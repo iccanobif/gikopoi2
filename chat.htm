@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <title>Gikopoi 2</title>
     <style>
-        #chatLog {
+        #chatLog 
+        {
             border: 4px;
             border-color: Black;
             border-style: inset;
@@ -14,13 +15,15 @@
     </style>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        function byId(id){
+        function byId(id)
+        {
             return document.getElementById(id);
         }
 
         var socket = io();
 
-        socket.on("server_msg", function(user, msg) {
+        socket.on("server_msg", function(user, msg) 
+        {
             var chatLog = byId("chatLog");
             chatLog.innerHTML += user + ": " + msg + "<br/>";
             byId("chatLog").scrollTop = byId("chatLog").scrollHeight;
@@ -28,7 +31,7 @@
         function sendMessage()
         {
             var message = byId("message").value;
-            var user = byId("name").value;
+            var user = byId("userName").value;
             byId("message").value = "";
             socket.emit("user_msg", user, message);
         }
@@ -39,9 +42,10 @@
     <div id="userList"></div>
     <div id="chatLog"></div>
     <form onsubmit="sendMessage(); return false;">
-        Name: <input id="name" type="text" /><br/>
+        Name: @USER_NAME@<br/>
         Message: <input id="message" type="text" /><br/>
         <input type="submit" value="Send" />
+        <input type="hidden" id="userName" value="@USER_NAME@" />
     </form>
 </body>
 </html>

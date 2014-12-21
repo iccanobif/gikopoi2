@@ -19,26 +19,38 @@ io.on("connection", function(socket){
     });
 });
 
-app.get("/", function (req, res) {
+app.get("/", function (req, res) 
+    {
     res.writeHead(200, {'Content-Type': 'text/html'});
-    fs.readFile("index.htm", function(err, data) {
+    fs.readFile("index.htm", function(err, data) 
+    {
         if (err) res.end(err);
         else res.end(data);
     });
 });
 
-app.post("/", function (req, res) {
+app.post("/", function (req, res) 
+{
     var body = "";
-    req.on("data", function (data) {
+    req.on("data", function (data) 
+    {
         body += data;
     });
-    req.on("end", function () {
+    req.on("end", function () 
+    {
         var post = require("querystring").parse(body);
         var userName = post["name"];
         res.writeHead(200, {'Content-Type': 'text/html'});
-        fs.readFile("chat.htm", function(err, data) {
-            if (err) res.end(err);
-            else res.end(data);
+        fs.readFile("chat.htm", function(err, data) 
+        {
+            if (err) 
+            {
+                res.end(err);
+                return;
+            }
+
+            data = String(data).replace(/@USER_NAME@/g, userName);
+            res.end(data);
         });
     });
 });
