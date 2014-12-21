@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Gikopoi 2</title>
+    <style>
+        #chatLog {
+            border: 4px;
+            border-color: Black;
+            border-style: inset;
+            height: 200px;
+            overflow: auto;
+        }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        function byId(id){
+            return document.getElementById(id);
+        }
+
+        var socket = io();
+
+        socket.on("server_msg", function(user, msg) {
+            var chatLog = byId("chatLog");
+            chatLog.innerHTML += user + ": " + msg + "<br/>";
+            byId("chatLog").scrollTop = byId("chatLog").scrollHeight;
+        });
+        function sendMessage()
+        {
+            var message = byId("message").value;
+            var user = byId("name").value;
+            byId("message").value = "";
+            socket.emit("user_msg", user, message);
+        }
+    </script>
+</head>
+<body>
+    <h1>Gikopoi 2</h1>
+    <div id="userList"></div>
+    <div id="chatLog"></div>
+    <form onsubmit="sendMessage(); return false;">
+        Name: <input id="name" type="text" /><br/>
+        Message: <input id="message" type="text" /><br/>
+        <input type="submit" value="Send" />
+    </form>
+</body>
+</html>
