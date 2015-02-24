@@ -1,4 +1,5 @@
-var app = require("express")();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var fs = require('fs');
 var io = require("socket.io")(http);
@@ -120,21 +121,8 @@ app.post("/", function (req, res)
     });
 });
 
-app.get("/static/*", function (req, res)
-{
-    try
-    {
-        fs.readFile(req.originalUrl.slice(1), function(err, data) 
-        {
-            if (err) res.end(JSON.stringify(err));
-            else res.end(data);
-        });
-    }
-    catch (e)
-    {
-        console.log(e);
-    }
-});
+app.use(express.compress());
+app.use(express.static('static'));
 
 http.listen(1337);
 
