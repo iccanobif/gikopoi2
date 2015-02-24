@@ -31,6 +31,7 @@ io.on("connection", function(socket){
         console.log("token: " + token + " name: " + users[token]["name"]);
         
         io.emit("server_msg", "SYSTEM", users[token]["name"] + " connected");
+        io.emit("new_user_login", token, users[token]["name"]);
         
         socket.on("user_msg", function(msg)
         {
@@ -40,13 +41,13 @@ io.on("connection", function(socket){
         });
         socket.on("disconnect", function()
         {
-            console.log("user disconnected");
+            console.log(users[token]["name"] + " disconnected");
             io.emit("server_msg", "system", "someone disconnected");
         });
-        socket.on("user_move", function(x, y)
+        socket.on("user_move", function(x, z)
         {
-            console.log(token + ", " + x + ", "+ y);
-            io.emit("server_move", token, x, y);
+            console.log(token + ", " + x + ", "+ z);
+            io.emit("server_move", token, x, z);
         });
     }
     catch(e)
@@ -123,7 +124,6 @@ app.get("/static/*", function (req, res)
 {
     try
     {
-        console.log(req.originalUrl.slice(1));
         fs.readFile(req.originalUrl.slice(1), function(err, data) 
         {
             if (err) res.end(JSON.stringify(err));

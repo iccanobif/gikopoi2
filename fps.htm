@@ -65,9 +65,26 @@
     <script>
         //Websockets stuff
         
+        function readCookie(cookies, cookieName)
+        {
+            c = cookies.split(";");
+            for (var i = 0; i < c.length; i++)
+            {
+                s = c[i].trim().split("=")
+                if (s[0] == cookieName)
+                    return s[1];
+            }
+            return null;
+        }
+        
         function byId(id)
         {
             return document.getElementById(id);
+        }
+        
+        function getMyUserId()
+        {
+            return readCookie(document.cookie, "token");
         }
 
         var socket = io();
@@ -78,17 +95,31 @@
             chatLog.innerHTML += userName + ": " + msg + "<br/>";
             byId("chatLog").scrollTop = byId("chatLog").scrollHeight;
         });
-        socket.on("server_move", function(userToken, x, y)
+        socket.on("server_move", function(userId, x, z)
         {
-            console.log(userToken + ", "+x+", "+y);
+            console.log(userId + ", " + x + ", " + z + " e io sono " + getMyUserId());
+            if (userId != getMyUserId())
+            {
+                console.log("si', si sta muovendo qualcun'altro");
+                players[userId].setPosition(x, z);
+            }
         });
+        socket.on("new_user_login", function(userId, userName)
+        {
+            if (userId != getMyUserId())
+            {
+                console.log("new_user_login: " + userId);
+                addUser(userId, userName);
+            }
+        });
+        
         function sendMessage(msg)
         {
             socket.emit("user_msg", msg);
         }
-        function sendNewPosition(x, y)
+        function sendNewPosition(x, z)
         {
-            socket.emit("user_move", x, y);
+            socket.emit("user_move", x, z);
         }
     </script>
     
@@ -151,11 +182,12 @@
     
     var fpsControls = new FpsControls(camera, renderer.domElement, {godMode: false});
     
+    var players = {};
+    
     var Player = function(options)
     {
         if (options === undefined) options = {};
         
-        this.id = options["id"];
         this.name = options["name"] === undefined ? "Anonymous" : options["name"];
         this.color = options["color"] === undefined ? 0x00ffcc : options["color"];
         
@@ -201,9 +233,10 @@
         scene.add(text);
     }
     
-    function addUser()
+    function addUser(userId, userName)
     {
-        players[players.length] = new Player({name: "Red", color: 0xff0000})
+        console.log("addUser: " + userId + " " + userName);
+        players[userId] = new Player({name: userName, color: 0xff0000})
                                      .setPosition(Math.random() * 100 - 50, Math.random() * 100 - 50);
                                      
         
@@ -266,7 +299,7 @@
         {
             if (i == 0)
             {
-                sendNewPosition(camera.position.x, camera.position.y);
+                sendNewPosition(camera.position.x, camera.position.z);
                 i = 10;
             }
         });
