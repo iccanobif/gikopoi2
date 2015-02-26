@@ -18,43 +18,72 @@ function readCookie(cookies, cookieName)
 }
 
 io.on("connection", function(socket){
-    try
+    console.log("Connection attempt");
+    
+    var userId = null;
+    
+    socket.on("user_connect", function(id)
     {
-        console.log("Connection attempt");
-        var token = readCookie(socket.handshake.headers.cookie, "token");
-        
-        if (users[token] === undefined)
+         try
         {
-            console.log("Access denied to invalid token " + token);
-            return;
+            userId = id;
+            
+            if (users[userId] === undefined)
+            {
+                console.log("Access denied to invalid userId " + userId);
+                socket.disconnect(); //TO TEST
+                return;
+            }
+            
+            console.log("userId: " + userId + " name: " + users[userId]["name"]);
+            
+            socket.emit("server_usr_list", users);
+            io.emit("server_msg", "SYSTEM", users[userId]["name"] + " connected");
+            io.emit("new_user_login", userId, users[userId]["name"]);
+            
         }
-        
-        console.log("token: " + token + " name: " + users[token]["name"]);
-        
-        io.emit("server_msg", "SYSTEM", users[token]["name"] + " connected");
-        io.emit("new_user_login", token, users[token]["name"]);
-        
-        socket.on("user_msg", function(msg)
+        catch (e)
         {
-            var user = users[token]["name"];
-            console.log(user + ": " + msg);
-            io.emit("server_msg", user, msg);
-        });
-        socket.on("disconnect", function()
-        {
-            console.log(users[token]["name"] + " disconnected");
-            io.emit("server_msg", "system", "someone disconnected");
-        });
-        socket.on("user_move", function(x, z)
-        {
-            console.log(token + ", " + x + ", "+ z);
-            io.emit("server_move", token, x, z);
-        });
-    }
-    catch(e)
+            console.log(e.message);
+        }
+    });
+    socket.on("user_msg", function(msg)
     {
-        console.log(e.message);
-    }
+        try
+        {
+            var userName = users[userId]["name"];
+            console.log(userName + ": " + msg);
+            io.emit("server_msg", userName, msg);
+        }
+        catch (e)
+        {
+            console.log(e.message);
+        }
+    });
+    socket.on("disconnect", function()
+    {
+        try
+        {
+            console.log(users[userId]["name"] + " disconnected");
+            io.emit("server_msg", "system", "someone disconnected");
+        }
+        catch (e)
+        {
+            console.log(e.message);
+        }
+    });
+    socket.on("user_move", function(x, z)
+    {
+        try
+        {
+            console.log(userId + ", " + x + ", "+ z);
+            io.emit("server_move", userId, x, z);
+        }
+        catch (e)
+        {
+            console.log(e.message);
+        }
+    });
 });
 
 app.get("/", function (req, res) 
@@ -89,7 +118,7 @@ function addNewUser(name)
     return token;
 }
 
-app.post("/", function (req, res) 
+app.post("/giko", function (req, res) 
 {
     var body = "";
     req.on("data", function (data) 
@@ -101,11 +130,9 @@ app.post("/", function (req, res)
         var post = require("querystring").parse(body);
         var userName = post["name"];
         
-        var token = addNewUser(userName);
+        var userId = addNewUser(userName);
         
-        
-        res.writeHead(200, {'Content-Type': 'text/html',
-                            'Set-Cookie': "token=" + token});
+        res.writeHead(200, {'Content-Type': 'text/html'});
         //fs.readFile("chat.htm", function(err, data) 
         fs.readFile("fps.htm", function(err, data) 
         {
@@ -115,13 +142,13 @@ app.post("/", function (req, res)
                 return;
             }
 
-            data = String(data).replace(/@USER_NAME@/g, userName);
+            data = String(data).replace(/@USER_NAME@/g, userName)
+                               .replace(/@USER_ID@/g, userId);
             res.end(data);
         });
     });
 });
 
-app.use(express.compress());
 app.use(express.static('static'));
 
 http.listen(1337);

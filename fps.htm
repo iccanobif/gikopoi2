@@ -52,79 +52,19 @@
         }
         
     </style>
-    <script src="static/three.js/three.js"></script>
-    <script src="static/three.js/stats.min.js"></script>
-    <script src="static/three.js/FpsControls.js"></script>
-    <script src="static/three.js/droid_serif_regular.typeface.js"></script>
-    <script src="static/three.js/TGALoader.js"></script>
-    <script src="static/three.js/MTLLoader.js"></script>
-    <script src="static/three.js/OBJMTLLoader.js"></script>
+    <script src="three.js/three.js"></script>
+    <script src="three.js/stats.min.js"></script>
+    <script src="three.js/FpsControls.js"></script>
+    <script src="three.js/droid_serif_regular.typeface.js"></script>
+    <script src="three.js/TGALoader.js"></script>
+    <script src="three.js/MTLLoader.js"></script>
+    <script src="three.js/OBJMTLLoader.js"></script>
     
     <script src="/socket.io/socket.io.js"></script>
     
-    <script>
-        //Websockets stuff
-        
-        function readCookie(cookies, cookieName)
-        {
-            c = cookies.split(";");
-            for (var i = 0; i < c.length; i++)
-            {
-                s = c[i].trim().split("=")
-                if (s[0] == cookieName)
-                    return s[1];
-            }
-            return null;
-        }
-        
-        function byId(id)
-        {
-            return document.getElementById(id);
-        }
-        
-        function getMyUserId()
-        {
-            return readCookie(document.cookie, "token");
-        }
-
-        var socket = io();
-
-        socket.on("server_msg", function(userName, msg) 
-        {
-            var chatLog = byId("chatLog");
-            chatLog.innerHTML += userName + ": " + msg + "<br/>";
-            byId("chatLog").scrollTop = byId("chatLog").scrollHeight;
-        });
-        socket.on("server_move", function(userId, x, z)
-        {
-            console.log(userId + ", " + x + ", " + z + " e io sono " + getMyUserId());
-            if (userId != getMyUserId())
-            {
-                console.log("si', si sta muovendo qualcun'altro");
-                players[userId].setPosition(x, z);
-            }
-        });
-        socket.on("new_user_login", function(userId, userName)
-        {
-            if (userId != getMyUserId())
-            {
-                console.log("new_user_login: " + userId);
-                addUser(userId, userName);
-            }
-        });
-        
-        function sendMessage(msg)
-        {
-            socket.emit("user_msg", msg);
-        }
-        function sendNewPosition(x, z)
-        {
-            socket.emit("user_move", x, z);
-        }
-    </script>
-    
 </head>
 <body>
+<input type="hidden" id="userId" value="@USER_ID@" />
 <!-- <audio src="vapour.mp3.wav.mp3" loop autoplay></audio> -->
 <div id="console">
     <input type="button" onclick="addRandomUser()"></input>
@@ -135,6 +75,80 @@
     <input id="textBox" type="text"></input>
 </div>
 <script>
+
+   //WEBSOCKETS STUFF
+    function readCookie(cookies, cookieName)
+    {
+        c = cookies.split(";");
+        for (var i = 0; i < c.length; i++)
+        {
+            s = c[i].trim().split("=")
+            if (s[0] == cookieName)
+                return s[1];
+        }
+        return null;
+    }
+    
+    function byId(id)
+    {
+        return document.getElementById(id);
+    }
+    
+    function getMyUserId()
+    {
+        //return readCookie(document.cookie, "token");
+        return byId("userId").value;
+    }
+
+    var socket = io();
+    
+    socket.on("connect", function()
+    {
+        socket.emit("user_connect", getMyUserId());
+    });
+    
+    socket.on("server_usr_list", function(users)
+    {
+        for (var u in users)
+            if (users.hasOwnProperty(u)
+                && u != getMyUserId())
+            {
+                addUser(u, users[u].name);
+            }
+    });
+    socket.on("server_msg", function(userName, msg) 
+    {
+        var chatLog = byId("chatLog");
+        chatLog.innerHTML += userName + ": " + msg + "<br/>";
+        byId("chatLog").scrollTop = byId("chatLog").scrollHeight;
+    });
+    socket.on("server_move", function(userId, x, z)
+    {
+        console.log(userId + ", " + x + ", " + z + " e io sono " + getMyUserId());
+        if (userId != getMyUserId())
+        {
+            players[userId].setPosition(x, z);
+        }
+    });
+    socket.on("new_user_login", function(userId, userName)
+    {
+        if (userId != getMyUserId())
+        {
+            addUser(userId, userName);
+        }
+    });
+    
+    function sendMessage(msg)
+    {
+        socket.emit("user_msg", msg);
+    }
+    function sendNewPosition(x, z)
+    {
+        socket.emit("user_move", x, z);
+    }
+
+    //THREE.JS STUFF
+
     stats = new Stats();
     stats.domElement.style.position = 'absolute';
     stats.domElement.style.bottom = '0px';
@@ -253,13 +267,13 @@
     //SMOKING GIRL
     var smokingGirl = new THREE.Mesh(new THREE.BoxGeometry(4,4,4),
                                      new THREE.MeshPhongMaterial());
-    smokingGirl.material.map = THREE.ImageUtils.loadTexture("static/textures/smoking_girl.jpg");
+    smokingGirl.material.map = THREE.ImageUtils.loadTexture("textures/smoking_girl.jpg");
     smokingGirl.position.set(-8, 2, 0);
     smokingGirl.rotation.y = -800;
     scene.add(smokingGirl);
     
     //FLOOR
-    var floorTexture = THREE.ImageUtils.loadTexture("static/textures/blacklodge.png");
+    var floorTexture = THREE.ImageUtils.loadTexture("textures/blacklodge.png");
     floorTexture.wrapS = THREE.RepeatWrapping;
     floorTexture.wrapT = THREE.RepeatWrapping;
     floorTexture.repeat.set(10, 10);
