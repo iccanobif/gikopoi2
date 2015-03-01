@@ -3,7 +3,7 @@ var app = express();
 var http = require('http').Server(app);
 var fs = require('fs');
 var io = require("socket.io")(http);
-
+var users = require("./users.js");
 
 function readCookie(cookies, cookieName)
 {
@@ -21,6 +21,7 @@ io.on("connection", function(socket){
     console.log("Connection attempt");
     
     var userId = null;
+    var user = null;
     
     socket.on("user_connect", function(id)
     {
@@ -28,30 +29,31 @@ io.on("connection", function(socket){
         {
             userId = id;
             
-            if (users[userId] === undefined)
+            if (users.getUser(userId) === undefined)
             {
                 console.log("Access denied to invalid userId " + userId);
                 socket.disconnect(); //TO TEST
                 return;
             }
             
-            console.log("userId: " + userId + " name: " + users[userId]["name"]);
+            user = users.getUser(userId);
             
-            socket.emit("server_usr_list", users);
-            io.emit("server_msg", "SYSTEM", users[userId]["name"] + " connected");
-            io.emit("new_user_login", userId, users[userId]["name"]);
+            console.log("userId: " + userId + " name: " + user["name"]);
             
+            socket.emit("server_usr_list", users.getConnectedUserList());
+            io.emit("server_msg", "SYSTEM", user["name"] + " connected");
+            io.emit("server_new_user_login", userId, user["name"]);
         }
         catch (e)
         {
-            console.log(e.message);
+            console.log(e.message + " " + e.stack);
         }
     });
     socket.on("user_msg", function(msg)
     {
         try
         {
-            var userName = users[userId]["name"];
+            var userName = user["name"];
             console.log(userName + ": " + msg);
             io.emit("server_msg", userName, msg);
         }
@@ -64,8 +66,12 @@ io.on("connection", function(socket){
     {
         try
         {
-            console.log(users[userId]["name"] + " disconnected");
-            io.emit("server_msg", "system", "someone disconnected");
+            if (user === null) return;
+            
+            user["connected"] = false; //TODO: siamo sicuri che funzioni?
+            console.log(user["name"] + " disconnected");
+            io.emit("server_msg", "system", user["name"] + " disconnected");
+            io.emit("server_user_disconnect", userId);
         }
         catch (e)
         {
@@ -96,28 +102,6 @@ app.get("/", function (req, res)
     });
 });
 
-var users = {};
-
-function generateToken()
-{
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for( var i=0; i < 16; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    
-    return text;
-}
-
-function addNewUser(name)
-{
-    var token = generateToken();
-    while (users[token] != undefined)
-        token = generateToken();
-    users[token] = {name: name};
-    return token;
-}
-
 app.post("/giko", function (req, res) 
 {
     var body = "";
@@ -130,17 +114,12 @@ app.post("/giko", function (req, res)
         var post = require("querystring").parse(body);
         var userName = post["name"];
         
-        var userId = addNewUser(userName);
+        var userId = users.addNewUser(userName);
         
         res.writeHead(200, {'Content-Type': 'text/html'});
-        //fs.readFile("chat.htm", function(err, data) 
         fs.readFile("fps.htm", function(err, data) 
         {
-            if (err) 
-            {
-                res.end(err);
-                return;
-            }
+            if (err) return res.end(err);
 
             data = String(data).replace(/@USER_NAME@/g, userName)
                                .replace(/@USER_ID@/g, userId);
@@ -151,6 +130,6 @@ app.post("/giko", function (req, res)
 
 app.use(express.static('static'));
 
-http.listen(1337);
+http.listen(80);
 
 console.log("Server running");
