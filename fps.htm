@@ -19,6 +19,11 @@
         {
             position: absolute;
             z-index: -1;
+            image-rendering: -moz-crisp-edges;          // FF 6.0+
+            image-rendering: -webkit-optimize-contrast; // Safari
+            image-rendering: -o-crisp-edges;            // OS X & Windows Opera (12.02+)
+            image-rendering: pixelated;                 // Awesome future-browsers
+            -ms-interpolation-mode: nearest-neighbor;   // IE
         }
         #chatLog
         {
@@ -54,18 +59,16 @@
     </style>
     <script src="three.js/three.js"></script>
     <script src="three.js/stats.min.js"></script>
-    <script src="three.js/FpsControls.js"></script>
     <script src="three.js/droid_serif_regular.typeface.js"></script>
     <script src="three.js/TGALoader.js"></script>
     <script src="three.js/MTLLoader.js"></script>
     <script src="three.js/OBJMTLLoader.js"></script>
-    
+    <script src="FpsControls.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    
 </head>
 <body>
 <input type="hidden" id="userId" value="@USER_ID@" />
-<!-- <audio src="vapour.mp3.wav.mp3" loop autoplay></audio> -->
+<audio src="vapour.mp3.wav.mp3" loop autoplay></audio>
 <div id="console">
     <input type="button" onclick="addRandomUser()"></input>
 </div>

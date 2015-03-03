@@ -7,6 +7,10 @@ var FpsControls = function(camera, canvas, options)
     var moveForward = false;
     var moveBackwards = false;
     
+    this.cameraMovementCallback = null;
+    this.cameraRotationCallback = null;
+    this.positionValidationCallback = null;
+    
     if (options != undefined)
         if (options["godMode"] != undefined)
             godMode = options["godMode"];
@@ -51,7 +55,7 @@ var FpsControls = function(camera, canvas, options)
         }
     });
     
-    this.update = function(callback)
+    this.update = function()
     {
         if (moveLeft) camera.translateX(-1);
         if (moveRight) camera.translateX(1);
@@ -71,9 +75,10 @@ var FpsControls = function(camera, canvas, options)
                 camera.position.x = camera.position.x - Math.sin(angles.x);
                 camera.position.z = camera.position.z + Math.cos(angles.x);
             }
-            
+        
         if (moveLeft || moveRight || moveForward || moveBackwards)
-            callback();
+            if (this.cameraMovementCallback != null)
+                this.cameraMovementCallback();
     }
     
     //
@@ -93,6 +98,9 @@ var FpsControls = function(camera, canvas, options)
         camera.lookAt(new THREE.Vector3(camera.position.x + Math.sin(angles.x) * Math.cos(angles.y),
                                         camera.position.y + Math.sin(angles.y),
                                         camera.position.z - Math.cos(angles.x) * Math.cos(angles.y)));
+                                        
+        if (this.cameraRotationCallback != null)
+            this.cameraRotationCallback();
     }
     
     canvas.requestPointerLock = canvas.requestPointerLock ||

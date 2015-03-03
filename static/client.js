@@ -46,7 +46,7 @@ socket.on("server_msg", function(userName, msg)
 });
 socket.on("server_move", function(userId, x, z)
 {
-    console.log(userId + ", " + x + ", " + z + " e io sono " + getMyUserId());
+    //console.log(userId + ", " + x + ", " + z + " e io sono " + getMyUserId());
     if (userId != getMyUserId())
     {
         players[userId].setPosition(x, z);
@@ -114,10 +114,11 @@ function writeToConsole(str)
 
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-var renderer = new THREE.WebGLRenderer();
+var renderer = new THREE.WebGLRenderer({precision: "lowp"});
+//renderer.setPixelRatio(1/4);
 renderer.setSize(window.innerWidth, window.innerHeight);
+//renderer.setSize(500, 200);
 renderer.setClearColor( 0xff0000 );
-//renderer.shadowMapEnabled = true;
 
 document.body.appendChild(renderer.domElement);
 
@@ -182,7 +183,7 @@ var Player = function(options)
 
 function addUser(userId, userName)
 {
-    console.log("addUser: " + userId + " " + userName);
+    //console.log("addUser: " + userId + " " + userName);
     players[userId] = new Player({name: userName, color: 0xff0000})
                                  .setPosition(Math.random() * 100 - 50, Math.random() * 100 - 50);
                                  
@@ -240,18 +241,22 @@ window.addEventListener("resize", function ()
 
 var i = 0;
 
+fpsControls.cameraMovementCallback = function ()
+{
+    if (i == 0)
+    {
+        sendNewPosition(camera.position.x, camera.position.z);
+        i = 10;
+    }
+}
+
 function render() {
     requestAnimationFrame(render);
-    fpsControls.update(function ()
-    {
-        if (i == 0)
-        {
-            sendNewPosition(camera.position.x, camera.position.z);
-            i = 10;
-        }
-    });
+    fpsControls.update();
     
     //Boundary checks TODO: move this stuff somewhere else, together with collision detection
+    
+    smokingGirl.rotation.y += 0.01;
     
     if (camera.position.y < 1)
         camera.position.y = 1;
