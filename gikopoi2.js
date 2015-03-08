@@ -20,29 +20,26 @@ function readCookie(cookies, cookieName)
 io.on("connection", function(socket){
     console.log("Connection attempt");
     
-    var userId = null;
     var user = null;
     
     socket.on("user_connect", function(id)
     {
          try
         {
-            userId = id;
-            
-            if (users.getUser(userId) === undefined)
+            if (users.getUser(id) === undefined)
             {
-                console.log("Access denied to invalid userId " + userId);
+                console.log("Access denied to invalid userId " + id);
                 socket.disconnect(); //TO TEST
                 return;
             }
             
-            user = users.getUser(userId);
+            user = users.getUser(id);
             
-            console.log("userId: " + userId + " name: " + user["name"]);
+            console.log("userId: " + id + " name: " + user.name);
             
             socket.emit("server_usr_list", users.getConnectedUserList());
-            io.emit("server_msg", "SYSTEM", user["name"] + " connected");
-            io.emit("server_new_user_login", userId, user["name"]);
+            io.emit("server_msg", "SYSTEM", user.name + " connected");
+            io.emit("server_new_user_login", user);
         }
         catch (e)
         {
@@ -53,9 +50,8 @@ io.on("connection", function(socket){
     {
         try
         {
-            var userName = user["name"];
-            console.log(userName + ": " + msg);
-            io.emit("server_msg", userName, msg);
+            console.log(user.name + ": " + msg);
+            io.emit("server_msg", user.name, msg);
         }
         catch (e)
         {
@@ -69,9 +65,9 @@ io.on("connection", function(socket){
             if (user === null) return;
             
             user["connected"] = false; //TODO: siamo sicuri che funzioni?
-            console.log(user["name"] + " disconnected");
-            io.emit("server_msg", "system", user["name"] + " disconnected");
-            io.emit("server_user_disconnect", userId);
+            console.log(user.name + " disconnected");
+            io.emit("server_msg", "system", user.name + " disconnected");
+            io.emit("server_user_disconnect", user.id);
         }
         catch (e)
         {
@@ -82,8 +78,9 @@ io.on("connection", function(socket){
     {
         try
         {
-            console.log(userId + ", " + x + ", "+ z);
-            io.emit("server_move", userId, x, z);
+            user.x = x;
+            user.z = z;
+            io.emit("server_move", user.id, x, z);
         }
         catch (e)
         {

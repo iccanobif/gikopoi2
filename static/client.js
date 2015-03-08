@@ -29,13 +29,18 @@ socket.on("connect", function()
     socket.emit("user_connect", getMyUserId());
 });
 
+socket.on("disconnect", function()
+{
+    //TODO
+});
+
 socket.on("server_usr_list", function(users)
 {
     for (var u in users)
         if (users.hasOwnProperty(u)
             && u != getMyUserId())
         {
-            addUser(u, users[u].name);
+            addUser(users[u]);
         }
 });
 socket.on("server_msg", function(userName, msg) 
@@ -52,11 +57,11 @@ socket.on("server_move", function(userId, x, z)
         players[userId].setPosition(x, z);
     }
 });
-socket.on("server_new_user_login", function(userId, userName)
+socket.on("server_new_user_login", function(user)
 {
-    if (userId != getMyUserId())
+    if (user.id != getMyUserId())
     {
-        addUser(userId, userName);
+        addUser(user);
     }
 });
 socket.on("server_user_disconnect", function(userId)
@@ -181,14 +186,16 @@ var Player = function(options)
     }
 }
 
-function addUser(userId, userName)
+function addUser(user)
 {
     //console.log("addUser: " + userId + " " + userName);
-    players[userId] = new Player({name: userName, color: 0xff0000})
+    players[user.id] = new Player({name: user.name, color: 0xff0000})
                                  .setPosition(Math.random() * 100 - 50, Math.random() * 100 - 50);
                                  
     
 }
+
+//TODO: move the stuff for building the room into another file
 
 //WALLS
 var walls = new THREE.Mesh(new THREE.BoxGeometry(100, 10, 100), 
