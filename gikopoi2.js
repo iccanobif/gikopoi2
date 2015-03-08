@@ -108,6 +108,8 @@ app.post("/giko", function (req, res)
     });
     req.on("end", function () 
     {
+        //TODO: if the users simply did an F5 or for some reason the websocket is reconnecting,
+        //      reuse the old user that's still in the user list flagged as disconnected
         var post = require("querystring").parse(body);
         var userName = post["name"];
         
