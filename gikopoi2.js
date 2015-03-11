@@ -129,6 +129,8 @@ app.post("/giko", function (req, res)
 
 app.use(express.static('static'));
 
-http.listen(80);
+//http.listen(80);
+http.listen(process.env.OPENSHIFT_NODEJS_PORT || 80, 
+            process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
 
 console.log("Server running");
