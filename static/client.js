@@ -77,6 +77,7 @@ window.addEventListener("load", function()
     function sendMessage(msg)
     {
         socket.emit("user_msg", msg);
+        //<audio src="btn.mp3" autoplay>
     }
     function sendNewPosition(x, z)
     {
@@ -101,7 +102,7 @@ window.addEventListener("load", function()
         }
 
         if (e.keyCode != 13) return; // Not Enter
-        
+        else if (byId('textBox').value == '') return;
         sendMessage(byId('textBox').value);
         byId('textBox').value = "";
     }
