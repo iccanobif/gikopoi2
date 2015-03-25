@@ -204,7 +204,8 @@ window.addEventListener("load", function()
         
     }
 
-    buildRoom(scene);
+    var room = new Room("");
+    room.buildRoom(scene);
 
     camera.position.set(0, 4, 30);
 
@@ -237,6 +238,7 @@ window.addEventListener("load", function()
         if (camera.position.y > 9.7)
             camera.position.y = 9.7;
         
+        room.update();
         stats.update();
         renderer.render(scene, camera);
         if (i > 0) i--;
