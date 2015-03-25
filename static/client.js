@@ -156,11 +156,11 @@ window.addEventListener("load", function()
         var textGeo = 
             new THREE.TextGeometry( this.name, 
                                    { size: 1, 
-                                     height: 1, 
+                                     height: 0.5, 
                                      curveSegments: 6, 
                                      font: "droid serif", 
                                      weight: "normal", 
-                                     style: "normal" });
+                                     style: "normal"});
         
         textGeo.computeBoundingBox();
         
