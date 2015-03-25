@@ -38,7 +38,7 @@ io.on("connection", function(socket){
             console.log("userId: " + id + " name: " + user.name);
             
             socket.emit("server_usr_list", users.getConnectedUserList());
-            io.emit("server_msg", "SYSTEM", user.name + " connected");
+            io.emit("server_msg", "<span class=\"system\">SYSTEM</span>", user.name + " connected");
             io.emit("server_new_user_login", user);
         }
         catch (e)
@@ -50,8 +50,9 @@ io.on("connection", function(socket){
     {
         try
         {
+            //<p class=\"messageUsername\">" + user.name + "</p>: "  + "<p class=\"messageBody\">" + msg
             console.log(user.name + ": " + msg);
-            io.emit("server_msg", user.name, msg);
+            io.emit("server_msg", "<span class=\"messageAuthor\">" + user.name + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
         }
         catch (e)
         {
@@ -66,7 +67,7 @@ io.on("connection", function(socket){
             
             user["connected"] = false; //TODO: siamo sicuri che funzioni?
             console.log(user.name + " disconnected");
-            io.emit("server_msg", "system", user.name + " disconnected");
+            io.emit("server_msg", "<span class=\"system\">SYSTEM</span>", user.name + " disconnected");
             io.emit("server_user_disconnect", user.id);
         }
         catch (e)
