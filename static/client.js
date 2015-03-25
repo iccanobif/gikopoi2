@@ -1,8 +1,6 @@
 //WEBSOCKETS STUFF
 window.addEventListener("load", function()
 {
-
-
     function readCookie(cookies, cookieName)
     {
         c = cookies.split(";");
@@ -35,7 +33,7 @@ window.addEventListener("load", function()
 
     socket.on("disconnect", function()
     {
-        //TODO
+        //TODO (but what, again?)
     });
 
     socket.on("server_usr_list", function(users)
@@ -78,10 +76,16 @@ window.addEventListener("load", function()
     {
         socket.emit("user_msg", msg);
     }
+    
     function sendNewPosition(x, z)
     {
         socket.emit("user_move", x, z);
     }
+    
+    window.addEventListener("beforeunload", function () 
+    {
+        socket.disconnect();
+    });
 
     //THREE.JS STUFF
 
