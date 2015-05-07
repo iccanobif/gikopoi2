@@ -105,7 +105,7 @@ app.get("/", function (req, res)
     });
 });
 
-app.post("/giko", function (req, res) 
+app.post("/", function (req, res) 
 {
     var body = "";
     req.on("data", function (data) 
