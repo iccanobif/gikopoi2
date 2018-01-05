@@ -17,7 +17,6 @@
 
 	var socket = io();
 
-
 	function byId(id)
 	{
 		return document.getElementById(id);
@@ -299,13 +298,15 @@
 
 	function loadRoom()
 	{
-		currentUser = 420;
-		users[420] = {
-			"name": "maf",
-			"character": "giko",
-			"position": [8, 4],
-			"direction": 3
-		};
+		// I should wait for the server to give me a user list
+
+		// currentUser = 420;
+		// users[420] = {
+		// 	"name": "maf",
+		// 	"character": "giko",
+		// 	"position": [8, 4],
+		// 	"direction": 3
+		// };
 
 		roomName = "bar";
 		config = JSON.parse(
@@ -315,11 +316,20 @@
 		scale = ("scale" in config ? config.scale : 1);
 	}
 
-    function getMyUserId()
-    {
-        //return readCookie(document.cookie, "token");
-        return byId("userId").value;
-    }
+	function getMyUserId()
+	{
+		return byId("userId").value;
+	}
+
+	function addUser(user)
+	{
+		users[user.id] = {
+			"name": user.name,
+			"character": user.character,
+			"position": user.position,
+			"direction": user.direction
+		};
+	}
 
 	function initializeWebsocket()
 	{
@@ -330,7 +340,8 @@
 
 		socket.on("disconnect", function ()
 		{
-			//TODO (but what, again?)
+			//TODO
+			//But I forgot what there's to do, here...
 		});
 
 		socket.on("server_usr_list", function (users)
@@ -352,10 +363,9 @@
 
 		socket.on("server_move", function (userId, x, z)
 		{
-			//console.log(userId + ", " + x + ", " + z + " e io sono " + getMyUserId());
 			if (userId != getMyUserId())
 			{
-				players[userId].setPosition(x, z, true);
+				users[userId].setPosition(x, z, true);
 			}
 		});
 
@@ -369,8 +379,8 @@
 
 		socket.on("server_user_disconnect", function (userId)
 		{
-			players[userId].dispose();
-			delete players[userId];
+			users[userId].dispose();
+			delete users[userId];
 		});
 
 		window.addEventListener("beforeunload", function ()
@@ -382,17 +392,16 @@
 	function sendMessage(msg)
 	{
 		socket.emit("user_msg", msg);
-		//<audio src="btn.mp3" autoplay>
 	}
 
-	function sendNewPosition(x, z)
+	// TODO: Please call this when the player's character moves
+	function sendNewPosition(x, y)
 	{
-		socket.emit("user_move", x, z);
+		socket.emit("user_move", x, y);
 	}
 
 	run = function ()
 	{
-		roomStyle = byId("room-style"); // Does this serve any purpose?
 		eRoom = byId("room");
 		eBackground = byId("background");
 		eBackground.onload = setUpRoom;

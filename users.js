@@ -20,10 +20,10 @@ var Player = function(options)
     this.id = generateId();
     
     this.name = options["name"] === undefined ? "Anonymous" : options["name"];
-    this.color = options["color"] === undefined ? 0x00ffcc : options["color"];
-    this.x = options["x"] === undefined ? 0 : options["x"]
-    this.z = options["z"] === undefined ? 0 : options["z"]
-    this.connected = options["connected"] === undefined ? true : options["connected"]
+    this.position =  options["position"] === undefined ? [8,4] : options["position"];
+    this.character = options["character"] === undefined ? "giko" : options["character"];
+    this.direction = options["direction"] === undefined ? 3 : options["direction"];
+    this.connected = options["connected"] === undefined ? true : options["connected"];
 }
 
 var users = {};

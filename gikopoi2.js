@@ -94,14 +94,13 @@ io.on("connection", function (socket)
         console.log("user_disconnect!"); 
         handleDisconnect();
     });*/
-    socket.on("user_move", function (x, z)
+    socket.on("user_move", function (x, y)
     {
         try
         {
-            console.log(user.id  + " moving to " + x + ", " + z);
-            user.x = x;
-            user.z = z;
-            io.emit("server_move", user.id, x, z);
+            console.log(user.id  + " moving to " + x + ", " + y);
+            user.position = [x, y]
+            io.emit("server_move", user.id, x, y);
         }
         catch (e)
         {
