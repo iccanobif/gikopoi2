@@ -1,11 +1,15 @@
 (function ()
 {
+	function byId(id)
+	{
+		return document.getElementById(id);
+	}
+
 	var INNER_SQUARE = [40, 20];
 	var MOVE_DURATION = 600;
 
 	var eRoom;
 	var eBackground;
-	var eTextBox;
 
 	var roomName;
 	var config;
@@ -13,14 +17,9 @@
 	var zoom = 1.3;
 
 	var users = {};
-	var currentUser;
 
 	var socket = io();
 
-	function byId(id)
-	{
-		return document.getElementById(id);
-	}
 
 	function setScale()
 	{
@@ -62,6 +61,7 @@
 
 	function directUser(user)
 	{
+		console.log("directuser");
 		if (user.direction == 1 || user.direction == 2)
 			var side = "front";
 		else
@@ -136,17 +136,6 @@
 		return object;
 	}
 
-	function setUpUser(user)
-	{
-		user.element = createObject(2);
-		user.imgElement = user.element.getElementsByTagName("img")[0];
-		user.element.id = "u" + user.id;
-		user.element.classList.add("character");
-		placeElement(user.element, user.position);
-		directUser(user);
-		eRoom.appendChild(user.element);
-	}
-
 	function getOppositeDirection(direction)
 	{
 		if (direction < 2)
@@ -157,7 +146,7 @@
 
 	function sendDirection(direction) // parts to be moved to server
 	{
-		var user = users[currentUser];
+		var user = users[getMyUserId()];
 		if (direction != user.direction)
 		{
 			user.direction = direction;
@@ -218,56 +207,6 @@
 		}
 	}
 
-	function final()
-	{
-		var keyCode = null;
-		var isDown = false;
-		var sendInterval = null;
-		document.addEventListener("keydown", function (event)
-		{
-			e = event || window.event;
-			if (keyCode == e.keyCode) return;
-			if (sendInterval !== null)
-				clearInterval(sendInterval);
-			isDown = true;
-			keyCode = e.keyCode;
-			var direction = null;
-			if (keyCode == 38) // up
-				direction = 0;
-			else if (keyCode == 40) // down
-				direction = 2;
-			else if (keyCode == 37) // left
-				direction = 3;
-			else if (keyCode == 39) // right
-				direction = 1;
-			if (direction !== null)
-			{
-				sendInterval = setInterval(function ()
-				{
-					if (isDown)
-					{
-						sendDirection(direction);
-					}
-					else
-					{
-						clearInterval(sendInterval);
-						keyCode = null;
-					}
-				}, MOVE_DURATION);
-				sendDirection(direction);
-				return false;
-			}
-		});
-
-		document.addEventListener("keyup", function (event)
-		{
-			e = event || window.event;
-			if (e.keyCode != keyCode) return;
-			isDown = false;
-			return false;
-		});
-	}
-
 	function placeObjects()
 	{
 		for (var i = 0; i < config.objects.length; i++)
@@ -283,37 +222,22 @@
 
 	function setUpRoom()
 	{
-		setScale();
-		placeObjects();
-
-		for (var userId in users)
-		{
-			var user = users[userId];
-			user.id = userId;
-			setUpUser(user);
-		}
-
-		final();
-	}
-
-	function loadRoom()
-	{
-		// I should wait for the server to give me a user list
-
-		// currentUser = 420;
-		// users[420] = {
-		// 	"name": "maf",
-		// 	"character": "giko",
-		// 	"position": [8, 4],
-		// 	"direction": 3
-		// };
-
 		roomName = "bar";
 		config = JSON.parse(
 			byId("room-config").textContent);
 
+		// Gotta do this stuff only after the background image has finished loading, otherwise I have
+		// no way to know the picture's size and calculate the scale correctly.
+		eBackground.onload = function()
+		{
+			scale = ("scale" in config ? config.scale : 1);
+	
+			setScale();
+			placeObjects();
+	
+			registerEventListeners(); // FIXME: This should be done only once, not everytime I set up a room...
+		}
 		eBackground.src = "rooms/" + roomName + "/" + config.background;
-		scale = ("scale" in config ? config.scale : 1);
 	}
 
 	function getMyUserId()
@@ -323,12 +247,15 @@
 
 	function addUser(user)
 	{
-		users[user.id] = {
-			"name": user.name,
-			"character": user.character,
-			"position": user.position,
-			"direction": user.direction
-		};
+		users[user.id] = user;
+
+		user.element = createObject(2);
+		user.imgElement = user.element.getElementsByTagName("img")[0];
+		user.element.id = "u" + user.id;
+		user.element.classList.add("character");
+		placeElement(user.element, user.position);
+		directUser(user);
+		eRoom.appendChild(user.element);
 	}
 
 	function initializeWebsocket()
@@ -346,12 +273,9 @@
 
 		socket.on("server_usr_list", function (users)
 		{
+			setUpRoom();
 			for (var u in users)
-				if (users.hasOwnProperty(u)
-					&& u != getMyUserId())
-				{
 					addUser(users[u]);
-				}
 		});
 
 		socket.on("server_msg", function (userName, msg)
@@ -400,16 +324,56 @@
 		socket.emit("user_move", x, y);
 	}
 
-	run = function ()
+	function registerEventListeners()
 	{
-		eRoom = byId("room");
-		eBackground = byId("background");
-		eBackground.onload = setUpRoom;
-		eTextBox = byId("textBox");
+		var keyCode = null;
+		var isDown = false;
+		var sendInterval = null;
+		document.addEventListener("keydown", function (event)
+		{
+			e = event || window.event;
+			if (keyCode == e.keyCode) return;
+			if (sendInterval !== null)
+				clearInterval(sendInterval);
+			isDown = true;
+			keyCode = e.keyCode;
+			var direction = null;
+			if (keyCode == 38) // up
+				direction = 0;
+			else if (keyCode == 40) // down
+				direction = 2;
+			else if (keyCode == 37) // left
+				direction = 3;
+			else if (keyCode == 39) // right
+				direction = 1;
+			if (direction !== null)
+			{
+				sendInterval = setInterval(function ()
+				{
+					if (isDown)
+					{
+						sendDirection(direction);
+					}
+					else
+					{
+						clearInterval(sendInterval);
+						keyCode = null;
+					}
+				}, MOVE_DURATION);
+				sendDirection(direction);
+				return false;
+			}
+		});
 
-		loadRoom();
-		initializeWebsocket();
+		document.addEventListener("keyup", function (event)
+		{
+			e = event || window.event;
+			if (e.keyCode != keyCode) return;
+			isDown = false;
+			return false;
+		});
 
+		var eTextBox = byId("textBox");
 		eTextBox.onkeydown = function (e)
 		{
 			if (e.keyCode != 13) return; // Not Enter
@@ -417,5 +381,13 @@
 			sendMessage(eTextBox.value);
 			eTextBox.value = "";
 		}
-	};
+	}
+
+	$(function ()
+	{
+		eRoom = byId("room");
+		eBackground = byId("background");
+		initializeWebsocket();
+	});
+
 })();
