@@ -121,6 +121,7 @@
 		var object = document.createElement("div");
 		object.classList.add("square");
 		object.style.visibility = "hidden";
+
 		var image = document.createElement("img");
 		image.onload = function ()
 		{
@@ -251,6 +252,10 @@
 
 		user.element = createObject(2);
 		user.imgElement = user.element.getElementsByTagName("img")[0];
+
+		var label = document.createElement("label");
+		label.innerText = user.name;
+		user.element.insertBefore(label, user.element.imgElement);
 		user.element.id = "u" + user.id;
 		user.element.classList.add("character");
 		placeElement(user.element, user.position);
