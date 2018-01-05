@@ -150,7 +150,6 @@ app.post("/", function (req, res)
 app.use(express.static('static'));
 
 //http.listen(80);
-http.listen(process.env.OPENSHIFT_NODEJS_PORT || 80,
-    process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
+http.listen(8080, "0.0.0.0");
 
 console.log("Server running");
