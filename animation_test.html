@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>氏ね</title>
+<style>
+    .outer
+    {
+        font-family: Mona,'MS PGothic' !important;
+    }
+    .leg
+    {
+        display: inline;
+        animation-duration: 0.5s;
+        animation-name: patapata_leg_left;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+        position: absolute;
+        transform-origin: 0 0;
+    }
+    .leg_left
+    {
+        animation-name: patapata_leg_left;
+    }
+    .leg_right
+    {
+        animation-name: patapata_leg_right;
+    }
+    @keyframes patapata_leg_left {
+        from {
+            transform: rotate(0);
+        }
+        50% {
+            transform: rotate(-0.25turn);
+        }
+        to {
+            transform: rotate(0);
+        }
+    }
+    @keyframes patapata_leg_right {
+        from {
+            transform: rotate(-0.25turn);
+        }
+        50% {
+            transform: rotate(0);
+        }
+        to {
+            
+            transform: rotate(-0.25turn);
+        }
+    }
+</style>
+</head> 
+<body>
+
+<div class="outer">
+　∧＿∧<br/>
+（ 　´∀｀）<br/>
+⊂　　　っ<br/>        
+　|＿＿|<br/>
+　<div class="leg leg_left">∪</div>　　<div class="leg leg_right">∪</div><br/>
+</div>
+
+
+  </body></html>
