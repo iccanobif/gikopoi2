@@ -113,7 +113,7 @@ io.on("connection", function (socket)
 app.get("/", function (req, res)
 {
     res.writeHead(200, { 'Content-Type': 'text/html' });
-    fs.readFile("index.htm", function (err, data)
+    fs.readFile("login.htm", function (err, data)
     {
         if (err) res.end(err);
         else res.end(data);
