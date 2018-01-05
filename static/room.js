@@ -28,7 +28,7 @@ var Room = function(roomId) {
         this.objs.smokingGirl.material.map = THREE.ImageUtils.loadTexture("textures/smoking_girl.jpg");
         this.objs.smokingGirl.position.set(0, 5, 0);
         this.objs.smokingGirl.rotation.y = 100;
-        scene.add(this.objs.smokingGirl);
+        // scene.add(this.objs.smokingGirl);
 
         //SMOKING GIRL2
         this.objs.smokingGirl2 = new THREE.Mesh(new THREE.BoxGeometry(10,10,10),
@@ -36,7 +36,7 @@ var Room = function(roomId) {
         this.objs.smokingGirl2.material.map = THREE.ImageUtils.loadTexture("textures/smoking_girl.jpg");
         this.objs.smokingGirl2.position.set(0, 15, 0);
         this.objs.smokingGirl2.rotation.y = 50;
-        scene.add(this.objs.smokingGirl2);
+        // scene.add(this.objs.smokingGirl2);
 
         //FLOOR
         var floorTexture = THREE.ImageUtils.loadTexture("textures/tex.jpg");
@@ -69,14 +69,14 @@ var Room = function(roomId) {
     //called at every frame, in order to animate pieces of forniture or stuff like that
  
     this.update = function() {
-        this.objs.smokingGirl.rotation.y += 0.1;
-        this.objs.smokingGirl2.rotation.y -= 0.1;
+        // this.objs.smokingGirl.rotation.y += 0.1;
+        // this.objs.smokingGirl2.rotation.y -= 0.1;
     };
     //returns true or false 
     //(alternatively, it could return a set of alternative coordinates to move to, if the give ones are no good, 
     //so the player can move diagonally towards a wall without getting stuck: if one of the coordinates is unwalkable, replace it with the nearest walkable one)
     this.isWalkable = function(x, z) {
-        return false;
+        return true;
     };
     //removes every object, called when switching to another room
     this.disposeRoom = function(scene)

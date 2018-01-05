@@ -84,6 +84,7 @@ io.on("connection", function(socket){
     {
         try
         {
+            console.log(user.id  + " moving to " + x + ", " + z);
             user.x = x;
             user.z = z;
             io.emit("server_move", user.id, x, z);

@@ -56,7 +56,7 @@ window.addEventListener("load", function()
         //console.log(userId + ", " + x + ", " + z + " e io sono " + getMyUserId());
         if (userId != getMyUserId())
         {
-            players[userId].setPosition(x, z);
+            players[userId].setPosition(x, z, true);
         }
     });
     socket.on("server_new_user_login", function(user)
@@ -128,6 +128,12 @@ window.addEventListener("load", function()
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+    // var camera = new THREE.OrthographicCamera(window.innerWidth / - 2, 
+                                              // window.innerWidth / 2,
+                                              // window.innerHeight / - 2, 
+                                              // window.innerHeight / 2, 
+                                              // 0.1, 
+                                              // 1000);
     var renderer = new THREE.WebGLRenderer({precision: "lowp"});
     //renderer.setPixelRatio(1/4);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -146,8 +152,10 @@ window.addEventListener("load", function()
         
         this.name = options["name"] === undefined ? "Anonymous" : options["name"];
         this.color = options["color"] === undefined ? 0x00ffcc : options["color"];
+        this.currentTween = null;
         
         //CUBE
+        //TODO: shouldn't this be something like "this.cube", instead?
         var cube = new THREE.Mesh(new THREE.BoxGeometry(4, 8, 4), 
                                   new THREE.MeshLambertMaterial({ color: this.color }));
 
@@ -175,17 +183,40 @@ window.addEventListener("load", function()
                            8.2, 
                            0.5 * (textGeo.boundingBox.max.z - textGeo.boundingBox.min.z));
         
-        this.setPosition = function(x, z) {
-            cube.position.x = x;
-            cube.position.z = z;
+        this.setPosition = function(x, z, doAnimation) {
+            if (doAnimation)
+            {
+                console.log("yup, doing animation");
+                var position = { x: cube.position.x, z: cube.position.z };
+                this.currentTween = new TWEEN.Tween(position).to({x: x, z: z}, 1000);
+                this.currentTween.onUpdate(function() {
+                    cube.position.x = position.x;
+                    cube.position.z = position.z;
+                    text.position.set(cube.position.x - 0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x), 
+                                   8.2, 
+                                   cube.position.z - 0.5 * (textGeo.boundingBox.max.z - textGeo.boundingBox.min.z));
+                });
+            }
+            else
+            {
+                this.currentTween = null;
+                cube.position.x = x;
+                cube.position.z = z;
             
-            text.position.set(x - 0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x), 
-                               8.2, 
-                               z - 0.5 * (textGeo.boundingBox.max.z - textGeo.boundingBox.min.z));
+                text.position.set(x - 0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x), 
+                                   8.2, 
+                                   z - 0.5 * (textGeo.boundingBox.max.z - textGeo.boundingBox.min.z));
+            }
             return this;
         }
         
-        this.setPosition(0, 0);
+        this.updatePosition = function() {
+            if (this.currentTween == null) return;
+            
+            this.currentTween.update();
+        }
+        
+        this.setPosition(0, 0, false);
         scene.add(text);
         
         this.dispose = function()
@@ -199,7 +230,7 @@ window.addEventListener("load", function()
     function addUser(user)
     {
         players[user.id] = new Player({name: user.name, color: 0xff0000})
-                                     .setPosition(Math.random() * 100 - 50, Math.random() * 100 - 50);
+                                     .setPosition(Math.random() * 100 - 50, Math.random() * 100 - 50, false);
                                      
         
     }
@@ -240,6 +271,12 @@ window.addEventListener("load", function()
         
         room.update();
         stats.update();
+        
+        for (var p in players)
+            if (players.hasOwnProperty(p)
+                && p != getMyUserId())
+            players[p].updatePosition();
+        
         renderer.render(scene, camera);
         if (i > 0) i--;
     }
