@@ -17,26 +17,40 @@ function readCookie(cookies, cookieName)
     return null;
 }
 
-io.on("connection", function(socket){
+/*
+Supported websocket messages:
+- user_connect(id):                 sent by the client, basically to ask the server to send the user list
+- server_usr_list(id):              sent by the server to a single client
+- user_msg(msg):                    sent by the client to the server, basically makes the server send a server_msg to everyone
+- server_msg(userName, msg):        sent by the server to ALL clients, it's a message to display on the chat
+- server_new_user_login(user):      sent by the server to ALL clients, notifies everyone that a new user logged in
+- server_user_disconnect(userId):   sent by the server to ALL clients, notifies eveyrone that a user logged out
+- disconnect:                       sent by the client to the server (wouldn't it be simpler to just do this stuff when the websocket dies?)
+- user_move:                        sent by the client to the server, move the avater somewhere
+- server_move(userId, x, y):        sent by the server to ALL clients, asks everyone to move a character to coordinates (x, y)
+*/
+
+io.on("connection", function (socket)
+{
     console.log("Connection attempt");
-    
+
     var user = null;
-    
-    socket.on("user_connect", function(id)
+
+    socket.on("user_connect", function (id)
     {
-         try
+        try
         {
             if (users.getUser(id) === undefined)
             {
                 console.log("Access denied to invalid userId " + id);
-                socket.disconnect(); //TO TEST
+                socket.disconnect(); //TO BE TESTED
                 return;
             }
-            
+
             user = users.getUser(id);
-            
+
             console.log("userId: " + id + " name: " + user.name);
-            
+
             socket.emit("server_usr_list", users.getConnectedUserList());
             io.emit("server_msg", "<span class=\"system\">SYSTEM</span>", user.name + " connected");
             io.emit("server_new_user_login", user);
@@ -46,7 +60,7 @@ io.on("connection", function(socket){
             console.log(e.message + " " + e.stack);
         }
     });
-    socket.on("user_msg", function(msg)
+    socket.on("user_msg", function (msg)
     {
         try
         {
@@ -61,11 +75,11 @@ io.on("connection", function(socket){
     });
     function handleDisconnect()
     {
-         try
+        try
         {
             if (user === null) return;
-            
-            user["connected"] = false; //TODO: siamo sicuri che funzioni?
+
+            user["connected"] = false; //TODO: I'm not sure this works.
             console.log(user.name + " disconnected");
             io.emit("server_msg", "<span class=\"system\">SYSTEM</span>", user.name + " disconnected");
             io.emit("server_user_disconnect", user.id);
@@ -80,7 +94,7 @@ io.on("connection", function(socket){
         console.log("user_disconnect!"); 
         handleDisconnect();
     });*/
-    socket.on("user_move", function(x, z)
+    socket.on("user_move", function (x, z)
     {
         try
         {
@@ -96,10 +110,10 @@ io.on("connection", function(socket){
     });
 });
 
-app.get("/", function (req, res) 
-    {
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    fs.readFile("index.htm", function(err, data) 
+app.get("/", function (req, res)
+{
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    fs.readFile("index.htm", function (err, data)
     {
         if (err) res.end(err);
         else res.end(data);
@@ -109,26 +123,26 @@ app.get("/", function (req, res)
 app.post("/", function (req, res) 
 {
     var body = "";
-    req.on("data", function (data) 
+    req.on("data", function (data)
     {
         body += data;
     });
-    req.on("end", function () 
+    req.on("end", function ()
     {
         //TODO: if the users simply did an F5 or for some reason the websocket is reconnecting,
         //      reuse the old user that's still in the user list flagged as disconnected
         var post = require("querystring").parse(body);
         var userName = post["name"];
-        
+
         var userId = users.addNewUser(userName);
-        
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        fs.readFile("fps.htm", function(err, data) 
+
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        fs.readFile("fps.htm", function (err, data)
         {
             if (err) return res.end(err);
 
             data = String(data).replace(/@USER_NAME@/g, userName)
-                               .replace(/@USER_ID@/g, userId);
+                .replace(/@USER_ID@/g, userId);
             res.end(data);
         });
     });
@@ -137,7 +151,7 @@ app.post("/", function (req, res)
 app.use(express.static('static'));
 
 //http.listen(80);
-http.listen(process.env.OPENSHIFT_NODEJS_PORT || 80, 
-            process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
+http.listen(process.env.OPENSHIFT_NODEJS_PORT || 80,
+    process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
 
 console.log("Server running");
