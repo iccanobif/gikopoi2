@@ -137,7 +137,7 @@ app.post("/", function (req, res)
         var userId = users.addNewUser(userName);
 
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        fs.readFile("fps.htm", function (err, data)
+        fs.readFile("gikopoi2.html", function (err, data)
         {
             if (err) return res.end(err);
 
