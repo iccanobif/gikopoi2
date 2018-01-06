@@ -100,7 +100,19 @@ io.on("connection", function (socket)
         {
             console.log(user.id  + " moving to " + x + ", " + y);
             user.position = [x, y]
-            io.emit("server_move", user.id, x, y);
+            io.emit("server_move", user.id, x, y, user.direction);
+        }
+        catch (e)
+        {
+            console.log(e.message);
+        }
+    });
+    socket.on("user_new_direction", function(direction) {
+        try
+        {
+            console.log(user.id  + " changing direction: " + direction);
+            user.direction = direction;
+            io.emit("server_new_direction", user.id, direction);
         }
         catch (e)
         {

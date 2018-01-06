@@ -138,13 +138,16 @@
 			return direction - 2;
 	}
 
-	function setDirection(direction) // parts to be moved to server
+	// If the player is already facing towards that direction, move one block forward, otherwise
+	// change the direction without moving.
+	function pushTowardsDirection(direction) // parts to be moved to server
 	{
 		var user = users[getMyUserId()];
 		if (direction != user.direction)
 		{
 			user.direction = direction;
 			directUser(user);
+			sendDirectionToServer(user.direction);
 		}
 		else
 		{
@@ -196,7 +199,8 @@
 				}
 			}
 			
-			moveUser(user, pos);
+			// moveUser(user, pos);
+			sendNewPositionToServer(pos[0], pos[1]);
 		}
 	}
 
@@ -286,12 +290,19 @@
 			byId("chatLog").scrollTop = byId("chatLog").scrollHeight;
 		});
 
-		socket.on("server_move", function (userId, x, z)
+		socket.on("server_move", function (userId, x, y, direction)
 		{
-			if (userId != getMyUserId())
-			{
-				users[userId].setPosition(x, z, true);
-			}
+			var user = users[userId];
+			user.direction = direction;
+			directUser(user);
+			moveUser(user, [x, y]);
+		});
+
+		socket.on("server_new_direction", function (userId, direction)
+		{
+			var user = users[userId];
+			user.direction = direction;
+			directUser(user);
 		});
 
 		socket.on("server_new_user_login", function (user)
@@ -314,21 +325,21 @@
 		});
 	}
 
-	function sendMessage(msg)
+	function sendMessageToServer(msg)
 	{
 		socket.emit("user_msg", msg);
 	}
 
 	// TODO: Please call this when the player's character moves
-	function sendNewPosition(x, y)
+	function sendNewPositionToServer(x, y)
 	{
 		socket.emit("user_move", x, y);
 	}
 
 	// Sends to the server the new position of the player's character
-	function sendDirection(direction)
+	function sendDirectionToServer(direction)
 	{
-		// TODO
+		socket.emit("user_new_direction", direction);
 	}
 
 	function registerEventListeners()
@@ -359,7 +370,7 @@
 				{
 					if (isDown)
 					{
-						setDirection(direction);
+						pushTowardsDirection(direction);
 					}
 					else
 					{
@@ -367,7 +378,7 @@
 						keyCode = null;
 					}
 				}, MOVE_DURATION);
-				setDirection(direction);
+				pushTowardsDirection(direction);
 				return false;
 			}
 		});
@@ -385,7 +396,7 @@
 		{
 			if (e.keyCode != 13) return; // Not Enter
 			else if (eTextBox.value == '') return;
-			sendMessage(eTextBox.value);
+			sendMessageToServer(eTextBox.value);
 			eTextBox.value = "";
 		}
 	}
