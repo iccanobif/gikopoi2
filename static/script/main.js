@@ -198,7 +198,7 @@
 					}
 				}
 			}
-			
+
 			// moveUser(user, pos);
 			sendNewPositionToServer(pos[0], pos[1]);
 		}
@@ -210,34 +210,27 @@
 		config = JSON.parse(
 			byId("room-config").textContent);
 
-		// Gotta do this stuff only after the background image has finished loading, otherwise I have
-		// no way to know the picture's size and calculate the scale correctly.
-		eBackground.onload = function ()
-		{
-			// Set scale
-			// TODO: get the values of eBackground.clientWidth from the json, instead of having to wait for the picture to download
-			scale = ("scale" in config ? config.scale : 1);
-			var w = eBackground.clientWidth / scale + "px";
-			var h = eBackground.clientHeight / scale + "px";
-			eBackground.style.width = w;
-			eBackground.style.height = h;
-			eRoom.style.width = w;
-			eRoom.style.height = h;
-
-			// Place objects
-			for (var i = 0; i < config.objects.length; i++)
-			{
-				var object = config.objects[i];
-				var element = createObject(scale);
-				placeElement(element, object[0]);
-				var img = element.getElementsByTagName("img")[0];
-				img.src = "rooms/" + roomName + "/" + object[1];
-				eRoom.appendChild(element);
-			}
-
-			registerEventListeners(); // FIXME: This should be done only once, not everytime I set up a room...
-		}
 		eBackground.src = "rooms/" + roomName + "/" + config.background;
+		scale = ("scale" in config ? config.scale : 1);
+		var w = config.background_size[0] / scale + "px";
+		var h = config.background_size[1] / scale + "px";
+		eBackground.style.width = w;
+		eBackground.style.height = h;
+		eRoom.style.width = w;
+		eRoom.style.height = h;
+
+		// Place objects
+		for (var i = 0; i < config.objects.length; i++)
+		{
+			var object = config.objects[i];
+			var element = createObject(scale);
+			placeElement(element, object[0]);
+			var img = element.getElementsByTagName("img")[0];
+			img.src = "rooms/" + roomName + "/" + object[1];
+			eRoom.appendChild(element);
+		}
+
+		registerEventListeners(); // FIXME: This should be done only once, not everytime I set up a room...
 	}
 
 	function getMyUserId()
@@ -330,7 +323,6 @@
 		socket.emit("user_msg", msg);
 	}
 
-	// TODO: Please call this when the player's character moves
 	function sendNewPositionToServer(x, y)
 	{
 		socket.emit("user_move", x, y);
