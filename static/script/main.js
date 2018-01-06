@@ -20,17 +20,6 @@
 
 	var socket = io();
 
-
-	function setScale()
-	{
-		var w = eBackground.clientWidth / scale + "px";
-		var h = eBackground.clientHeight / scale + "px";
-		eBackground.style.width = w;
-		eBackground.style.height = h;
-		eRoom.style.width = w;
-		eRoom.style.height = h;
-	}
-
 	function positionToXY(pos)
 	{
 		x = 0;
@@ -59,6 +48,7 @@
 		element.style.bottom = xy[1] + "px";
 	}
 
+	// Draw the correct sprite for a certain user according to the direction it's facing towards
 	function directUser(user)
 	{
 		console.log("directuser");
@@ -86,8 +76,10 @@
 	}
 
 	var alternateInstance = null;
-	function moveUser(user)
+	function moveUser(user, pos)
 	{
+		user.position = pos;
+
 		if (alternateInstance !== null)
 			clearInterval(alternateInstance);
 
@@ -116,6 +108,7 @@
 			});
 	}
 
+	// Used to create DOM objects for both users and assets in the room
 	function createObject(scale)
 	{
 		var object = document.createElement("div");
@@ -145,7 +138,7 @@
 			return direction - 2;
 	}
 
-	function sendDirection(direction) // parts to be moved to server
+	function setDirection(direction) // parts to be moved to server
 	{
 		var user = users[getMyUserId()];
 		if (direction != user.direction)
@@ -202,22 +195,8 @@
 					}
 				}
 			}
-
-			user.position = pos;
-			moveUser(user);
-		}
-	}
-
-	function placeObjects()
-	{
-		for (var i = 0; i < config.objects.length; i++)
-		{
-			var object = config.objects[i];
-			var element = createObject(scale);
-			placeElement(element, object[0]);
-			var img = element.getElementsByTagName("img")[0];
-			img.src = "rooms/" + roomName + "/" + object[1];
-			eRoom.appendChild(element);
+			
+			moveUser(user, pos);
 		}
 	}
 
@@ -229,13 +208,29 @@
 
 		// Gotta do this stuff only after the background image has finished loading, otherwise I have
 		// no way to know the picture's size and calculate the scale correctly.
-		eBackground.onload = function()
+		eBackground.onload = function ()
 		{
+			// Set scale
+			// TODO: get the values of eBackground.clientWidth from the json, instead of having to wait for the picture to download
 			scale = ("scale" in config ? config.scale : 1);
-	
-			setScale();
-			placeObjects();
-	
+			var w = eBackground.clientWidth / scale + "px";
+			var h = eBackground.clientHeight / scale + "px";
+			eBackground.style.width = w;
+			eBackground.style.height = h;
+			eRoom.style.width = w;
+			eRoom.style.height = h;
+
+			// Place objects
+			for (var i = 0; i < config.objects.length; i++)
+			{
+				var object = config.objects[i];
+				var element = createObject(scale);
+				placeElement(element, object[0]);
+				var img = element.getElementsByTagName("img")[0];
+				img.src = "rooms/" + roomName + "/" + object[1];
+				eRoom.appendChild(element);
+			}
+
 			registerEventListeners(); // FIXME: This should be done only once, not everytime I set up a room...
 		}
 		eBackground.src = "rooms/" + roomName + "/" + config.background;
@@ -279,8 +274,9 @@
 		socket.on("server_usr_list", function (users)
 		{
 			setUpRoom();
+			//oh, add table objects before the characters if possible. it's causing giko to appear behind the table
 			for (var u in users)
-					addUser(users[u]);
+				addUser(users[u]);
 		});
 
 		socket.on("server_msg", function (userName, msg)
@@ -329,6 +325,12 @@
 		socket.emit("user_move", x, y);
 	}
 
+	// Sends to the server the new position of the player's character
+	function sendDirection(direction)
+	{
+		// TODO
+	}
+
 	function registerEventListeners()
 	{
 		var keyCode = null;
@@ -357,7 +359,7 @@
 				{
 					if (isDown)
 					{
-						sendDirection(direction);
+						setDirection(direction);
 					}
 					else
 					{
@@ -365,7 +367,7 @@
 						keyCode = null;
 					}
 				}, MOVE_DURATION);
-				sendDirection(direction);
+				setDirection(direction);
 				return false;
 			}
 		});
