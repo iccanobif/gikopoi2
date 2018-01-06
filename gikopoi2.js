@@ -17,6 +17,11 @@ function readCookie(cookies, cookieName)
     return null;
 }
 
+function getImageCacheHtml()
+{
+    return "";
+}
+
 /*
 Supported websocket messages:
 - user_connect(id):                 sent by the client, basically to ask the server to send the user list
@@ -150,13 +155,17 @@ app.post("/", function (req, res)
             if (err) return res.end(err);
 
             data = String(data).replace(/@USER_NAME@/g, userName)
-                .replace(/@USER_ID@/g, userId);
+                .replace(/@USER_ID@/g, userId)
+                .replace(/@IMAGE_CACHE@/g, getImageCacheHtml());
             res.end(data);
         });
     });
 });
 
-app.use(express.static('static'));
+app.use(express.static('static',
+    {
+        "maxAge": 24*60*60*1000 // 1 day in milliseconds
+    }));
 
 //http.listen(80);
 http.listen(8080, "0.0.0.0");

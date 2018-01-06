@@ -41,3 +41,8 @@ body
 	left: 50%;
 	bottom: 17px;
 }
+
+#imageCache
+{
+	display: none;
+}
