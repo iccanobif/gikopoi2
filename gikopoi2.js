@@ -73,7 +73,8 @@ io.on("connection", function (socket)
             console.log(e.message);
         }
     });
-    function handleDisconnect()
+
+    socket.on("disconnect", function ()
     {
         try
         {
@@ -88,17 +89,12 @@ io.on("connection", function (socket)
         {
             console.log(e.message);
         }
-    }
-    socket.on("disconnect", handleDisconnect);
-    /*socket.on("user_disconnect", function(){
-        console.log("user_disconnect!"); 
-        handleDisconnect();
-    });*/
+    });
     socket.on("user_move", function (x, y)
     {
         try
         {
-            console.log(user.id  + " moving to " + x + ", " + y);
+            console.log(user.id + " moving to " + x + ", " + y);
             user.position = [x, y]
             io.emit("server_move", user.id, x, y, user.direction);
         }
@@ -107,10 +103,11 @@ io.on("connection", function (socket)
             console.log(e.message);
         }
     });
-    socket.on("user_new_direction", function(direction) {
+    socket.on("user_new_direction", function (direction)
+    {
         try
         {
-            console.log(user.id  + " changing direction: " + direction);
+            console.log(user.id + " changing direction: " + direction);
             user.direction = direction;
             io.emit("server_new_direction", user.id, direction);
         }

@@ -308,6 +308,7 @@
 
 		socket.on("server_user_disconnect", function (userId)
 		{
+			users[userId].element.remove();
 			users[userId].dispose();
 			delete users[userId];
 		});
