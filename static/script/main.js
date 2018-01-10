@@ -73,14 +73,13 @@
 		else
 			user.imgElement.style.transform = "scaleX(1) translateX(-50%)";
 	}
-
-	var alternateInstance = null;
+	
 	function moveUser(user, pos)
 	{
 		user.position = pos;
 
-		if (alternateInstance !== null)
-			clearInterval(alternateInstance);
+		if ("alternateInstance" in user)
+			clearInterval(user.alternateInstance);
 
 		setElementIndex(user.element, user.position);
 
@@ -95,14 +94,14 @@
 
 			isRight = !isRight;
 		}
-		alternateInstance = setInterval(alternateLegs, MOVE_DURATION / 8);
+		user.alternateInstance = setInterval(alternateLegs, MOVE_DURATION / 8);
 		alternateLegs();
 
 		var xy = positionToXY(user.position);
 		$(user.element).stop().animate({ left: xy[0], bottom: xy[1] },
 			MOVE_DURATION, "linear", function ()
 			{
-				clearInterval(alternateInstance);
+				clearInterval(user.alternateInstance);
 				directUser(user);
 			});
 	}
