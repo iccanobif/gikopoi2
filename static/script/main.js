@@ -79,7 +79,7 @@
 	{
 		user.position = pos;
 
-		if (alternateInstance in user)
+		if ("alternateInstance" in user)
 			clearInterval(user.alternateInstance);
 
 		setElementIndex(user.element, user.position);
