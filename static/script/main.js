@@ -51,7 +51,6 @@
 	// Draw the correct sprite for a certain user according to the direction it's facing towards
 	function directUser(user)
 	{
-		console.log("directuser");
 		if (user.direction == 1 || user.direction == 2)
 			var side = "front";
 		else
@@ -308,7 +307,6 @@
 		socket.on("server_user_disconnect", function (userId)
 		{
 			users[userId].element.remove();
-			users[userId].dispose();
 			delete users[userId];
 		});
 
