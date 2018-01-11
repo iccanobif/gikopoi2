@@ -339,49 +339,51 @@
 		var keyCode = null;
 		var isDown = false;
 		var sendInterval = null;
-		document.addEventListener("keydown", function (event)
+		
+		function directionKeyEventListener(event)
 		{
 			e = event || window.event;
-			if (keyCode == e.keyCode) return;
-			if (sendInterval !== null)
-				clearInterval(sendInterval);
+			
+			if(e.target.tagName == "INPUT") return;
+			
+			if(e.type == "keyup")
+			{
+				if(keyCode != e.keyCode) return
+				isDown = false;
+				return;
+			}
+			
+			if(keyCode == e.keyCode) return;
+			
+			if(sendInterval !== null) clearInterval(sendInterval);
 			isDown = true;
 			keyCode = e.keyCode;
-			var direction = null;
-			if (keyCode == 38) // up
-				direction = 0;
-			else if (keyCode == 40) // down
-				direction = 2;
-			else if (keyCode == 37) // left
-				direction = 3;
-			else if (keyCode == 39) // right
-				direction = 1;
-			if (direction !== null)
+			
+			switch(keyCode)
 			{
-				sendInterval = setInterval(function ()
-				{
-					if (isDown)
-					{
-						pushTowardsDirection(direction);
-					}
-					else
-					{
-						clearInterval(sendInterval);
-						keyCode = null;
-					}
-				}, MOVE_DURATION);
-				pushTowardsDirection(direction);
-				return false;
+			case 38: direction = 0; break; // up
+			case 39: direction = 1; break; // right
+			case 40: direction = 2; break; // down
+			case 37: direction = 3; break; // left
+			default: return;
 			}
-		});
-
-		document.addEventListener("keyup", function (event)
-		{
-			e = event || window.event;
-			if (e.keyCode != keyCode) return;
-			isDown = false;
-			return false;
-		});
+			sendInterval = setInterval(function()
+			{
+				if(isDown)
+				{
+					pushTowardsDirection(direction);
+				}
+				else
+				{
+					clearInterval(sendInterval);
+					keyCode = null;
+				}
+			}, MOVE_DURATION);
+			pushTowardsDirection(direction);
+		}
+		
+		document.addEventListener("keydown", directionKeyEventListener);
+		document.addEventListener("keyup", directionKeyEventListener);
 
 		var eTextBox = byId("textBox");
 		eTextBox.onkeydown = function (e)
