@@ -52,7 +52,6 @@ io.on("connection", function (socket)
     {
         try
         {
-            //<p class=\"messageUsername\">" + user.name + "</p>: "  + "<p class=\"messageBody\">" + msg
             console.log(user.name + ": " + msg);
             io.emit("server_msg", "<span class=\"messageAuthor\">" + user.name + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
         }
