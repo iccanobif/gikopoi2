@@ -6,21 +6,21 @@ function generateId()
     do
     {
         text = "";
-        for( var i=0; i < 16; i++ )
+        for (var i = 0; i < 16; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
     } while (users[text] != undefined)
-    
+
     return text;
 }
 
-var Player = function(options)
+var Player = function (options)
 {
     if (options === undefined) options = {};
 
     this.id = generateId();
-    
+
     this.name = options["name"] === undefined ? "Anonymous" : options["name"];
-    this.position =  options["position"] === undefined ? [8,4] : options["position"];
+    this.position = options["position"] === undefined ? [8, 4] : options["position"];
     this.character = options["character"] === undefined ? "giko" : options["character"];
     this.direction = options["direction"] === undefined ? 3 : options["direction"];
     this.connected = options["connected"] === undefined ? true : options["connected"];
@@ -28,13 +28,14 @@ var Player = function(options)
 
 var users = {};
 
-module.exports.addNewUser = function(name)
-{   var p = new Player({name: name, connected: true});
+module.exports.addNewUser = function (name)
+{
+    var p = new Player({ name: name, connected: true });
     users[p.id] = p;
     return p.id;
 };
 
-module.exports.getConnectedUserList = function()
+module.exports.getConnectedUserList = function ()
 {
     //It'd be nice to benchmark this and check if not sending through the wire the disconnected users
     //is worth iterating through "users"' properties like this (I expect it is).
@@ -48,7 +49,7 @@ module.exports.getConnectedUserList = function()
     return output;
 };
 
-module.exports.getUser = function(userId)
+module.exports.getUser = function (userId)
 {
     return users[userId];
 };
