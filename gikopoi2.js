@@ -126,7 +126,7 @@ io.on("connection", function (socket)
 app.get("/", function (req, res)
 {
     res.writeHead(200, { 'Content-Type': 'text/html' });
-    fs.readFile("login.htm", function (err, data)
+    fs.readFile("static/login.html", function (err, data)
     {
         if (err) res.end(err);
         else res.end(data);
@@ -150,7 +150,7 @@ app.post("/", function (req, res)
         var userId = users.addNewUser(userName);
 
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        fs.readFile("gikopoi2.html", function (err, data)
+        fs.readFile("static/gikopoi2.html", function (err, data)
         {
             if (err) return res.end(err);
 
