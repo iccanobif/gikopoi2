@@ -5,23 +5,6 @@ var fs = require('fs');
 var io = require("socket.io")(http);
 var users = require("./users.js");
 
-function readCookie(cookies, cookieName)
-{
-    c = cookies.split(";");
-    for (var i = 0; i < c.length; i++)
-    {
-        s = c[i].trim().split("=")
-        if (s[0] == cookieName)
-            return s[1];
-    }
-    return null;
-}
-
-function getImageCacheHtml()
-{
-    return "";
-}
-
 /*
 Supported websocket messages:
 - user_connect(id):                 sent by the client, basically to ask the server to send the user list
@@ -123,16 +106,6 @@ io.on("connection", function (socket)
     });
 });
 
-app.get("/", function (req, res)
-{
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    fs.readFile("static/login.html", function (err, data)
-    {
-        if (err) res.end(err);
-        else res.end(data);
-    });
-});
-
 app.post("/", function (req, res) 
 {
     var body = "";
@@ -155,8 +128,7 @@ app.post("/", function (req, res)
             if (err) return res.end(err);
 
             data = String(data).replace(/@USER_NAME@/g, userName)
-                .replace(/@USER_ID@/g, userId)
-                .replace(/@IMAGE_CACHE@/g, getImageCacheHtml());
+                               .replace(/@USER_ID@/g, userId);
             res.end(data);
         });
     });
@@ -167,7 +139,6 @@ app.use(express.static('static',
         "maxAge": 24*60*60*1000 // 1 day in milliseconds
     }));
 
-//http.listen(80);
 http.listen(8080, "0.0.0.0");
 
-console.log("Server running");
+console.log("Server running on port 8080");
