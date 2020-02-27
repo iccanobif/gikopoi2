@@ -18,6 +18,8 @@
 
 	var users = {};
 
+	let myUserId = null
+
 	var socket = io();
 
 	function positionToXY(pos)
@@ -73,7 +75,7 @@
 		else
 			user.imgElement.style.transform = "scaleX(1) translateX(-50%)";
 	}
-	
+
 	function moveUser(user, pos)
 	{
 		user.position = pos;
@@ -100,10 +102,10 @@
 		var xy = positionToXY(user.position);
 		$(user.element).stop().animate({ left: xy[0], bottom: xy[1] },
 			MOVE_DURATION, "linear", function ()
-			{
-				clearInterval(user.alternateInstance);
-				directUser(user);
-			});
+		{
+			clearInterval(user.alternateInstance);
+			directUser(user);
+		});
 	}
 
 	// Used to create DOM objects for both users and assets in the room
@@ -233,7 +235,7 @@
 
 	function getMyUserId()
 	{
-		return byId("userId").value;
+		return myUserId;
 	}
 
 	function addUser(user)
@@ -257,8 +259,13 @@
 	{
 		socket.on("connect", function ()
 		{
-			socket.emit("user_connect", getMyUserId());
+			socket.emit("user_connect", "iccanobif");
 		});
+
+		socket.on("your_user_id", function (userId) 
+		{
+			myUserId = userId
+		})
 
 		socket.on("disconnect", function ()
 		{
@@ -337,37 +344,37 @@
 		var keyCode = null;
 		var isDown = false;
 		var sendInterval = null;
-		
+
 		function directionKeyEventListener(event)
 		{
 			e = event || window.event;
-			
-			if(e.target.tagName == "INPUT") return;
-			
-			if(e.type == "keyup")
+
+			if (e.target.tagName == "INPUT") return;
+
+			if (e.type == "keyup")
 			{
-				if(keyCode != e.keyCode) return
+				if (keyCode != e.keyCode) return
 				isDown = false;
 				return;
 			}
-			
-			if(keyCode == e.keyCode) return;
-			
-			if(sendInterval !== null) clearInterval(sendInterval);
+
+			if (keyCode == e.keyCode) return;
+
+			if (sendInterval !== null) clearInterval(sendInterval);
 			isDown = true;
 			keyCode = e.keyCode;
-			
-			switch(keyCode)
+
+			switch (keyCode)
 			{
-			case 38: direction = 0; break; // up
-			case 39: direction = 1; break; // right
-			case 40: direction = 2; break; // down
-			case 37: direction = 3; break; // left
-			default: return;
+				case 38: direction = 0; break; // up
+				case 39: direction = 1; break; // right
+				case 40: direction = 2; break; // down
+				case 37: direction = 3; break; // left
+				default: return;
 			}
-			sendInterval = setInterval(function()
+			sendInterval = setInterval(function ()
 			{
-				if(isDown)
+				if (isDown)
 				{
 					pushTowardsDirection(direction);
 				}
@@ -379,7 +386,7 @@
 			}, MOVE_DURATION);
 			pushTowardsDirection(direction);
 		}
-		
+
 		document.addEventListener("keydown", directionKeyEventListener);
 		document.addEventListener("keyup", directionKeyEventListener);
 

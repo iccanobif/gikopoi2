@@ -24,20 +24,23 @@ io.on("connection", function (socket)
 
     var user = null;
 
-    socket.on("user_connect", function (id)
+    socket.on("user_connect", function (userName)
     {
         try
         {
-            if (users.getUser(id) === undefined)
+            const userId = users.addNewUser(userName);
+            socket.emit("your_user_id", userId)
+
+            if (users.getUser(userId) === undefined)
             {
-                console.log("Access denied to invalid userId " + id);
+                console.log("Access denied to invalid userId " + userId);
                 socket.disconnect(); //TO BE TESTED
                 return;
             }
 
-            user = users.getUser(id);
+            user = users.getUser(userId);
 
-            console.log("userId: " + id + " name: " + user.name);
+            console.log("userId: " + userId + " name: " + user.name);
 
             socket.emit("server_usr_list", users.getConnectedUserList());
             io.emit("server_msg", "<span class=\"system\">SYSTEM</span>", user.name + " connected");
@@ -114,26 +117,22 @@ app.post("/", function (req, res)
     });
     req.on("end", function ()
     {
-        //TODO: if the users simply did an F5 or for some reason the websocket is reconnecting,
-        //      reuse the old user that's still in the user list flagged as disconnected
-        var post = require("querystring").parse(body);
-        var userName = post["name"];
-
-        var userId = users.addNewUser(userName);
-
         res.writeHead(200, { 'Content-Type': 'text/html' });
         fs.readFile("static/gikopoi2.html", function (err, data)
         {
             if (err) return res.end(err);
-
-            data = String(data).replace(/@USER_NAME@/g, userName)
-                .replace(/@USER_ID@/g, userId);
             res.end(data);
         });
     });
 });
 
-app.use(express.static('static'));
+app.use(express.static('static', {
+    setHeaders: (res) =>
+    {
+        res.set("Cache-Control", "no-cache")
+    }
+}
+));
 
 http.listen(8080, "0.0.0.0");
 
