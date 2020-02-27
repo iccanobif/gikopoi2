@@ -255,11 +255,11 @@
 		eRoom.appendChild(user.element);
 	}
 
-	function initializeWebsocket()
+	function login(username)
 	{
 		socket.on("connect", function ()
 		{
-			socket.emit("user_connect", "iccanobif");
+			socket.emit("user_connect", username);
 		});
 
 		socket.on("your_user_id", function (userId) 
@@ -404,7 +404,7 @@
 	{
 		eRoom = byId("room");
 		eBackground = byId("background");
-		initializeWebsocket();
+		login("iccanobif");
 	});
 
 })();
