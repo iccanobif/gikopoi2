@@ -487,7 +487,9 @@
     {
         eRoom = byId("room");
         eBackground = byId("background");
-        login("iccanobif");
+        const queryString = new URLSearchParams(window.location.search)
+        const username = queryString.get("username")
+        login(username);
     });
 
 })();
