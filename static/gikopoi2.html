@@ -2,132 +2,131 @@
 <html>
 
 <head>
-	<meta charset='utf-8' />
-	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <meta charset='utf-8' />
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
 
-	<link rel='stylesheet' href='style/main.css' />
-	<script src='third/jquery.js'></script>
-	<script src="/socket.io/socket.io.js"></script>
-	<script src='script/main.js'></script>
+    <link rel='stylesheet' href='style/main.css' />
+    <script src='third/jquery.js'></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src='script/main.js'></script>
 
-	<title>BARギコっぽいONLINE</title>
+    <title>BARギコっぽいONLINE</title>
 </head>
 
 <body>
-	<input type="hidden" id="userId" value="@USER_ID@" />
-	<div id='room'>
-		<img id='background' />
-	</div>
-	<script type='application/json' id='room-config'>
+    <div id='room'>
+        <img id='background' />
+    </div>
+    <script type='application/json' id='room-config'>
 {
-	"offset": [1,1],
-	"scale": 2,
-	"grid": [9,9],
-	"background": "background.png",
-	"background_size": [1442, 1022],
-	"objects": [
-		[[0,1], "light.png"],
-		[[0,3], "light.png"],
-		[[0,4], "light.png"],
-		
-		[[2,1], "table.png"],
-		[[2,2], "table.png"],
-		
-		[[6,1], "table.png"],
-		[[6,2], "table.png"],
-		
-		[[2,5], "counter_bottom_left.png"],
-		[[3,5], "counter_bottom.png"],
-		[[4,5], "counter_bottom.png"],
-		[[5,5], "counter_bottom.png"],
-		[[6,5], "counter_bottom_right.png"],
-		
-		[[2,6], "counter_left.png"],
-		[[2,7], "counter_left.png"],
-		
-		[[6,6], "counter_right.png"],
-		[[6,7], "counter_right.png"]
-	],
-	"sit": [
-		[1,1],
-		[1,2],
-		
-		[3,1],
-		[3,2],
-		
-		[5,1],
-		[5,2],
-		
-		[7,1],
-		[7,2],
-		
-		[1,5],
-		[1,6],
-		[1,7],
-		
-		[2,4],
-		[3,4],
-		[4,4],
-		[5,4],
-		[6,4],
-		
-		[7,5],
-		[7,6],
-		[7,7]
-	],
-	
-	"blocked": [
-		[2,1],
-		[2,2],
-		
-		[6,1],
-		[6,2],
-		
-		[2,5],
-		[3,5],
-		[4,5],
-		[5,5],
-		[6,5],
-		
-		[2,6],
-		[2,7],
-		
-		[6,6],
-		[6,7],
-		
-		[1,8],
-		[2,8],
-		[3,8],
-		[4,8],
-		[5,8],
-		[6,8],
-		[7,8]
-	],
-	"doors": [
-		[[0,0], "bar_street", [1,7], 1],
-		[[3,7], "underground", [0,2], 1],
-		[[8,4], "bar_street", [3,5], 1]
-	]
+    "offset": [1,1],
+    "scale": 2,
+    "grid": [9,9],
+    "background": "background.png",
+    "background_size": [1442, 1022],
+    "objects": [
+        [[0,1], "light.png"],
+        [[0,3], "light.png"],
+        [[0,4], "light.png"],
+        
+        [[2,1], "table.png"],
+        [[2,2], "table.png"],
+        
+        [[6,1], "table.png"],
+        [[6,2], "table.png"],
+        
+        [[2,5], "counter_bottom_left.png"],
+        [[3,5], "counter_bottom.png"],
+        [[4,5], "counter_bottom.png"],
+        [[5,5], "counter_bottom.png"],
+        [[6,5], "counter_bottom_right.png"],
+        
+        [[2,6], "counter_left.png"],
+        [[2,7], "counter_left.png"],
+        
+        [[6,6], "counter_right.png"],
+        [[6,7], "counter_right.png"]
+    ],
+    "sit": [
+        [1,1],
+        [1,2],
+        
+        [3,1],
+        [3,2],
+        
+        [5,1],
+        [5,2],
+        
+        [7,1],
+        [7,2],
+        
+        [1,5],
+        [1,6],
+        [1,7],
+        
+        [2,4],
+        [3,4],
+        [4,4],
+        [5,4],
+        [6,4],
+        
+        [7,5],
+        [7,6],
+        [7,7]
+    ],
+    
+    "blocked": [
+        [2,1],
+        [2,2],
+        
+        [6,1],
+        [6,2],
+        
+        [2,5],
+        [3,5],
+        [4,5],
+        [5,5],
+        [6,5],
+        
+        [2,6],
+        [2,7],
+        
+        [6,6],
+        [6,7],
+        
+        [1,8],
+        [2,8],
+        [3,8],
+        [4,8],
+        [5,8],
+        [6,8],
+        [7,8]
+    ],
+    "doors": [
+        [[0,0], "bar_street", [1,7], 1],
+        [[3,7], "underground", [0,2], 1],
+        [[8,4], "bar_street", [3,5], 1]
+    ]
 }
-	</script>
-	<div id="messageBox">
-		<input id="textBox" type="text"></input>
-	</div>
-	Log:
-	<div id="chatLog">
-	</div>
-	<div id="imageCache">
-		<img src="image/characters/giko/back.png" />
-		<img src="image/characters/giko/back_eyes_closed.png" />
-		<img src="image/characters/giko/back_left_leg.png" />
-		<img src="image/characters/giko/back_right_leg.png" />
-		<img src="image/characters/giko/back_sit.png" />
-		<img src="image/characters/giko/front.png" />
-		<img src="image/characters/giko/front_eyes_closed.png" />
-		<img src="image/characters/giko/front_left_leg.png" />
-		<img src="image/characters/giko/front_right_leg.png" />
-		<img src="image/characters/giko/front_sit.png" />
-	</div>
+    </script>
+    <div id="messageBox">
+        <input id="textBox" type="text"></input>
+    </div>
+    Log:
+    <div id="chatLog">
+    </div>
+    <div id="imageCache">
+        <img src="image/characters/giko/back.png" />
+        <img src="image/characters/giko/back_eyes_closed.png" />
+        <img src="image/characters/giko/back_left_leg.png" />
+        <img src="image/characters/giko/back_right_leg.png" />
+        <img src="image/characters/giko/back_sit.png" />
+        <img src="image/characters/giko/front.png" />
+        <img src="image/characters/giko/front_eyes_closed.png" />
+        <img src="image/characters/giko/front_left_leg.png" />
+        <img src="image/characters/giko/front_right_leg.png" />
+        <img src="image/characters/giko/front_sit.png" />
+    </div>
 </body>
 
 </html>
