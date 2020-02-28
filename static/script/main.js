@@ -209,10 +209,6 @@
             "background": "background.png",
             "background_size": [1442, 1022],
             "objects": [
-                [[0, 1], "light.png"],
-                [[0, 3], "light.png"],
-                [[0, 4], "light.png"],
-
                 [[2, 1], "table.png"],
                 [[2, 2], "table.png"],
 
