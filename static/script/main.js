@@ -5,19 +5,13 @@
         return document.getElementById(id);
     }
 
-    var INNER_SQUARE = [40, 20];
-    var MOVE_DURATION = 600;
+    const INNER_SQUARE = [40, 20];
+    const MOVE_DURATION = 600;
 
-    var eRoom;
-    var eBackground;
-
-    var config;
+    var config; // holds the structure of the room (shape, assets...)
     var scale;
-
     var users = {};
-
     let myUserId = null
-
     var socket = io();
 
     function positionToXY(pos)
@@ -289,12 +283,14 @@
             ]
         };
 
+        const eBackground = byId("background");
         eBackground.src = "rooms/bar/" + config.background;
         scale = ("scale" in config ? config.scale : 1);
-        var w = config.background_size[0] / scale + "px";
-        var h = config.background_size[1] / scale + "px";
+        const w = config.background_size[0] / scale + "px";
+        const h = config.background_size[1] / scale + "px";
         eBackground.style.width = w;
         eBackground.style.height = h;
+        const eRoom = byId("room");
         eRoom.style.width = w;
         eRoom.style.height = h;
 
@@ -331,6 +327,7 @@
         user.element.classList.add("character");
         placeElement(user.element, user.position);
         directUser(user);
+        const eRoom = byId("room");
         eRoom.appendChild(user.element);
     }
 
@@ -475,8 +472,6 @@
 
     $(function ()
     {
-        eRoom = byId("room");
-        eBackground = byId("background");
         const queryString = new URLSearchParams(window.location.search)
         const username = queryString.get("username")
         login(username);
