@@ -350,12 +350,6 @@
             myUserId = userId
         })
 
-        socket.on("disconnect", function ()
-        {
-            //TODO
-            //But I forgot what there's to do, here...
-        });
-
         socket.on("server_usr_list", function (users)
         {
             setUpRoom();

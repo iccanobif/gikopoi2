@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
-const fs = require('fs');
 const io = require("socket.io")(http);
 const users = require("./users.js");
 
@@ -108,12 +107,8 @@ io.on("connection", function (socket)
     });
 });
 
-app.use(express.static('static', {
-    setHeaders: (res) =>
-    {
-        res.set("Cache-Control", "no-cache")
-    }
-}
+app.use(express.static('static',
+    { setHeaders: (res) => res.set("Cache-Control", "no-cache") }
 ));
 
 http.listen(8080, "0.0.0.0");
