@@ -309,7 +309,7 @@
             var element = createObject(scale);
             placeElement(element, object[0]);
             var img = element.getElementsByTagName("img")[0];
-            img.src = "rooms/bar" + object[1];
+            img.src = "rooms/bar/" + object[1];
             eRoom.appendChild(element);
         }
 
