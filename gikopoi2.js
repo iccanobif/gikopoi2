@@ -108,24 +108,6 @@ io.on("connection", function (socket)
     });
 });
 
-app.post("/", function (req, res) 
-{
-    var body = "";
-    req.on("data", function (data)
-    {
-        body += data;
-    });
-    req.on("end", function ()
-    {
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        fs.readFile("static/gikopoi2.html", function (err, data)
-        {
-            if (err) return res.end(err);
-            res.end(data);
-        });
-    });
-});
-
 app.use(express.static('static', {
     setHeaders: (res) =>
     {
