@@ -127,7 +127,7 @@ app.post("/", function (req, res)
             if (err) return res.end(err);
 
             data = String(data).replace(/@USER_NAME@/g, userName)
-                               .replace(/@USER_ID@/g, userId);
+                .replace(/@USER_ID@/g, userId);
             res.end(data);
         });
     });
@@ -135,9 +135,13 @@ app.post("/", function (req, res)
 
 app.use(express.static('static',
     {
-        "maxAge": 24*60*60*1000 // 1 day in milliseconds
+        "maxAge": 24 * 60 * 60 * 1000 // 1 day in milliseconds
     }));
 
-http.listen(8080, "0.0.0.0");
+const port = process.env.PORT == undefined
+    ? 8085
+    : Number.parseInt(process.env.PORT)
 
-console.log("Server running on port 8080");
+http.listen(port, "0.0.0.0");
+
+console.log("Server running on port " + port);
