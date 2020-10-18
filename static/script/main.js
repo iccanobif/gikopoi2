@@ -468,6 +468,12 @@
             sendMessageToServer(eTextBox.value);
             eTextBox.value = "";
         }
+
+        byId("send-button").addEventListener("click", () => {
+            if (eTextBox.value == '') return;
+            sendMessageToServer(eTextBox.value);
+            eTextBox.value = "";
+        })
     }
 
     $(function ()
