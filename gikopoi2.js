@@ -111,6 +111,10 @@ app.use(express.static('static',
     { setHeaders: (res) => res.set("Cache-Control", "no-cache") }
 ));
 
-http.listen(8080, "0.0.0.0");
+const port = process.env.PORT == undefined
+    ? 8085
+    : Number.parseInt(process.env.PORT)
 
-console.log("Server running on port 8080");
+http.listen(port, "0.0.0.0");
+
+console.log("Server running on port " + port);
