@@ -1,3 +1,5 @@
+import barData from "../rooms/bar/data.js"
+
 (function ()
 {
     function byId(id)
@@ -7,17 +9,19 @@
 
     const INNER_SQUARE = [40, 20];
     const MOVE_DURATION = 600;
+    const scale = 0.5;
 
     var config; // holds the structure of the room (shape, assets...)
-    var scale;
     var users = {};
     let myUserId = null
     var socket = io();
 
+    const eRoom = byId("room");
+
     function positionToXY(pos)
     {
-        x = 0;
-        y = (config.grid[1] - 1) * INNER_SQUARE[1];
+        let x = 0;
+        let y = (config.grid[1] - 1) * INNER_SQUARE[1];
 
         x += pos[0] * INNER_SQUARE[0];
         y -= pos[0] * INNER_SQUARE[1];
@@ -101,7 +105,7 @@
     }
 
     // Used to create DOM objects for both users and assets in the room
-    function createObject(scale)
+    function createObject()
     {
         var object = document.createElement("div");
         object.classList.add("square");
@@ -111,8 +115,8 @@
         image.onload = function ()
         {
             image.onload = undefined;
-            var w = image.clientWidth / scale;
-            var h = image.clientHeight / scale;
+            var w = image.clientWidth * scale;
+            var h = image.clientHeight * scale;
             image.style.width = w + "px";
             image.style.height = h + "px";
             image.style.transform = "translateX(-50%)";
@@ -194,103 +198,46 @@
         }
     }
 
+
+    function loadImage(url)
+    {
+        return new Promise((resolve, reject) =>
+        {
+            try {
+                const img = new Image();
+                img.addEventListener("load", () => 
+                {
+                    resolve(img)
+                })
+                img.addEventListener("error", reject)
+                img.src = url;
+            }
+            catch (err) {
+                reject(err)
+            }
+        })
+    }
+
+    async function setUpRoomCanvas()
+    {
+        const canvas = document.getElementById("room-canvas")
+        const context = canvas.getContext("2d")
+
+        const backgroundImage = await loadImage("rooms/bar/background.png")
+        context.drawImage(backgroundImage, 0, 0, backgroundImage.width / 2, backgroundImage.height / 2)
+
+    }
+
     function setUpRoom()
     {
-        config = {
-            "offset": [1, 1],
-            "scale": 2,
-            "grid": [9, 9],
-            "background": "background.png",
-            "background_size": [1442, 1022],
-            "objects": [
-                [[2, 1], "table.png"],
-                [[2, 2], "table.png"],
-
-                [[6, 1], "table.png"],
-                [[6, 2], "table.png"],
-
-                [[2, 5], "counter_bottom_left.png"],
-                [[3, 5], "counter_bottom.png"],
-                [[4, 5], "counter_bottom.png"],
-                [[5, 5], "counter_bottom.png"],
-                [[6, 5], "counter_bottom_right.png"],
-
-                [[2, 6], "counter_left.png"],
-                [[2, 7], "counter_left.png"],
-
-                [[6, 6], "counter_right.png"],
-                [[6, 7], "counter_right.png"]
-            ],
-            "sit": [
-                [1, 1],
-                [1, 2],
-
-                [3, 1],
-                [3, 2],
-
-                [5, 1],
-                [5, 2],
-
-                [7, 1],
-                [7, 2],
-
-                [1, 5],
-                [1, 6],
-                [1, 7],
-
-                [2, 4],
-                [3, 4],
-                [4, 4],
-                [5, 4],
-                [6, 4],
-
-                [7, 5],
-                [7, 6],
-                [7, 7]
-            ],
-
-            "blocked": [
-                [2, 1],
-                [2, 2],
-
-                [6, 1],
-                [6, 2],
-
-                [2, 5],
-                [3, 5],
-                [4, 5],
-                [5, 5],
-                [6, 5],
-
-                [2, 6],
-                [2, 7],
-
-                [6, 6],
-                [6, 7],
-
-                [1, 8],
-                [2, 8],
-                [3, 8],
-                [4, 8],
-                [5, 8],
-                [6, 8],
-                [7, 8]
-            ],
-            "doors": [
-                [[0, 0], "bar_street", [1, 7], 1],
-                [[3, 7], "underground", [0, 2], 1],
-                [[8, 4], "bar_street", [3, 5], 1]
-            ]
-        };
+        config = barData
 
         const eBackground = byId("background");
         eBackground.src = "rooms/bar/" + config.background;
-        scale = ("scale" in config ? config.scale : 1);
-        const w = config.background_size[0] / scale + "px";
-        const h = config.background_size[1] / scale + "px";
+        const w = config.background_size[0] * scale + "px";
+        const h = config.background_size[1] * scale + "px";
         eBackground.style.width = w;
         eBackground.style.height = h;
-        const eRoom = byId("room");
         eRoom.style.width = w;
         eRoom.style.height = h;
 
@@ -298,7 +245,7 @@
         for (var i = 0; i < config.objects.length; i++)
         {
             var object = config.objects[i];
-            var element = createObject(scale);
+            var element = createObject();
             placeElement(element, object[0]);
             var img = element.getElementsByTagName("img")[0];
             img.src = "rooms/bar/" + object[1];
@@ -327,7 +274,7 @@
         user.element.classList.add("character");
         placeElement(user.element, user.position);
         directUser(user);
-        const eRoom = byId("room");
+
         eRoom.appendChild(user.element);
     }
 
@@ -346,6 +293,7 @@
         socket.on("server_usr_list", function (users)
         {
             setUpRoom();
+            setUpRoomCanvas();
             //oh, add table objects before the characters if possible. it's causing giko to appear behind the table
             for (var u in users)
                 addUser(users[u]);
@@ -411,13 +359,14 @@
 
     function registerEventListeners()
     {
+        // TODO: use event.code instead of event.keyCode
         var keyCode = null;
         var isDown = false;
         var sendInterval = null;
 
         function directionKeyEventListener(event)
         {
-            e = event || window.event;
+            const e = event || window.event;
 
             if (e.target.tagName == "INPUT") return;
 
@@ -434,6 +383,7 @@
             isDown = true;
             keyCode = e.keyCode;
 
+            let direction;
             switch (keyCode)
             {
                 case 38: direction = 0; break; // up
@@ -469,7 +419,8 @@
             eTextBox.value = "";
         }
 
-        byId("send-button").addEventListener("click", () => {
+        byId("send-button").addEventListener("click", () =>
+        {
             if (eTextBox.value == '') return;
             sendMessageToServer(eTextBox.value);
             eTextBox.value = "";

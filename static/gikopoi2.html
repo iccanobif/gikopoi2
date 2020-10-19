@@ -6,9 +6,6 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
 
     <link rel='stylesheet' href='style/main.css' />
-    <script src='third/jquery.js'></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src='script/main.js'></script>
 
     <title>BARギコっぽいONLINE</title>
 </head>
@@ -17,6 +14,7 @@
     <div id='room'>
         <img id='background' />
     </div>
+    <canvas id="room-canvas" width="721px" height="511px" style="display: none;"></canvas>
     <div id="messageBox">
         Input: <input id="textBox" type="text"></input><button id="send-button">Send</button>
     </div>
@@ -35,6 +33,10 @@
         <img src="image/characters/giko/front_right_leg.png" />
         <img src="image/characters/giko/front_sit.png" />
     </div>
+
+    <script src='third/jquery.js'></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="module" src='script/main.js'></script>
 </body>
 
 </html>
