@@ -145,25 +145,25 @@ import barData from "../rooms/bar/data.js"
                     image.height * scale)
             }
 
-        // conSuppellettili = !conSuppellettili
+        conSuppellettili = !conSuppellettili
 
-        const image = await loadImage("image/characters/giko/front.png")
-        // for (let x = 0; x < 9; x++)
-        const x = 8
-        for (let y = 0; y < 9; y++)
-        {
-            // const x = 0
-            const realCoordinates = calculateRealCoordinates(x, y);
-            context.drawImage(image,
-                realCoordinates.x,
-                realCoordinates.y - image.height * scale,
-                image.width * scale,
-                image.height * scale)
-            context.fillRect(realCoordinates.x,
-                realCoordinates.y,
-                5,
-                5)
-        }
+        // const image = await loadImage("image/characters/giko/front.png")
+        // // for (let x = 0; x < 9; x++)
+        // const x = 8
+        // for (let y = 0; y < 9; y++)
+        // {
+        //     // const x = 0
+        //     const realCoordinates = calculateRealCoordinates(x, y);
+        //     context.drawImage(image,
+        //         realCoordinates.x,
+        //         realCoordinates.y - image.height * scale,
+        //         image.width * scale,
+        //         image.height * scale)
+        //     context.fillRect(realCoordinates.x,
+        //         realCoordinates.y,
+        //         5,
+        //         5)
+        // }
 
 
     }
@@ -171,8 +171,5 @@ import barData from "../rooms/bar/data.js"
     paint()
 
 
-    document.getElementById("wplus").addEventListener("click", () => { BLOCK_WIDTH++; paint() })
-    document.getElementById("wmin").addEventListener("click", () => { BLOCK_WIDTH--; paint() })
-    document.getElementById("hplus").addEventListener("click", () => { BLOCK_HEIGHT++; paint() })
-    document.getElementById("hmin").addEventListener("click", () => { BLOCK_HEIGHT--; paint() })
+    document.getElementById("wplus").addEventListener("click", () => { paint() })
 })();
