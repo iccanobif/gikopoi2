@@ -106,6 +106,8 @@ import barData from "../rooms/bar/data.js"
             + x * BLOCK_HEIGHT / 2
             - y * BLOCK_HEIGHT / 2
 
+        realY += BLOCK_HEIGHT / 2
+
         realX *= scale
         realY *= scale
 
@@ -114,7 +116,7 @@ import barData from "../rooms/bar/data.js"
 
     let conSuppellettili = true
 
-    async function paint()
+    async function paint(timestamp)
     {
         console.log(BLOCK_WIDTH)
         console.log(BLOCK_HEIGHT)
@@ -147,29 +149,30 @@ import barData from "../rooms/bar/data.js"
 
         conSuppellettili = !conSuppellettili
 
-        // const image = await loadImage("image/characters/giko/front.png")
-        // // for (let x = 0; x < 9; x++)
-        // const x = 8
-        // for (let y = 0; y < 9; y++)
-        // {
-        //     // const x = 0
-        //     const realCoordinates = calculateRealCoordinates(x, y);
-        //     context.drawImage(image,
-        //         realCoordinates.x,
-        //         realCoordinates.y - image.height * scale,
-        //         image.width * scale,
-        //         image.height * scale)
-        //     context.fillRect(realCoordinates.x,
-        //         realCoordinates.y,
-        //         5,
-        //         5)
-        // }
+        for (let x = 0; x < 9; x++)
+            for (let y = 0; y < 9; y++)
+            {
+                let image
 
-
+                if (currentRoom.sit.filter(s => s[0] == x && s[1] == y).length > 0)
+                    image = await loadImage("image/characters/giko/front_sit.png")
+                else
+                    image = await loadImage("image/characters/giko/front.png")
+                // const x = 0
+                const realCoordinates = calculateRealCoordinates(x, y);
+                context.drawImage(image,
+                    realCoordinates.x,
+                    realCoordinates.y - image.height * scale,
+                    image.width * scale,
+                    image.height * scale)
+                // context.fillRect(realCoordinates.x,
+                //     realCoordinates.y,
+                //     5,
+                //     5)
+            }
     }
 
     paint()
-
 
     document.getElementById("wplus").addEventListener("click", () => { paint() })
 })();
