@@ -7,27 +7,43 @@ import barData from "../rooms/bar/data.js"
         return document.getElementById(id);
     }
 
-    const INNER_SQUARE = [40, 20];
     const MOVE_DURATION = 600;
     const scale = 0.5;
 
-    var config; // holds the structure of the room (shape, assets...)
+    var config = barData; // holds the structure of the room (shape, assets...)
     var users = {};
     let myUserId = null
     var socket = io();
 
     const eRoom = byId("room");
 
+    // returns "left" and "bottom" positions
+    function calculateRealCoordinates(x, y)
+    {
+        const output = {
+            x: config.originCoordinates.x * scale,
+            y: config.originCoordinates.y * scale,
+        }
+
+        output.x += x * 43;
+        output.y -= x * 20;
+
+        output.x += y * 40;
+        output.y += y * 20;
+
+        return output
+    }
+
     function positionToXY(pos)
     {
         let x = 0;
-        let y = (config.grid[1] - 1) * INNER_SQUARE[1];
+        let y = (config.grid[1] - 1) * 20;
 
-        x += pos[0] * INNER_SQUARE[0];
-        y -= pos[0] * INNER_SQUARE[1];
+        x += pos[0] * 40;
+        y -= pos[0] * 20;
 
-        x += pos[1] * INNER_SQUARE[0];
-        y += pos[1] * INNER_SQUARE[1];
+        x += pos[1] * 40;
+        y += pos[1] * 20;
         return [x, y]
     }
 
@@ -203,7 +219,8 @@ import barData from "../rooms/bar/data.js"
     {
         return new Promise((resolve, reject) =>
         {
-            try {
+            try
+            {
                 const img = new Image();
                 img.addEventListener("load", () => 
                 {
@@ -212,7 +229,8 @@ import barData from "../rooms/bar/data.js"
                 img.addEventListener("error", reject)
                 img.src = url;
             }
-            catch (err) {
+            catch (err)
+            {
                 reject(err)
             }
         })
@@ -226,12 +244,41 @@ import barData from "../rooms/bar/data.js"
         const backgroundImage = await loadImage("rooms/bar/background.png")
         context.drawImage(backgroundImage, 0, 0, backgroundImage.width / 2, backgroundImage.height / 2)
 
+        // const table = await loadImage("rooms/bar/" + "table.png")
+        // const x = 2
+        // const y = 1
+        // context.drawImage(table, 0, 0, backgroundImage.width / 2, backgroundImage.height / 2)
+
+        // TODO: draw in the order inferred by the "z-index" (see setElementIndex())
+        // Place objects
+
+        
+
+        // for (let x = 0; x < 9; x++)
+        //     for (let y = 0; y < 9; y++)
+        //     {
+        //         const realCoordinates = calculateRealCoordinates(x, y);
+        //         context.fillStyle = 'blue'
+        //         context.fillRect(realCoordinates.x, realCoordinates.y - 20, 20, 20)
+        //         context.fillStyle = 'white'
+        //         context.fillText(x + "," + y, realCoordinates.x, realCoordinates.y)
+        //     }
+
+        for (var i = 0; i < config.objects.length; i++)
+        {
+            const object = config.objects[i];
+            const image = await loadImage("rooms/bar/" + object.url)
+            const realCoordinates = calculateRealCoordinates(object.x, object.y);
+            context.drawImage(image,
+                realCoordinates.x,
+                realCoordinates.y - image.height * scale,
+                image.width * scale,
+                image.height * scale)
+        }
     }
 
     function setUpRoom()
     {
-        config = barData
-
         const eBackground = byId("background");
         eBackground.src = "rooms/bar/" + config.background;
         const w = config.background_size[0] * scale + "px";
@@ -251,8 +298,6 @@ import barData from "../rooms/bar/data.js"
             img.src = "rooms/bar/" + object[1];
             eRoom.appendChild(element);
         }
-
-        registerEventListeners(); // FIXME: This should be done only once, not everytime I set up a room...
     }
 
     function getMyUserId()
@@ -290,10 +335,12 @@ import barData from "../rooms/bar/data.js"
             myUserId = userId
         })
 
-        socket.on("server_usr_list", function (users)
+        socket.on("server_usr_list", async function (users)
         {
-            setUpRoom();
-            setUpRoomCanvas();
+            // setUpRoom();
+            await setUpRoomCanvas();
+            // registerEventListeners(); // TODO uncomment
+
             //oh, add table objects before the characters if possible. it's causing giko to appear behind the table
             for (var u in users)
                 addUser(users[u]);

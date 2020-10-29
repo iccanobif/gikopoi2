@@ -1,26 +1,23 @@
 export default ({
     "offset": [1, 1],
     "grid": [9, 9],
+    "originCoordinates": { x: 0, y: 660 },
     "background": "background.png",
     "background_size": [1442, 1022],
     "objects": [
-        [[2, 1], "table.png"],
-        [[2, 2], "table.png"],
-
-        [[6, 1], "table.png"],
-        [[6, 2], "table.png"],
-
-        [[2, 5], "counter_bottom_left.png"],
-        [[3, 5], "counter_bottom.png"],
-        [[4, 5], "counter_bottom.png"],
-        [[5, 5], "counter_bottom.png"],
-        [[6, 5], "counter_bottom_right.png"],
-
-        [[2, 6], "counter_left.png"],
-        [[2, 7], "counter_left.png"],
-
-        [[6, 6], "counter_right.png"],
-        [[6, 7], "counter_right.png"]
+        { x: 2, y: 1, url: "table.png" },
+        { x: 2, y: 2, url: "table.png" },
+        { x: 6, y: 1, url: "table.png" },
+        { x: 6, y: 2, url: "table.png" },
+        // { x: 2, y: 5, url: "counter_bottom_left.png" },
+        // { x: 3, y: 5, url: "counter_bottom.png" },
+        // { x: 4, y: 5, url: "counter_bottom.png" },
+        // { x: 5, y: 5, url: "counter_bottom.png" },
+        // { x: 6, y: 5, url: "counter_bottom_right.png" },
+        // { x: 2, y: 6, url: "counter_left.png" },
+        // { x: 2, y: 7, url: "counter_left.png" },
+        // { x: 6, y: 6, url: "counter_right.png" },
+        // { x: 6, y: 7, url: "counter_right.png" },
     ],
     "sit": [
         [1, 1],
