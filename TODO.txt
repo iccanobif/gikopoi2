@@ -1,0 +1,3 @@
+FRONTEND:
+- make a class for communications with server
+- make a class for assets for a given character

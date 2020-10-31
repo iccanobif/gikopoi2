@@ -2,6 +2,8 @@
 //      EVERYTHING HAS A WIDTH OF 160
 
 import barData from "../rooms/bar/data.js"
+import Character from "./character.js"
+import { loadImage } from "./utils.js"
 
 (function ()
 {
@@ -14,6 +16,7 @@ import barData from "../rooms/bar/data.js"
 
     const users = {}
     let currentRoom = barData
+    const gikoCharacter = new Character("giko")
 
     socket.on("connect", function ()
     {
@@ -22,7 +25,6 @@ import barData from "../rooms/bar/data.js"
 
     socket.on("server_usr_list", async function (users)
     {
-        //oh, add table objects before the characters if possible. it's causing giko to appear behind the table
         for (var u in users)
             addUser(users[u]);
     });
@@ -64,27 +66,6 @@ import barData from "../rooms/bar/data.js"
         socket.disconnect();
     });
 
-    function loadImage(url)
-    {
-        return new Promise((resolve, reject) =>
-        {
-            try
-            {
-                const img = new Image();
-                img.addEventListener("load", () => 
-                {
-                    resolve(img)
-                })
-                img.addEventListener("error", reject)
-                img.src = url;
-            }
-            catch (err)
-            {
-                reject(err)
-            }
-        })
-    }
-
     function addUser(user)
     {
         users[user.id] = user;
@@ -112,47 +93,54 @@ import barData from "../rooms/bar/data.js"
         return { x: realX, y: realY }
     }
 
-    async function paint(timestamp)
+    function drawImage(image, x, y)
     {
-
         const canvas = document.getElementById("room-canvas")
         const context = canvas.getContext("2d")
 
-        context.drawImage(currentRoom.backgroundImage,
-            0,
-            0,
-            currentRoom.backgroundImage.width * scale,
-            currentRoom.backgroundImage.height * scale)
+        context.drawImage(image,
+            x,
+            y - image.height * scale,
+            image.width * scale,
+            image.height * scale)
+    }
 
-        for (let x = 0; x < 9; x++)
-            for (let y = 0; y < 9; y++)
-            {
-                const realCoordinates = calculateRealCoordinates(x, y);
-            }
+    async function paint(timestamp)
+    {
+        // draw background
+        drawImage(currentRoom.backgroundImage, 0, 511)
 
+        // draw objects
         for (var i = 0; i < currentRoom.objects.length; i++)
         {
             const object = currentRoom.objects[i];
             // const image = await loadImage("rooms/bar/" + object.url)
-            const realCoordinates = calculateRealCoordinates(object.x, object.y);
-            context.drawImage(object.image,
-                realCoordinates.x,
-                realCoordinates.y - object.image.height * scale,
-                object.image.width * scale,
-                object.image.height * scale)
+            const { x, y } = calculateRealCoordinates(object.x, object.y);
+            drawImage(object.image, x, y)
+        }
+
+        // draw users
+        for (const user of Object.values(users))
+        {
+            const { x, y } = calculateRealCoordinates(user.position[0], user.position[1]);
+            // console.log(user)
+            // console.log(x, y, user.name, user.direction)
+
+            drawImage(gikoCharacter.frontStandingImage, x, y)
         }
 
         requestAnimationFrame(paint)
     }
 
-    async function loadAllRoomImages()
+    async function loadAllImages()
     {
         currentRoom.backgroundImage = await loadImage("rooms/bar/background.png")
         for (const o of currentRoom.objects)
             o.image = await loadImage("rooms/bar/" + o.url) // TODO: make generic
+        await gikoCharacter.loadImages()
     }
 
-    loadAllRoomImages()
+    loadAllImages()
         .then(() =>
         {
             paint()
