@@ -214,7 +214,6 @@ import barData from "../rooms/bar/data.js"
         }
     }
 
-
     function loadImage(url)
     {
         return new Promise((resolve, reject) =>
@@ -252,7 +251,7 @@ import barData from "../rooms/bar/data.js"
         // TODO: draw in the order inferred by the "z-index" (see setElementIndex())
         // Place objects
 
-        
+
 
         // for (let x = 0; x < 9; x++)
         //     for (let y = 0; y < 9; y++)

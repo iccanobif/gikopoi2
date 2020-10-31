@@ -88,8 +88,6 @@ import barData from "../rooms/bar/data.js"
     function addUser(user)
     {
         users[user.id] = user;
-
-
     }
 
     let BLOCK_WIDTH = 160
@@ -114,65 +112,50 @@ import barData from "../rooms/bar/data.js"
         return { x: realX, y: realY }
     }
 
-    let conSuppellettili = true
-
     async function paint(timestamp)
     {
-        console.log(BLOCK_WIDTH)
-        console.log(BLOCK_HEIGHT)
 
         const canvas = document.getElementById("room-canvas")
         const context = canvas.getContext("2d")
 
-        const backgroundImage = await loadImage("rooms/bar/background.png")
-        context.drawImage(backgroundImage, 0, 0, backgroundImage.width * scale, backgroundImage.height * scale)
+        context.drawImage(currentRoom.backgroundImage,
+            0,
+            0,
+            currentRoom.backgroundImage.width * scale,
+            currentRoom.backgroundImage.height * scale)
 
         for (let x = 0; x < 9; x++)
             for (let y = 0; y < 9; y++)
             {
                 const realCoordinates = calculateRealCoordinates(x, y);
-                console.log(realCoordinates)
             }
 
-        if (conSuppellettili)
-            for (var i = 0; i < currentRoom.objects.length; i++)
-            {
-                const object = currentRoom.objects[i];
-                const image = await loadImage("rooms/bar/" + object.url)
-                const realCoordinates = calculateRealCoordinates(object.x, object.y);
-                context.drawImage(image,
-                    realCoordinates.x,
-                    realCoordinates.y - image.height * scale,
-                    image.width * scale,
-                    image.height * scale)
-            }
+        for (var i = 0; i < currentRoom.objects.length; i++)
+        {
+            const object = currentRoom.objects[i];
+            // const image = await loadImage("rooms/bar/" + object.url)
+            const realCoordinates = calculateRealCoordinates(object.x, object.y);
+            context.drawImage(object.image,
+                realCoordinates.x,
+                realCoordinates.y - object.image.height * scale,
+                object.image.width * scale,
+                object.image.height * scale)
+        }
 
-        conSuppellettili = !conSuppellettili
-
-        for (let x = 0; x < 9; x++)
-            for (let y = 0; y < 9; y++)
-            {
-                let image
-
-                if (currentRoom.sit.filter(s => s[0] == x && s[1] == y).length > 0)
-                    image = await loadImage("image/characters/giko/front_sit.png")
-                else
-                    image = await loadImage("image/characters/giko/front.png")
-                // const x = 0
-                const realCoordinates = calculateRealCoordinates(x, y);
-                context.drawImage(image,
-                    realCoordinates.x,
-                    realCoordinates.y - image.height * scale,
-                    image.width * scale,
-                    image.height * scale)
-                // context.fillRect(realCoordinates.x,
-                //     realCoordinates.y,
-                //     5,
-                //     5)
-            }
+        requestAnimationFrame(paint)
     }
 
-    paint()
+    async function loadAllRoomImages()
+    {
+        currentRoom.backgroundImage = await loadImage("rooms/bar/background.png")
+        for (const o of currentRoom.objects)
+            o.image = await loadImage("rooms/bar/" + o.url) // TODO: make generic
+    }
 
-    document.getElementById("wplus").addEventListener("click", () => { paint() })
+    loadAllRoomImages()
+        .then(() =>
+        {
+            paint()
+        })
+        .catch(console.error)
 })();
