@@ -1,17 +1,13 @@
-// RULES FOR MAKING ASSETS:
-//      EVERYTHING HAS A WIDTH OF 160
-
 import barData from "../rooms/bar/data.js";
 import Character from "./character.js";
-import { loadImage } from "./utils.js";
+import User from "./user.js";
+import { loadImage, calculateRealCoordinates, scale } from "./utils.js";
 
 const canvas = document.getElementById("room-canvas");
 const context = canvas.getContext("2d");
 
 (function ()
 {
-    const scale = 0.5;
-
     const socket = io();
 
     const queryString = new URLSearchParams(window.location.search);
@@ -41,17 +37,21 @@ const context = canvas.getContext("2d");
 
     socket.on("server_move", function (userId, x, y, direction)
     {
+        console.log(userId, x, y, direction)
         var user = users[userId];
         user.direction = direction;
-        directUser(user);
-        moveUser(user, [x, y]);
+        user.logicalPositionX = x
+        user.logicalPositionY = y
+        const realCoordinates = calculateRealCoordinates(currentRoom, user.logicalPositionX, user.logicalPositionY)
+        user.currentPhysicalPositionX = realCoordinates.x;
+        user.currentPhysicalPositionY = realCoordinates.y;
     });
 
     socket.on("server_new_direction", function (userId, direction)
     {
         var user = users[userId];
         user.direction = direction;
-        directUser(user);
+        // directUser(user);
     });
 
     socket.on("server_new_user_login", function (user)
@@ -69,31 +69,16 @@ const context = canvas.getContext("2d");
         socket.disconnect();
     });
 
-    function addUser(user)
+    function addUser(userDTO)
     {
-        users[user.id] = user;
-    }
+        const newUser = new User('TODO')
+        newUser.logicalPositionX = userDTO.position[0];
+        newUser.logicalPositionY = userDTO.position[1];
+        const realCoordinates = calculateRealCoordinates(currentRoom, newUser.logicalPositionX, newUser.logicalPositionY)
+        newUser.currentPhysicalPositionX = realCoordinates.x;
+        newUser.currentPhysicalPositionY = realCoordinates.y;
 
-    let BLOCK_WIDTH = 160
-    let BLOCK_HEIGHT = 80
-
-    // returns "left" and "bottom" positions
-    function calculateRealCoordinates(x, y)
-    {
-        let realX = currentRoom.originCoordinates.x
-            + x * BLOCK_WIDTH / 2
-            + y * BLOCK_WIDTH / 2
-
-        let realY = currentRoom.originCoordinates.y
-            + x * BLOCK_HEIGHT / 2
-            - y * BLOCK_HEIGHT / 2
-
-        realY += BLOCK_HEIGHT / 2
-
-        realX *= scale
-        realY *= scale
-
-        return { x: realX, y: realY }
+        users[userDTO.id] = newUser;
     }
 
     function drawImage(image, x, y)
@@ -115,15 +100,14 @@ const context = canvas.getContext("2d");
         {
             const object = currentRoom.objects[i];
             // const image = await loadImage("rooms/bar/" + object.url)
-            const { x, y } = calculateRealCoordinates(object.x, object.y);
+            const { x, y } = calculateRealCoordinates(currentRoom, object.x, object.y);
             drawImage(object.image, x, y)
         }
 
         // draw users
         for (const user of Object.values(users))
         {
-            const { x, y } = calculateRealCoordinates(user.position[0], user.position[1]);
-            drawImage(gikoCharacter.frontStandingImage, x, y)
+            drawImage(gikoCharacter.frontStandingImage, user.currentPhysicalPositionX, user.currentPhysicalPositionY)
         }
 
         requestAnimationFrame(paint)
@@ -142,14 +126,33 @@ const context = canvas.getContext("2d");
         socket.emit("user_msg", msg);
     }
 
+    function sendNewPositionToServer(x, y)
+    {
+        socket.emit("user_move", x, y);
+    }
+
     function registerKeybindings()
     {
-        function onKeyPress(event)
+        function onKeyDown(event)
         {
-            sendNewPositionToServer(pos[0], pos[1]);
+            switch (event.key)
+            {
+                case "ArrowLeft":
+                    sendNewPositionToServer("left");
+                    break;
+                case "ArrowRight":
+                    sendNewPositionToServer("right");
+                    break;
+                case "ArrowUp":
+                    sendNewPositionToServer("up");
+                    break;
+                case "ArrowDown":
+                    sendNewPositionToServer("down");
+                    break;
+            }
         }
 
-        canvas.addEventListener("keypress", onKeyPress);
+        document.addEventListener("keydown", onKeyDown);
     }
 
     loadAllImages()

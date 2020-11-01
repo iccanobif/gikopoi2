@@ -79,13 +79,29 @@ io.on("connection", function (socket)
             console.log(e.message);
         }
     });
-    socket.on("user_move", function (x, y)
+    socket.on("user_move", function (direction)
     {
+        // TODO VALIDATE POSITION CONSIDERING THE SHAPE OF THE MAP
         try
         {
-            console.log(user.id + " moving to " + x + ", " + y);
-            user.position = [x, y]
-            io.emit("server_move", user.id, x, y, user.direction);
+            switch (direction)
+            {
+                case "up":
+                    user.position[1]++
+                    break;
+                case "down":
+                    user.position[1]--
+                    break;
+                case "left":
+                    user.position[0]--
+                    break;
+                case "right":
+                    user.position[0]++
+                    break;
+            }
+
+            console.log(user.id + " moving " + direction);
+            io.emit("server_move", user.id, user.position[0], user.position[1], user.direction);
         }
         catch (e)
         {

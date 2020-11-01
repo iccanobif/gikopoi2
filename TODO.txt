@@ -4,3 +4,13 @@ FRONTEND:
 
 BACKEND
 - move the stage data here, so we can do server-side validation for the character position
+
+
+
+
+
+stuff to add to documentation:
+- "logical" position and "physical" position
+- how to make graphical assets:
+    rules for making assets:
+        everything has a width of 160
