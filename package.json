@@ -2,12 +2,12 @@
   "name": "gikopoi2",
   "version": "0.0.1",
   "description": "gikopoi2",
-  "main": "gikopoi2.js",
+  "main": "index.js",
   "dependencies": {
     "express": "^4.16.2",
     "socket.io": "^2.0.4"
   },
   "scripts": {
-    "start": "node gikopoi2.js"
+    "start": "node index.js"
   }
 }

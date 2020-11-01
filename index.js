@@ -3,17 +3,18 @@ const app = express();
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
 const users = require("./users.js");
+const barData = require("./static/rooms/bar/data.js");
 
 /*
 Supported websocket messages:
 - user_connect(id):                 sent by the client, basically to ask the server to send the user list
-- server_usr_list(id):              sent by the server to a single client
 - user_msg(msg):                    sent by the client to the server, basically makes the server send a server_msg to everyone
+- disconnect:                       sent by the client to the server (wouldn't it be simpler to just do this stuff when the websocket dies?)
+- user_move:                        sent by the client to the server, move the avater somewhere
+- server_usr_list(id):              sent by the server to a single client
 - server_msg(userName, msg):        sent by the server to ALL clients, it's a message to display on the chat
 - server_new_user_login(user):      sent by the server to ALL clients, notifies everyone that a new user logged in
 - server_user_disconnect(userId):   sent by the server to ALL clients, notifies eveyrone that a user logged out
-- disconnect:                       sent by the client to the server (wouldn't it be simpler to just do this stuff when the websocket dies?)
-- user_move:                        sent by the client to the server, move the avater somewhere
 - server_move(userId, x, y):        sent by the server to ALL clients, asks everyone to move a character to coordinates (x, y)
 */
 
@@ -82,23 +83,19 @@ io.on("connection", function (socket)
     socket.on("user_move", function (direction)
     {
         // TODO VALIDATE POSITION CONSIDERING THE SHAPE OF THE MAP
+        const newPosition = { x: user.position[0], y: user.position[1] }
+
         try
         {
             switch (direction)
             {
-                case "up":
-                    user.position[1]++
-                    break;
-                case "down":
-                    user.position[1]--
-                    break;
-                case "left":
-                    user.position[0]--
-                    break;
-                case "right":
-                    user.position[0]++
-                    break;
+                case "up": newPosition.y++; break;
+                case "down": newPosition.y--; break;
+                case "left": newPosition.x--; break;
+                case "right": newPosition.x++; break;
             }
+
+            user.position = [newPosition.x, newPosition.y]
 
             console.log(user.id + " moving " + direction);
             io.emit("server_move", user.id, user.position[0], user.position[1], user.direction);
