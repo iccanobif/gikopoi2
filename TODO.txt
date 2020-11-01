@@ -1,3 +1,6 @@
 FRONTEND:
 - make a class for communications with server
 - make a class for assets for a given character
+
+BACKEND
+- move the stage data here, so we can do server-side validation for the character position

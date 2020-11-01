@@ -1,21 +1,24 @@
 // RULES FOR MAKING ASSETS:
 //      EVERYTHING HAS A WIDTH OF 160
 
-import barData from "../rooms/bar/data.js"
-import Character from "./character.js"
-import { loadImage } from "./utils.js"
+import barData from "../rooms/bar/data.js";
+import Character from "./character.js";
+import { loadImage } from "./utils.js";
+
+const canvas = document.getElementById("room-canvas");
+const context = canvas.getContext("2d");
 
 (function ()
 {
-    const scale = 0.5
+    const scale = 0.5;
 
     const socket = io();
 
-    const queryString = new URLSearchParams(window.location.search)
-    const username = queryString.get("username")
+    const queryString = new URLSearchParams(window.location.search);
+    const username = queryString.get("username");
 
-    const users = {}
-    let currentRoom = barData
+    const users = {};
+    let currentRoom = barData;
     const gikoCharacter = new Character("giko")
 
     socket.on("connect", function ()
@@ -95,9 +98,6 @@ import { loadImage } from "./utils.js"
 
     function drawImage(image, x, y)
     {
-        const canvas = document.getElementById("room-canvas")
-        const context = canvas.getContext("2d")
-
         context.drawImage(image,
             x,
             y - image.height * scale,
@@ -123,9 +123,6 @@ import { loadImage } from "./utils.js"
         for (const user of Object.values(users))
         {
             const { x, y } = calculateRealCoordinates(user.position[0], user.position[1]);
-            // console.log(user)
-            // console.log(x, y, user.name, user.direction)
-
             drawImage(gikoCharacter.frontStandingImage, x, y)
         }
 
@@ -140,9 +137,25 @@ import { loadImage } from "./utils.js"
         await gikoCharacter.loadImages()
     }
 
+    function sendMessageToServer(msg)
+    {
+        socket.emit("user_msg", msg);
+    }
+
+    function registerKeybindings()
+    {
+        function onKeyPress(event)
+        {
+            sendNewPositionToServer(pos[0], pos[1]);
+        }
+
+        canvas.addEventListener("keypress", onKeyPress);
+    }
+
     loadAllImages()
         .then(() =>
         {
+            registerKeybindings()
             paint()
         })
         .catch(console.error)
