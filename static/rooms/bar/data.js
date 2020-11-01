@@ -1,4 +1,4 @@
-export default ({
+module.exports.bar = {
     "offset": [1, 1],
     "grid": [9, 9],
     "originCoordinates": { x: 0, y: 660 },
@@ -79,4 +79,4 @@ export default ({
         [[3, 7], "underground", [0, 2], 1],
         [[8, 4], "bar_street", [3, 5], 1]
     ]
-});
+}

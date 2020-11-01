@@ -1,4 +1,3 @@
-import barData from "../rooms/bar/data.js";
 import Character from "./character.js";
 import User from "./user.js";
 import { loadImage, calculateRealCoordinates, scale } from "./utils.js";
@@ -8,66 +7,71 @@ const context = canvas.getContext("2d");
 
 (function ()
 {
-    const socket = io();
+    let socket = null;
 
     const queryString = new URLSearchParams(window.location.search);
     const username = queryString.get("username");
 
     const users = {};
-    let currentRoom = barData;
+    let currentRoom = null;
     const gikoCharacter = new Character("giko")
 
-    socket.on("connect", function ()
+    function connectToServer()
     {
-        socket.emit("user_connect", username);
-    });
+        socket = io()
 
-    socket.on("server_usr_list", async function (users)
-    {
-        for (var u in users)
-            addUser(users[u]);
-    });
+        socket.on("connect", function ()
+        {
+            socket.emit("user_connect", username);
+        });
 
-    socket.on("server_msg", function (userName, msg)
-    {
-        const chatLog = document.getElementById("chatLog");
-        chatLog.innerHTML += userName + ": " + msg + "<br/>";
-        chatLog.scrollTop = chatLog.scrollHeight;
-    });
+        socket.on("server_usr_list", async function (users)
+        {
+            for (var u in users)
+                addUser(users[u]);
+        });
 
-    socket.on("server_move", function (userId, x, y, direction)
-    {
-        console.log(userId, x, y, direction)
-        var user = users[userId];
-        user.direction = direction;
-        user.logicalPositionX = x
-        user.logicalPositionY = y
-        const realCoordinates = calculateRealCoordinates(currentRoom, user.logicalPositionX, user.logicalPositionY)
-        user.currentPhysicalPositionX = realCoordinates.x;
-        user.currentPhysicalPositionY = realCoordinates.y;
-    });
+        socket.on("server_msg", function (userName, msg)
+        {
+            const chatLog = document.getElementById("chatLog");
+            chatLog.innerHTML += userName + ": " + msg + "<br/>";
+            chatLog.scrollTop = chatLog.scrollHeight;
+        });
 
-    socket.on("server_new_direction", function (userId, direction)
-    {
-        var user = users[userId];
-        user.direction = direction;
-        // directUser(user);
-    });
+        socket.on("server_move", function (userId, x, y, direction)
+        {
+            var user = users[userId];
+            user.direction = direction;
+            user.logicalPositionX = x
+            user.logicalPositionY = y
+            const realCoordinates = calculateRealCoordinates(currentRoom, user.logicalPositionX, user.logicalPositionY)
+            user.currentPhysicalPositionX = realCoordinates.x;
+            user.currentPhysicalPositionY = realCoordinates.y;
+        });
 
-    socket.on("server_new_user_login", function (user)
-    {
-        addUser(user);
-    });
+        socket.on("server_new_direction", function (userId, direction)
+        {
+            var user = users[userId];
+            user.direction = direction;
+            // directUser(user);
+        });
 
-    socket.on("server_user_disconnect", function (userId)
-    {
-        delete users[userId];
-    });
+        socket.on("server_new_user_login", function (user)
+        {
+            addUser(user);
+        });
 
-    window.addEventListener("beforeunload", function ()
-    {
-        socket.disconnect();
-    });
+        socket.on("server_user_disconnect", function (userId)
+        {
+            delete users[userId];
+        });
+
+
+        window.addEventListener("beforeunload", function ()
+        {
+            socket.disconnect();
+        });
+    }
 
     function addUser(userDTO)
     {
@@ -113,11 +117,13 @@ const context = canvas.getContext("2d");
         requestAnimationFrame(paint)
     }
 
-    async function loadAllImages()
+    async function loadRoom(roomName)
     {
-        currentRoom.backgroundImage = await loadImage("rooms/bar/background.png")
+        currentRoom = await (await fetch("/rooms/" + roomName)).json()
+
+        currentRoom.backgroundImage = await loadImage("rooms/" + roomName + "/background.png")
         for (const o of currentRoom.objects)
-            o.image = await loadImage("rooms/bar/" + o.url) // TODO: make generic
+            o.image = await loadImage("rooms/" + roomName + "/" + o.url) // TODO: make generic
         await gikoCharacter.loadImages()
     }
 
@@ -142,10 +148,11 @@ const context = canvas.getContext("2d");
         document.addEventListener("keydown", onKeyDown);
     }
 
-    loadAllImages()
+    loadRoom("bar")
         .then(() =>
         {
             registerKeybindings()
+            connectToServer()
             paint()
         })
         .catch(console.error)

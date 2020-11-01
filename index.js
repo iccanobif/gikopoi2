@@ -3,7 +3,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
 const users = require("./users.js");
-const barData = require("./static/rooms/bar/data.js");
+const { bar } = require("./static/rooms/bar/data.js");
 
 /*
 Supported websocket messages:
@@ -82,11 +82,11 @@ io.on("connection", function (socket)
     });
     socket.on("user_move", function (direction)
     {
-        // TODO VALIDATE POSITION CONSIDERING THE SHAPE OF THE MAP
-        const newPosition = { x: user.position[0], y: user.position[1] }
-
         try
         {
+            // TODO VALIDATE POSITION CONSIDERING THE SHAPE OF THE MAP
+            const newPosition = { x: user.position[0], y: user.position[1] }
+
             switch (direction)
             {
                 case "up": newPosition.y++; break;
@@ -94,6 +94,9 @@ io.on("connection", function (socket)
                 case "left": newPosition.x--; break;
                 case "right": newPosition.x++; break;
             }
+
+            if (bar.blocked.filter(p => p[0] == newPosition.x && p[1] == newPosition.y).length > 0)
+                return;
 
             user.position = [newPosition.x, newPosition.y]
 
@@ -123,6 +126,11 @@ io.on("connection", function (socket)
 app.use(express.static('static',
     { setHeaders: (res) => res.set("Cache-Control", "no-cache") }
 ));
+
+app.get("/rooms/:roomName", (req, res) => {
+    const roomName = req.params.roomName
+    res.json(bar)
+})
 
 const port = process.env.PORT == undefined
     ? 8085
