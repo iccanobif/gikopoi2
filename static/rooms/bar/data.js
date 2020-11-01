@@ -1,10 +1,10 @@
 module.exports.bar = {
-    "offset": [1, 1],
-    "grid": [9, 9],
-    "originCoordinates": { x: 0, y: 660 },
-    "background": "background.png",
-    "background_size": [1442, 1022],
-    "objects": [
+    offset: [1, 1],
+    grid: [9, 9],
+    originCoordinates: { x: 0, y: 660 },
+    background: "background.png",
+    background_size: [1442, 1022],
+    objects: [
         { x: 2, y: 1, url: "table.png" },
         { x: 2, y: 2, url: "table.png" },
         { x: 6, y: 1, url: "table.png" },
@@ -19,7 +19,7 @@ module.exports.bar = {
         { x: 6, y: 6, url: "counter_right.png" },
         { x: 6, y: 5, url: "counter_bottom_right.png" },
     ],
-    "sit": [
+    sit: [
         [1, 1],
         [1, 2],
 
@@ -46,8 +46,7 @@ module.exports.bar = {
         [7, 6],
         [7, 7]
     ],
-
-    "blocked": [
+    blocked: [
         [2, 1],
         [2, 2],
 
@@ -74,7 +73,7 @@ module.exports.bar = {
         [6, 8],
         [7, 8]
     ],
-    "doors": [
+    doors: [
         [[0, 0], "bar_street", [1, 7], 1],
         [[3, 7], "underground", [0, 2], 1],
         [[8, 4], "bar_street", [3, 5], 1]

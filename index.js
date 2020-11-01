@@ -84,7 +84,6 @@ io.on("connection", function (socket)
     {
         try
         {
-            // TODO VALIDATE POSITION CONSIDERING THE SHAPE OF THE MAP
             const newPosition = { x: user.position[0], y: user.position[1] }
 
             switch (direction)
@@ -95,6 +94,13 @@ io.on("connection", function (socket)
                 case "right": newPosition.x++; break;
             }
 
+            // prevent going outside of the map
+            if (newPosition.x < 0) return
+            if (newPosition.y < 0) return
+            if (newPosition.x >= bar.grid[0]) return
+            if (newPosition.y >= bar.grid[1]) return
+
+            // prevent moving over a blocked square
             if (bar.blocked.filter(p => p[0] == newPosition.x && p[1] == newPosition.y).length > 0)
                 return;
 
