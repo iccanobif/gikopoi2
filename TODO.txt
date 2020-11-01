@@ -4,7 +4,7 @@ FRONTEND:
 
 BACKEND
 - move the stage data here, so we can do server-side validation for the character position
-
+- use a sequential number for ids instead of those silly string "GUID"s
 
 
 

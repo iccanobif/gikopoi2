@@ -121,11 +121,6 @@ const context = canvas.getContext("2d");
         await gikoCharacter.loadImages()
     }
 
-    function sendMessageToServer(msg)
-    {
-        socket.emit("user_msg", msg);
-    }
-
     function sendNewPositionToServer(x, y)
     {
         socket.emit("user_move", x, y);
@@ -137,18 +132,10 @@ const context = canvas.getContext("2d");
         {
             switch (event.key)
             {
-                case "ArrowLeft":
-                    sendNewPositionToServer("left");
-                    break;
-                case "ArrowRight":
-                    sendNewPositionToServer("right");
-                    break;
-                case "ArrowUp":
-                    sendNewPositionToServer("up");
-                    break;
-                case "ArrowDown":
-                    sendNewPositionToServer("down");
-                    break;
+                case "ArrowLeft": sendNewPositionToServer("left"); break;
+                case "ArrowRight": sendNewPositionToServer("right"); break;
+                case "ArrowUp": sendNewPositionToServer("up"); break;
+                case "ArrowDown": sendNewPositionToServer("down"); break;
             }
         }
 
