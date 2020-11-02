@@ -1,7 +1,8 @@
 export default class User
 {
-    constructor(name)
+    constructor(room, name)
     {
+        this.room = room;
         this.name = name;
 
         this.logicalPositionX = 0;

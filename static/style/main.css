@@ -9,47 +9,9 @@ body
     position: relative;
 }
 
-.square
-{
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 80px;
-    height: 40px;
-}
-
-.square label
-{
-    position: absolute;
-    bottom: 90px;
-    left: 0px;
-    color: blue;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 13px;
-    font-weight: bold;
-    display: block;
-    width: 77px;
-    text-align: center;
-}
-
-.square img
-{
-    display: block;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    left: 50%;
-    bottom: 17px;
-}
-
-#imageCache
-{
-    display: none;
-}
-
 #chatLog
 {
     background-color: white;
-    height: 100px;
+    height: 150px;
     overflow-y: auto;
 }

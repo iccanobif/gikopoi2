@@ -75,7 +75,7 @@ const context = canvas.getContext("2d");
 
     function addUser(userDTO)
     {
-        const newUser = new User('TODO')
+        const newUser = new User(currentRoom, userDTO.name)
         newUser.logicalPositionX = userDTO.position[0];
         newUser.logicalPositionY = userDTO.position[1];
         const realCoordinates = calculateRealCoordinates(currentRoom, newUser.logicalPositionX, newUser.logicalPositionY)
@@ -92,6 +92,16 @@ const context = canvas.getContext("2d");
             y - image.height * scale,
             image.width * scale,
             image.height * scale)
+    }
+
+    function drawCenteredText(text, x, y)
+    {
+        // const width = context.measureText(text).width
+        context.font = "bold 13px Arial, Helvetica, sans-serif"
+        context.textBaseline = "bottom"
+        context.textAlign = "center"
+        context.fillStyle = "blue"
+        context.fillText(text, x, y)
     }
 
     async function paint(timestamp)
@@ -111,6 +121,7 @@ const context = canvas.getContext("2d");
         // draw users
         for (const user of Object.values(users))
         {
+            drawCenteredText(user.name, user.currentPhysicalPositionX + 40, user.currentPhysicalPositionY - 95)
             drawImage(gikoCharacter.frontStandingImage, user.currentPhysicalPositionX, user.currentPhysicalPositionY)
         }
 
