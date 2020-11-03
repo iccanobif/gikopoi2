@@ -99,9 +99,8 @@ const context = canvas.getContext("2d");
         drawImage(currentRoom.backgroundImage, 0, 511)
 
         // draw objects
-        for (var i = 0; i < currentRoom.objects.length; i++)
+        for (const object of currentRoom.objects)
         {
-            const object = currentRoom.objects[i];
             const { x, y } = calculateRealCoordinates(currentRoom, object.x, object.y);
             drawImage(object.image, x, y)
         }

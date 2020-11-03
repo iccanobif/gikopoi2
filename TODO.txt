@@ -1,17 +1,16 @@
 FRONTEND:
+- orientation
+- real walking
 - ignore keypresses while the user's still moving
+- draw tables over characters
 - make a class for communications with server
 - make a class for assets for a given character
-
 
 BACKEND
 - move the stage data here, so we can do server-side validation for the character position
 - use a sequential number for ids instead of those silly string "GUID"s
 
-
-
-
-stuff to add to documentation:
+STUFF TO ADD TO DOCUMENTATION:
 - "logical" position and "physical" position
 - how to make graphical assets:
     rules for making assets:
