@@ -41,12 +41,7 @@ const context = canvas.getContext("2d");
         socket.on("server_move", function (userId, x, y, direction)
         {
             var user = users[userId];
-            user.direction = direction;
-            user.logicalPositionX = x
-            user.logicalPositionY = y
-            const realCoordinates = calculateRealCoordinates(currentRoom, user.logicalPositionX, user.logicalPositionY)
-            user.currentPhysicalPositionX = realCoordinates.x;
-            user.currentPhysicalPositionY = realCoordinates.y;
+            user.moveToPosition(x, y)
         });
 
         socket.on("server_new_direction", function (userId, direction)
@@ -66,7 +61,6 @@ const context = canvas.getContext("2d");
             delete users[userId];
         });
 
-
         window.addEventListener("beforeunload", function ()
         {
             socket.disconnect();
@@ -75,13 +69,8 @@ const context = canvas.getContext("2d");
 
     function addUser(userDTO)
     {
-        const newUser = new User(currentRoom, userDTO.name)
-        newUser.logicalPositionX = userDTO.position[0];
-        newUser.logicalPositionY = userDTO.position[1];
-        const realCoordinates = calculateRealCoordinates(currentRoom, newUser.logicalPositionX, newUser.logicalPositionY)
-        newUser.currentPhysicalPositionX = realCoordinates.x;
-        newUser.currentPhysicalPositionY = realCoordinates.y;
-
+        const newUser = new User(currentRoom, gikoCharacter, userDTO.name)
+        newUser.moveImmediatelyToPosition(userDTO.position[0], userDTO.position[1])
         users[userDTO.id] = newUser;
     }
 
@@ -113,7 +102,6 @@ const context = canvas.getContext("2d");
         for (var i = 0; i < currentRoom.objects.length; i++)
         {
             const object = currentRoom.objects[i];
-            // const image = await loadImage("rooms/bar/" + object.url)
             const { x, y } = calculateRealCoordinates(currentRoom, object.x, object.y);
             drawImage(object.image, x, y)
         }
@@ -122,8 +110,12 @@ const context = canvas.getContext("2d");
         for (const user of Object.values(users))
         {
             drawCenteredText(user.name, user.currentPhysicalPositionX + 40, user.currentPhysicalPositionY - 95)
-            drawImage(gikoCharacter.frontStandingImage, user.currentPhysicalPositionX, user.currentPhysicalPositionY)
+
+            drawImage(user.getCurrentImage(), user.currentPhysicalPositionX, user.currentPhysicalPositionY)
+
+            user.spendTime()
         }
+
 
         requestAnimationFrame(paint)
     }
@@ -134,7 +126,7 @@ const context = canvas.getContext("2d");
 
         currentRoom.backgroundImage = await loadImage("rooms/" + roomName + "/background.png")
         for (const o of currentRoom.objects)
-            o.image = await loadImage("rooms/" + roomName + "/" + o.url) // TODO: make generic
+            o.image = await loadImage("rooms/" + roomName + "/" + o.url)
         await gikoCharacter.loadImages()
     }
 

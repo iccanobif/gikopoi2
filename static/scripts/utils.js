@@ -1,5 +1,6 @@
-const BLOCK_WIDTH = 160
-const BLOCK_HEIGHT = 80
+export const BLOCK_WIDTH = 160
+export const BLOCK_HEIGHT = 80
+
 export const scale = 0.5;
 
 export function loadImage(url)
