@@ -47,17 +47,18 @@ export default class User
 
         const realTargetCoordinates = calculateRealCoordinates(this.room, this.logicalPositionX, this.logicalPositionY);
 
-        if (this.currentPhysicalPositionX > realTargetCoordinates.x)
-            this.currentPhysicalPositionX -= Math.min(this.currentPhysicalPositionX - realTargetCoordinates.x, walkingSpeedX)
-        else if (this.currentPhysicalPositionX < realTargetCoordinates.x)
-            this.currentPhysicalPositionX += Math.min(realTargetCoordinates.x - this.currentPhysicalPositionX, walkingSpeedX)
-        if (this.currentPhysicalPositionY > realTargetCoordinates.y)
-            this.currentPhysicalPositionY -= Math.min(this.currentPhysicalPositionY - realTargetCoordinates.y, walkingSpeedY)
-        else if (this.currentPhysicalPositionY < realTargetCoordinates.y)
-            this.currentPhysicalPositionY += Math.min(realTargetCoordinates.y - this.currentPhysicalPositionY, walkingSpeedY)
-        else
+        const xDelta = Math.min(Math.abs(this.currentPhysicalPositionX - realTargetCoordinates.x), walkingSpeedX)
+        const yDelta = Math.min(Math.abs(this.currentPhysicalPositionY - realTargetCoordinates.y), walkingSpeedY)
+
+        if (this.currentPhysicalPositionX > realTargetCoordinates.x) this.currentPhysicalPositionX -= xDelta
+        else if (this.currentPhysicalPositionX < realTargetCoordinates.x) this.currentPhysicalPositionX += xDelta
+
+        if (this.currentPhysicalPositionY > realTargetCoordinates.y) this.currentPhysicalPositionY -= yDelta
+        else if (this.currentPhysicalPositionY < realTargetCoordinates.y) this.currentPhysicalPositionY += yDelta
+
+        if (xDelta === 0 && yDelta === 0)
             this.isWalking = false
-        
+
     }
 
     getCurrentImage()
