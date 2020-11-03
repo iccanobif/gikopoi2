@@ -93,28 +93,44 @@ const context = canvas.getContext("2d");
         context.fillText(text, x, y)
     }
 
+    // TODO: Refactor this entire function
     async function paint(timestamp)
     {
         // draw background
         drawImage(currentRoom.backgroundImage, 0, 511)
 
-        // draw objects
-        for (const object of currentRoom.objects)
+        const allObjects = currentRoom.objects.map(o => ({
+            o,
+            type: "room-object",
+            priority: o.x + 1 + (currentRoom.grid[1] - o.y)
+        }))
+            .concat(Object.values(users).map(o => ({
+                o,
+                type: "user",
+                priority: o.logicalPositionX + 1 + (currentRoom.grid[1] - o.logicalPositionY)
+            })))
+            .sort((a, b) =>
+            {
+                if (a.priority < b.priority) return -1
+                if (a.priority > b.priority) return 1
+                return 0
+            })
+
+        for (const o of allObjects)
         {
-            const { x, y } = calculateRealCoordinates(currentRoom, object.x, object.y);
-            drawImage(object.image, x, y)
+            if (o.type == "room-object")
+            {
+                drawImage(o.o.image, o.o.physicalPositionX, o.o.physicalPositionY)
+            }
+            else
+            {
+                drawCenteredText(o.o.name, o.o.currentPhysicalPositionX + 40, o.o.currentPhysicalPositionY - 95)
+
+                drawImage(o.o.getCurrentImage(), o.o.currentPhysicalPositionX, o.o.currentPhysicalPositionY)
+
+                o.o.spendTime()
+            }
         }
-
-        // draw users
-        for (const user of Object.values(users))
-        {
-            drawCenteredText(user.name, user.currentPhysicalPositionX + 40, user.currentPhysicalPositionY - 95)
-
-            drawImage(user.getCurrentImage(), user.currentPhysicalPositionX, user.currentPhysicalPositionY)
-
-            user.spendTime()
-        }
-
 
         requestAnimationFrame(paint)
     }
@@ -125,7 +141,12 @@ const context = canvas.getContext("2d");
 
         currentRoom.backgroundImage = await loadImage("rooms/" + roomName + "/background.png")
         for (const o of currentRoom.objects)
+        {
             o.image = await loadImage("rooms/" + roomName + "/" + o.url)
+            const { x, y } = calculateRealCoordinates(currentRoom, o.x, o.y);
+            o.physicalPositionX = x
+            o.physicalPositionY = y
+        }
         await gikoCharacter.loadImages()
     }
 
