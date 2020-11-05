@@ -22,7 +22,7 @@ var Player = function (options)
     this.name = options["name"] === undefined ? "Anonymous" : options["name"];
     this.position = options["position"] === undefined ? [8, 4] : options["position"];
     this.character = options["character"] === undefined ? "giko" : options["character"];
-    this.direction = options["direction"] === undefined ? 3 : options["direction"];
+    this.direction = options["direction"] === undefined ? "left" : options["direction"];
     this.connected = options["connected"] === undefined ? true : options["connected"];
 }
 

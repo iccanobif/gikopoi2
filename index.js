@@ -84,29 +84,40 @@ io.on("connection", function (socket)
     {
         try
         {
-            const newPosition = { x: user.position[0], y: user.position[1] }
-
-            switch (direction)
+            if (user.direction != direction)
             {
-                case "up": newPosition.y++; break;
-                case "down": newPosition.y--; break;
-                case "left": newPosition.x--; break;
-                case "right": newPosition.x++; break;
+                // ONLY CHANGE DIRECTION
+                user.direction = direction;
+                console.log(user.id, "facing", direction)
+            }
+            else
+            {
+                // MOVE
+                const newPosition = { x: user.position[0], y: user.position[1] }
+
+                switch (direction)
+                {
+                    case "up": newPosition.y++; break;
+                    case "down": newPosition.y--; break;
+                    case "left": newPosition.x--; break;
+                    case "right": newPosition.x++; break;
+                }
+
+                // prevent going outside of the map
+                if (newPosition.x < 0) return
+                if (newPosition.y < 0) return
+                if (newPosition.x >= bar.grid[0]) return
+                if (newPosition.y >= bar.grid[1]) return
+
+                // prevent moving over a blocked square
+                if (bar.blocked.filter(p => p[0] == newPosition.x && p[1] == newPosition.y).length > 0)
+                    return;
+
+                user.position = [newPosition.x, newPosition.y]
+
+                console.log(user.id + " moving " + direction);
             }
 
-            // prevent going outside of the map
-            if (newPosition.x < 0) return
-            if (newPosition.y < 0) return
-            if (newPosition.x >= bar.grid[0]) return
-            if (newPosition.y >= bar.grid[1]) return
-
-            // prevent moving over a blocked square
-            if (bar.blocked.filter(p => p[0] == newPosition.x && p[1] == newPosition.y).length > 0)
-                return;
-
-            user.position = [newPosition.x, newPosition.y]
-
-            console.log(user.id + " moving " + direction);
             io.emit("server_move", user.id, user.position[0], user.position[1], user.direction);
         }
         catch (e)
@@ -133,7 +144,8 @@ app.use(express.static('static',
     { setHeaders: (res) => res.set("Cache-Control", "no-cache") }
 ));
 
-app.get("/rooms/:roomName", (req, res) => {
+app.get("/rooms/:roomName", (req, res) =>
+{
     const roomName = req.params.roomName
     res.json(bar)
 })

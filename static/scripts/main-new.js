@@ -41,7 +41,7 @@ const context = canvas.getContext("2d");
         socket.on("server_move", function (userId, x, y, direction)
         {
             var user = users[userId];
-            user.moveToPosition(x, y)
+            user.moveToPosition(x, y, direction)
         });
 
         socket.on("server_new_direction", function (userId, direction)
@@ -83,6 +83,13 @@ const context = canvas.getContext("2d");
             image.height * scale)
     }
 
+    function drawHorizontallyFlippedImage(image, x, y)
+    {
+        context.scale(-1, 1)
+        drawImage(image, - x - image.width / 2, y)
+        context.setTransform(1, 0, 0, 1, 0, 0); // clear transformation
+    }
+
     function drawCenteredText(text, x, y)
     {
         // const width = context.measureText(text).width
@@ -122,11 +129,21 @@ const context = canvas.getContext("2d");
             {
                 drawImage(o.o.image, o.o.physicalPositionX, o.o.physicalPositionY)
             }
-            else
+            else // o.type == "user"
             {
                 drawCenteredText(o.o.name, o.o.currentPhysicalPositionX + 40, o.o.currentPhysicalPositionY - 95)
 
-                drawImage(o.o.getCurrentImage(), o.o.currentPhysicalPositionX, o.o.currentPhysicalPositionY)
+                switch (o.o.direction)
+                {
+                    case "up":
+                    case "right":
+                        drawHorizontallyFlippedImage(o.o.getCurrentImage(), o.o.currentPhysicalPositionX, o.o.currentPhysicalPositionY)
+                        break;
+                    case "down":
+                    case "left":
+                        drawImage(o.o.getCurrentImage(), o.o.currentPhysicalPositionX, o.o.currentPhysicalPositionY)
+                        break;
+                }
 
                 o.o.spendTime()
             }
@@ -150,9 +167,9 @@ const context = canvas.getContext("2d");
         await gikoCharacter.loadImages()
     }
 
-    function sendNewPositionToServer(x, y)
+    function sendNewPositionToServer(direction)
     {
-        socket.emit("user_move", x, y);
+        socket.emit("user_move", direction);
     }
 
     function registerKeybindings()

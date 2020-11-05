@@ -15,6 +15,7 @@ export default class User
         this.currentPhysicalPositionX = 0;
         this.currentPhysicalPositionY = 0;
         this.isWalking = false;
+        this.direction = "up";
         this.framesUntilNextStep = STEP_LENGTH
     }
 
@@ -30,11 +31,14 @@ export default class User
 
     }
 
-    moveToPosition(logicalPositionX, logicalPositionY)
+    moveToPosition(logicalPositionX, logicalPositionY, direction)
     {
+        if (this.logicalPositionX != logicalPositionX || this.logicalPositionY != logicalPositionY)
+            this.isWalking = true;
+
         this.logicalPositionX = logicalPositionX;
         this.logicalPositionY = logicalPositionY;
-        this.isWalking = true;
+        this.direction = direction;
     }
 
     // TODO really, find a better name for this function
@@ -67,14 +71,29 @@ export default class User
 
     getCurrentImage()
     {
-        Date.now()
         if (this.isWalking)
         {
-            return this.framesUntilNextStep > STEP_LENGTH / 2 ? this.character.frontWalking1Image : this.character.frontWalking2Image;
+            switch (this.direction)
+            {
+                case "up":
+                case "left":
+                    return this.framesUntilNextStep > STEP_LENGTH / 2 ? this.character.backWalking1Image : this.character.backWalking2Image;
+                case "down":
+                case "right":
+                    return this.framesUntilNextStep > STEP_LENGTH / 2 ? this.character.frontWalking1Image : this.character.frontWalking2Image;
+            }
         }
         else
         {
-            return this.character.frontStandingImage;
+            switch (this.direction)
+            {
+                case "up":
+                case "left":
+                    return this.character.backStandingImage;
+                case "down":
+                case "right":
+                    return this.character.frontStandingImage;
+            }
         }
     }
 }

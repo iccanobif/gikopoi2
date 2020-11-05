@@ -5,7 +5,6 @@ export const scale = 0.5;
 
 export function loadImage(url)
 {
-    console.log(url)
     return new Promise((resolve, reject) =>
     {
         try
