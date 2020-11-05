@@ -1,6 +1,6 @@
 import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils.js";
 
-const STEP_LENGTH = 10;
+const STEP_LENGTH = 8;
 
 export default class User
 {
@@ -15,6 +15,7 @@ export default class User
         this.currentPhysicalPositionX = 0;
         this.currentPhysicalPositionY = 0;
         this.isWalking = false;
+        this.framesUntilNextStep = STEP_LENGTH
     }
 
     moveImmediatelyToPosition(logicalPositionX, logicalPositionY)
@@ -59,6 +60,9 @@ export default class User
         if (xDelta === 0 && yDelta === 0)
             this.isWalking = false
 
+        this.framesUntilNextStep--
+        if (this.framesUntilNextStep < 0)
+            this.framesUntilNextStep = STEP_LENGTH
     }
 
     getCurrentImage()
@@ -66,7 +70,7 @@ export default class User
         Date.now()
         if (this.isWalking)
         {
-            return this.character.frontWalking1Image;
+            return this.framesUntilNextStep > STEP_LENGTH / 2 ? this.character.frontWalking1Image : this.character.frontWalking2Image;
         }
         else
         {
