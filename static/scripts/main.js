@@ -179,6 +179,7 @@ const context = canvas.getContext("2d");
         if (users[myUserID].isWalking)
             return
 
+        users[myUserID].isWalking = true
         socket.emit("user_move", direction);
     }
 
