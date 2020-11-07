@@ -62,7 +62,8 @@ const context = canvas.getContext("2d");
             delete users[userId];
         });
 
-        socket.on("your_user_id", function (userId) {
+        socket.on("your_user_id", function (userId)
+        {
             myUserID = userId
         })
 
@@ -74,8 +75,9 @@ const context = canvas.getContext("2d");
 
     function addUser(userDTO)
     {
-        const newUser = new User(currentRoom, gikoCharacter, userDTO.name)
-        newUser.moveImmediatelyToPosition(userDTO.position[0], userDTO.position[1])
+        const newUser = new User(currentRoom, gikoCharacter, userDTO.name);
+        newUser.moveImmediatelyToPosition(userDTO.position[0], userDTO.position[1]);
+        newUser.direction = userDTO.direction;
         users[userDTO.id] = newUser;
     }
 
@@ -180,6 +182,11 @@ const context = canvas.getContext("2d");
         socket.emit("user_move", direction);
     }
 
+    function sendMessageToServer(msg)
+    {
+        socket.emit("user_msg", msg);
+    }
+
     function registerKeybindings()
     {
         function onKeyDown(event)
@@ -194,6 +201,17 @@ const context = canvas.getContext("2d");
         }
 
         document.addEventListener("keydown", onKeyDown);
+        const inputTextbox = document.getElementById("textBox")
+
+        inputTextbox.addEventListener("keydown", (event) =>
+        {
+            if (event.key != "Enter") return
+
+            if (inputTextbox.value == "") return;
+            sendMessageToServer(inputTextbox.value);
+            inputTextbox.value = "";
+
+        })
     }
 
     loadRoom("bar")
