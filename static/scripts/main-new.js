@@ -182,9 +182,13 @@ const context = canvas.getContext("2d");
         socket.emit("user_move", direction);
     }
 
-    function sendMessageToServer(msg)
+    function sendMessageToServer()
     {
-        socket.emit("user_msg", msg);
+        const inputTextbox = document.getElementById("textBox")
+
+        if (inputTextbox.value == "") return;
+        socket.emit("user_msg", inputTextbox.value);
+        inputTextbox.value = "";
     }
 
     function registerKeybindings()
@@ -200,18 +204,20 @@ const context = canvas.getContext("2d");
             }
         }
 
-        document.addEventListener("keydown", onKeyDown);
+        const canvas = document.getElementById("room-canvas")
+
+        canvas.addEventListener("keydown", onKeyDown);
+
+        
         const inputTextbox = document.getElementById("textBox")
 
         inputTextbox.addEventListener("keydown", (event) =>
         {
             if (event.key != "Enter") return
-
-            if (inputTextbox.value == "") return;
-            sendMessageToServer(inputTextbox.value);
-            inputTextbox.value = "";
-
+            sendMessageToServer()
         })
+
+        document.getElementById("send-button").addEventListener("click", () => sendMessageToServer())
     }
 
     loadRoom("bar")
