@@ -15,6 +15,7 @@ const context = canvas.getContext("2d");
     const users = {};
     let currentRoom = null;
     const gikoCharacter = new Character("giko")
+    let myUserID = null;
 
     function connectToServer()
     {
@@ -60,6 +61,10 @@ const context = canvas.getContext("2d");
         {
             delete users[userId];
         });
+
+        socket.on("your_user_id", function (userId) {
+            myUserID = userId
+        })
 
         window.addEventListener("beforeunload", function ()
         {
@@ -169,6 +174,9 @@ const context = canvas.getContext("2d");
 
     function sendNewPositionToServer(direction)
     {
+        if (users[myUserID].isWalking)
+            return
+
         socket.emit("user_move", direction);
     }
 
