@@ -1,3 +1,5 @@
+// TODO a simple integer ID would be enough, probably? this server is single-threaded
+// anyway so there should be no race conditions.
 function generateId()
 {
     var text;

@@ -11,11 +11,12 @@ Supported websocket messages:
 - user_msg(msg):                    sent by the client to the server, basically makes the server send a server_msg to everyone
 - disconnect:                       sent by the client to the server (wouldn't it be simpler to just do this stuff when the websocket dies?)
 - user_move:                        sent by the client to the server, move the avater somewhere
-- server_usr_list(id):              sent by the server to a single client
+- server_connection_complete(dto):  sent by the server to a single client
 - server_msg(userName, msg):        sent by the server to ALL clients, it's a message to display on the chat
 - server_new_user_login(user):      sent by the server to ALL clients, notifies everyone that a new user logged in
 - server_user_disconnect(userId):   sent by the server to ALL clients, notifies eveyrone that a user logged out
 - server_move(userId, x, y):        sent by the server to ALL clients, asks everyone to move a character to coordinates (x, y)
+- server_reject_movement:           sent by the server to a single client
 */
 
 io.on("connection", function (socket)
@@ -29,7 +30,7 @@ io.on("connection", function (socket)
         try
         {
             const userId = users.addNewUser(userName);
-            socket.emit("your_user_id", userId)
+            
 
             if (users.getUser(userId) === undefined)
             {
@@ -42,7 +43,10 @@ io.on("connection", function (socket)
 
             console.log("userId: " + userId + " name: " + user.name);
 
-            socket.emit("server_usr_list", users.getConnectedUserList());
+            socket.emit("server_connection_complete", {
+                userId,
+                users: users.getConnectedUserList()
+            })
             io.emit("server_msg", "<span class=\"system\">SYSTEM</span>", user.name + " connected");
             io.emit("server_new_user_login", user);
         }
@@ -103,19 +107,21 @@ io.on("connection", function (socket)
                     case "right": newPosition.x++; break;
                 }
 
+                const rejectMovement = () => socket.emit("server_reject_movement")
+
                 // prevent going outside of the map
-                if (newPosition.x < 0) return
-                if (newPosition.y < 0) return
-                if (newPosition.x >= bar.grid[0]) return
-                if (newPosition.y >= bar.grid[1]) return
+                if (newPosition.x < 0) { rejectMovement(); return }
+                if (newPosition.y < 0) { rejectMovement(); return }
+                if (newPosition.x >= bar.grid[0]) { rejectMovement(); return }
+                if (newPosition.y >= bar.grid[1]) { rejectMovement(); return }
 
                 // prevent moving over a blocked square
                 if (bar.blocked.filter(p => p[0] == newPosition.x && p[1] == newPosition.y).length > 0)
-                    return;
+                    { rejectMovement(); return }
 
                 user.position = [newPosition.x, newPosition.y]
 
-                console.log(user.id + " moving " + direction);
+                console.log(user.id + " moved " + direction);
             }
 
             io.emit("server_move", user.id, user.position[0], user.position[1], user.direction);

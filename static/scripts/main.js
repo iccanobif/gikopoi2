@@ -16,6 +16,7 @@ const context = canvas.getContext("2d");
     let currentRoom = null;
     const gikoCharacter = new Character("giko")
     let myUserID = null;
+    let isWaitingForServerResponseOnMovement = false
 
     function connectToServer()
     {
@@ -26,10 +27,12 @@ const context = canvas.getContext("2d");
             socket.emit("user_connect", username);
         });
 
-        socket.on("server_usr_list", async function (users)
+        socket.on("server_connection_complete", async function (dto)
         {
-            for (var u in users)
-                addUser(users[u]);
+            for (var u in dto.users)
+                addUser(dto.users[u]);
+
+            myUserID = dto.userId
         });
 
         socket.on("server_msg", function (userName, msg)
@@ -43,7 +46,12 @@ const context = canvas.getContext("2d");
         {
             var user = users[userId];
             user.moveToPosition(x, y, direction)
+
+            if (userId == myUserID)
+                isWaitingForServerResponseOnMovement = false
         });
+
+        socket.on("server_reject_movement", () => isWaitingForServerResponseOnMovement = false)
 
         socket.on("server_new_direction", function (userId, direction)
         {
@@ -54,18 +62,14 @@ const context = canvas.getContext("2d");
 
         socket.on("server_new_user_login", function (user)
         {
-            addUser(user);
+            if (user.id != myUserID)
+                addUser(user);
         });
 
         socket.on("server_user_disconnect", function (userId)
         {
             delete users[userId];
         });
-
-        socket.on("your_user_id", function (userId)
-        {
-            myUserID = userId
-        })
 
         window.addEventListener("beforeunload", function ()
         {
@@ -176,10 +180,10 @@ const context = canvas.getContext("2d");
 
     function sendNewPositionToServer(direction)
     {
-        if (users[myUserID].isWalking)
+        if (isWaitingForServerResponseOnMovement || users[myUserID].isWalking)
             return
 
-        users[myUserID].isWalking = true
+        isWaitingForServerResponseOnMovement = true
         socket.emit("user_move", direction);
     }
 
@@ -209,7 +213,7 @@ const context = canvas.getContext("2d");
 
         canvas.addEventListener("keydown", onKeyDown);
 
-        
+
         const inputTextbox = document.getElementById("textBox")
 
         inputTextbox.addEventListener("keydown", (event) =>
