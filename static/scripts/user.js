@@ -85,14 +85,16 @@ export default class User
         }
         else
         {
+            const isSitting = !!this.room.sit.find(s => s[0] == this.logicalPositionX && s[1] == this.logicalPositionY)
+
             switch (this.direction)
             {
                 case "up":
                 case "left":
-                    return this.character.backStandingImage;
+                    return isSitting ? this.character.backSittingImage : this.character.backStandingImage;
                 case "down":
                 case "right":
-                    return this.character.frontStandingImage;
+                    return isSitting ? this.character.frontSittingImage : this.character.frontStandingImage;
             }
         }
     }
