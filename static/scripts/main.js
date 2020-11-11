@@ -71,14 +71,37 @@ const context = canvas.getContext("2d");
             delete users[userId];
         });
 
+        let whichVideo = 1
+        const video1 = document.getElementById("received-video-1")
+        const video2 = document.getElementById("received-video-2")
+        video1.addEventListener("loadeddata", () => 
+        {
+            video1.style.zIndex = 1000;
+            video2.style.zIndex = -1;
+        })
+        video2.addEventListener("loadeddata", () => 
+        {
+            video2.style.zIndex = 1000;
+            video1.style.zIndex = -1;
+        })
+
         socket.on("server_stream_data", function (data) {
-            console.log(data)
+            
 
             const blob = new Blob([data])
-            console.log(blob)
+            if (whichVideo == 1 )
+            {
+                video1.src = URL.createObjectURL(blob)
+                whichVideo = 2
+            }
+            else 
+            {
+                video2.src = URL.createObjectURL(blob)
+                whichVideo = 1
+            }
 
-            const video = document.getElementById("received-video")
-            video.src = URL.createObjectURL(blob)
+            
+            
         })
 
         window.addEventListener("beforeunload", function ()
