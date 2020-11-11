@@ -1,3 +1,7 @@
+WEBRTC:
+    https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling
+    https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API
+
 FRONTEND:
 - orientation
 - real walking
