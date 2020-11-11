@@ -1,6 +1,6 @@
 import Character from "./character.js";
 import User from "./user.js";
-import { loadImage, calculateRealCoordinates, scale } from "./utils.js";
+import { loadImage, calculateRealCoordinates, scale, sleep } from "./utils.js";
 
 const canvas = document.getElementById("room-canvas");
 const context = canvas.getContext("2d");
@@ -70,6 +70,16 @@ const context = canvas.getContext("2d");
         {
             delete users[userId];
         });
+
+        socket.on("server_stream_data", function (data) {
+            console.log(data)
+
+            const blob = new Blob([data])
+            console.log(blob)
+
+            const video = document.getElementById("received-video")
+            video.src = URL.createObjectURL(blob)
+        })
 
         window.addEventListener("beforeunload", function ()
         {
@@ -223,6 +233,33 @@ const context = canvas.getContext("2d");
         })
 
         document.getElementById("send-button").addEventListener("click", () => sendMessageToServer())
+        document.getElementById("start-streaming-button").addEventListener("click", () => startStreaming())
+    }
+
+    // WebRTC
+
+    let webcamStream;
+
+
+    async function startStreaming()
+    {
+        webcamStream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: { aspectRatio: { ideal: 1.333333 } }
+        });
+        document.getElementById("local-video").srcObject = webcamStream;
+
+        const recorder = new RecordRTCPromisesHandler(webcamStream, { type: "video" })
+
+        while (true) 
+        {
+            recorder.startRecording()
+            await sleep(1000);
+            await recorder.stopRecording();
+            let blob = await recorder.getBlob();
+            socket.emit("user_stream_data", blob);
+        }
+        
     }
 
     loadRoom("bar")

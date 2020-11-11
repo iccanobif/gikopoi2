@@ -17,6 +17,7 @@ Supported websocket messages:
 - server_user_disconnect(userId):   sent by the server to ALL clients, notifies eveyrone that a user logged out
 - server_move(userId, x, y):        sent by the server to ALL clients, asks everyone to move a character to coordinates (x, y)
 - server_reject_movement:           sent by the server to a single client
+- user_stream_data                  sent by the client to the server, it's a chunk of video/audio data
 */
 
 io.on("connection", function (socket)
@@ -144,6 +145,10 @@ io.on("connection", function (socket)
             console.log(e.message);
         }
     });
+    socket.on("user_stream_data", function (data) {
+        console.log("received stream data...")
+        io.emit("server_stream_data", data)
+    })
 });
 
 app.use(express.static('static',

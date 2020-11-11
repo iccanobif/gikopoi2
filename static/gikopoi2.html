@@ -7,6 +7,8 @@
 
     <link rel='stylesheet' href='style/main.css' />
 
+    <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
+
     <title>BARギコっぽいONLINE</title>
 </head>
 
@@ -15,8 +17,13 @@
         <img id='background' />
     </div>
     <canvas id="room-canvas" width="721px" height="511px" tabindex="0"></canvas>
-    <div id="messageBox">
-        Input: <input id="textBox" type="text"></input><button id="send-button">Send</button>
+    <video id="received-video" autoplay></video>
+    <video id="local-video" autoplay muted></video>
+
+    <div>
+        Input: <input id="textBox" type="text"></input>
+        <button id="send-button">Send</button>
+        <button id="start-streaming-button">Start streaming</button>
     </div>
     Log:
     <div id="chatLog">

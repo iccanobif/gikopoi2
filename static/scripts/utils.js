@@ -42,3 +42,5 @@ export function calculateRealCoordinates(room, x, y)
 
     return { x: realX, y: realY }
 }
+
+export const sleep = (milliseconds) => new Promise(resolve => setTimeout(resolve, milliseconds));
