@@ -11,6 +11,7 @@ WEBRTC:
 - limit streams to the room they're made in
 - sound only streams
 - REFACTOR REFACTOR REFACTOR
+- don't get the context from the DOM every damn time
 
 STUFF TO ADD TO DOCUMENTATION:
 - "logical" position and "physical" position

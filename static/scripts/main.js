@@ -3,17 +3,13 @@ import User from "./user.js";
 import { loadImage, calculateRealCoordinates, scale, sleep } from "./utils.js";
 import VideoChunkPlayer from "./video-chunk-player.js";
 
-const canvas = document.getElementById("room-canvas");
-const context = canvas.getContext("2d");
-
-(function ()
+const gikopoi = function ()
 {
     const STOP_STREAM = "STOP_STREAM"
 
     let socket = null;
 
     const queryString = new URLSearchParams(window.location.search);
-    const username = queryString.get("username");
 
     const users = {};
     let currentRoom = null;
@@ -21,7 +17,7 @@ const context = canvas.getContext("2d");
     let myUserID = null;
     let isWaitingForServerResponseOnMovement = false
 
-    function connectToServer()
+    function connectToServer(username)
     {
         socket = io()
 
@@ -41,7 +37,7 @@ const context = canvas.getContext("2d");
         socket.on("server_msg", function (userName, msg)
         {
             const chatLog = document.getElementById("chatLog");
-            
+
             chatLog.innerHTML += userName + ": " + msg + "<br/>";
             chatLog.scrollTop = chatLog.scrollHeight;
         });
@@ -104,6 +100,7 @@ const context = canvas.getContext("2d");
 
     function drawImage(image, x, y)
     {
+        const context = document.getElementById("room-canvas").getContext("2d");
         context.drawImage(image,
             x,
             y - image.height * scale,
@@ -113,6 +110,7 @@ const context = canvas.getContext("2d");
 
     function drawHorizontallyFlippedImage(image, x, y)
     {
+        const context = document.getElementById("room-canvas").getContext("2d");
         context.scale(-1, 1)
         drawImage(image, - x - image.width / 2, y)
         context.setTransform(1, 0, 0, 1, 0, 0); // clear transformation
@@ -120,6 +118,7 @@ const context = canvas.getContext("2d");
 
     function drawCenteredText(text, x, y)
     {
+        const context = document.getElementById("room-canvas").getContext("2d");
         // const width = context.measureText(text).width
         context.font = "bold 13px Arial, Helvetica, sans-serif"
         context.textBaseline = "bottom"
@@ -193,6 +192,7 @@ const context = canvas.getContext("2d");
             o.physicalPositionY = y
         }
         await gikoCharacter.loadImages()
+        document.getElementById("room-canvas").focus()
     }
 
     function sendNewPositionToServer(direction)
@@ -280,12 +280,32 @@ const context = canvas.getContext("2d");
         socket.emit("user_stream_data", STOP_STREAM)
     }
 
-    loadRoom("bar")
-        .then(() =>
+    return {
+        login: function (username)
         {
-            registerKeybindings()
-            connectToServer()
-            paint()
-        })
-        .catch(console.error)
-})();
+            loadRoom("bar")
+                .then(() =>
+                {
+                    registerKeybindings()
+                    connectToServer(username)
+                    paint()
+                })
+                .catch(console.error)
+        }
+    }
+}();
+
+const app = new Vue({
+    el: '#vue-app',
+    data: {
+        username: "",
+        loggedIn: false,
+    },
+    methods: {
+        login: function ()
+        {
+            this.loggedIn = true
+            gikopoi.login(this.username)
+        }
+    }
+})
