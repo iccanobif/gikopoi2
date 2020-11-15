@@ -2,17 +2,14 @@ WEBRTC:
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API
 
-FRONTEND:
-- orientation
-- real walking
-- ignore keypresses while the user's still moving
-- draw tables over characters
-- make a class for communications with server
-- make a class for assets for a given character
-
-BACKEND
-- move the stage data here, so we can do server-side validation for the character position
+- FRONTEND: make a class for communications with server
+- FRONTEND: make a class for assets for a given character
+- make some sort of component to abstract away the fact that i use two <video> elements to display a single stream
 - use a sequential number for ids instead of those silly string "GUID"s
+- allow more than one stream at the same time
+- limit streams to the room they're made in
+- implement a new room, in order to make all the needed infrastructure for building
+  all the rooms
 
 STUFF TO ADD TO DOCUMENTATION:
 - "logical" position and "physical" position

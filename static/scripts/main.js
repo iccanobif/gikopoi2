@@ -7,6 +7,8 @@ const context = canvas.getContext("2d");
 
 (function ()
 {
+    const STOP_STREAM = "STOP_STREAM"
+
     let socket = null;
 
     const queryString = new URLSearchParams(window.location.search);
@@ -85,23 +87,30 @@ const context = canvas.getContext("2d");
             video1.style.zIndex = -1;
         })
 
-        socket.on("server_stream_data", function (data) {
-            
-
-            const blob = new Blob([data])
-            if (whichVideo == 1 )
+        socket.on("server_stream_data", function (data)
+        {
+            if (data == STOP_STREAM)
             {
-                video1.src = URL.createObjectURL(blob)
-                whichVideo = 2
+                video1.style.display = "none";
+                video2.style.display = "none";
             }
             else 
             {
-                video2.src = URL.createObjectURL(blob)
-                whichVideo = 1
-            }
+                video1.style.display = "block";
+                video2.style.display = "block";
 
-            
-            
+                const blob = new Blob([data])
+                if (whichVideo == 1)
+                {
+                    video1.src = URL.createObjectURL(blob)
+                    whichVideo = 2
+                }
+                else 
+                {
+                    video2.src = URL.createObjectURL(blob)
+                    whichVideo = 1
+                }
+            }
         })
 
         window.addEventListener("beforeunload", function ()
@@ -257,12 +266,12 @@ const context = canvas.getContext("2d");
 
         document.getElementById("send-button").addEventListener("click", () => sendMessageToServer())
         document.getElementById("start-streaming-button").addEventListener("click", () => startStreaming())
+        document.getElementById("stop-streaming-button").addEventListener("click", () => stopStreaming())
     }
 
     // WebRTC
 
-    let webcamStream;
-
+    let webcamStream = null;
 
     async function startStreaming()
     {
@@ -271,18 +280,28 @@ const context = canvas.getContext("2d");
             video: { aspectRatio: { ideal: 1.333333 } }
         });
         document.getElementById("local-video").srcObject = webcamStream;
+        document.getElementById("local-video").style.display = "block";
 
         const recorder = new RecordRTCPromisesHandler(webcamStream, { type: "video" })
 
-        while (true) 
+        while (webcamStream)
         {
             recorder.startRecording()
             await sleep(1000);
             await recorder.stopRecording();
             let blob = await recorder.getBlob();
-            socket.emit("user_stream_data", blob);
+            if (webcamStream)
+            {
+                socket.emit("user_stream_data", blob);
+            }
         }
-        
+    }
+
+    function stopStreaming()
+    {
+        webcamStream = null
+        socket.emit("user_stream_data", STOP_STREAM)
+        document.getElementById("local-video").style.display = "none"
     }
 
     loadRoom("bar")
