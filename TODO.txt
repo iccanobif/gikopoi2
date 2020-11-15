@@ -2,10 +2,15 @@ WEBRTC:
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API
 
-- allow more than one stream at the same time
-- limit streams to the room they're made in
 - implement a new room, in order to make all the needed infrastructure for building
   all the rooms
+  - the server should remember which room each user is in.
+- better login page (and maybe login mechanism, query string parameters might not be a great idea)
+- improve layout and graphics
+- allow more than one stream at the same time
+- limit streams to the room they're made in
+- sound only streams
+- REFACTOR REFACTOR REFACTOR
 
 STUFF TO ADD TO DOCUMENTATION:
 - "logical" position and "physical" position
