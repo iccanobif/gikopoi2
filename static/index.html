@@ -10,8 +10,8 @@
 </head>
 
 <body>
-    <div id="vue-app">
-        <div id="login-page" v-if="!loggedIn">
+    <div id="vue-app" v-cloak>
+        <div id="login-page" v-if="!loggedIn" >
             <h1>Gikopoi 2</h1>
             <form>
                 <label>User Name:</label> <input type="text" v-model="username" />
