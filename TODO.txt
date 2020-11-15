@@ -2,8 +2,6 @@ WEBRTC:
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API
 
-- FRONTEND: make a class for communications with server
-- use a sequential number for ids instead of those silly string "GUID"s
 - allow more than one stream at the same time
 - limit streams to the room they're made in
 - implement a new room, in order to make all the needed infrastructure for building

@@ -1,18 +1,7 @@
-// TODO a simple integer ID would be enough, probably? this server is single-threaded
-// anyway so there should be no race conditions.
+let nextUserID = 1
 function generateId()
 {
-    var text;
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    do
-    {
-        text = "";
-        for (var i = 0; i < 16; i++)
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-    } while (users[text] != undefined)
-
-    return text;
+    return nextUserID++;
 }
 
 var Player = function (options)
