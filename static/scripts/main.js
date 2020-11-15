@@ -258,7 +258,6 @@ const context = canvas.getContext("2d");
         document.getElementById("local-video").style.display = "block";
 
         const recorder = new RecordRTCPromisesHandler(webcamStream, { type: "video" })
-
         while (webcamStream)
         {
             recorder.startRecording()
@@ -274,9 +273,11 @@ const context = canvas.getContext("2d");
 
     function stopStreaming()
     {
-        webcamStream = null
-        socket.emit("user_stream_data", STOP_STREAM)
+        for (const track of webcamStream.getTracks())
+            track.stop()
+        document.getElementById("local-video").srcObject = webcamStream = null;
         document.getElementById("local-video").style.display = "none"
+        socket.emit("user_stream_data", STOP_STREAM)
     }
 
     loadRoom("bar")
