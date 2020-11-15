@@ -24,15 +24,7 @@ body
     left: 510px;
     /* border: 10px solid #ad0000; */
 }
-#received-video-1
-{
-    position: absolute;
-    width: 219px;
-    top: 18px;
-    left: 0px;
-    /* border: 10px solid #ad0000; */
-}
-#received-video-2
+#received-video-1 video
 {
     position: absolute;
     width: 219px;

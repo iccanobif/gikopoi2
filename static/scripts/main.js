@@ -1,6 +1,7 @@
 import Character from "./character.js";
 import User from "./user.js";
 import { loadImage, calculateRealCoordinates, scale, sleep } from "./utils.js";
+import VideoChunkPlayer from "./video-chunk-player.js";
 
 const canvas = document.getElementById("room-canvas");
 const context = canvas.getContext("2d");
@@ -40,6 +41,7 @@ const context = canvas.getContext("2d");
         socket.on("server_msg", function (userName, msg)
         {
             const chatLog = document.getElementById("chatLog");
+            
             chatLog.innerHTML += userName + ": " + msg + "<br/>";
             chatLog.scrollTop = chatLog.scrollHeight;
         });
@@ -59,7 +61,6 @@ const context = canvas.getContext("2d");
         {
             var user = users[userId];
             user.direction = direction;
-            // directUser(user);
         });
 
         socket.on("server_new_user_login", function (user)
@@ -73,43 +74,17 @@ const context = canvas.getContext("2d");
             delete users[userId];
         });
 
-        let whichVideo = 1
-        const video1 = document.getElementById("received-video-1")
-        const video2 = document.getElementById("received-video-2")
-        video1.addEventListener("loadeddata", () => 
-        {
-            video1.style.zIndex = 1000;
-            video2.style.zIndex = -1;
-        })
-        video2.addEventListener("loadeddata", () => 
-        {
-            video2.style.zIndex = 1000;
-            video1.style.zIndex = -1;
-        })
+        const receivedVideoPlayer = new VideoChunkPlayer(document.getElementById("received-video-1"))
 
         socket.on("server_stream_data", function (data)
         {
             if (data == STOP_STREAM)
             {
-                video1.style.display = "none";
-                video2.style.display = "none";
+                receivedVideoPlayer.stop()
             }
             else 
             {
-                video1.style.display = "block";
-                video2.style.display = "block";
-
-                const blob = new Blob([data])
-                if (whichVideo == 1)
-                {
-                    video1.src = URL.createObjectURL(blob)
-                    whichVideo = 2
-                }
-                else 
-                {
-                    video2.src = URL.createObjectURL(blob)
-                    whichVideo = 1
-                }
+                receivedVideoPlayer.playChunk(data)
             }
         })
 
