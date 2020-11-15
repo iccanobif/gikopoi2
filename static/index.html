@@ -13,8 +13,10 @@
     <div id="vue-app">
         <div id="login-page" v-if="!loggedIn">
             <h1>Gikopoi 2</h1>
-            <label>User Name:</label> <input type="text" v-model="username" />
-            <button v-on:click="login">Login</button>
+            <form>
+                <label>User Name:</label> <input type="text" v-model="username" />
+                <button v-on:click="login">Login</button>
+            </form>
         </div>
         <div id="stage" v-if="loggedIn">
             <div id='room'>
@@ -23,7 +25,7 @@
             <canvas id="room-canvas" width="721px" height="511px" tabindex="0"></canvas>
             <div id="received-video-1"></div>
             <video id="local-video" autoplay muted></video>
-        
+
             <div>
                 Input: <input id="textBox" type="text"></input>
                 <button id="send-button">Send</button>
@@ -33,7 +35,7 @@
             Log:
             <div id="chatLog">
             </div>
-        
+
         </div>
     </div>
 

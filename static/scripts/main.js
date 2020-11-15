@@ -302,10 +302,16 @@ const app = new Vue({
         loggedIn: false,
     },
     methods: {
-        login: function ()
+        login: function (ev)
         {
-            this.loggedIn = true
-            gikopoi.login(this.username)
+            ev.preventDefault()
+            if (this.username === "")
+                alert("Please write a username")
+            else
+            {
+                this.loggedIn = true
+                gikopoi.login(this.username)
+            }
         }
     }
 })

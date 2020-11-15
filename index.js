@@ -122,7 +122,7 @@ io.on("connection", function (socket)
 
                 user.position = [newPosition.x, newPosition.y]
 
-                console.log(user.id + " moved " + direction);
+                console.log(user.id, "moved", direction);
             }
 
             io.emit("server_move", user.id, user.position[0], user.position[1], user.direction);
