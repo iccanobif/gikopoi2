@@ -2,11 +2,12 @@ WEBRTC:
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API
 
+- text messages get sent very slowly while streaming
 - implement a new room, in order to make all the needed infrastructure for building
   all the rooms
   - the server should remember which room each user is in.
 - better login page (and maybe login mechanism, query string parameters might not be a great idea)
-- improve layout and graphics
+- improve layout and graphics (responsive: <canvas> could be set to 80% of the viewport's height and the log to 20%, for example)
 - allow more than one stream at the same time
 - limit streams to the room they're made in
 - sound only streams
