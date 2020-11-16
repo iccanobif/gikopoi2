@@ -2,7 +2,11 @@ WEBRTC:
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API
 
+
+
+- sound notifications when someone writes
 - text messages get sent very slowly while streaming
+- to fix: tab is not visible => some user moves => tab is visible again => that user starts floating, slowly reaching its new position
 - implement a new room, in order to make all the needed infrastructure for building
   all the rooms
   - the server should remember which room each user is in.
@@ -13,6 +17,7 @@ WEBRTC:
 - sound only streams
 - REFACTOR REFACTOR REFACTOR
 - don't get the context from the DOM every damn time
+
 
 STUFF TO ADD TO DOCUMENTATION:
 - "logical" position and "physical" position
