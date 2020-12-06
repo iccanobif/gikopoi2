@@ -8,10 +8,11 @@
     "socket.io": "^2.0.4"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "cross-env DEBUG=* node index.js",
     "dev": "nodemon index.js"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "nodemon": "^2.0.6"
   }
 }

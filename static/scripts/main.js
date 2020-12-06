@@ -1,3 +1,5 @@
+localStorage.debug = '*'; // socket.io debug
+
 import Character from "./character.js";
 import User from "./user.js";
 import { loadImage, calculateRealCoordinates, scale, sleep } from "./utils.js";
