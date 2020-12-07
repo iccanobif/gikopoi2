@@ -1,0 +1,2 @@
+on the roof there's a real clock that shows the current (local) hour. the squid moves as if it were the seconds hand
+the chicken is animated
