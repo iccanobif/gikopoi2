@@ -48,7 +48,7 @@ io.on("connection", function (socket)
                 userId,
                 users: users.getConnectedUserList()
             })
-            io.emit("server_msg", "<span class=\"system\">SYSTEM</span>", user.name + " connected");
+            io.emit("server_msg", "SYSTEM", user.name + " connected");
             io.emit("server_new_user_login", user);
         }
         catch (e)
@@ -77,7 +77,7 @@ io.on("connection", function (socket)
 
             user["connected"] = false; //TODO: I'm not sure this works.
             console.log(user.name + " disconnected");
-            io.emit("server_msg", "<span class=\"system\">SYSTEM</span>", user.name + " disconnected");
+            io.emit("server_msg", "SYSTEM", user.name + " disconnected");
             io.emit("server_user_disconnect", user.id);
         }
         catch (e)
@@ -122,7 +122,7 @@ io.on("connection", function (socket)
 
                 user.position = [newPosition.x, newPosition.y]
 
-                console.log(user.id, "moved", direction);
+                console.log(user.id, "moved", direction, newPosition.x, newPosition.y);
             }
 
             io.emit("server_move", user.id, user.position[0], user.position[1], user.direction);

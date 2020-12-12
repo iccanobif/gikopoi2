@@ -24,3 +24,12 @@ STUFF TO ADD TO DOCUMENTATION:
 - how to make graphical assets:
     rules for making assets:
         everything has a width of 160
+
+        ／＼
+   x↗ ／    ＼
+    ／        ＼
+  ／            ＼
+  ＼            ／
+    ＼        ／
+   y↘ ＼    ／
+        ＼／

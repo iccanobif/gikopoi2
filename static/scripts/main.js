@@ -39,6 +39,9 @@ const gikopoi = function ()
         socket.on("server_msg", function (userName, msg)
         {
             const chatLog = document.getElementById("chatLog");
+            console.log(userName)
+            if (userName != "SYSTEM")
+                document.getElementById("message-sound").play()
 
             chatLog.innerHTML += userName + ": " + msg + "<br/>";
             chatLog.scrollTop = chatLog.scrollHeight;
@@ -63,6 +66,8 @@ const gikopoi = function ()
 
         socket.on("server_new_user_login", function (user)
         {
+            document.getElementById("login-sound").play()
+
             if (user.id != myUserID)
                 addUser(user);
         });
