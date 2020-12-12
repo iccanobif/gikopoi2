@@ -1,3 +1,4 @@
+const fs = require('fs');
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
@@ -31,7 +32,7 @@ io.on("connection", function (socket)
         try
         {
             const userId = users.addNewUser(userName);
-            
+
 
             if (users.getUser(userId) === undefined)
             {
@@ -118,7 +119,7 @@ io.on("connection", function (socket)
 
                 // prevent moving over a blocked square
                 if (bar.blocked.filter(p => p[0] == newPosition.x && p[1] == newPosition.y).length > 0)
-                    { rejectMovement(); return }
+                { rejectMovement(); return }
 
                 user.position = [newPosition.x, newPosition.y]
 
@@ -145,7 +146,8 @@ io.on("connection", function (socket)
             console.log(e.message);
         }
     });
-    socket.on("user_stream_data", function (data) {
+    socket.on("user_stream_data", function (data)
+    {
         console.log("received stream data...")
         io.emit("server_stream_data", data)
     })
@@ -159,6 +161,21 @@ app.get("/rooms/:roomName", (req, res) =>
 {
     const roomName = req.params.roomName
     res.json(bar)
+})
+
+app.get("/version", async (req, res) =>
+{
+    fs.readFile("version", (err, data) =>
+    {
+        if (err)
+            res.json(err)
+        else
+        {
+            const str = data.toString()
+            const version = Number.parseInt(str)
+            res.json(version)
+        }
+    })
 })
 
 const port = process.env.PORT == undefined
