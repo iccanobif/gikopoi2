@@ -15,6 +15,7 @@ var Player = function (options)
     this.character = options["character"] === undefined ? "giko" : options["character"];
     this.direction = options["direction"] === undefined ? "left" : options["direction"];
     this.connected = options["connected"] === undefined ? true : options["connected"];
+    this.lastPing = Date.now();
 }
 
 var users = {};
@@ -23,7 +24,7 @@ module.exports.addNewUser = function (name)
 {
     var p = new Player({ name: name, connected: true });
     users[p.id] = p;
-    return p.id;
+    return p;
 };
 
 module.exports.getConnectedUserList = function ()

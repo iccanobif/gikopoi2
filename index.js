@@ -25,32 +25,19 @@ io.on("connection", function (socket)
 {
     console.log("Connection attempt");
 
-    var user = null;
+    let user = null;
 
-    socket.on("user_connect", function (userName)
+    socket.on("user_connect", function (userId)
     {
         try
         {
-            const userId = users.addNewUser(userName);
-
-
-            if (users.getUser(userId) === undefined)
-            {
-                console.log("Access denied to invalid userId " + userId);
-                socket.disconnect(); //TO BE TESTED
-                return;
-            }
-
             user = users.getUser(userId);
 
             console.log("userId: " + userId + " name: " + user.name);
 
             socket.emit("server_connection_complete", {
-                userId,
                 users: users.getConnectedUserList()
             })
-            io.emit("server_msg", "SYSTEM", user.name + " connected");
-            io.emit("server_new_user_login", user);
         }
         catch (e)
         {
@@ -74,12 +61,7 @@ io.on("connection", function (socket)
     {
         try
         {
-            if (user === null) return;
 
-            user["connected"] = false; //TODO: I'm not sure this works.
-            console.log(user.name + " disconnected");
-            io.emit("server_msg", "SYSTEM", user.name + " disconnected");
-            io.emit("server_user_disconnect", user.id);
         }
         catch (e)
         {
@@ -163,7 +145,7 @@ app.get("/rooms/:roomName", (req, res) =>
     res.json(bar)
 })
 
-app.get("/version", async (req, res) =>
+app.post("/ping/:userId", async (req, res) =>
 {
     fs.readFile("version", (err, data) =>
     {
@@ -171,12 +153,80 @@ app.get("/version", async (req, res) =>
             res.json(err)
         else
         {
+            // Update last ping date for the user
+            const { userId } = req.params
+            const user = users.getUser(userId)
+
+            if (!user)
+                return
+
+            user.lastPing = Date.now()
+
+            // Return software version, so that the client can refresh the page
+            // if there has been a new deploy.
             const str = data.toString()
             const version = Number.parseInt(str)
-            res.json(version)
+            res.json({ version })
         }
     })
 })
+
+app.use(express.json());
+
+app.post("/login", (req, res) =>
+{
+    const { userName } = req.body
+
+    console.log(userName)
+    if (!userName)
+    {
+        res.statusCode = 500
+        res.end("please specify a username")
+    }
+    else
+    {
+        const user = users.addNewUser(userName);
+        res.json(user.id)
+
+        io.emit("server_msg", "SYSTEM", userName + " connected");
+        io.emit("server_new_user_login", user);
+    }
+})
+
+function disconnectUser(user)
+{
+    console.log("Disconnecting user ", user.id, user.name)
+    user["connected"] = false;
+    console.log(user.name + " disconnected");
+    io.emit("server_msg", "SYSTEM", user.name + " disconnected");
+    io.emit("server_user_disconnect", user.id);
+}
+
+app.post("/logout", (req, res) =>
+{
+    const { userID } = req.body
+    if (!userID)
+    {
+        res.statusCode = 500
+        res.end("please specify a username")
+    }
+    else
+    {
+        const user = users.getUser(userId);
+        if (!user) return;
+
+        res.end()
+    }
+})
+
+// Disconnect users that have failed to ping in the last 30 seconds
+setInterval(() =>
+{
+    const allUsers = users.getConnectedUserList()
+    for (const user of Object.values(allUsers))
+        if (Date.now() - user.lastPing > 30 * 1000)
+            disconnectUser(user)
+}, 20 * 1000)
 
 const port = process.env.PORT == undefined
     ? 8085

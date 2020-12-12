@@ -19,21 +19,27 @@ const gikopoi = function ()
     let myUserID = null;
     let isWaitingForServerResponseOnMovement = false
 
-    function connectToServer(username)
+    async function connectToServer(username)
     {
+        const loginResponse = await fetch("/login", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userName: username })
+        })
+
+        myUserID = await loginResponse.json()
+
         socket = io()
 
         socket.on("connect", function ()
         {
-            socket.emit("user_connect", username);
+            socket.emit("user_connect", myUserID);
         });
 
         socket.on("server_connection_complete", async function (dto)
         {
             for (var u in dto.users)
                 addUser(dto.users[u]);
-
-            myUserID = dto.userId
         });
 
         socket.on("server_msg", function (userName, msg)
@@ -91,10 +97,27 @@ const gikopoi = function ()
             }
         })
 
-        window.addEventListener("beforeunload", function ()
-        {
-            socket.disconnect();
-        });
+        let version = Infinity
+
+        async function ping() {
+            const response = await fetch("/ping/" + myUserID, {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: myUserID })
+            })
+            const { version: newVersion } = await response.json()
+            console.log(newVersion)
+            if (newVersion > version)
+            {
+                // TODO refresh page while keeping username ,selected character and room
+            }
+            else
+            {
+                version = newVersion
+            }
+        }
+
+        setInterval(ping, 1000 * 10)
     }
 
     function addUser(userDTO)
@@ -249,6 +272,7 @@ const gikopoi = function ()
         document.getElementById("send-button").addEventListener("click", () => sendMessageToServer())
         document.getElementById("start-streaming-button").addEventListener("click", () => startStreaming())
         document.getElementById("stop-streaming-button").addEventListener("click", () => stopStreaming())
+        // document.getElementById("logout").addEventListener("click", () => logout())
     }
 
     // WebRTC
@@ -287,17 +311,22 @@ const gikopoi = function ()
         socket.emit("user_stream_data", STOP_STREAM)
     }
 
+    async function logout()
+    {
+        await fetch("/logout", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userID: myUserID })
+        })
+    }
+
     return {
-        login: function (username)
+        login: async function (username)
         {
-            loadRoom("bar")
-                .then(() =>
-                {
-                    registerKeybindings()
-                    connectToServer(username)
-                    paint()
-                })
-                .catch(console.error)
+            await loadRoom("bar")
+            registerKeybindings()
+            await connectToServer(username)
+            paint()
         }
     }
 }();
@@ -317,8 +346,9 @@ const app = new Vue({
             else
             {
                 this.loggedIn = true
-                gikopoi.login(this.username)
+                gikopoi.login(this.username).catch(console.error)
             }
         }
     }
 })
+
