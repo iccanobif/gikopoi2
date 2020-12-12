@@ -1,0 +1,12 @@
+#!/bin/sh
+
+branch=`git branch --show-current`
+
+
+if [ "$branch" != 'master' ]; then
+    exit 0;
+fi
+
+version=`cat version`
+echo $(( version + 1)) > version
+git add version

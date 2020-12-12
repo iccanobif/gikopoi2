@@ -1,0 +1,8 @@
+to start server, run:
+
+$ yarn start
+
+to enable automatic version bump run:
+
+$ git config core.hooksPath .githooks
+

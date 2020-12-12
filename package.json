@@ -8,8 +8,10 @@
     "express": "^4.16.2",
     "socket.io": "^3.0.4"
   },
+  "license": "Beerware",
   "scripts": {
-    "start": "cross-env DEBUG=* node index.js",
+    "start-debug": "cross-env DEBUG=* node index.js",
+    "start": "node index.js",
     "dev": "nodemon index.js"
   },
   "devDependencies": {
