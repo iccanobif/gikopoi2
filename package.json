@@ -4,9 +4,9 @@
   "description": "gikopoi2",
   "main": "index.js",
   "dependencies": {
+    "cross-env": "^7.0.3",
     "express": "^4.16.2",
-    "socket.io": "^2.0.4",
-    "cross-env": "^7.0.3"
+    "socket.io": "^3.0.4"
   },
   "scripts": {
     "start": "cross-env DEBUG=* node index.js",
