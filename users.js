@@ -22,7 +22,7 @@ const users = {};
 
 module.exports.addNewUser = function (name)
 {
-    const p = new Player({ name: name, connected: true });
+    const p = new Player({ name });
     users[p.id] = p;
     return p;
 };

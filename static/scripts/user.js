@@ -19,7 +19,7 @@ export default class User
         this.framesUntilNextStep = STEP_LENGTH
     }
 
-    moveImmediatelyToPosition(logicalPositionX, logicalPositionY)
+    moveImmediatelyToPosition(logicalPositionX, logicalPositionY, direction)
     {
         this.logicalPositionX = logicalPositionX;
         this.logicalPositionY = logicalPositionY;
@@ -28,7 +28,7 @@ export default class User
 
         this.currentPhysicalPositionX = realTargetCoordinates.x;
         this.currentPhysicalPositionY = realTargetCoordinates.y;
-
+        this.direction = direction;
     }
 
     moveToPosition(logicalPositionX, logicalPositionY, direction)
@@ -97,5 +97,10 @@ export default class User
                     return isSitting ? this.character.frontSittingImage : this.character.frontStandingImage;
             }
         }
+    }
+
+    changeRoom(room)
+    {
+        this.room = room
     }
 }

@@ -8,17 +8,17 @@ const { rooms } = require("./rooms.js");
 
 /*
 Supported websocket messages:
-- user_connect(id):                 sent by the client, basically to ask the server to send the user list
-- user_msg(msg):                    sent by the client to the server, basically makes the server send a server_msg to everyone
-- disconnect:                       sent by the client to the server (wouldn't it be simpler to just do this stuff when the websocket dies?)
-- user_move:                        sent by the client to the server, move the avatar somewhere
-- server_connection_complete(dto):  sent by the server to a single client
-- server_msg(userName, msg):        sent by the server to ALL clients, it's a message to display on the chat
-- server_new_user_login(user):      sent by the server to ALL clients, notifies everyone that a new user logged in
-- server_user_disconnect(userId):   sent by the server to ALL clients, notifies eveyrone that a user logged out
-- server_move(userId, x, y):        sent by the server to ALL clients, asks everyone to move a character to coordinates (x, y)
-- server_reject_movement:           sent by the server to a single client
-- user_stream_data                  sent by the client to the server, it's a chunk of video/audio data
+- user_connect(id):                     sent by the client, basically to ask the server to send the user list
+- user_msg(msg):                        sent by the client to the server, basically makes the server send a server_msg to everyone
+- disconnect:                           sent by the client to the server (wouldn't it be simpler to just do this stuff when the websocket dies?)
+- user_move:                            sent by the client to the server, move the avatar somewhere
+- server_connection_complete(dto):      sent by the server to a single client
+- server_msg(userName, msg):            sent by the server to ALL clients, it's a message to display on the chat
+- server_new_user_login(user):          sent by the server to ALL clients, notifies everyone that a new user logged in
+- server_user_disconnect(userId):       sent by the server to ALL clients, notifies eveyrone that a user logged out
+- server_move(userId, x, y, direction): sent by the server to ALL clients, asks everyone to move a character to coordinates (x, y)
+- server_reject_movement:               sent by the server to a single client
+- user_stream_data                      sent by the client to the server, it's a chunk of video/audio data
 */
 
 io.on("connection", function (socket)
@@ -109,7 +109,12 @@ io.on("connection", function (socket)
                 console.log(user.id, "moved", direction, newPosition.x, newPosition.y);
             }
 
-            io.emit("server_move", user.id, user.position[0], user.position[1], user.direction);
+            io.emit("server_move",
+                    user.id,
+                    user.position[0],
+                    user.position[1],
+                    user.direction,
+                    false);
         }
         catch (e)
         {
@@ -139,6 +144,15 @@ io.on("connection", function (socket)
         const { targetRoomId } = data
 
         currentRoom = rooms[targetRoomId]
+
+        user.position = [currentRoom.spawnPoint.x, currentRoom.spawnPoint.y]
+
+        io.emit("server_move",
+            user.id,
+            currentRoom.spawnPoint.x,
+            currentRoom.spawnPoint.y,
+            currentRoom.spawnPoint.direction, 
+            true);
 
         console.log("switched to room", targetRoomId)
         // notify all users that were in the same room that this user left

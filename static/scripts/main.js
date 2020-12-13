@@ -51,13 +51,19 @@ const gikopoi = function ()
             chatLog.scrollTop = chatLog.scrollHeight;
         });
 
-        socket.on("server_move", function (userId, x, y, direction)
+        socket.on("server_move", function (userId, x, y, direction, isInstant)
         {
             const user = users[userId];
-            user.moveToPosition(x, y, direction)
+            if (isInstant)
+                user.moveImmediatelyToPosition(x, y, direction)
+            else
+                user.moveToPosition(x, y, direction)
 
             if (userId == myUserID)
+            {
                 isWaitingForServerResponseOnMovement = false
+                justSpawnedToThisRoom = false
+            }
         });
 
         socket.on("server_reject_movement", () => isWaitingForServerResponseOnMovement = false)
@@ -118,21 +124,23 @@ const gikopoi = function ()
     function addUser(userDTO)
     {
         const newUser = new User(currentRoom, gikoCharacter, userDTO.name);
-        newUser.moveImmediatelyToPosition(userDTO.position[0], userDTO.position[1]);
-        newUser.direction = userDTO.direction;
+        newUser.moveImmediatelyToPosition(userDTO.position[0], userDTO.position[1], userDTO.direction);
         users[userDTO.id] = newUser;
     }
 
-    function drawImage(image, x, y)
+    function drawImage(image, x, y, roomScale)
     {
         if (!image) return // image might be null when rendering a room that hasn't been fully loaded
+
+        if (!roomScale)
+            roomScale = 1
 
         const context = document.getElementById("room-canvas").getContext("2d");
         context.drawImage(image,
             x,
-            y - image.height * scale,
-            image.width * scale,
-            image.height * scale)
+            y - image.height * scale * roomScale,
+            image.width * scale * roomScale,
+            image.height * scale * roomScale)
     }
 
     function drawHorizontallyFlippedImage(image, x, y)
@@ -157,8 +165,11 @@ const gikopoi = function ()
     // TODO: Refactor this entire function
     async function paint(timestamp)
     {
+        const context = document.getElementById("room-canvas").getContext("2d");
+        context.fillStyle = "#c0c0c0"
+        context.fillRect(0, 0, 721, 511)
         // draw background
-        drawImage(currentRoom.backgroundImage, 0, 511)
+        drawImage(currentRoom.backgroundImage, 0, 511, currentRoom.scale)
 
         const allObjects = currentRoom.objects.map(o => ({
             o,
@@ -181,7 +192,7 @@ const gikopoi = function ()
         {
             if (o.type == "room-object")
             {
-                drawImage(o.o.image, o.o.physicalPositionX, o.o.physicalPositionY)
+                drawImage(o.o.image, o.o.physicalPositionX, o.o.physicalPositionY, currentRoom.scale)
             }
             else // o.type == "user"
             {
@@ -227,6 +238,7 @@ const gikopoi = function ()
         const { targetRoomId } = door
 
         await loadRoom(targetRoomId)
+        currentUser.changeRoom(currentRoom)
 
         socket.emit("user_change_room", { targetRoomId });
     }
@@ -253,7 +265,6 @@ const gikopoi = function ()
             return
 
         isWaitingForServerResponseOnMovement = true
-        justSpawnedToThisRoom = false
         socket.emit("user_move", direction);
     }
 

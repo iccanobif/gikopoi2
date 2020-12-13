@@ -1,5 +1,6 @@
 module.exports.rooms = {
     bar: {
+        scale: 1,
         grid: [9, 9],
         originCoordinates: { x: 0, y: 660 },
         spawnPoint: { x: 8, y: 4 },
@@ -21,26 +22,20 @@ module.exports.rooms = {
         sit: [
             [1, 1],
             [1, 2],
-
             [3, 1],
             [3, 2],
-
             [5, 1],
             [5, 2],
-
             [7, 1],
             [7, 2],
-
             [1, 5],
             [1, 6],
             [1, 7],
-
             [2, 4],
             [3, 4],
             [4, 4],
             [5, 4],
             [6, 4],
-
             [7, 5],
             [7, 6],
             [7, 7]
@@ -48,22 +43,17 @@ module.exports.rooms = {
         blocked: [
             [2, 1],
             [2, 2],
-
             [6, 1],
             [6, 2],
-
             [2, 5],
             [3, 5],
             [4, 5],
             [5, 5],
             [6, 5],
-
             [2, 6],
             [2, 7],
-
             [6, 6],
             [6, 7],
-
             [1, 8],
             [2, 8],
             [3, 8],
@@ -80,11 +70,26 @@ module.exports.rooms = {
         ]
     },
     admin_st: {
-        grid: [9, 10],
+        scale: 160 / 200,
+        grid: [10, 9],
         originCoordinates: { x: 18, y: 614 },
+        spawnPoint: { x: 5, y: 2, direction: "right" },
         objects: [],
         sit: [],
-        blocked: [],
+        blocked: [
+            [0,5],
+            [1,5],
+            [2,5],
+            [3,5],
+            [4,5],
+            [5,5],
+            [5,4],
+            [6,5],
+            [7,5],
+            [8,5],
+            [9,5],
+            [9,4],
+        ],
         doors: []
     }
 }

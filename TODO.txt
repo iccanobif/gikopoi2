@@ -25,11 +25,11 @@ STUFF TO ADD TO DOCUMENTATION:
     rules for making assets:
         everything has a width of 160
 
-        ／＼
-   x↗ ／    ＼
-    ／        ＼
-  ／            ＼
-  ＼            ／
-    ＼        ／
-   y↘ ＼    ／
-        ＼／
+            ／＼
+ LEFT  x↗ ／    ＼  UP
+        ／        ＼
+      ／            ＼
+      ＼            ／
+ DOWN   ＼        ／  RIGHT
+       y↘ ＼    ／
+            ＼／
