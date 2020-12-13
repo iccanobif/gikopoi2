@@ -73,9 +73,10 @@ module.exports.rooms = {
             [7, 8]
         ],
         doors: [
-            [[0, 0], "bar_street", [1, 7], 1],
-            [[3, 7], "underground", [0, 2], 1],
-            [[8, 4], "bar_street", [3, 5], 1]
+            // [[0, 0], "bar_street", [1, 7], 1],
+            // [[3, 7], "underground", [0, 2], 1],
+            // [[8, 4], "bar_street", [3, 5], 1]
+            { x: 8, y: 4, targetRoomId: "admin_st", targetX: 0, targetY: 0 }
         ]
     },
     admin_st: {

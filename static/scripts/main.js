@@ -19,6 +19,7 @@ const gikopoi = function ()
     const gikoCharacter = new Character("giko")
     let myUserID = null;
     let isWaitingForServerResponseOnMovement = false
+    let justSpawnedToThisRoom = true
 
     async function connectToServer(username)
     {
@@ -124,6 +125,8 @@ const gikopoi = function ()
 
     function drawImage(image, x, y)
     {
+        if (!image) return // image might be null when rendering a room that hasn't been fully loaded
+
         const context = document.getElementById("room-canvas").getContext("2d");
         context.drawImage(image,
             x,
@@ -199,12 +202,38 @@ const gikopoi = function ()
                 o.o.spendTime()
             }
         }
+        changeRoomIfSteppingOnDoor()
 
         requestAnimationFrame(paint)
     }
 
+    async function changeRoomIfSteppingOnDoor()
+    {
+        if (justSpawnedToThisRoom)
+            return
+
+        const currentUser = users[myUserID]
+
+        if (currentUser.isWalking)
+            return
+
+        const door = currentRoom.doors.find(d =>
+            d.x == currentUser.logicalPositionX &&
+            d.y == currentUser.logicalPositionY)
+
+        if (!door)
+            return
+
+        const { targetRoomId } = door
+
+        await loadRoom(targetRoomId)
+
+        socket.emit("user_change_room", { targetRoomId });
+    }
+
     async function loadRoom(roomName)
     {
+        justSpawnedToThisRoom = true
         currentRoom = await (await fetch("/rooms/" + roomName)).json()
 
         currentRoom.backgroundImage = await loadImage("rooms/" + roomName + "/background.png")
@@ -215,7 +244,6 @@ const gikopoi = function ()
             o.physicalPositionX = x
             o.physicalPositionY = y
         }
-        await gikoCharacter.loadImages()
         document.getElementById("room-canvas").focus()
     }
 
@@ -225,6 +253,7 @@ const gikopoi = function ()
             return
 
         isWaitingForServerResponseOnMovement = true
+        justSpawnedToThisRoom = false
         socket.emit("user_move", direction);
     }
 
@@ -253,7 +282,6 @@ const gikopoi = function ()
         const canvas = document.getElementById("room-canvas")
 
         canvas.addEventListener("keydown", onKeyDown);
-
 
         const inputTextbox = document.getElementById("textBox")
 
@@ -313,6 +341,7 @@ const gikopoi = function ()
     return {
         login: async function (username)
         {
+            await gikoCharacter.loadImages()
             await loadRoom("bar")
             registerKeybindings()
             await connectToServer(username)

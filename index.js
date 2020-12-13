@@ -134,11 +134,15 @@ io.on("connection", function (socket)
         console.log("received stream data...")
         io.emit("server_stream_data", data)
     })
-    socket.on("user_change_room", function (roomId)
+    socket.on("user_change_room", function (data)
     {
+        const { targetRoomId } = data
+
+        currentRoom = rooms[targetRoomId]
+
+        console.log("switched to room", targetRoomId)
         // notify all users that were in the same room that this user left
         // notify all users in the new room that a new friend came in
-        
     })
 });
 
