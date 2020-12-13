@@ -4,14 +4,14 @@ const app = express();
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
 const users = require("./users.js");
-const { bar } = require("./static/rooms/bar/data.js");
+const { rooms } = require("./rooms.js");
 
 /*
 Supported websocket messages:
 - user_connect(id):                 sent by the client, basically to ask the server to send the user list
 - user_msg(msg):                    sent by the client to the server, basically makes the server send a server_msg to everyone
 - disconnect:                       sent by the client to the server (wouldn't it be simpler to just do this stuff when the websocket dies?)
-- user_move:                        sent by the client to the server, move the avater somewhere
+- user_move:                        sent by the client to the server, move the avatar somewhere
 - server_connection_complete(dto):  sent by the server to a single client
 - server_msg(userName, msg):        sent by the server to ALL clients, it's a message to display on the chat
 - server_new_user_login(user):      sent by the server to ALL clients, notifies everyone that a new user logged in
@@ -26,6 +26,7 @@ io.on("connection", function (socket)
     console.log("Connection attempt");
 
     let user = null;
+    let currentRoom = rooms.bar
 
     socket.on("user_connect", function (userId)
     {
@@ -96,11 +97,11 @@ io.on("connection", function (socket)
                 // prevent going outside of the map
                 if (newPosition.x < 0) { rejectMovement(); return }
                 if (newPosition.y < 0) { rejectMovement(); return }
-                if (newPosition.x >= bar.grid[0]) { rejectMovement(); return }
-                if (newPosition.y >= bar.grid[1]) { rejectMovement(); return }
+                if (newPosition.x >= currentRoom.grid[0]) { rejectMovement(); return }
+                if (newPosition.y >= currentRoom.grid[1]) { rejectMovement(); return }
 
                 // prevent moving over a blocked square
-                if (bar.blocked.filter(p => p[0] == newPosition.x && p[1] == newPosition.y).length > 0)
+                if (currentRoom.blocked.filter(p => p[0] == newPosition.x && p[1] == newPosition.y).length > 0)
                 { rejectMovement(); return }
 
                 user.position = [newPosition.x, newPosition.y]
@@ -133,6 +134,12 @@ io.on("connection", function (socket)
         console.log("received stream data...")
         io.emit("server_stream_data", data)
     })
+    socket.on("user_change_room", function (roomId)
+    {
+        // notify all users that were in the same room that this user left
+        // notify all users in the new room that a new friend came in
+        
+    })
 });
 
 app.use(express.static('static',
@@ -142,7 +149,7 @@ app.use(express.static('static',
 app.get("/rooms/:roomName", (req, res) =>
 {
     const roomName = req.params.roomName
-    res.json(bar)
+    res.json(rooms[roomName])
 })
 
 app.post("/ping/:userId", async (req, res) =>

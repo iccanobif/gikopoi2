@@ -1,8 +1,9 @@
-localStorage.debug = '*'; // socket.io debug
+//localStorage.debug = '*'; // socket.io debug
+localStorage.clear()
 
 import Character from "./character.js";
 import User from "./user.js";
-import { loadImage, calculateRealCoordinates, scale, sleep } from "./utils.js";
+import { loadImage, calculateRealCoordinates, scale, sleep, postJson } from "./utils.js";
 import VideoChunkPlayer from "./video-chunk-player.js";
 
 const gikopoi = function ()
@@ -21,11 +22,7 @@ const gikopoi = function ()
 
     async function connectToServer(username)
     {
-        const loginResponse = await fetch("/login", {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userName: username })
-        })
+        const loginResponse = await postJson("/login", { userName: username })
 
         myUserID = await loginResponse.json()
 
@@ -38,7 +35,7 @@ const gikopoi = function ()
 
         socket.on("server_connection_complete", async function (dto)
         {
-            for (var u in dto.users)
+            for (const u in dto.users)
                 addUser(dto.users[u]);
         });
 
@@ -55,7 +52,7 @@ const gikopoi = function ()
 
         socket.on("server_move", function (userId, x, y, direction)
         {
-            var user = users[userId];
+            const user = users[userId];
             user.moveToPosition(x, y, direction)
 
             if (userId == myUserID)
@@ -66,7 +63,7 @@ const gikopoi = function ()
 
         socket.on("server_new_direction", function (userId, direction)
         {
-            var user = users[userId];
+            const user = users[userId];
             user.direction = direction;
         });
 
@@ -99,12 +96,9 @@ const gikopoi = function ()
 
         let version = Infinity
 
-        async function ping() {
-            const response = await fetch("/ping/" + myUserID, {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: myUserID })
-            })
+        async function ping()
+        {
+            const response = await postJson("/ping/" + myUserID, { userId: myUserID })
             const { version: newVersion } = await response.json()
             console.log(newVersion)
             if (newVersion > version)
@@ -313,11 +307,7 @@ const gikopoi = function ()
 
     async function logout()
     {
-        await fetch("/logout", {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userID: myUserID })
-        })
+        await postJson("/logout", { userID: myUserID })
     }
 
     return {

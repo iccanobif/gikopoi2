@@ -4,7 +4,7 @@ function generateId()
     return nextUserID++;
 }
 
-var Player = function (options)
+const Player = function (options)
 {
     if (options === undefined) options = {};
 
@@ -18,11 +18,11 @@ var Player = function (options)
     this.lastPing = Date.now();
 }
 
-var users = {};
+const users = {};
 
 module.exports.addNewUser = function (name)
 {
-    var p = new Player({ name: name, connected: true });
+    const p = new Player({ name: name, connected: true });
     users[p.id] = p;
     return p;
 };
@@ -31,8 +31,8 @@ module.exports.getConnectedUserList = function ()
 {
     //It'd be nice to benchmark this and check if not sending through the wire the disconnected users
     //is worth iterating through "users"' properties like this (I expect it is).
-    var output = {};
-    for (var u in users)
+    const output = {};
+    for (const u in users)
         if (users.hasOwnProperty(u)
             && users[u].connected == true)
         {
