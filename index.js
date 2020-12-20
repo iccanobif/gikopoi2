@@ -12,7 +12,7 @@ Supported websocket messages:
 - user_msg(msg):                        sent by the client to the server, basically makes the server send a server_msg to everyone
 - disconnect:                           sent by the client to the server (wouldn't it be simpler to just do this stuff when the websocket dies?)
 - user_move:                            sent by the client to the server, move the avatar somewhere
-- server_connection_complete(dto):      sent by the server to a single client
+- server_update_current_room_users(dto):      sent by the server to a single client
 - server_msg(userName, msg):            sent by the server to ALL clients, it's a message to display on the chat
 - server_user_joined_room(user):          sent by the server to ALL clients, notifies everyone that a new user logged in
 - server_user_left_room(userId):       sent by the server to ALL clients, notifies everyone that a user logged out
@@ -36,8 +36,8 @@ io.on("connection", function (socket)
 
             console.log("userId: " + userId + " name: " + user.name);
 
-            socket.emit("server_connection_complete", {
-                users: users.getConnectedUserList()
+            socket.emit("server_update_current_room_users", {
+                users: users.getConnectedUserList(user.roomId)
             })
             socket.join(user.roomId)
         }
@@ -129,6 +129,10 @@ io.on("connection", function (socket)
         user.roomId = targetRoomId
         socket.join(targetRoomId)
 
+        socket.emit("server_update_current_room_users", {
+            users: users.getConnectedUserList(targetRoomId)
+        })
+
         io.to(targetRoomId).emit("server_user_joined_room", user);
     })
 });
@@ -219,7 +223,7 @@ app.post("/logout", (req, res) =>
 // Disconnect users that have failed to ping in the last 30 seconds
 setInterval(() =>
 {
-    const allUsers = users.getConnectedUserList()
+    const allUsers = users.getConnectedUserList(null)
     for (const user of Object.values(allUsers))
         if (Date.now() - user.lastPing > 30 * 1000)
             disconnectUser(user)

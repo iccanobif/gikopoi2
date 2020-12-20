@@ -4,9 +4,8 @@ const STEP_LENGTH = 8;
 
 export default class User
 {
-    constructor(room, character, name)
+    constructor(character, name)
     {
-        this.room = room;
         this.name = name;
         this.character = character;
 
@@ -19,12 +18,13 @@ export default class User
         this.framesUntilNextStep = STEP_LENGTH
     }
 
-    moveImmediatelyToPosition(logicalPositionX, logicalPositionY, direction)
+    moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)
     {
+        console.log("moveImmediatelyToPosition for user", this.name)
         this.logicalPositionX = logicalPositionX;
         this.logicalPositionY = logicalPositionY;
 
-        const realTargetCoordinates = calculateRealCoordinates(this.room, this.logicalPositionX, this.logicalPositionY);
+        const realTargetCoordinates = calculateRealCoordinates(room, this.logicalPositionX, this.logicalPositionY);
 
         this.currentPhysicalPositionX = realTargetCoordinates.x;
         this.currentPhysicalPositionY = realTargetCoordinates.y;
@@ -42,7 +42,7 @@ export default class User
     }
 
     // TODO really, find a better name for this function
-    spendTime()
+    spendTime(room)
     {
         const walkingSpeedX = BLOCK_WIDTH / 80
         const walkingSpeedY = BLOCK_HEIGHT / 80
@@ -50,7 +50,7 @@ export default class User
         if (!this.isWalking)
             return
 
-        const realTargetCoordinates = calculateRealCoordinates(this.room, this.logicalPositionX, this.logicalPositionY);
+        const realTargetCoordinates = calculateRealCoordinates(room, this.logicalPositionX, this.logicalPositionY);
 
         const xDelta = Math.min(Math.abs(this.currentPhysicalPositionX - realTargetCoordinates.x), walkingSpeedX)
         const yDelta = Math.min(Math.abs(this.currentPhysicalPositionY - realTargetCoordinates.y), walkingSpeedY)
@@ -69,7 +69,7 @@ export default class User
             this.framesUntilNextStep = STEP_LENGTH
     }
 
-    getCurrentImage()
+    getCurrentImage(room)
     {
         if (this.isWalking)
         {
@@ -85,7 +85,7 @@ export default class User
         }
         else
         {
-            const isSitting = !!this.room.sit.find(s => s[0] == this.logicalPositionX && s[1] == this.logicalPositionY)
+            const isSitting = !!room.sit.find(s => s[0] == this.logicalPositionX && s[1] == this.logicalPositionY)
 
             switch (this.direction)
             {
@@ -97,10 +97,5 @@ export default class User
                     return isSitting ? this.character.frontSittingImage : this.character.frontStandingImage;
             }
         }
-    }
-
-    changeRoom(room)
-    {
-        this.room = room
     }
 }

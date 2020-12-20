@@ -28,14 +28,13 @@ module.exports.addNewUser = function (name)
     return p;
 };
 
-module.exports.getConnectedUserList = function ()
+module.exports.getConnectedUserList = function (roomId)
 {
-    //It'd be nice to benchmark this and check if not sending through the wire the disconnected users
-    //is worth iterating through "users"' properties like this (I expect it is).
     const output = {};
     for (const u in users)
         if (users.hasOwnProperty(u)
-            && users[u].connected == true)
+            && users[u].connected == true
+            && (roomId == null || users[u].roomId == roomId))
         {
             output[u] = users[u];
         }

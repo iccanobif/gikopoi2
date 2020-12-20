@@ -14,7 +14,7 @@ const gikopoi = function ()
 
     const queryString = new URLSearchParams(window.location.search);
 
-    const users = {};
+    let users = {};
     let currentRoom = null;
     const gikoCharacter = new Character("giko")
     let myUserID = null;
@@ -34,8 +34,9 @@ const gikopoi = function ()
             socket.emit("user_connect", myUserID);
         });
 
-        socket.on("server_connection_complete", async function (dto)
+        socket.on("server_update_current_room_users", async function (dto)
         {
+            users = {}
             for (const u in dto.users)
                 addUser(dto.users[u]);
         });
@@ -59,7 +60,7 @@ const gikopoi = function ()
             const oldY = user.logicalPositionY
 
             if (isInstant)
-                user.moveImmediatelyToPosition(x, y, direction)
+                user.moveImmediatelyToPosition(currentRoom, x, y, direction)
             else
                 user.moveToPosition(x, y, direction)
 
@@ -80,8 +81,7 @@ const gikopoi = function ()
             if (user.id == myUserID)
             {
                 await loadRoom(user.roomId)
-                users[myUserID].changeRoom(currentRoom)
-                users[myUserID].moveImmediatelyToPosition(user.position.x, user.position.y, user.direction)
+                users[myUserID].moveImmediatelyToPosition(currentRoom, user.position.x, user.position.y, user.direction)
             }
             else
             {
@@ -115,7 +115,6 @@ const gikopoi = function ()
         {
             const response = await postJson("/ping/" + myUserID, { userId: myUserID })
             const { version: newVersion } = await response.json()
-            console.log(newVersion)
             if (newVersion > version)
             {
                 // TODO refresh page while keeping username ,selected character and room
@@ -131,8 +130,8 @@ const gikopoi = function ()
 
     function addUser(userDTO)
     {
-        const newUser = new User(currentRoom, gikoCharacter, userDTO.name);
-        newUser.moveImmediatelyToPosition(userDTO.position.x, userDTO.position.y, userDTO.direction);
+        const newUser = new User(gikoCharacter, userDTO.name);
+        newUser.moveImmediatelyToPosition(currentRoom, userDTO.position.x, userDTO.position.y, userDTO.direction);
         users[userDTO.id] = newUser;
     }
 
@@ -210,15 +209,15 @@ const gikopoi = function ()
                 {
                     case "up":
                     case "right":
-                        drawHorizontallyFlippedImage(o.o.getCurrentImage(), o.o.currentPhysicalPositionX, o.o.currentPhysicalPositionY)
+                        drawHorizontallyFlippedImage(o.o.getCurrentImage(currentRoom), o.o.currentPhysicalPositionX, o.o.currentPhysicalPositionY)
                         break;
                     case "down":
                     case "left":
-                        drawImage(o.o.getCurrentImage(), o.o.currentPhysicalPositionX, o.o.currentPhysicalPositionY)
+                        drawImage(o.o.getCurrentImage(currentRoom), o.o.currentPhysicalPositionX, o.o.currentPhysicalPositionY)
                         break;
                 }
 
-                o.o.spendTime()
+                o.o.spendTime(currentRoom)
             }
         }
         changeRoomIfSteppingOnDoor()
@@ -252,6 +251,7 @@ const gikopoi = function ()
     {
         justSpawnedToThisRoom = true
         currentRoom = await (await fetch("/rooms/" + roomName)).json()
+        console.log("currentRoom updated")
 
         currentRoom.backgroundImage = await loadImage("rooms/" + roomName + "/background.png")
         for (const o of currentRoom.objects)
@@ -261,6 +261,12 @@ const gikopoi = function ()
             o.physicalPositionX = x
             o.physicalPositionY = y
         }
+
+        // Force update of user coordinates using the current room's logics (origin coordinates, etc)
+
+        for (const u of Object.values(users))
+            u.moveImmediatelyToPosition(currentRoom, u.logicalPositionX, u.logicalPositionY, u.direction)
+
         document.getElementById("room-canvas").focus()
     }
 
