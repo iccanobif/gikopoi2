@@ -14,8 +14,8 @@ Supported websocket messages:
 - user_move:                            sent by the client to the server, move the avatar somewhere
 - server_connection_complete(dto):      sent by the server to a single client
 - server_msg(userName, msg):            sent by the server to ALL clients, it's a message to display on the chat
-- server_new_user_login(user):          sent by the server to ALL clients, notifies everyone that a new user logged in
-- server_user_disconnect(userId):       sent by the server to ALL clients, notifies eveyrone that a user logged out
+- server_user_joined_room(user):          sent by the server to ALL clients, notifies everyone that a new user logged in
+- server_user_left_room(userId):       sent by the server to ALL clients, notifies everyone that a user logged out
 - server_move(userId, x, y, direction): sent by the server to ALL clients, asks everyone to move a character to coordinates (x, y)
 - server_reject_movement:               sent by the server to a single client
 - user_stream_data                      sent by the client to the server, it's a chunk of video/audio data
@@ -26,7 +26,7 @@ io.on("connection", function (socket)
     console.log("Connection attempt");
 
     let user = null;
-    let currentRoom = rooms.bar
+    let currentRoom = rooms.bar;
 
     socket.on("user_connect", function (userId)
     {
@@ -39,6 +39,7 @@ io.on("connection", function (socket)
             socket.emit("server_connection_complete", {
                 users: users.getConnectedUserList()
             })
+            socket.join(user.roomId)
         }
         catch (e)
         {
@@ -50,25 +51,14 @@ io.on("connection", function (socket)
         try
         {
             console.log(user.name + ": " + msg);
-            io.emit("server_msg", "<span class=\"messageAuthor\">" + user.name + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
+            io.to(user.roomId).emit("server_msg", "<span class=\"messageAuthor\">" + user.name + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
         }
         catch (e)
         {
-            console.log(e.message);
+            console.log(e.message + " " + e.stack);
         }
     });
 
-    socket.on("disconnect", function ()
-    {
-        try
-        {
-
-        }
-        catch (e)
-        {
-            console.log(e.message);
-        }
-    });
     socket.on("user_move", function (direction)
     {
         try
@@ -77,86 +67,69 @@ io.on("connection", function (socket)
             {
                 // ONLY CHANGE DIRECTION
                 user.direction = direction;
-                console.log(user.id, "facing", direction)
             }
             else
             {
                 // MOVE
-                const newPosition = { x: user.position[0], y: user.position[1] }
+                let newX = user.position.x
+                let newY = user.position.y
 
                 switch (direction)
                 {
-                    case "up": newPosition.y++; break;
-                    case "down": newPosition.y--; break;
-                    case "left": newPosition.x--; break;
-                    case "right": newPosition.x++; break;
+                    case "up": newY++; break;
+                    case "down": newY--; break;
+                    case "left": newX--; break;
+                    case "right": newX++; break;
                 }
 
                 const rejectMovement = () => socket.emit("server_reject_movement")
 
                 // prevent going outside of the map
-                if (newPosition.x < 0) { rejectMovement(); return }
-                if (newPosition.y < 0) { rejectMovement(); return }
-                if (newPosition.x >= currentRoom.grid[0]) { rejectMovement(); return }
-                if (newPosition.y >= currentRoom.grid[1]) { rejectMovement(); return }
+                if (newX < 0) { rejectMovement(); return }
+                if (newY < 0) { rejectMovement(); return }
+                if (newX >= currentRoom.grid[0]) { rejectMovement(); return }
+                if (newY >= currentRoom.grid[1]) { rejectMovement(); return }
 
                 // prevent moving over a blocked square
-                if (currentRoom.blocked.filter(p => p[0] == newPosition.x && p[1] == newPosition.y).length > 0)
-                { rejectMovement(); return }
+                if (currentRoom.blocked.find(p => p[0] == newX && p[1] == newY))
+                {
+                    rejectMovement();
+                    return
+                }
 
-                user.position = [newPosition.x, newPosition.y]
-
-                console.log(user.id, "moved", direction, newPosition.x, newPosition.y);
+                user.position.x = newX
+                user.position.y = newY
             }
 
-            io.emit("server_move",
-                    user.id,
-                    user.position[0],
-                    user.position[1],
-                    user.direction,
-                    false);
+            io.to(user.roomId).emit("server_move",
+                user.id,
+                user.position.x,
+                user.position.y,
+                user.direction,
+                false);
         }
         catch (e)
         {
-            console.log(e.message);
-        }
-    });
-    socket.on("user_new_direction", function (direction)
-    {
-        try
-        {
-            console.log(user.id + " changing direction: " + direction);
-            user.direction = direction;
-            io.emit("server_new_direction", user.id, direction);
-        }
-        catch (e)
-        {
-            console.log(e.message);
+            console.log(e.message + " " + e.stack);
         }
     });
     socket.on("user_stream_data", function (data)
     {
-        console.log("received stream data...")
-        io.emit("server_stream_data", data)
+        io.to(user.roomId).emit("server_stream_data", data)
     })
     socket.on("user_change_room", function (data)
     {
-        const { targetRoomId } = data
+        const { targetRoomId, targetX, targetY } = data
 
         currentRoom = rooms[targetRoomId]
 
-        user.position = [currentRoom.spawnPoint.x, currentRoom.spawnPoint.y]
+        io.to(user.roomId).emit("server_user_left_room", user.id);
+        socket.leave(user.roomId)
+        user.position = { x: targetX, y: targetY }
+        user.roomId = targetRoomId
+        socket.join(targetRoomId)
 
-        io.emit("server_move",
-            user.id,
-            currentRoom.spawnPoint.x,
-            currentRoom.spawnPoint.y,
-            currentRoom.spawnPoint.direction, 
-            true);
-
-        console.log("switched to room", targetRoomId)
-        // notify all users that were in the same room that this user left
-        // notify all users in the new room that a new friend came in
+        io.to(targetRoomId).emit("server_user_joined_room", user);
     })
 });
 
@@ -202,7 +175,7 @@ app.post("/login", (req, res) =>
 {
     const { userName } = req.body
 
-    console.log(userName)
+    console.log(userName, "logging in")
     if (!userName)
     {
         res.statusCode = 500
@@ -214,7 +187,7 @@ app.post("/login", (req, res) =>
         res.json(user.id)
 
         io.emit("server_msg", "SYSTEM", userName + " connected");
-        io.emit("server_new_user_login", user);
+        io.emit("server_user_joined_room", user);
     }
 })
 
@@ -222,9 +195,8 @@ function disconnectUser(user)
 {
     console.log("Disconnecting user ", user.id, user.name)
     user["connected"] = false;
-    console.log(user.name + " disconnected");
     io.emit("server_msg", "SYSTEM", user.name + " disconnected");
-    io.emit("server_user_disconnect", user.id);
+    io.emit("server_user_left_room", user.id);
 }
 
 app.post("/logout", (req, res) =>

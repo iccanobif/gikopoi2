@@ -54,6 +54,10 @@ const gikopoi = function ()
         socket.on("server_move", function (userId, x, y, direction, isInstant)
         {
             const user = users[userId];
+
+            const oldX = user.logicalPositionX
+            const oldY = user.logicalPositionY
+
             if (isInstant)
                 user.moveImmediatelyToPosition(x, y, direction)
             else
@@ -62,29 +66,33 @@ const gikopoi = function ()
             if (userId == myUserID)
             {
                 isWaitingForServerResponseOnMovement = false
-                justSpawnedToThisRoom = false
+                if (oldX != x || oldY != y)
+                    justSpawnedToThisRoom = false
             }
         });
 
         socket.on("server_reject_movement", () => isWaitingForServerResponseOnMovement = false)
 
-        socket.on("server_new_direction", function (userId, direction)
-        {
-            const user = users[userId];
-            user.direction = direction;
-        });
-
-        socket.on("server_new_user_login", function (user)
+        socket.on("server_user_joined_room", async function (user)
         {
             document.getElementById("login-sound").play()
 
-            if (user.id != myUserID)
+            if (user.id == myUserID)
+            {
+                await loadRoom(user.roomId)
+                users[myUserID].changeRoom(currentRoom)
+                users[myUserID].moveImmediatelyToPosition(user.position.x, user.position.y, user.direction)
+            }
+            else
+            {
                 addUser(user);
+            }
         });
 
-        socket.on("server_user_disconnect", function (userId)
+        socket.on("server_user_left_room", function (userId)
         {
-            delete users[userId];
+            if (userId != myUserID)
+                delete users[userId];
         });
 
         const receivedVideoPlayer = new VideoChunkPlayer(document.getElementById("received-video-1"))
@@ -124,7 +132,7 @@ const gikopoi = function ()
     function addUser(userDTO)
     {
         const newUser = new User(currentRoom, gikoCharacter, userDTO.name);
-        newUser.moveImmediatelyToPosition(userDTO.position[0], userDTO.position[1], userDTO.direction);
+        newUser.moveImmediatelyToPosition(userDTO.position.x, userDTO.position.y, userDTO.direction);
         users[userDTO.id] = newUser;
     }
 
@@ -235,12 +243,9 @@ const gikopoi = function ()
         if (!door)
             return
 
-        const { targetRoomId } = door
+        const { targetRoomId, targetX, targetY } = door
 
-        await loadRoom(targetRoomId)
-        currentUser.changeRoom(currentRoom)
-
-        socket.emit("user_change_room", { targetRoomId });
+        socket.emit("user_change_room", { targetRoomId, targetX, targetY });
     }
 
     async function loadRoom(roomName)

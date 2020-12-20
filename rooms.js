@@ -66,7 +66,7 @@ module.exports.rooms = {
             // [[0, 0], "bar_street", [1, 7], 1],
             // [[3, 7], "underground", [0, 2], 1],
             // [[8, 4], "bar_street", [3, 5], 1]
-            { x: 8, y: 4, targetRoomId: "admin_st", targetX: 0, targetY: 0 }
+            { x: 8, y: 4, targetRoomId: "admin_st", targetX: 0, targetY: 2 }
         ]
     },
     admin_st: {
@@ -77,19 +77,21 @@ module.exports.rooms = {
         objects: [],
         sit: [],
         blocked: [
-            [0,5],
-            [1,5],
-            [2,5],
-            [3,5],
-            [4,5],
-            [5,5],
-            [5,4],
-            [6,5],
-            [7,5],
-            [8,5],
-            [9,5],
-            [9,4],
+            [0, 5],
+            [1, 5],
+            [2, 5],
+            [3, 5],
+            [4, 5],
+            [5, 5],
+            [5, 4],
+            [6, 5],
+            [7, 5],
+            [8, 5],
+            [9, 5],
+            [9, 4],
         ],
-        doors: []
+        doors: [
+            { x: 0, y: 2, targetRoomId: "bar", targetX: 8, targetY: 4 }
+        ]
     }
 }

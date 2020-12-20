@@ -11,10 +11,11 @@ const Player = function (options)
     this.id = generateId();
 
     this.name = options["name"] === undefined ? "Anonymous" : options["name"];
-    this.position = options["position"] === undefined ? [8, 4] : options["position"];
+    this.position = options["position"] === undefined ? { x: 8, y: 4 } : options["position"];
     this.character = options["character"] === undefined ? "giko" : options["character"];
     this.direction = options["direction"] === undefined ? "left" : options["direction"];
     this.connected = options["connected"] === undefined ? true : options["connected"];
+    this.roomId = "bar"
     this.lastPing = Date.now();
 }
 
