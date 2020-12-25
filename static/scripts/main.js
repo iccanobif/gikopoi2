@@ -12,14 +12,13 @@ const gikopoi = function ()
 
     let socket = null;
 
-    const queryString = new URLSearchParams(window.location.search);
-
     let users = {};
     let currentRoom = null;
     const gikoCharacter = new Character("giko")
     let myUserID = null;
     let isWaitingForServerResponseOnMovement = false
     let justSpawnedToThisRoom = true
+    let isLoadingRoom = false
 
     async function connectToServer(username)
     {
@@ -203,18 +202,23 @@ const gikopoi = function ()
             }
             else // o.type == "user"
             {
-                drawCenteredText(o.o.name, o.o.currentPhysicalPositionX + 40, o.o.currentPhysicalPositionY - 95)
-
-                switch (o.o.direction)
+                if (!isLoadingRoom)
                 {
-                    case "up":
-                    case "right":
-                        drawHorizontallyFlippedImage(o.o.getCurrentImage(currentRoom), o.o.currentPhysicalPositionX, o.o.currentPhysicalPositionY)
-                        break;
-                    case "down":
-                    case "left":
-                        drawImage(o.o.getCurrentImage(currentRoom), o.o.currentPhysicalPositionX, o.o.currentPhysicalPositionY)
-                        break;
+                    // draw users only when the room is fully loaded, so that the "physical position" calculations
+                    // are done with the correct room's data.
+                    drawCenteredText(o.o.name, o.o.currentPhysicalPositionX + 40, o.o.currentPhysicalPositionY - 95)
+
+                    switch (o.o.direction)
+                    {
+                        case "up":
+                        case "right":
+                            drawHorizontallyFlippedImage(o.o.getCurrentImage(currentRoom), o.o.currentPhysicalPositionX, o.o.currentPhysicalPositionY)
+                            break;
+                        case "down":
+                        case "left":
+                            drawImage(o.o.getCurrentImage(currentRoom), o.o.currentPhysicalPositionX, o.o.currentPhysicalPositionY)
+                            break;
+                    }
                 }
 
                 o.o.spendTime(currentRoom)
@@ -227,20 +231,18 @@ const gikopoi = function ()
 
     async function changeRoomIfSteppingOnDoor()
     {
-        if (justSpawnedToThisRoom)
-            return
+        if (justSpawnedToThisRoom) return
+        if (isWaitingForServerResponseOnMovement) return
 
         const currentUser = users[myUserID]
 
-        if (currentUser.isWalking)
-            return
+        if (currentUser.isWalking) return
 
         const door = currentRoom.doors.find(d =>
             d.x == currentUser.logicalPositionX &&
             d.y == currentUser.logicalPositionY)
 
-        if (!door)
-            return
+        if (!door) return
 
         const { targetRoomId, targetX, targetY } = door
 
@@ -249,6 +251,7 @@ const gikopoi = function ()
 
     async function loadRoom(roomName)
     {
+        isLoadingRoom = true
         justSpawnedToThisRoom = true
         currentRoom = await (await fetch("/rooms/" + roomName)).json()
         console.log("currentRoom updated")
@@ -268,11 +271,12 @@ const gikopoi = function ()
             u.moveImmediatelyToPosition(currentRoom, u.logicalPositionX, u.logicalPositionY, u.direction)
 
         document.getElementById("room-canvas").focus()
+        isLoadingRoom = false
     }
 
     function sendNewPositionToServer(direction)
     {
-        if (isWaitingForServerResponseOnMovement || users[myUserID].isWalking)
+        if (isLoadingRoom || isWaitingForServerResponseOnMovement || users[myUserID].isWalking)
             return
 
         isWaitingForServerResponseOnMovement = true
