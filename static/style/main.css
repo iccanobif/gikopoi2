@@ -27,7 +27,6 @@ body
     width: 219px;
     top: 18px;
     left: 510px;
-    /* border: 10px solid #ad0000; */
 }
 #received-video-1 video
 {
@@ -35,5 +34,4 @@ body
     width: 219px;
     top: 18px;
     left: 0px;
-    /* border: 10px solid #ad0000; */
 }

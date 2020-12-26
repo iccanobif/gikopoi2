@@ -8,17 +8,17 @@ const { rooms } = require("./rooms.js");
 
 /*
 Supported websocket messages:
-- user_connect(id):                     sent by the client, basically to ask the server to send the user list
-- user_msg(msg):                        sent by the client to the server, basically makes the server send a server_msg to everyone
+- user-connect(id):                     sent by the client, basically to ask the server to send the user list
+- user-msg(msg):                        sent by the client to the server, basically makes the server send a server_msg to everyone
 - disconnect:                           sent by the client to the server (wouldn't it be simpler to just do this stuff when the websocket dies?)
-- user_move:                            sent by the client to the server, move the avatar somewhere
-- server_update_current_room_users(dto):      sent by the server to a single client
-- server_msg(userName, msg):            sent by the server to ALL clients, it's a message to display on the chat
-- server_user_joined_room(user):          sent by the server to ALL clients, notifies everyone that a new user logged in
-- server_user_left_room(userId):       sent by the server to ALL clients, notifies everyone that a user logged out
-- server_move(userId, x, y, direction): sent by the server to ALL clients, asks everyone to move a character to coordinates (x, y)
-- server_reject_movement:               sent by the server to a single client
-- user_stream_data                      sent by the client to the server, it's a chunk of video/audio data
+- user-move:                            sent by the client to the server, move the avatar somewhere
+- server-update-current-room-users(dto):      sent by the server to a single client
+- server-msg(userName, msg):            sent by the server to ALL clients, it's a message to display on the chat
+- server-user-joined-room(user):          sent by the server to ALL clients, notifies everyone that a new user logged in
+- server-user-left-room(userId):       sent by the server to ALL clients, notifies everyone that a user logged out
+- server-move(userId, x, y, direction): sent by the server to ALL clients, asks everyone to move a character to coordinates (x, y)
+- server-reject-movement:               sent by the server to a single client
+- user-stream-data                      sent by the client to the server, it's a chunk of video/audio data
 */
 
 io.on("connection", function (socket)
@@ -28,7 +28,7 @@ io.on("connection", function (socket)
     let user = null;
     let currentRoom = rooms.bar;
 
-    socket.on("user_connect", function (userId)
+    socket.on("user-connect", function (userId)
     {
         try
         {
@@ -36,7 +36,7 @@ io.on("connection", function (socket)
 
             console.log("userId: " + userId + " name: " + user.name);
 
-            socket.emit("server_update_current_room_users", {
+            socket.emit("server-update-current-room-users", {
                 users: users.getConnectedUserList(user.roomId)
             })
             socket.join(user.roomId)
@@ -46,12 +46,12 @@ io.on("connection", function (socket)
             console.log(e.message + " " + e.stack);
         }
     });
-    socket.on("user_msg", function (msg)
+    socket.on("user-msg", function (msg)
     {
         try
         {
             console.log(user.name + ": " + msg);
-            io.to(user.roomId).emit("server_msg", "<span class=\"messageAuthor\">" + user.name + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
+            io.to(user.roomId).emit("server-msg", "<span class=\"messageAuthor\">" + user.name + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
         }
         catch (e)
         {
@@ -59,7 +59,7 @@ io.on("connection", function (socket)
         }
     });
 
-    socket.on("user_move", function (direction)
+    socket.on("user-move", function (direction)
     {
         try
         {
@@ -82,7 +82,7 @@ io.on("connection", function (socket)
                     case "right": newX++; break;
                 }
 
-                const rejectMovement = () => socket.emit("server_reject_movement")
+                const rejectMovement = () => socket.emit("server-reject-movement")
 
                 // prevent going outside of the map
                 if (newX < 0) { rejectMovement(); return }
@@ -101,7 +101,7 @@ io.on("connection", function (socket)
                 user.position.y = newY
             }
 
-            io.to(user.roomId).emit("server_move",
+            io.to(user.roomId).emit("server-move",
                 user.id,
                 user.position.x,
                 user.position.y,
@@ -113,27 +113,27 @@ io.on("connection", function (socket)
             console.log(e.message + " " + e.stack);
         }
     });
-    socket.on("user_stream_data", function (data)
+    socket.on("user-stream-data", function (data)
     {
-        io.to(user.roomId).emit("server_stream_data", data)
+        io.to(user.roomId).emit("server-stream-data", data)
     })
-    socket.on("user_change_room", function (data)
+    socket.on("user-change-room", function (data)
     {
         const { targetRoomId, targetX, targetY } = data
 
         currentRoom = rooms[targetRoomId]
 
-        io.to(user.roomId).emit("server_user_left_room", user.id);
+        io.to(user.roomId).emit("server-user-left-room", user.id);
         socket.leave(user.roomId)
         user.position = { x: targetX, y: targetY }
         user.roomId = targetRoomId
         socket.join(targetRoomId)
 
-        socket.emit("server_update_current_room_users", {
+        socket.emit("server-update-current-room-users", {
             users: users.getConnectedUserList(targetRoomId)
         })
 
-        io.to(targetRoomId).emit("server_user_joined_room", user);
+        io.to(targetRoomId).emit("server-user-joined-room", user);
     })
 });
 
@@ -190,8 +190,8 @@ app.post("/login", (req, res) =>
         const user = users.addNewUser(userName);
         res.json(user.id)
 
-        io.emit("server_msg", "SYSTEM", userName + " connected");
-        io.emit("server_user_joined_room", user);
+        io.emit("server-msg", "SYSTEM", userName + " connected");
+        io.emit("server-user-joined-room", user);
     }
 })
 
@@ -199,8 +199,8 @@ function disconnectUser(user)
 {
     console.log("Disconnecting user ", user.id, user.name)
     user["connected"] = false;
-    io.emit("server_msg", "SYSTEM", user.name + " disconnected");
-    io.emit("server_user_left_room", user.id);
+    io.emit("server-msg", "SYSTEM", user.name + " disconnected");
+    io.emit("server-user-left-room", user.id);
 }
 
 app.post("/logout", (req, res) =>

@@ -30,17 +30,17 @@ const gikopoi = function ()
 
         socket.on("connect", function ()
         {
-            socket.emit("user_connect", myUserID);
+            socket.emit("user-connect", myUserID);
         });
 
-        socket.on("server_update_current_room_users", async function (dto)
+        socket.on("server-update-current-room-users", async function (dto)
         {
             users = {}
             for (const u in dto.users)
                 addUser(dto.users[u]);
         });
 
-        socket.on("server_msg", function (userName, msg)
+        socket.on("server-msg", function (userName, msg)
         {
             const chatLog = document.getElementById("chatLog");
             console.log(userName)
@@ -51,7 +51,7 @@ const gikopoi = function ()
             chatLog.scrollTop = chatLog.scrollHeight;
         });
 
-        socket.on("server_move", function (userId, x, y, direction, isInstant)
+        socket.on("server-move", function (userId, x, y, direction, isInstant)
         {
             const user = users[userId];
 
@@ -71,9 +71,9 @@ const gikopoi = function ()
             }
         });
 
-        socket.on("server_reject_movement", () => isWaitingForServerResponseOnMovement = false)
+        socket.on("server-reject-movement", () => isWaitingForServerResponseOnMovement = false)
 
-        socket.on("server_user_joined_room", async function (user)
+        socket.on("server-user-joined-room", async function (user)
         {
             document.getElementById("login-sound").play()
 
@@ -88,7 +88,7 @@ const gikopoi = function ()
             }
         });
 
-        socket.on("server_user_left_room", function (userId)
+        socket.on("server-user-left-room", function (userId)
         {
             if (userId != myUserID)
                 delete users[userId];
@@ -96,7 +96,7 @@ const gikopoi = function ()
 
         const receivedVideoPlayer = new VideoChunkPlayer(document.getElementById("received-video-1"))
 
-        socket.on("server_stream_data", function (data)
+        socket.on("server-stream-data", function (data)
         {
             if (data == STOP_STREAM)
             {
@@ -246,7 +246,7 @@ const gikopoi = function ()
 
         const { targetRoomId, targetX, targetY } = door
 
-        socket.emit("user_change_room", { targetRoomId, targetX, targetY });
+        socket.emit("user-change-room", { targetRoomId, targetX, targetY });
     }
 
     async function loadRoom(roomName)
@@ -280,7 +280,7 @@ const gikopoi = function ()
             return
 
         isWaitingForServerResponseOnMovement = true
-        socket.emit("user_move", direction);
+        socket.emit("user-move", direction);
     }
 
     function sendMessageToServer()
@@ -288,7 +288,7 @@ const gikopoi = function ()
         const inputTextbox = document.getElementById("textBox")
 
         if (inputTextbox.value == "") return;
-        socket.emit("user_msg", inputTextbox.value);
+        socket.emit("user-msg", inputTextbox.value);
         inputTextbox.value = "";
     }
 
@@ -345,7 +345,7 @@ const gikopoi = function ()
             let blob = await recorder.getBlob();
             if (webcamStream)
             {
-                socket.emit("user_stream_data", blob);
+                socket.emit("user-stream-data", blob);
             }
         }
     }
@@ -356,7 +356,7 @@ const gikopoi = function ()
             track.stop()
         document.getElementById("local-video").srcObject = webcamStream = null;
         document.getElementById("local-video").style.display = "none"
-        socket.emit("user_stream_data", STOP_STREAM)
+        socket.emit("user-stream-data", STOP_STREAM)
     }
 
     async function logout()
