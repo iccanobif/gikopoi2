@@ -4,33 +4,35 @@ function generateId()
     return nextUserID++;
 }
 
-const Player = function (options)
+class Player
 {
-    if (options === undefined) options = {};
+    public id: number = generateId();
+    public name: string = "Anonymous";
+    public position: { x: number, y: number } = { x: 8, y: 4 };
+    public character: 'giko' = 'giko';
+    public direction: 'up' | 'down' | 'left' | 'right' = "left";
+    public connected: boolean = true;
+    public roomId: string = "bar";
+    public lastPing = Date.now();
 
-    this.id = generateId();
-
-    this.name = options["name"] === undefined ? "Anonymous" : options["name"];
-    this.position = options["position"] === undefined ? { x: 8, y: 4 } : options["position"];
-    this.character = options["character"] === undefined ? "giko" : options["character"];
-    this.direction = options["direction"] === undefined ? "left" : options["direction"];
-    this.connected = options["connected"] === undefined ? true : options["connected"];
-    this.roomId = "bar"
-    this.lastPing = Date.now();
+    constructor(options: { name?: string })
+    {
+        if (options.name) this.name = options.name
+    }
 }
 
-const users = {};
+const users: { [id: number]: Player; } = {}
 
-module.exports.addNewUser = function (name)
+export function addNewUser(name: string)
 {
     const p = new Player({ name });
     users[p.id] = p;
     return p;
 };
 
-module.exports.getConnectedUserList = function (roomId)
+export function getConnectedUserList(roomId: string)
 {
-    const output = {};
+    const output: { [id: number]: Player; } = {};
     for (const u in users)
         if (users.hasOwnProperty(u)
             && users[u].connected == true
@@ -41,7 +43,7 @@ module.exports.getConnectedUserList = function (roomId)
     return output;
 };
 
-module.exports.getUser = function (userId)
+export function getUser(userId: number)
 {
     return users[userId];
 };
