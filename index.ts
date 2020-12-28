@@ -1,20 +1,21 @@
-const fs = require('fs');
-const express = require('express');
-const app = express();
+// const fs = require('fs');
+import express from "express"
+import { readFile } from "fs";
+const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
 const users = require("./users.js");
 const { rooms } = require("./rooms.js");
 
-io.on("connection", function (socket)
+io.on("connection", function (socket: any)
 {
     console.log("Connection attempt");
 
-    let user = null;
+    let user: any = null;
     let currentRoom = rooms.bar;
-    let currentStreamSlotId = null;
+    let currentStreamSlotId: number | null = null;
 
-    socket.on("user-connect", function (userId)
+    socket.on("user-connect", function (userId: number)
     {
         try
         {
@@ -32,7 +33,7 @@ io.on("connection", function (socket)
             console.log(e.message + " " + e.stack);
         }
     });
-    socket.on("user-msg", function (msg)
+    socket.on("user-msg", function (msg: string)
     {
         try
         {
@@ -45,7 +46,7 @@ io.on("connection", function (socket)
         }
     });
 
-    socket.on("user-move", function (direction)
+    socket.on("user-move", function (direction: 'up' | 'down' | 'left' | 'right')
     {
         try
         {
@@ -77,7 +78,7 @@ io.on("connection", function (socket)
                 if (newY >= currentRoom.grid[1]) { rejectMovement(); return }
 
                 // prevent moving over a blocked square
-                if (currentRoom.blocked.find(p => p[0] == newX && p[1] == newY))
+                if (currentRoom.blocked.find((p: { x: number, y: number }) => p.x == newX && p.y == newY))
                 {
                     rejectMovement();
                     return
@@ -99,13 +100,13 @@ io.on("connection", function (socket)
             console.log(e.message + " " + e.stack);
         }
     });
-    socket.on("user-stream-data", function (data)
+    socket.on("user-stream-data", function (data: any)
     {
         io.to(user.roomId).emit("server-stream-data", data)
     })
-    socket.on("user-want-to-stream", function (streamRequest)
+    socket.on("user-want-to-stream", function (streamRequest: { streamSlotId: number, withVideo: boolean, withSound: boolean })
     {
-        const { streamSlotId, withVideo, withSound } = streamRequest
+        const { streamSlotId } = streamRequest
 
         if (currentRoom.streams[streamSlotId].isActive)
             socket.emit("server-not-ok-to-stream", "sorry, someone else is already streaming in this slot")
@@ -119,18 +120,19 @@ io.on("connection", function (socket)
             socket.to(user.roomId).emit("server-stream-started", streamInfo)
         }
     })
-    socket.on("user-want-to-stop-stream", function () {
-        
+    socket.on("user-want-to-stop-stream", function ()
+    {
+        if (currentStreamSlotId === null) return // should never happen
+
         currentRoom.streams[currentStreamSlotId].isActive = false
 
         socket.to(user.roomId).emit("server-stream-stopped", {
             streamSlotId: currentStreamSlotId,
         })
 
-        currentStreamSlotId = false
-
+        currentStreamSlotId = null
     })
-    socket.on("user-change-room", function (data)
+    socket.on("user-change-room", function (data: { targetRoomId: number, targetX: number, targetY: number })
     {
         const { targetRoomId, targetX, targetY } = data
 
@@ -162,7 +164,7 @@ app.get("/rooms/:roomName", (req, res) =>
 
 app.post("/ping/:userId", async (req, res) =>
 {
-    fs.readFile("version", (err, data) =>
+    readFile("version", (err, data) =>
     {
         if (err)
             res.json(err)
@@ -208,7 +210,7 @@ app.post("/login", (req, res) =>
     }
 })
 
-function disconnectUser(user)
+function disconnectUser(user: any)
 {
     console.log("Disconnecting user ", user.id, user.name)
     user["connected"] = false;
@@ -238,7 +240,7 @@ setInterval(() =>
 {
     const allUsers = users.getConnectedUserList(null)
     for (const user of Object.values(allUsers))
-        if (Date.now() - user["lastPing"] > 30 * 1000)
+        if (Date.now() - (user as any)["lastPing"] > 30 * 1000)
             disconnectUser(user)
 }, 20 * 1000)
 
