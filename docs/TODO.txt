@@ -2,8 +2,6 @@ WEBRTC:
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API
 
-
-
 - sound notifications when someone writes
 - text messages get sent very slowly while streaming
 - to fix: tab is not visible => some user moves => tab is visible again => that user starts floating, slowly reaching its new position
