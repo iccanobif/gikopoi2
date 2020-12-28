@@ -28,10 +28,17 @@ body
     top: 18px;
     left: 510px;
 }
-#received-video-1 video
+#received-video-container
 {
     position: absolute;
-    width: 219px;
     top: 18px;
+    left: 0px;
+}
+
+#received-video-container video
+{
+    width: 219px;
+    position: absolute;
+    top: 20px;
     left: 0px;
 }

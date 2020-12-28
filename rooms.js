@@ -67,7 +67,8 @@ module.exports.rooms = {
             // [[3, 7], "underground", [0, 2], 1],
             // [[8, 4], "bar_street", [3, 5], 1]
             { x: 8, y: 4, targetRoomId: "admin_st", targetX: 0, targetY: 2 }
-        ]
+        ],
+        streams: [{}, {}]
     },
     admin_st: {
         scale: 160 / 200,
@@ -92,6 +93,7 @@ module.exports.rooms = {
         ],
         doors: [
             { x: 0, y: 2, targetRoomId: "bar", targetX: 8, targetY: 4 }
-        ]
+        ],
+        streams: []
     }
 }

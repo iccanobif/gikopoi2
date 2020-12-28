@@ -11,7 +11,7 @@
 
 <body>
     <div id="vue-app" v-cloak>
-        <div id="login-page" v-if="!loggedIn" >
+        <div id="login-page" v-if="!loggedIn">
             <h1>Gikopoi 2</h1>
             <form>
                 <label>User Name:</label> <input type="text" v-model="username" />
@@ -23,14 +23,18 @@
                 <img id='background' />
             </div>
             <canvas id="room-canvas" width="721px" height="511px" tabindex="0"></canvas>
-            <div id="received-video-1"></div>
+            <div id="received-video-container" v-show="someoneIsStreaming && !iAmStreaming">
+                Streamer: {{ currentStreamerName }}
+                <div id="received-video-1"></div>
+            </div>
             <video id="local-video" autoplay muted></video>
 
             <div>
                 Input: <input id="textBox" type="text"></input>
                 <button id="send-button">Send</button>
-                <button id="start-streaming-button">Start streaming</button>
-                <button id="stop-streaming-button">Stop streaming</button>
+                <button id="start-streaming-button" v-show="!someoneIsStreaming && !iAmStreaming && !wantToStream">Start
+                    streaming</button>
+                <button id="stop-streaming-button" v-show="iAmStreaming">Stop streaming</button>
                 <!-- <button id="logout">Logout</button> -->
             </div>
             Log:

@@ -8,11 +8,10 @@ import VideoChunkPlayer from "./video-chunk-player.js";
 
 const gikopoi = function ()
 {
-    const STOP_STREAM = "STOP_STREAM"
-
     let socket = null;
 
     let users = {};
+    let currentRoomId = null;
     let currentRoom = null;
     const gikoCharacter = new Character("giko")
     let myUserID = null;
@@ -98,14 +97,30 @@ const gikopoi = function ()
 
         socket.on("server-stream-data", function (data)
         {
-            if (data == STOP_STREAM)
-            {
-                receivedVideoPlayer.stop()
-            }
-            else 
-            {
-                receivedVideoPlayer.playChunk(data)
-            }
+            receivedVideoPlayer.playChunk(data)
+        })
+        socket.on("server-not-ok-to-stream", (reason) =>
+        {
+            vueApp.wantToStream = false
+            alert(reason)
+        })
+        socket.on("server-ok-to-stream", () =>
+        {
+            vueApp.wantToStream = false
+            vueApp.iAmStreaming = true
+            vueApp.someoneIsStreaming = true
+            startStreaming()
+        })
+        socket.on("server-stream-started", (streamInfo) =>
+        {
+            vueApp.someoneIsStreaming = true
+            vueApp.currentStreamerName = users[streamInfo.userId].name
+        })
+        socket.on("server-stream-stopped", (streamInfo) =>
+        {
+            const { streamSlotId } = streamInfo
+            vueApp.someoneIsStreaming = false
+            receivedVideoPlayer.stop() // kinda useless, now that i'm using the someoneIsStreaming variable to drive the visibility of the video player
         })
 
         let version = Infinity
@@ -246,11 +261,15 @@ const gikopoi = function ()
 
         const { targetRoomId, targetX, targetY } = door
 
+        if (webcamStream)
+            stopStreaming()
+
         socket.emit("user-change-room", { targetRoomId, targetX, targetY });
     }
 
     async function loadRoom(roomName)
     {
+        currentRoomId = roomName
         isLoadingRoom = true
         justSpawnedToThisRoom = true
         currentRoom = await (await fetch("/rooms/" + roomName)).json()
@@ -318,21 +337,39 @@ const gikopoi = function ()
         })
 
         document.getElementById("send-button").addEventListener("click", () => sendMessageToServer())
-        document.getElementById("start-streaming-button").addEventListener("click", () => startStreaming())
+        document.getElementById("start-streaming-button").addEventListener("click", () => wantToStartStreaming())
         document.getElementById("stop-streaming-button").addEventListener("click", () => stopStreaming())
-        // document.getElementById("logout").addEventListener("click", () => logout())
     }
 
     // WebRTC
 
     let webcamStream = null;
 
+    async function wantToStartStreaming()
+    {
+        try
+        {
+            vueApp.wantToStream = true
+            webcamStream = await navigator.mediaDevices.getUserMedia({
+                audio: true,
+                video: { aspectRatio: { ideal: 1.333333 } }
+            })
+            
+            socket.emit("user-want-to-stream", {
+                roomId: currentRoomId,
+                streamSlotId: 0,
+                withVideo: true,
+                withSound: true,
+            })
+        }
+        catch (err)
+        {
+            alert("sorry, can't find a webcam")
+        }
+    }
+
     async function startStreaming()
     {
-        webcamStream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-            video: { aspectRatio: { ideal: 1.333333 } }
-        });
         document.getElementById("local-video").srcObject = webcamStream;
         document.getElementById("local-video").style.display = "block";
 
@@ -352,11 +389,13 @@ const gikopoi = function ()
 
     function stopStreaming()
     {
+        vueApp.iAmStreaming = false
+        vueApp.someoneIsStreaming = false
         for (const track of webcamStream.getTracks())
             track.stop()
         document.getElementById("local-video").srcObject = webcamStream = null;
         document.getElementById("local-video").style.display = "none"
-        socket.emit("user-stream-data", STOP_STREAM)
+        socket.emit("user-want-to-stop-stream")
     }
 
     async function logout()
@@ -376,11 +415,15 @@ const gikopoi = function ()
     }
 }();
 
-const app = new Vue({
+const vueApp = new Vue({
     el: '#vue-app',
     data: {
         username: "",
         loggedIn: false,
+        wantToStream: false,
+        iAmStreaming: false,
+        someoneIsStreaming: false, // this won't be enough when we allow more than one stream slot in the same room
+        currentStreamerName: "",
     },
     methods: {
         login: function (ev)

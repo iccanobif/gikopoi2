@@ -6,27 +6,13 @@ const io = require("socket.io")(http);
 const users = require("./users.js");
 const { rooms } = require("./rooms.js");
 
-/*
-Supported websocket messages:
-- user-connect(id):                     sent by the client, basically to ask the server to send the user list
-- user-msg(msg):                        sent by the client to the server, basically makes the server send a server_msg to everyone
-- disconnect:                           sent by the client to the server (wouldn't it be simpler to just do this stuff when the websocket dies?)
-- user-move:                            sent by the client to the server, move the avatar somewhere
-- server-update-current-room-users(dto):      sent by the server to a single client
-- server-msg(userName, msg):            sent by the server to ALL clients, it's a message to display on the chat
-- server-user-joined-room(user):          sent by the server to ALL clients, notifies everyone that a new user logged in
-- server-user-left-room(userId):       sent by the server to ALL clients, notifies everyone that a user logged out
-- server-move(userId, x, y, direction): sent by the server to ALL clients, asks everyone to move a character to coordinates (x, y)
-- server-reject-movement:               sent by the server to a single client
-- user-stream-data                      sent by the client to the server, it's a chunk of video/audio data
-*/
-
 io.on("connection", function (socket)
 {
     console.log("Connection attempt");
 
     let user = null;
     let currentRoom = rooms.bar;
+    let currentStreamSlotId = null;
 
     socket.on("user-connect", function (userId)
     {
@@ -116,6 +102,33 @@ io.on("connection", function (socket)
     socket.on("user-stream-data", function (data)
     {
         io.to(user.roomId).emit("server-stream-data", data)
+    })
+    socket.on("user-want-to-stream", function (streamRequest)
+    {
+        const { streamSlotId, withVideo, withSound } = streamRequest
+
+        if (currentRoom.streams[streamSlotId].isActive)
+            socket.emit("server-not-ok-to-stream", "sorry, someone else is already streaming in this slot")
+        else
+        {
+            currentStreamSlotId = streamSlotId
+
+            socket.emit("server-ok-to-stream")
+
+            const streamInfo = { ...streamRequest, userId: user.id }
+            socket.to(user.roomId).emit("server-stream-started", streamInfo)
+        }
+    })
+    socket.on("user-want-to-stop-stream", function () {
+        
+        currentRoom.streams[currentStreamSlotId].isActive = false
+
+        socket.to(user.roomId).emit("server-stream-stopped", {
+            streamSlotId: currentStreamSlotId,
+        })
+
+        currentStreamSlotId = false
+
     })
     socket.on("user-change-room", function (data)
     {
