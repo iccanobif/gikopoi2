@@ -1,17 +1,16 @@
-// const fs = require('fs');
 import express from "express"
 import { readFile } from "fs";
+import { rooms } from "./rooms";
+import { addNewUser, getConnectedUserList, getUser, Player } from "./users";
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
-const users = require("./users.js");
-const { rooms } = require("./rooms.js");
 
 io.on("connection", function (socket: any)
 {
     console.log("Connection attempt");
 
-    let user: any = null;
+    let user: Player;
     let currentRoom = rooms.bar;
     let currentStreamSlotId: number | null = null;
 
@@ -19,12 +18,12 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            user = users.getUser(userId);
+            user = getUser(userId);
 
             console.log("userId: " + userId + " name: " + user.name);
 
             socket.emit("server-update-current-room-users", {
-                users: users.getConnectedUserList(user.roomId)
+                users: getConnectedUserList(user.roomId)
             })
             socket.join(user.roomId)
         }
@@ -132,7 +131,7 @@ io.on("connection", function (socket: any)
 
         currentStreamSlotId = null
     })
-    socket.on("user-change-room", function (data: { targetRoomId: number, targetX: number, targetY: number })
+    socket.on("user-change-room", function (data: { targetRoomId: string, targetX: number, targetY: number })
     {
         const { targetRoomId, targetX, targetY } = data
 
@@ -145,7 +144,7 @@ io.on("connection", function (socket: any)
         socket.join(targetRoomId)
 
         socket.emit("server-update-current-room-users", {
-            users: users.getConnectedUserList(targetRoomId)
+            users: getConnectedUserList(targetRoomId)
         })
 
         io.to(targetRoomId).emit("server-user-joined-room", user);
@@ -172,7 +171,7 @@ app.post("/ping/:userId", async (req, res) =>
         {
             // Update last ping date for the user
             const { userId } = req.params
-            const user = users.getUser(userId)
+            const user = getUser(Number.parseInt(userId))
 
             if (!user)
                 return
@@ -202,7 +201,7 @@ app.post("/login", (req, res) =>
     }
     else
     {
-        const user = users.addNewUser(userName);
+        const user = addNewUser(userName);
         res.json(user.id)
 
         io.emit("server-msg", "SYSTEM", userName + " connected");
@@ -228,7 +227,7 @@ app.post("/logout", (req, res) =>
     }
     else
     {
-        const user = users.getUser(userID);
+        const user = getUser(userID);
         if (!user) return;
 
         res.end()
@@ -238,7 +237,7 @@ app.post("/logout", (req, res) =>
 // Disconnect users that have failed to ping in the last 30 seconds
 setInterval(() =>
 {
-    const allUsers = users.getConnectedUserList(null)
+    const allUsers = getConnectedUserList(null)
     for (const user of Object.values(allUsers))
         if (Date.now() - (user as any)["lastPing"] > 30 * 1000)
             disconnectUser(user)

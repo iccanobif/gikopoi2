@@ -4,7 +4,7 @@ function generateId()
     return nextUserID++;
 }
 
-class Player
+export class Player
 {
     public id: number = generateId();
     public name: string = "Anonymous";
@@ -30,7 +30,7 @@ export function addNewUser(name: string)
     return p;
 };
 
-export function getConnectedUserList(roomId: string)
+export function getConnectedUserList(roomId: string | null)
 {
     const output: { [id: number]: Player; } = {};
     for (const u in users)

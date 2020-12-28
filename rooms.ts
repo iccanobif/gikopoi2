@@ -1,9 +1,11 @@
-module.exports.rooms = {
+import { Room } from "./types";
+
+export const rooms: { [roomId: string]: Room } = {
     bar: {
         scale: 1,
         grid: [9, 9],
         originCoordinates: { x: 0, y: 660 },
-        spawnPoint: { x: 8, y: 4 },
+        spawnPoint: { x: 8, y: 4, direction: "left" },
         objects: [
             { x: 2, y: 1, url: "table.png" },
             { x: 2, y: 2, url: "table.png" },
@@ -68,7 +70,7 @@ module.exports.rooms = {
             // [[8, 4], "bar_street", [3, 5], 1]
             { x: 8, y: 4, targetRoomId: "admin_st", targetX: 0, targetY: 2 }
         ],
-        streams: [{}, {}]
+        streams: [{ isActive: false }, { isActive: false }]
     },
     admin_st: {
         scale: 160 / 200,
