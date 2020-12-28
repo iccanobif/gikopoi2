@@ -226,7 +226,7 @@ app.post("/logout", (req, res) =>
     }
     else
     {
-        const user = users.getUser(userId);
+        const user = users.getUser(userID);
         if (!user) return;
 
         res.end()
@@ -238,7 +238,7 @@ setInterval(() =>
 {
     const allUsers = users.getConnectedUserList(null)
     for (const user of Object.values(allUsers))
-        if (Date.now() - user.lastPing > 30 * 1000)
+        if (Date.now() - user["lastPing"] > 30 * 1000)
             disconnectUser(user)
 }, 20 * 1000)
 
