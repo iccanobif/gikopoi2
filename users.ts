@@ -1,3 +1,5 @@
+import { defaultRoom } from "./rooms";
+
 let nextUserID = 1
 function generateId()
 {
@@ -8,11 +10,11 @@ export class Player
 {
     public id: number = generateId();
     public name: string = "Anonymous";
-    public position: { x: number, y: number } = { x: 8, y: 4 };
+    public position: { x: number, y: number } = defaultRoom.spawnPoint;
     public character: 'giko' = 'giko';
-    public direction: 'up' | 'down' | 'left' | 'right' = "left";
+    public direction: 'up' | 'down' | 'left' | 'right' = defaultRoom.spawnPoint.direction;
     public connected: boolean = true;
-    public roomId: string = "bar";
+    public roomId: string = "admin";
     public lastPing = Date.now();
 
     constructor(options: { name?: string })

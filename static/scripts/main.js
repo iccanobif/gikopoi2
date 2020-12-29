@@ -411,7 +411,7 @@ const gikopoi = function ()
         login: async function (username)
         {
             await gikoCharacter.loadImages()
-            await loadRoom("bar")
+            await loadRoom("admin_st")
             registerKeybindings()
             await connectToServer(username)
             paint()

@@ -24,10 +24,10 @@ STUFF TO ADD TO DOCUMENTATION:
         everything has a width of 160
 
             ／＼
- LEFT  x↗ ／    ＼  UP
+ LEFT  y↗ ／    ＼  UP
         ／        ＼
       ／            ＼
       ＼            ／
  DOWN   ＼        ／  RIGHT
-       y↘ ＼    ／
+       x↘ ＼    ／
             ＼／

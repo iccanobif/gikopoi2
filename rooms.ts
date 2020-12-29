@@ -94,8 +94,55 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 9, y: 4 },
         ],
         doors: [
-            { x: 0, y: 2, targetRoomId: "bar", targetX: 8, targetY: 4 }
+            { x: 0, y: 2, targetRoomId: "bar", targetX: 8, targetY: 4 },
+            { x: 2, y: 4, targetRoomId: "admin", targetX: 10, targetY: 0 }
+        ],
+        streams: []
+    },
+    admin: {
+        scale: 160 / 200,
+        grid: [12, 6],
+        originCoordinates: { x: 90, y: 530 },
+        spawnPoint: { x: 10, y: 0, direction: "up" },
+        objects: [],
+        sit: [
+            [10, 2],
+            [10, 3],
+            [7, 2],
+            [7, 3],
+            [9, 1],
+            [9, 4],
+            [8, 1],
+            [8, 4],
+            [4, 1],
+            [4, 2],
+            [4, 3],
+            [4, 4],
+            [1, 1],
+            [1, 2],
+            [1, 3],
+            [1, 4],
+        ],
+        blocked: [
+            { x: 2, y: 1 },
+            { x: 2, y: 2 },
+            { x: 2, y: 3 },
+            { x: 2, y: 4 },
+            { x: 3, y: 1 },
+            { x: 3, y: 2 },
+            { x: 3, y: 3 },
+            { x: 3, y: 4 },
+            { x: 8, y: 2 },
+            { x: 8, y: 3 },
+            { x: 9, y: 2 },
+            { x: 9, y: 3 },
+        ],
+        doors: [
+            { x: 10, y: 0, targetRoomId: "admin_st", targetX: 2, targetY: 4 }
         ],
         streams: []
     }
 }
+
+
+export const defaultRoom = rooms.admin_st

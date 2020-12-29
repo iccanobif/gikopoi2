@@ -12,7 +12,7 @@ export interface Room
     spawnPoint: {
         x: number;
         y: number;
-        direction: string;
+        direction: 'up' | 'down' | 'left' | 'right';
     };
     objects: {
         x: number;
