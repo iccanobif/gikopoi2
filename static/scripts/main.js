@@ -19,6 +19,7 @@ const gikopoi = function ()
     let justSpawnedToThisRoom = true
     let isLoadingRoom = false
     let requestedRoomChange = false
+    let forceUserInstantMove = false
 
     async function connectToServer(username)
     {
@@ -133,6 +134,7 @@ const gikopoi = function ()
             if (newVersion > version)
             {
                 // TODO refresh page while keeping username ,selected character and room
+                alert("Sorry, a new version of gikopoi2 is ready, please refresh this page!")
             }
             else
             {
@@ -187,6 +189,12 @@ const gikopoi = function ()
     // TODO: Refactor this entire function
     async function paint(timestamp)
     {
+        if (forceUserInstantMove)
+        {
+            forcePhysicalPositionRefresh()
+            forceUserInstantMove = false
+        }
+
         const context = document.getElementById("room-canvas").getContext("2d");
         context.fillStyle = "#c0c0c0"
         context.fillRect(0, 0, 721, 511)
@@ -287,9 +295,7 @@ const gikopoi = function ()
         }
 
         // Force update of user coordinates using the current room's logics (origin coordinates, etc)
-
-        for (const u of Object.values(users))
-            u.moveImmediatelyToPosition(currentRoom, u.logicalPositionX, u.logicalPositionY, u.direction)
+        forcePhysicalPositionRefresh()
 
         document.getElementById("room-canvas").focus()
         justSpawnedToThisRoom = true
@@ -297,6 +303,12 @@ const gikopoi = function ()
         requestedRoomChange = false
 
         vueApp.roomAllowsStreaming = currentRoom.streams.length > 0
+    }
+
+    function forcePhysicalPositionRefresh()
+    {
+        for (const u of Object.values(users))
+            u.moveImmediatelyToPosition(currentRoom, u.logicalPositionX, u.logicalPositionY, u.direction)
     }
 
     function sendNewPositionToServer(direction)
@@ -345,6 +357,11 @@ const gikopoi = function ()
         document.getElementById("send-button").addEventListener("click", () => sendMessageToServer())
         document.getElementById("start-streaming-button").addEventListener("click", () => wantToStartStreaming())
         document.getElementById("stop-streaming-button").addEventListener("click", () => stopStreaming())
+
+        window.addEventListener("focus", () =>
+        {
+            forceUserInstantMove = true
+        });
     }
 
     // WebRTC
@@ -417,6 +434,8 @@ const gikopoi = function ()
             registerKeybindings()
             await connectToServer(username)
             paint()
+
+
         }
     }
 }();
