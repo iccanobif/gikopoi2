@@ -295,6 +295,8 @@ const gikopoi = function ()
         justSpawnedToThisRoom = true
         isLoadingRoom = false
         requestedRoomChange = false
+
+        vueApp.roomAllowsStreaming = currentRoom.streams.length > 0
     }
 
     function sendNewPositionToServer(direction)
@@ -427,6 +429,7 @@ const vueApp = new Vue({
         wantToStream: false,
         iAmStreaming: false,
         someoneIsStreaming: false, // this won't be enough when we allow more than one stream slot in the same room
+        roomAllowsStreaming: false,
         currentStreamerName: "",
     },
     methods: {

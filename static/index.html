@@ -32,7 +32,8 @@
             <div>
                 Input: <input id="textBox" type="text"></input>
                 <button id="send-button">Send</button>
-                <button id="start-streaming-button" v-show="!someoneIsStreaming && !iAmStreaming && !wantToStream">Start
+                <button id="start-streaming-button"
+                    v-show="roomAllowsStreaming && !someoneIsStreaming && !iAmStreaming && !wantToStream">Start
                     streaming</button>
                 <button id="stop-streaming-button" v-show="iAmStreaming">Stop streaming</button>
                 <!-- <button id="logout">Logout</button> -->
