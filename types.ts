@@ -9,7 +9,7 @@ export interface Room
     scale: number;
     grid: number[];
     originCoordinates: Coordinates;
-    spawnPoint: { 
+    spawnPoint: {
         x: number;
         y: number;
         direction: string;
@@ -21,6 +21,16 @@ export interface Room
     }[];
     sit: number[][];
     blocked: Coordinates[];
-    doors: { x: number, y: number, targetRoomId: string, targetX: number, targetY: number }[];
-    streams: { isActive: boolean }[];
+    doors: {
+        x: number,
+        y: number,
+        targetRoomId: string,
+        targetX: number,
+        targetY: number
+    }[];
+    streams: {
+        isActive: boolean,
+        withSound: boolean | null,
+        withVideo: boolean | null
+    }[];
 }
