@@ -4,7 +4,7 @@ export interface Coordinates
     y: number;
 }
 
-export interface Room 
+export interface Room
 {
     scale: number;
     grid: number[];
