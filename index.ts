@@ -40,7 +40,7 @@ io.on("connection", function (socket: any)
         try
         {
             msg = msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")
-            const userName =  user.name.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            const userName =  user.name
 
             console.log(userName + ": " + msg);
             io.to(user.roomId).emit("server-msg", "<span class=\"messageAuthor\">" + userName + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
@@ -234,6 +234,7 @@ app.post("/login", (req, res) =>
     const { userName } = req.body
 
     console.log(userName, "logging in")
+
     if (!userName)
     {
         res.statusCode = 500
@@ -241,10 +242,11 @@ app.post("/login", (req, res) =>
     }
     else
     {
-        const user = addNewUser(userName);
+        const sanitizedUserName = userName.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        const user = addNewUser(sanitizedUserName);
         res.json(user.id)
 
-        io.emit("server-msg", "SYSTEM", userName + " connected");
+        io.emit("server-msg", "SYSTEM", sanitizedUserName + " connected");
         io.emit("server-user-joined-room", user);
     }
 })

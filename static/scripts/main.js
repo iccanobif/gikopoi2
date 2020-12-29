@@ -230,7 +230,7 @@ const gikopoi = function ()
                 {
                     // draw users only when the room is fully loaded, so that the "physical position" calculations
                     // are done with the correct room's data.
-                    drawCenteredText(o.o.name, o.o.currentPhysicalPositionX + 40, o.o.currentPhysicalPositionY - 95)
+                    drawCenteredText(o.o.name.replace(/&gt;/g, ">").replace(/&lt;/g, "<"), o.o.currentPhysicalPositionX + 40, o.o.currentPhysicalPositionY - 95)
 
                     switch (o.o.direction)
                     {
