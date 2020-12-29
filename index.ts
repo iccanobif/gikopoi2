@@ -39,6 +39,8 @@ io.on("connection", function (socket: any)
     {
         try
         {
+            msg = msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+
             console.log(user.name + ": " + msg);
             io.to(user.roomId).emit("server-msg", "<span class=\"messageAuthor\">" + user.name + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
         }
@@ -106,55 +108,85 @@ io.on("connection", function (socket: any)
     });
     socket.on("user-stream-data", function (data: any)
     {
-        io.to(user.roomId).emit("server-stream-data", data)
+        try
+        {
+
+            io.to(user.roomId).emit("server-stream-data", data)
+        }
+        catch (e)
+        {
+            console.log(e.message + " " + e.stack);
+        }
     })
     socket.on("user-want-to-stream", function (streamRequest: { streamSlotId: number, withVideo: boolean, withSound: boolean })
     {
-        const { streamSlotId } = streamRequest
-
-        if (currentRoom.streams[streamSlotId].isActive)
-            socket.emit("server-not-ok-to-stream", "sorry, someone else is already streaming in this slot")
-        else
+        try
         {
-            currentStreamSlotId = streamSlotId
+            const { streamSlotId } = streamRequest
 
-            socket.emit("server-ok-to-stream")
+            if (currentRoom.streams[streamSlotId].isActive)
+                socket.emit("server-not-ok-to-stream", "sorry, someone else is already streaming in this slot")
+            else
+            {
+                currentStreamSlotId = streamSlotId
 
-            const streamInfo = { ...streamRequest, userId: user.id }
-            socket.to(user.roomId).emit("server-stream-started", streamInfo)
+                socket.emit("server-ok-to-stream")
+
+                const streamInfo = { ...streamRequest, userId: user.id }
+                socket.to(user.roomId).emit("server-stream-started", streamInfo)
+            }
+        }
+        catch (e)
+        {
+            console.log(e.message + " " + e.stack);
         }
     })
     socket.on("user-want-to-stop-stream", function ()
     {
-        if (currentStreamSlotId === null) return // should never happen
+        try
+        {
+            if (currentStreamSlotId === null) return // should never happen
 
-        currentRoom.streams[currentStreamSlotId].isActive = false
+            currentRoom.streams[currentStreamSlotId].isActive = false
 
-        socket.to(user.roomId).emit("server-stream-stopped", {
-            streamSlotId: currentStreamSlotId,
-        })
+            socket.to(user.roomId).emit("server-stream-stopped", {
+                streamSlotId: currentStreamSlotId,
+            })
 
-        currentStreamSlotId = null
+            currentStreamSlotId = null
+        }
+        catch (e)
+        {
+            console.log(e.message + " " + e.stack);
+        }
     })
     socket.on("user-change-room", async function (data: { targetRoomId: string, targetX: number, targetY: number })
     {
-        await sleep(delay)
+        try
+        {
 
-        const { targetRoomId, targetX, targetY } = data
+            await sleep(delay)
 
-        currentRoom = rooms[targetRoomId]
+            const { targetRoomId, targetX, targetY } = data
 
-        io.to(user.roomId).emit("server-user-left-room", user.id);
-        socket.leave(user.roomId)
-        user.position = { x: targetX, y: targetY }
-        user.roomId = targetRoomId
-        socket.join(targetRoomId)
+            currentRoom = rooms[targetRoomId]
 
-        socket.emit("server-update-current-room-users", {
-            users: getConnectedUserList(targetRoomId)
-        })
+            io.to(user.roomId).emit("server-user-left-room", user.id);
+            socket.leave(user.roomId)
+            user.position = { x: targetX, y: targetY }
+            user.roomId = targetRoomId
+            socket.join(targetRoomId)
 
-        io.to(targetRoomId).emit("server-user-joined-room", user);
+            socket.emit("server-update-current-room-users", {
+                users: getConnectedUserList(targetRoomId)
+            })
+
+            io.to(targetRoomId).emit("server-user-joined-room", user);
+        }
+        catch (e)
+        {
+            console.log(e.message + " " + e.stack);
+        }
     })
 });
 
