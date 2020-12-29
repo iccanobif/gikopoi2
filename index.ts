@@ -209,10 +209,10 @@ app.post("/login", (req, res) =>
     }
 })
 
-function disconnectUser(user: any)
+function disconnectUser(user: Player)
 {
     console.log("Disconnecting user ", user.id, user.name)
-    user["connected"] = false;
+    user.connected = false;
     io.emit("server-msg", "SYSTEM", user.name + " disconnected");
     io.emit("server-user-left-room", user.id);
 }
@@ -239,7 +239,7 @@ setInterval(() =>
 {
     const allUsers = getConnectedUserList(null)
     for (const user of Object.values(allUsers))
-        if (Date.now() - (user as any)["lastPing"] > 30 * 1000)
+        if (Date.now() - user.lastPing > 30 * 1000)
             disconnectUser(user)
 }, 20 * 1000)
 
