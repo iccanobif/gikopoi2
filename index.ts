@@ -40,9 +40,10 @@ io.on("connection", function (socket: any)
         try
         {
             msg = msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            const userName =  user.name.replace(/</g, "&lt;").replace(/>/g, "&gt;")
 
-            console.log(user.name + ": " + msg);
-            io.to(user.roomId).emit("server-msg", "<span class=\"messageAuthor\">" + user.name + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
+            console.log(userName + ": " + msg);
+            io.to(user.roomId).emit("server-msg", "<span class=\"messageAuthor\">" + userName + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
         }
         catch (e)
         {
