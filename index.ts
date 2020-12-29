@@ -2,9 +2,12 @@ import express from "express"
 import { readFile } from "fs";
 import { rooms } from "./rooms";
 import { addNewUser, getConnectedUserList, getUser, Player } from "./users";
+import { sleep } from "./utils";
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
+
+const delay = 0
 
 io.on("connection", function (socket: any)
 {
@@ -45,8 +48,10 @@ io.on("connection", function (socket: any)
         }
     });
 
-    socket.on("user-move", function (direction: 'up' | 'down' | 'left' | 'right')
+    socket.on("user-move", async function (direction: 'up' | 'down' | 'left' | 'right')
     {
+        await sleep(delay)
+
         try
         {
             if (user.direction != direction)
@@ -131,8 +136,10 @@ io.on("connection", function (socket: any)
 
         currentStreamSlotId = null
     })
-    socket.on("user-change-room", function (data: { targetRoomId: string, targetX: number, targetY: number })
+    socket.on("user-change-room", async function (data: { targetRoomId: string, targetX: number, targetY: number })
     {
+        await sleep(delay)
+
         const { targetRoomId, targetX, targetY } = data
 
         currentRoom = rooms[targetRoomId]

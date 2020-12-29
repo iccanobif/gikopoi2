@@ -18,6 +18,7 @@ const gikopoi = function ()
     let isWaitingForServerResponseOnMovement = false
     let justSpawnedToThisRoom = true
     let isLoadingRoom = false
+    let requestedRoomChange = false
 
     async function connectToServer(username)
     {
@@ -244,10 +245,11 @@ const gikopoi = function ()
         requestAnimationFrame(paint)
     }
 
-    async function changeRoomIfSteppingOnDoor()
+    function changeRoomIfSteppingOnDoor()
     {
         if (justSpawnedToThisRoom) return
         if (isWaitingForServerResponseOnMovement) return
+        if (requestedRoomChange) return
 
         const currentUser = users[myUserID]
 
@@ -264,6 +266,7 @@ const gikopoi = function ()
         if (webcamStream)
             stopStreaming()
 
+        requestedRoomChange = true
         socket.emit("user-change-room", { targetRoomId, targetX, targetY });
     }
 
@@ -271,7 +274,6 @@ const gikopoi = function ()
     {
         currentRoomId = roomName
         isLoadingRoom = true
-        justSpawnedToThisRoom = true
         currentRoom = await (await fetch("/rooms/" + roomName)).json()
         console.log("currentRoom updated")
 
@@ -290,7 +292,9 @@ const gikopoi = function ()
             u.moveImmediatelyToPosition(currentRoom, u.logicalPositionX, u.logicalPositionY, u.direction)
 
         document.getElementById("room-canvas").focus()
+        justSpawnedToThisRoom = true
         isLoadingRoom = false
+        requestedRoomChange = false
     }
 
     function sendNewPositionToServer(direction)
@@ -354,7 +358,7 @@ const gikopoi = function ()
                 audio: true,
                 video: { aspectRatio: { ideal: 1.333333 } }
             })
-            
+
             socket.emit("user-want-to-stream", {
                 roomId: currentRoomId,
                 streamSlotId: 0,
