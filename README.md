@@ -2,6 +2,7 @@ https://gikopoi2.herokuapp.com
 
 to start server, run:
 
+``$ yarn``
 ``$ yarn start``
 
 to enable automatic version bump run:
