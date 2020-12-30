@@ -132,6 +132,7 @@ export const rooms: { [roomId: string]: Room } = {
             [1, 4],
         ],
         blocked: [
+            { x: 0, y: 5 }, // shobon
             { x: 2, y: 1 },
             { x: 2, y: 2 },
             { x: 2, y: 3 },
