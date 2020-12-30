@@ -448,12 +448,9 @@ const vueApp = new Vue({
         {
             ev.preventDefault()
             if (this.username === "")
-                alert("Please write a username")
-            else
-            {
-                this.loggedIn = true
-                gikopoi.login(this.username).catch(console.error)
-            }
+                this.username = "名無しさん"
+            this.loggedIn = true
+            gikopoi.login(this.username).catch(console.error)
         }
     }
 })
