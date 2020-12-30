@@ -19,6 +19,7 @@
             </form>
         </div>
         <div id="stage" v-if="loggedIn">
+            <h2 id="connection-lost-alert" v-if="connectionLost">Connection lost, please refresh the page!　<br/>接続できません、ページをリフレッシュしてください！</h2>
             <div id='room'>
                 <img id='background' />
             </div>
@@ -31,19 +32,19 @@
 
             <div>
                 Input: <input id="textBox" type="text"></input>
-                <button id="send-button">Send</button>
+                <button id="send-button">発言</button>
                 <button id="start-streaming-button"
-                    v-show="roomAllowsStreaming && !someoneIsStreaming && !iAmStreaming && !wantToStream">Start
-                    streaming</button>
-                <button id="stop-streaming-button" v-show="iAmStreaming">Stop streaming</button>
+                    v-show="roomAllowsStreaming && !someoneIsStreaming && !iAmStreaming && !wantToStream">配信</button>
+                <button id="stop-streaming-button" v-show="iAmStreaming">配信停止</button>
                 <!-- <button id="logout">Logout</button> -->
             </div>
-            Log:
+            ログ：
             <div id="chatLog">
             </div>
 
             <audio id="message-sound" src="message.mp3"></audio>
             <audio id="login-sound" src="login.mp3"></audio>
+            <audio id="connection-lost-sound" src="connection-lost.mp3"></audio>
 
         </div>
     </div>

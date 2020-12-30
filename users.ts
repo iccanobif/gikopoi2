@@ -1,5 +1,6 @@
 import { defaultRoom } from "./rooms";
 
+// TODO use a GUID
 let nextUserID = 1
 function generateId()
 {

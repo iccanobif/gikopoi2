@@ -24,6 +24,8 @@ io.on("connection", function (socket: any)
         try
         {
             user = getUser(userId);
+            if (!user)
+                socket.emit("server-cant-log-you-in")
 
             console.log("userId: " + userId + " name: " + user.name);
 

@@ -42,3 +42,9 @@ body
     top: 20px;
     left: 0px;
 }
+
+#connection-lost-alert {
+    position: absolute;
+    z-index: 100;
+    color: #d00;
+}

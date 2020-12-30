@@ -30,8 +30,21 @@ const gikopoi = function ()
 
         socket.on("connect", function ()
         {
+            vueApp.connectionLost = false;
             socket.emit("user-connect", myUserID);
+            // TODO, give the server a way to reply "sorry, can't reconnect you"
+            // so we can show a decent error message
         });
+
+        socket.on("disconnect", () =>
+        {
+            document.getElementById("connection-lost-sound").play()
+            vueApp.connectionLost = true;
+        })
+        socket.on("server-cant-log-you-in", () =>
+        {
+            vueApp.connectionLost = true;
+        })
 
         socket.on("server-update-current-room-state", async function (roomDto, usersDto)
         {
@@ -145,17 +158,19 @@ const gikopoi = function ()
 
         async function ping()
         {
+            if (vueApp.connectionLost)
+                return
             const response = await postJson("/ping/" + myUserID, { userId: myUserID })
             const { version: newVersion } = await response.json()
-            if (newVersion > version)
-            {
-                // TODO refresh page while keeping username ,selected character and room
-                alert("Sorry, a new version of gikopoi2 is ready, please refresh this page!")
-            }
-            else
-            {
-                version = newVersion
-            }
+            // if (newVersion > version)
+            // {
+            //     // TODO refresh page while keeping username ,selected character and room
+            //     alert("Sorry, a new version of gikopoi2 is ready, please refresh this page!")
+            // }
+            // else
+            // {
+            //     version = newVersion
+            // }
         }
 
         setInterval(ping, 1000 * 10)
@@ -442,6 +457,7 @@ const vueApp = new Vue({
         someoneIsStreaming: false, // this won't be enough when we allow more than one stream slot in the same room
         roomAllowsStreaming: false,
         currentStreamerName: "",
+        connectionLost: false,
     },
     methods: {
         login: function (ev)
