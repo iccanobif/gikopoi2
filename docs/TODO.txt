@@ -1,6 +1,8 @@
 WEBRTC:
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling
     https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API
+    https://ikasekai.hatenablog.com/
+    https://www.wowza.com/blog/low-latency-hls-vs-webrtc
 
 - sound notifications when someone writes
 - text messages get sent very slowly while streaming
