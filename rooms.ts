@@ -2,10 +2,12 @@ import { Room } from "./types";
 
 export const rooms: { [roomId: string]: Room } = {
     bar: {
+        id: "bar",
         scale: 1,
         grid: [9, 9],
         originCoordinates: { x: 0, y: 660 },
         spawnPoint: { x: 8, y: 4, direction: "left" },
+        backgroundImageUrl: "rooms/bar/background.png",
         objects: [
             { x: 2, y: 1, url: "table.png" },
             { x: 2, y: 2, url: "table.png" },
@@ -70,13 +72,16 @@ export const rooms: { [roomId: string]: Room } = {
             // [[8, 4], "bar_street", [3, 5], 1]
             { x: 8, y: 4, targetRoomId: "admin_st", targetX: 0, targetY: 2 }
         ],
-        streams: [{ isActive: false, withSound: null, withVideo: null }, { isActive: false, withSound: null, withVideo: null }]
+        streams: [{ isActive: false, withSound: null, withVideo: null }, { isActive: false, withSound: null, withVideo: null }],
+        users: [],
     },
     admin_st: {
+        id: "admin_st",
         scale: 160 / 200,
         grid: [10, 9],
         originCoordinates: { x: 18, y: 614 },
         spawnPoint: { x: 5, y: 2, direction: "right" },
+        backgroundImageUrl: "rooms/admin_st/background.png",
         objects: [],
         sit: [],
         blocked: [
@@ -97,13 +102,16 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 0, y: 2, targetRoomId: "bar", targetX: 8, targetY: 4 },
             { x: 2, y: 4, targetRoomId: "admin", targetX: 10, targetY: 0 }
         ],
-        streams: []
+        streams: [],
+        users: [],
     },
     admin: {
+        id: "admin",
         scale: 160 / 200,
         grid: [12, 6],
         originCoordinates: { x: 90, y: 530 },
         spawnPoint: { x: 10, y: 0, direction: "up" },
+        backgroundImageUrl: "rooms/admin/background.png",
         objects: [],
         sit: [
             [10, 2],
@@ -136,11 +144,13 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 8, y: 3 },
             { x: 9, y: 2 },
             { x: 9, y: 3 },
+            { x: 6, y: 5 },
         ],
         doors: [
             { x: 10, y: 0, targetRoomId: "admin_st", targetX: 2, targetY: 4 }
         ],
-        streams: []
+        streams: [],
+        users: [],
     }
 }
 

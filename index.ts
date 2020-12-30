@@ -1,7 +1,7 @@
 import express from "express"
 import { readFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
-import { addNewUser, getConnectedUserList, getUser, Player } from "./users";
+import { addNewUser, getConnectedUserList, getUser, Player, removeUser } from "./users";
 import { sleep } from "./utils";
 const app: express.Application = express()
 const http = require('http').Server(app);
@@ -17,6 +17,8 @@ io.on("connection", function (socket: any)
     let currentRoom = defaultRoom;
     let currentStreamSlotId: number | null = null;
 
+    socket.join(currentRoom.id)
+
     socket.on("user-connect", function (userId: number)
     {
         try
@@ -25,10 +27,8 @@ io.on("connection", function (socket: any)
 
             console.log("userId: " + userId + " name: " + user.name);
 
-            socket.emit("server-update-current-room-users", {
-                users: getConnectedUserList(user.roomId)
-            })
-            socket.join(user.roomId)
+            socket.emit("server-update-current-room-state", currentRoom)
+
         }
         catch (e)
         {
@@ -40,7 +40,7 @@ io.on("connection", function (socket: any)
         try
         {
             msg = msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")
-            const userName =  user.name
+            const userName = user.name
 
             console.log(userName + ": " + msg);
             io.to(user.roomId).emit("server-msg", "<span class=\"messageAuthor\">" + userName + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
@@ -165,24 +165,26 @@ io.on("connection", function (socket: any)
     {
         try
         {
-
             await sleep(delay)
 
             const { targetRoomId, targetX, targetY } = data
 
+            // Remove user object from the current room and add it to the new room
+            currentRoom.users = currentRoom.users.filter(u => u != user)
             currentRoom = rooms[targetRoomId]
+            currentRoom.users.push(user)
 
             io.to(user.roomId).emit("server-user-left-room", user.id);
             socket.leave(user.roomId)
+
             user.position = { x: targetX, y: targetY }
             user.roomId = targetRoomId
+
+
+
+            socket.emit("server-update-current-room-state", currentRoom)
             socket.join(targetRoomId)
-
-            socket.emit("server-update-current-room-users", {
-                users: getConnectedUserList(targetRoomId)
-            })
-
-            io.to(targetRoomId).emit("server-user-joined-room", user);
+            socket.to(targetRoomId).emit("server-user-joined-room", user);
         }
         catch (e)
         {
@@ -246,21 +248,32 @@ app.post("/login", (req, res) =>
         const user = addNewUser(sanitizedUserName);
         res.json(user.id)
 
-        io.emit("server-msg", "SYSTEM", sanitizedUserName + " connected");
-        io.emit("server-user-joined-room", user);
+        io.to(user.roomId).emit("server-msg", "SYSTEM", sanitizedUserName + " connected");
+        io.to(user.roomId).emit("server-user-joined-room", user);
     }
 })
 
 function disconnectUser(user: Player)
 {
-    console.log("Disconnecting user ", user.id, user.name)
-    user.connected = false;
-    io.emit("server-msg", "SYSTEM", user.name + " disconnected");
-    io.emit("server-user-left-room", user.id);
+    try
+    {
+        console.log("Disconnecting user ", user.id, user.name)
+        removeUser(user)
+        for (const r of Object.values(rooms))
+            r.users = r.users.filter(u => u != user)
+
+        io.to(user.roomId).emit("server-msg", "SYSTEM", user.name + " disconnected");
+        io.to(user.roomId).emit("server-user-left-room", user.id);
+    }
+    catch (e)
+    {
+        console.log(e.message + " " + e.stack);
+    }
 }
 
 app.post("/logout", (req, res) =>
 {
+    // this has never been tested
     const { userID } = req.body
     if (!userID)
     {
@@ -272,14 +285,17 @@ app.post("/logout", (req, res) =>
         const user = getUser(userID);
         if (!user) return;
 
+        removeUser(user)
+
         res.end()
     }
 })
 
+
 // Disconnect users that have failed to ping in the last 30 seconds
 setInterval(() =>
 {
-    const allUsers = getConnectedUserList(null)
+    const allUsers = getConnectedUserList()
     for (const user of Object.values(allUsers))
         if (Date.now() - user.lastPing > 30 * 1000)
             disconnectUser(user)

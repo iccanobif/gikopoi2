@@ -14,7 +14,7 @@ export class Player
     public character: 'giko' = 'giko';
     public direction: 'up' | 'down' | 'left' | 'right' = defaultRoom.spawnPoint.direction;
     public connected: boolean = true;
-    public roomId: string = "admin";
+    public roomId: string = defaultRoom.id;
     public lastPing = Date.now();
 
     constructor(options: { name?: string })
@@ -29,16 +29,17 @@ export function addNewUser(name: string)
 {
     const p = new Player({ name });
     users[p.id] = p;
+
+    defaultRoom.users.push(p)
     return p;
 };
 
-export function getConnectedUserList(roomId: string | null)
+export function getConnectedUserList()
 {
     const output: { [id: number]: Player; } = {};
     for (const u in users)
         if (users.hasOwnProperty(u)
-            && users[u].connected == true
-            && (roomId == null || users[u].roomId == roomId))
+            && users[u].connected == true)
         {
             output[u] = users[u];
         }
@@ -50,3 +51,7 @@ export function getUser(userId: number)
     return users[userId];
 };
 
+export function removeUser(user: Player)
+{
+    delete users[user.id];
+}
