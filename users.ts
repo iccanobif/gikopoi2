@@ -1,15 +1,18 @@
+import { v4 } from "uuid";
 import { defaultRoom } from "./rooms";
+//import { v4 } from "uuid"
 
 // TODO use a GUID
-let nextUserID = 1
+// let nextUserID = 1
 function generateId()
 {
-    return nextUserID++;
+    return v4()
+    // return (nextUserID++).toString()
 }
 
 export class Player
 {
-    public id: number = generateId();
+    public id: string = generateId();
     public name: string = "Anonymous";
     public position: { x: number, y: number } = { x: defaultRoom.spawnPoint.x, y: defaultRoom.spawnPoint.y };
     public character: 'giko' = 'giko';
@@ -24,7 +27,7 @@ export class Player
     }
 }
 
-const users: { [id: number]: Player; } = {}
+const users: { [id: string]: Player; } = {}
 
 export function addNewUser(name: string)
 {
@@ -49,7 +52,7 @@ export function getConnectedUserList(roomId: string | null): Player[]
         return Object.values(users)
 };
 
-export function getUser(userId: number)
+export function getUser(userId: string)
 {
     return users[userId];
 };

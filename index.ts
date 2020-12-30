@@ -19,7 +19,7 @@ io.on("connection", function (socket: any)
 
     socket.join(currentRoom.id)
 
-    socket.on("user-connect", function (userId: number)
+    socket.on("user-connect", function (userId: string)
     {
         try
         {
@@ -210,7 +210,7 @@ app.post("/ping/:userId", async (req, res) =>
         {
             // Update last ping date for the user
             const { userId } = req.params
-            const user = getUser(Number.parseInt(userId))
+            const user = getUser(userId)
 
             if (!user)
                 return
