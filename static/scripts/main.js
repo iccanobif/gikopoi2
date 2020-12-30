@@ -327,7 +327,7 @@ const gikopoi = function ()
 
     function sendMessageToServer()
     {
-        const inputTextbox = document.getElementById("textBox")
+        const inputTextbox = document.getElementById("input-textbox")
 
         if (inputTextbox.value == "") return;
         socket.emit("user-msg", inputTextbox.value);
@@ -351,7 +351,7 @@ const gikopoi = function ()
 
         canvas.addEventListener("keydown", onKeyDown);
 
-        const inputTextbox = document.getElementById("textBox")
+        const inputTextbox = document.getElementById("input-textbox")
 
         inputTextbox.addEventListener("keydown", (event) =>
         {
@@ -362,6 +362,11 @@ const gikopoi = function ()
         document.getElementById("send-button").addEventListener("click", () => sendMessageToServer())
         document.getElementById("start-streaming-button").addEventListener("click", () => wantToStartStreaming())
         document.getElementById("stop-streaming-button").addEventListener("click", () => stopStreaming())
+
+        document.getElementById("btn-move-left").addEventListener("click", () => sendNewPositionToServer("left"))
+        document.getElementById("btn-move-up").addEventListener("click", () => sendNewPositionToServer("up"))
+        document.getElementById("btn-move-down").addEventListener("click", () => sendNewPositionToServer("down"))
+        document.getElementById("btn-move-right").addEventListener("click", () => sendNewPositionToServer("right"))
 
         window.addEventListener("focus", () =>
         {

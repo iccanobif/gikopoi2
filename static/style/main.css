@@ -26,7 +26,7 @@ body
     position: absolute;
     width: 219px;
     top: 18px;
-    left: 510px;
+    right: 0px;
 }
 #received-video-container
 {
@@ -47,4 +47,39 @@ body
     position: absolute;
     z-index: 100;
     color: #d00;
+}
+
+#stage
+{
+    display: flex;
+    flex-direction: column;;
+    width: 100%;
+    height: 100%;
+}
+
+#room-canvas
+{
+    width: 100%;   
+}
+
+#canvas-container
+{
+    position: relative;
+    max-width: 700px;
+}
+
+#movement-buttons
+{
+    display: inline;
+}
+
+#toolbar
+{
+    max-width: 700px;
+    display: flex;
+}
+
+#input-textbox
+{
+    flex-grow: 1;
 }

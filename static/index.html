@@ -19,20 +19,30 @@
             </form>
         </div>
         <div id="stage" v-if="loggedIn">
-            <h2 id="connection-lost-alert" v-if="connectionLost">Connection lost, please refresh the page!　<br/>接続できません、ページをリフレッシュしてください！</h2>
-            <div id='room'>
-                <img id='background' />
+            <h2 id="connection-lost-alert" v-if="connectionLost">Connection lost, please refresh the
+                page!　<br />接続できません、ページをリフレッシュしてください！</h2>
+            <div id="canvas-container">
+                <video id="local-video" autoplay muted></video>
+                <canvas id="room-canvas" width="721px" height="511px" tabindex="0"></canvas>
+
             </div>
-            <canvas id="room-canvas" width="721px" height="511px" tabindex="0"></canvas>
             <div id="received-video-container" v-show="someoneIsStreaming && !iAmStreaming">
                 Streamer: {{ currentStreamerName }}
                 <div id="received-video-1"></div>
             </div>
-            <video id="local-video" autoplay muted></video>
 
-            <div>
-                Input: <input id="textBox" type="text"></input>
+
+            <div id="toolbar">
+                Input: <input id="input-textbox" type="text"></input>
                 <button id="send-button">発言</button>
+
+                <div id="movement-buttons">
+                    <button id="btn-move-left">←</button>
+                    <button id="btn-move-up">↑</button>
+                    <button id="btn-move-down">↓</button>
+                    <button id="btn-move-right">→</button>
+                </div>
+
                 <button id="start-streaming-button"
                     v-show="roomAllowsStreaming && !someoneIsStreaming && !iAmStreaming && !wantToStream">配信</button>
                 <button id="stop-streaming-button" v-show="iAmStreaming">配信停止</button>
