@@ -41,7 +41,15 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            msg = msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            msg = msg
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/((https?:\/\/|www\.)[^\s]+)/gi, function(url, prefix)
+                {
+                    let href = (prefix == "www." ? "http://" + url : url);
+                    return "<a href='" + href + "' target='_blank'>" + url + "</a>";
+                })
+            
             const userName = user.name
 
             console.log(userName + ": " + msg);
