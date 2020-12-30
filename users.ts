@@ -1,13 +1,9 @@
 import { v4 } from "uuid";
 import { defaultRoom } from "./rooms";
-//import { v4 } from "uuid"
 
-// TODO use a GUID
-// let nextUserID = 1
 function generateId()
 {
     return v4()
-    // return (nextUserID++).toString()
 }
 
 export class Player
