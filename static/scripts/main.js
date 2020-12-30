@@ -48,13 +48,11 @@ const gikopoi = function ()
 
         socket.on("server-update-current-room-state", async function (roomDto, usersDto)
         {
-            console.log("roomDto", roomDto)
             isLoadingRoom = true
 
             currentRoom = roomDto
             users = {}
 
-            console.log(usersDto)
             for (const u of usersDto)
                 addUser(u);
 
@@ -82,7 +80,6 @@ const gikopoi = function ()
         socket.on("server-msg", function (userName, msg)
         {
             const chatLog = document.getElementById("chatLog");
-            console.log(userName)
             if (userName != "SYSTEM")
                 document.getElementById("message-sound").play()
 
