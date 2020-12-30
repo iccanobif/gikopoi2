@@ -73,7 +73,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 8, y: 4, targetRoomId: "admin_st", targetX: 0, targetY: 2 }
         ],
         streams: [{ isActive: false, withSound: null, withVideo: null }, { isActive: false, withSound: null, withVideo: null }],
-        users: [],
+        // users: [],
     },
     admin_st: {
         id: "admin_st",
@@ -103,7 +103,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 2, y: 4, targetRoomId: "admin", targetX: 10, targetY: 0 }
         ],
         streams: [],
-        users: [],
+        // users: [],
     },
     admin: {
         id: "admin",
@@ -150,7 +150,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 10, y: 0, targetRoomId: "admin_st", targetX: 2, targetY: 4 }
         ],
         streams: [],
-        users: [],
+        // users: [],
     }
 }
 

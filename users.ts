@@ -10,7 +10,7 @@ export class Player
 {
     public id: number = generateId();
     public name: string = "Anonymous";
-    public position: { x: number, y: number } = defaultRoom.spawnPoint;
+    public position: { x: number, y: number } = { x: defaultRoom.spawnPoint.x, y: defaultRoom.spawnPoint.y };
     public character: 'giko' = 'giko';
     public direction: 'up' | 'down' | 'left' | 'right' = defaultRoom.spawnPoint.direction;
     public connected: boolean = true;
@@ -30,20 +30,22 @@ export function addNewUser(name: string)
     const p = new Player({ name });
     users[p.id] = p;
 
-    defaultRoom.users.push(p)
     return p;
 };
 
-export function getConnectedUserList()
+export function getConnectedUserList(roomId: string | null): Player[]
 {
-    const output: { [id: number]: Player; } = {};
-    for (const u in users)
-        if (users.hasOwnProperty(u)
-            && users[u].connected == true)
-        {
-            output[u] = users[u];
-        }
-    return output;
+    // const output: { [id: number]: Player; } = {};
+    // for (const u in users)
+    //     if (users.hasOwnProperty(u))
+    //     {
+    //         output[u] = users[u];
+    //     }
+    // return output;
+    if (roomId)
+        return Object.values(users).filter(u => u.roomId == roomId)
+    else
+        return Object.values(users)
 };
 
 export function getUser(userId: number)

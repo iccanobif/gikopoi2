@@ -27,7 +27,7 @@ io.on("connection", function (socket: any)
 
             console.log("userId: " + userId + " name: " + user.name);
 
-            socket.emit("server-update-current-room-state", currentRoom)
+            socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(user.roomId))
 
         }
         catch (e)
@@ -169,10 +169,7 @@ io.on("connection", function (socket: any)
 
             const { targetRoomId, targetX, targetY } = data
 
-            // Remove user object from the current room and add it to the new room
-            currentRoom.users = currentRoom.users.filter(u => u != user)
             currentRoom = rooms[targetRoomId]
-            currentRoom.users.push(user)
 
             io.to(user.roomId).emit("server-user-left-room", user.id);
             socket.leave(user.roomId)
@@ -180,9 +177,7 @@ io.on("connection", function (socket: any)
             user.position = { x: targetX, y: targetY }
             user.roomId = targetRoomId
 
-
-
-            socket.emit("server-update-current-room-state", currentRoom)
+            socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(targetRoomId))
             socket.join(targetRoomId)
             socket.to(targetRoomId).emit("server-user-joined-room", user);
         }
@@ -259,8 +254,8 @@ function disconnectUser(user: Player)
     {
         console.log("Disconnecting user ", user.id, user.name)
         removeUser(user)
-        for (const r of Object.values(rooms))
-            r.users = r.users.filter(u => u != user)
+        // for (const r of Object.values(rooms))
+        //     r.users = r.users.filter(u => u != user)
 
         io.to(user.roomId).emit("server-msg", "SYSTEM", user.name + " disconnected");
         io.to(user.roomId).emit("server-user-left-room", user.id);
@@ -293,13 +288,13 @@ app.post("/logout", (req, res) =>
 
 
 // Disconnect users that have failed to ping in the last 30 seconds
+
 setInterval(() =>
 {
-    const allUsers = getConnectedUserList()
-    for (const user of Object.values(allUsers))
-        if (Date.now() - user.lastPing > 30 * 1000)
+    for (const user of getConnectedUserList(null))
+        if (Date.now() - user.lastPing > 20 * 1000)
             disconnectUser(user)
-}, 20 * 1000)
+}, 1 * 1000)
 
 const port = process.env.PORT == undefined
     ? 8085

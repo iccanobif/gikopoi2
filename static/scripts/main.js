@@ -33,15 +33,17 @@ const gikopoi = function ()
             socket.emit("user-connect", myUserID);
         });
 
-        socket.on("server-update-current-room-state", async function (roomDto)
+        socket.on("server-update-current-room-state", async function (roomDto, usersDto)
         {
             console.log("roomDto", roomDto)
             isLoadingRoom = true
 
             currentRoom = roomDto
             users = {}
-            for (const u in roomDto.users)
-                addUser(roomDto.users[u]);
+
+            console.log(usersDto)
+            for (const u of usersDto)
+                addUser(u);
 
             currentRoom.backgroundImage = await loadImage(currentRoom.backgroundImageUrl)
             for (const o of currentRoom.objects)

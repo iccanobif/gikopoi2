@@ -1,5 +1,3 @@
-import { Player } from "./users";
-
 export interface Coordinates
 {
     x: number;
@@ -37,5 +35,5 @@ export interface Room
         withSound: boolean | null,
         withVideo: boolean | null
     }[];
-    users: Player[]
+    // users: Player[]
 }
