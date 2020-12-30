@@ -395,6 +395,8 @@ const gikopoi = function ()
         catch (err)
         {
             alert("sorry, can't find a webcam")
+            vueApp.wantToStream = false
+            webcamStream = false
         }
     }
 
