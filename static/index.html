@@ -28,16 +28,27 @@
                 まだ部屋の用意ができていません。ごめんね！
             </h2>
             <div id="canvas-container">
-                <video id="local-video" autoplay muted></video>
                 <canvas id="room-canvas" width="721px" height="511px" tabindex="0"></canvas>
 
             </div>
-            <div id="received-video-container" v-show="someoneIsStreaming && !iAmStreaming">
-                Streamer: {{ currentStreamerName }}
-                <div id="received-video-1"></div>
+            <div id="video-streams">
+                <video id="local-video" autoplay muted></video>
+                <div v-for="(streamSlot, index) in currentRoomStreamSlots">
+                    <div v-if="streamSlot.isActive">
+                        配信者: {{ streamSlot.userName }}
+                    </div>
+                    <button :id="'start-streaming-button-' + index"
+                        v-if="!streamSlot.isActive && !iAmStreaming && !wantToStream"
+                        v-on:click="wantToStartStreaming(index)">
+                        配信
+                    </button>
+                    <div v-show="streamSlot.isActive" :id="'received-video-' + index"></div>
+                    <button :id="'stop-streaming-button-' + index"
+                        v-if="iAmStreaming && streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
+                        配信停止
+                    </button>
+                </div>
             </div>
-
-
             <div id="toolbar">
                 Input: <input id="input-textbox" type="text"></input>
                 <button id="send-button">発言</button>
@@ -49,9 +60,6 @@
                     <button id="btn-move-right">→</button>
                 </div>
 
-                <button id="start-streaming-button"
-                    v-show="roomAllowsStreaming && !someoneIsStreaming && !iAmStreaming && !wantToStream">配信</button>
-                <button id="stop-streaming-button" v-show="iAmStreaming">配信停止</button>
                 <!-- <button id="logout">Logout</button> -->
             </div>
             ログ：

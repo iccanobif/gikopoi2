@@ -35,6 +35,7 @@ export interface Room
         withSound: boolean | null,
         withVideo: boolean | null,
         userId: string | null,
+        userName: string | null,
     }[];
     // users: Player[]
 }

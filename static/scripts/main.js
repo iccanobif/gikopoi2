@@ -20,6 +20,8 @@ const gikopoi = function ()
     let requestedRoomChange = false
     let forceUserInstantMove = false
 
+    let receivedVideoPlayers = []
+
     async function connectToServer(username)
     {
         const loginResponse = await postJson("/login", { userName: username })
@@ -74,18 +76,12 @@ const gikopoi = function ()
             requestedRoomChange = false
 
             // stream stuff
-            vueApp.roomAllowsStreaming = currentRoom.streams.length > 0
-
             console.log(currentRoom)
+            vueApp.currentRoomStreamSlots = currentRoom.streams
 
-            // TODO THIS WON'T WORK FOR MULTIPLE STREAMS IN THE SAME ROOM!
-            const activeStream = currentRoom.streams.find(s => s.isActive)
+            await sleep(0) // Allow vue.js to render the received-video-* containers
 
-            if (activeStream)
-            {
-                vueApp.someoneIsStreaming = true
-                vueApp.currentStreamerName = users[activeStream.userId].name
-            }
+            receivedVideoPlayers = currentRoom.streams.map((s, i) => new VideoChunkPlayer(document.getElementById("received-video-" + i)))
         });
 
         socket.on("server-msg", function (userName, msg)
@@ -132,7 +128,7 @@ const gikopoi = function ()
                 delete users[userId];
         });
 
-        const receivedVideoPlayer = new VideoChunkPlayer(document.getElementById("received-video-1"))
+
 
         socket.on("server-stream-data", function (data)
         {
@@ -147,18 +143,15 @@ const gikopoi = function ()
         {
             vueApp.wantToStream = false
             vueApp.iAmStreaming = true
-            vueApp.someoneIsStreaming = true
             startStreaming()
         })
         socket.on("server-stream-started", (streamInfo) =>
         {
-            vueApp.someoneIsStreaming = true
-            vueApp.currentStreamerName = users[streamInfo.userId].name
+            // vueApp.currentStreamerName = users[streamInfo.userId].name
         })
         socket.on("server-stream-stopped", (streamInfo) =>
         {
             const { streamSlotId } = streamInfo
-            vueApp.someoneIsStreaming = false
             receivedVideoPlayer.stop() // kinda useless, now that i'm using the someoneIsStreaming variable to drive the visibility of the video player
         })
 
@@ -379,8 +372,6 @@ const gikopoi = function ()
         })
 
         document.getElementById("send-button").addEventListener("click", () => sendMessageToServer())
-        document.getElementById("start-streaming-button").addEventListener("click", () => wantToStartStreaming())
-        document.getElementById("stop-streaming-button").addEventListener("click", () => stopStreaming())
 
         document.getElementById("btn-move-left").addEventListener("click", () => sendNewPositionToServer("left"))
         document.getElementById("btn-move-up").addEventListener("click", () => sendNewPositionToServer("up"))
@@ -396,30 +387,6 @@ const gikopoi = function ()
     // WebRTC
 
     let webcamStream = null;
-
-    async function wantToStartStreaming()
-    {
-        try
-        {
-            vueApp.wantToStream = true
-            webcamStream = await navigator.mediaDevices.getUserMedia({
-                audio: true,
-                video: { aspectRatio: { ideal: 1.333333 } }
-            })
-
-            socket.emit("user-want-to-stream", {
-                streamSlotId: 0,
-                withVideo: true,
-                withSound: true,
-            })
-        }
-        catch (err)
-        {
-            showWarningToast("sorry, can't find a webcam")
-            vueApp.wantToStream = false
-            webcamStream = false
-        }
-    }
 
     async function startStreaming()
     {
@@ -443,7 +410,7 @@ const gikopoi = function ()
     function stopStreaming()
     {
         vueApp.iAmStreaming = false
-        vueApp.someoneIsStreaming = false
+        vueApp.streamSlotIdInWhichIWantToStream = null
         for (const track of webcamStream.getTracks())
             track.stop()
         document.getElementById("local-video").srcObject = webcamStream = null;
@@ -464,8 +431,33 @@ const gikopoi = function ()
             registerKeybindings()
             await connectToServer(username)
             paint()
+        },
+        wantToStartStreaming: async function wantToStartStreaming(streamSlotId)
+        {
+            try
+            {
+                vueApp.wantToStream = true
+                vueApp.streamSlotIdInWhichIWantToStream = streamSlotId
+                webcamStream = await navigator.mediaDevices.getUserMedia({
+                    audio: true,
+                    video: { aspectRatio: { ideal: 1.333333 } }
+                })
 
-
+                socket.emit("user-want-to-stream", {
+                    streamSlotId: streamSlotId,
+                    withVideo: true,
+                    withSound: true,
+                })
+            }
+            catch (err)
+            {
+                showWarningToast("sorry, can't find a webcam")
+                vueApp.wantToStream = false
+                webcamStream = false
+            }
+        },
+        stopStreaming: function () {
+            stopStreaming()
         }
     }
 }();
@@ -483,11 +475,10 @@ const vueApp = new Vue({
         loggedIn: false,
         wantToStream: false,
         iAmStreaming: false,
-        someoneIsStreaming: false, // this won't be enough when we allow more than one stream slot in the same room
-        roomAllowsStreaming: false,
-        currentStreamerName: "",
         connectionLost: false,
         steppingOnPortalToNonAvailableRoom: false,
+        currentRoomStreamSlots: [],
+        streamSlotIdInWhichIWantToStream: null,
     },
     methods: {
         login: function (ev)
@@ -497,6 +488,14 @@ const vueApp = new Vue({
                 this.username = "名無しさん"
             this.loggedIn = true
             gikopoi.login(this.username).catch(console.error)
+        },
+        wantToStartStreaming: function (streamSlotID)
+        {
+            gikopoi.wantToStartStreaming(streamSlotID)
+        },
+        stopStreaming: function ()
+        {
+            gikopoi.stopStreaming()
         }
     }
 })

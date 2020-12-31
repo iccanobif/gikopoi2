@@ -30,7 +30,6 @@ io.on("connection", function (socket: any)
             console.log("userId: " + userId + " name: " + user.name);
 
             socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(user.roomId))
-
         }
         catch (e)
         {
@@ -121,7 +120,6 @@ io.on("connection", function (socket: any)
     {
         try
         {
-
             io.to(user.roomId).emit("server-stream-data", data)
         }
         catch (e)
@@ -161,6 +159,8 @@ io.on("connection", function (socket: any)
             if (currentStreamSlotId === null) return // should never happen
 
             currentRoom.streams[currentStreamSlotId].isActive = false
+            currentRoom.streams[currentStreamSlotId].userId = null
+            currentRoom.streams[currentStreamSlotId].userName = null
 
             socket.to(user.roomId).emit("server-stream-stopped", {
                 streamSlotId: currentStreamSlotId,
