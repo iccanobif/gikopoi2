@@ -100,7 +100,10 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         doors: [
             { x: 0, y: 2, targetRoomId: "bar", targetX: 8, targetY: 4 },
-            { x: 2, y: 4, targetRoomId: "admin", targetX: 10, targetY: 0 }
+            { x: 2, y: 4, targetRoomId: "admin", targetX: 10, targetY: 0 },
+            { x: 7, y: 4, targetRoomId: "NOT_READY_YET", targetX: 10, targetY: 0 },
+            { x: 7, y: 0, targetRoomId: "NOT_READY_YET", targetX: 10, targetY: 0 },
+            { x: 9, y: 2, targetRoomId: "NOT_READY_YET", targetX: 10, targetY: 0 },
         ],
         streams: [],
         // users: [],

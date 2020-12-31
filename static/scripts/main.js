@@ -130,7 +130,7 @@ const gikopoi = function ()
         socket.on("server-not-ok-to-stream", (reason) =>
         {
             vueApp.wantToStream = false
-            alert(reason)
+            showWarningToast(reason)
         })
         socket.on("server-ok-to-stream", () =>
         {
@@ -162,7 +162,7 @@ const gikopoi = function ()
             // if (newVersion > version)
             // {
             //     // TODO refresh page while keeping username ,selected character and room
-            //     alert("Sorry, a new version of gikopoi2 is ready, please refresh this page!")
+            //     showWarningToast("Sorry, a new version of gikopoi2 is ready, please refresh this page!")
             // }
             // else
             // {
@@ -295,6 +295,8 @@ const gikopoi = function ()
 
         if (currentUser.isWalking) return
 
+        vueApp.steppingOnPortalToNonAvailableRoom = false
+
         const door = currentRoom.doors.find(d =>
             d.x == currentUser.logicalPositionX &&
             d.y == currentUser.logicalPositionY)
@@ -302,6 +304,12 @@ const gikopoi = function ()
         if (!door) return
 
         const { targetRoomId, targetX, targetY } = door
+
+        if (targetRoomId == "NOT_READY_YET")
+        {
+            vueApp.steppingOnPortalToNonAvailableRoom = true
+            return
+        }
 
         if (webcamStream)
             stopStreaming()
@@ -396,7 +404,7 @@ const gikopoi = function ()
         }
         catch (err)
         {
-            alert("sorry, can't find a webcam")
+            showWarningToast("sorry, can't find a webcam")
             vueApp.wantToStream = false
             webcamStream = false
         }
@@ -451,6 +459,12 @@ const gikopoi = function ()
     }
 }();
 
+function showWarningToast(text)
+{
+    // TODO make this a nice, non-blocking message
+    alert(text)
+}
+
 const vueApp = new Vue({
     el: '#vue-app',
     data: {
@@ -462,6 +476,7 @@ const vueApp = new Vue({
         roomAllowsStreaming: false,
         currentStreamerName: "",
         connectionLost: false,
+        steppingOnPortalToNonAvailableRoom: false,
     },
     methods: {
         login: function (ev)

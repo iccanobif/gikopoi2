@@ -19,8 +19,14 @@
             </form>
         </div>
         <div id="stage" v-if="loggedIn">
-            <h2 id="connection-lost-alert" v-if="connectionLost">Connection lost, please refresh the
-                page!　<br />接続できません、ページをリフレッシュしてください！</h2>
+            <h2 class="big-red-alert" v-if="connectionLost">
+                Connection lost, please refresh the
+                page!　<br />接続できません、ページをリフレッシュしてください！
+            </h2>
+            <h2 class="big-red-alert" v-if="steppingOnPortalToNonAvailableRoom">
+                This room is not available yet. Sorry!<br />
+                まだ部屋の用意ができていません。ごめんね！
+            </h2>
             <div id="canvas-container">
                 <video id="local-video" autoplay muted></video>
                 <canvas id="room-canvas" width="721px" height="511px" tabindex="0"></canvas>
