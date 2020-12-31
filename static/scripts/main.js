@@ -130,9 +130,9 @@ const gikopoi = function ()
 
 
 
-        socket.on("server-stream-data", function (data)
+        socket.on("server-stream-data", function (streamSlotId, data)
         {
-            receivedVideoPlayer.playChunk(data)
+            receivedVideoPlayers[streamSlotId].playChunk(data)
         })
         socket.on("server-not-ok-to-stream", (reason) =>
         {
@@ -145,14 +145,9 @@ const gikopoi = function ()
             vueApp.iAmStreaming = true
             startStreaming()
         })
-        socket.on("server-stream-started", (streamInfo) =>
+        socket.on("server-update-current-room-streams", (streams) =>
         {
-            // vueApp.currentStreamerName = users[streamInfo.userId].name
-        })
-        socket.on("server-stream-stopped", (streamInfo) =>
-        {
-            const { streamSlotId } = streamInfo
-            receivedVideoPlayer.stop() // kinda useless, now that i'm using the someoneIsStreaming variable to drive the visibility of the video player
+            vueApp.currentRoomStreamSlots = currentRoom.streams = streams
         })
 
         let version = Infinity

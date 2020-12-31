@@ -43,12 +43,12 @@ io.on("connection", function (socket: any)
             msg = msg
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
-                .replace(/((https?:\/\/|www\.)[^\s]+)/gi, function(url, prefix)
+                .replace(/((https?:\/\/|www\.)[^\s]+)/gi, function (url, prefix)
                 {
                     let href = (prefix == "www." ? "http://" + url : url);
                     return "<a href='" + href + "' target='_blank'>" + url + "</a>";
                 })
-            
+
             const userName = user.name
 
             console.log(userName + ": " + msg);
@@ -120,7 +120,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            io.to(user.roomId).emit("server-stream-data", data)
+            io.to(user.roomId).emit("server-stream-data", currentStreamSlotId, data)
         }
         catch (e)
         {
@@ -143,8 +143,7 @@ io.on("connection", function (socket: any)
 
                 socket.emit("server-ok-to-stream")
 
-                const streamInfo = { ...streamRequest, userId: user.id }
-                socket.to(user.roomId).emit("server-stream-started", streamInfo)
+                socket.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
             }
         }
         catch (e)
@@ -162,9 +161,7 @@ io.on("connection", function (socket: any)
             currentRoom.streams[currentStreamSlotId].userId = null
             currentRoom.streams[currentStreamSlotId].userName = null
 
-            socket.to(user.roomId).emit("server-stream-stopped", {
-                streamSlotId: currentStreamSlotId,
-            })
+            socket.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
 
             currentStreamSlotId = null
         }
@@ -183,6 +180,7 @@ io.on("connection", function (socket: any)
 
             currentRoom = rooms[targetRoomId]
 
+            clearStream(user)
             io.to(user.roomId).emit("server-user-left-room", user.id);
             socket.leave(user.roomId)
 
@@ -260,14 +258,25 @@ app.post("/login", (req, res) =>
     }
 })
 
+function clearStream(user: Player)
+{
+    const stream = rooms[user.roomId].streams.find(s => s.userId == user.id)
+    if (stream)
+    {
+        stream.isActive = false
+        stream.userId = null
+        stream.userName = ""
+    }
+}
+
 function disconnectUser(user: Player)
 {
     try
     {
         console.log("Disconnecting user ", user.id, user.name)
+        clearStream(user)
+
         removeUser(user)
-        // for (const r of Object.values(rooms))
-        //     r.users = r.users.filter(u => u != user)
 
         io.to(user.roomId).emit("server-msg", "SYSTEM", user.name + " disconnected");
         io.to(user.roomId).emit("server-user-left-room", user.id);
