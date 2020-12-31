@@ -260,12 +260,14 @@ app.post("/login", (req, res) =>
 
 function clearStream(user: Player)
 {
-    const stream = rooms[user.roomId].streams.find(s => s.userId == user.id)
+    const room = rooms[user.roomId]
+    const stream = room.streams.find(s => s.userId == user.id)
     if (stream)
     {
         stream.isActive = false
         stream.userId = null
         stream.userName = ""
+        io.to(user.roomId).emit("server-update-current-room-streams", room.streams)
     }
 }
 
@@ -275,7 +277,6 @@ function disconnectUser(user: Player)
     {
         console.log("Disconnecting user ", user.id, user.name)
         clearStream(user)
-
         removeUser(user)
 
         io.to(user.roomId).emit("server-msg", "SYSTEM", user.name + " disconnected");

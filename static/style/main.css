@@ -28,14 +28,15 @@ body
     top: 18px;
     right: 0px;
 }
-#received-video-container
+
+div[id^="received-video-"]
 {
     position: absolute;
     top: 18px;
     left: 0px;
 }
 
-#received-video-container video
+div[id^="received-video-"] video
 {
     width: 219px;
     position: absolute;
