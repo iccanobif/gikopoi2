@@ -140,6 +140,8 @@ io.on("connection", function (socket: any)
             else
             {
                 currentStreamSlotId = streamSlotId
+                currentRoom.streams[streamSlotId].isActive = true
+                currentRoom.streams[streamSlotId].userId = user.id
 
                 socket.emit("server-ok-to-stream")
 

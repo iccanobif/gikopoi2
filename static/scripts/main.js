@@ -73,8 +73,19 @@ const gikopoi = function ()
             isLoadingRoom = false
             requestedRoomChange = false
 
+            // stream stuff
             vueApp.roomAllowsStreaming = currentRoom.streams.length > 0
 
+            console.log(currentRoom)
+
+            // TODO THIS WON'T WORK FOR MULTIPLE STREAMS IN THE SAME ROOM!
+            const activeStream = currentRoom.streams.find(s => s.isActive)
+
+            if (activeStream)
+            {
+                vueApp.someoneIsStreaming = true
+                vueApp.currentStreamerName = users[activeStream.userId].name
+            }
         });
 
         socket.on("server-msg", function (userName, msg)

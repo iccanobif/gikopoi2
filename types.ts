@@ -33,7 +33,8 @@ export interface Room
     streams: {
         isActive: boolean,
         withSound: boolean | null,
-        withVideo: boolean | null
+        withVideo: boolean | null,
+        userId: string | null,
     }[];
     // users: Player[]
 }

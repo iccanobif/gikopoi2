@@ -27,8 +27,8 @@ streamInfo: {
     <- server-stream-stopped({ streamSlotId: number })
 
 TODO:
-    - when a streamer changes room, automatically stop his stream            OK
-    - if a room has an empty "streams" array, hide the "start streaming" button
-    - when a non streamer changes room, close the previous room's stream
-    - when someone joins a room where a stream is ongoing, have the server send a server-stream-started message
+    - OK when a streamer changes room, automatically stop his stream
+    - OK if a room has an empty "streams" array, hide the "start streaming" button
+    - OK when someone joins a room where a stream is ongoing, have the server send a server-stream-started message
+    - when a non streamer changes room, close the previous room's stream        
     - ability to mute/hide streams (and save bandwidth)

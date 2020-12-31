@@ -72,7 +72,10 @@ export const rooms: { [roomId: string]: Room } = {
             // [[8, 4], "bar_street", [3, 5], 1]
             { x: 8, y: 4, targetRoomId: "admin_st", targetX: 0, targetY: 2 }
         ],
-        streams: [{ isActive: false, withSound: null, withVideo: null }, { isActive: false, withSound: null, withVideo: null }],
+        streams: [
+            { isActive: false, withSound: null, withVideo: null, userId: null },
+            { isActive: false, withSound: null, withVideo: null, userId: null },
+        ],
         // users: [],
     },
     admin_st: {
