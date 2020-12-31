@@ -52,6 +52,9 @@ const gikopoi = function ()
 
             currentRoom = roomDto
             users = {}
+            
+            // TODO We need actual room names
+            vueApp.roomname = currentRoom.id;
 
             for (const u of usersDto)
                 addUser(u);
@@ -96,6 +99,11 @@ const gikopoi = function ()
 
             chatLog.innerHTML += userName + ": " + msg + "<br/>";
             chatLog.scrollTop = chatLog.scrollHeight;
+        });
+        
+        socket.on("server-stats", function (serverStats)
+        {
+            vueApp.serverStats = serverStats;
         });
 
         socket.on("server-move", function (userId, x, y, direction, isInstant)
@@ -386,7 +394,12 @@ const gikopoi = function ()
         document.getElementById("btn-move-up").addEventListener("click", () => sendNewPositionToServer("up"))
         document.getElementById("btn-move-down").addEventListener("click", () => sendNewPositionToServer("down"))
         document.getElementById("btn-move-right").addEventListener("click", () => sendNewPositionToServer("right"))
-
+        
+        document.getElementById("infobox-button").addEventListener("click", function()
+        {
+            document.getElementById("infobox").classList.toggle("hidden");
+        });
+        
         window.addEventListener("focus", () =>
         {
             forceUserInstantMove = true
@@ -480,6 +493,10 @@ const vueApp = new Vue({
     el: '#vue-app',
     data: {
         username: "",
+        roomname: "",
+        serverStats: {
+            userCount: 0
+        },
         loggedIn: false,
         wantToStream: false,
         iAmStreaming: false,
@@ -500,4 +517,3 @@ const vueApp = new Vue({
         }
     }
 })
-

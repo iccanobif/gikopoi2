@@ -30,7 +30,7 @@ io.on("connection", function (socket: any)
             console.log("userId: " + userId + " name: " + user.name);
 
             socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(user.roomId))
-
+            emitServerStats()
         }
         catch (e)
         {
@@ -200,6 +200,13 @@ io.on("connection", function (socket: any)
     })
 });
 
+function emitServerStats()
+{
+    io.emit("server-stats", {
+        userCount: getConnectedUserList(null).length
+    })
+}
+
 app.use(express.static('static',
     { setHeaders: (res) => res.set("Cache-Control", "no-cache") }
 ));
@@ -271,6 +278,7 @@ function disconnectUser(user: Player)
 
         io.to(user.roomId).emit("server-msg", "SYSTEM", user.name + " disconnected");
         io.to(user.roomId).emit("server-user-left-room", user.id);
+        emitServerStats()
     }
     catch (e)
     {
