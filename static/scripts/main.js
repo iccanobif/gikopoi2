@@ -170,7 +170,7 @@ const gikopoi = function ()
             // }
         }
 
-        setInterval(ping, 1000 * 10)
+        setInterval(ping, 1000 * 60)
     }
 
     function addUser(userDTO)

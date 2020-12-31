@@ -302,7 +302,7 @@ app.post("/logout", (req, res) =>
 setInterval(() =>
 {
     for (const user of getConnectedUserList(null))
-        if (Date.now() - user.lastPing > 20 * 1000)
+        if (Date.now() - user.lastPing > 80 * 1000)
             disconnectUser(user)
 }, 1 * 1000)
 
