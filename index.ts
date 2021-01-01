@@ -6,6 +6,7 @@ import { sleep } from "./utils";
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
+const tripcode = require('tripcode');
 
 const delay = 0
 
@@ -248,23 +249,27 @@ app.use(express.json());
 app.post("/login", (req, res) =>
 {
     const { userName } = req.body
-
-    console.log(userName, "logging in")
-
     if (!userName)
     {
         res.statusCode = 500
         res.end("please specify a username")
+        return;
     }
-    else
-    {
-        const sanitizedUserName = userName.replace(/</g, "&lt;").replace(/>/g, "&gt;")
-        const user = addNewUser(sanitizedUserName);
-        res.json(user.id)
+    
+    const n = userName.indexOf("#");
+    let processedUserName = (n >= 0 ? userName.substr(0, n) : userName)
+        .replace("◆", "◇");
+    if (n >= 0)
+        processedUserName = processedUserName + "◆" + tripcode(userName.substr(n+1));
+    
+    console.log(processedUserName, "logging in")
+    
+    const sanitizedUserName = processedUserName.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    const user = addNewUser(sanitizedUserName);
+    res.json(user.id)
 
-        io.to(user.roomId).emit("server-msg", "SYSTEM", sanitizedUserName + " connected");
-        io.to(user.roomId).emit("server-user-joined-room", user);
-    }
+    io.to(user.roomId).emit("server-msg", "SYSTEM", sanitizedUserName + " connected");
+    io.to(user.roomId).emit("server-user-joined-room", user);
 })
 
 function disconnectUser(user: Player)
