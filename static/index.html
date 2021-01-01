@@ -30,7 +30,27 @@
             <div id="canvas-container">
                 <video id="local-video" autoplay muted></video>
                 <canvas id="room-canvas" width="721px" height="511px" tabindex="0"></canvas>
-
+                <div id="infobox-container">
+                    <div id="infobox" class="hidden">
+                        <div id="infobox-area" class="infobox-line">
+                            <div class="infobox-title">ｴﾘｱ：</div>
+                            <div class="infobox-value">海辺の町</div>
+                        </div>
+                        <div id="infobox-roomname" class="infobox-line">
+                            <div class="infobox-title">ｽﾃｰｼﾞ：</div>
+                            <div class="infobox-value">{{ roomname }}</div>
+                        </div>
+                        <div id="infobox-username" class="infobox-line">
+                            <div class="infobox-title">名前：</div>
+                            <div class="infobox-value">{{ username }}</div>
+                        </div>
+                        <div id="infobox-usercount" class="infobox-line">
+                            <div class="infobox-title">人数：</div>
+                            <div class="infobox-value">{{ serverStats.userCount }}</div>
+                        </div>
+                    </div>
+                    <button id="infobox-button" class="canvas-button-top-right"></button>
+                </div>
             </div>
             <div id="received-video-container" v-show="someoneIsStreaming && !iAmStreaming">
                 Streamer: {{ currentStreamerName }}
