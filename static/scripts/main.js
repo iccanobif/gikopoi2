@@ -63,6 +63,12 @@ const vueApp = new Vue({
             // TODO make this a nice, non-blocking message
             alert(text)
         },
+        updateStreamSlots: async function ()
+        {
+            this.currentRoomStreamSlots = this.currentRoom.streams
+            await sleep(0) // Allow vue.js to render the received-video-* containers
+            this.receivedVideoPlayers = this.currentRoom.streams.map((s, i) => new VideoChunkPlayer(document.getElementById("received-video-" + i)))
+        },
         connectToServer: async function (username)
         {
             const loginResponse = await postJson("/login", { userName: username })
@@ -120,11 +126,7 @@ const vueApp = new Vue({
                 // stream stuff
                 this.roomAllowsStreaming = this.currentRoom.streams.length > 0
 
-                this.currentRoomStreamSlots = this.currentRoom.streams
-
-                await sleep(0) // Allow vue.js to render the received-video-* containers
-
-                this.receivedVideoPlayers = this.currentRoom.streams.map((s, i) => new VideoChunkPlayer(document.getElementById("received-video-" + i)))
+                this.updateStreamSlots()
             });
 
             this.socket.on("server-msg", (userName, msg) =>
@@ -178,7 +180,9 @@ const vueApp = new Vue({
 
             this.socket.on("server-stream-data", (streamSlotId, data) =>
             {
-                this.receivedVideoPlayers[streamSlotId].playChunk(data)
+                const player = this.receivedVideoPlayers[streamSlotId]
+                if (player)
+                    player.playChunk(data)
             })
             this.socket.on("server-not-ok-to-stream", (reason) =>
             {
@@ -193,7 +197,9 @@ const vueApp = new Vue({
             })
             this.socket.on("server-update-current-room-streams", (streams) =>
             {
-                this.currentRoomStreamSlots = this.currentRoom.streams = streams
+                this.currentRoom.streams = streams
+
+                this.updateStreamSlots()
             })
             this.socket.on("server-stream-started", (streamInfo) =>
             {
@@ -202,7 +208,7 @@ const vueApp = new Vue({
             this.socket.on("server-stream-stopped", (streamInfo) =>
             {
                 const { streamSlotId } = streamInfo
-                receivedVideoPlayer.stop() // kinda useless, now that i'm using the someoneIsStreaming variable to drive the visibility of the video player
+                // receivedVideoPlayer.stop() // kinda useless, now that i'm using the someoneIsStreaming variable to drive the visibility of the video player
             })
 
             let version = Infinity
@@ -464,6 +470,7 @@ const vueApp = new Vue({
                 recorder.startRecording()
                 await sleep(1000);
                 await recorder.stopRecording();
+                console.log("stopped recording")
                 let blob = await recorder.getBlob();
                 if (this.webcamStream)
                 {

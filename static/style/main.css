@@ -35,7 +35,7 @@ body
     right: 0px;
 }
 
-div[id^="received-video-"]
+/* div[id^="received-video-"]
 {
     position: absolute;
     top: 18px;
@@ -48,7 +48,7 @@ div[id^="received-video-"] video
     position: absolute;
     top: 20px;
     left: 0px;
-}
+} */
 
 
 /* --- canvas triangle buttons --- */
