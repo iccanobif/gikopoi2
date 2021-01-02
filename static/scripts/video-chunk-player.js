@@ -1,53 +1,55 @@
+const mimeType = 'video/webm; codecs="vorbis,vp8"'
+
 export default class VideoChunkPlayer
 {
     constructor(container)
     {
         this.container = container
-        this.videoElement1 = document.createElement("video")
-        this.videoElement2 = document.createElement("video")
+        this.videoElement = document.createElement("video")
 
-        for (const videoElement of [this.videoElement1, this.videoElement2])
-        {
-            videoElement.style.zIndex = -1
-            videoElement.autoplay = true
-            container.appendChild(videoElement)
-        }
+        this.videoElement.autoplay = true
+        container.appendChild(this.videoElement)
 
-        this.videoElement1.addEventListener("loadeddata", () => 
-        {
-            this.videoElement1.style.zIndex = 1000;
-            this.videoElement2.style.zIndex = -1;
-        })
-        this.videoElement2.addEventListener("loadeddata", () => 
-        {
-            this.videoElement2.style.zIndex = 1000;
-            this.videoElement1.style.zIndex = -1;
-        })
+        this.mediaSource = new MediaSource();
+        this.videoElement.src = URL.createObjectURL(this.mediaSource);
 
-        this.whichVideoElement = 1
+        this.queue = []
+
+        this.mediaSource.addEventListener("sourceopen", (e) =>
+        {
+            console.log("sourceopen", e)
+            this.sourceBuffer = this.mediaSource.addSourceBuffer(mimeType);
+
+            // this.sourceBuffer.addEventListener('abort', console.warn)
+            // this.sourceBuffer.addEventListener('error', console.warn)
+            // this.sourceBuffer.addEventListener('update', console.warn)
+            // this.sourceBuffer.addEventListener('updateend', console.warn)
+            // this.sourceBuffer.addEventListener('updatestart', console.warn)
+
+            this.sourceBuffer.addEventListener('updateend', () =>
+            {
+                console.log("updateend", this.queue)
+                if (this.queue.length)
+                {
+                    this.sourceBuffer.appendBuffer(this.queue.shift())
+                    this.videoElement.play().catch(console.error)
+                }
+            }, false);
+        }, false)
     }
 
     playChunk(arrayBuffer)
     {
-        this.videoElement1.style.display = "block"
-        this.videoElement2.style.display = "block"
-
-        const blob = new Blob([arrayBuffer])
-        if (this.whichVideoElement == 1)
+        console.log("playing chunk", this.mediaSource.readyState, this.sourceBuffer.updating, this.queue)
+        if (this.mediaSource.readyState != "open")
+            return
+        if (!this.queue.length && !this.sourceBuffer.updating)
         {
-            this.videoElement1.src = URL.createObjectURL(blob)
-            this.whichVideoElement = 2
+            console.log("appending buffer")
+            this.sourceBuffer.appendBuffer(arrayBuffer);
+            this.videoElement.play().catch(console.error)
         }
-        else 
-        {
-            this.videoElement2.src = URL.createObjectURL(blob)
-            this.whichVideoElement = 1
-        }
-    }
-
-    stop()
-    {
-        this.videoElement1.style.display = "none"
-        this.videoElement2.style.display = "none"
+        else
+            this.queue.push(arrayBuffer)
     }
 }
