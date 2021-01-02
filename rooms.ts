@@ -4,7 +4,7 @@ export const rooms: { [roomId: string]: Room } = {
     bar: {
         id: "bar",
         scale: 1,
-        grid: [9, 9],
+        size: { x: 9, y: 9 },
         originCoordinates: { x: 0, y: 660 },
         spawnPoint: { x: 8, y: 4, direction: "left" },
         backgroundImageUrl: "rooms/bar/background.png",
@@ -81,7 +81,7 @@ export const rooms: { [roomId: string]: Room } = {
     admin_st: {
         id: "admin_st",
         scale: 160 / 200,
-        grid: [10, 9],
+        size: { x: 10, y: 9 },
         originCoordinates: { x: 18, y: 614 },
         spawnPoint: { x: 5, y: 2, direction: "right" },
         backgroundImageUrl: "rooms/admin_st/background.png",
@@ -114,7 +114,7 @@ export const rooms: { [roomId: string]: Room } = {
     admin: {
         id: "admin",
         scale: 160 / 200,
-        grid: [12, 6],
+        size: { x: 12, y: 6 },
         originCoordinates: { x: 90, y: 530 },
         spawnPoint: { x: 10, y: 0, direction: "up" },
         backgroundImageUrl: "rooms/admin/background.png",
@@ -158,6 +158,19 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         streams: [],
         // users: [],
+    },
+    radio_backstage: {
+        id: "radio_backstage",
+        scale: 160 / 200,
+        size: { x: 12, y: 6 },
+        originCoordinates: { x: 90, y: 530 },
+        spawnPoint: { x: 10, y: 0, direction: "up" },
+        backgroundImageUrl: "rooms/radio_backstage/radio_backstage.png",
+        objects: [],
+        sit: [],
+        blocked: [],
+        doors: [],
+        streams: []
     }
 }
 

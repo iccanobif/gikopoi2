@@ -289,12 +289,12 @@ const vueApp = new Vue({
                 const allObjects = this.currentRoom.objects.map(o => ({
                     o,
                     type: "room-object",
-                    priority: o.x + 1 + (this.currentRoom.grid[1] - o.y)
+                    priority: o.x + 1 + (this.currentRoom.size.y - o.y)
                 }))
                     .concat(Object.values(this.users).map(o => ({
                         o,
                         type: "user",
-                        priority: o.logicalPositionX + 1 + (this.currentRoom.grid[1] - o.logicalPositionY)
+                        priority: o.logicalPositionX + 1 + (this.currentRoom.size.y - o.logicalPositionY)
                     })))
                     .sort((a, b) =>
                     {

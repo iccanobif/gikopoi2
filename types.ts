@@ -8,7 +8,7 @@ export interface Room
 {
     id: string;
     scale: number;
-    grid: number[];
+    size: Coordinates;
     originCoordinates: Coordinates;
     backgroundImageUrl: string;
     spawnPoint: {
