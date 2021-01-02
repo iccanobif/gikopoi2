@@ -1,5 +1,6 @@
 import { v4 } from "uuid";
 import { defaultRoom } from "./rooms";
+import { Direction } from "./types";
 
 function generateId()
 {
@@ -12,7 +13,7 @@ export class Player
     public name: string = "Anonymous";
     public position: { x: number, y: number } = { x: defaultRoom.spawnPoint.x, y: defaultRoom.spawnPoint.y };
     public character: 'giko' = 'giko';
-    public direction: 'up' | 'down' | 'left' | 'right' = defaultRoom.spawnPoint.direction;
+    public direction: Direction = defaultRoom.spawnPoint.direction;
     public connected: boolean = true;
     public roomId: string = defaultRoom.id;
     public lastPing = Date.now();

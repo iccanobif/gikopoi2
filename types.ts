@@ -1,3 +1,5 @@
+export type Direction = 'up' | 'down' | 'left' | 'right'
+
 export interface Coordinates
 {
     x: number;
@@ -21,7 +23,7 @@ export interface Room
     spawnPoint: {
         x: number;
         y: number;
-        direction: 'up' | 'down' | 'left' | 'right';
+        direction: Direction;
     };
     objects: {
         x: number;

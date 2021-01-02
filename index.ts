@@ -1,6 +1,7 @@
 import express from "express"
 import { readFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
+import { Direction } from "./types";
 import { addNewUser, getConnectedUserList, getUser, Player, removeUser } from "./users";
 import { sleep } from "./utils";
 const app: express.Application = express()
@@ -38,6 +39,7 @@ io.on("connection", function (socket: any)
             currentRoom = rooms[user.roomId]
 
             socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(user.roomId))
+            socket.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
 
             emitServerStats()
         }
@@ -69,7 +71,7 @@ io.on("connection", function (socket: any)
             console.log(e.message + " " + e.stack);
         }
     });
-    socket.on("user-move", async function (direction: 'up' | 'down' | 'left' | 'right')
+    socket.on("user-move", async function (direction: Direction)
     {
         await sleep(delay)
 
@@ -129,7 +131,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            io.to(user.roomId).emit("server-stream-data", currentStreamSlotId, data)
+            socket.to(user.roomId).emit("server-stream-data", currentStreamSlotId, data)
         }
         catch (e)
         {
