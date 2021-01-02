@@ -73,8 +73,8 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 8, y: 4, targetRoomId: "admin_st", targetX: 0, targetY: 2 }
         ],
         streams: [
-            { isActive: false, withSound: null, withVideo: null, userId: null, userName: null },
-            { isActive: false, withSound: null, withVideo: null, userId: null, userName: null },
+            { isActive: false, withSound: null, withVideo: null, userId: null },
+            { isActive: false, withSound: null, withVideo: null, userId: null },
         ],
         // users: [],
     },

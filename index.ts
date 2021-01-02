@@ -20,6 +20,11 @@ io.on("connection", function (socket: any)
 
     socket.join(currentRoom.id)
 
+    socket.on("disconnect", function()
+    {
+        clearStream(user)
+    })
+
     socket.on("user-connect", function (userId: string)
     {
         try
@@ -29,6 +34,8 @@ io.on("connection", function (socket: any)
                 socket.emit("server-cant-log-you-in")
 
             console.log("userId: " + userId + " name: " + user.name);
+
+            currentRoom = rooms[user.roomId]
 
             socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(user.roomId))
 
@@ -62,7 +69,6 @@ io.on("connection", function (socket: any)
             console.log(e.message + " " + e.stack);
         }
     });
-
     socket.on("user-move", async function (direction: 'up' | 'down' | 'left' | 'right')
     {
         await sleep(delay)
@@ -158,14 +164,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            if (currentStreamSlotId === null) return // should never happen
-
-            currentRoom.streams[currentStreamSlotId].isActive = false
-            currentRoom.streams[currentStreamSlotId].userId = null
-            currentRoom.streams[currentStreamSlotId].userName = null
-
-            socket.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
-
+            clearStream(user)
             currentStreamSlotId = null
         }
         catch (e)
@@ -274,13 +273,14 @@ app.post("/login", (req, res) =>
 
 function clearStream(user: Player)
 {
+    if (!user) return 
+
     const room = rooms[user.roomId]
     const stream = room.streams.find(s => s.userId == user.id)
     if (stream)
     {
         stream.isActive = false
         stream.userId = null
-        stream.userName = ""
         io.to(user.roomId).emit("server-update-current-room-streams", room.streams)
     }
 }

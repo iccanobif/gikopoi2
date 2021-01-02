@@ -9,7 +9,6 @@ export interface StreamSlot {
     withSound: boolean | null,
     withVideo: boolean | null,
     userId: string | null,
-    userName: string | null,
 }
 
 export interface Room

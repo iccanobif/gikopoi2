@@ -51,9 +51,11 @@
             </div>
             <div id="video-streams">
                 <video id="local-video" autoplay muted></video>
+                {{ JSON.stringify(currentRoomStreamSlots) }}
                 <div v-for="(streamSlot, index) in currentRoomStreamSlots">
+                    isActive: {{ streamSlot.isActive }}
                     <div v-if="streamSlot.isActive">
-                        {{ $t("ui.label_streamer") }} {{ streamSlot.userName }}
+                        {{ $t("ui.label_streamer") }} {{ users[streamSlot.userId].name }}
                     </div>
                     <button :id="'start-streaming-button-' + index"
                         v-if="!streamSlot.isActive && !iAmStreaming && !wantToStream"
