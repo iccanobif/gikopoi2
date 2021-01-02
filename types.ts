@@ -22,7 +22,7 @@ export interface Room
         y: number;
         url: string;
     }[];
-    sit: number[][];
+    sit: Coordinates[];
     blocked: Coordinates[];
     doors: {
         x: number,
