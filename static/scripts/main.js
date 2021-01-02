@@ -283,6 +283,9 @@ const vueApp = new Vue({
 
             if (this.currentRoom)
             {
+                context.fillStyle = this.currentRoom.backgroundColor
+                context.fillRect(0, 0, 721, 511)
+
                 // draw background
                 this.drawImage(this.currentRoom.backgroundImage, 0, 511, this.currentRoom.scale)
 
@@ -427,7 +430,7 @@ const vueApp = new Vue({
 
             document.getElementById("infobox-button").addEventListener("click",
                 () => document.getElementById("infobox").classList.toggle("hidden"))
-            
+
             document.getElementById("button-switch-locale").addEventListener("click",
                 () => i18n.locale = (i18n.locale == "ja" ? "en" : "ja"));
 

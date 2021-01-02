@@ -11,6 +11,7 @@ export interface Room
     size: Coordinates;
     originCoordinates: Coordinates;
     backgroundImageUrl: string;
+    backgroundColor: string;
     spawnPoint: {
         x: number;
         y: number;

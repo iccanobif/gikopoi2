@@ -8,6 +8,7 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 0, y: 660 },
         spawnPoint: { x: 8, y: 4, direction: "left" },
         backgroundImageUrl: "rooms/bar/background.png",
+        backgroundColor: "#c0c0c0",
         objects: [
             { x: 2, y: 1, url: "table.png" },
             { x: 2, y: 2, url: "table.png" },
@@ -76,7 +77,6 @@ export const rooms: { [roomId: string]: Room } = {
             { isActive: false, withSound: null, withVideo: null, userId: null },
             { isActive: false, withSound: null, withVideo: null, userId: null },
         ],
-        // users: [],
     },
     admin_st: {
         id: "admin_st",
@@ -85,6 +85,7 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 18, y: 614 },
         spawnPoint: { x: 5, y: 2, direction: "right" },
         backgroundImageUrl: "rooms/admin_st/background.png",
+        backgroundColor: "#c0c0c0",
         objects: [],
         sit: [],
         blocked: [
@@ -104,12 +105,11 @@ export const rooms: { [roomId: string]: Room } = {
         doors: [
             { x: 0, y: 2, targetRoomId: "bar", targetX: 8, targetY: 4 },
             { x: 2, y: 4, targetRoomId: "admin", targetX: 10, targetY: 0 },
-            { x: 7, y: 4, targetRoomId: "NOT_READY_YET", targetX: 10, targetY: 0 },
+            { x: 7, y: 4, targetRoomId: "radio_backstage", targetX: 2, targetY: 4 },
             { x: 7, y: 0, targetRoomId: "NOT_READY_YET", targetX: 10, targetY: 0 },
             { x: 9, y: 2, targetRoomId: "NOT_READY_YET", targetX: 10, targetY: 0 },
         ],
         streams: [],
-        // users: [],
     },
     admin: {
         id: "admin",
@@ -118,6 +118,7 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 90, y: 530 },
         spawnPoint: { x: 10, y: 0, direction: "up" },
         backgroundImageUrl: "rooms/admin/background.png",
+        backgroundColor: "#c0c0c0",
         objects: [],
         sit: [
             [10, 2],
@@ -157,19 +158,29 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 10, y: 0, targetRoomId: "admin_st", targetX: 2, targetY: 4 }
         ],
         streams: [],
-        // users: [],
     },
     radio_backstage: {
         id: "radio_backstage",
         scale: 160 / 200,
-        size: { x: 12, y: 6 },
-        originCoordinates: { x: 90, y: 530 },
-        spawnPoint: { x: 10, y: 0, direction: "up" },
+        size: { x: 3, y: 9 },
+        originCoordinates: { x: 37, y: 900 },
+        spawnPoint: { x: 2, y: 4, direction: "left" },
+        //spawnPoint: { x: 0, y: 0, direction: "up" },
         backgroundImageUrl: "rooms/radio_backstage/radio_backstage.png",
+        backgroundColor: "#333333",
         objects: [],
         sit: [],
-        blocked: [],
-        doors: [],
+        blocked: [
+            { x: 0, y: 0 },
+            { x: 0, y: 1 },
+            { x: 0, y: 7 },
+            { x: 0, y: 8 },
+        ],
+        doors: [
+            { x: 2, y: 1, targetRoomId: "bar", targetX: 8, targetY: 4 },
+            { x: 2, y: 4, targetRoomId: "admin", targetX: 10, targetY: 0 },
+            { x: 2, y: 7, targetRoomId: "admin_st", targetX: 2, targetY: 4 }
+        ],
         streams: []
     }
 }
