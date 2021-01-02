@@ -12,7 +12,7 @@
 <body>
     <div id="vue-app" v-cloak>
         <div id="login-page" v-if="!loggedIn">
-            <h1>Gikopoi 2</h1>
+            <h1>{{ $t("ui.site_name") }}</h1>
             <form>
                 <label>User Name:</label> <input type="text" v-model="username" />
                 <button v-on:click="login">Login</button>
@@ -20,12 +20,10 @@
         </div>
         <div id="stage" v-if="loggedIn">
             <h2 class="big-red-alert" v-if="connectionLost">
-                Connection lost, please refresh the
-                page!　<br />接続できません、ページをリフレッシュしてください！
+                {{ $t("msg.connection_lost") }}
             </h2>
             <h2 class="big-red-alert" v-if="steppingOnPortalToNonAvailableRoom">
-                This room is not available yet. Sorry!<br />
-                まだ部屋の用意ができていません。ごめんね！
+                {{ $t("msg.room_unavailable") }}
             </h2>
             <div id="canvas-container">
                 <video id="local-video" autoplay muted></video>
@@ -33,19 +31,19 @@
                 <div id="infobox-container">
                     <div id="infobox" class="hidden">
                         <div id="infobox-area" class="infobox-line">
-                            <div class="infobox-title">ｴﾘｱ：</div>
-                            <div class="infobox-value">海辺の町</div>
+                            <div class="infobox-title">{{ $t("ui.infobox_label_area") }}</div>
+                            <div class="infobox-value">{{ $t("ui.infobox_value_area") }}</div>
                         </div>
                         <div id="infobox-roomname" class="infobox-line">
-                            <div class="infobox-title">ｽﾃｰｼﾞ：</div>
-                            <div class="infobox-value">{{ roomname }}</div>
+                            <div class="infobox-title">{{ $t("ui.infobox_label_room") }}</div>
+                            <div class="infobox-value">{{ $t("room."+roomid) }}</div>
                         </div>
                         <div id="infobox-username" class="infobox-line">
-                            <div class="infobox-title">名前：</div>
+                            <div class="infobox-title">{{ $t("ui.infobox_label_user_name") }}</div>
                             <div class="infobox-value">{{ username }}</div>
                         </div>
                         <div id="infobox-usercount" class="infobox-line">
-                            <div class="infobox-title">人数：</div>
+                            <div class="infobox-title">{{ $t("ui.infobox_label_user_count") }}</div>
                             <div class="infobox-value">{{ serverStats.userCount }}</div>
                         </div>
                     </div>
@@ -53,14 +51,14 @@
                 </div>
             </div>
             <div id="received-video-container" v-show="someoneIsStreaming && !iAmStreaming">
-                Streamer: {{ currentStreamerName }}
+                {{ $t("ui.label_streamer") }} {{ currentStreamerName }}
                 <div id="received-video-1"></div>
             </div>
 
 
             <div id="toolbar">
-                Input: <input id="input-textbox" type="text"></input>
-                <button id="send-button">発言</button>
+                {{ $t("ui.label_input") }} <input id="input-textbox" type="text"></input>
+                <button id="send-button">{{ $t("ui.button_send") }}</button>
 
                 <div id="movement-buttons">
                     <button id="btn-move-left">←</button>
@@ -70,11 +68,12 @@
                 </div>
 
                 <button id="start-streaming-button"
-                    v-show="roomAllowsStreaming && !someoneIsStreaming && !iAmStreaming && !wantToStream">配信</button>
-                <button id="stop-streaming-button" v-show="iAmStreaming">配信停止</button>
+                    v-show="roomAllowsStreaming && !someoneIsStreaming && !iAmStreaming && !wantToStream">{{ $t("ui.button_stream_start") }}</button>
+                <button id="stop-streaming-button" v-show="iAmStreaming">{{ $t("ui.button_stream_stop") }}</button>
+                <button id="button-switch-locale">{{ $t("ui.button_switch_language") }}</button>
                 <!-- <button id="logout">Logout</button> -->
             </div>
-            ログ：
+            {{ $t("ui.label_log") }}
             <div id="chatLog">
             </div>
 
@@ -86,6 +85,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-i18n/dist/vue-i18n.js"></script>
     <script src='third/jquery.js'></script>
     <script src="/socket.io/socket.io.js"></script>
     <script type="module" src='scripts/main.js'></script>

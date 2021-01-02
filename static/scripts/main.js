@@ -5,8 +5,16 @@ import Character from "./character.js";
 import User from "./user.js";
 import { loadImage, calculateRealCoordinates, scale, sleep, postJson } from "./utils.js";
 import VideoChunkPlayer from "./video-chunk-player.js";
+import { messages } from "./lang.js";
+
+const i18n = new VueI18n({
+    locale: 'ja',
+    fallbackLocale: 'ja',
+    messages,
+})
 
 const vueApp = new Vue({
+    i18n,
     el: '#vue-app',
     data: {
         gikoCharacter: new Character("giko"),
@@ -23,7 +31,7 @@ const vueApp = new Vue({
 
         // Possibly redundant data:
         username: "",
-        roomname: "",
+        roomid: "",
         serverStats: {
             userCount: 0
         },
@@ -41,7 +49,7 @@ const vueApp = new Vue({
         {
             ev.preventDefault()
             if (this.username === "")
-                this.username = "名無しさん"
+                this.username = i18n.t('default_user_name')
             this.loggedIn = true
             await this.gikoCharacter.loadImages()
             // await loadRoom("admin_st")
@@ -85,10 +93,8 @@ const vueApp = new Vue({
                 this.isLoadingRoom = true
 
                 this.currentRoom = roomDto
+                this.roomid = this.currentRoom.id
                 this.users = {}
-
-                // TODO We need actual room names
-                this.roomname = this.currentRoom.id;
 
                 for (const u of usersDto)
                     this.addUser(u);
@@ -419,10 +425,11 @@ const vueApp = new Vue({
             document.getElementById("btn-move-down").addEventListener("click", () => this.sendNewPositionToServer("down"))
             document.getElementById("btn-move-right").addEventListener("click", () => this.sendNewPositionToServer("right"))
 
-            document.getElementById("infobox-button").addEventListener("click", () =>
-            {
-                document.getElementById("infobox").classList.toggle("hidden");
-            });
+            document.getElementById("infobox-button").addEventListener("click",
+                () => document.getElementById("infobox").classList.toggle("hidden"))
+            
+            document.getElementById("button-switch-locale").addEventListener("click",
+                () => i18n.locale = (i18n.locale == "ja" ? "en" : "ja"));
 
             window.addEventListener("focus", () =>
             {
