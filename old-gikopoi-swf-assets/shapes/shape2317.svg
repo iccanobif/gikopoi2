@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="66px" height="26px"
+xml:space="preserve">
+<g id="1049" transform="matrix(1, 0, 0, 1, 33, 12.95)">
+<path style="fill:#999999;fill-opacity:0.160784" d="M32.5,9.35Q32.5 10.65 31.35 11.5Q30.2 12.45 28.6 12.45L-28.6 12.45Q-30.2 12.45 -31.4 11.5Q-32.5 10.65 -32.5 9.35L-32.5 -9.35Q-32.5 -10.65 -31.4 -11.55Q-30.2 -12.45 -28.6 -12.45L28.6 -12.45Q30.2 -12.45 31.35 -11.55Q32.5 -10.65 32.5 -9.35L32.5 9.35" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#444444;stroke-opacity:1" d="M32.5,-9.35Q32.5 -10.65 31.35 -11.55Q30.2 -12.45 28.6 -12.45L-28.6 -12.45Q-30.2 -12.45 -31.4 -11.55Q-32.5 -10.65 -32.5 -9.35L-32.5 9.35Q-32.5 10.65 -31.4 11.5Q-30.2 12.45 -28.6 12.45" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#FCE7FE;stroke-opacity:1" d="M-28.6,12.45L28.6 12.45Q30.2 12.45 31.35 11.5Q32.5 10.65 32.5 9.35L32.5 -9.35" />
+<path style="fill:#FF0000;fill-opacity:0.101961" d="M32.6,-8.05L32.6 8.1Q32.6 9.9 31.2 11.15Q29.9 12.45 27.95 12.5L-27.7 12.5Q-29.65 12.45 -31.05 11.15Q-32.35 9.9 -32.35 8.1L-32.35 -8.05Q-32.35 -9.85 -31.05 -11.15Q-29.65 -12.4 -27.7 -12.4L27.95 -12.4Q29.9 -12.4 31.2 -11.15Q32.6 -9.85 32.6 -8.05" />
+</g>
+</svg>

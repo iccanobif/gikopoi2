@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="34px" height="64px"
+xml:space="preserve">
+<g id="100" transform="matrix(1, 0, 0, 1, -2.65, 48.45)">
+<path style="fill:#888888;fill-opacity:1" d="M27.4,-48.2L29.55 -47.15L31.9 -45.95L31.9 -5.25L36.4 -7.5L36.4 -6.35L36.4 1.75L29.6 5.15L27.45 6.2L27.4 6.1L27.25 6.15L27.3 6.25L9.1 15.3L2.9 12.2L2.9 10.15L2.9 9.25L27.25 -2.95L27.4 -2.85L27.4 -48.2" />
+<path style="fill:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#666666;stroke-opacity:1" d="M27.4,-48.2L29.55 -47.15L31.9 -45.95L31.9 -5.25M36.4,-7.5L36.4 -6.35L36.4 1.75M27.45,6.2L27.4 6.1L27.25 6.15L27.3 6.25M9.1,15.3L2.9 12.2L2.9 10.15L2.9 9.25M27.25,-2.95L27.4 -2.85M27.4,-2.05L27.4 -2.85M29.55,-47.15L29.6 5.15" />
+<path style="fill:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#444444;stroke-opacity:1" d="M31.9,-5.25L36.4 -7.5" />
+<path style="fill:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#E1E1E1;stroke-opacity:1" d="M36.4,-6.35L31.9 -4.1" />
+<path style="fill:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#1E1E1E;stroke-opacity:1" d="M27.4,-2.85L27.4 -48.2M27.4,-2.05L27.4 6.1" />
+<path style="fill:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#2B2B2B;stroke-opacity:1" d="M36.4,1.75L29.6 5.15M27.3,6.25L9.1 15.3" />
+<path style="fill:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#262626;stroke-opacity:1" d="M29.6,5.15L27.45 6.2" />
+<path style="fill:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#D0D0D0;stroke-opacity:1" d="M2.9,10.15L27.4 -2.05" />
+<path style="fill:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#484848;stroke-opacity:1" d="M2.9,9.25L27.25 -2.95" />
+<linearGradient
+id="LinearGradID_465" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.0126038, 0.0218353, -0.0287781, 0.0166016, 33.1, -26.4)" spreadMethod ="pad" x1="-819.2" y1="0" x2="819.2" y2="0" >
+<stop  offset="0" style="stop-color:#5E5E5E;stop-opacity:0.901961" />
+<stop  offset="0.552941" style="stop-color:#FFFFFF;stop-opacity:0.301961" />
+<stop  offset="1" style="stop-color:#5E5E5E;stop-opacity:0.8" />
+</linearGradient>
+<path style="fill:url(#LinearGradID_465) " d="M31.9,-45.95L31.9 -5.25L36.4 -7.5L36.4 1.75L27.45 6.2L27.4 6.1L27.4 -48.2L31.9 -45.95" />
+</g>
+</svg>

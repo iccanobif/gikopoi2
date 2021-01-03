@@ -3,7 +3,7 @@ localStorage.clear()
 
 import Character from "./character.js";
 import User from "./user.js";
-import { loadImage, calculateRealCoordinates, scale, sleep, postJson } from "./utils.js";
+import { loadImage, calculateRealCoordinates, globalScale, sleep, postJson } from "./utils.js";
 import VideoChunkPlayer from "./video-chunk-player.js";
 import { messages } from "./lang.js";
 
@@ -32,7 +32,7 @@ const vueApp = new Vue({
 
         // Possibly redundant data:
         username: "",
-        roomid: "",
+        roomid: "admin_st",
         serverStats: {
             userCount: 0
         },
@@ -53,7 +53,6 @@ const vueApp = new Vue({
                 this.username = i18n.t('default_user_name')
             this.loggedIn = true
             await this.gikoCharacter.loadImages()
-            // await loadRoom("admin_st")
             this.registerKeybindings()
             await this.connectToServer(this.username)
             this.paint()
@@ -100,13 +99,19 @@ const vueApp = new Vue({
                 for (const u of usersDto)
                     this.addUser(u);
 
-                this.currentRoom.backgroundImage = await loadImage(this.currentRoom.backgroundImageUrl)
+                loadImage(this.currentRoom.backgroundImageUrl).then(image => {
+                    this.currentRoom.backgroundImage = image
+                })
                 for (const o of this.currentRoom.objects)
                 {
-                    o.image = await loadImage("rooms/" + this.currentRoom.id + "/" + o.url)
-                    const { x, y } = calculateRealCoordinates(this.currentRoom, o.x, o.y);
-                    o.physicalPositionX = x
-                    o.physicalPositionY = y
+                    loadImage("rooms/" + this.currentRoom.id + "/" + o.url).then(image =>
+                    {
+                        o.image = image
+                        const { x, y } = calculateRealCoordinates(this.currentRoom, o.x, o.y);
+                        o.physicalPositionX = x + (o.xOffset || 0)
+                        o.physicalPositionY = y + (o.yOffset || 0)
+                        console.log(o)
+                    })
                 }
 
                 // Force update of user coordinates using the current room's logics (origin coordinates, etc)
@@ -238,19 +243,19 @@ const vueApp = new Vue({
             newUser.moveImmediatelyToPosition(this.currentRoom, userDTO.position.x, userDTO.position.y, userDTO.direction);
             this.users[userDTO.id] = newUser;
         },
-        drawImage: function (image, x, y, roomScale)
+        drawImage: function (image, x, y, scale)
         {
             if (!image) return // image might be null when rendering a room that hasn't been fully loaded
 
-            if (!roomScale)
-                roomScale = 1
+            if (!scale)
+                scale = 1
 
             const context = document.getElementById("room-canvas").getContext("2d");
             context.drawImage(image,
                 x,
-                y - image.height * scale * roomScale,
-                image.width * scale * roomScale,
-                image.height * scale * roomScale)
+                y - image.height * globalScale * scale,
+                image.width * globalScale * scale,
+                image.height * globalScale * scale)
         },
         drawHorizontallyFlippedImage: function (image, x, y)
         {
@@ -284,18 +289,21 @@ const vueApp = new Vue({
 
             if (this.currentRoom)
             {
+                context.fillStyle = this.currentRoom.backgroundColor
+                context.fillRect(0, 0, 721, 511)
+
                 // draw background
                 this.drawImage(this.currentRoom.backgroundImage, 0, 511, this.currentRoom.scale)
 
                 const allObjects = this.currentRoom.objects.map(o => ({
                     o,
                     type: "room-object",
-                    priority: o.x + 1 + (this.currentRoom.grid[1] - o.y)
+                    priority: o.x + 1 + (this.currentRoom.size.y - o.y)
                 }))
                     .concat(Object.values(this.users).map(o => ({
                         o,
                         type: "user",
-                        priority: o.logicalPositionX + 1 + (this.currentRoom.grid[1] - o.logicalPositionY)
+                        priority: o.logicalPositionX + 1 + (this.currentRoom.size.y - o.logicalPositionY)
                     })))
                     .sort((a, b) =>
                     {
@@ -308,7 +316,7 @@ const vueApp = new Vue({
                 {
                     if (o.type == "room-object")
                     {
-                        this.drawImage(o.o.image, o.o.physicalPositionX, o.o.physicalPositionY, this.currentRoom.scale)
+                        this.drawImage(o.o.image, o.o.physicalPositionX, o.o.physicalPositionY, this.currentRoom.scale * o.o.scale)
                     }
                     else // o.type == "user"
                     {
@@ -425,7 +433,7 @@ const vueApp = new Vue({
             document.getElementById("btn-move-up").addEventListener("click", () => this.sendNewPositionToServer("up"))
             document.getElementById("btn-move-down").addEventListener("click", () => this.sendNewPositionToServer("down"))
             document.getElementById("btn-move-right").addEventListener("click", () => this.sendNewPositionToServer("right"))
-
+            
             window.addEventListener("focus", () =>
             {
                 this.forceUserInstantMove = true

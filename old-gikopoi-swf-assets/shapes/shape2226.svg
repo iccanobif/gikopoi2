@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="26px" height="52px"
+xml:space="preserve">
+<g id="1023" transform="matrix(1, 0, 0, 1, 12.95, 26)">
+<radialGradient
+id="RadialGradID_3148" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.0187225, 0, 0, 0.0187225, 2.35, 0)" spreadMethod ="pad" cx="0" cy="0" r="819.2" fx="0" fy="0" >
+<stop  offset="0"  style="stop-color:#000000;stop-opacity:1" />
+<stop  offset="1"  style="stop-color:#BCBCBC;stop-opacity:1" />
+</radialGradient>
+<path style="fill:url(#RadialGradID_3148) " d="M7.5,-14.95L7.35 14.9L-7.5 -0.05L7.5 -14.95" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#999999;stroke-opacity:1" d="M-7.5,-0.05L7.35 14.9L7.5 -14.95L-7.5 -0.05z" />
+<path style="fill:none;stroke-width:0.05;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#FCE7FE;stroke-opacity:1" d="M-11.85,21.5L-11.85 -20.4Q-11.85 -22.25 -10.9 -23.55Q-9.95 -24.85 -8.55 -24.8L8.7 -24.8" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#9F9F9F;stroke-opacity:1" d="M10.65,-24.7Q11.55 -23.8 11.55 -22.55L11.55 21.45Q11.55 22.7 10.65 23.55Q9.8 24.45 8.55 24.45L-9.45 24.45Q-10.7 24.45 -11.6 23.55Q-12.45 22.7 -12.45 21.45L-12.45 -22.55Q-12.45 -23.8 -11.6 -24.7Q-10.7 -25.5 -9.45 -25.5L8.55 -25.5Q9.8 -25.5 10.65 -24.7z" />
+<path style="fill:none;stroke-width:0.05;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#FCE7FE;stroke-opacity:1" d="M12.45,-20.85L12.45 21.05Q12.45 22.9 11.55 24.25Q10.55 25.5 9.15 25.5L-8.05 25.5" />
+</g>
+</svg>

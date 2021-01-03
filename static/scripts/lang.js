@@ -60,7 +60,7 @@ export const messages =
             school_rouka: "学校 廊下",
             school_international: "学校 国際科教室",
             school_pc: "学校 パソコンルーム",
-            enkai: "宴会場",
+            enkai: "宴会場"
         }
     },
     en:
@@ -122,7 +122,7 @@ export const messages =
             radio_gakuya: "Radio Studio: Dressing Room",
             radio_backstage: "Radio Studio: Greenroom",
             yatai: "Sushi Vendor",
-            kaidan: "Hilltop Stairway",
+            kaidan: "Hilltop Stairway"
         }
     }
 }

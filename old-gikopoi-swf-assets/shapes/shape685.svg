@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="240px" height="147px"
+xml:space="preserve">
+<g id="314" transform="matrix(1, 0, 0, 1, 55.45, 17.75)">
+<path style="fill:#000000;fill-opacity:0.2" d="M127.55,128.5L-55.45 36.5L-1.95 9.75L181.55 101.5L127.55 128.5" />
+<radialGradient
+id="RadialGradID_1225" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.0407104, 0, 0, 0.0407104, 159, 93)" spreadMethod ="pad" cx="0" cy="0" r="819.2" fx="0" fy="0" >
+<stop  offset="0"  style="stop-color:#877901;stop-opacity:1" />
+<stop  offset="0.247059"  style="stop-color:#746801;stop-opacity:1" />
+<stop  offset="0.478431"  style="stop-color:#837501;stop-opacity:1" />
+<stop  offset="0.729412"  style="stop-color:#746801;stop-opacity:1" />
+<stop  offset="1"  style="stop-color:#8B7C01;stop-opacity:1" />
+</radialGradient>
+<path style="fill:url(#RadialGradID_1225) " d="M169.05,89.75L138.4 105.05L134.5 107L130 109.25L129.75 108.9L129.55 108.6L129.5 101.5L183.5 74.5L183.5 82.5L179.95 84.3L176.3 86.1L169.05 89.75" />
+<path style="fill:#969201;fill-opacity:1" d="M180.05,103.75L176.6 105.45L176.3 86.1L179.95 84.3L180.05 103.75M134.5,107L138.4 105.05L138.5 124.5L134.5 126.5L134.5 107" />
+<radialGradient
+id="RadialGradID_1226" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.0292664, -0.0506897, 0.129929, 0.0750122, 87, 48)" spreadMethod ="pad" cx="0" cy="0" r="819.2" fx="0" fy="0" >
+<stop  offset="0"  style="stop-color:#877901;stop-opacity:1" />
+<stop  offset="0.247059"  style="stop-color:#746801;stop-opacity:1" />
+<stop  offset="0.478431"  style="stop-color:#837501;stop-opacity:1" />
+<stop  offset="0.729412"  style="stop-color:#746801;stop-opacity:1" />
+<stop  offset="1"  style="stop-color:#8B7C01;stop-opacity:1" />
+</radialGradient>
+<path style="fill:url(#RadialGradID_1226) " d="M-53.5,9.5L0 -17.25L183.5 74.5L129.5 101.5L-53.5 9.5M146,81L141 84L144 87L148 84L146 81" />
+<path style="fill:#837E01;fill-opacity:1" d="M134.5,126.5L125.7 107.1L129.55 109.05L130 109.25L134.5 107L134.5 126.5M169.05,89.75L176.3 86.1L176.6 105.45L169.05 89.75M-37.45,25.5L-47.5 37.5L-52.5 37.5L-49.05 20.3L-48.7 19.75L-41 23.75L-37.45 25.5" />
+<path style="fill:#756901;fill-opacity:1" d="M148,84L144 87L141 84L146 81L148 84" />
+<radialGradient
+id="RadialGradID_1227" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.176331, 0, 0, 0.176331, 2, 41.5)" spreadMethod ="pad" cx="0" cy="0" r="819.2" fx="0" fy="0" >
+<stop  offset="0"  style="stop-color:#877901;stop-opacity:1" />
+<stop  offset="0.247059"  style="stop-color:#746801;stop-opacity:1" />
+<stop  offset="0.478431"  style="stop-color:#837501;stop-opacity:1" />
+<stop  offset="0.729412"  style="stop-color:#746801;stop-opacity:1" />
+<stop  offset="1"  style="stop-color:#8B7C01;stop-opacity:1" />
+</radialGradient>
+<path style="fill:url(#RadialGradID_1227) " d="M129.5,101.5L129.55 108.6L129.75 108.9L129.55 109.05L125.7 107.1L124.8 106.65L123.9 106.2L118.2 103.35L-37.45 25.5L-41 23.75L-48.7 19.75L-53.5 17.15L-53.5 9.5L129.5 101.5" />
+<path style="fill:#999900;fill-opacity:1" d="M129.75,108.9L130 109.25L129.55 109.05L129.75 108.9" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#4B4401;stroke-opacity:1" d="M176.3,86.1L179.95 84.3L183.5 82.5L183.5 74.5L129.5 101.5L129.55 108.6L129.75 108.9L130 109.25L134.5 107L138.4 105.05L169.05 89.75L176.3 86.1L176.6 105.45L180.05 103.75L179.95 84.3M176.6,105.45L169.05 89.75M138.4,105.05L138.5 124.5L134.5 126.5L125.7 107.1L124.8 106.65L123.9 106.2L118.2 103.35L-37.45 25.5L-47.5 37.5L-52.5 37.5L-49.05 20.3M-48.7,19.75L-53.5 17.15L-53.5 9.5L0 -17.25L183.5 74.5M125.7,107.1L129.55 109.05L130 109.25M134.5,126.5L134.5 107M-48.7,19.75L-41 23.75L-52.5 37.5M-41,23.75L-37.45 25.5M-53.5,9.5L129.5 101.5" />
+<path style="fill:none;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#4B4401;stroke-opacity:1" d="M171,75L171 78L174 75L174 78L177 75M162,79L165 81L165 78L168 78L167 75M116,83L116 87M111,84L120 81M111,82L117 80M135,85L137 84L137 80L132 80L132 82M123,82L126 82M123,84L128 84L125 89M156,81L159 84L159 81L161 83L161 80M151,81L155 84L152.95 84.85L153 87M148,84L144 87L141 84L146 81L148 84M152.95,84.85L150 86" />
+</g>
+</svg>

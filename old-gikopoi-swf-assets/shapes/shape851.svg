@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="14px" height="111px"
+xml:space="preserve">
+<g id="383" transform="matrix(1, 0, 0, 1, 6.85, 55.85)">
+<radialGradient
+id="RadialGradID_1501" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.02948, -0.00790405, 0.0220184, 0.0821838, -10.75, -18.75)" spreadMethod ="pad" cx="0" cy="0" r="819.2" fx="0" fy="0" >
+<stop  offset="0"  style="stop-color:#C1723E;stop-opacity:1" />
+<stop  offset="0.192157"  style="stop-color:#D68754;stop-opacity:1" />
+<stop  offset="0.345098"  style="stop-color:#C9722C;stop-opacity:1" />
+<stop  offset="0.513725"  style="stop-color:#BD7546;stop-opacity:1" />
+<stop  offset="0.768627"  style="stop-color:#C86A2D;stop-opacity:1" />
+<stop  offset="1"  style="stop-color:#985621;stop-opacity:1" />
+</radialGradient>
+<path style="fill:url(#RadialGradID_1501) " d="M0,-49.1L0.4 -48.9L0.4 54.15L-6.6 50.65L-6.6 -52.35L-6.6 -52.4L-6.55 -52.4L0 -49.1" />
+<path style="fill:#934629;fill-opacity:1" d="M-6.55,-52.4L-6.5 -52.4L-0.15 -55.6L6.4 -52.3L6.5 -41.25L2.95 -39.4L2.95 -39.15L2.95 -36.1L3.05 -36.05L3.7 -35.75L3.9 -35.65L3.9 52.45L3.7 52.55L2.4 53.2L2.15 53.35L0.45 54.2L0.4 54.15L0.4 -48.9L0.4 -49.3L0.05 -49.1L0 -49.1L-6.55 -52.4" />
+<path style="fill:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#633612;stroke-opacity:1" d="M2.4,53.2L3.7 52.55L3.9 52.45M3.7,-35.75L3.05 -36.05L2.95 -36.1L2.95 -39.15M2.95,-39.4L6.5 -41.25M0.4,-48.9L0.4 54.15M0.45,54.2L0.4 54.2L0.4 54.15" />
+<path style="fill:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#49250E;stroke-opacity:1" d="M3.7,-35.75L3.7 52.55M6.5,-41.25L6.4 -52.3L0.4 -49.3L0.05 -49.1L0 -49.1L0.4 -48.9M0.45,54.2L2.15 53.35M0.4,54.15L-6.6 50.65L-6.6 -52.35L-6.6 -52.4L-6.55 -52.4L-6.5 -52.4L-0.15 -55.6L6.4 -52.3M-6.6,-52.35L-6.55 -52.4M0.05,-49.1L-6.5 -52.4" />
+</g>
+</svg>

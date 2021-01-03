@@ -8,9 +8,10 @@ export interface Room
 {
     id: string;
     scale: number;
-    grid: number[];
+    size: Coordinates;
     originCoordinates: Coordinates;
     backgroundImageUrl: string;
+    backgroundColor: string;
     spawnPoint: {
         x: number;
         y: number;
@@ -20,8 +21,11 @@ export interface Room
         x: number;
         y: number;
         url: string;
+        scale?: number;
+        xOffset?: number;
+        yOffset?: number;
     }[];
-    sit: number[][];
+    sit: Coordinates[];
     blocked: Coordinates[];
     doors: {
         x: number,

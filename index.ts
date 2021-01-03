@@ -92,8 +92,8 @@ io.on("connection", function (socket: any)
                 // prevent going outside of the map
                 if (newX < 0) { rejectMovement(); return }
                 if (newY < 0) { rejectMovement(); return }
-                if (newX >= currentRoom.grid[0]) { rejectMovement(); return }
-                if (newY >= currentRoom.grid[1]) { rejectMovement(); return }
+                if (newX >= currentRoom.size.x) { rejectMovement(); return }
+                if (newY >= currentRoom.size.y) { rejectMovement(); return }
 
                 // prevent moving over a blocked square
                 if (currentRoom.blocked.find((p: { x: number, y: number }) => p.x == newX && p.y == newY))

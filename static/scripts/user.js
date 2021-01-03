@@ -84,7 +84,7 @@ export default class User
         }
         else
         {
-            const isSitting = !!room.sit.find(s => s[0] == this.logicalPositionX && s[1] == this.logicalPositionY)
+            const isSitting = !!room.sit.find(s => s.x == this.logicalPositionX && s.y == this.logicalPositionY)
 
             switch (this.direction)
             {
