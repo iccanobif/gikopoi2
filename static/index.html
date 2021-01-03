@@ -27,9 +27,10 @@
             </h2>
             <div id="canvas-container">
                 <video id="local-video" autoplay muted></video>
-                <canvas id="room-canvas" width="721px" height="511px" tabindex="0"></canvas>
+                <canvas id="room-canvas" width="721px" height="511px" tabindex="0"
+                    v-on:keydown="handleCanvasKeydown($event)"></canvas>
                 <div id="infobox-container">
-                    <div id="infobox" class="hidden">
+                    <div id="infobox" v-show="isInfoboxVisible">
                         <div id="infobox-area" class="infobox-line">
                             <div class="infobox-title">{{ $t("ui.infobox_label_area") }}</div>
                             <div class="infobox-value">{{ $t("ui.infobox_value_area") }}</div>
@@ -47,7 +48,8 @@
                             <div class="infobox-value">{{ serverStats.userCount }}</div>
                         </div>
                     </div>
-                    <button id="infobox-button" class="canvas-button-top-right"></button>
+                    <button id="infobox-button" class="canvas-button-top-right"
+                        v-on:click="toggleInfobox"></button>
                 </div>
             </div>
             <div id="received-video-container" v-show="someoneIsStreaming && !iAmStreaming">
@@ -57,20 +59,25 @@
 
 
             <div id="toolbar">
-                {{ $t("ui.label_input") }} <input id="input-textbox" type="text"></input>
-                <button id="send-button">{{ $t("ui.button_send") }}</button>
+                {{ $t("ui.label_input") }} <input id="input-textbox" type="text"
+                    v-on:keydown="handleMessageInputKeydown($event)"></input>
+                <button id="send-button"
+                    v-on:click="sendMessageToServer">{{ $t("ui.button_send") }}</button>
 
                 <div id="movement-buttons">
-                    <button id="btn-move-left">←</button>
-                    <button id="btn-move-up">↑</button>
-                    <button id="btn-move-down">↓</button>
-                    <button id="btn-move-right">→</button>
+                    <button id="btn-move-left" v-on:click="sendNewPositionToServer('left')">←</button>
+                    <button id="btn-move-up" v-on:click="sendNewPositionToServer('up')">↑</button>
+                    <button id="btn-move-down" v-on:click="sendNewPositionToServer('down')">↓</button>
+                    <button id="btn-move-right" v-on:click="sendNewPositionToServer('right')">→</button>
                 </div>
 
                 <button id="start-streaming-button"
-                    v-show="roomAllowsStreaming && !someoneIsStreaming && !iAmStreaming && !wantToStream">{{ $t("ui.button_stream_start") }}</button>
-                <button id="stop-streaming-button" v-show="iAmStreaming">{{ $t("ui.button_stream_stop") }}</button>
-                <button id="button-switch-locale">{{ $t("ui.button_switch_language") }}</button>
+                    v-show="roomAllowsStreaming && !someoneIsStreaming && !iAmStreaming && !wantToStream"
+                    v-on:click="wantToStartStreaming">{{ $t("ui.button_stream_start") }}</button>
+                <button id="stop-streaming-button"
+                    v-show="iAmStreaming"
+                    v-on:click="stopStreaming">{{ $t("ui.button_stream_stop") }}</button>
+                <button v-on:click="switchLanguage">{{ $t("ui.button_switch_language") }}</button>
                 <!-- <button id="logout">Logout</button> -->
             </div>
             {{ $t("ui.label_log") }}
