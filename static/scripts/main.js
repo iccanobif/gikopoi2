@@ -402,45 +402,25 @@ const vueApp = new Vue({
         },
         registerKeybindings: function ()
         {
-            const onKeyDown = (event) =>
-            {
-                switch (event.key)
-                {
-                    case "ArrowLeft": this.sendNewPositionToServer("left"); break;
-                    case "ArrowRight": this.sendNewPositionToServer("right"); break;
-                    case "ArrowUp": this.sendNewPositionToServer("up"); break;
-                    case "ArrowDown": this.sendNewPositionToServer("down"); break;
-                }
-            }
-
-            const canvas = document.getElementById("room-canvas")
-
-            canvas.addEventListener("keydown", onKeyDown);
-
-            const inputTextbox = document.getElementById("input-textbox")
-
-            inputTextbox.addEventListener("keydown", (event) =>
-            {
-                if (event.key != "Enter") return
-                this.sendMessageToServer()
-            })
-
-            document.getElementById("send-button").addEventListener("click", () => this.sendMessageToServer())
-            document.getElementById("start-streaming-button").addEventListener("click", () => this.wantToStartStreaming())
-            document.getElementById("stop-streaming-button").addEventListener("click", () => this.stopStreaming())
-
-            document.getElementById("btn-move-left").addEventListener("click", () => this.sendNewPositionToServer("left"))
-            document.getElementById("btn-move-up").addEventListener("click", () => this.sendNewPositionToServer("up"))
-            document.getElementById("btn-move-down").addEventListener("click", () => this.sendNewPositionToServer("down"))
-            document.getElementById("btn-move-right").addEventListener("click", () => this.sendNewPositionToServer("right"))
-            
-            window.addEventListener("focus", () =>
-            {
-                this.forceUserInstantMove = true
-            });
+            window.addEventListener("focus", () => this.forceUserInstantMove = true );
         },
         toggleInfobox: function () { this.isInfoboxVisible ^= true; },
         switchLanguage: function () { i18n.locale = (i18n.locale == "ja" ? "en" : "ja") },
+        handleCanvasKeydown: function (event)
+        {
+            switch (event.key)
+            {
+                case "ArrowLeft": this.sendNewPositionToServer("left"); break;
+                case "ArrowRight": this.sendNewPositionToServer("right"); break;
+                case "ArrowUp": this.sendNewPositionToServer("up"); break;
+                case "ArrowDown": this.sendNewPositionToServer("down"); break;
+            }
+        },
+        handleMessageInputKeydown: function (event)
+        {
+            if (event.key != "Enter") return
+            this.sendMessageToServer()
+        },
         
         // WebRTC
         wantToStartStreaming: async function ()
