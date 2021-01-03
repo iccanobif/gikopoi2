@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="18px" height="16px"
+xml:space="preserve">
+<g id="76" transform="matrix(1, 0, 0, 1, 8.65, 7.65)">
+<path style="fill:#35404A;fill-opacity:1" d="M-8.4,-3.4L0.4 6.9Q2.75 6.25 4.25 4.5L4.75 3.95L5.7 3.1Q6.8 2.35 7.55 2.4Q8 2.45 8.35 2.8L8.4 2.9L8.4 3.4L8.35 3.35Q7.45 2.4 5.7 3.65L5.1 4.1L4.25 5.05Q2.75 6.8 0.4 7.4L-8.4 -2.85L-8.4 -3.4" />
+<path style="fill:#586A7C;fill-opacity:1" d="M7.55,2.4Q6.8 2.35 5.7 3.1L4.75 3.95L4.25 4.5Q2.75 6.25 0.4 6.9L-8.4 -3.4L-0.4 -7.4L8.35 2.8Q8 2.45 7.55 2.4" />
+<path style="fill:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#000000;stroke-opacity:1" d="M8.35,2.8L-0.4 -7.4L-8.4 -3.4M8.35,2.8L8.4 2.9L8.4 3.4L8.35 3.35Q7.45 2.4 5.7 3.65L5.1 4.1L4.25 5.05Q2.75 6.8 0.4 7.4L-8.4 -2.85L-8.4 -3.4M0.4,7.4L0.4 6.9" />
+<path style="fill:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#A6A6A6;stroke-opacity:1" d="M0.4,6.9Q2.75 6.25 4.25 4.5L4.75 3.95L5.7 3.1Q6.8 2.35 7.55 2.4Q8 2.45 8.35 2.8" />
+<path style="fill:none;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#B3B3B3;stroke-opacity:1" d="M4.2,3.2L-0.65 -2.6" />
+<path style="fill:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#9AA7C2;stroke-opacity:1" d="M-8.4,-3.4L0.4 6.9" />
+</g>
+</svg>

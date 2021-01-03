@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="72px" height="20px"
+xml:space="preserve">
+<g id="708" transform="matrix(1, 0, 0, 1, 34.25, 40.15)">
+<path style="fill:#378426;fill-opacity:1" d="M36.7,-35.7L36.15 -35.3L36.1 -35.45L35.75 -35.85Q35.05 -36.1 34.3 -35.85L28.7 -33.7Q27 -32.95 26.4 -34.65Q25.9 -35.95 24.65 -36.35L24.6 -36.35Q29.65 -43.3 36.7 -35.7M27.75,-31.9L28.4 -32Q29.8 -32.3 31.05 -32.9L34.25 -34.05Q30.15 -31.55 27.75 -31.9" />
+<path style="fill:#2B5E1C;fill-opacity:1" d="M34.25,-34.05L31.05 -32.9Q29.8 -32.3 28.4 -32L27.75 -31.9Q25.1 -32.35 24.4 -36.05L24.6 -36.35L24.65 -36.35Q25.9 -35.95 26.4 -34.65Q27 -32.95 28.7 -33.7L34.3 -35.85Q35.05 -36.1 35.75 -35.85L36.1 -35.45L36.15 -35.3L34.25 -34.05" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#265218;stroke-opacity:1" d="M34.25,-34.05L36.15 -35.3L36.7 -35.7Q29.65 -43.3 24.6 -36.35L24.4 -36.05Q25.1 -32.35 27.75 -31.9Q30.15 -31.55 34.25 -34.05z" />
+<path style="fill:#378426;fill-opacity:1" d="M-23,-25.55Q-24.3 -25.85 -25.4 -24.95Q-26.75 -23.8 -27.85 -25.25L-31.6 -29.95Q-32.15 -30.55 -32.85 -30.65L-33.4 -30.5L-33.45 -30.4L-33.75 -31Q-23.9 -34.05 -22.95 -25.5L-23 -25.55M-30.3,-25.75L-28.45 -23.65L-27.9 -23.25Q-30.2 -24.15 -32.45 -28.35Q-31.25 -27.2 -30.3 -25.75" />
+<path style="fill:#2B5E1C;fill-opacity:1" d="M-32.45,-28.35L-33.45 -30.4L-33.4 -30.5L-32.85 -30.65Q-32.15 -30.55 -31.6 -29.95L-27.85 -25.25Q-26.75 -23.8 -25.4 -24.95Q-24.3 -25.85 -23 -25.55L-22.95 -25.5L-22.95 -25.2Q-25.45 -22.3 -27.9 -23.25L-28.45 -23.65L-30.3 -25.75Q-31.25 -27.2 -32.45 -28.35" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#265218;stroke-opacity:1" d="M-22.95,-25.5Q-23.9 -34.05 -33.75 -31L-33.45 -30.4M-22.95,-25.5L-22.95 -25.2Q-25.45 -22.3 -27.9 -23.25Q-30.2 -24.15 -32.45 -28.35L-33.45 -30.4" />
+<path style="fill:#378426;fill-opacity:1" d="M7.6,-22.05Q2.6 -18.85 0.45 -26.3Q6.5 -28.8 7.6 -22.05" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#265218;stroke-opacity:1" d="M0.45,-26.3Q2.6 -18.85 7.6 -22.05Q6.5 -28.8 0.45 -26.3z" />
+</g>
+</svg>
