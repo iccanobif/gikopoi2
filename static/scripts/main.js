@@ -103,8 +103,9 @@ const vueApp = new Vue({
                 {
                     o.image = await loadImage("rooms/" + this.currentRoom.id + "/" + o.url)
                     const { x, y } = calculateRealCoordinates(this.currentRoom, o.x, o.y);
-                    o.physicalPositionX = x + o.xOffset
-                    o.physicalPositionY = y + o.yOffset 
+                    o.physicalPositionX = x + (o.xOffset || 0)
+                    o.physicalPositionY = y + (o.yOffset || 0)
+                    console.log(o)
                 }
 
                 // Force update of user coordinates using the current room's logics (origin coordinates, etc)
