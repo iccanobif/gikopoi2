@@ -3,7 +3,7 @@ localStorage.clear()
 
 import Character from "./character.js";
 import User from "./user.js";
-import { loadImage, calculateRealCoordinates, scale, sleep, postJson } from "./utils.js";
+import { loadImage, calculateRealCoordinates, globalScale, sleep, postJson } from "./utils.js";
 import VideoChunkPlayer from "./video-chunk-player.js";
 import { messages } from "./lang.js";
 
@@ -52,7 +52,6 @@ const vueApp = new Vue({
                 this.username = i18n.t('default_user_name')
             this.loggedIn = true
             await this.gikoCharacter.loadImages()
-            // await loadRoom("admin_st")
             this.registerKeybindings()
             await this.connectToServer(this.username)
             this.paint()
@@ -104,8 +103,8 @@ const vueApp = new Vue({
                 {
                     o.image = await loadImage("rooms/" + this.currentRoom.id + "/" + o.url)
                     const { x, y } = calculateRealCoordinates(this.currentRoom, o.x, o.y);
-                    o.physicalPositionX = x
-                    o.physicalPositionY = y
+                    o.physicalPositionX = x + o.xOffset
+                    o.physicalPositionY = y + o.yOffset 
                 }
 
                 // Force update of user coordinates using the current room's logics (origin coordinates, etc)
@@ -237,19 +236,19 @@ const vueApp = new Vue({
             newUser.moveImmediatelyToPosition(this.currentRoom, userDTO.position.x, userDTO.position.y, userDTO.direction);
             this.users[userDTO.id] = newUser;
         },
-        drawImage: function (image, x, y, roomScale)
+        drawImage: function (image, x, y, scale)
         {
             if (!image) return // image might be null when rendering a room that hasn't been fully loaded
 
-            if (!roomScale)
-                roomScale = 1
+            if (!scale)
+                scale = 1
 
             const context = document.getElementById("room-canvas").getContext("2d");
             context.drawImage(image,
                 x,
-                y - image.height * scale * roomScale,
-                image.width * scale * roomScale,
-                image.height * scale * roomScale)
+                y - image.height * globalScale * scale,
+                image.width * globalScale * scale,
+                image.height * globalScale * scale)
         },
         drawHorizontallyFlippedImage: function (image, x, y)
         {
@@ -310,7 +309,7 @@ const vueApp = new Vue({
                 {
                     if (o.type == "room-object")
                     {
-                        this.drawImage(o.o.image, o.o.physicalPositionX, o.o.physicalPositionY, this.currentRoom.scale)
+                        this.drawImage(o.o.image, o.o.physicalPositionX, o.o.physicalPositionY, this.currentRoom.scale * o.o.scale )
                     }
                     else // o.type == "user"
                     {

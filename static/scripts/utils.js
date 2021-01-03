@@ -1,7 +1,7 @@
 export const BLOCK_WIDTH = 160
 export const BLOCK_HEIGHT = 80
 
-export const scale = 0.5;
+export const globalScale = 0.5;
 
 export function loadImage(url)
 {
@@ -37,8 +37,8 @@ export function calculateRealCoordinates(room, x, y)
 
     realY += BLOCK_HEIGHT / 2
 
-    realX *= scale
-    realY *= scale
+    realX *= globalScale
+    realY *= globalScale
 
     return { x: realX, y: realY }
 }

@@ -21,6 +21,9 @@ export interface Room
         x: number;
         y: number;
         url: string;
+        scale?: number;
+        xOffset?: number;
+        yOffset?: number;
     }[];
     sit: Coordinates[];
     blocked: Coordinates[];
