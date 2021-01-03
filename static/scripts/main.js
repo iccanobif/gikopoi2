@@ -28,6 +28,7 @@ const vueApp = new Vue({
         requestedRoomChange: false,
         forceUserInstantMove: false,
         webcamStream: null,
+        isInfoboxVisible: false,
 
         // Possibly redundant data:
         username: "",
@@ -425,17 +426,14 @@ const vueApp = new Vue({
             document.getElementById("btn-move-down").addEventListener("click", () => this.sendNewPositionToServer("down"))
             document.getElementById("btn-move-right").addEventListener("click", () => this.sendNewPositionToServer("right"))
 
-            document.getElementById("infobox-button").addEventListener("click",
-                () => document.getElementById("infobox").classList.toggle("hidden"))
-            
-            document.getElementById("button-switch-locale").addEventListener("click",
-                () => i18n.locale = (i18n.locale == "ja" ? "en" : "ja"));
-
             window.addEventListener("focus", () =>
             {
                 this.forceUserInstantMove = true
             });
         },
+        toggleInfobox: function () { this.isInfoboxVisible ^= true; },
+        switchLanguage: function () { i18n.locale = (i18n.locale == "ja" ? "en" : "ja") },
+        
         // WebRTC
         wantToStartStreaming: async function ()
         {

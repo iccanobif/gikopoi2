@@ -29,7 +29,7 @@
                 <video id="local-video" autoplay muted></video>
                 <canvas id="room-canvas" width="721px" height="511px" tabindex="0"></canvas>
                 <div id="infobox-container">
-                    <div id="infobox" class="hidden">
+                    <div id="infobox" v-show="isInfoboxVisible">
                         <div id="infobox-area" class="infobox-line">
                             <div class="infobox-title">{{ $t("ui.infobox_label_area") }}</div>
                             <div class="infobox-value">{{ $t("ui.infobox_value_area") }}</div>
@@ -47,7 +47,8 @@
                             <div class="infobox-value">{{ serverStats.userCount }}</div>
                         </div>
                     </div>
-                    <button id="infobox-button" class="canvas-button-top-right"></button>
+                    <button id="infobox-button" class="canvas-button-top-right"
+                        v-on:click="toggleInfobox"></button>
                 </div>
             </div>
             <div id="received-video-container" v-show="someoneIsStreaming && !iAmStreaming">
@@ -70,7 +71,7 @@
                 <button id="start-streaming-button"
                     v-show="roomAllowsStreaming && !someoneIsStreaming && !iAmStreaming && !wantToStream">{{ $t("ui.button_stream_start") }}</button>
                 <button id="stop-streaming-button" v-show="iAmStreaming">{{ $t("ui.button_stream_stop") }}</button>
-                <button id="button-switch-locale">{{ $t("ui.button_switch_language") }}</button>
+                <button v-on:click="switchLanguage">{{ $t("ui.button_switch_language") }}</button>
                 <!-- <button id="logout">Logout</button> -->
             </div>
             {{ $t("ui.label_log") }}
