@@ -98,14 +98,19 @@ const vueApp = new Vue({
                 for (const u of usersDto)
                     this.addUser(u);
 
-                this.currentRoom.backgroundImage = await loadImage(this.currentRoom.backgroundImageUrl)
+                loadImage(this.currentRoom.backgroundImageUrl).then(image => {
+                    this.currentRoom.backgroundImage = image
+                })
                 for (const o of this.currentRoom.objects)
                 {
-                    o.image = await loadImage("rooms/" + this.currentRoom.id + "/" + o.url)
-                    const { x, y } = calculateRealCoordinates(this.currentRoom, o.x, o.y);
-                    o.physicalPositionX = x + (o.xOffset || 0)
-                    o.physicalPositionY = y + (o.yOffset || 0)
-                    console.log(o)
+                    loadImage("rooms/" + this.currentRoom.id + "/" + o.url).then(image =>
+                    {
+                        o.image = image
+                        const { x, y } = calculateRealCoordinates(this.currentRoom, o.x, o.y);
+                        o.physicalPositionX = x + (o.xOffset || 0)
+                        o.physicalPositionY = y + (o.yOffset || 0)
+                        console.log(o)
+                    })
                 }
 
                 // Force update of user coordinates using the current room's logics (origin coordinates, etc)
@@ -310,7 +315,7 @@ const vueApp = new Vue({
                 {
                     if (o.type == "room-object")
                     {
-                        this.drawImage(o.o.image, o.o.physicalPositionX, o.o.physicalPositionY, this.currentRoom.scale * o.o.scale )
+                        this.drawImage(o.o.image, o.o.physicalPositionX, o.o.physicalPositionY, this.currentRoom.scale * o.o.scale)
                     }
                     else // o.type == "user"
                     {
