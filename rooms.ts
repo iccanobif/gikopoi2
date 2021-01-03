@@ -94,6 +94,9 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 5, y: 7, url: "go-table.svg", scale: 2.5, xOffset: 10, yOffset: -7 },
             { x: 5, y: 6, url: "chair.svg", scale: 2.5, xOffset: 28, yOffset: -18 },
             { x: 5, y: 8, url: "chair.svg", scale: 2.5, xOffset: 28, yOffset: -18 },
+
+            { x: 6, y: 5, url: "boom-barrier.svg", scale: 2.5, xOffset: -1, yOffset: -10 },
+            { x: 9, y: 4, url: "funkyboon.svg", scale: 2.5, xOffset: 5, yOffset: -8 },
         ],
         sit: [],
         blocked: [
