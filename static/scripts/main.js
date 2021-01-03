@@ -31,7 +31,7 @@ const vueApp = new Vue({
 
         // Possibly redundant data:
         username: "",
-        roomid: "",
+        roomid: "admin_st",
         serverStats: {
             userCount: 0
         },
