@@ -13,7 +13,7 @@ export const messages =
             infobox_label_user_name: "名前：",
             infobox_label_user_count: "人数：",
 
-            label_streamer: "ストリーマー：",
+            label_streamer: "配信者：",
             label_input: "入力：",
             label_log: "ログ：",
 

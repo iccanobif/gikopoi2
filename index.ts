@@ -39,7 +39,7 @@ io.on("connection", function (socket: any)
             currentRoom = rooms[user.roomId]
 
             socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(user.roomId))
-            socket.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
+            io.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
 
             emitServerStats()
         }
@@ -154,7 +154,7 @@ io.on("connection", function (socket: any)
 
                 socket.emit("server-ok-to-stream")
 
-                socket.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
+                io.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
             }
         }
         catch (e)

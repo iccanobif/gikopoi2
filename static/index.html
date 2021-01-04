@@ -50,24 +50,26 @@
                 </div>
             </div>
             <div id="video-streams">
-                <video id="local-video" autoplay muted></video>
-                {{ JSON.stringify(currentRoomStreamSlots) }}
                 <div v-for="(streamSlot, index) in currentRoomStreamSlots">
-                    isActive: {{ streamSlot.isActive }}
+                    <hr />
                     <div v-if="streamSlot.isActive">
                         {{ $t("ui.label_streamer") }} {{ users[streamSlot.userId].name }}
                     </div>
+                    <video :id="'local-video-' + index"
+                        v-show="streamSlot.isActive && index == streamSlotIdInWhichIWantToStream" autoplay
+                        muted></video>
+                    <video v-show="streamSlot.isActive && index != streamSlotIdInWhichIWantToStream"
+                        :id="'received-video-' + index" autoplay :src="streamSlot.src"></video>
                     <button :id="'start-streaming-button-' + index"
                         v-if="!streamSlot.isActive && !iAmStreaming && !wantToStream"
                         v-on:click="wantToStartStreaming(index)">
                         {{ $t("ui.button_stream_start") }}
                     </button>
-                    <video v-show="streamSlot.isActive" :id="'received-video-' + index" autoplay
-                        :src="streamSlot.src"></video>
                     <button :id="'stop-streaming-button-' + index"
                         v-if="iAmStreaming && streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
                         {{ $t("ui.button_stream_stop") }}
                     </button>
+                    <hr />
                 </div>
             </div>
             <div id="toolbar">

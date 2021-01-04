@@ -27,6 +27,7 @@ const vueApp = new Vue({
         requestedRoomChange: false,
         forceUserInstantMove: false,
         webcamStream: null,
+        streamSlotIdInWhichIWantToStream: null,
 
         // Possibly redundant data:
         username: "",
@@ -201,12 +202,16 @@ const vueApp = new Vue({
             })
             this.socket.on("server-update-current-room-streams", (streams) =>
             {
+                console.log("server-update-current-room-streams")
                 const mimeType = 'video/webm;codecs="vp8,opus"'
 
-                this.currentRoom.streams = streams.map(s =>
+                this.currentRoom.streams = streams.map((s, i) =>
                 {
                     if (s.userId == this.myUserID)
                         return s
+
+                    if (this.currentRoom.streams[i].isActive == s.isActive)
+                        return this.currentRoom.streams[i]
 
                     s.isPlaying = false
                     s.mediaSource = new MediaSource()
@@ -214,24 +219,20 @@ const vueApp = new Vue({
 
                     s.playFromQueue = () =>
                     {
-                        console.log("playing from queue", s.queue.length)
                         if (!s.queue.length)
                         {
                             s.isPlaying = false
                             return
                         }
-                        console.log("hooray")
                         s.isPlaying = true
                         s.sourceBuffer.appendBuffer(s.queue.shift())
                     }
 
                     s.mediaSource.addEventListener("sourceopen", (e) =>
                     {
-                        console.log("sourceopen", e)
                         s.sourceBuffer = s.mediaSource.addSourceBuffer(mimeType);
                         s.sourceBuffer.addEventListener('updateend', () =>
                         {
-                            console.log("updateend", s.queue)
                             s.playFromQueue()
                         });
                     })
@@ -494,13 +495,11 @@ const vueApp = new Vue({
         },
         startStreaming: async function ()
         {
-            document.getElementById("local-video").srcObject = this.webcamStream;
-            document.getElementById("local-video").style.display = "block";
+            document.getElementById("local-video-" + this.streamSlotIdInWhichIWantToStream).srcObject = this.webcamStream;
 
             const recorder = new MediaRecorder(this.webcamStream, { mimeType: 'video/webm;codecs="vp8,opus"', bitsPerSecond: 64 })
             recorder.ondataavailable = (e) =>
             {
-                console.log("emitting")
                 this.socket.emit("user-stream-data", e.data);
             };
             recorder.start(1000);
@@ -508,11 +507,10 @@ const vueApp = new Vue({
         stopStreaming: function ()
         {
             this.iAmStreaming = false
-            this.streamSlotIdInWhichIWantToStream = null
             for (const track of this.webcamStream.getTracks())
                 track.stop()
-            document.getElementById("local-video").srcObject = this.webcamStream = null;
-            document.getElementById("local-video").style.display = "none"
+            document.getElementById("local-video-" + this.streamSlotIdInWhichIWantToStream).srcObject = this.webcamStream = null;
+            this.streamSlotIdInWhichIWantToStream = null
             this.socket.emit("user-want-to-stop-stream")
         },
         logout: async function ()

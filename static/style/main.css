@@ -27,12 +27,8 @@ body
     font-family: Arial, Helvetica, sans-serif;
 }
 
-#local-video
-{
-    position: absolute;
+video {
     width: 219px;
-    top: 18px;
-    right: 0px;
 }
 
 /* div[id^="received-video-"]
@@ -41,14 +37,6 @@ body
     top: 18px;
     left: 0px;
 }
-
-div[id^="received-video-"] video
-{
-    width: 219px;
-    position: absolute;
-    top: 20px;
-    left: 0px;
-} */
 
 
 /* --- canvas triangle buttons --- */
@@ -141,9 +129,6 @@ div[id^="received-video-"] video
     width: 44px;
 }
 
-
-
-
 .big-red-alert
 {
     position: absolute;
@@ -185,7 +170,6 @@ div[id^="received-video-"] video
 {
     flex-grow: 1;
 }
-
 
 .hidden
 {
