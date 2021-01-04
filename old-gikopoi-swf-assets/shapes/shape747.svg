@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="542px" height="198px"
+xml:space="preserve">
+<g id="338" transform="matrix(1, 0, 0, 1, 359.95, -53.8)">
+<path style="fill:#FFFF00;fill-opacity:1" d="M-253.55,168.45L-253.55 170.25L-257.1 168.45L-253.55 168.45" />
+<linearGradient
+id="LinearGradID_1290" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-0.111053, 0, 0, -0.0658569, -210.9, 216.8)" spreadMethod ="pad" x1="-819.2" y1="0" x2="819.2" y2="0" >
+<stop  offset="0" style="stop-color:#7850AF;stop-opacity:1" />
+<stop  offset="0.85098" style="stop-color:#353535;stop-opacity:1" />
+<stop  offset="1" style="stop-color:#000000;stop-opacity:1" />
+</linearGradient>
+<path style="fill:url(#LinearGradID_1290) " d="M-359.45,159.65L-359.4 142.65L-337.7 153.5L-327.65 158.55L-325.5 159.6L-302.35 171.15L-269.65 187.5L-259.6 192.55L-257.45 193.6L-234.3 205.15L-201.6 221.5L-200.6 222L-199.3 222.65L-187.9 228.35L-183.1 230.75L-179.9 232.35L-178.6 233L-177.5 233.55L-177.5 250.55L-359.45 159.65" />
+<radialGradient
+id="RadialGradID_1291" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.407349, 0, 0, 0.407349, 18.95, 268)" spreadMethod ="pad" cx="0" cy="0" r="819.2" fx="0" fy="0" >
+<stop  offset="0"  style="stop-color:#4517FF;stop-opacity:1" />
+<stop  offset="0.658824"  style="stop-color:#383838;stop-opacity:1" />
+<stop  offset="1"  style="stop-color:#000000;stop-opacity:1" />
+</radialGradient>
+<path style="fill:url(#RadialGradID_1291) " d="M-171.55,247.6L-177.5 250.55L-177.5 233.55L-171.55 230.6L-163.4 226.5L-161 225.3L-145.15 217.4L-143.35 216.5L-131.75 210.85L-131.35 210.6L-130.85 210.35L-126.15 208L-122.5 206.15L-120.1 205.05L-101.4 195.6L-80.2 185L-39.3 164.55L-37.35 163.6L-29.6 159.7L-25.7 157.75L-12.7 151.25L22.3 133.75L140.5 74.7L166.35 61.75L169.5 60.2L174.5 57.65L175.2 57.3L181.2 54.3L181.2 71.3L-171.55 247.6" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#000000;stroke-opacity:1" d="M181.2,71.3L181.2 54.3M-177.5,233.55L-177.5 250.55L-171.55 247.6M-257.1,168.45L-253.55 170.25M-359.4,142.65L-359.45 159.65L-177.5 250.55" />
+</g>
+</svg>

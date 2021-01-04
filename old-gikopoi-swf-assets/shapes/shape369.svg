@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="81px" height="46px"
+xml:space="preserve">
+<g id="166" transform="matrix(1, 0, 0, 1, 40.5, 25.5)">
+<path style="fill:#000000;fill-opacity:0.2" d="M0,20L-40 0.05L0 -20L40 0.05L0 20" />
+<path style="fill:#70615C;fill-opacity:1" d="M25.45,-2.95L30.4 -5.5L37.5 -1.95L37.5 0L32.5 2.5L25.45 -1L25.45 -2.95M3.5,17L-3.55 13.5L-3.55 11.5L1.4 8.95L8.5 12.5L8.5 14.5L3.5 17" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#615350;stroke-opacity:1" d="M25.45,-2.95L30.4 -5.5L37.5 -1.95L37.5 0L32.5 2.5L25.45 -1L25.45 -2.95L32.5 0.55L37.5 -1.95M32.5,2.5L32.5 0.55M-3.55,11.5L3.5 15L8.5 12.5L1.4 8.95L-3.55 11.5L-3.55 13.5L3.5 17L3.5 15M8.5,12.5L8.5 14.5L3.5 17" />
+<path style="fill:#827068;fill-opacity:1" d="M30,0.05L25 2.55L20 5.05L15 7.5L10 10L5 12.5L0 15L-40 -4.95L-34.9 -7.5L-29.9 -10L-24.9 -12.5L-19.9 -15L-14.95 -17.45L-9.95 -20L-5 -22.5L0 -25L40 -4.95L35 -2.45L30 0.05" />
+<path style="fill:#70615C;fill-opacity:1" d="M35,-2.45L40 -4.95L40 -3L35 -0.5L30 2L25 4.5L20 7L15 9.5L10 12L5 14.5L0 16.95L-40 -3L-40 -4.95L0 15L5 12.5L10 10L15 7.5L20 5.05L25 2.55L30 0.05L35 -2.45" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#615350;stroke-opacity:1" d="M-40,-4.95L-34.9 -7.5L-29.9 -10L-24.9 -12.5L-19.9 -15L-14.95 -17.45L-9.95 -20L-5 -22.5L0 -25L40 -4.95L40 -3L35 -0.5L30 2L25 4.5L20 7L15 9.5L10 12L5 14.5L0 16.95L-40 -3L-40 -4.95L0 15L5 12.5L-34.9 -7.5M40,-4.95L35 -2.45L35 -0.5M-9.95,-20L30 0.05L35 -2.45L-5 -22.5M30,0.05L30 2M30,0.05L25 2.55L25 4.5M25,2.55L-14.95 -17.45M20,7L20 5.05L15 7.5L15 9.5M10,12L10 10L5 12.5L5 14.5M0,15L0 16.95M-24.9,-12.5L15 7.5L10 10L-29.9 -10M25,2.55L20 5.05L-19.9 -15" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#947E72;stroke-opacity:1" d="M-6.45,-19.45L30 -1.2L32.5 -2.4M-1.45,-22L35 -3.7L37.5 -4.9M-16.45,-14.45L20 3.8L22.5 2.6M-26.4,-9.5L10.05 8.8L12.55 7.6M-36.4,-4.5L0.05 13.8L2.55 12.6M-31.4,-7L5.05 11.3L7.55 10.1M-21.4,-12L15.05 6.3L17.55 5.1M-11.45,-17L25 1.3L27.5 0.1" />
+</g>
+</svg>

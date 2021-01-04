@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="361px" height="301px"
+xml:space="preserve">
+<g id="1044" transform="matrix(1, 0, 0, 1, 0.5, 0.5)">
+<radialGradient
+id="RadialGradID_3187" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.286011, 0, 0, 0.286011, 71, 41.25)" spreadMethod ="pad" cx="0" cy="0" r="819.2" fx="0" fy="0" >
+<stop  offset="0"  style="stop-color:#A3BDF3;stop-opacity:1" />
+<stop  offset="1"  style="stop-color:#F9C4A2;stop-opacity:1" />
+</radialGradient>
+<path style="fill:url(#RadialGradID_3187) " d="M360,159.95L360 300L236.4 300L0 300L0 171.25L0 0L198.05 0L360 0L360 159.95" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#000000;stroke-opacity:1" d="M360,159.95L360 300L236.4 300L0 300L0 171.25L0 0L198.05 0L360 0L360 159.95z" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#D8DEEA;stroke-opacity:1" d="M360,159.95Q334.65 148.5 303 148.5Q256.65 148.5 223.85 173.05Q191.05 197.65 191.1 232.45Q191.1 245.65 195.8 257.35Q203.5 276.55 223.85 291.8Q229.9 296.3 236.4 300M198.05,0Q236.35 31.95 236.35 75.85Q236.35 123.15 191.8 156.55Q147.2 190 84.1 190Q36.85 190 0 171.25" />
+</g>
+</svg>

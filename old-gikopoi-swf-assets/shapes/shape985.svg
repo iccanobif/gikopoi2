@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="28px" height="28px"
+xml:space="preserve">
+<g id="444" transform="matrix(1, 0, 0, 1, 13.9, 27.5)">
+<linearGradient
+id="LinearGradID_1852" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.00500488, 0, 0, 0.00366211, 9.25, -20.75)" spreadMethod ="pad" x1="-819.2" y1="0" x2="819.2" y2="0" >
+<stop  offset="0" style="stop-color:#C29E6D;stop-opacity:1" />
+<stop  offset="1" style="stop-color:#68492D;stop-opacity:1" />
+</linearGradient>
+<path style="fill:url(#LinearGradID_1852) " d="M9.65,-20.95Q12.35 -22.25 12.8 -23.75Q13.35 -22 13.35 -20.75Q13.35 -17.75 6.25 -17.75L5.15 -19.9Q6.65 -19.55 9.65 -20.95" />
+<linearGradient
+id="LinearGradID_1853" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.00140381, 0.00140381, -0.00917053, 0.00917053, -4.4, -10.65)" spreadMethod ="pad" x1="-819.2" y1="0" x2="819.2" y2="0" >
+<stop  offset="0" style="stop-color:#C29E6D;stop-opacity:1" />
+<stop  offset="1" style="stop-color:#62462B;stop-opacity:1" />
+</linearGradient>
+<path style="fill:url(#LinearGradID_1853) " d="M4.55,-19.8L-6.1 -6.75Q-11.45 0 -11.9 0Q-12.55 0 -13.4 -1.25Q-13.4 -3.15 -7.55 -8.75Q-0.35 -15.65 2.85 -21.25L3.05 -21.2Q4.25 -20.9 4.55 -19.8" />
+<path style="fill:#AA8046;fill-opacity:1" d="M5.15,-19.9L4.85 -20.15L4.55 -19.8Q4.25 -20.9 3.05 -21.2Q3.75 -25 4.35 -25.8Q5.2 -27 7.75 -27Q12.85 -27 12.85 -24.35L12.85 -24.25L12.8 -23.75Q12.35 -22.25 9.65 -20.95Q6.65 -19.55 5.15 -19.9" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#423113;stroke-opacity:1" d="M4.85,-20.15L4.55 -19.8L-6.1 -6.75Q-11.45 0 -11.9 0Q-12.55 0 -13.4 -1.25Q-13.4 -3.15 -7.55 -8.75Q-0.35 -15.65 2.85 -21.25L3.05 -21.2Q3.75 -25 4.35 -25.8Q5.2 -27 7.75 -27Q12.85 -27 12.85 -24.35L12.85 -24.25L12.8 -23.75Q13.35 -22 13.35 -20.75Q13.35 -17.75 6.25 -17.75L5.15 -19.9M3.05,-21.2Q4.25 -20.9 4.55 -19.8M12.8,-23.75Q12.35 -22.25 9.65 -20.95Q6.65 -19.55 5.15 -19.9" />
+</g>
+</svg>

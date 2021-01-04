@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="25px" height="13px"
+xml:space="preserve">
+<g id="317" transform="matrix(1, 0, 0, 1, 0.5, 0.5)">
+<path style="fill:#0099FF;fill-opacity:1" d="M19.85,9.05L20.2 8.2Q21.15 5.15 17.7 3.05L17.9 3.05L18.55 3.05L18.9 3.05L19.2 3.05L19.3 3.05L19.35 3.05L19.45 3.05L19.55 3.05L19.65 3.05L19.7 3.05L19.8 3.05L22.05 3.55Q23.65 4.25 22.9 6.05L22.85 6.15Q22.3 7.35 19.85 9.05L15.65 11.15Q8.65 11.5 8.7 9.05L12.9 6.95L19.85 9.05M11.5,5.2Q12.45 2.15 9 0.05L9.2 0.05L9.85 0.05L10.2 0.05L10.5 0.05L10.6 0.05L10.65 0.05L10.75 0.05L10.85 0.05L10.95 0.05L11 0.05L11.1 0.05Q15.4 0.35 14.15 3.15Q13.6 4.35 11.15 6.05L11.5 5.2M6.95,8.15Q-0.05 8.5 0 6.05L4.2 3.95L11.15 6.05L6.95 8.15" />
+<linearGradient
+id="LinearGradID_1235" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-0.00457764, 0, 0, 0.00366211, 16.65, 6.05)" spreadMethod ="pad" x1="-819.2" y1="0" x2="819.2" y2="0" >
+<stop  offset="0.329412" style="stop-color:#000000;stop-opacity:1" />
+<stop  offset="0.47451" style="stop-color:#000000;stop-opacity:1" />
+<stop  offset="0.964706" style="stop-color:#FFFFFF;stop-opacity:1" />
+</linearGradient>
+<path style="fill:url(#LinearGradID_1235) " d="M12.9,6.95Q14.9 3.15 17.7 3.05Q21.15 5.15 20.2 8.2L19.85 9.05L12.9 6.95" />
+<linearGradient
+id="LinearGradID_1236" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-0.00457764, 0, 0, 0.00366211, 7.95, 3.05)" spreadMethod ="pad" x1="-819.2" y1="0" x2="819.2" y2="0" >
+<stop  offset="0.329412" style="stop-color:#000000;stop-opacity:1" />
+<stop  offset="0.47451" style="stop-color:#000000;stop-opacity:1" />
+<stop  offset="0.964706" style="stop-color:#FFFFFF;stop-opacity:1" />
+</linearGradient>
+<path style="fill:url(#LinearGradID_1236) " d="M9,0.05Q12.45 2.15 11.5 5.2L11.15 6.05L4.2 3.95Q6.2 0.15 9 0.05" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#000000;stroke-opacity:1" d="M17.7,3.05L17.9 3.05L18.55 3.05L18.9 3.05L19.2 3.05L19.3 3.05L19.35 3.05L19.45 3.05L19.55 3.05L19.65 3.05L19.7 3.05L19.8 3.05L22.05 3.55Q23.65 4.25 22.9 6.05L22.85 6.15Q22.3 7.35 19.85 9.05L15.65 11.15Q8.65 11.5 8.7 9.05L12.9 6.95Q14.9 3.15 17.7 3.05Q21.15 5.15 20.2 8.2L19.85 9.05L12.9 6.95M11.15,6.05Q13.6 4.35 14.15 3.15Q15.4 0.35 11.1 0.05L11 0.05L10.95 0.05L10.85 0.05L10.75 0.05L10.65 0.05L10.6 0.05L10.5 0.05L10.2 0.05L9.85 0.05L9.2 0.05L9 0.05Q12.45 2.15 11.5 5.2L11.15 6.05L4.2 3.95L0 6.05Q-0.05 8.5 6.95 8.15L11.15 6.05M4.2,3.95Q6.2 0.15 9 0.05" />
+</g>
+</svg>

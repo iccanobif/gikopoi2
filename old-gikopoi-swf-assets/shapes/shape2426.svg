@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="5px" height="30px"
+xml:space="preserve">
+<g id="1075" transform="matrix(1, 0, 0, 1, 0, 0)">
+<linearGradient
+id="LinearGradID_3420" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0, -0.0177002, 0.0164795, 0, -125, 13.5)" spreadMethod ="pad" x1="-819.2" y1="0" x2="819.2" y2="0" >
+<stop  offset="0.435294" style="stop-color:#F7F7F7;stop-opacity:1" />
+<stop  offset="1" style="stop-color:#E6E6E6;stop-opacity:1" />
+</linearGradient>
+<path style="fill:url(#LinearGradID_3420) " d="M5,4L5 29L0 29L0 0L1 0Q2.1 0 3 0.55L3 0.95L3.6 0.95L3.85 1.2Q5 2.35 5 4" />
+<path style="fill:#C4CCCC;fill-opacity:1" d="M0,29L0 28L5 28L5 29L0 29" />
+<path style="fill:#EEEEEE;fill-opacity:1" d="M5,29L5 30L0 30L0 29L5 29" />
+<path style="fill:#EAEAEA;fill-opacity:1" d="M4.75,1.15L4.85 1.3L4.9 1.35L4.95 1.45L5 1.55L5 5.25L0 5.25L0 0L3 0L3 0.95L4.5 0.95L4.5 1L4.6 1.1L4.65 1.1L4.75 1.15" />
+<path style="fill:#FFFFFF;fill-opacity:1" d="M4.25,1L2.9 1L0 1L0 0L3 0Q3.8 0 4.4 0.65L5 1.75L4.7 1.25Q4.5 1.05 4.25 1" />
+</g>
+</svg>

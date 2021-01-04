@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="43px" height="49px"
+xml:space="preserve">
+<g id="118" transform="matrix(1, 0, 0, 1, -0.5, 78.3)">
+<path style="fill:#EFECF4;fill-opacity:1" d="M28.35,-59.2Q28.6 -55.05 27.35 -51.15Q25.95 -46.75 23.1 -44.25Q27.4 -50.5 26.8 -57.75Q23.6 -54.15 23.55 -49.45L22.2 -48.4Q20.2 -53.1 23.2 -57.9L22.5 -50.8Q23.4 -55.4 26.55 -59Q26.7 -61.2 24.8 -61.6L26.8 -62.35L28.25 -60.45L31.1 -60.35Q32.15 -54.75 27.7 -50.55L29.55 -56.25Q30.15 -58.05 29.1 -59.35L28.35 -59.2" />
+<linearGradient
+id="LinearGradID_520" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.00721741, 0.014389, -0.0288849, 0.0144958, 25.55, -50.6)" spreadMethod ="pad" x1="-819.2" y1="0" x2="819.2" y2="0" >
+<stop  offset="0" style="stop-color:#8561AB;stop-opacity:1" />
+<stop  offset="1" style="stop-color:#6C4E8D;stop-opacity:1" />
+</linearGradient>
+<path style="fill:url(#LinearGradID_520) " d="M42.4,-50.3L2.4 -30.3L2.4 -53.8L42.4 -73.85L42.4 -50.3M29.1,-59.35Q30.15 -58.05 29.55 -56.25L27.7 -50.55Q32.15 -54.75 31.1 -60.35L28.25 -60.45L26.8 -62.35L24.8 -61.6Q26.7 -61.2 26.55 -59Q23.4 -55.4 22.5 -50.8L23.2 -57.9Q20.2 -53.1 22.2 -48.4L23.55 -49.45Q23.6 -54.15 26.8 -57.75Q27.4 -50.5 23.1 -44.25Q25.95 -46.75 27.35 -51.15Q28.6 -55.05 28.35 -59.2L29.1 -59.35" />
+<path style="fill:#999999;fill-opacity:1" d="M1,-57.75L41 -77.8L43 -76.8L3 -56.75L1 -57.75" />
+<path style="fill:#666666;fill-opacity:1" d="M3,-56.75L43 -76.8L43 -74.3L3 -54.25L1 -55.25L1 -57.75L3 -56.75" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#4A3461;stroke-opacity:1" d="M42.4,-73.85L2.4 -53.8L2.4 -30.3L42.4 -50.3L42.4 -73.85z" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#8663A9;stroke-opacity:1" d="M34.65,-56.2L34.7 -47.55L41.3 -50.9L41.3 -72.1M3.65,-53.15L3.65 -32L18.65 -39.5L18.65 -48.15M18.65,-39.5L34.7 -47.55" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#634680;stroke-opacity:1" d="M41.3,-72.1L3.65 -53.15" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#464646;stroke-opacity:1" d="M43,-74.3L3 -54.25L1 -55.25L1 -57.75L41 -77.8" />
+</g>
+</svg>

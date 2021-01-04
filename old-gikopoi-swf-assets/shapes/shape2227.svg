@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns:author="http://www.sothink.com"
+width="26px" height="51px"
+xml:space="preserve">
+<g id="1024" transform="matrix(1, 0, 0, 1, 12.55, 25.5)">
+<path style="fill:#999999;fill-opacity:0.160784" d="M-9,25Q-10.25 25 -11.15 24.1Q-12 23.25 -12 22L-12 -22Q-12 -23.25 -11.15 -24.15Q-10.25 -25 -9 -25L9 -25Q10.25 -25 11.1 -24.15Q12 -23.25 12 -22L12 22Q12 23.25 11.1 24.1Q10.25 25 9 25L-9 25" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#444444;stroke-opacity:1" d="M-9,25Q-10.25 25 -11.15 24.1Q-12 23.25 -12 22L-12 -22Q-12 -23.25 -11.15 -24.15Q-10.25 -25 -9 -25L9 -25Q10.25 -25 11.1 -24.15Q12 -23.25 12 -22" />
+<path style="fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#FCE7FE;stroke-opacity:1" d="M12,-22L12 22Q12 23.25 11.1 24.1Q10.25 25 9 25L-9 25" />
+<radialGradient
+id="RadialGradID_3149" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.0187225, 0, 0, 0.0187225, 2.35, 0)" spreadMethod ="pad" cx="0" cy="0" r="819.2" fx="0" fy="0" >
+<stop  offset="0"  style="stop-color:#000000;stop-opacity:1" />
+<stop  offset="1"  style="stop-color:#BCBCBC;stop-opacity:1" />
+</radialGradient>
+<path style="fill:url(#RadialGradID_3149) " d="M-7.5,0.1L7.35 -14.9L7.5 15L-7.5 0.1" />
+<path style="fill:none;stroke-width:0.05;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3;stroke:#00FF00;stroke-opacity:1" d="M-7.5,0.1L7.35 -14.9L7.5 15L-7.5 0.1z" />
+<radialGradient
+id="RadialGradID_3150" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0, 0.0361481, -0.0234528, 0, 1.9, 0)" spreadMethod ="pad" cx="0" cy="0" r="819.2" fx="0" fy="0" >
+<stop  offset="0"  style="stop-color:#B6FE7A;stop-opacity:1" />
+<stop  offset="0.333333"  style="stop-color:#00F03C;stop-opacity:0.290196" />
+<stop  offset="0.764706"  style="stop-color:#61EF01;stop-opacity:0.0901961" />
+</radialGradient>
+<path style="fill:url(#RadialGradID_3150) " d="M12.55,-21.5L12.55 21.75Q12.5 23.25 11.3 24.25Q9.95 25.35 8.15 25.35L-8.15 25.35Q-10 25.35 -11.25 24.25Q-12.55 23.25 -12.55 21.75L-12.55 -21.5Q-12.55 -23.05 -11.25 -24.1Q-10 -25.15 -8.15 -25.15L8.15 -25.15Q9.95 -25.15 11.3 -24.1Q12.5 -23.05 12.55 -21.5" />
+</g>
+</svg>
