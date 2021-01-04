@@ -442,19 +442,18 @@ const vueApp = new Vue({
                 this.wantToStream = true
                 this.streamSlotIdInWhichIWantToStream = streamSlotId
                 this.webcamStream = await navigator.mediaDevices.getUserMedia({
-                    audio: false,
+                    audio: true,
                     video: { aspectRatio: { ideal: 1.333333 } }
                 })
 
                 this.socket.emit("user-want-to-stream", {
                     streamSlotId: streamSlotId,
                     withVideo: true,
-                    withSound: false,
+                    withSound: true,
                 })
             }
             catch (err)
             {
-                console.log(err)
                 this.showWarningToast("sorry, can't find a webcam")
                 this.wantToStream = false
                 this.webcamStream = false
