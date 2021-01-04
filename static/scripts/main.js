@@ -98,13 +98,19 @@ const vueApp = new Vue({
                 this.isLoadingRoom = true
 
                 this.currentRoom = roomDto
+
+                // HACK: i set isActive to false for all streams so that when server-update-current-room-streams
+                // comes, the MediaSource gets initialized
+                this.currentRoom.streams.forEach(s => s.isActive = false)
+
                 this.roomid = this.currentRoom.id
                 this.users = {}
 
                 for (const u of usersDto)
                     this.addUser(u);
 
-                loadImage(this.currentRoom.backgroundImageUrl).then(image => {
+                loadImage(this.currentRoom.backgroundImageUrl).then(image =>
+                {
                     this.currentRoom.backgroundImage = image
                 })
                 for (const o of this.currentRoom.objects)
@@ -115,7 +121,6 @@ const vueApp = new Vue({
                         const { x, y } = calculateRealCoordinates(this.currentRoom, o.x, o.y);
                         o.physicalPositionX = x + (o.xOffset || 0)
                         o.physicalPositionY = y + (o.yOffset || 0)
-                        console.log(o)
                     })
                 }
 
@@ -184,10 +189,6 @@ const vueApp = new Vue({
 
             this.socket.on("server-stream-data", (streamSlotId, arrayBuffer) =>
             {
-                // const player = this.receivedVideoPlayers[streamSlotId]
-                // if (player)
-                //     player.playChunk(data)
-
                 const slot = this.currentRoomStreamSlots[streamSlotId]
 
                 if (!slot || !slot.mediaSource || slot.mediaSource.readyState != "open")
@@ -208,7 +209,6 @@ const vueApp = new Vue({
             })
             this.socket.on("server-update-current-room-streams", (streams) =>
             {
-                console.log("server-update-current-room-streams")
                 const mimeType = 'video/webm;codecs="vp8,opus"'
 
                 this.currentRoom.streams = streams.map((s, i) =>
@@ -221,7 +221,11 @@ const vueApp = new Vue({
 
                     s.isPlaying = false
                     s.mediaSource = new MediaSource()
-                    s.queue = []
+                    
+                    if (s.firstChunk)
+                        s.queue = [s.firstChunk]
+                    else
+                        s.queue = []
 
                     s.playFromQueue = () =>
                     {
@@ -437,7 +441,7 @@ const vueApp = new Vue({
         },
         registerKeybindings: function ()
         {
-            window.addEventListener("focus", () => this.forceUserInstantMove = true );
+            window.addEventListener("focus", () => this.forceUserInstantMove = true);
         },
         toggleInfobox: function () { this.isInfoboxVisible ^= true; },
         switchLanguage: function () { i18n.locale = (i18n.locale == "ja" ? "en" : "ja") },
@@ -456,7 +460,6 @@ const vueApp = new Vue({
             if (event.key != "Enter") return
             this.sendMessageToServer()
         },
-        
         // WebRTC
         wantToStartStreaming: async function (streamSlotId)
         {

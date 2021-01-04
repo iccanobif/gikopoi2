@@ -21,7 +21,7 @@ io.on("connection", function (socket: any)
 
     socket.join(currentRoom.id)
 
-    socket.on("disconnect", function()
+    socket.on("disconnect", function ()
     {
         clearStream(user)
     })
@@ -127,10 +127,15 @@ io.on("connection", function (socket: any)
             console.log(e.message + " " + e.stack);
         }
     });
-    socket.on("user-stream-data", function (data: any)
+    socket.on("user-stream-data", function (data: ArrayBuffer)
     {
         try
         {
+            const streamSlot = currentRoom.streams[currentStreamSlotId!]
+
+            if (streamSlot.firstChunk == null)
+                streamSlot.firstChunk = data
+
             socket.to(user.roomId).emit("server-stream-data", currentStreamSlotId, data)
         }
         catch (e)
@@ -192,6 +197,7 @@ io.on("connection", function (socket: any)
             user.roomId = targetRoomId
 
             socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(targetRoomId))
+            socket.emit("server-update-current-room-streams", currentRoom.streams)
             socket.join(targetRoomId)
             socket.to(targetRoomId).emit("server-user-joined-room", user);
         }
@@ -256,15 +262,15 @@ app.post("/login", (req, res) =>
         res.end("please specify a username")
         return;
     }
-    
+
     const n = userName.indexOf("#");
     let processedUserName = (n >= 0 ? userName.substr(0, n) : userName)
         .replace("◆", "◇");
     if (n >= 0)
-        processedUserName = processedUserName + "◆" + tripcode(userName.substr(n+1));
-    
+        processedUserName = processedUserName + "◆" + tripcode(userName.substr(n + 1));
+
     console.log(processedUserName, "logging in")
-    
+
     const sanitizedUserName = processedUserName.replace(/</g, "&lt;").replace(/>/g, "&gt;")
     const user = addNewUser(sanitizedUserName);
     res.json(user.id)
@@ -275,7 +281,7 @@ app.post("/login", (req, res) =>
 
 function clearStream(user: Player)
 {
-    if (!user) return 
+    if (!user) return
 
     const room = rooms[user.roomId]
     const stream = room.streams.find(s => s.userId == user.id)
@@ -283,6 +289,7 @@ function clearStream(user: Player)
     {
         stream.isActive = false
         stream.userId = null
+        stream.firstChunk = null
         io.to(user.roomId).emit("server-update-current-room-streams", room.streams)
     }
 }

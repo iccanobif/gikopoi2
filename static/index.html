@@ -52,7 +52,7 @@
             </div>
             <div id="video-streams">
                 <div v-for="(streamSlot, index) in currentRoomStreamSlots">
-                    <hr />
+                    <hr v-if="index != 0" />
                     <div v-if="streamSlot.isActive">
                         {{ $t("ui.label_streamer") }} {{ users[streamSlot.userId].name }}
                     </div>
@@ -70,7 +70,7 @@
                         v-if="iAmStreaming && streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
                         {{ $t("ui.button_stream_stop") }}
                     </button>
-                    <hr />
+
                 </div>
             </div>
             <div id="toolbar">

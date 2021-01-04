@@ -31,6 +31,12 @@ video {
     width: 219px;
 }
 
+#video-streams{
+    position: absolute;
+    left: 700px;
+    width: 232px;
+}
+
 /* div[id^="received-video-"]
 {
     position: absolute;
