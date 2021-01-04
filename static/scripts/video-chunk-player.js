@@ -1,17 +1,15 @@
-const mimeType = 'video/webm; codecs="vorbis,vp8"'
+const mimeType = 'video/webm;codecs="vp8,opus"'
 
 export default class VideoChunkPlayer
 {
     constructor(container)
     {
         this.isPlaying = false
-        this.duration = 0
         
         this.videoElement = document.createElement("video")
         container.appendChild(this.videoElement)
         
         this.videoElement.autoplay = true
-        this.videoElement.crossOrigin="anonymous"
         
         this.mediaSource = new MediaSource();
         
@@ -21,7 +19,6 @@ export default class VideoChunkPlayer
         {
             console.log("sourceopen", e)
             this.sourceBuffer = this.mediaSource.addSourceBuffer(mimeType);
-            this.sourceBuffer.mode = "sequence";
             this.sourceBuffer.addEventListener('updateend', () =>
             {
                 console.log("updateend", this.queue)
@@ -30,7 +27,6 @@ export default class VideoChunkPlayer
         })
         
         this.videoElement.src = URL.createObjectURL(this.mediaSource);
-        this.videoElement.play().catch(console.error)
     }
     
     playFromQueue()
