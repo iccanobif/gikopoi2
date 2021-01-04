@@ -10,7 +10,6 @@ export default class VideoChunkPlayer
         container.appendChild(this.videoElement)
         
         this.videoElement.autoplay = true
-        this.videoElement.preload = "none"
         
         this.mediaSource = new MediaSource();
         
@@ -28,7 +27,6 @@ export default class VideoChunkPlayer
         })
         
         this.videoElement.src = URL.createObjectURL(this.mediaSource);
-        this.videoElement.play().catch(console.error)
     }
     
     playFromQueue()
