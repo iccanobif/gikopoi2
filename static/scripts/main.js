@@ -442,18 +442,19 @@ const vueApp = new Vue({
                 this.wantToStream = true
                 this.streamSlotIdInWhichIWantToStream = streamSlotId
                 this.webcamStream = await navigator.mediaDevices.getUserMedia({
-                    audio: true,
+                    audio: false,
                     video: { aspectRatio: { ideal: 1.333333 } }
                 })
 
                 this.socket.emit("user-want-to-stream", {
                     streamSlotId: streamSlotId,
                     withVideo: true,
-                    withSound: true,
+                    withSound: false,
                 })
             }
             catch (err)
             {
+                console.log(err)
                 this.showWarningToast("sorry, can't find a webcam")
                 this.wantToStream = false
                 this.webcamStream = false
@@ -464,19 +465,12 @@ const vueApp = new Vue({
             document.getElementById("local-video").srcObject = this.webcamStream;
             document.getElementById("local-video").style.display = "block";
 
-            const recorder = new RecordRTCPromisesHandler(this.webcamStream, { type: "video" })
-            while (this.webcamStream)
+            const recorder = new MediaRecorder(this.webcamStream, { mimeType: 'video/webm; codecs=vp8' })
+            recorder.ondataavailable = (e) =>
             {
-                recorder.startRecording()
-                await sleep(1000);
-                await recorder.stopRecording();
-                console.log("stopped recording")
-                let blob = await recorder.getBlob();
-                if (this.webcamStream)
-                {
-                    this.socket.emit("user-stream-data", blob);
-                }
-            }
+                this.socket.emit("user-stream-data", e.data);
+            };
+            recorder.start(1000);
         },
         stopStreaming: function ()
         {
