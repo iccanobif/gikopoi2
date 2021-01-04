@@ -464,19 +464,13 @@ const vueApp = new Vue({
             document.getElementById("local-video").srcObject = this.webcamStream;
             document.getElementById("local-video").style.display = "block";
 
-            const recorder = new RecordRTCPromisesHandler(this.webcamStream, { type: "video" })
-            while (this.webcamStream)
+            const recorder = new MediaRecorder(this.webcamStream, { mimeType: 'video/webm;codecs="vp8,opus"', bitsPerSecond: 64 })
+            recorder.ondataavailable = (e) =>
             {
-                recorder.startRecording()
-                await sleep(1000);
-                await recorder.stopRecording();
-                console.log("stopped recording")
-                let blob = await recorder.getBlob();
-                if (this.webcamStream)
-                {
-                    this.socket.emit("user-stream-data", blob);
-                }
-            }
+                console.log("emitting")
+                this.socket.emit("user-stream-data", e.data);
+            };
+            recorder.start(1000);
         },
         stopStreaming: function ()
         {
