@@ -465,9 +465,10 @@ const vueApp = new Vue({
             document.getElementById("local-video").srcObject = this.webcamStream;
             document.getElementById("local-video").style.display = "block";
 
-            const recorder = new MediaRecorder(this.webcamStream, { mimeType: 'video/webm; codecs=vp8' })
+            const recorder = new MediaRecorder(this.webcamStream, { mimeType: 'video/webm;codecs="vp8,opus"', bitsPerSecond: 64 })
             recorder.ondataavailable = (e) =>
             {
+                console.log("emitting")
                 this.socket.emit("user-stream-data", e.data);
             };
             recorder.start(1000);
