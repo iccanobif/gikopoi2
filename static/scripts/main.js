@@ -222,8 +222,8 @@ const vueApp = new Vue({
                     s.isPlaying = false
                     s.mediaSource = new MediaSource()
                     
-                    if (s.firstChunk)
-                        s.queue = [s.firstChunk]
+                    if (s.initializationSegment)
+                        s.queue = [s.initializationSegment]
                     else
                         s.queue = []
 

@@ -11,7 +11,9 @@ export interface StreamSlot {
     withSound: boolean | null,
     withVideo: boolean | null,
     userId: string | null,
-    firstChunk: any | null,
+    initialBuffer: ArrayBuffer | null,
+    initializationSegment: ArrayBuffer | null,
+    firstWebmCluster: ArrayBuffer | null,
 }
 
 export interface Room

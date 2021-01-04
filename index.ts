@@ -3,7 +3,7 @@ import { readFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
 import { Direction } from "./types";
 import { addNewUser, getConnectedUserList, getUser, Player, removeUser } from "./users";
-import { sleep } from "./utils";
+import { appendBuffer, indexOfMulti, sleep } from "./utils";
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
@@ -133,10 +133,43 @@ io.on("connection", function (socket: any)
         {
             const streamSlot = currentRoom.streams[currentStreamSlotId!]
 
-            if (streamSlot.firstChunk == null)
-                streamSlot.firstChunk = data
+            // the initialization segment is everything that's before the first 0x1F43B675
+            // every cluster begins with a 0x1F43B675
+
+            // cluster that starts with keyframe is 0x1F43B675 FFE7840000
+
+            // console.log(streamSlot)
+
+            if (!streamSlot.initializationSegment || !streamSlot.firstWebmCluster)
+            {
+                streamSlot.initialBuffer = streamSlot.initialBuffer
+                    ? appendBuffer(streamSlot.initialBuffer, data)
+                    : data
+            }
+            if (!streamSlot.initializationSegment)
+            {
+                const array = new Uint8Array(streamSlot.initialBuffer!)
+                const startOfFirstCluster = indexOfMulti(array, [0x1F, 0x43, 0xB6, 0x75,], 0)
+                if (startOfFirstCluster != -1)
+                    streamSlot.initializationSegment = array.slice(0, startOfFirstCluster)
+                else
+                    streamSlot.initialBuffer = appendBuffer(streamSlot.initialBuffer!, data)
+            }
+
+            if (!streamSlot.firstWebmCluster)
+            {
+                const array = new Uint8Array(streamSlot.initialBuffer!)
+                const startOfFirstCluster = indexOfMulti(array, [0x1F, 0x43, 0xB6, 0x75,], 0)
+                const startOfSecondCluster = indexOfMulti(array, [0x1F, 0x43, 0xB6, 0x75,], startOfFirstCluster + 1)
+                if (startOfFirstCluster != -1 && startOfSecondCluster != -1)
+                    streamSlot.firstWebmCluster = array.slice(startOfFirstCluster, startOfSecondCluster)
+                else
+                    streamSlot.initialBuffer = appendBuffer(streamSlot.initialBuffer!, data)
+            }
+
 
             socket.to(user.roomId).emit("server-stream-data", currentStreamSlotId, data)
+
         }
         catch (e)
         {
@@ -289,7 +322,9 @@ function clearStream(user: Player)
     {
         stream.isActive = false
         stream.userId = null
-        stream.firstChunk = null
+        stream.initializationSegment = null
+        stream.initialBuffer = null
+        stream.firstWebmCluster = null
         io.to(user.roomId).emit("server-update-current-room-streams", room.streams)
     }
 }
