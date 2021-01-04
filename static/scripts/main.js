@@ -4,7 +4,6 @@ localStorage.clear()
 import Character from "./character.js";
 import User from "./user.js";
 import { loadImage, calculateRealCoordinates, scale, sleep, postJson } from "./utils.js";
-import VideoChunkPlayer from "./video-chunk-player.js";
 import { messages } from "./lang.js";
 
 const i18n = new VueI18n({
@@ -66,8 +65,6 @@ const vueApp = new Vue({
         updateStreamSlots: async function ()
         {
             this.currentRoomStreamSlots = this.currentRoom.streams
-            await sleep(0) // Allow vue.js to render the received-video-* containers
-            this.receivedVideoPlayers = this.currentRoom.streams.map((s, i) => new VideoChunkPlayer(document.getElementById("received-video-" + i)))
         },
         connectToServer: async function (username)
         {
@@ -178,11 +175,18 @@ const vueApp = new Vue({
                     delete this.users[userId];
             });
 
-            this.socket.on("server-stream-data", (streamSlotId, data) =>
+            this.socket.on("server-stream-data", (streamSlotId, arrayBuffer) =>
             {
-                const player = this.receivedVideoPlayers[streamSlotId]
-                if (player)
-                    player.playChunk(data)
+                // const player = this.receivedVideoPlayers[streamSlotId]
+                // if (player)
+                //     player.playChunk(data)
+
+                const slot = this.currentRoomStreamSlots[streamSlotId]
+
+                if (!slot || !slot.mediaSource || slot.mediaSource.readyState != "open")
+                    return
+                slot.queue.push(arrayBuffer)
+                if (!slot.isPlaying) slot.playFromQueue()
             })
             this.socket.on("server-not-ok-to-stream", (reason) =>
             {
@@ -197,18 +201,47 @@ const vueApp = new Vue({
             })
             this.socket.on("server-update-current-room-streams", (streams) =>
             {
-                this.currentRoom.streams = streams
+                const mimeType = 'video/webm;codecs="vp8,opus"'
+
+                this.currentRoom.streams = streams.map(s =>
+                {
+                    if (s.userId == this.myUserID)
+                        return s
+
+                    s.isPlaying = false
+                    s.mediaSource = new MediaSource()
+                    s.queue = []
+
+                    s.playFromQueue = () =>
+                    {
+                        console.log("playing from queue", s.queue.length)
+                        if (!s.queue.length)
+                        {
+                            s.isPlaying = false
+                            return
+                        }
+                        console.log("hooray")
+                        s.isPlaying = true
+                        s.sourceBuffer.appendBuffer(s.queue.shift())
+                    }
+
+                    s.mediaSource.addEventListener("sourceopen", (e) =>
+                    {
+                        console.log("sourceopen", e)
+                        s.sourceBuffer = s.mediaSource.addSourceBuffer(mimeType);
+                        s.sourceBuffer.addEventListener('updateend', () =>
+                        {
+                            console.log("updateend", s.queue)
+                            s.playFromQueue()
+                        });
+                    })
+
+                    s.src = URL.createObjectURL(s.mediaSource);
+
+                    return s
+                })
 
                 this.updateStreamSlots()
-            })
-            this.socket.on("server-stream-started", (streamInfo) =>
-            {
-                this.currentStreamerName = this.users[streamInfo.userId].name
-            })
-            this.socket.on("server-stream-stopped", (streamInfo) =>
-            {
-                const { streamSlotId } = streamInfo
-                // receivedVideoPlayer.stop() // kinda useless, now that i'm using the someoneIsStreaming variable to drive the visibility of the video player
             })
 
             let version = Infinity

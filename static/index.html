@@ -62,7 +62,8 @@
                         v-on:click="wantToStartStreaming(index)">
                         {{ $t("ui.button_stream_start") }}
                     </button>
-                    <div v-show="streamSlot.isActive" :id="'received-video-' + index"></div>
+                    <video v-show="streamSlot.isActive" :id="'received-video-' + index" autoplay
+                        :src="streamSlot.src"></video>
                     <button :id="'stop-streaming-button-' + index"
                         v-if="iAmStreaming && streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
                         {{ $t("ui.button_stream_stop") }}
