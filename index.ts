@@ -231,8 +231,15 @@ io.on("connection", function (socket: any)
             if (event.candidate && event.candidate.candidate)
                 socket.emit('server-rtc-ice-candidate', event.candidate)
         });
-        rtcPeerConnection.addEventListener('iceconnectionstatechange',
-            (event) => {if (rtcPeerConnection !== null)  console.log('ICE state change event: ', rtcPeerConnection.iceConnectionState)});
+        rtcPeerConnection.addEventListener('iceconnectionstatechange', (event) =>
+        {
+            if (rtcPeerConnection !== null)
+                console.log('ICE state change event: ', rtcPeerConnection.iceConnectionState)
+        });
+        rtcPeerConnection.addEventListener('track', (event) =>
+        {
+            console.log(event.streams)
+        });
         
         await rtcPeerConnection.setRemoteDescription(offer);
         const answer = await rtcPeerConnection.createAnswer({

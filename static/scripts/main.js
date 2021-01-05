@@ -499,10 +499,10 @@ const vueApp = new Vue({
             }).then(async (offer) =>
             {
                 this.rtcPeerConnection.addEventListener('icecandidate', (event) =>
-                    {
-                        if (event.candidate && event.candidate.candidate)
-                            this.socket.emit('user-rtc-ice-candidate', event.candidate)
-                    });
+                {
+                    if (event.candidate && event.candidate.candidate)
+                        this.socket.emit('user-rtc-ice-candidate', event.candidate)
+                });
                 this.rtcPeerConnection.addEventListener('iceconnectionstatechange',
                     (event) => console.log('ICE state change event: ', this.rtcPeerConnection.iceConnectionState));
                 
