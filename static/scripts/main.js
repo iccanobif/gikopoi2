@@ -522,8 +522,8 @@ const vueApp = new Vue({
                                 
                 this.socket.emit("user-want-to-stream", {
                     streamSlotId: streamSlotId,
-                    with_video: true,
-                    with_audio: true
+                    withVideo: true,
+                    withSound: true
                 })
             }
             catch (err)
