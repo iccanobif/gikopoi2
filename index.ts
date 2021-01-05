@@ -9,16 +9,19 @@ const http = require('http').Server(app);
 const io = require("socket.io")(http);
 const tripcode = require('tripcode');
 const { RTCPeerConnection } = require('wrtc')
+const enforce = require('express-sslify');
 
 const delay = 0
 
-const stunServers = [{urls: [
-    "stun:stun.l.google.com:19302",
-    "stun:stun1.l.google.com:19302"
-//    "stun:stun2.l.google.com:19302",
-//    "stun:stun3.l.google.com:19302",
-//    "stun:stun4.l.google.com:19302"
-]}]
+const stunServers = [{
+    urls: [
+        "stun:stun.l.google.com:19302",
+        "stun:stun1.l.google.com:19302"
+        //    "stun:stun2.l.google.com:19302",
+        //    "stun:stun3.l.google.com:19302",
+        //    "stun:stun4.l.google.com:19302"
+    ]
+}]
 
 const iceConfig = {
     iceServers: stunServers
@@ -31,7 +34,7 @@ io.on("connection", function (socket: any)
     let user: Player;
     let currentRoom = defaultRoom;
     //let currentStreamSlotId: number | null = null;
-    
+
     let rtcPeerConnection: RTCPeerConnection | null = null;
 
     socket.join(currentRoom.id)
@@ -156,31 +159,31 @@ io.on("connection", function (socket: any)
         try
         {
             const { streamSlotId } = streamRequest
-            
+
             if (currentRoom.streams[streamSlotId].isActive)
             {
                 socket.emit("server-not-ok-to-stream", "sorry, someone else is already streaming in this slot")
                 return;
             }
-            
+
             openRTCPeerConnection()
             if (rtcPeerConnection === null) return;
-            
+
             //currentStreamSlotId = streamSlotId
             currentRoom.streams[streamSlotId].isActive = true
             currentRoom.streams[streamSlotId].isReady = false
             currentRoom.streams[streamSlotId].userId = user.id
             io.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
-            
+
             rtcPeerConnection.addEventListener('track', (event) =>
             {
                 user.mediaStream = event.streams[0]
                 console.log(event.streams[0], "the heck, shouldnt be here twice")
                 currentRoom.streams[streamSlotId].isReady = true
                 io.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
-                
-            }, {once: true});
-            
+
+            }, { once: true });
+
             socket.emit("server-ok-to-stream")
         }
         catch (e)
@@ -200,7 +203,7 @@ io.on("connection", function (socket: any)
             console.log(e.message + " " + e.stack);
         }
     })
-    
+
     socket.on("user-want-to-get-stream", function (streamSlotId: number)
     {
         try
@@ -208,9 +211,9 @@ io.on("connection", function (socket: any)
             const userid = currentRoom.streams[streamSlotId].userId;
             if (userid === null) return;
             const user = getUser(userid)
-            
+
             if (user.mediaStream === null) return;
-            
+
             openRTCPeerConnection()
             if (rtcPeerConnection === null) return;
             user.mediaStream.getTracks().forEach(track =>
@@ -223,7 +226,7 @@ io.on("connection", function (socket: any)
             console.log(e.message + " " + e.stack);
         }
     })
-    
+
     socket.on("user-change-room", async function (data: { targetRoomId: string, targetX: number, targetY: number })
     {
         try
@@ -251,7 +254,7 @@ io.on("connection", function (socket: any)
             console.log(e.message + " " + e.stack);
         }
     })
-    
+
     socket.on("user-rtc-offer", async function (offer: RTCSessionDescription)
     {
         try
@@ -282,14 +285,14 @@ io.on("connection", function (socket: any)
             console.log(e.message + " " + e.stack);
         }
     })
-    
+
     function openRTCPeerConnection()
     {
         if (rtcPeerConnection !== null) return;
-        
+
         rtcPeerConnection = new RTCPeerConnection(iceConfig);
         if (rtcPeerConnection === null) return;
-        
+
         rtcPeerConnection.addEventListener('icecandidate', (event) =>
         {
             if (event.candidate && event.candidate.candidate)
@@ -309,6 +312,10 @@ function emitServerStats()
         userCount: getConnectedUserList(null).length
     })
 }
+
+if (process.env.NODE_ENV == "production")
+    app.use(enforce.HTTPS({ trustProtoHeader: true }))
+
 
 app.use(express.static('static',
     { setHeaders: (res) => res.set("Cache-Control", "no-cache") }
