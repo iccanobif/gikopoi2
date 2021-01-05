@@ -6,12 +6,13 @@ import User from "./user.js";
 import { loadImage, calculateRealCoordinates, globalScale, sleep, postJson } from "./utils.js";
 import { messages } from "./lang.js";
 
-const stunServers = [
-    "stun.l.google.com:19302",
-    "stun1.l.google.com:19302",
-    "stun2.l.google.com:19302",
-    "stun3.l.google.com:19302",
-    "stun4.l.google.com:19302"]
+const stunServers = [{urls: [
+    "stun:stun.l.google.com:19302",
+    "stun:stun1.l.google.com:19302"
+//    "stun:stun2.l.google.com:19302",
+//    "stun:stun3.l.google.com:19302",
+//    "stun:stun4.l.google.com:19302"
+]}]
 
 const iceConfig = {
     iceServers: stunServers
@@ -40,6 +41,7 @@ const vueApp = new Vue({
         webcamStream: null,
         streamSlotIdInWhichIWantToStream: null,
         isInfoboxVisible: false,
+        rtcPeerConnection: null,
 
         // Possibly redundant data:
         username: "",
@@ -266,10 +268,17 @@ const vueApp = new Vue({
                 this.updateStreamSlots()
             })
             
-            this.socket.on("server-rtc-answer", (answer) =>
-                this.rtcPeerConnection.setRemoteDescription(answer))
-            this.socket.on("server-rtc-ice-candidate", (candidate) =>
-                this.rtcPeerConnection.addIceCandidate(candidate))
+            this.socket.on("server-rtc-answer", async (answer) =>
+            {
+                if (this.rtcPeerConnection === null) return;
+                await this.rtcPeerConnection.setRemoteDescription(answer)
+            })
+            this.socket.on("server-rtc-ice-candidate", async (candidate) =>
+            {
+                if (this.rtcPeerConnection === null) return;
+                await this.rtcPeerConnection.addIceCandidate(candidate)
+                console.log("ice")
+            })
             
             let version = Infinity
 
@@ -485,15 +494,21 @@ const vueApp = new Vue({
             this.rtcPeerConnection = new RTCPeerConnection(iceConfig);
             
             // No need to await this. Tracks can already be added.
-            this.rtcPeerConnection.createOffer(offerOptions).then(async (offer) =>
+            this.rtcPeerConnection.createOffer({
+                offerToReceiveAudio: true,
+                offerToReceiveVideo: true
+            }).then(async (offer) =>
             {
-                this.rtcPeerConnection.addEventListener('icecandidate',
-                    (event) => this.socket.emit('user-rtc-ice-candidate', {candidate: event.candidate}));
+                this.rtcPeerConnection.addEventListener('icecandidate', (event) =>
+                    {
+                        if (event.candidate && event.candidate.candidate)
+                            this.socket.emit('user-rtc-ice-candidate', event.candidate)
+                    });
                 this.rtcPeerConnection.addEventListener('iceconnectionstatechange',
-                    (event) => console.log('ICE state change event: ', event));
+                    (event) => console.log('ICE state change event: ', this.rtcPeerConnection.iceConnectionState));
                 
                 await this.rtcPeerConnection.setLocalDescription(offer);
-                this.socket.emit('user-rtc-offer', {offer})
+                this.socket.emit('user-rtc-offer', offer)
             })
         },
         
@@ -506,8 +521,8 @@ const vueApp = new Vue({
         
         wantToStartStreaming: async function (streamSlotId)
         {
-            try
-            {/*
+/*            try
+            {
                 this.socket.emit('user-want-to-stream', {
                     streamSlotId: streamSlotId,
                     withVideo: true,
@@ -524,7 +539,7 @@ const vueApp = new Vue({
                 })
                 this.webcamStream.getTracks().forEach(track =>
                     this.rtcPeerConnection.addTrack(track, this.webcamStream));
-            }
+/*            }
             catch (err)
             {
                 this.showWarningToast("sorry, can't find a webcam")
@@ -532,7 +547,7 @@ const vueApp = new Vue({
                 this.wantToStream = false
                 this.webcamStream = false
             }
-        },
+*/        },
         startStreaming: async function ()
         {
             document.getElementById(

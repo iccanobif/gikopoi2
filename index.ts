@@ -8,15 +8,17 @@ const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
 const tripcode = require('tripcode');
+const { RTCPeerConnection } = require('wrtc')
 
 const delay = 0
 
-const stunServers = [
-    "stun.l.google.com:19302",
-    "stun1.l.google.com:19302",
-    "stun2.l.google.com:19302",
-    "stun3.l.google.com:19302",
-    "stun4.l.google.com:19302"]
+const stunServers = [{urls: [
+    "stun:stun.l.google.com:19302",
+    "stun:stun1.l.google.com:19302"
+//    "stun:stun2.l.google.com:19302",
+//    "stun:stun3.l.google.com:19302",
+//    "stun:stun4.l.google.com:19302"
+]}]
 
 const iceConfig = {
     iceServers: stunServers
@@ -29,7 +31,7 @@ io.on("connection", function (socket: any)
     let user: Player;
     let currentRoom = defaultRoom;
     let currentStreamSlotId: number | null = null;
-    let rtcPeerConnection: null;
+    let rtcPeerConnection: RTCPeerConnection | null = null;
 
     socket.join(currentRoom.id)
 
@@ -219,14 +221,31 @@ io.on("connection", function (socket: any)
         }
     })
     
-    socket.on("user-rtc-offer", function ()
+    socket.on("user-rtc-offer", async function (offer: RTCSessionDescription)
     {
         rtcPeerConnection = new RTCPeerConnection(iceConfig);
+        if (rtcPeerConnection === null) return;
+        
+        rtcPeerConnection.addEventListener('icecandidate', (event) =>
+        {
+            if (event.candidate && event.candidate.candidate)
+                socket.emit('server-rtc-ice-candidate', event.candidate)
+        });
+        rtcPeerConnection.addEventListener('iceconnectionstatechange',
+            (event) => {if (rtcPeerConnection !== null)  console.log('ICE state change event: ', rtcPeerConnection.iceConnectionState)});
+        
         await rtcPeerConnection.setRemoteDescription(offer);
+        const answer = await rtcPeerConnection.createAnswer({
+            offerToReceiveAudio: true,
+            offerToReceiveVideo: true
+        })
+        await rtcPeerConnection.setLocalDescription(answer);
+        socket.emit("server-rtc-answer", answer)
     })
-    socket.on("user-rtc-ice-candidate", function(candidate)
+    socket.on("user-rtc-ice-candidate", function (candidate: RTCIceCandidate)
     {
-        rtcPeerConnection.addIceCandidate(candidate)
+        if (rtcPeerConnection === null) return;
+        rtcPeerConnection.addIceCandidate(candidate);
     })
 });
 
