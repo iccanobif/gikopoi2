@@ -8,6 +8,7 @@ export interface Coordinates
 
 export interface StreamSlot {
     isActive: boolean,
+    isReady: boolean,
     withSound: boolean | null,
     withVideo: boolean | null,
     userId: string | null,

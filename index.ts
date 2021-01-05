@@ -30,7 +30,8 @@ io.on("connection", function (socket: any)
 
     let user: Player;
     let currentRoom = defaultRoom;
-    let currentStreamSlotId: number | null = null;
+    //let currentStreamSlotId: number | null = null;
+    
     let rtcPeerConnection: RTCPeerConnection | null = null;
 
     socket.join(currentRoom.id)
@@ -141,58 +142,79 @@ io.on("connection", function (socket: any)
             console.log(e.message + " " + e.stack);
         }
     });
-    socket.on("user-stream-data", function (data: ArrayBuffer)
-    {
-        try
-        {
-            const streamSlot = currentRoom.streams[currentStreamSlotId!]
-
-            if (streamSlot.firstChunk == null)
-                streamSlot.firstChunk = data
-
-            socket.to(user.roomId).emit("server-stream-data", currentStreamSlotId, data)
-        }
-        catch (e)
-        {
-            console.log(e.message + " " + e.stack);
-        }
-    })
     socket.on("user-want-to-stream", function (streamRequest: { streamSlotId: number, withVideo: boolean, withSound: boolean })
     {
         try
         {
             const { streamSlotId } = streamRequest
-
+            
             if (currentRoom.streams[streamSlotId].isActive)
-                socket.emit("server-not-ok-to-stream", "sorry, someone else is already streaming in this slot")
-            else
             {
-                currentStreamSlotId = streamSlotId
-                currentRoom.streams[streamSlotId].isActive = true
-                currentRoom.streams[streamSlotId].userId = user.id
-
-                socket.emit("server-ok-to-stream")
-
-                io.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
+                socket.emit("server-not-ok-to-stream", "sorry, someone else is already streaming in this slot")
+                return;
             }
+            
+            openRTCPeerConnection()
+            if (rtcPeerConnection === null) return;
+            
+            //currentStreamSlotId = streamSlotId
+            currentRoom.streams[streamSlotId].isActive = true
+            currentRoom.streams[streamSlotId].isReady = false
+            currentRoom.streams[streamSlotId].userId = user.id
+            io.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
+            
+            rtcPeerConnection.addEventListener('track', (event) =>
+            {
+                user.mediaStream = event.streams[0]
+                console.log(event.streams[0], "the heck, shouldnt be here twice")
+                currentRoom.streams[streamSlotId].isReady = true
+                io.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
+                
+            }, {once: true});
+            
+            socket.emit("server-ok-to-stream")
         }
         catch (e)
         {
             console.log(e.message + " " + e.stack);
         }
     })
-    socket.on("user-want-to-stop-stream", function ()
+    socket.on("user-want-to-stop-stream", function () //TODO
     {
         try
         {
             clearStream(user)
-            currentStreamSlotId = null
+            //currentStreamSlotId = null
         }
         catch (e)
         {
             console.log(e.message + " " + e.stack);
         }
     })
+    
+    socket.on("user-want-to-get-stream", function (streamSlotId: number)
+    {
+        try
+        {
+            const userid = currentRoom.streams[streamSlotId].userId;
+            if (userid === null) return;
+            const user = getUser(userid)
+            
+            if (user.mediaStream === null) return;
+            
+            openRTCPeerConnection()
+            if (rtcPeerConnection === null) return;
+            user.mediaStream.getTracks().forEach(track =>
+                rtcPeerConnection!.addTrack(track, user.mediaStream!))
+            console.log("almost there")
+            socket.emit("server-ok-to-get-stream", streamSlotId)
+        }
+        catch (e)
+        {
+            console.log(e.message + " " + e.stack);
+        }
+    })
+    
     socket.on("user-change-room", async function (data: { targetRoomId: string, targetX: number, targetY: number })
     {
         try
@@ -223,6 +245,39 @@ io.on("connection", function (socket: any)
     
     socket.on("user-rtc-offer", async function (offer: RTCSessionDescription)
     {
+        try
+        {
+            if (rtcPeerConnection === null) return;
+            await rtcPeerConnection.setRemoteDescription(offer);
+            const answer = await rtcPeerConnection.createAnswer({
+                offerToReceiveAudio: true,
+                offerToReceiveVideo: true
+            })
+            await rtcPeerConnection.setLocalDescription(answer);
+            socket.emit("server-rtc-answer", answer)
+        }
+        catch (e)
+        {
+            console.log(e.message + " " + e.stack);
+        }
+    })
+    socket.on("user-rtc-ice-candidate", function (candidate: RTCIceCandidate)
+    {
+        try
+        {
+            if (rtcPeerConnection === null) return;
+            rtcPeerConnection.addIceCandidate(candidate);
+        }
+        catch (e)
+        {
+            console.log(e.message + " " + e.stack);
+        }
+    })
+    
+    function openRTCPeerConnection()
+    {
+        if (rtcPeerConnection !== null) return;
+        
         rtcPeerConnection = new RTCPeerConnection(iceConfig);
         if (rtcPeerConnection === null) return;
         
@@ -236,24 +291,7 @@ io.on("connection", function (socket: any)
             if (rtcPeerConnection !== null)
                 console.log('ICE state change event: ', rtcPeerConnection.iceConnectionState)
         });
-        rtcPeerConnection.addEventListener('track', (event) =>
-        {
-            console.log(event.streams)
-        });
-        
-        await rtcPeerConnection.setRemoteDescription(offer);
-        const answer = await rtcPeerConnection.createAnswer({
-            offerToReceiveAudio: true,
-            offerToReceiveVideo: true
-        })
-        await rtcPeerConnection.setLocalDescription(answer);
-        socket.emit("server-rtc-answer", answer)
-    })
-    socket.on("user-rtc-ice-candidate", function (candidate: RTCIceCandidate)
-    {
-        if (rtcPeerConnection === null) return;
-        rtcPeerConnection.addIceCandidate(candidate);
-    })
+    }
 });
 
 function emitServerStats()
