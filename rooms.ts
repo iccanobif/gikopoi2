@@ -205,13 +205,47 @@ export const rooms: { [roomId: string]: Room } = {
         // backgroundColor: "#c0c0c0",
         backgroundColor: "#990600",
         objects: [],
-        sit: [],
-        blocked: [
-            { x: 0, y: 3 },
-            { x: 0, y: 4 },
+        sit: [
+            { x: 0, y: 2 },
             { x: 0, y: 4 },
             { x: 0, y: 6 },
-            { x: 0, y: 7 },
+            { x: 1, y: 2 },
+            { x: 2, y: 2 },
+            { x: 3, y: 2 },
+            { x: 4, y: 2 },
+            { x: 5, y: 5 },
+            { x: 0, y: 2 },
+            { x: 3, y: 4 },
+            { x: 3, y: 2 },
+            { x: 5, y: 5 },
+            { x: 0, y: 3 },
+
+            { x: 0, y: 2 },
+            { x: 0, y: 5 },
+            { x: 3, y: 7 },
+            { x: 5, y: 2 },
+            { x: 4, y: 1 },
+
+        ],
+        blocked: [
+            // correct blocks:
+            // { x: 0, y: 3 },
+            // { x: 0, y: 4 },
+            // { x: 0, y: 4 },
+            // { x: 0, y: 6 },
+            // { x: 0, y: 7 },
+
+
+            { x: 2, y: 7 },
+            { x: 5, y: 6 },
+            { x: 0, y: 1 },
+            { x: 2, y: 2 },
+            { x: 3, y: 3 },
+            { x: 2, y: 5 },
+            { x: 6, y: 7 },
+            { x: 3, y: 4 },
+            { x: 4, y: 6 },
+            { x: 6, y: 2 },
         ],
         doors: [
             { x: 0, y: 2, targetRoomId: "NOT_READY_YET", targetX: 8, targetY: 4 },
