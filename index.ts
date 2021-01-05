@@ -3,7 +3,7 @@ import { readFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
 import { Direction } from "./types";
 import { addNewUser, getConnectedUserList, getUser, Player, removeUser } from "./users";
-import { appendBuffer, indexOfMulti, sleep } from "./utils";
+import { sleep } from "./utils";
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
@@ -384,9 +384,6 @@ function clearStream(user: Player)
     {
         stream.isActive = false
         stream.userId = null
-        stream.initializationSegment = null
-        stream.initialBuffer = null
-        stream.firstWebmCluster = null
         io.to(user.roomId).emit("server-update-current-room-streams", room.streams)
     }
 }
