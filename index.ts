@@ -105,9 +105,18 @@ io.on("connection", function (socket: any)
                 if (newY >= currentRoom.size.y) { rejectMovement(); return }
 
                 // prevent moving over a blocked square
-                if (currentRoom.blocked.find((p: { x: number, y: number }) => p.x == newX && p.y == newY))
+                if (currentRoom.blocked.find(p => p.x == newX && p.y == newY))
                 {
                     rejectMovement();
+                    return
+                }
+                if (currentRoom.forbiddenMovements.find(p =>
+                    p.xTo == newX &&
+                    p.yTo == newY &&
+                    p.xFrom == user.position.x &&
+                    p.yFrom == user.position.y))
+                {
+                    rejectMovement()
                     return
                 }
 

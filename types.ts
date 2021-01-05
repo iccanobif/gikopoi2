@@ -6,7 +6,8 @@ export interface Coordinates
     y: number;
 }
 
-export interface StreamSlot {
+export interface StreamSlot
+{
     isActive: boolean,
     withSound: boolean | null,
     withVideo: boolean | null,
@@ -39,6 +40,7 @@ export interface Room
     }[];
     sit: Coordinates[];
     blocked: Coordinates[];
+    forbiddenMovements: { xFrom: number, yFrom: number, xTo: number, yTo: number }[],
     doors: {
         x: number,
         y: number,

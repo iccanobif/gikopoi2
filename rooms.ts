@@ -67,6 +67,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 6, y: 8 },
             { x: 7, y: 8 },
         ],
+        forbiddenMovements: [],
         doors: [
             // [[0, 0], "bar_street", [1, 7], 1],
             // [[3, 7], "underground", [0, 2], 1],
@@ -113,6 +114,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 9, y: 5 },
             { x: 9, y: 4 },
         ],
+        forbiddenMovements: [],
         doors: [
             { x: 0, y: 2, targetRoomId: "bar", targetX: 8, targetY: 4 },
             { x: 2, y: 4, targetRoomId: "admin", targetX: 10, targetY: 0 },
@@ -166,6 +168,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 9, y: 3 },
             { x: 6, y: 5 },
         ],
+        forbiddenMovements: [],
         doors: [
             { x: 10, y: 0, targetRoomId: "admin_st", targetX: 2, targetY: 4 }
         ],
@@ -188,6 +191,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 0, y: 7 },
             { x: 0, y: 8 },
         ],
+        forbiddenMovements: [],
         doors: [
             { x: 2, y: 1, targetRoomId: "bar", targetX: 8, targetY: 4 },
             { x: 2, y: 4, targetRoomId: "admin", targetX: 10, targetY: 0 },
@@ -247,6 +251,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 4, y: 6 },
             { x: 6, y: 2 },
         ],
+        forbiddenMovements: [],
         doors: [
             { x: 0, y: 2, targetRoomId: "NOT_READY_YET", targetX: 8, targetY: 4 },
             { x: 0, y: 5, targetRoomId: "NOT_READY_YET", targetX: 8, targetY: 4 }, // school entrance
@@ -291,6 +296,12 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 3, y: 6 },
             { x: 3, y: 7 },
             { x: 3, y: 8 },
+        ],
+        forbiddenMovements: [
+            { xFrom: 4, yFrom: 5, xTo: 5, yTo: 5 },
+            { xFrom: 4, yFrom: 5, xTo: 4, yTo: 6 },
+            { xFrom: 5, yFrom: 5, xTo: 4, yTo: 5 },
+            { xFrom: 4, yFrom: 6, xTo: 4, yTo: 5 },
         ],
         doors: [
             { x: 4, y: 5, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 }, // to bar
