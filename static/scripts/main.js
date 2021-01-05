@@ -277,7 +277,6 @@ const vueApp = new Vue({
             {
                 if (this.rtcPeerConnection === null) return;
                 await this.rtcPeerConnection.addIceCandidate(candidate)
-                console.log("ice")
             })
             
             let version = Infinity
