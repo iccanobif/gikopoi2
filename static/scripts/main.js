@@ -6,6 +6,18 @@ import User from "./user.js";
 import { loadImage, calculateRealCoordinates, globalScale, sleep, postJson } from "./utils.js";
 import { messages } from "./lang.js";
 
+const stunServers = [{urls: [
+    "stun:stun.l.google.com:19302",
+    "stun:stun1.l.google.com:19302"
+//    "stun:stun2.l.google.com:19302",
+//    "stun:stun3.l.google.com:19302",
+//    "stun:stun4.l.google.com:19302"
+]}]
+
+const iceConfig = {
+    iceServers: stunServers
+}
+
 const i18n = new VueI18n({
     locale: 'ja',
     fallbackLocale: 'ja',
@@ -29,6 +41,7 @@ const vueApp = new Vue({
         webcamStream: null,
         streamSlotIdInWhichIWantToStream: null,
         isInfoboxVisible: false,
+        rtcPeerConnection: null,
 
         // Possibly redundant data:
         username: "",
@@ -254,7 +267,23 @@ const vueApp = new Vue({
 
                 this.updateStreamSlots()
             })
-
+            
+            this.socket.on("server-rtc-answer", async (answer) =>
+            {
+                if (this.rtcPeerConnection === null) return;
+                await this.rtcPeerConnection.setRemoteDescription(answer)
+            })
+            this.socket.on("server-rtc-ice-candidate", async (candidate) =>
+            {
+                if (this.rtcPeerConnection === null) return;
+                await this.rtcPeerConnection.addIceCandidate(candidate)
+            })
+            this.socket.on("server-ok-to-get-stream", async (candidate) =>
+            {
+                if (this.rtcPeerConnection === null) return;
+                await this.negotiateRTCPeerConnection()
+            })
+            
             let version = Infinity
 
             const ping = async () =>
@@ -460,41 +489,89 @@ const vueApp = new Vue({
             if (event.key != "Enter") return
             this.sendMessageToServer()
         },
-        // WebRTC
+        
+        
+        openRTCPeerConnection: function ()
+        {
+            if (this.rtcPeerConnection !== null) return;
+            
+            this.rtcPeerConnection = new RTCPeerConnection(iceConfig);
+            
+            this.rtcPeerConnection.addEventListener('icecandidate', (event) =>
+            {
+                if (event.candidate && event.candidate.candidate)
+                    this.socket.emit('user-rtc-ice-candidate', event.candidate)
+            });
+            this.rtcPeerConnection.addEventListener('iceconnectionstatechange',
+                (event) => console.log('ICE state change event: ', this.rtcPeerConnection.iceConnectionState));
+        },
+        
+        /*
+            Used initially to start the ICE candidate comms and
+            for informing the peers about track changes
+        */
+        negotiateRTCPeerConnection: async function ()
+        {
+            const offer = await this.rtcPeerConnection.createOffer({
+                offerToReceiveAudio: true,
+                offerToReceiveVideo: true
+            })
+            await this.rtcPeerConnection.setLocalDescription(offer);
+            this.socket.emit('user-rtc-offer', offer)
+        },
+        
+        closeRTCPeerConnection: function ()
+        {
+            if (this.rtcPeerConnection === null) return;
+            this.rtcPeerConnection.close();
+            this.rtcPeerConnection = null;
+        },
+        
         wantToStartStreaming: async function (streamSlotId)
         {
             try
             {
+                const withVideo = true;
+                const withSound = true;
+                
                 this.wantToStream = true
                 this.streamSlotIdInWhichIWantToStream = streamSlotId
-                this.webcamStream = await navigator.mediaDevices.getUserMedia({
-                    audio: true,
-                    video: { aspectRatio: { ideal: 1.333333 } }
+                
+                let userMedia = {}
+                if (withVideo) userMedia.audio = true;
+                if (withSound) userMedia.video = {
+                    aspectRatio: { ideal: 1.333333 }
+                };
+                
+                this.webcamStream = await navigator.mediaDevices.getUserMedia(userMedia)
+                
+                this.socket.emit('user-want-to-stream', {
+                    streamSlotId: streamSlotId,
+                    withVideo: withVideo,
+                    withSound: withSound
                 })
 
-                this.socket.emit("user-want-to-stream", {
-                    streamSlotId: streamSlotId,
-                    withVideo: true,
-                    withSound: true,
-                })
             }
             catch (err)
             {
                 this.showWarningToast("sorry, can't find a webcam")
+                console.error(err)
                 this.wantToStream = false
                 this.webcamStream = false
             }
         },
         startStreaming: async function ()
         {
-            document.getElementById("local-video-" + this.streamSlotIdInWhichIWantToStream).srcObject = this.webcamStream;
-
-            const recorder = new MediaRecorder(this.webcamStream, { mimeType: 'video/webm;codecs="vp8,opus"', bitsPerSecond: 64 })
-            recorder.ondataavailable = (e) =>
-            {
-                this.socket.emit("user-stream-data", e.data);
-            };
-            recorder.start(1000);
+            this.openRTCPeerConnection()
+            
+            this.webcamStream.getTracks().forEach(track =>
+                this.rtcPeerConnection.addTrack(track, this.webcamStream));
+            
+            this.negotiateRTCPeerConnection()
+            
+            document.getElementById(
+                "local-video-" + this.streamSlotIdInWhichIWantToStream)
+                .srcObject = this.webcamStream;
         },
         stopStreaming: function ()
         {
@@ -505,6 +582,19 @@ const vueApp = new Vue({
             this.streamSlotIdInWhichIWantToStream = null
             this.socket.emit("user-want-to-stop-stream")
         },
+        wantToGetStream: function(streamSlotId)
+        {
+            this.openRTCPeerConnection()
+            
+            this.rtcPeerConnection.addEventListener('track', (event) =>
+            {
+                document.getElementById("received-video-" + streamSlotId).srcObject = event.streams[0];
+            }, {once: true});
+            
+            this.socket.emit("user-want-to-get-stream", streamSlotId)
+        },
+        
+        
         logout: async function ()
         {
             await postJson("/logout", { userID: this.myUserID })
