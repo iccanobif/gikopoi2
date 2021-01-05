@@ -17,6 +17,7 @@ export class Player
     public connected: boolean = true;
     public roomId: string = defaultRoom.id;
     public lastPing = Date.now();
+    public mediaStream: MediaStream | null = null;
 
     constructor(options: { name?: string })
     {

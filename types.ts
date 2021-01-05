@@ -9,12 +9,10 @@ export interface Coordinates
 export interface StreamSlot
 {
     isActive: boolean,
+    isReady: boolean,
     withSound: boolean | null,
     withVideo: boolean | null,
     userId: string | null,
-    initialBuffer: ArrayBuffer | null,
-    initializationSegment: ArrayBuffer | null,
-    firstWebmCluster: ArrayBuffer | null,
 }
 
 export interface Room
