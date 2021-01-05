@@ -69,9 +69,9 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [],
         doors: [
-            // [[0, 0], "bar_street", [1, 7], 1],
+            // [[0, 0], "bar_st", [1, 7], 1],
             // [[3, 7], "underground", [0, 2], 1],
-            // [[8, 4], "bar_street", [3, 5], 1]
+            // [[8, 4], "bar_st", [3, 5], 1]
             { x: 8, y: 4, targetRoomId: "admin_st", targetX: 0, targetY: 2 }
         ],
         streams: [
@@ -269,7 +269,11 @@ export const rooms: { [roomId: string]: Room } = {
         spawnPoint: { x: 4, y: 3, direction: "right" },
         backgroundImageUrl: "rooms/bar_st/bar_st.png",
         backgroundColor: "#c0c0c0",
-        objects: [],
+        objects: [
+            { x: 4, y: 5, url: "door.svg", scale: 2.5, xOffset: 8, yOffset: -1 },
+            { x: 4, y: 5, url: "arrow.svg", scale: 2.5, xOffset: 30, yOffset: -12 },
+            { x: 4, y: 5, url: "signboard.svg", scale: 2.5, xOffset: 5, yOffset: -9 },
+        ],
         sit: [
             { x: 1, y: 0 },
             { x: 2, y: 0 },
@@ -316,4 +320,5 @@ export const rooms: { [roomId: string]: Room } = {
 
 }
 
-export const defaultRoom = rooms.admin_st
+// export const defaultRoom = rooms.admin_st
+export const defaultRoom = rooms.bar_st
