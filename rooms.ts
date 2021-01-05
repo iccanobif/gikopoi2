@@ -201,8 +201,9 @@ export const rooms: { [roomId: string]: Room } = {
         size: { x: 6, y: 8 },
         originCoordinates: { x: 52, y: 780 },
         spawnPoint: { x: 0, y: 0, direction: "left" },
-        backgroundImageUrl: "rooms/school_st/school_st.png",
-        backgroundColor: "#c0c0c0",
+        backgroundImageUrl: "rooms/school_st/giko-hell.png",
+        // backgroundColor: "#c0c0c0",
+        backgroundColor: "#990600",
         objects: [],
         sit: [],
         blocked: [
