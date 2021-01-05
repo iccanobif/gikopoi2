@@ -11,6 +11,17 @@ const tripcode = require('tripcode');
 
 const delay = 0
 
+const stunServers = [
+    "stun.l.google.com:19302",
+    "stun1.l.google.com:19302",
+    "stun2.l.google.com:19302",
+    "stun3.l.google.com:19302",
+    "stun4.l.google.com:19302"]
+
+const iceConfig = {
+    iceServers: stunServers
+}
+
 io.on("connection", function (socket: any)
 {
     console.log("Connection attempt");
@@ -18,6 +29,7 @@ io.on("connection", function (socket: any)
     let user: Player;
     let currentRoom = defaultRoom;
     let currentStreamSlotId: number | null = null;
+    let rtcPeerConnection: null;
 
     socket.join(currentRoom.id)
 
@@ -205,6 +217,16 @@ io.on("connection", function (socket: any)
         {
             console.log(e.message + " " + e.stack);
         }
+    })
+    
+    socket.on("user-rtc-offer", function ()
+    {
+        rtcPeerConnection = new RTCPeerConnection(iceConfig);
+        await rtcPeerConnection.setRemoteDescription(offer);
+    })
+    socket.on("user-rtc-ice-candidate", function(candidate)
+    {
+        rtcPeerConnection.addIceCandidate(candidate)
     })
 });
 
