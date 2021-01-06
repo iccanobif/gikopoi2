@@ -172,7 +172,10 @@ export const rooms: { [roomId: string]: Room } = {
         doors: [
             { x: 10, y: 0, targetRoomId: "admin_st", targetX: 2, targetY: 4 }
         ],
-        streams: [],
+        streams: [
+            { isActive: false, isReady: false, withSound: null, withVideo: null, userId: null },
+            { isActive: false, isReady: false, withSound: null, withVideo: null, userId: null },
+        ],
     },
     radio_backstage: {
         id: "radio_backstage",
