@@ -40,7 +40,8 @@
                         </div>
                         <div id="infobox-username" class="infobox-line">
                             <div class="infobox-title">{{ $t("ui.infobox_label_user_name") }}</div>
-                            <div class="infobox-value">{{ myUserID && users && users[myUserID] ? users[myUserID].name : '-' }}</div>
+                            <div class="infobox-value">{{ myUserID && users && users[myUserID] ? users[myUserID].name :
+                                '-' }}</div>
                         </div>
                         <div id="infobox-usercount" class="infobox-line">
                             <div class="infobox-title">{{ $t("ui.infobox_label_user_count") }}</div>
@@ -69,7 +70,7 @@
                     <button :id="'get-stream-button-' + index"
                         v-if="streamSlot.isActive && !iAmStreaming && !wantToStream"
                         v-on:click="wantToGetStream(index)">
-                        Get Stream
+                        {{ $t("ui.button_stream_get") }}
                     </button>
                     <button :id="'stop-streaming-button-' + index"
                         v-if="iAmStreaming && streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
