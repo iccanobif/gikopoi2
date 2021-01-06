@@ -83,13 +83,13 @@
                 {{ $t("ui.label_input") }} <input id="input-textbox" type="text"
                     v-on:keydown="handleMessageInputKeydown($event)"></input>
                 <button id="send-button" v-on:click="sendMessageToServer">{{ $t("ui.button_send") }}</button>
-
-                <div id="movement-buttons">
-                    <button id="btn-move-left" v-on:click="sendNewPositionToServer('left')">←</button>
-                    <button id="btn-move-up" v-on:click="sendNewPositionToServer('up')">↑</button>
-                    <button id="btn-move-down" v-on:click="sendNewPositionToServer('down')">↓</button>
-                    <button id="btn-move-right" v-on:click="sendNewPositionToServer('right')">→</button>
-                </div>
+                <button id="toggle-sound" v-on:click="toggleSound">
+                    {{ $t(isSoundEnabled ? "ui.button_toggle_sound_on" : "ui.button_toggle_sound_off") }}
+                </button>
+                <button id="btn-move-left" v-on:click="sendNewPositionToServer('left')">←</button>
+                <button id="btn-move-up" v-on:click="sendNewPositionToServer('up')">↑</button>
+                <button id="btn-move-down" v-on:click="sendNewPositionToServer('down')">↓</button>
+                <button id="btn-move-right" v-on:click="sendNewPositionToServer('right')">→</button>
 
                 <button v-on:click="switchLanguage">{{ $t("ui.button_switch_language") }}</button>
             </div>

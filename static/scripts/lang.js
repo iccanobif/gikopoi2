@@ -19,6 +19,8 @@ export const messages =
 
             button_switch_language: "English",
             button_send: "発言",
+            button_toggle_sound_on: "🔊効果音",
+            button_toggle_sound_off: "🔈効果音",
             button_stream_start: "配信",
             button_stream_stop: "配信停止",
             button_stream_get: "受信",
@@ -83,6 +85,8 @@ export const messages =
 
             button_switch_language: "日本語",
             button_send: "Send",
+            button_toggle_sound_on: "🔊Sound",
+            button_toggle_sound_off: "🔈Sound",
             button_stream_start: "Stream",
             button_stream_stop: "Stop stream",
             button_stream_get: "Get stream",

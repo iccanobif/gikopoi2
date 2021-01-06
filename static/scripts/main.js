@@ -42,8 +42,9 @@ const vueApp = new Vue({
         forceUserInstantMove: false,
         webcamStream: null,
         streamSlotIdInWhichIWantToStream: null,
-        isInfoboxVisible: !!localStorage.getItem("isInfoboxVisible"),
+        isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
         rtcPeerConnection: null,
+        isSoundEnabled: localStorage.getItem("isSoundEnabled") == "true",
 
         // Possibly redundant data:
         username: "",
@@ -100,7 +101,8 @@ const vueApp = new Vue({
 
             this.socket.on("disconnect", () =>
             {
-                document.getElementById("connection-lost-sound").play()
+                if (this.isSoundEnabled)
+                    document.getElementById("connection-lost-sound").play()
                 this.connectionLost = true;
             })
             this.socket.on("server-cant-log-you-in", () =>
@@ -156,8 +158,10 @@ const vueApp = new Vue({
             this.socket.on("server-msg", (userName, msg) =>
             {
                 const chatLog = document.getElementById("chatLog");
-                if (userName != "SYSTEM")
+                if (userName != "SYSTEM" && this.isSoundEnabled)
+                {
                     document.getElementById("message-sound").play()
+                }
 
                 chatLog.innerHTML += userName + ": " + msg + "<br/>";
                 chatLog.scrollTop = chatLog.scrollHeight;
@@ -192,7 +196,8 @@ const vueApp = new Vue({
 
             this.socket.on("server-user-joined-room", async (user) =>
             {
-                document.getElementById("login-sound").play()
+                if (this.isSoundEnabled)
+                    document.getElementById("login-sound").play()
                 this.addUser(user);
             });
 
@@ -477,6 +482,11 @@ const vueApp = new Vue({
         toggleInfobox: function ()
         {
             localStorage.setItem("isInfoboxVisible", this.isInfoboxVisible = !this.isInfoboxVisible);
+        },
+        toggleSound: function ()
+        {
+            localStorage.setItem("isSoundEnabled", this.isSoundEnabled = !this.isSoundEnabled);
+            console.log(localStorage.getItem("isSoundEnabled"))
         },
         switchLanguage: function ()
         {
