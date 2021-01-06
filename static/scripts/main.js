@@ -1,5 +1,5 @@
 //localStorage.debug = '*'; // socket.io debug
-localStorage.clear()
+localStorage.removeItem("debug")
 
 import Character from "./character.js";
 import User from "./user.js";
@@ -21,7 +21,7 @@ const iceConfig = {
 }
 
 const i18n = new VueI18n({
-    locale: 'ja',
+    locale: localStorage.getItem("locale") || 'ja',
     fallbackLocale: 'ja',
     messages,
 })
@@ -42,7 +42,7 @@ const vueApp = new Vue({
         forceUserInstantMove: false,
         webcamStream: null,
         streamSlotIdInWhichIWantToStream: null,
-        isInfoboxVisible: false,
+        isInfoboxVisible: !!localStorage.getItem("isInfoboxVisible"),
         rtcPeerConnection: null,
 
         // Possibly redundant data:
@@ -474,8 +474,15 @@ const vueApp = new Vue({
         {
             window.addEventListener("focus", () => this.forceUserInstantMove = true);
         },
-        toggleInfobox: function () { this.isInfoboxVisible ^= true; },
-        switchLanguage: function () { i18n.locale = (i18n.locale == "ja" ? "en" : "ja") },
+        toggleInfobox: function ()
+        {
+            localStorage.setItem("isInfoboxVisible", this.isInfoboxVisible = !this.isInfoboxVisible);
+        },
+        switchLanguage: function ()
+        {
+            i18n.locale = (i18n.locale == "ja" ? "en" : "ja")
+            localStorage.setItem("locale", i18n.locale)
+        },
         handleCanvasKeydown: function (event)
         {
             switch (event.key)
