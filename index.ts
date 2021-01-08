@@ -41,7 +41,14 @@ io.on("connection", function (socket: any)
 
     socket.on("disconnect", function ()
     {
-        clearStream(user)
+        try
+        {
+            clearStream(user)
+        }
+        catch (e)
+        {
+            console.error(e.message + " " + e.stack);
+        }
     })
 
     socket.on("user-connect", function (userId: string)
@@ -63,7 +70,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.log(e.message + " " + e.stack);
+            console.error(e.message + " " + e.stack);
         }
     });
     socket.on("user-msg", function (msg: string)
@@ -86,7 +93,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.log(e.message + " " + e.stack);
+            console.error(e.message + " " + e.stack);
         }
     });
     socket.on("user-move", async function (direction: Direction)
@@ -151,7 +158,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.log(e.message + " " + e.stack);
+            console.error(e.message + " " + e.stack);
         }
     });
     socket.on("user-want-to-stream", function (streamRequest: { streamSlotId: number, withVideo: boolean, withSound: boolean })
@@ -188,7 +195,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.log(e.message + " " + e.stack);
+            console.error(e.message + " " + e.stack);
         }
     })
     socket.on("user-want-to-stop-stream", function () //TODO
@@ -200,7 +207,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.log(e.message + " " + e.stack);
+            console.error(e.message + " " + e.stack);
         }
     })
 
@@ -223,7 +230,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.log(e.message + " " + e.stack);
+            console.error(e.message + " " + e.stack);
         }
     })
 
@@ -251,7 +258,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.log(e.message + " " + e.stack);
+            console.error(e.message + " " + e.stack);
         }
     })
 
@@ -270,7 +277,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.log(e.message + " " + e.stack);
+            console.error(e.message + " " + e.stack);
         }
     })
     socket.on("user-rtc-ice-candidate", function (candidate: RTCIceCandidate)
@@ -282,27 +289,35 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.log(e.message + " " + e.stack);
+            console.error(e.message + " " + e.stack);
         }
     })
 
     function openRTCPeerConnection()
     {
-        if (rtcPeerConnection !== null) return;
 
-        rtcPeerConnection = new RTCPeerConnection(iceConfig);
-        if (rtcPeerConnection === null) return;
+        try
+        {
+            if (rtcPeerConnection !== null) return;
 
-        rtcPeerConnection.addEventListener('icecandidate', (event) =>
+            rtcPeerConnection = new RTCPeerConnection(iceConfig);
+            if (rtcPeerConnection === null) return;
+
+            rtcPeerConnection.addEventListener('icecandidate', (event) =>
+            {
+                if (event.candidate && event.candidate.candidate)
+                    socket.emit('server-rtc-ice-candidate', event.candidate)
+            });
+            rtcPeerConnection.addEventListener('iceconnectionstatechange', (event) =>
+            {
+                if (rtcPeerConnection !== null)
+                    console.log('ICE state change event: ', rtcPeerConnection.iceConnectionState)
+            });
+        }
+        catch (e)
         {
-            if (event.candidate && event.candidate.candidate)
-                socket.emit('server-rtc-ice-candidate', event.candidate)
-        });
-        rtcPeerConnection.addEventListener('iceconnectionstatechange', (event) =>
-        {
-            if (rtcPeerConnection !== null)
-                console.log('ICE state change event: ', rtcPeerConnection.iceConnectionState)
-        });
+            console.error(e.message + " " + e.stack);
+        }
     }
 });
 
@@ -316,15 +331,21 @@ function emitServerStats()
 if (process.env.NODE_ENV == "production")
     app.use(enforce.HTTPS({ trustProtoHeader: true }))
 
-
 app.use(express.static('static',
     { setHeaders: (res) => res.set("Cache-Control", "no-cache") }
 ));
 
 app.get("/rooms/:roomName", (req, res) =>
 {
-    const roomName = req.params.roomName
-    res.json(rooms[roomName])
+    try
+    {
+        const roomName = req.params.roomName
+        res.json(rooms[roomName])
+    }
+    catch (e)
+    {
+        res.end(e.message + " " + e.stack)
+    }
 })
 
 app.post("/ping/:userId", async (req, res) =>
@@ -335,20 +356,28 @@ app.post("/ping/:userId", async (req, res) =>
             res.json(err)
         else
         {
-            // Update last ping date for the user
-            const { userId } = req.params
-            const user = getUser(userId)
+            try
+            {
 
-            if (!user)
-                return
+                // Update last ping date for the user
+                const { userId } = req.params
+                const user = getUser(userId)
 
-            user.lastPing = Date.now()
+                if (!user)
+                    return
 
-            // Return software version, so that the client can refresh the page
-            // if there has been a new deploy.
-            const str = data.toString()
-            const version = Number.parseInt(str)
-            res.json({ version })
+                user.lastPing = Date.now()
+
+                // Return software version, so that the client can refresh the page
+                // if there has been a new deploy.
+                const str = data.toString()
+                const version = Number.parseInt(str)
+                res.json({ version })
+            }
+            catch (e)
+            {
+                res.end(e.message + " " + e.stack)
+            }
         }
     })
 })
@@ -357,28 +386,35 @@ app.use(express.json());
 
 app.post("/login", (req, res) =>
 {
-    const { userName } = req.body
-    if (!userName)
+    try
     {
-        res.statusCode = 500
-        res.end("please specify a username")
-        return;
+        const { userName } = req.body
+        if (!userName)
+        {
+            res.statusCode = 500
+            res.end("please specify a username")
+            return;
+        }
+
+        const n = userName.indexOf("#");
+        let processedUserName = (n >= 0 ? userName.substr(0, n) : userName)
+            .replace("◆", "◇");
+        if (n >= 0)
+            processedUserName = processedUserName + "◆" + tripcode(userName.substr(n + 1));
+
+        console.log(processedUserName, "logging in")
+
+        const sanitizedUserName = processedUserName.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        const user = addNewUser(sanitizedUserName);
+        res.json(user.id)
+
+        io.to(user.roomId).emit("server-msg", "SYSTEM", sanitizedUserName + " connected");
+        io.to(user.roomId).emit("server-user-joined-room", user);
     }
-
-    const n = userName.indexOf("#");
-    let processedUserName = (n >= 0 ? userName.substr(0, n) : userName)
-        .replace("◆", "◇");
-    if (n >= 0)
-        processedUserName = processedUserName + "◆" + tripcode(userName.substr(n + 1));
-
-    console.log(processedUserName, "logging in")
-
-    const sanitizedUserName = processedUserName.replace(/</g, "&lt;").replace(/>/g, "&gt;")
-    const user = addNewUser(sanitizedUserName);
-    res.json(user.id)
-
-    io.to(user.roomId).emit("server-msg", "SYSTEM", sanitizedUserName + " connected");
-    io.to(user.roomId).emit("server-user-joined-room", user);
+    catch (e)
+    {
+        res.end(e.message + " " + e.stack)
+    }
 })
 
 function clearStream(user: Player)
@@ -397,50 +433,57 @@ function clearStream(user: Player)
 
 function disconnectUser(user: Player)
 {
-    try
-    {
-        console.log("Disconnecting user ", user.id, user.name)
-        clearStream(user)
-        removeUser(user)
+    console.log("Disconnecting user ", user.id, user.name)
+    clearStream(user)
+    removeUser(user)
 
-        io.to(user.roomId).emit("server-msg", "SYSTEM", user.name + " disconnected");
-        io.to(user.roomId).emit("server-user-left-room", user.id);
-        emitServerStats()
-    }
-    catch (e)
-    {
-        console.log(e.message + " " + e.stack);
-    }
+    io.to(user.roomId).emit("server-msg", "SYSTEM", user.name + " disconnected");
+    io.to(user.roomId).emit("server-user-left-room", user.id);
+    emitServerStats()
 }
 
 app.post("/logout", (req, res) =>
 {
-    // this has never been tested
-    const { userID } = req.body
-    if (!userID)
+    try
     {
-        res.statusCode = 500
-        res.end("please specify a username")
+
+        // this has never been tested
+        const { userID } = req.body
+        if (!userID)
+        {
+            res.statusCode = 500
+            res.end("please specify a username")
+        }
+        else
+        {
+            const user = getUser(userID);
+            if (!user) return;
+
+            removeUser(user)
+
+            res.end()
+        }
     }
-    else
+    catch (e)
     {
-        const user = getUser(userID);
-        if (!user) return;
-
-        removeUser(user)
-
-        res.end()
+        res.end(e.message + " " + e.stack)
     }
 })
-
 
 // Disconnect users that have failed to ping in the last 30 seconds
 
 setInterval(() =>
 {
-    for (const user of getConnectedUserList(null))
-        if (Date.now() - user.lastPing > 80 * 1000)
-            disconnectUser(user)
+    try
+    {
+        for (const user of getConnectedUserList(null))
+            if (Date.now() - user.lastPing > 80 * 1000)
+                disconnectUser(user)
+    }
+    catch (e)
+    {
+        console.error(e.message + " " + e.stack);
+    }
 }, 1 * 1000)
 
 const port = process.env.PORT == undefined
