@@ -24,6 +24,7 @@ export const messages =
             button_stream_start: "配信",
             button_stream_stop: "配信停止",
             button_stream_get: "受信",
+            volume: "音量: ",
 
             cancel: "キャンセル"
         },
@@ -95,6 +96,7 @@ export const messages =
             button_stream_start: "Stream",
             button_stream_stop: "Stop stream",
             button_stream_get: "Get stream",
+            volume: "Volume: ",
 
             cancel: "Cancel"
         },

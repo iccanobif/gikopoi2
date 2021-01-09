@@ -51,13 +51,15 @@
                             <div class="infobox-value">{{ serverStats.userCount }}</div>
                         </div>
                     </div>
-                    <button id="infobox-button" class="canvas-button-top-right" v-on:click="toggleInfobox" tabindex="-1"></button>
+                    <button id="infobox-button" class="canvas-button-top-right" v-on:click="toggleInfobox"
+                        tabindex="-1"></button>
                 </div>
             </div>
             <div id="toolbar">
                 {{ $t("ui.label_input") }} <input id="input-textbox" type="text"
                     v-on:keydown="handleMessageInputKeydown($event)" tabindex="2"></input>
-                <button id="send-button" v-on:click="sendMessageToServer" tabindex="3">{{ $t("ui.button_send") }}</button>
+                <button id="send-button" v-on:click="sendMessageToServer" tabindex="3">{{ $t("ui.button_send")
+                    }}</button>
                 <button id="toggle-sound" v-on:click="toggleSound">
                     {{ $t(isSoundEnabled ? "ui.button_toggle_sound_on" : "ui.button_toggle_sound_off") }}
                 </button>
@@ -72,7 +74,7 @@
             <div id="chatLog">
             </div>
 
-            
+
             <div id="video-streams">
                 <div v-for="(streamSlot, index) in currentRoomStreamSlots">
                     <hr v-if="index != 0" />
@@ -84,6 +86,13 @@
                         muted></video>
                     <video v-show="streamSlot.isActive && index != streamSlotIdInWhichIWantToStream"
                         :id="'received-video-' + index" autoplay :src="streamSlot.src"></video>
+
+                    <div v-show="streamSlot.isActive && index != streamSlotIdInWhichIWantToStream">
+                        <label for="volume">{{ $t("ui.volume") }}</label>
+                        <input type="range" :id="'volume-' + index" v-on:change="changeVolume(index)" name="volume"
+                            min="0" max="1" step="0.01" value="1">
+                    </div>
+
                     <button :id="'start-streaming-button-' + index"
                         v-if="!streamSlot.isActive && !iAmStreaming && !wantToStream"
                         v-on:click="wantToStartStreaming(index)">

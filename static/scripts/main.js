@@ -663,6 +663,13 @@ const vueApp = new Vue({
         logout: async function ()
         {
             await postJson("/logout", { userID: this.myUserID })
+        },
+        changeVolume: function (streamSlotId) {
+            const volumeSlider = document.getElementById("volume-" + streamSlotId)
+
+            const videoElement = document.getElementById("received-video-" + streamSlotId)
+
+            videoElement.volume = volumeSlider.value
         }
     }
 })
