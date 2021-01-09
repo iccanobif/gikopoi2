@@ -135,7 +135,8 @@ export const messages =
             radio_gakuya: "Radio Studio: Dressing Room",
             radio_backstage: "Radio Studio: Greenroom",
             yatai: "Sushi Vendor",
-            kaidan: "Hilltop Stairway"
+            kaidan: "Hilltop Stairway",
+            takadai: "Hilltop",
         },
         change_log: `
 2021/01/09: Added #rula command.

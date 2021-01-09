@@ -426,6 +426,22 @@ const vueApp = new Vue({
                         o.o.spendTime(this.currentRoom)
                     }
                 }
+
+                if (localStorage.getItem("enableGridNumbers") == "true")
+                {
+
+                    context.font = "bold 13px Arial, Helvetica, sans-serif"
+                    context.textBaseline = "bottom"
+                    context.textAlign = "right"
+                    context.fillStyle = "blue"
+
+                    for (let x = 0; x < this.currentRoom.size.x; x++)
+                        for (let y = 0; y < this.currentRoom.size.y; y++)
+                        {
+                            const realCoord = calculateRealCoordinates(this.currentRoom, x, y);
+                            context.fillText(x + "," + y, realCoord.x + 40, realCoord.y - 20)
+                        }
+                }
             }
             this.changeRoomIfSteppingOnDoor()
 
@@ -640,7 +656,8 @@ const vueApp = new Vue({
             this.changeRoom(roomId)
             this.isRulaPopupOpen = false
         },
-        cancelRula: function () {
+        cancelRula: function ()
+        {
             this.isRulaPopupOpen = false
         },
         logout: async function ()

@@ -119,7 +119,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 0, y: 2, targetRoomId: "bar", targetX: 8, targetY: 4 },
             { x: 2, y: 4, targetRoomId: "admin", targetX: 10, targetY: 0 },
             { x: 7, y: 4, targetRoomId: "radio_backstage", targetX: 2, targetY: 4 },
-            { x: 7, y: 0, targetRoomId: "bar_st", targetX: 9, targetY: 2 },
+            { x: 7, y: 0, targetRoomId: "bar_st", targetX: 7, targetY: 8 },
             { x: 9, y: 2, targetRoomId: "NOT_READY_YET", targetX: 10, targetY: 0 },
             { x: 0, y: 8, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
         ],
@@ -313,15 +313,85 @@ export const rooms: { [roomId: string]: Room } = {
         doors: [
             { x: 4, y: 5, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 }, // to bar
             { x: 7, y: 0, targetRoomId: "school_st", targetX: 0, targetY: 2 },
-            { x: 7, y: 8, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
+            { x: 7, y: 8, targetRoomId: "admin_st", targetX: 7, targetY: 0 },
             { x: 9, y: 8, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
-            { x: 9, y: 2, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
+            { x: 9, y: 2, targetRoomId: "takadai", targetX: 2, targetY: 0 },
             { x: 8, y: 4, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 }, // manhole
         ],
         streams: []
     },
+    takadai: {
+        id: "takadai",
+        scale: 160 / 200,
+        size: { x: 9, y: 14 },
+        originCoordinates: { x: -90, y: 620 },
+        spawnPoint: { x: 2, y: 0, direction: "right" },
+        backgroundImageUrl: "rooms/takadai/takadai-cropped.png",
+        backgroundColor: "#c0c0c0",
+        objects: [],
+        sit: [
+            { x: 3, y: 5 },
+            { x: 3, y: 6 },
+        ],
+        blocked: [
+            // dango flag
+            { x: 1, y: 0 },
+            // naito shop
+            { x: 1, y: 1 },
+            { x: 2, y: 1 },
+            { x: 2, y: 2 },
+            { x: 2, y: 3 },
+            { x: 2, y: 4 },
+            { x: 2, y: 5 },
+            { x: 2, y: 6 },
+            { x: 2, y: 7 },
+            { x: 1, y: 1 },
+            { x: 1, y: 2 },
+            { x: 1, y: 3 },
+            { x: 1, y: 4 },
+            { x: 1, y: 5 },
+            { x: 1, y: 6 },
+            { x: 1, y: 7 },
 
+            { x: 1, y: 8 },
+            { x: 1, y: 10 },
+            { x: 1, y: 11 },
+            { x: 1, y: 12 },
+            { x: 4, y: 12 },
+            { x: 5, y: 12 },
+            { x: 5, y: 11, },
+            { x: 5, y: 10 },
+            { x: 5, y: 9 },
+            { x: 6, y: 8 },
+            { x: 7, y: 8 },
+            { x: 8, y: 7 },
+            { x: 7, y: 7 },
+
+            { x: 3, y: 1 },
+
+            { x: 6, y: 5 },
+
+            { x: 8, y: 0 },
+            { x: 8, y: 1 },
+
+            { x: 0, y: 13 },
+            { x: 0, y: 9 },
+            { x: 3, y: 13 },
+            { x: 5, y: 8 },
+            { x: 8, y: 4 },
+            { x: 8, y: 5 },
+            { x: 8, y: 6 },
+        ],
+        forbiddenMovements: [
+        ],
+        doors: [
+            { x: 2, y: 0, targetRoomId: "bar_st", targetX: 9, targetY: 2 }, // to bar
+            { x: 6, y: 0, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 }, // to bar
+        ],
+        streams: []
+    }
 }
 
-export const defaultRoom = rooms.admin_st
+export const defaultRoom = rooms.takadai
+// export const defaultRoom = rooms.admin_st
 
