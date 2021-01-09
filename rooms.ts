@@ -388,7 +388,10 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 2, y: 0, targetRoomId: "bar_st", targetX: 9, targetY: 2 }, // to bar
             { x: 6, y: 0, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 }, // to bar
         ],
-        streams: []
+        streams: [
+            { isActive: false, isReady: false, withSound: null, withVideo: null, userId: null },
+            { isActive: false, isReady: false, withSound: null, withVideo: null, userId: null },
+        ]
     }
 }
 
