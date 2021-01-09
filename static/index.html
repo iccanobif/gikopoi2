@@ -17,6 +17,9 @@
                 <label>User Name:</label> <input type="text" v-model="username" />
                 <button v-on:click="login">Login</button>
             </form>
+            <div id="change-log">
+                <pre>{{ $t("change_log") }}</pre>
+            </div>
         </div>
         <div id="stage" v-if="loggedIn">
             <h2 class="big-red-alert" v-if="connectionLost">
@@ -78,6 +81,10 @@
                     </button>
 
                 </div>
+            </div>
+            <div id="rula-menu" v-if="isRulaPopupOpen">
+                <button v-for="roomId in rulableRooms" v-on:click="rula(roomId)">{{ $t("room." + roomId) }}</button>
+                <button v-on:click="cancelRula()" id="cancel-rula-button">{{ $t("ui.cancel")}}</button>
             </div>
             <div id="toolbar">
                 {{ $t("ui.label_input") }} <input id="input-textbox" type="text"

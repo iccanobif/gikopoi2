@@ -24,6 +24,8 @@ export const messages =
             button_stream_start: "配信",
             button_stream_stop: "配信停止",
             button_stream_get: "受信",
+
+            cancel: "キャンセル"
         },
         msg:
         {
@@ -64,7 +66,10 @@ export const messages =
             school_international: "学校 国際科教室",
             school_pc: "学校 パソコンルーム",
             enkai: "宴会場"
-        }
+        },
+        change_log: `
+2021/01/09: #rulaコマンドを追加されました。
+        `
     },
     en:
     {
@@ -90,6 +95,8 @@ export const messages =
             button_stream_start: "Stream",
             button_stream_stop: "Stop stream",
             button_stream_get: "Get stream",
+
+            cancel: "Cancel"
         },
         msg:
         {
@@ -129,6 +136,9 @@ export const messages =
             radio_backstage: "Radio Studio: Greenroom",
             yatai: "Sushi Vendor",
             kaidan: "Hilltop Stairway"
-        }
+        },
+        change_log: `
+2021/01/09: Added #rula command.
+        `
     }
 }

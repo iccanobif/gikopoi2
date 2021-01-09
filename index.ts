@@ -240,9 +240,14 @@ io.on("connection", function (socket: any)
         {
             await sleep(delay)
 
-            const { targetRoomId, targetX, targetY } = data
+            let { targetRoomId, targetX, targetY } = data
 
             currentRoom = rooms[targetRoomId]
+
+            if (targetX == undefined)
+                targetX = rooms[targetRoomId].spawnPoint.x
+            if (targetY == undefined)
+                targetY = rooms[targetRoomId].spawnPoint.y
 
             clearStream(user)
             io.to(user.roomId).emit("server-user-left-room", user.id);

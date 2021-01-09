@@ -172,3 +172,19 @@ video {
 {
     flex-grow: 1;
 }
+
+#rula-menu {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    top: calc(50% - 100px);
+    left: calc(50% - 100px);
+    background-color: gray;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#cancel-rula-button {
+    padding: 10px;
+}

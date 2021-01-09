@@ -45,6 +45,15 @@ const vueApp = new Vue({
         isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
         rtcPeerConnection: null,
         isSoundEnabled: localStorage.getItem("isSoundEnabled") == "true",
+        isRulaPopupOpen: false,
+        rulableRooms: [
+            "bar",
+            "admin_st",
+            "admin",
+            "radio_backstage",
+            "school_st",
+            "bar_st"
+        ],
 
         // Possibly redundant data:
         username: "",
@@ -447,7 +456,10 @@ const vueApp = new Vue({
                 this.steppingOnPortalToNonAvailableRoom = true
                 return
             }
-
+            this.changeRoom(targetRoomId, targetX, targetY)
+        },
+        changeRoom: function (targetRoomId, targetX, targetY)
+        {
             if (this.webcamStream)
                 this.stopStreaming()
 
@@ -472,7 +484,12 @@ const vueApp = new Vue({
             const inputTextbox = document.getElementById("input-textbox")
 
             if (inputTextbox.value == "") return;
-            this.socket.emit("user-msg", inputTextbox.value);
+
+            const message = inputTextbox.value
+            if (message == "#rula")
+                this.isRulaPopupOpen = true
+            else
+                this.socket.emit("user-msg", message);
             inputTextbox.value = "";
         },
         registerKeybindings: function ()
@@ -506,6 +523,7 @@ const vueApp = new Vue({
         handleMessageInputKeydown: function (event)
         {
             if (event.key != "Enter") return
+
             this.sendMessageToServer()
         },
 
@@ -617,8 +635,14 @@ const vueApp = new Vue({
 
             this.socket.emit("user-want-to-get-stream", streamSlotId)
         },
-
-
+        rula: function (roomId)
+        {
+            this.changeRoom(roomId)
+            this.isRulaPopupOpen = false
+        },
+        cancelRula: function () {
+            this.isRulaPopupOpen = false
+        },
         logout: async function ()
         {
             await postJson("/logout", { userID: this.myUserID })
