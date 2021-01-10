@@ -580,19 +580,15 @@ const vueApp = new Vue({
             this.rtcPeerConnection = null;
         },
 
-        wantToStartStreaming: async function (streamSlotId)
+        wantToStartStreaming: async function (streamSlotId, withVideo, withSound)
         {
             try
             {
-                const withVideo = true;
-                const withSound = true;
-
                 this.wantToStream = true
                 this.streamSlotIdInWhichIWantToStream = streamSlotId
 
                 let userMedia = {}
-                if (withVideo) userMedia.audio = true;
-                if (withSound) userMedia.video = {
+                if (withVideo) userMedia.video = {
                     width: 320,
                     height: 240,
                     frameRate: {
@@ -600,6 +596,7 @@ const vueApp = new Vue({
                         min: 10
                     }
                 };
+                if (withSound) userMedia.audio = true;
 
                 this.webcamStream = await navigator.mediaDevices.getUserMedia(userMedia)
 

@@ -165,7 +165,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            const { streamSlotId } = streamRequest
+            const { streamSlotId, withVideo, withSound } = streamRequest
 
             if (currentRoom.streams[streamSlotId].isActive)
             {
@@ -179,17 +179,19 @@ io.on("connection", function (socket: any)
             //currentStreamSlotId = streamSlotId
             currentRoom.streams[streamSlotId].isActive = true
             currentRoom.streams[streamSlotId].isReady = false
+            currentRoom.streams[streamSlotId].withVideo = withVideo
+            currentRoom.streams[streamSlotId].withSound = withSound
             currentRoom.streams[streamSlotId].userId = user.id
             io.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
-
-            rtcPeerConnection.addEventListener('track', (event) =>
+            
+            const handleTrack = (event: RTCTrackEvent) =>
             {
                 user.mediaStream = event.streams[0]
-                console.log(event.streams[0], "the heck, shouldnt be here twice")
                 currentRoom.streams[streamSlotId].isReady = true
                 io.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
-
-            }, { once: true });
+                rtcPeerConnection!.removeEventListener('track', handleTrack);
+            };
+            rtcPeerConnection.addEventListener('track', handleTrack);
 
             socket.emit("server-ok-to-stream")
         }

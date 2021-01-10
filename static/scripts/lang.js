@@ -14,6 +14,7 @@ export const messages =
             infobox_label_user_count: "人数：",
 
             label_streamer: "配信者：",
+            label_stream_start: "配信：",
             label_input: "入力：",
             label_log: "ログ：",
 
@@ -21,7 +22,6 @@ export const messages =
             button_send: "発言",
             button_toggle_sound_on: "🔊効果音",
             button_toggle_sound_off: "🔈効果音",
-            button_stream_start: "配信",
             button_stream_stop: "配信停止",
             button_stream_get: "受信",
             volume: "音量: ",
@@ -86,6 +86,7 @@ export const messages =
             infobox_label_user_count: "Users:",
 
             label_streamer: "Streamer:",
+            label_stream_start: "Stream:",
             label_input: "Input:",
             label_log: "Log:",
 
@@ -93,7 +94,6 @@ export const messages =
             button_send: "Send",
             button_toggle_sound_on: "🔊Sound",
             button_toggle_sound_off: "🔈Sound",
-            button_stream_start: "Stream",
             button_stream_stop: "Stop stream",
             button_stream_get: "Get stream",
             volume: "Volume: ",
