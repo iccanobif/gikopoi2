@@ -76,10 +76,9 @@ const vueApp = new Vue({
         login: async function (ev)
         {
             ev.preventDefault()
+            await Promise.all([characters.giko.loadImages(), characters.naito.loadImages()])
             if (this.username === "")
                 this.username = i18n.t('default_user_name')
-            await characters.giko.loadImages()
-            await characters.naito.loadImages()
             this.loggedIn = true
             this.selectedCharacter = characters[this.characterId]
             this.registerKeybindings()
