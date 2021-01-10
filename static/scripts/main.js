@@ -30,7 +30,7 @@ const vueApp = new Vue({
     i18n,
     el: '#vue-app',
     data: {
-        gikoCharacter: new Character("giko"),
+        gikoCharacter: new Character("naito"),
         socket: null,
         users: {},
         currentRoom: null,
