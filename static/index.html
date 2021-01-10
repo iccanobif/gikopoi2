@@ -15,6 +15,12 @@
             <h1>{{ $t("ui.site_name") }}</h1>
             <form>
                 <label>User Name:</label> <input type="text" v-model="username" />
+                <div id="character-selection">
+                    <input type="radio" id="yes" value="giko" v-model="characterId">
+                    <img src="characters/giko/front-standing.png" />
+                    <input type="radio" id="no" value="naito" v-model="characterId">
+                    <img src="characters/naito/front-standing.png" />
+                </div>
                 <button v-on:click="login">Login</button>
             </form>
             <div id="change-log">

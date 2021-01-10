@@ -1,7 +1,7 @@
 //localStorage.debug = '*'; // socket.io debug
 localStorage.removeItem("debug")
 
-import Character from "./character.js";
+import { characters } from "./character.js";
 import User from "./user.js";
 import { loadImage, calculateRealCoordinates, globalScale, sleep, postJson } from "./utils.js";
 import { messages } from "./lang.js";
@@ -30,7 +30,7 @@ const vueApp = new Vue({
     i18n,
     el: '#vue-app',
     data: {
-        gikoCharacter: new Character("naito"),
+        selectedCharacter: null,
         socket: null,
         users: {},
         currentRoom: null,
@@ -54,6 +54,7 @@ const vueApp = new Vue({
             "school_st",
             "bar_st"
         ],
+        characterId: "giko",
 
         // Possibly redundant data:
         username: "",
@@ -77,8 +78,10 @@ const vueApp = new Vue({
             ev.preventDefault()
             if (this.username === "")
                 this.username = i18n.t('default_user_name')
+            await characters.giko.loadImages()
+            await characters.naito.loadImages()
             this.loggedIn = true
-            await this.gikoCharacter.loadImages()
+            this.selectedCharacter = characters[this.characterId]
             this.registerKeybindings()
             await this.connectToServer(this.username)
             this.paint()
@@ -92,9 +95,12 @@ const vueApp = new Vue({
         {
             this.currentRoomStreamSlots = this.currentRoom.streams
         },
-        connectToServer: async function (username)
+        connectToServer: async function ()
         {
-            const loginResponse = await postJson("/login", { userName: username })
+            const loginResponse = await postJson("/login", {
+                userName: this.username,
+                characterId: this.characterId
+            })
 
             this.myUserID = await loginResponse.json()
 
@@ -323,7 +329,7 @@ const vueApp = new Vue({
         },
         addUser: function (userDTO)
         {
-            const newUser = new User(this.gikoCharacter, userDTO.name);
+            const newUser = new User(characters[userDTO.characterId], userDTO.name);
             newUser.moveImmediatelyToPosition(this.currentRoom, userDTO.position.x, userDTO.position.y, userDTO.direction);
             this.users[userDTO.id] = newUser;
         },

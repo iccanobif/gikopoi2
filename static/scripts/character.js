@@ -1,6 +1,6 @@
 import { loadImage } from "./utils.js"
 
-export default class Character
+export class Character
 {
     constructor(name)
     {
@@ -27,4 +27,9 @@ export default class Character
         this.backWalking1Image = await loadImage("characters/" + this.characterName + "/back-walking-1.png");
         this.backWalking2Image = await loadImage("characters/" + this.characterName + "/back-walking-2.png");
     }
+}
+
+export const characters = {
+    giko: new Character("giko"),
+    naito: new Character("naito"),
 }
