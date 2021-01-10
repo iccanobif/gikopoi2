@@ -502,7 +502,7 @@ const vueApp = new Vue({
             if (inputTextbox.value == "") return;
 
             const message = inputTextbox.value
-            if (message == "#rula")
+            if (message == "#rula" || message == "#ﾙｰﾗ")
                 this.isRulaPopupOpen = true
             else
                 this.socket.emit("user-msg", message);
@@ -664,7 +664,8 @@ const vueApp = new Vue({
         {
             await postJson("/logout", { userID: this.myUserID })
         },
-        changeVolume: function (streamSlotId) {
+        changeVolume: function (streamSlotId)
+        {
             const volumeSlider = document.getElementById("volume-" + streamSlotId)
 
             const videoElement = document.getElementById("received-video-" + streamSlotId)
