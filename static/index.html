@@ -16,12 +16,16 @@
             <form>
                 <label>User Name:</label> <input type="text" v-model="username" />
                 <div id="character-selection">
-                    <input type="radio" id="yes" value="giko" v-model="characterId">
-                    <img src="characters/giko/front-standing.png" />
-                    <input type="radio" id="no" value="naito" v-model="characterId">
-                    <img src="characters/naito/front-standing.png" />
+                    <input type="radio" id="giko-selection" value="giko" v-model="characterId">
+                    <label for="giko-selection">
+                        <img src="characters/giko/front-standing.png" />
+                    </label>
+                    <input type="radio" id="naito-selection" value="naito" v-model="characterId">
+                    <label for="naito-selection">
+                        <img src="characters/naito/front-standing.png" />
+                    </label>
                 </div>
-                <button v-on:click="login">Login</button>
+                <button v-on:click="login" :disabled="isLoggingIn">Login</button>
             </form>
             <div id="change-log">
                 <pre>{{ $t("change_log") }}</pre>

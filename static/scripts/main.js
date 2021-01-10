@@ -55,6 +55,7 @@ const vueApp = new Vue({
             "bar_st"
         ],
         characterId: "giko",
+        isLoggingIn: false,
 
         // Possibly redundant data:
         username: "",
@@ -76,6 +77,7 @@ const vueApp = new Vue({
         login: async function (ev)
         {
             ev.preventDefault()
+            this.isLoggingIn = true
             await Promise.all([characters.giko.loadImages(), characters.naito.loadImages()])
             if (this.username === "")
                 this.username = i18n.t('default_user_name')
@@ -83,6 +85,7 @@ const vueApp = new Vue({
             this.selectedCharacter = characters[this.characterId]
             this.registerKeybindings()
             await this.connectToServer(this.username)
+            this.isLoggingIn = false
             this.paint()
         },
         showWarningToast: function showWarningToast(text)
