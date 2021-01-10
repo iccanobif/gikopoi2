@@ -395,6 +395,5 @@ export const rooms: { [roomId: string]: Room } = {
     }
 }
 
-export const defaultRoom = rooms.takadai
-// export const defaultRoom = rooms.admin_st
+export const defaultRoom = rooms.admin_st
 
