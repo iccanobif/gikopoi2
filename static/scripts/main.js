@@ -516,7 +516,7 @@ const vueApp = new Vue({
 
             if (inputTextbox.value == "") return;
 
-            const message = inputTextbox.value
+            const message = inputTextbox.value.substr(0, 500)
             if (message == "#rula" || message == "#ﾙｰﾗ")
                 this.isRulaPopupOpen = true
             else

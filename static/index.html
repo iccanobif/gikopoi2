@@ -67,7 +67,7 @@
             </div>
             <div id="toolbar">
                 {{ $t("ui.label_input") }} <input id="input-textbox" type="text"
-                    v-on:keydown="handleMessageInputKeydown($event)" tabindex="2"></input>
+                    v-on:keydown="handleMessageInputKeydown($event)" tabindex="2" maxlength="500"></input>
                 <button id="send-button" v-on:click="sendMessageToServer" tabindex="3">{{ $t("ui.button_send")
                     }}</button>
                 <button id="toggle-sound" v-on:click="toggleSound">
