@@ -142,9 +142,10 @@ const vueApp = new Vue({
                     })
                 }
                 
-                this.updateCurrentRoomStreams(this.currentRoom.streams)
                 
                 this.takenStreams = this.currentRoom.streams.map(() => false)
+                
+                this.updateCurrentRoomStreams(this.currentRoom.streams)
                 
                 // Force update of user coordinates using the current room's logics (origin coordinates, etc)
                 this.forcePhysicalPositionRefresh()
