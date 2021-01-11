@@ -4,28 +4,14 @@ import { defaultRoom, rooms } from "./rooms";
 import { Direction } from "./types";
 import { addNewUser, getConnectedUserList, getUser, Player, removeUser } from "./users";
 import { sleep } from "./utils";
+import { RTCPeer, defaultIceConfig } from "./rtcpeer";
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
 const tripcode = require('tripcode');
-const { RTCPeerConnection } = require('wrtc')
 const enforce = require('express-sslify');
 
 const delay = 0
-
-const stunServers = [{
-    urls: [
-        "stun:stun.l.google.com:19302",
-        "stun:stun1.l.google.com:19302"
-        //    "stun:stun2.l.google.com:19302",
-        //    "stun:stun3.l.google.com:19302",
-        //    "stun:stun4.l.google.com:19302"
-    ]
-}]
-
-const iceConfig = {
-    iceServers: stunServers
-}
 
 io.on("connection", function (socket: any)
 {
@@ -35,7 +21,7 @@ io.on("connection", function (socket: any)
     let currentRoom = defaultRoom;
     //let currentStreamSlotId: number | null = null;
 
-    let rtcPeerConnection: RTCPeerConnection | null = null;
+    let rtcPeer: RTCPeer = new RTCPeer(defaultIceConfig, emitRTCMessage);
 
     socket.join(currentRoom.id)
 
@@ -64,8 +50,8 @@ io.on("connection", function (socket: any)
             currentRoom = rooms[user.roomId]
 
             socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(user.roomId))
-            io.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
-
+            socket.emit("server-update-current-room-streams", currentRoom.streams)
+            
             emitServerStats()
         }
         catch (e)
@@ -166,7 +152,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            const { streamSlotId } = streamRequest
+            const { streamSlotId, withVideo, withSound } = streamRequest
 
             if (currentRoom.streams[streamSlotId].isActive)
             {
@@ -174,24 +160,32 @@ io.on("connection", function (socket: any)
                 return;
             }
 
-            openRTCPeerConnection()
-            if (rtcPeerConnection === null) return;
+            openRTCConnection()
+            if (rtcPeer.conn === null) return;
 
             //currentStreamSlotId = streamSlotId
             currentRoom.streams[streamSlotId].isActive = true
             currentRoom.streams[streamSlotId].isReady = false
+            currentRoom.streams[streamSlotId].withVideo = withVideo
+            currentRoom.streams[streamSlotId].withSound = withSound
             currentRoom.streams[streamSlotId].userId = user.id
             io.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
-
-            rtcPeerConnection.addEventListener('track', (event) =>
+            const handleTrack = (event: RTCTrackEvent) =>
             {
+                if (rtcPeer.conn === null) return;
                 user.mediaStream = event.streams[0]
-                console.log(event.streams[0], "the heck, shouldnt be here twice")
                 currentRoom.streams[streamSlotId].isReady = true
                 io.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
-
-            }, { once: true });
-
+                try
+                {
+                    rtcPeer.conn.removeEventListener('track', handleTrack);
+                }
+                catch (e)
+                {
+                    console.error(e.message + " " + e.stack);
+                }
+            };
+            rtcPeer.conn.addEventListener('track', handleTrack);
             socket.emit("server-ok-to-stream")
         }
         catch (e)
@@ -204,7 +198,6 @@ io.on("connection", function (socket: any)
         try
         {
             clearStream(user)
-            //currentStreamSlotId = null
         }
         catch (e)
         {
@@ -212,7 +205,7 @@ io.on("connection", function (socket: any)
         }
     })
 
-    socket.on("user-want-to-get-stream", function (streamSlotId: number)
+    socket.on("user-want-to-take-stream", function (streamSlotId: number)
     {
         try
         {
@@ -222,19 +215,44 @@ io.on("connection", function (socket: any)
 
             if (user.mediaStream === null) return;
 
-            openRTCPeerConnection()
-            if (rtcPeerConnection === null) return;
+            openRTCConnection()
+            
+            if (rtcPeer.conn === null) return;
+            
             user.mediaStream.getTracks().forEach(track =>
-                rtcPeerConnection!.addTrack(track, user.mediaStream!))
-            console.log("almost there")
-            socket.emit("server-ok-to-get-stream", streamSlotId)
+                rtcPeer.conn!.addTrack(track, user.mediaStream!))
+            socket.emit("server-ok-to-take-stream", streamSlotId)
         }
         catch (e)
         {
             console.error(e.message + " " + e.stack);
         }
     })
-
+    
+    socket.on("user-want-to-drop-stream", function (streamSlotId: number)
+    {
+        try
+        {
+            const userid = currentRoom.streams[streamSlotId].userId;
+            if (userid === null) return;
+            const user = getUser(userid)
+            if (user.mediaStream === null) return;
+            if (rtcPeer.conn === null) return;
+            
+            const tracks = user.mediaStream.getTracks();
+            rtcPeer.conn.getSenders().forEach((sender: RTCRtpSender) =>
+            {
+                if (sender === null || sender.track === null) return;
+                if (sender.track && tracks.includes(sender.track))
+                    rtcPeer.conn!.removeTrack(sender)
+            });
+        }
+        catch (e)
+        {
+            console.error(e.message + " " + e.stack);
+        }
+    })
+    
     socket.on("user-change-room", async function (data: { targetRoomId: string, targetX: number, targetY: number })
     {
         try
@@ -256,7 +274,9 @@ io.on("connection", function (socket: any)
 
             user.position = { x: targetX, y: targetY }
             user.roomId = targetRoomId
-
+            
+            rtcPeer.close()
+            
             socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(targetRoomId))
             socket.emit("server-update-current-room-streams", currentRoom.streams)
             socket.join(targetRoomId)
@@ -267,64 +287,58 @@ io.on("connection", function (socket: any)
             console.error(e.message + " " + e.stack);
         }
     })
-
-    socket.on("user-rtc-offer", async function (offer: RTCSessionDescription)
+    
+    function openRTCConnection()
     {
         try
         {
-            if (rtcPeerConnection === null) return;
-            await rtcPeerConnection.setRemoteDescription(offer);
-            const answer = await rtcPeerConnection.createAnswer({
-                offerToReceiveAudio: true,
-                offerToReceiveVideo: true
-            })
-            await rtcPeerConnection.setLocalDescription(answer);
-            socket.emit("server-rtc-answer", answer)
+            rtcPeer.open()
+            if (rtcPeer.conn === null) return;
+            rtcPeer.conn.addEventListener('iceconnectionstatechange',
+                handleIceConnectionStateChange);
         }
-        catch (e)
-        {
-            console.error(e.message + " " + e.stack);
-        }
-    })
-    socket.on("user-rtc-ice-candidate", function (candidate: RTCIceCandidate)
-    {
-        try
-        {
-            if (rtcPeerConnection === null) return;
-            rtcPeerConnection.addIceCandidate(candidate);
-        }
-        catch (e)
-        {
-            console.error(e.message + " " + e.stack);
-        }
-    })
-
-    function openRTCPeerConnection()
-    {
-
-        try
-        {
-            if (rtcPeerConnection !== null) return;
-
-            rtcPeerConnection = new RTCPeerConnection(iceConfig);
-            if (rtcPeerConnection === null) return;
-
-            rtcPeerConnection.addEventListener('icecandidate', (event) =>
-            {
-                if (event.candidate && event.candidate.candidate)
-                    socket.emit('server-rtc-ice-candidate', event.candidate)
-            });
-            rtcPeerConnection.addEventListener('iceconnectionstatechange', (event) =>
-            {
-                if (rtcPeerConnection !== null)
-                    console.log('ICE state change event: ', rtcPeerConnection.iceConnectionState)
-            });
-        }
-        catch (e)
-        {
-            console.error(e.message + " " + e.stack);
-        }
+        catch(e){console.error(e.message + " " + e.stack);}
     }
+    
+    function handleIceConnectionStateChange(event: Event)
+    {
+        try
+        {
+            if (rtcPeer.conn === null) return;
+            const state = rtcPeer.conn.iceConnectionState;
+            
+            if (["failed", "disconnected", "closed"].includes(state))
+            {
+                rtcPeer.close()
+                clearStream(user)
+            }
+        }
+        catch(e){console.error(e.message + " " + e.stack);}
+    }
+    
+    function emitRTCMessage(type: string, message: any)
+    {
+        try{socket.emit('server-rtc-' + type, message)}
+        catch(e){console.error(e.message + " " + e.stack);}
+    }
+    
+    socket.on("user-rtc-offer", (offer: RTCSessionDescription) =>
+    {
+        try{rtcPeer.acceptOffer(offer)}
+        catch(e){console.error(e.message + " " + e.stack);}
+    })
+    
+    socket.on("user-rtc-answer", (answer: RTCSessionDescription) =>
+    {
+        try{rtcPeer.acceptAnswer(answer)}
+        catch(e){console.error(e.message + " " + e.stack);}
+    })
+    
+    socket.on("user-rtc-candidate", (candidate: RTCIceCandidate) =>
+    {
+        try{rtcPeer.addCandidate(candidate)}
+        catch(e){console.error(e.message + " " + e.stack);}
+    })
 });
 
 function emitServerStats()
@@ -432,6 +446,7 @@ function clearStream(user: Player)
     if (stream)
     {
         stream.isActive = false
+        stream.isReady = false
         stream.userId = null
         io.to(user.roomId).emit("server-update-current-room-streams", room.streams)
     }

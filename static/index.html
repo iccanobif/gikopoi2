@@ -86,38 +86,48 @@
 
 
             <div id="video-streams">
-                <div v-for="(streamSlot, index) in currentRoomStreamSlots">
+                <div v-for="(streamSlot, index) in this.currentRoom.streams">
                     <hr v-if="index != 0" />
                     <div v-if="streamSlot.isActive">
                         {{ $t("ui.label_streamer") }} {{ users[streamSlot.userId].name }}
                     </div>
                     <video :id="'local-video-' + index"
-                        v-show="streamSlot.isActive && index == streamSlotIdInWhichIWantToStream" autoplay
-                        muted></video>
-                    <video v-show="streamSlot.isActive && index != streamSlotIdInWhichIWantToStream"
-                        :id="'received-video-' + index" autoplay :src="streamSlot.src"></video>
+                        v-show="streamSlot.isActive && streamSlot.withVideo && index == streamSlotIdInWhichIWantToStream"
+                        autoplay muted></video>
+                    <video :id="'received-video-' + index"
+                        v-show="takenStreams[index] && streamSlot.withVideo && index != streamSlotIdInWhichIWantToStream"
+                        autoplay></video>
 
                     <div v-show="streamSlot.isActive && index != streamSlotIdInWhichIWantToStream">
                         <label for="volume">{{ $t("ui.volume") }}</label>
                         <input type="range" :id="'volume-' + index" v-on:change="changeVolume(index)" name="volume"
                             min="0" max="1" step="0.01" value="1">
                     </div>
-
-                    <button :id="'start-streaming-button-' + index"
-                        v-if="!streamSlot.isActive && !iAmStreaming && !wantToStream"
-                        v-on:click="wantToStartStreaming(index)">
-                        {{ $t("ui.button_stream_start") }}
-                    </button>
-                    <button :id="'get-stream-button-' + index"
-                        v-if="streamSlot.isActive && !iAmStreaming && !wantToStream"
-                        v-on:click="wantToGetStream(index)">
-                        {{ $t("ui.button_stream_get") }}
-                    </button>
+                    
+                    <div v-if="!streamSlot.isActive && !iAmStreaming && !wantToStream">
+                        {{ $t("ui.label_stream_start") }}
+                        <button class="start-streaming-button" :id="'start-video-streaming-button-' + index"
+                            v-on:click="wantToStartStreaming(index, true, false)">📹</button>
+                        <button class="start-streaming-button" :id="'start-sound-streaming-button-' + index"
+                            v-on:click="wantToStartStreaming(index, false, true)">🎤</button>
+                        <button class="start-streaming-button" :id="'start-video-sound-streaming-button-' + index"
+                            v-on:click="wantToStartStreaming(index, true, true)">📹 ➕ 🎤</button>
+                    </div>
                     <button :id="'stop-streaming-button-' + index"
                         v-if="iAmStreaming && streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
                         {{ $t("ui.button_stream_stop") }}
                     </button>
-
+                    
+                    <button :id="'take-stream-button-' + index"
+                        v-if="streamSlot.isReady && !takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
+                        v-on:click="wantToTakeStream(index)">
+                        {{ $t("ui.button_stream_take") }}
+                    </button>
+                    <button :id="'drop-stream-button-' + index"
+                        v-if="streamSlot.isReady && takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
+                        v-on:click="wantToDropStream(index)">
+                        {{ $t("ui.button_stream_drop") }}
+                    </button>
                 </div>
             </div>
             <div id="rula-menu" v-if="isRulaPopupOpen">

@@ -37,6 +37,11 @@ video {
     width: 232px;
 }
 
+.start-streaming-button
+{
+    padding: 0;
+}
+
 /* div[id^="received-video-"]
 {
     position: absolute;
