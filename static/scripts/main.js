@@ -142,6 +142,8 @@ const vueApp = new Vue({
                     })
                 }
                 
+                this.updateCurrentRoomStreams(this.currentRoom.streams)
+                
                 this.takenStreams = this.currentRoom.streams.map(() => false)
                 
                 // Force update of user coordinates using the current room's logics (origin coordinates, etc)
@@ -225,11 +227,7 @@ const vueApp = new Vue({
             this.socket.on("server-update-current-room-streams", (streams) =>
             {
                 this.currentRoom.streams = streams
-                for(const slotId in streams)
-                {
-                    if (!streams[slotId].isReady)
-                        Vue.set(this.takenStreams, slotId, false)
-                }
+                this.updateCurrentRoomStreams(streams)
             })
             
             this.socket.on("server-ok-to-take-stream", async (slotId) =>
@@ -530,6 +528,19 @@ const vueApp = new Vue({
             catch(e){console.error(e.message + " " + e.stack);}
         },
         
+        updateCurrentRoomStreams: function (streams)
+        {
+            for(const slotId in streams)
+            {
+                const stream = streams[slotId];
+                if(stream.isActive)
+                    Vue.set(stream, "title", this.users[stream.userId].name)
+                else
+                    Vue.set(stream, "title", "OFF")
+                if (!stream.isActive || !stream.isReady)
+                    Vue.set(this.takenStreams, slotId, false)
+            }
+        },
 
         wantToStartStreaming: async function (streamSlotId, withVideo, withSound)
         {
