@@ -24,6 +24,7 @@ export const messages =
             button_toggle_sound_off: "🔈効果音",
             button_stream_stop: "配信停止",
             button_stream_get: "受信",
+            button_stream_stop_getting: "配信停止",
             volume: "音量: ",
 
             cancel: "キャンセル"
@@ -96,6 +97,7 @@ export const messages =
             button_toggle_sound_off: "🔈Sound",
             button_stream_stop: "Stop stream",
             button_stream_get: "Get stream",
+            button_stream_stop_getting: "Stop stream",
             volume: "Volume: ",
 
             cancel: "Cancel"

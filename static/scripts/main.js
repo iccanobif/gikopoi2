@@ -34,6 +34,7 @@ const vueApp = new Vue({
         streamSlotIdInWhichIWantToStream: null,
         isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
         rtcPeer: null,
+        takenStreams: [],
         isSoundEnabled: localStorage.getItem("isSoundEnabled") == "true",
         isRulaPopupOpen: false,
         rulableRooms: [
@@ -60,7 +61,6 @@ const vueApp = new Vue({
         currentStreamerName: "",
         connectionLost: false,
         steppingOnPortalToNonAvailableRoom: false,
-        receivedVideoPlayers: [],
     },
     methods: {
         login: async function (ev)
@@ -141,7 +141,9 @@ const vueApp = new Vue({
                         o.physicalPositionY = y + (o.yOffset || 0)
                     })
                 }
-
+                
+                this.takenStreams = this.currentRoom.streams.map(() => false)
+                
                 // Force update of user coordinates using the current room's logics (origin coordinates, etc)
                 this.forcePhysicalPositionRefresh()
 
@@ -152,7 +154,7 @@ const vueApp = new Vue({
 
                 if (this.rtcPeer !== null)
                     this.rtcPeer.close()
-                
+                             
                 // stream stuff
                 this.roomAllowsStreaming = this.currentRoom.streams.length > 0
             });
@@ -223,9 +225,14 @@ const vueApp = new Vue({
             this.socket.on("server-update-current-room-streams", (streams) =>
             {
                 this.currentRoom.streams = streams
+                for(const slotId in streams)
+                {
+                    if (!streams[slotId].isReady)
+                        Vue.set(this.takenStreams, slotId, false)
+                }
             })
             
-            this.socket.on("server-ok-to-get-stream", async (candidate) =>
+            this.socket.on("server-ok-to-get-stream", async (slotId) =>
             {
                 
             })
@@ -583,6 +590,7 @@ const vueApp = new Vue({
         },
         wantToGetStream: function (streamSlotId)
         {
+            Vue.set(this.takenStreams, streamSlotId, true)
             this.openRTCConnection()
 
             this.rtcPeer.conn.addEventListener('track', (event) =>
@@ -594,6 +602,7 @@ const vueApp = new Vue({
         },
         wantToStopGettingStream: function (streamSlotId)
         {
+            Vue.set(this.takenStreams, streamSlotId, false)
             this.socket.emit("user-want-to-stop-getting-stream", streamSlotId)
         },
         rula: function (roomId)

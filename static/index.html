@@ -95,7 +95,7 @@
                         v-show="streamSlot.isActive && streamSlot.withVideo && index == streamSlotIdInWhichIWantToStream"
                         autoplay muted></video>
                     <video :id="'received-video-' + index"
-                        v-show="streamSlot.isReady && streamSlot.withVideo && index != streamSlotIdInWhichIWantToStream"
+                        v-show="takenStreams[index] && streamSlot.withVideo && index != streamSlotIdInWhichIWantToStream"
                         autoplay></video>
 
                     <div v-show="streamSlot.isActive && index != streamSlotIdInWhichIWantToStream">
@@ -113,17 +113,21 @@
                         <button class="start-streaming-button" :id="'start-video-sound-streaming-button-' + index"
                             v-on:click="wantToStartStreaming(index, true, true)">📹 ➕ 🎤</button>
                     </div>
-                        
-                    <button :id="'get-stream-button-' + index"
-                        v-if="streamSlot.isReady && streamSlot.userId != myUserID && !wantToStream"
-                        v-on:click="wantToGetStream(index)">
-                        {{ $t("ui.button_stream_get") }}
-                    </button>
                     <button :id="'stop-streaming-button-' + index"
                         v-if="iAmStreaming && streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
                         {{ $t("ui.button_stream_stop") }}
                     </button>
-
+                    
+                    <button :id="'get-stream-button-' + index"
+                        v-if="streamSlot.isReady && !takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
+                        v-on:click="wantToGetStream(index)">
+                        {{ $t("ui.button_stream_get") }}
+                    </button>
+                    <button :id="'stop-getting-stream-button-' + index"
+                        v-if="streamSlot.isReady && takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
+                        v-on:click="wantToStopGettingStream(index)">
+                        {{ $t("ui.button_stream_stop_getting") }}
+                    </button>
                 </div>
             </div>
             <div id="rula-menu" v-if="isRulaPopupOpen">
