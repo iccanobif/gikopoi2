@@ -64,6 +64,7 @@ io.on("connection", function (socket: any)
         try
         {
             msg = msg
+                .substr(0, 500)
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
                 .replace(/((https?:\/\/|www\.)[^\s]+)/gi, function (url, prefix)
