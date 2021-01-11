@@ -232,7 +232,7 @@ const vueApp = new Vue({
                 }
             })
             
-            this.socket.on("server-ok-to-get-stream", async (slotId) =>
+            this.socket.on("server-ok-to-take-stream", async (slotId) =>
             {
                 
             })
@@ -496,8 +496,6 @@ const vueApp = new Vue({
 
             this.sendMessageToServer()
         },
-
-
         
         openRTCConnection: function ()
         {
@@ -588,7 +586,7 @@ const vueApp = new Vue({
             this.streamSlotIdInWhichIWantToStream = null
             this.socket.emit("user-want-to-stop-stream")
         },
-        wantToGetStream: function (streamSlotId)
+        wantToTakeStream: function (streamSlotId)
         {
             Vue.set(this.takenStreams, streamSlotId, true)
             this.openRTCConnection()
@@ -598,12 +596,12 @@ const vueApp = new Vue({
                 document.getElementById("received-video-" + streamSlotId).srcObject = event.streams[0];
             }, { once: true });
 
-            this.socket.emit("user-want-to-get-stream", streamSlotId)
+            this.socket.emit("user-want-to-take-stream", streamSlotId)
         },
-        wantToStopGettingStream: function (streamSlotId)
+        wantToDropStream: function (streamSlotId)
         {
             Vue.set(this.takenStreams, streamSlotId, false)
-            this.socket.emit("user-want-to-stop-getting-stream", streamSlotId)
+            this.socket.emit("user-want-to-drop-stream", streamSlotId)
         },
         rula: function (roomId)
         {

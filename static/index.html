@@ -118,15 +118,15 @@
                         {{ $t("ui.button_stream_stop") }}
                     </button>
                     
-                    <button :id="'get-stream-button-' + index"
+                    <button :id="'take-stream-button-' + index"
                         v-if="streamSlot.isReady && !takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
-                        v-on:click="wantToGetStream(index)">
-                        {{ $t("ui.button_stream_get") }}
+                        v-on:click="wantToTakeStream(index)">
+                        {{ $t("ui.button_stream_take") }}
                     </button>
-                    <button :id="'stop-getting-stream-button-' + index"
+                    <button :id="'drop-stream-button-' + index"
                         v-if="streamSlot.isReady && takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
-                        v-on:click="wantToStopGettingStream(index)">
-                        {{ $t("ui.button_stream_stop_getting") }}
+                        v-on:click="wantToDropStream(index)">
+                        {{ $t("ui.button_stream_drop") }}
                     </button>
                 </div>
             </div>

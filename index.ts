@@ -204,7 +204,7 @@ io.on("connection", function (socket: any)
         }
     })
 
-    socket.on("user-want-to-get-stream", function (streamSlotId: number)
+    socket.on("user-want-to-take-stream", function (streamSlotId: number)
     {
         try
         {
@@ -220,7 +220,7 @@ io.on("connection", function (socket: any)
             
             user.mediaStream.getTracks().forEach(track =>
                 rtcPeer.conn!.addTrack(track, user.mediaStream!))
-            socket.emit("server-ok-to-get-stream", streamSlotId)
+            socket.emit("server-ok-to-take-stream", streamSlotId)
         }
         catch (e)
         {
@@ -228,7 +228,7 @@ io.on("connection", function (socket: any)
         }
     })
     
-    socket.on("user-want-to-stop-getting-stream", function (streamSlotId: number)
+    socket.on("user-want-to-drop-stream", function (streamSlotId: number)
     {
         try
         {
