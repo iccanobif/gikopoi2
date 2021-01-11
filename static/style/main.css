@@ -193,3 +193,7 @@ video {
 #cancel-rula-button {
     padding: 10px;
 }
+
+#character-selection img {
+    width: 50px;
+}

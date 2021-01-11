@@ -1,7 +1,7 @@
 //localStorage.debug = '*'; // socket.io debug
 localStorage.removeItem("debug")
 
-import Character from "./character.js";
+import { characters } from "./character.js";
 import User from "./user.js";
 import { loadImage, calculateRealCoordinates, globalScale, sleep, postJson } from "./utils.js";
 import { messages } from "./lang.js";
@@ -17,7 +17,7 @@ const vueApp = new Vue({
     i18n,
     el: '#vue-app',
     data: {
-        gikoCharacter: new Character("naito"),
+        selectedCharacter: null,
         socket: null,
         users: {},
         currentRoom: {
@@ -44,7 +44,9 @@ const vueApp = new Vue({
             "school_st",
             "bar_st"
         ],
-                
+        characterId: "giko",
+        isLoggingIn: false,
+        
         // Possibly redundant data:
         username: "",
         roomid: "admin_st",
@@ -64,12 +66,15 @@ const vueApp = new Vue({
         login: async function (ev)
         {
             ev.preventDefault()
+            this.isLoggingIn = true
+            await Promise.all([characters.giko.loadImages(), characters.naito.loadImages()])
             if (this.username === "")
                 this.username = i18n.t('default_user_name')
             this.loggedIn = true
-            await this.gikoCharacter.loadImages()
+            this.selectedCharacter = characters[this.characterId]
             this.registerKeybindings()
             await this.connectToServer(this.username)
+            this.isLoggingIn = false
             this.paint()
         },
         showWarningToast: function showWarningToast(text)
@@ -77,9 +82,12 @@ const vueApp = new Vue({
             // TODO make this a nice, non-blocking message
             alert(text)
         },
-        connectToServer: async function (username)
+        connectToServer: async function ()
         {
-            const loginResponse = await postJson("/login", { userName: username })
+            const loginResponse = await postJson("/login", {
+                userName: this.username,
+                characterId: this.characterId
+            })
 
             this.myUserID = await loginResponse.json()
 
@@ -262,7 +270,7 @@ const vueApp = new Vue({
         },
         addUser: function (userDTO)
         {
-            const newUser = new User(this.gikoCharacter, userDTO.name);
+            const newUser = new User(characters[userDTO.characterId], userDTO.name);
             newUser.moveImmediatelyToPosition(this.currentRoom, userDTO.position.x, userDTO.position.y, userDTO.direction);
             this.users[userDTO.id] = newUser;
         },
@@ -441,7 +449,7 @@ const vueApp = new Vue({
             if (inputTextbox.value == "") return;
 
             const message = inputTextbox.value
-            if (message == "#rula")
+            if (message == "#rula" || message == "#ﾙｰﾗ")
                 this.isRulaPopupOpen = true
             else
                 this.socket.emit("user-msg", message);
@@ -602,7 +610,8 @@ const vueApp = new Vue({
         {
             await postJson("/logout", { userID: this.myUserID })
         },
-        changeVolume: function (streamSlotId) {
+        changeVolume: function (streamSlotId)
+        {
             const volumeSlider = document.getElementById("volume-" + streamSlotId)
 
             const videoElement = document.getElementById("received-video-" + streamSlotId)

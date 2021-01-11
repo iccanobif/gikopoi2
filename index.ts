@@ -405,7 +405,7 @@ app.post("/login", (req, res) =>
 {
     try
     {
-        const { userName } = req.body
+        const { userName, characterId } = req.body
         if (!userName)
         {
             res.statusCode = 500
@@ -422,7 +422,7 @@ app.post("/login", (req, res) =>
         console.log(processedUserName, "logging in")
 
         const sanitizedUserName = processedUserName.replace(/</g, "&lt;").replace(/>/g, "&gt;")
-        const user = addNewUser(sanitizedUserName);
+        const user = addNewUser(sanitizedUserName, characterId);
         res.json(user.id)
 
         io.to(user.roomId).emit("server-msg", "SYSTEM", sanitizedUserName + " connected");

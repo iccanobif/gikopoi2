@@ -12,24 +12,25 @@ export class Player
     public id: string = generateId();
     public name: string = "Anonymous";
     public position: { x: number, y: number } = { x: defaultRoom.spawnPoint.x, y: defaultRoom.spawnPoint.y };
-    public character: 'giko' = 'giko';
     public direction: Direction = defaultRoom.spawnPoint.direction;
     public connected: boolean = true;
     public roomId: string = defaultRoom.id;
     public lastPing = Date.now();
     public mediaStream: MediaStream | null = null;
+    public characterId: string;
 
-    constructor(options: { name?: string })
+    constructor(options: { name?: string, characterId: string })
     {
         if (options.name) this.name = options.name
+        this.characterId = options.characterId
     }
 }
 
 const users: { [id: string]: Player; } = {}
 
-export function addNewUser(name: string)
+export function addNewUser(name: string, characterId: string)
 {
-    const p = new Player({ name });
+    const p = new Player({ name, characterId });
     users[p.id] = p;
 
     return p;
