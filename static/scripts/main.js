@@ -5,20 +5,7 @@ import Character from "./character.js";
 import User from "./user.js";
 import { loadImage, calculateRealCoordinates, globalScale, sleep, postJson } from "./utils.js";
 import { messages } from "./lang.js";
-
-const stunServers = [{
-    urls: [
-        "stun:stun.l.google.com:19302",
-        "stun:stun1.l.google.com:19302"
-        //    "stun:stun2.l.google.com:19302",
-        //    "stun:stun3.l.google.com:19302",
-        //    "stun:stun4.l.google.com:19302"
-    ]
-}]
-
-const iceConfig = {
-    iceServers: stunServers
-}
+import { defaultIceConfig } from './rtcpeer.js'
 
 const i18n = new VueI18n({
     locale: localStorage.getItem("locale") || 'ja',
@@ -33,7 +20,10 @@ const vueApp = new Vue({
         gikoCharacter: new Character("naito"),
         socket: null,
         users: {},
-        currentRoom: null,
+        currentRoom: {
+            streams: [],
+            objects: []
+        },
         myUserID: null,
         isWaitingForServerResponseOnMovement: false,
         justSpawnedToThisRoom: true,
@@ -54,7 +44,7 @@ const vueApp = new Vue({
             "school_st",
             "bar_st"
         ],
-
+                
         // Possibly redundant data:
         username: "",
         roomid: "admin_st",
@@ -68,7 +58,6 @@ const vueApp = new Vue({
         currentStreamerName: "",
         connectionLost: false,
         steppingOnPortalToNonAvailableRoom: false,
-        currentRoomStreamSlots: [],
         receivedVideoPlayers: [],
     },
     methods: {
@@ -87,10 +76,6 @@ const vueApp = new Vue({
         {
             // TODO make this a nice, non-blocking message
             alert(text)
-        },
-        updateStreamSlots: async function ()
-        {
-            this.currentRoomStreamSlots = this.currentRoom.streams
         },
         connectToServer: async function (username)
         {
@@ -125,10 +110,6 @@ const vueApp = new Vue({
 
                 this.currentRoom = roomDto
 
-                // HACK: i set isActive to false for all streams so that when server-update-current-room-streams
-                // comes, the MediaSource gets initialized
-                this.currentRoom.streams.forEach(s => s.isActive = false)
-
                 this.roomid = this.currentRoom.id
                 this.users = {}
 
@@ -160,8 +141,6 @@ const vueApp = new Vue({
 
                 // stream stuff
                 this.roomAllowsStreaming = this.currentRoom.streams.length > 0
-
-                this.updateStreamSlots()
             });
 
             this.socket.on("server-msg", (userName, msg) =>
@@ -216,15 +195,6 @@ const vueApp = new Vue({
                     delete this.users[userId];
             });
 
-            this.socket.on("server-stream-data", (streamSlotId, arrayBuffer) =>
-            {
-                const slot = this.currentRoomStreamSlots[streamSlotId]
-
-                if (!slot || !slot.mediaSource || slot.mediaSource.readyState != "open")
-                    return
-                slot.queue.push(arrayBuffer)
-                if (!slot.isPlaying) slot.playFromQueue()
-            })
             this.socket.on("server-not-ok-to-stream", (reason) =>
             {
                 this.wantToStream = false
@@ -238,50 +208,7 @@ const vueApp = new Vue({
             })
             this.socket.on("server-update-current-room-streams", (streams) =>
             {
-                const mimeType = 'video/webm;codecs="vp8,opus"'
-
-                this.currentRoom.streams = streams.map((s, i) =>
-                {
-                    if (s.userId == this.myUserID)
-                        return s
-
-                    if (this.currentRoom.streams[i].isActive == s.isActive)
-                        return this.currentRoom.streams[i]
-
-                    s.isPlaying = false
-                    s.mediaSource = new MediaSource()
-
-                    if (s.initializationSegment)
-                        s.queue = [s.initializationSegment]
-                    else
-                        s.queue = []
-
-                    s.playFromQueue = () =>
-                    {
-                        if (!s.queue.length)
-                        {
-                            s.isPlaying = false
-                            return
-                        }
-                        s.isPlaying = true
-                        s.sourceBuffer.appendBuffer(s.queue.shift())
-                    }
-
-                    s.mediaSource.addEventListener("sourceopen", (e) =>
-                    {
-                        s.sourceBuffer = s.mediaSource.addSourceBuffer(mimeType);
-                        s.sourceBuffer.addEventListener('updateend', () =>
-                        {
-                            s.playFromQueue()
-                        });
-                    })
-
-                    s.src = URL.createObjectURL(s.mediaSource);
-
-                    return s
-                })
-
-                this.updateStreamSlots()
+                this.currentRoom.streams = streams
             })
 
             this.socket.on("server-rtc-answer", async (answer) =>
@@ -289,7 +216,7 @@ const vueApp = new Vue({
                 if (this.rtcPeerConnection === null) return;
                 await this.rtcPeerConnection.setRemoteDescription(answer)
             })
-            this.socket.on("server-rtc-ice-candidate", async (candidate) =>
+            this.socket.on("server-rtc-candidate", async (candidate) =>
             {
                 if (this.rtcPeerConnection === null) return;
                 await this.rtcPeerConnection.addIceCandidate(candidate)
@@ -297,8 +224,20 @@ const vueApp = new Vue({
             this.socket.on("server-ok-to-get-stream", async (candidate) =>
             {
                 if (this.rtcPeerConnection === null) return;
-                await this.negotiateRTCPeerConnection()
             })
+
+            this.socket.on("server-rtc-offer", async (offer) =>
+            {
+                if (this.rtcPeerConnection === null) return;
+                await this.rtcPeerConnection.setRemoteDescription(offer);
+                const answer = await this.rtcPeerConnection.createAnswer({
+                    offerToReceiveAudio: true,
+                    offerToReceiveVideo: true
+                })
+                await this.rtcPeerConnection.setLocalDescription(answer);
+                this.socket.emit("user-rtc-answer", answer);
+            })
+
 
             let version = Infinity
 
@@ -544,27 +483,11 @@ const vueApp = new Vue({
         },
 
 
-        openRTCPeerConnection: function ()
+        
+        
+        sendRTCOffer: async function ()
         {
-            if (this.rtcPeerConnection !== null) return;
-
-            this.rtcPeerConnection = new RTCPeerConnection(iceConfig);
-
-            this.rtcPeerConnection.addEventListener('icecandidate', (event) =>
-            {
-                if (event.candidate && event.candidate.candidate)
-                    this.socket.emit('user-rtc-ice-candidate', event.candidate)
-            });
-            this.rtcPeerConnection.addEventListener('iceconnectionstatechange',
-                (event) => console.log('ICE state change event: ', this.rtcPeerConnection.iceConnectionState));
-        },
-
-        /*
-            Used initially to start the ICE candidate comms and
-            for informing the peers about track changes
-        */
-        negotiateRTCPeerConnection: async function ()
-        {
+            if (!this.rtcPeerConnection) return;
             const offer = await this.rtcPeerConnection.createOffer({
                 offerToReceiveAudio: true,
                 offerToReceiveVideo: true
@@ -573,6 +496,22 @@ const vueApp = new Vue({
             this.socket.emit('user-rtc-offer', offer)
         },
 
+        openRTCPeerConnection: function ()
+        {
+            if (this.rtcPeerConnection !== null) return;
+
+            this.rtcPeerConnection = new RTCPeerConnection(defaultIceConfig);
+
+            this.rtcPeerConnection.addEventListener('icecandidate', (event) =>
+            {
+                if (event.candidate && event.candidate.candidate)
+                    this.socket.emit('user-rtc-ice-candidate', event.candidate)
+            });
+            this.rtcPeerConnection.addEventListener('iceconnectionstatechange',
+                (event) => console.log('ICE state change event: ', this.rtcPeerConnection.iceConnectionState));
+            this.rtcPeerConnection.addEventListener('negotiationneeded', () => this.sendRTCOffer());
+        },
+        
         closeRTCPeerConnection: function ()
         {
             if (this.rtcPeerConnection === null) return;
@@ -622,8 +561,6 @@ const vueApp = new Vue({
             this.webcamStream.getTracks().forEach(track =>
                 this.rtcPeerConnection.addTrack(track, this.webcamStream));
 
-            this.negotiateRTCPeerConnection()
-
             document.getElementById(
                 "local-video-" + this.streamSlotIdInWhichIWantToStream)
                 .srcObject = this.webcamStream;
@@ -647,6 +584,10 @@ const vueApp = new Vue({
             }, { once: true });
 
             this.socket.emit("user-want-to-get-stream", streamSlotId)
+        },
+        wantToStopGettingStream: function (streamSlotId)
+        {
+            this.socket.emit("user-want-to-stop-getting-stream", streamSlotId)
         },
         rula: function (roomId)
         {

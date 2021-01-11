@@ -76,7 +76,7 @@
 
 
             <div id="video-streams">
-                <div v-for="(streamSlot, index) in currentRoomStreamSlots">
+                <div v-for="(streamSlot, index) in this.currentRoom.streams">
                     <hr v-if="index != 0" />
                     <div v-if="streamSlot.isActive">
                         {{ $t("ui.label_streamer") }} {{ users[streamSlot.userId].name }}
@@ -85,8 +85,8 @@
                         v-show="streamSlot.isActive && streamSlot.withVideo && index == streamSlotIdInWhichIWantToStream"
                         autoplay muted></video>
                     <video :id="'received-video-' + index"
-                        v-show="streamSlot.isActive && streamSlot.withVideo && index != streamSlotIdInWhichIWantToStream"
-                        autoplay :src="streamSlot.src"></video>
+                        v-show="streamSlot.isReady && streamSlot.withVideo && index != streamSlotIdInWhichIWantToStream"
+                        autoplay></video>
 
                     <div v-show="streamSlot.isActive && index != streamSlotIdInWhichIWantToStream">
                         <label for="volume">{{ $t("ui.volume") }}</label>
@@ -105,7 +105,7 @@
                     </div>
                         
                     <button :id="'get-stream-button-' + index"
-                        v-if="streamSlot.isActive && streamSlot.userId != myUserID && !wantToStream"
+                        v-if="streamSlot.isReady && streamSlot.userId != myUserID && !wantToStream"
                         v-on:click="wantToGetStream(index)">
                         {{ $t("ui.button_stream_get") }}
                     </button>
