@@ -5,7 +5,7 @@ import { characters } from "./character.js";
 import User from "./user.js";
 import { loadImage, calculateRealCoordinates, globalScale, sleep, postJson } from "./utils.js";
 import { messages } from "./lang.js";
-import { defaultIceConfig } from './rtcpeer.js'
+import { RTCPeer, defaultIceConfig } from './rtcpeer.js'
 
 const i18n = new VueI18n({
     locale: localStorage.getItem("locale") || 'ja',
@@ -33,7 +33,7 @@ const vueApp = new Vue({
         webcamStream: null,
         streamSlotIdInWhichIWantToStream: null,
         isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
-        rtcPeerConnection: null,
+        rtcPeer: null,
         isSoundEnabled: localStorage.getItem("isSoundEnabled") == "true",
         isRulaPopupOpen: false,
         rulableRooms: [
@@ -99,6 +99,9 @@ const vueApp = new Vue({
                 this.socket.emit("user-connect", this.myUserID);
                 // TODO, give the server a way to reply "sorry, can't reconnect you"
                 // so we can show a decent error message
+                
+                this.rtcPeer = new RTCPeer(defaultIceConfig,
+                    (type, msg) => this.emitRTCMessage(type, msg))
             });
 
             this.socket.on("disconnect", () =>
@@ -218,32 +221,26 @@ const vueApp = new Vue({
             {
                 this.currentRoom.streams = streams
             })
-
-            this.socket.on("server-rtc-answer", async (answer) =>
-            {
-                if (this.rtcPeerConnection === null) return;
-                await this.rtcPeerConnection.setRemoteDescription(answer)
-            })
-            this.socket.on("server-rtc-candidate", async (candidate) =>
-            {
-                if (this.rtcPeerConnection === null) return;
-                await this.rtcPeerConnection.addIceCandidate(candidate)
-            })
+            
             this.socket.on("server-ok-to-get-stream", async (candidate) =>
             {
-                if (this.rtcPeerConnection === null) return;
+                
             })
 
             this.socket.on("server-rtc-offer", async (offer) =>
             {
-                if (this.rtcPeerConnection === null) return;
-                await this.rtcPeerConnection.setRemoteDescription(offer);
-                const answer = await this.rtcPeerConnection.createAnswer({
-                    offerToReceiveAudio: true,
-                    offerToReceiveVideo: true
-                })
-                await this.rtcPeerConnection.setLocalDescription(answer);
-                this.socket.emit("user-rtc-answer", answer);
+                try{this.rtcPeer.acceptOffer(offer)}
+                catch(e){console.error(e.message + " " + e.stack);}
+            })
+            this.socket.on("server-rtc-answer", async (answer) =>
+            {
+                try{this.rtcPeer.acceptAnswer(answer)}
+                catch(e){console.error(e.message + " " + e.stack);}
+            })
+            this.socket.on("server-rtc-candidate", async (candidate) =>
+            {
+                try{this.rtcPeer.addCandidate(candidate)}
+                catch(e){console.error(e.message + " " + e.stack);}
             })
 
 
@@ -492,40 +489,39 @@ const vueApp = new Vue({
 
 
         
-        
-        sendRTCOffer: async function ()
+        openRTCConnection: function ()
         {
-            if (!this.rtcPeerConnection) return;
-            const offer = await this.rtcPeerConnection.createOffer({
-                offerToReceiveAudio: true,
-                offerToReceiveVideo: true
-            })
-            await this.rtcPeerConnection.setLocalDescription(offer);
-            this.socket.emit('user-rtc-offer', offer)
-        },
-
-        openRTCPeerConnection: function ()
-        {
-            if (this.rtcPeerConnection !== null) return;
-
-            this.rtcPeerConnection = new RTCPeerConnection(defaultIceConfig);
-
-            this.rtcPeerConnection.addEventListener('icecandidate', (event) =>
+            try
             {
-                if (event.candidate && event.candidate.candidate)
-                    this.socket.emit('user-rtc-ice-candidate', event.candidate)
-            });
-            this.rtcPeerConnection.addEventListener('iceconnectionstatechange',
-                (event) => console.log('ICE state change event: ', this.rtcPeerConnection.iceConnectionState));
-            this.rtcPeerConnection.addEventListener('negotiationneeded', () => this.sendRTCOffer());
+                this.rtcPeer.open()
+                if (this.rtcPeer.conn === null) return;
+                this.rtcPeer.conn.addEventListener('iceconnectionstatechange',
+                    (ev) => this.handleIceConnectionStateChange(ev));
+            }
+            catch(e){console.error(e.message + " " + e.stack);}
         },
         
-        closeRTCPeerConnection: function ()
+        handleIceConnectionStateChange: function (event)
         {
-            if (this.rtcPeerConnection === null) return;
-            this.rtcPeerConnection.close();
-            this.rtcPeerConnection = null;
+            try
+            {
+                if (this.rtcPeer.conn === null) return;
+                const state = this.rtcPeer.conn.iceConnectionState;
+                
+                if (["failed", "disconnected", "closed"].includes(state))
+                {
+                    this.rtcPeer.close()
+                }
+            }
+            catch(e){console.error(e.message + " " + e.stack);}
         },
+        
+        emitRTCMessage: function (type, message)
+        {
+            try{this.socket.emit('user-rtc-' + type, message)}
+            catch(e){console.error(e.message + " " + e.stack);}
+        },
+        
 
         wantToStartStreaming: async function (streamSlotId, withVideo, withSound)
         {
@@ -564,10 +560,10 @@ const vueApp = new Vue({
         },
         startStreaming: async function ()
         {
-            this.openRTCPeerConnection()
+            this.openRTCConnection()
 
             this.webcamStream.getTracks().forEach(track =>
-                this.rtcPeerConnection.addTrack(track, this.webcamStream));
+                this.rtcPeer.conn.addTrack(track, this.webcamStream));
 
             document.getElementById(
                 "local-video-" + this.streamSlotIdInWhichIWantToStream)
@@ -584,9 +580,9 @@ const vueApp = new Vue({
         },
         wantToGetStream: function (streamSlotId)
         {
-            this.openRTCPeerConnection()
+            this.openRTCConnection()
 
-            this.rtcPeerConnection.addEventListener('track', (event) =>
+            this.rtcPeer.conn.addEventListener('track', (event) =>
             {
                 document.getElementById("received-video-" + streamSlotId).srcObject = event.streams[0];
             }, { once: true });
