@@ -197,7 +197,6 @@ io.on("connection", function (socket: any)
         try
         {
             clearStream(user)
-            //currentStreamSlotId = null
         }
         catch (e)
         {
@@ -233,17 +232,19 @@ io.on("connection", function (socket: any)
     {
         try
         {
+            const userid = currentRoom.streams[streamSlotId].userId;
+            if (userid === null) return;
+            const user = getUser(userid)
             if (user.mediaStream === null) return;
             if (rtcPeer.conn === null) return;
             
             const tracks = user.mediaStream.getTracks();
-            rtcPeer.conn.getSenders().forEach((sender: any) =>
+            rtcPeer.conn.getSenders().forEach((sender: RTCRtpSender) =>
             {
-                if (sender === null) return;
+                if (sender === null || sender.track === null) return;
                 if (sender.track && tracks.includes(sender.track))
                     rtcPeer.conn!.removeTrack(sender)
             });
-                
         }
         catch (e)
         {
