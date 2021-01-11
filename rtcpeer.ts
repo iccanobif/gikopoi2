@@ -53,7 +53,7 @@ export class RTCPeer
         this.conn = null
     }
     
-    async sendOffer() // private
+    private async sendOffer()
     {
         if (this.conn === null) return;
         const offer = await this.conn.createOffer({
@@ -82,7 +82,7 @@ export class RTCPeer
         await this.conn.setRemoteDescription(answer)
     }
     
-    handleCandidateEvent(event: RTCPeerConnectionIceEvent) // private
+    private handleCandidateEvent(event: RTCPeerConnectionIceEvent)
     {
         if (event.candidate && event.candidate.candidate)
             this.sendCallback('candidate', event.candidate)

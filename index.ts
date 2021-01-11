@@ -50,7 +50,7 @@ io.on("connection", function (socket: any)
             currentRoom = rooms[user.roomId]
 
             socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(user.roomId))
-            io.to(user.roomId).emit("server-update-current-room-streams", currentRoom.streams)
+            socket.emit("server-update-current-room-streams", currentRoom, getConnectedUserList(user.roomId))
             
             emitServerStats()
         }
@@ -303,7 +303,6 @@ io.on("connection", function (socket: any)
             if (rtcPeer.conn === null) return;
             const state = rtcPeer.conn.iceConnectionState;
             
-            console.log("["+user.id+"]", 'ICE state change event: ', state)
             if (["failed", "disconnected", "closed"].includes(state))
             {
                 rtcPeer.close()
