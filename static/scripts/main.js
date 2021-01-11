@@ -150,6 +150,9 @@ const vueApp = new Vue({
                 this.isLoadingRoom = false
                 this.requestedRoomChange = false
 
+                if (this.rtcPeer !== null)
+                    this.rtcPeer.close()
+                
                 // stream stuff
                 this.roomAllowsStreaming = this.currentRoom.streams.length > 0
             });

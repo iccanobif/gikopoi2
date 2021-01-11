@@ -272,7 +272,9 @@ io.on("connection", function (socket: any)
 
             user.position = { x: targetX, y: targetY }
             user.roomId = targetRoomId
-
+            
+            rtcPeer.close()
+            
             socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(targetRoomId))
             socket.emit("server-update-current-room-streams", currentRoom.streams)
             socket.join(targetRoomId)
