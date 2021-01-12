@@ -35,11 +35,22 @@ video {
     position: absolute;
     left: 700px;
     width: 232px;
+    padding: 5px
 }
 
 .start-streaming-button
 {
     padding: 0;
+}
+
+.stream-title
+{
+    font-weight: bold;
+}
+
+.stream-is-active .stream-title
+{
+    font-weight: normal;
 }
 
 /* div[id^="received-video-"]
