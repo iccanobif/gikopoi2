@@ -16,14 +16,20 @@
             <form>
                 <label>User Name:</label> <input type="text" v-model="username" />
                 <div id="character-selection">
-                    <input type="radio" id="giko-selection" value="giko" v-model="characterId">
                     <label for="giko-selection">
+                        <input type="radio" id="giko-selection" value="giko" v-model="characterId">
                         <img src="characters/giko/front-standing.png" />
                     </label>
-                    <input type="radio" id="naito-selection" value="naito" v-model="characterId">
                     <label for="naito-selection">
+                        <input type="radio" id="naito-selection" value="naito" v-model="characterId">
                         <img src="characters/naito/front-standing.png" />
                     </label>
+                </div>
+                <div id="area-selection">
+                    <label for="gen-selection"><input type="radio" id="gen-selection" value="gen" v-model="areaId">
+                        一般 (_gen)</label>
+                    <label for="for-selection"><input type="radio" id="for-selection" value="for" v-model="areaId">
+                        International (_for)</label>
                 </div>
                 <button v-on:click="login" :disabled="isLoggingIn">Login</button>
             </form>
@@ -103,7 +109,7 @@
                         <input type="range" :id="'volume-' + index" v-on:change="changeVolume(index)" name="volume"
                             min="0" max="1" step="0.01" value="1">
                     </div>
-                    
+
                     <div v-if="!streamSlot.isActive && !iAmStreaming && !wantToStream">
                         {{ $t("ui.label_stream_start") }}
                         <button class="start-streaming-button" :id="'start-video-streaming-button-' + index"
@@ -117,7 +123,7 @@
                         v-if="iAmStreaming && streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
                         {{ $t("ui.button_stream_stop") }}
                     </button>
-                    
+
                     <button :id="'take-stream-button-' + index"
                         v-if="streamSlot.isReady && !takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
                         v-on:click="wantToTakeStream(index)">

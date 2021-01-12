@@ -70,6 +70,8 @@ export const messages =
             enkai: "宴会場"
         },
         change_log: `
+2021/01/12: 「一般」と「国際」の分離。
+2021/01/11: 配信機能を改善。
 2021/01/09: #rulaコマンドを追加されました。
         `
     },
@@ -143,6 +145,8 @@ export const messages =
             takadai: "Hilltop",
         },
         change_log: `
+2021/01/12: Split _gen and _for。
+2021/01/11: Improved streaming.
 2021/01/09: Added #rula command.
         `
     }

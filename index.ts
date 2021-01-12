@@ -13,48 +13,30 @@ const enforce = require('express-sslify');
 
 const delay = 0
 
+// Initialize room states:
+const roomStates: {
+    [areaId: string]: { [roomId: string]: RoomState }
+} = {};
 
-// Initialize room states
-
-const roomStates: { [roomId: string]: RoomState } = {};
-
-for (const roomId in rooms)
+for (const areaId of ["for", "gen"])
 {
-    roomStates[roomId] = { streams: [] }
-    for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
-        roomStates[roomId].streams.push({
-            isActive: false,
-            isReady: false,
-            withSound: null,
-            withVideo: null,
-            userId: null
-        })
+    roomStates[areaId] = {}
+    for (const roomId in rooms)
+    {
+        roomStates[areaId][roomId] = { streams: [] }
+        for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
+        {
+            roomStates[areaId][roomId].streams.push({
+                isActive: false,
+                isReady: false,
+                withSound: null,
+                withVideo: null,
+                userId: null
+            })
+        }
+    }
+
 }
-
-// // Initialize room states:
-// const roomStates: {
-//     [areaId: string]: { [roomId: string]: RoomState }
-// } = {};
-
-// for (const areaId of ["for", "gen"])
-// {
-//     roomStates[areaId] = {}
-//     for (const roomId in rooms)
-//     {
-//         roomStates[areaId][roomId] = { streams: [] }
-//         for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
-//         {
-//             roomStates[areaId][roomId].streams.push({
-//                 isActive: false,
-//                 isReady: false,
-//                 withSound: null,
-//                 withVideo: null,
-//                 userId: null
-//             })
-//         }
-//     }
-
-// }
 
 io.on("connection", function (socket: any)
 {
@@ -65,8 +47,6 @@ io.on("connection", function (socket: any)
     //let currentStreamSlotId: number | null = null;
 
     let rtcPeer: RTCPeer = new RTCPeer(defaultIceConfig, emitRTCMessage);
-
-    socket.join(currentRoom.id)
 
     socket.on("disconnect", function ()
     {
@@ -88,14 +68,16 @@ io.on("connection", function (socket: any)
             if (!user)
                 socket.emit("server-cant-log-you-in")
 
+            socket.join(user.areaId + currentRoom.id)
+
             console.log("userId: " + userId + " name: " + user.name);
 
             currentRoom = rooms[user.roomId]
 
-            socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(user.roomId), roomStates[user.roomId].streams)
-            socket.emit("server-update-current-room-streams", roomStates[user.roomId].streams)
+            socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(user.roomId, user.areaId), roomStates[user.areaId][user.roomId].streams)
+            socket.emit("server-update-current-room-streams", roomStates[user.areaId][user.roomId].streams)
 
-            emitServerStats()
+            emitServerStats(user.areaId)
         }
         catch (e)
         {
@@ -119,7 +101,7 @@ io.on("connection", function (socket: any)
             const userName = user.name
 
             console.log(userName + ": " + msg);
-            io.to(user.roomId).emit("server-msg", "<span class=\"messageAuthor\">" + userName + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
+            io.to(user.areaId + user.roomId).emit("server-msg", "<span class=\"messageAuthor\">" + userName + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
         }
         catch (e)
         {
@@ -179,7 +161,7 @@ io.on("connection", function (socket: any)
                 user.position.y = newY
             }
 
-            io.to(user.roomId).emit("server-move",
+            io.to(user.areaId + user.roomId).emit("server-move",
                 user.id,
                 user.position.x,
                 user.position.y,
@@ -197,7 +179,7 @@ io.on("connection", function (socket: any)
         {
             const { streamSlotId, withVideo, withSound } = streamRequest
 
-            const streams = roomStates[user.roomId].streams
+            const streams = roomStates[user.areaId][user.roomId].streams
 
             if (streams[streamSlotId].isActive)
             {
@@ -214,13 +196,14 @@ io.on("connection", function (socket: any)
             streams[streamSlotId].withVideo = withVideo
             streams[streamSlotId].withSound = withSound
             streams[streamSlotId].userId = user.id
-            io.to(user.roomId).emit("server-update-current-room-streams", streams)
+            io.to(user.areaId + user.roomId).emit("server-update-current-room-streams", streams)
+
             const handleTrack = (event: RTCTrackEvent) =>
             {
                 if (rtcPeer.conn === null) return;
                 user.mediaStream = event.streams[0]
                 streams[streamSlotId].isReady = true
-                io.to(user.roomId).emit("server-update-current-room-streams", streams)
+                io.to(user.areaId + user.roomId).emit("server-update-current-room-streams", streams)
                 try
                 {
                     rtcPeer.conn.removeEventListener('track', handleTrack);
@@ -254,7 +237,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            const streams = roomStates[currentRoom.id].streams
+            const streams = roomStates[user.areaId][currentRoom.id].streams
             const userid = streams[streamSlotId].userId;
             if (userid === null) return;
             const userWhoIsStreaming = getUser(userid)
@@ -279,7 +262,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            const streams = roomStates[currentRoom.id].streams
+            const streams = roomStates[user.areaId][currentRoom.id].streams
             const userid = streams[streamSlotId].userId;
             if (userid === null) return;
             const userWhoIsStreaming = getUser(userid)
@@ -316,7 +299,7 @@ io.on("connection", function (socket: any)
                 targetY = rooms[targetRoomId].spawnPoint.y
 
             clearStream(user)
-            io.to(user.roomId).emit("server-user-left-room", user.id);
+            io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
             socket.leave(user.roomId)
 
             user.position = { x: targetX, y: targetY }
@@ -324,10 +307,10 @@ io.on("connection", function (socket: any)
 
             rtcPeer.close()
 
-            socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(targetRoomId), roomStates[targetRoomId].streams)
-            socket.emit("server-update-current-room-streams", roomStates[targetRoomId].streams)
-            socket.join(targetRoomId)
-            socket.to(targetRoomId).emit("server-user-joined-room", user);
+            socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(targetRoomId, user.areaId), roomStates[user.areaId][targetRoomId].streams)
+            socket.emit("server-update-current-room-streams", roomStates[user.areaId][targetRoomId].streams)
+            socket.join(user.areaId + targetRoomId)
+            socket.to(user.areaId + targetRoomId).emit("server-user-joined-room", user);
         }
         catch (e)
         {
@@ -388,10 +371,10 @@ io.on("connection", function (socket: any)
     })
 });
 
-function emitServerStats()
+function emitServerStats(areaId: string)
 {
     io.emit("server-stats", {
-        userCount: getConnectedUserList(null).length
+        userCount: getConnectedUserList(null, areaId).length
     })
 }
 
@@ -455,7 +438,7 @@ app.post("/login", (req, res) =>
 {
     try
     {
-        const { userName, characterId } = req.body
+        const { userName, characterId, areaId } = req.body
         if (!userName)
         {
             res.statusCode = 500
@@ -472,11 +455,11 @@ app.post("/login", (req, res) =>
         console.log(processedUserName, "logging in")
 
         const sanitizedUserName = processedUserName.replace(/</g, "&lt;").replace(/>/g, "&gt;")
-        const user = addNewUser(sanitizedUserName, characterId);
+        const user = addNewUser(sanitizedUserName, characterId, areaId);
         res.json(user.id)
 
-        io.to(user.roomId).emit("server-msg", "SYSTEM", sanitizedUserName + " connected");
-        io.to(user.roomId).emit("server-user-joined-room", user);
+        io.to(areaId + user.roomId).emit("server-msg", "SYSTEM", sanitizedUserName + " connected");
+        io.to(areaId + user.roomId).emit("server-user-joined-room", user);
     }
     catch (e)
     {
@@ -488,7 +471,7 @@ function clearStream(user: Player)
 {
     if (!user) return
 
-    const streams = roomStates[user.roomId].streams
+    const streams = roomStates[user.areaId][user.roomId].streams
 
     const stream = streams.find(s => s.userId == user.id)
     if (stream)
@@ -496,7 +479,7 @@ function clearStream(user: Player)
         stream.isActive = false
         stream.isReady = false
         stream.userId = null
-        io.to(user.roomId).emit("server-update-current-room-streams", streams)
+        io.to(user.areaId + user.roomId).emit("server-update-current-room-streams", streams)
     }
 }
 
@@ -506,9 +489,9 @@ function disconnectUser(user: Player)
     clearStream(user)
     removeUser(user)
 
-    io.to(user.roomId).emit("server-msg", "SYSTEM", user.name + " disconnected");
-    io.to(user.roomId).emit("server-user-left-room", user.id);
-    emitServerStats()
+    io.to(user.areaId + user.roomId).emit("server-msg", "SYSTEM", user.name + " disconnected");
+    io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
+    emitServerStats(user.areaId)
 }
 
 app.post("/logout", (req, res) =>
@@ -545,7 +528,7 @@ setInterval(() =>
 {
     try
     {
-        for (const user of getConnectedUserList(null))
+        for (const user of getConnectedUserList(null, null))
             if (Date.now() - user.lastPing > 80 * 1000)
                 disconnectUser(user)
     }

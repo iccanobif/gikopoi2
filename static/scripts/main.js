@@ -48,6 +48,7 @@ const vueApp = new Vue({
         characterId: "giko",
         isLoggingIn: false,
         streams: [],
+        areaId: "gen", // 'gen' or 'for'
         
         // Possibly redundant data:
         username: "",
@@ -87,7 +88,8 @@ const vueApp = new Vue({
         {
             const loginResponse = await postJson("/login", {
                 userName: this.username,
-                characterId: this.characterId
+                characterId: this.characterId,
+                areaId: this.areaId,
             })
 
             this.myUserID = await loginResponse.json()
