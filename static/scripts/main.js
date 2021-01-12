@@ -47,6 +47,7 @@ const vueApp = new Vue({
         ],
         characterId: "giko",
         isLoggingIn: false,
+        streams: [],
         
         // Possibly redundant data:
         username: "",
@@ -115,7 +116,7 @@ const vueApp = new Vue({
                 this.connectionLost = true;
             })
 
-            this.socket.on("server-update-current-room-state", async (roomDto, usersDto) =>
+            this.socket.on("server-update-current-room-state", async (roomDto, usersDto, streamsDto) =>
             {
                 this.isLoadingRoom = true
 
@@ -142,7 +143,7 @@ const vueApp = new Vue({
                     })
                 }
                 
-                this.takenStreams = this.currentRoom.streams.map(() => false)
+                this.takenStreams = streamsDto.map(() => false)
                 
                 // Force update of user coordinates using the current room's logics (origin coordinates, etc)
                 this.forcePhysicalPositionRefresh()
@@ -156,7 +157,7 @@ const vueApp = new Vue({
                     this.rtcPeer.close()
                              
                 // stream stuff
-                this.roomAllowsStreaming = this.currentRoom.streams.length > 0
+                this.roomAllowsStreaming = streamsDto.length > 0
             });
 
             this.socket.on("server-msg", (userName, msg) =>
@@ -224,7 +225,7 @@ const vueApp = new Vue({
             })
             this.socket.on("server-update-current-room-streams", (streams) =>
             {
-                this.currentRoom.streams = streams
+                this.streams = streams
                 for(const slotId in streams)
                 {
                     if (!streams[slotId].isReady)

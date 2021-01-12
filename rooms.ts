@@ -74,10 +74,7 @@ export const rooms: { [roomId: string]: Room } = {
             // [[8, 4], "bar_st", [3, 5], 1]
             { x: 8, y: 4, targetRoomId: "admin_st", targetX: 0, targetY: 2 }
         ],
-        streams: [
-            { isActive: false, isReady: false, withSound: null, withVideo: null, userId: null },
-            { isActive: false, isReady: false, withSound: null, withVideo: null, userId: null },
-        ],
+        streamSlotCount: 2,
     },
     admin_st: {
         id: "admin_st",
@@ -123,7 +120,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 9, y: 2, targetRoomId: "NOT_READY_YET", targetX: 10, targetY: 0 },
             { x: 0, y: 8, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
         ],
-        streams: [],
+        streamSlotCount: 0,
     },
     admin: {
         id: "admin",
@@ -172,10 +169,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: [
             { x: 10, y: 0, targetRoomId: "admin_st", targetX: 2, targetY: 4 }
         ],
-        streams: [
-            { isActive: false, isReady: false, withSound: null, withVideo: null, userId: null },
-            { isActive: false, isReady: false, withSound: null, withVideo: null, userId: null },
-        ],
+        streamSlotCount: 2,
     },
     radio_backstage: {
         id: "radio_backstage",
@@ -200,7 +194,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 2, y: 4, targetRoomId: "admin", targetX: 10, targetY: 0 },
             { x: 2, y: 7, targetRoomId: "admin_st", targetX: 2, targetY: 4 }
         ],
-        streams: []
+        streamSlotCount: 0,
     },
     school_st: {
         id: "school_st",
@@ -262,7 +256,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 5, y: 2, targetRoomId: "NOT_READY_YET", targetX: 8, targetY: 4 }, // to kanrinin street
             { x: 4, y: 1, targetRoomId: "NOT_READY_YET", targetX: 8, targetY: 4 }, // manhole
         ],
-        streams: []
+        streamSlotCount: 0,
     },
     bar_st: {
         id: "bar_st",
@@ -318,7 +312,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 9, y: 2, targetRoomId: "takadai", targetX: 2, targetY: 0 },
             { x: 8, y: 4, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 }, // manhole
         ],
-        streams: []
+        streamSlotCount: 0,
     },
     takadai: {
         id: "takadai",
@@ -388,10 +382,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 2, y: 0, targetRoomId: "bar_st", targetX: 9, targetY: 2 }, // to bar
             { x: 6, y: 0, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 }, // to bar
         ],
-        streams: [
-            { isActive: false, isReady: false, withSound: null, withVideo: null, userId: null },
-            { isActive: false, isReady: false, withSound: null, withVideo: null, userId: null },
-        ]
+        streamSlotCount: 2,
     }
 }
 

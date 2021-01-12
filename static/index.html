@@ -86,7 +86,7 @@
 
 
             <div id="video-streams">
-                <div v-for="(streamSlot, index) in this.currentRoom.streams">
+                <div v-for="(streamSlot, index) in streams">
                     <hr v-if="index != 0" />
                     <div v-if="streamSlot.isActive">
                         {{ $t("ui.label_streamer") }} {{ users[streamSlot.userId].name }}
