@@ -18,8 +18,6 @@ const delay = 0
 
 const roomStates: { [roomId: string]: RoomState } = {};
 
-// for (const area of ["for", "gen"])
-// {
 for (const roomId in rooms)
 {
     roomStates[roomId] = { streams: [] }
@@ -32,6 +30,29 @@ for (const roomId in rooms)
             userId: null
         })
 }
+
+// // Initialize room states:
+// const roomStates: {
+//     [areaId: string]: { [roomId: string]: RoomState }
+// } = {};
+
+// for (const areaId of ["for", "gen"])
+// {
+//     roomStates[areaId] = {}
+//     for (const roomId in rooms)
+//     {
+//         roomStates[areaId][roomId] = { streams: [] }
+//         for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
+//         {
+//             roomStates[areaId][roomId].streams.push({
+//                 isActive: false,
+//                 isReady: false,
+//                 withSound: null,
+//                 withVideo: null,
+//                 userId: null
+//             })
+//         }
+//     }
 
 // }
 
