@@ -197,3 +197,7 @@ video {
 #character-selection img {
     width: 50px;
 }
+
+#change-log {
+    display: flex;
+}

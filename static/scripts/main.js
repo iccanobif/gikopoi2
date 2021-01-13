@@ -8,7 +8,7 @@ import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from './rtcpeer.js'
 
 const i18n = new VueI18n({
-    locale: localStorage.getItem("locale") || 'ja',
+    locale: 'ja',
     fallbackLocale: 'ja',
     messages,
 })
@@ -69,6 +69,9 @@ const vueApp = new Vue({
         {
             ev.preventDefault()
             this.isLoggingIn = true
+
+            i18n.locale = (this.areaId == "for" ? "en" : "ja")
+
             await Promise.all([characters.giko.loadImages(), characters.naito.loadImages()])
             if (this.username === "")
                 this.username = i18n.t('default_user_name')
@@ -484,11 +487,6 @@ const vueApp = new Vue({
         {
             localStorage.setItem("isSoundEnabled", this.isSoundEnabled = !this.isSoundEnabled);
             console.log(localStorage.getItem("isSoundEnabled"))
-        },
-        switchLanguage: function ()
-        {
-            i18n.locale = (i18n.locale == "ja" ? "en" : "ja")
-            localStorage.setItem("locale", i18n.locale)
         },
         handleCanvasKeydown: function (event)
         {

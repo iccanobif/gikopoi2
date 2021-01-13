@@ -300,7 +300,7 @@ io.on("connection", function (socket: any)
 
             clearStream(user)
             io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
-            socket.leave(user.roomId)
+            socket.leave(user.areaId + user.roomId)
 
             user.position = { x: targetX, y: targetY }
             user.roomId = targetRoomId

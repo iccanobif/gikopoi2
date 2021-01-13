@@ -34,7 +34,16 @@
                 <button v-on:click="login" :disabled="isLoggingIn">Login</button>
             </form>
             <div id="change-log">
-                <pre>{{ $t("change_log") }}</pre>
+                <pre>
+2021/01/12: 「一般」と「国際」の分離。
+2021/01/11: 配信機能を改善。
+2021/01/09: #rulaコマンドを追加されました。
+                </pre>
+                <pre>
+2021/01/12: Split _gen and _for。
+2021/01/11: Improved streaming.
+2021/01/09: Added #rula command.
+                </pre>
             </div>
         </div>
         <div id="stage" v-if="loggedIn">
@@ -83,8 +92,6 @@
                 <button id="btn-move-up" v-on:click="sendNewPositionToServer('up')">↑</button>
                 <button id="btn-move-down" v-on:click="sendNewPositionToServer('down')">↓</button>
                 <button id="btn-move-right" v-on:click="sendNewPositionToServer('right')">→</button>
-
-                <button v-on:click="switchLanguage">{{ $t("ui.button_switch_language") }}</button>
             </div>
             {{ $t("ui.label_log") }}
             <div id="chatLog">
