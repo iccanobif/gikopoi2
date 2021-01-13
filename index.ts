@@ -373,7 +373,7 @@ io.on("connection", function (socket: any)
 
 function emitServerStats(areaId: string)
 {
-    io.emit("server-stats", {
+    io.emit("server-stats", areaId, {
         userCount: getConnectedUserList(null, areaId).length
     })
 }
