@@ -70,10 +70,7 @@ export const messages =
             school_international: "学校 国際科教室",
             school_pc: "学校 パソコンルーム",
             enkai: "宴会場"
-        },
-        change_log: `
-2021/01/09: #rulaコマンドを追加されました。
-        `
+        }
     },
     en:
     {
@@ -145,9 +142,6 @@ export const messages =
             yatai: "Sushi Vendor",
             kaidan: "Hilltop Stairway",
             takadai: "Hilltop",
-        },
-        change_log: `
-2021/01/09: Added #rula command.
-        `
+        }
     }
 }

@@ -18,37 +18,32 @@ export class Player
     public lastPing = Date.now();
     public mediaStream: MediaStream | null = null;
     public characterId: string;
+    public areaId: string;
 
-    constructor(options: { name?: string, characterId: string })
+    constructor(options: { name?: string, characterId: string, areaId: string })
     {
         if (options.name) this.name = options.name
         this.characterId = options.characterId
+        this.areaId = options.areaId
     }
 }
 
 const users: { [id: string]: Player; } = {}
 
-export function addNewUser(name: string, characterId: string)
+export function addNewUser(name: string, characterId: string, areaId: string)
 {
-    const p = new Player({ name, characterId });
+    const p = new Player({ name, characterId, areaId });
     users[p.id] = p;
 
     return p;
 };
 
-export function getConnectedUserList(roomId: string | null): Player[]
+export function getConnectedUserList(roomId: string | null, areaId: string | null): Player[]
 {
-    // const output: { [id: number]: Player; } = {};
-    // for (const u in users)
-    //     if (users.hasOwnProperty(u))
-    //     {
-    //         output[u] = users[u];
-    //     }
-    // return output;
-    if (roomId)
-        return Object.values(users).filter(u => u.roomId == roomId)
-    else
-        return Object.values(users)
+    let output = Object.values(users)
+    if (roomId) output = output.filter(u => u.roomId == roomId)
+    if (areaId) output = output.filter(u => u.areaId == areaId)
+    return output
 };
 
 export function getUser(userId: string)

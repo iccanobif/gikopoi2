@@ -8,7 +8,7 @@ import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from './rtcpeer.js'
 
 const i18n = new VueI18n({
-    locale: localStorage.getItem("locale") || 'ja',
+    locale: 'ja',
     fallbackLocale: 'ja',
     messages,
 })
@@ -47,7 +47,9 @@ const vueApp = new Vue({
         ],
         characterId: "giko",
         isLoggingIn: false,
-        
+        streams: [],
+        areaId: "gen", // 'gen' or 'for'
+
         // Possibly redundant data:
         username: "",
         roomid: "admin_st",
@@ -67,6 +69,9 @@ const vueApp = new Vue({
         {
             ev.preventDefault()
             this.isLoggingIn = true
+
+            i18n.locale = (this.areaId == "for" ? "en" : "ja")
+
             await Promise.all([characters.giko.loadImages(), characters.naito.loadImages()])
             if (this.username === "")
                 this.username = i18n.t('default_user_name')
@@ -86,7 +91,8 @@ const vueApp = new Vue({
         {
             const loginResponse = await postJson("/login", {
                 userName: this.username,
-                characterId: this.characterId
+                characterId: this.characterId,
+                areaId: this.areaId,
             })
 
             this.myUserID = await loginResponse.json()
@@ -99,7 +105,7 @@ const vueApp = new Vue({
                 this.socket.emit("user-connect", this.myUserID);
                 // TODO, give the server a way to reply "sorry, can't reconnect you"
                 // so we can show a decent error message
-                
+
                 this.rtcPeer = new RTCPeer(defaultIceConfig,
                     (type, msg) => this.emitRTCMessage(type, msg))
             });
@@ -115,7 +121,7 @@ const vueApp = new Vue({
                 this.connectionLost = true;
             })
 
-            this.socket.on("server-update-current-room-state", async (roomDto, usersDto) =>
+            this.socket.on("server-update-current-room-state", async (roomDto, usersDto, streamsDto) =>
             {
                 this.isLoadingRoom = true
 
@@ -142,8 +148,7 @@ const vueApp = new Vue({
                     })
                 }
                 
-                
-                this.takenStreams = this.currentRoom.streams.map(() => false)
+                this.takenStreams = streamsDto.map(() => false)
                 
                 this.updateCurrentRoomStreams(this.currentRoom.streams)
                 
@@ -157,9 +162,9 @@ const vueApp = new Vue({
 
                 if (this.rtcPeer !== null)
                     this.rtcPeer.close()
-                             
+
                 // stream stuff
-                this.roomAllowsStreaming = this.currentRoom.streams.length > 0
+                this.roomAllowsStreaming = streamsDto.length > 0
             });
 
             this.socket.on("server-msg", (userName, msg) =>
@@ -174,9 +179,10 @@ const vueApp = new Vue({
                 chatLog.scrollTop = chatLog.scrollHeight;
             });
 
-            this.socket.on("server-stats", (serverStats) =>
+            this.socket.on("server-stats", (areaId, serverStats) =>
             {
-                this.serverStats = serverStats;
+                if (areaId == this.areaId)
+                    this.serverStats = serverStats;
             });
 
             this.socket.on("server-move", (userId, x, y, direction, isInstant) =>
@@ -227,29 +233,29 @@ const vueApp = new Vue({
             })
             this.socket.on("server-update-current-room-streams", (streams) =>
             {
-                this.currentRoom.streams = streams
+                this.streams = streams
                 this.updateCurrentRoomStreams(streams)
             })
-            
+
             this.socket.on("server-ok-to-take-stream", async (slotId) =>
             {
-                
+
             })
 
             this.socket.on("server-rtc-offer", async (offer) =>
             {
-                try{this.rtcPeer.acceptOffer(offer)}
-                catch(e){console.error(e.message + " " + e.stack);}
+                try { this.rtcPeer.acceptOffer(offer) }
+                catch (e) { console.error(e.message + " " + e.stack); }
             })
             this.socket.on("server-rtc-answer", async (answer) =>
             {
-                try{this.rtcPeer.acceptAnswer(answer)}
-                catch(e){console.error(e.message + " " + e.stack);}
+                try { this.rtcPeer.acceptAnswer(answer) }
+                catch (e) { console.error(e.message + " " + e.stack); }
             })
             this.socket.on("server-rtc-candidate", async (candidate) =>
             {
-                try{this.rtcPeer.addCandidate(candidate)}
-                catch(e){console.error(e.message + " " + e.stack);}
+                try { this.rtcPeer.addCandidate(candidate) }
+                catch (e) { console.error(e.message + " " + e.stack); }
             })
 
 
@@ -481,11 +487,6 @@ const vueApp = new Vue({
             localStorage.setItem("isSoundEnabled", this.isSoundEnabled = !this.isSoundEnabled);
             console.log(localStorage.getItem("isSoundEnabled"))
         },
-        switchLanguage: function ()
-        {
-            i18n.locale = (i18n.locale == "ja" ? "en" : "ja")
-            localStorage.setItem("locale", i18n.locale)
-        },
         handleCanvasKeydown: function (event)
         {
             switch (event.key)
@@ -502,7 +503,7 @@ const vueApp = new Vue({
 
             this.sendMessageToServer()
         },
-        
+
         openRTCConnection: function ()
         {
             try
@@ -512,28 +513,28 @@ const vueApp = new Vue({
                 this.rtcPeer.conn.addEventListener('iceconnectionstatechange',
                     (ev) => this.handleIceConnectionStateChange(ev));
             }
-            catch(e){console.error(e.message + " " + e.stack);}
+            catch (e) { console.error(e.message + " " + e.stack); }
         },
-        
+
         handleIceConnectionStateChange: function (event)
         {
             try
             {
                 if (this.rtcPeer.conn === null) return;
                 const state = this.rtcPeer.conn.iceConnectionState;
-                
+
                 if (["failed", "disconnected", "closed"].includes(state))
                 {
                     this.rtcPeer.close()
                 }
             }
-            catch(e){console.error(e.message + " " + e.stack);}
+            catch (e) { console.error(e.message + " " + e.stack); }
         },
-        
+
         emitRTCMessage: function (type, message)
         {
-            try{this.socket.emit('user-rtc-' + type, message)}
-            catch(e){console.error(e.message + " " + e.stack);}
+            try { this.socket.emit('user-rtc-' + type, message) }
+            catch (e) { console.error(e.message + " " + e.stack); }
         },
         
         updateCurrentRoomStreams: function (streams)

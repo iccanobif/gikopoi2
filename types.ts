@@ -46,6 +46,9 @@ export interface Room
         targetX: number,
         targetY: number
     }[];
-    streams: StreamSlot[];
-    // users: Player[]
+    streamSlotCount: number;
+}
+
+export interface RoomState {
+    streams: StreamSlot[]
 }

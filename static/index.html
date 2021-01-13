@@ -16,19 +16,34 @@
             <form>
                 <label>User Name:</label> <input type="text" v-model="username" />
                 <div id="character-selection">
-                    <input type="radio" id="giko-selection" value="giko" v-model="characterId">
                     <label for="giko-selection">
+                        <input type="radio" id="giko-selection" value="giko" v-model="characterId">
                         <img src="characters/giko/front-standing.png" />
                     </label>
-                    <input type="radio" id="naito-selection" value="naito" v-model="characterId">
                     <label for="naito-selection">
+                        <input type="radio" id="naito-selection" value="naito" v-model="characterId">
                         <img src="characters/naito/front-standing.png" />
                     </label>
+                </div>
+                <div id="area-selection">
+                    <label for="gen-selection"><input type="radio" id="gen-selection" value="gen" v-model="areaId">
+                        一般 (_gen)</label>
+                    <label for="for-selection"><input type="radio" id="for-selection" value="for" v-model="areaId">
+                        International (_for)</label>
                 </div>
                 <button v-on:click="login" :disabled="isLoggingIn">Login</button>
             </form>
             <div id="change-log">
-                <pre>{{ $t("change_log") }}</pre>
+                <pre>
+2021/01/12: 「一般」と「国際」の分離。
+2021/01/11: 配信機能を改善。
+2021/01/09: #rulaコマンドを追加されました。
+                </pre>
+                <pre>
+2021/01/12: Split _gen and _for。
+2021/01/11: Improved streaming.
+2021/01/09: Added #rula command.
+                </pre>
             </div>
         </div>
         <div id="stage" v-if="loggedIn">
@@ -77,8 +92,6 @@
                 <button id="btn-move-up" v-on:click="sendNewPositionToServer('up')">↑</button>
                 <button id="btn-move-down" v-on:click="sendNewPositionToServer('down')">↓</button>
                 <button id="btn-move-right" v-on:click="sendNewPositionToServer('right')">→</button>
-
-                <button v-on:click="switchLanguage">{{ $t("ui.button_switch_language") }}</button>
             </div>
             {{ $t("ui.label_log") }}
             <div id="chatLog">
@@ -86,8 +99,7 @@
 
 
             <div id="video-streams">
-                <div v-for="(streamSlot, index) in this.currentRoom.streams"
-                    v-bind:class="{'stream-is-active': streamSlot.isActive}">
+                <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
                     <hr v-if="index != 0" />
                     <div>
                         {{ $t("ui.label_stream", {index: index+1}) }}<span class="stream-title">{{ streamSlot.title }}</span>
@@ -104,7 +116,7 @@
                         <input type="range" :id="'volume-' + index" v-on:change="changeVolume(index)" name="volume"
                             min="0" max="1" step="0.01" value="1">
                     </div>
-                    
+
                     <div v-if="!streamSlot.isActive && !iAmStreaming && !wantToStream">
                         <button class="start-streaming-button" :id="'start-video-streaming-button-' + index"
                             v-on:click="wantToStartStreaming(index, true, false)">{{ $t("ui.button_video_stream_start") }}</button>
@@ -117,7 +129,7 @@
                         v-if="iAmStreaming && streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
                         {{ $t("ui.button_stream_stop") }}
                     </button>
-                    
+
                     <button :id="'take-stream-button-' + index"
                         v-if="streamSlot.isReady && !takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
                         v-on:click="wantToTakeStream(index)">
