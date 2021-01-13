@@ -43,7 +43,8 @@ const vueApp = new Vue({
             "admin",
             "radio_backstage",
             "school_st",
-            "bar_st"
+            "bar_st",
+            "takadai"
         ],
         characterId: "giko",
         isLoggingIn: false,
