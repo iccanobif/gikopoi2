@@ -81,8 +81,7 @@ export const rooms: { [roomId: string]: Room } = {
         scale: 160 / 200,
         size: { x: 10, y: 9 },
         originCoordinates: { x: 18, y: 614 },
-        // spawnPoint: { x: 5, y: 2, direction: "right" },
-        spawnPoint: { x: 9, y: 4, direction: "right" },
+        spawnPoint: { x: 5, y: 2, direction: "right" },
         backgroundImageUrl: "rooms/admin_st/background.png",
         backgroundColor: "#c0c0c0",
         objects: [
