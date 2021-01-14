@@ -3,6 +3,7 @@ export const messages =
     ja:
     {
         default_user_name: "名無しさん",
+        message_colon: "：",
         ui:
         {
             infobox_label_area: "ｴﾘｱ：",
@@ -25,7 +26,7 @@ export const messages =
             button_stream_stop: "配信停止",
             button_stream_take: "受信",
             button_stream_drop: "受信停止",
-            volume: "音量: ",
+            volume: "音量：",
 
             cancel: "キャンセル"
         },
@@ -73,6 +74,7 @@ export const messages =
     en:
     {
         default_user_name: "Anonymous",
+        message_colon: ": ",
         ui:
         {
             infobox_label_area: "Area:",
