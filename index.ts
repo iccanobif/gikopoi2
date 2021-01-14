@@ -469,19 +469,26 @@ app.post("/login", (req, res) =>
 
 function clearStream(user: Player)
 {
-    if (!user) return
-
-    console.log("trying clearStream:", user.areaId, user.roomId)
-
-    const streams = roomStates[user.areaId][user.roomId].streams
-
-    const stream = streams.find(s => s.userId == user.id)
-    if (stream)
+    try
     {
-        stream.isActive = false
-        stream.isReady = false
-        stream.userId = null
-        io.to(user.areaId + user.roomId).emit("server-update-current-room-streams", streams)
+        if (!user) return
+
+        console.log("trying clearStream:", user.areaId, user.roomId)
+
+        const streams = roomStates[user.areaId][user.roomId].streams
+
+        const stream = streams.find(s => s.userId == user.id)
+        if (stream)
+        {
+            stream.isActive = false
+            stream.isReady = false
+            stream.userId = null
+            io.to(user.areaId + user.roomId).emit("server-update-current-room-streams", streams)
+        }
+    }
+    catch (error)
+    {
+        console.log(error)
     }
 }
 
