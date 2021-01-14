@@ -4,13 +4,13 @@ localStorage.removeItem("debug");
 import { characters } from "./character.js";
 import User from "./user.js";
 import
-  {
-    loadImage,
-    calculateRealCoordinates,
-    globalScale,
-    sleep,
-    postJson,
-  } from "./utils.js";
+{
+  loadImage,
+  calculateRealCoordinates,
+  globalScale,
+  sleep,
+  postJson,
+} from "./utils.js";
 import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 
@@ -556,8 +556,14 @@ const vueApp = new Vue({
       if (inputTextbox.value == "") return;
 
       const message = inputTextbox.value.substr(0, 500);
-      if (message == "#rula" || message == "#ﾙｰﾗ") this.isRulaPopupOpen = true;
-      else this.socket.emit("user-msg", message);
+      if (message == "#rula"
+        || message == "#ﾙｰﾗ"
+        || message == '#ﾘｽﾄ'
+        || message == '#list'
+      )
+        this.isRulaPopupOpen = true;
+      else
+        this.socket.emit("user-msg", message);
       inputTextbox.value = "";
     },
     registerKeybindings: function ()
