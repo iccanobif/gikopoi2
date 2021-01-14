@@ -5,8 +5,6 @@ export const messages =
         default_user_name: "名無しさん",
         ui:
         {
-            site_name: "BARギコっぽい2",
-
             infobox_label_area: "ｴﾘｱ：",
             infobox_value_area: "海辺の町",
             infobox_label_room: "ｽﾃｰｼﾞ：",
@@ -77,8 +75,6 @@ export const messages =
         default_user_name: "Anonymous",
         ui:
         {
-            site_name: "Gikopoi 2",
-
             infobox_label_area: "Area:",
             infobox_value_area: "Sea City",
             infobox_label_room: "Stage:",

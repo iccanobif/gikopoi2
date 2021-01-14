@@ -6,14 +6,23 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
     <link rel='stylesheet' href='style/main.css' />
     <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
-    <title>BARギコっぽいONLINE</title>
+    <title>ギコっぽいっぽい</title>
 </head>
 
 <body>
     <div id="vue-app" v-cloak>
         <div id="login-page" v-if="!loggedIn">
-            <h1>{{ $t("ui.site_name") }}</h1>
-            <form>
+            <header>
+                <div>
+                    <h1>ギコっぽいっぽい</h1>
+                    <h2>非公式リメイク</h2>
+                </div>
+                <div>
+                    <h1>Gikopoipoi</h1>
+                    <h2>Unofficial remake</h2>
+                </div>
+            </header>
+            <form id="login-form">
                 <label>User Name:</label> <input type="text" v-model="username" />
                 <div id="character-selection">
                     <label for="giko-selection">
@@ -34,18 +43,18 @@
                 <button v-on:click="login" :disabled="isLoggingIn">Login</button>
             </form>
             <div id="change-log">
-                <pre>
-2021/01/14: ログアウト出来ない不具合は調査中...
-2021/01/12: 「一般」と「国際」の分離。
-2021/01/11: 配信機能を改善。
-2021/01/09: #rulaコマンドを追加されました。
-                </pre>
-                <pre>
-2021/01/14: Ghosting issue is under investigation...
-2021/01/12: Split _gen and _for。
-2021/01/11: Improved streaming.
-2021/01/09: Added #rula command.
-                </pre>
+                <div>
+                    2021/01/14: ログアウト出来ない不具合は調査中...<br />
+                    2021/01/12: 「一般」と「国際」の分離。<br />
+                    2021/01/11: 配信機能を改善。<br />
+                    2021/01/09: #rulaコマンドを追加されました。
+                </div>
+                <div>
+                    2021/01/14: Ghosting issue is under investigation...<br />
+                    2021/01/12: Split _gen and _for。<br />
+                    2021/01/11: Improved streaming.<br />
+                    2021/01/09: Added #rula command.
+                </div>
             </div>
         </div>
         <div id="stage" v-if="loggedIn">
@@ -104,7 +113,8 @@
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
                     <hr v-if="index != 0" />
                     <div>
-                        {{ $t("ui.label_stream", {index: index+1}) }}<span class="stream-title">{{ streamSlot.title }}</span>
+                        {{ $t("ui.label_stream", {index: index+1}) }}<span class="stream-title">{{ streamSlot.title
+                            }}</span>
                     </div>
                     <video :id="'local-video-' + index"
                         v-show="streamSlot.isActive && streamSlot.withVideo && index == streamSlotIdInWhichIWantToStream"
@@ -121,11 +131,14 @@
 
                     <div v-if="!streamSlot.isActive && !iAmStreaming && !wantToStream">
                         <button class="start-streaming-button" :id="'start-video-streaming-button-' + index"
-                            v-on:click="wantToStartStreaming(index, true, false)">{{ $t("ui.button_video_stream_start") }}</button>
+                            v-on:click="wantToStartStreaming(index, true, false)">{{ $t("ui.button_video_stream_start")
+                            }}</button>
                         <button class="start-streaming-button" :id="'start-sound-streaming-button-' + index"
-                            v-on:click="wantToStartStreaming(index, false, true)">{{ $t("ui.button_sound_stream_start") }}</button>
+                            v-on:click="wantToStartStreaming(index, false, true)">{{ $t("ui.button_sound_stream_start")
+                            }}</button>
                         <button class="start-streaming-button" :id="'start-video-sound-streaming-button-' + index"
-                            v-on:click="wantToStartStreaming(index, true, true)">{{ $t("ui.button_video_sound_stream_start") }}</button>
+                            v-on:click="wantToStartStreaming(index, true, true)">{{
+                            $t("ui.button_video_sound_stream_start") }}</button>
                     </div>
                     <button :id="'stop-streaming-button-' + index"
                         v-if="iAmStreaming && streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">

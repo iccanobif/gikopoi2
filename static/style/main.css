@@ -4,6 +4,36 @@ body
     margin: 0;
 }
 
+header {
+    padding: 20px;
+    display: flex;
+}
+header div {
+    flex: 1 1;
+}
+
+header h1 {
+    margin-top:-15px;
+}
+
+header h2 {
+    margin-top: -18px;
+    font-size: medium;
+}
+
+#login-form {
+    padding: 0 20px 0 20px;
+}
+
+#change-log {
+    display: flex;
+}
+#change-log div {
+    flex: 1 1;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 12px;
+}
+
 [v-cloak] 
 {
     display: none;
@@ -209,6 +239,3 @@ video {
     width: 50px;
 }
 
-#change-log {
-    display: flex;
-}
