@@ -3,13 +3,14 @@ localStorage.removeItem("debug");
 
 import { characters } from "./character.js";
 import User from "./user.js";
-import {
-  loadImage,
-  calculateRealCoordinates,
-  globalScale,
-  sleep,
-  postJson,
-} from "./utils.js";
+import
+  {
+    loadImage,
+    calculateRealCoordinates,
+    globalScale,
+    sleep,
+    postJson,
+  } from "./utils.js";
 import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 
@@ -72,7 +73,8 @@ const vueApp = new Vue({
     steppingOnPortalToNonAvailableRoom: false,
   },
   methods: {
-    login: async function (ev) {
+    login: async function (ev)
+    {
       ev.preventDefault();
       this.isLoggingIn = true;
 
@@ -87,10 +89,10 @@ const vueApp = new Vue({
 
       if (this.characterId === "naito")
       {
-          const die = Math.random()
-          console.log(die)
-          if (die < 0.25)
-            this.characterId = "funkynaito"
+        const die = Math.random()
+        console.log(die)
+        if (die < 0.25)
+          this.characterId = "funkynaito"
       }
 
       this.loggedIn = true;
@@ -100,11 +102,13 @@ const vueApp = new Vue({
       this.isLoggingIn = false;
       this.paint();
     },
-    showWarningToast: function showWarningToast(text) {
+    showWarningToast: function showWarningToast(text)
+    {
       // TODO make this a nice, non-blocking message
       alert(text);
     },
-    connectToServer: async function () {
+    connectToServer: async function ()
+    {
       const loginResponse = await postJson("/login", {
         userName: this.username,
         characterId: this.characterId,
@@ -115,7 +119,8 @@ const vueApp = new Vue({
 
       this.socket = io();
 
-      this.socket.on("connect", () => {
+      this.socket.on("connect", () =>
+      {
         this.connectionLost = false;
         this.socket.emit("user-connect", this.myUserID);
         // TODO, give the server a way to reply "sorry, can't reconnect you"
@@ -126,18 +131,21 @@ const vueApp = new Vue({
         );
       });
 
-      this.socket.on("disconnect", () => {
+      this.socket.on("disconnect", () =>
+      {
         if (this.isSoundEnabled)
           document.getElementById("connection-lost-sound").play();
         this.connectionLost = true;
       });
-      this.socket.on("server-cant-log-you-in", () => {
+      this.socket.on("server-cant-log-you-in", () =>
+      {
         this.connectionLost = true;
       });
 
       this.socket.on(
         "server-update-current-room-state",
-        async (roomDto, usersDto, streamsDto) => {
+        async (roomDto, usersDto, streamsDto) =>
+        {
           this.isLoadingRoom = true;
 
           this.currentRoom = roomDto;
@@ -147,12 +155,15 @@ const vueApp = new Vue({
 
           for (const u of usersDto) this.addUser(u);
 
-          loadImage(this.currentRoom.backgroundImageUrl).then((image) => {
+          loadImage(this.currentRoom.backgroundImageUrl).then((image) =>
+          {
             this.currentRoom.backgroundImage = image;
           });
-          for (const o of this.currentRoom.objects) {
+          for (const o of this.currentRoom.objects)
+          {
             loadImage("rooms/" + this.currentRoom.id + "/" + o.url).then(
-              (image) => {
+              (image) =>
+              {
                 o.image = image;
                 const { x, y } = calculateRealCoordinates(
                   this.currentRoom,
@@ -184,9 +195,11 @@ const vueApp = new Vue({
         }
       );
 
-      this.socket.on("server-msg", (userName, msg) => {
+      this.socket.on("server-msg", (userName, msg) =>
+      {
         const chatLog = document.getElementById("chatLog");
-        if (userName != "SYSTEM" && this.isSoundEnabled) {
+        if (userName != "SYSTEM" && this.isSoundEnabled)
+        {
           document.getElementById("message-sound").play();
         }
 
@@ -194,11 +207,13 @@ const vueApp = new Vue({
         chatLog.scrollTop = chatLog.scrollHeight;
       });
 
-      this.socket.on("server-stats", (areaId, serverStats) => {
+      this.socket.on("server-stats", (areaId, serverStats) =>
+      {
         if (areaId == this.areaId) this.serverStats = serverStats;
       });
 
-      this.socket.on("server-move", (userId, x, y, direction, isInstant) => {
+      this.socket.on("server-move", (userId, x, y, direction, isInstant) =>
+      {
         const user = this.users[userId];
 
         const oldX = user.logicalPositionX;
@@ -208,7 +223,8 @@ const vueApp = new Vue({
           user.moveImmediatelyToPosition(this.currentRoom, x, y, direction);
         else user.moveToPosition(x, y, direction);
 
-        if (userId == this.myUserID) {
+        if (userId == this.myUserID)
+        {
           this.isWaitingForServerResponseOnMovement = false;
           if (oldX != x || oldY != y) this.justSpawnedToThisRoom = false;
         }
@@ -219,56 +235,71 @@ const vueApp = new Vue({
         () => (this.isWaitingForServerResponseOnMovement = false)
       );
 
-      this.socket.on("server-user-joined-room", async (user) => {
+      this.socket.on("server-user-joined-room", async (user) =>
+      {
         if (this.isSoundEnabled) document.getElementById("login-sound").play();
         this.addUser(user);
       });
 
-      this.socket.on("server-user-left-room", (userId) => {
+      this.socket.on("server-user-left-room", (userId) =>
+      {
         if (userId != this.myUserID) delete this.users[userId];
       });
 
-      this.socket.on("server-not-ok-to-stream", (reason) => {
+      this.socket.on("server-not-ok-to-stream", (reason) =>
+      {
         this.wantToStream = false;
         this.showWarningToast(reason);
       });
-      this.socket.on("server-ok-to-stream", () => {
+      this.socket.on("server-ok-to-stream", () =>
+      {
         this.wantToStream = false;
         this.iAmStreaming = true;
         this.startStreaming();
       });
-      this.socket.on("server-update-current-room-streams", (streams) => {
+      this.socket.on("server-update-current-room-streams", (streams) =>
+      {
         this.streams = streams;
         this.updateCurrentRoomStreams(streams);
       });
 
-      this.socket.on("server-ok-to-take-stream", async (slotId) => {});
+      this.socket.on("server-ok-to-take-stream", async (slotId) => { });
 
-      this.socket.on("server-rtc-offer", async (offer) => {
-        try {
+      this.socket.on("server-rtc-offer", async (offer) =>
+      {
+        try
+        {
           this.rtcPeer.acceptOffer(offer);
-        } catch (e) {
+        } catch (e)
+        {
           console.error(e.message + " " + e.stack);
         }
       });
-      this.socket.on("server-rtc-answer", async (answer) => {
-        try {
+      this.socket.on("server-rtc-answer", async (answer) =>
+      {
+        try
+        {
           this.rtcPeer.acceptAnswer(answer);
-        } catch (e) {
+        } catch (e)
+        {
           console.error(e.message + " " + e.stack);
         }
       });
-      this.socket.on("server-rtc-candidate", async (candidate) => {
-        try {
+      this.socket.on("server-rtc-candidate", async (candidate) =>
+      {
+        try
+        {
           this.rtcPeer.addCandidate(candidate);
-        } catch (e) {
+        } catch (e)
+        {
           console.error(e.message + " " + e.stack);
         }
       });
 
       let version = Infinity;
 
-      const ping = async () => {
+      const ping = async () =>
+      {
         if (this.connectionLost) return;
         const response = await postJson("/ping/" + this.myUserID, {
           userId: this.myUserID,
@@ -287,7 +318,8 @@ const vueApp = new Vue({
 
       setInterval(ping, 1000 * 60);
     },
-    addUser: function (userDTO) {
+    addUser: function (userDTO)
+    {
       const newUser = new User(characters[userDTO.characterId], userDTO.name);
       newUser.moveImmediatelyToPosition(
         this.currentRoom,
@@ -297,7 +329,8 @@ const vueApp = new Vue({
       );
       this.users[userDTO.id] = newUser;
     },
-    drawImage: function (image, x, y, scale) {
+    drawImage: function (image, x, y, scale)
+    {
       if (!image) return; // image might be null when rendering a room that hasn't been fully loaded
 
       if (!scale) scale = 1;
@@ -311,13 +344,15 @@ const vueApp = new Vue({
         image.height * globalScale * scale
       );
     },
-    drawHorizontallyFlippedImage: function (image, x, y) {
+    drawHorizontallyFlippedImage: function (image, x, y)
+    {
       const context = document.getElementById("room-canvas").getContext("2d");
       context.scale(-1, 1);
       this.drawImage(image, -x - image.width / 2, y);
       context.setTransform(1, 0, 0, 1, 0, 0); // clear transformation
     },
-    drawCenteredText: function (text, x, y) {
+    drawCenteredText: function (text, x, y)
+    {
       const context = document.getElementById("room-canvas").getContext("2d");
       // const width = context.measureText(text).width
       context.font = "bold 13px Arial, Helvetica, sans-serif";
@@ -327,9 +362,12 @@ const vueApp = new Vue({
       context.fillText(text, x, y);
     },
     // TODO: Refactor this entire function
-    paint: function (timestamp) {
-      try {
-        if (this.forceUserInstantMove) {
+    paint: function (timestamp)
+    {
+      try
+      {
+        if (this.forceUserInstantMove)
+        {
           this.forcePhysicalPositionRefresh();
           this.forceUserInstantMove = false;
         }
@@ -338,7 +376,8 @@ const vueApp = new Vue({
         context.fillStyle = "#c0c0c0";
         context.fillRect(0, 0, 721, 511);
 
-        if (this.currentRoom) {
+        if (this.currentRoom)
+        {
           context.fillStyle = this.currentRoom.backgroundColor;
           context.fillRect(0, 0, 721, 511);
 
@@ -366,14 +405,17 @@ const vueApp = new Vue({
                   (this.currentRoom.size.y - o.logicalPositionY),
               }))
             )
-            .sort((a, b) => {
+            .sort((a, b) =>
+            {
               if (a.priority < b.priority) return -1;
               if (a.priority > b.priority) return 1;
               return 0;
             });
 
-          for (const o of allObjects) {
-            if (o.type == "room-object") {
+          for (const o of allObjects)
+          {
+            if (o.type == "room-object")
+            {
               this.drawImage(
                 o.o.image,
                 o.o.physicalPositionX,
@@ -381,8 +423,10 @@ const vueApp = new Vue({
                 this.currentRoom.scale * o.o.scale
               );
             } // o.type == "user"
-            else {
-              if (!this.isLoadingRoom) {
+            else
+            {
+              if (!this.isLoadingRoom)
+              {
                 // draw users only when the room is fully loaded, so that the "physical position" calculations
                 // are done with the correct room's data.
                 this.drawCenteredText(
@@ -391,7 +435,8 @@ const vueApp = new Vue({
                   o.o.currentPhysicalPositionY - 95
                 );
 
-                switch (o.o.direction) {
+                switch (o.o.direction)
+                {
                   case "up":
                   case "right":
                     this.drawHorizontallyFlippedImage(
@@ -415,14 +460,16 @@ const vueApp = new Vue({
             }
           }
 
-          if (localStorage.getItem("enableGridNumbers") == "true") {
+          if (localStorage.getItem("enableGridNumbers") == "true")
+          {
             context.font = "bold 13px Arial, Helvetica, sans-serif";
             context.textBaseline = "bottom";
             context.textAlign = "right";
             context.fillStyle = "blue";
 
             for (let x = 0; x < this.currentRoom.size.x; x++)
-              for (let y = 0; y < this.currentRoom.size.y; y++) {
+              for (let y = 0; y < this.currentRoom.size.y; y++)
+              {
                 const realCoord = calculateRealCoordinates(
                   this.currentRoom,
                   x,
@@ -437,13 +484,15 @@ const vueApp = new Vue({
           }
         }
         this.changeRoomIfSteppingOnDoor();
-      } catch (err) {
+      } catch (err)
+      {
         console.log(err);
       }
 
       requestAnimationFrame(this.paint);
     },
-    changeRoomIfSteppingOnDoor: function () {
+    changeRoomIfSteppingOnDoor: function ()
+    {
       if (this.justSpawnedToThisRoom) return;
       if (this.isWaitingForServerResponseOnMovement) return;
       if (this.requestedRoomChange) return;
@@ -464,19 +513,22 @@ const vueApp = new Vue({
 
       const { targetRoomId, targetX, targetY } = door;
 
-      if (targetRoomId == "NOT_READY_YET") {
+      if (targetRoomId == "NOT_READY_YET")
+      {
         this.steppingOnPortalToNonAvailableRoom = true;
         return;
       }
       this.changeRoom(targetRoomId, targetX, targetY);
     },
-    changeRoom: function (targetRoomId, targetX, targetY) {
+    changeRoom: function (targetRoomId, targetX, targetY)
+    {
       if (this.webcamStream) this.stopStreaming();
 
       this.requestedRoomChange = true;
       this.socket.emit("user-change-room", { targetRoomId, targetX, targetY });
     },
-    forcePhysicalPositionRefresh: function () {
+    forcePhysicalPositionRefresh: function ()
+    {
       for (const u of Object.values(this.users))
         u.moveImmediatelyToPosition(
           this.currentRoom,
@@ -485,7 +537,8 @@ const vueApp = new Vue({
           u.direction
         );
     },
-    sendNewPositionToServer: function (direction) {
+    sendNewPositionToServer: function (direction)
+    {
       if (
         this.isLoadingRoom ||
         this.isWaitingForServerResponseOnMovement ||
@@ -496,7 +549,8 @@ const vueApp = new Vue({
       this.isWaitingForServerResponseOnMovement = true;
       this.socket.emit("user-move", direction);
     },
-    sendMessageToServer: function () {
+    sendMessageToServer: function ()
+    {
       const inputTextbox = document.getElementById("input-textbox");
 
       if (inputTextbox.value == "") return;
@@ -506,27 +560,32 @@ const vueApp = new Vue({
       else this.socket.emit("user-msg", message);
       inputTextbox.value = "";
     },
-    registerKeybindings: function () {
+    registerKeybindings: function ()
+    {
       window.addEventListener(
         "focus",
         () => (this.forceUserInstantMove = true)
       );
     },
-    toggleInfobox: function () {
+    toggleInfobox: function ()
+    {
       localStorage.setItem(
         "isInfoboxVisible",
         (this.isInfoboxVisible = !this.isInfoboxVisible)
       );
     },
-    toggleSound: function () {
+    toggleSound: function ()
+    {
       localStorage.setItem(
         "isSoundEnabled",
         (this.isSoundEnabled = !this.isSoundEnabled)
       );
       console.log(localStorage.getItem("isSoundEnabled"));
     },
-    handleCanvasKeydown: function (event) {
-      switch (event.key) {
+    handleCanvasKeydown: function (event)
+    {
+      switch (event.key)
+      {
         case "ArrowLeft":
           this.sendNewPositionToServer("left");
           break;
@@ -541,47 +600,60 @@ const vueApp = new Vue({
           break;
       }
     },
-    handleMessageInputKeydown: function (event) {
+    handleMessageInputKeydown: function (event)
+    {
       if (event.key != "Enter") return;
 
       this.sendMessageToServer();
     },
 
-    openRTCConnection: function () {
-      try {
+    openRTCConnection: function ()
+    {
+      try
+      {
         this.rtcPeer.open();
         if (this.rtcPeer.conn === null) return;
         this.rtcPeer.conn.addEventListener("iceconnectionstatechange", (ev) =>
           this.handleIceConnectionStateChange(ev)
         );
-      } catch (e) {
+      } catch (e)
+      {
         console.error(e.message + " " + e.stack);
       }
     },
 
-    handleIceConnectionStateChange: function (event) {
-      try {
+    handleIceConnectionStateChange: function (event)
+    {
+      try
+      {
         if (this.rtcPeer.conn === null) return;
         const state = this.rtcPeer.conn.iceConnectionState;
 
-        if (["failed", "disconnected", "closed"].includes(state)) {
+        if (["failed", "disconnected", "closed"].includes(state))
+        {
           this.rtcPeer.close();
         }
-      } catch (e) {
+      } catch (e)
+      {
         console.error(e.message + " " + e.stack);
       }
     },
 
-    emitRTCMessage: function (type, message) {
-      try {
+    emitRTCMessage: function (type, message)
+    {
+      try
+      {
         this.socket.emit("user-rtc-" + type, message);
-      } catch (e) {
+      } catch (e)
+      {
         console.error(e.message + " " + e.stack);
       }
     },
 
-    updateCurrentRoomStreams: function (streams) {
-      for (const slotId in streams) {
+    updateCurrentRoomStreams: function (streams)
+    {
+      for (const slotId in streams)
+      {
         const stream = streams[slotId];
         if (stream.isActive)
           Vue.set(stream, "title", this.users[stream.userId].name);
@@ -591,8 +663,10 @@ const vueApp = new Vue({
       }
     },
 
-    wantToStartStreaming: async function (streamSlotId, withVideo, withSound) {
-      try {
+    wantToStartStreaming: async function (streamSlotId, withVideo, withSound)
+    {
+      try
+      {
         this.wantToStream = true;
         this.streamSlotIdInWhichIWantToStream = streamSlotId;
 
@@ -617,14 +691,16 @@ const vueApp = new Vue({
           withVideo: withVideo,
           withSound: withSound,
         });
-      } catch (err) {
+      } catch (err)
+      {
         this.showWarningToast("sorry, can't find a webcam");
         console.error(err);
         this.wantToStream = false;
         this.webcamStream = false;
       }
     },
-    startStreaming: async function () {
+    startStreaming: async function ()
+    {
       this.openRTCConnection();
 
       this.webcamStream
@@ -637,7 +713,8 @@ const vueApp = new Vue({
         "local-video-" + this.streamSlotIdInWhichIWantToStream
       ).srcObject = this.webcamStream;
     },
-    stopStreaming: function () {
+    stopStreaming: function ()
+    {
       this.iAmStreaming = false;
       for (const track of this.webcamStream.getTracks()) track.stop();
       document.getElementById(
@@ -646,13 +723,15 @@ const vueApp = new Vue({
       this.streamSlotIdInWhichIWantToStream = null;
       this.socket.emit("user-want-to-stop-stream");
     },
-    wantToTakeStream: function (streamSlotId) {
+    wantToTakeStream: function (streamSlotId)
+    {
       Vue.set(this.takenStreams, streamSlotId, true);
       this.openRTCConnection();
 
       this.rtcPeer.conn.addEventListener(
         "track",
-        (event) => {
+        (event) =>
+        {
           document.getElementById("received-video-" + streamSlotId).srcObject =
             event.streams[0];
         },
@@ -661,21 +740,26 @@ const vueApp = new Vue({
 
       this.socket.emit("user-want-to-take-stream", streamSlotId);
     },
-    wantToDropStream: function (streamSlotId) {
+    wantToDropStream: function (streamSlotId)
+    {
       Vue.set(this.takenStreams, streamSlotId, false);
       this.socket.emit("user-want-to-drop-stream", streamSlotId);
     },
-    rula: function (roomId) {
+    rula: function (roomId)
+    {
       this.changeRoom(roomId);
       this.isRulaPopupOpen = false;
     },
-    cancelRula: function () {
+    cancelRula: function ()
+    {
       this.isRulaPopupOpen = false;
     },
-    logout: async function () {
+    logout: async function ()
+    {
       await postJson("/logout", { userID: this.myUserID });
     },
-    changeVolume: function (streamSlotId) {
+    changeVolume: function (streamSlotId)
+    {
       const volumeSlider = document.getElementById("volume-" + streamSlotId);
 
       const videoElement = document.getElementById(
