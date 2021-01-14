@@ -81,7 +81,8 @@ export const rooms: { [roomId: string]: Room } = {
         scale: 160 / 200,
         size: { x: 10, y: 9 },
         originCoordinates: { x: 18, y: 614 },
-        spawnPoint: { x: 5, y: 2, direction: "right" },
+        // spawnPoint: { x: 5, y: 2, direction: "right" },
+        spawnPoint: { x: 9, y: 4, direction: "right" },
         backgroundImageUrl: "rooms/admin_st/background.png",
         backgroundColor: "#c0c0c0",
         objects: [
@@ -95,7 +96,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 5, y: 8, url: "chair.svg", scale: 2.5, xOffset: 28, yOffset: -18 },
 
             { x: 6, y: 5, url: "boom-barrier.svg", scale: 2.5, xOffset: -1, yOffset: -10 },
-            { x: 9, y: 4, url: "funkyboon.svg", scale: 2.5, xOffset: 5, yOffset: -8 },
+            { x: 10, y: 4, url: "funkyboon.svg", scale: 2.5, xOffset: -35, yOffset: -28 },
         ],
         sit: [
             { x: 5, y: 6 },
@@ -104,6 +105,8 @@ export const rooms: { [roomId: string]: Room } = {
         blocked: [
             // { x: 0, y: 5 },
             { x: 1, y: 5 },
+            { x: 1, y: 6 },
+            { x: 1, y: 8 },
             { x: 2, y: 5 },
             { x: 3, y: 5 },
             { x: 4, y: 5 },
@@ -112,8 +115,6 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 6, y: 5 },
             { x: 7, y: 5 },
             { x: 8, y: 5 },
-            { x: 9, y: 5 },
-            { x: 9, y: 4 },
 
             { x: 5, y: 7 }, // go table
         ],
@@ -126,6 +127,13 @@ export const rooms: { [roomId: string]: Room } = {
             { xFrom: 5, yFrom: 4, xTo: 5, yTo: 3 },
             { xFrom: 5, yFrom: 4, xTo: 6, yTo: 4 },
             { xFrom: 5, yFrom: 4, xTo: 4, yTo: 4 },
+            // can't enter funky boon
+            { xFrom: 9, yFrom: 3, xTo: 9, yTo: 4 },
+            { xFrom: 8, yFrom: 4, xTo: 9, yTo: 4 },
+            // cant' exit funky boon
+            { xFrom: 9, yFrom: 4, xTo: 9, yTo: 3 },
+            { xFrom: 9, yFrom: 4, xTo: 8, yTo: 4 },
+
         ],
         doors: [
             { x: 0, y: 2, targetRoomId: "bar", targetX: 8, targetY: 4 },
