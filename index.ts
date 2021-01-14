@@ -471,6 +471,8 @@ function clearStream(user: Player)
 {
     if (!user) return
 
+    console.log("trying clearStream:", user.areaId, user.roomId)
+
     const streams = roomStates[user.areaId][user.roomId].streams
 
     const stream = streams.find(s => s.userId == user.id)
@@ -485,7 +487,7 @@ function clearStream(user: Player)
 
 function disconnectUser(user: Player)
 {
-    console.log("Disconnecting user ", user.id, user.name)
+    console.log("Disconnecting user ", user.id, user.name, user.areaId)
     clearStream(user)
     removeUser(user)
 

@@ -192,7 +192,7 @@ video {
 #rula-menu {
     position: absolute;
     width: 200px;
-    height: 200px;
+    height: 250px;
     top: calc(50% - 100px);
     left: calc(50% - 100px);
     background-color: gray;
