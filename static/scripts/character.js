@@ -43,4 +43,5 @@ export class Character
 export const characters = {
     giko: new Character("giko"),
     naito: new Character("naito"),
+    funkynaito: new Character("funkynaito"),
 }
