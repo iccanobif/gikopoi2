@@ -97,7 +97,10 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 6, y: 5, url: "boom-barrier.svg", scale: 2.5, xOffset: -1, yOffset: -10 },
             { x: 9, y: 4, url: "funkyboon.svg", scale: 2.5, xOffset: 5, yOffset: -8 },
         ],
-        sit: [],
+        sit: [
+            { x: 5, y: 6 },
+            { x: 5, y: 8 },
+        ],
         blocked: [
             // { x: 0, y: 5 },
             { x: 1, y: 5 },
@@ -111,6 +114,8 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 8, y: 5 },
             { x: 9, y: 5 },
             { x: 9, y: 4 },
+
+            { x: 5, y: 7 }, // go table
         ],
         forbiddenMovements: [
             // can't enter the trash bin
@@ -129,6 +134,36 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 7, y: 0, targetRoomId: "bar_st", targetX: 7, targetY: 8 },
             { x: 9, y: 2, targetRoomId: "NOT_READY_YET", targetX: 10, targetY: 0 },
             { x: 0, y: 8, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
+            { x: 2, y: 0, targetRoomId: "basement", targetX: 8, targetY: 3 }, // manhole left
+            { x: 9, y: 7, targetRoomId: "basement", targetX: 9, targetY: 3 }, // manhole left
+        ],
+        streamSlotCount: 0,
+    },
+    basement: {
+        id: "basement",
+        scale: 160 / 200,
+        size: { x: 10, y: 4 },
+        originCoordinates: { x: 80, y: 534 },
+        spawnPoint: { x: 0, y: 0, direction: "right" },
+        backgroundImageUrl: "rooms/basement/basement.png",
+        backgroundColor: "#c0c0c0",
+        objects: [
+        ],
+        sit: [],
+        blocked: [
+            { x: 4, y: 3 }
+        ],
+        forbiddenMovements: [
+        ],
+        doors: [
+            { x: 1, y: 0, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
+            { x: 0, y: 2, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
+            { x: 1, y: 3, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
+            { x: 3, y: 3, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 }, // secret bar
+            { x: 6, y: 3, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 }, // bar774
+            { x: 8, y: 3, targetRoomId: "admin_st", targetX: 2, targetY: 0 }, // kanrinin street left
+            { x: 9, y: 3, targetRoomId: "admin_st", targetX: 9, targetY: 7 }, // kanrinin street right
+            { x: 8, y: 0, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
         ],
         streamSlotCount: 0,
     },
