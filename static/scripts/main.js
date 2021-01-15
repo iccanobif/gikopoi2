@@ -586,15 +586,19 @@ const vueApp = new Vue({
             switch (event.key)
             {
                 case "ArrowLeft":
+                    event.preventDefault()
                     this.sendNewPositionToServer("left");
                     break;
                 case "ArrowRight":
+                    event.preventDefault()
                     this.sendNewPositionToServer("right");
                     break;
                 case "ArrowUp":
+                    event.preventDefault()
                     this.sendNewPositionToServer("up");
                     break;
                 case "ArrowDown":
+                    event.preventDefault()
                     this.sendNewPositionToServer("down");
                     break;
             }
