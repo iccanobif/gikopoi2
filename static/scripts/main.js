@@ -188,7 +188,7 @@ const vueApp = new Vue({
                 }
             );
 
-            this.socket.on("server-msg", (userName, msg, msgType) =>
+            this.socket.on("server-msg", (msgType, msg, userName) =>
             {
                 const chatLog = document.getElementById("chatLog");
                 if (msgType != "system" && this.isSoundEnabled)
@@ -199,9 +199,15 @@ const vueApp = new Vue({
                 const messageDiv = document.createElement("div");
                 messageDiv.className = "message message-type-" + msgType;
                 
-                const authorSpan = document.createElement("span");
-                authorSpan.className = "message-author";
-                authorSpan.textContent = userName;
+                if (userName !== null)
+                {
+                    const authorSpan = document.createElement("span");
+                    authorSpan.className = "message-author";
+                    authorSpan.textContent = userName;
+                    
+                    messageDiv.append(authorSpan);
+                    messageDiv.append(document.createTextNode(": "));
+                }
                 
                 const bodySpan = document.createElement("span");
                 bodySpan.className = "message-body";
@@ -214,8 +220,6 @@ const vueApp = new Vue({
                         return "<a href='" + href + "' target='_blank'>" + url + "</a>";
                     })
                 
-                messageDiv.append(authorSpan);
-                messageDiv.append(document.createTextNode(": "));
                 messageDiv.append(bodySpan);
                 
                 

@@ -94,7 +94,7 @@ io.on("connection", function (socket: any)
 
             console.log(userName + ": " + msg);
             
-            io.to(user.areaId + user.roomId).emit("server-msg", userName, msg, "user");
+            io.to(user.areaId + user.roomId).emit("server-msg", "user", msg, userName);
         }
         catch (e)
         {
@@ -450,7 +450,7 @@ app.post("/login", (req, res) =>
         const user = addNewUser(processedUserName, characterId, areaId);
         res.json(user.id)
 
-        io.to(areaId + user.roomId).emit("server-msg", "SYSTEM", processedUserName + " connected", "system");
+        io.to(areaId + user.roomId).emit("server-msg", "system", processedUserName + " connected", null);
         io.to(areaId + user.roomId).emit("server-user-joined-room", user);
     }
     catch (e)
@@ -490,7 +490,7 @@ function disconnectUser(user: Player)
     clearStream(user)
     removeUser(user)
 
-    io.to(user.areaId + user.roomId).emit("server-msg", "SYSTEM", user.name + " disconnected", "system");
+    io.to(user.areaId + user.roomId).emit("server-msg", "system", user.name + " disconnected", null);
     io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
     emitServerStats(user.areaId)
 }
