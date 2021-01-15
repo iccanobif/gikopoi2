@@ -88,20 +88,13 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            msg = msg
-                .substr(0, 500)
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/((https?:\/\/|www\.)[^\s]+)/gi, function (url, prefix)
-                {
-                    let href = (prefix == "www." ? "http://" + url : url);
-                    return "<a href='" + href + "' target='_blank'>" + url + "</a>";
-                })
+            msg = msg.substr(0, 500)
 
             const userName = user.name
 
             console.log(userName + ": " + msg);
-            io.to(user.areaId + user.roomId).emit("server-msg", "<span class=\"messageAuthor\">" + userName + "</span>", "<span class=\"messageBody\">" + msg + "</span>");
+            
+            io.to(user.areaId + user.roomId).emit("server-msg", userName, msg, "user");
         }
         catch (e)
         {
@@ -453,12 +446,11 @@ app.post("/login", (req, res) =>
             processedUserName = processedUserName + "◆" + tripcode(userName.substr(n + 1));
 
         console.log(processedUserName, "logging in")
-
-        const sanitizedUserName = processedUserName.replace(/</g, "&lt;").replace(/>/g, "&gt;")
-        const user = addNewUser(sanitizedUserName, characterId, areaId);
+        
+        const user = addNewUser(processedUserName, characterId, areaId);
         res.json(user.id)
 
-        io.to(areaId + user.roomId).emit("server-msg", "SYSTEM", sanitizedUserName + " connected");
+        io.to(areaId + user.roomId).emit("server-msg", "SYSTEM", processedUserName + " connected", "system");
         io.to(areaId + user.roomId).emit("server-user-joined-room", user);
     }
     catch (e)
@@ -498,7 +490,7 @@ function disconnectUser(user: Player)
     clearStream(user)
     removeUser(user)
 
-    io.to(user.areaId + user.roomId).emit("server-msg", "SYSTEM", user.name + " disconnected");
+    io.to(user.areaId + user.roomId).emit("server-msg", "SYSTEM", user.name + " disconnected", "system");
     io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
     emitServerStats(user.areaId)
 }

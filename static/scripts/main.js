@@ -188,15 +188,39 @@ const vueApp = new Vue({
                 }
             );
 
-            this.socket.on("server-msg", (userName, msg) =>
+            this.socket.on("server-msg", (userName, msg, msgType) =>
             {
                 const chatLog = document.getElementById("chatLog");
-                if (userName != "SYSTEM" && this.isSoundEnabled)
+                if (msgType != "system" && this.isSoundEnabled)
                 {
                     document.getElementById("message-sound").play();
                 }
-
-                chatLog.innerHTML += userName + ": " + msg + "<br/>";
+                
+                const messageDiv = document.createElement("div");
+                messageDiv.className = "message message-type-" + msgType;
+                
+                const authorSpan = document.createElement("span");
+                authorSpan.className = "message-author";
+                authorSpan.textContent = userName;
+                
+                const bodySpan = document.createElement("span");
+                bodySpan.className = "message-body";
+                bodySpan.textContent = msg;
+                bodySpan.innerHTML = bodySpan.innerHTML.replace(
+                    /((https?:\/\/|www\.)[^\s]+)/gi,
+                    function (url, prefix)
+                    {
+                        let href = (prefix == "www." ? "http://" + url : url);
+                        return "<a href='" + href + "' target='_blank'>" + url + "</a>";
+                    })
+                
+                messageDiv.append(authorSpan);
+                messageDiv.append(document.createTextNode(": "));
+                messageDiv.append(bodySpan);
+                
+                
+                
+                chatLog.appendChild(messageDiv);
                 chatLog.scrollTop = chatLog.scrollHeight;
             });
 
@@ -423,7 +447,7 @@ const vueApp = new Vue({
                                 // draw users only when the room is fully loaded, so that the "physical position" calculations
                                 // are done with the correct room's data.
                                 this.drawCenteredText(
-                                    o.o.name.replace(/&gt;/g, ">").replace(/&lt;/g, "<"),
+                                    o.o.name,
                                     o.o.currentPhysicalPositionX + 40,
                                     o.o.currentPhysicalPositionY - 95
                                 );

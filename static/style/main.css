@@ -51,6 +51,11 @@ header h2 {
     overflow-y: auto;
 }
 
+.message-type-system
+{
+    color: #767676;
+}
+
 
 #canvas-container
 {
@@ -238,4 +243,3 @@ video {
 #character-selection img {
     width: 50px;
 }
-
