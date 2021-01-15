@@ -5,12 +5,16 @@ export const messages =
         default_user_name: "名無しさん",
         ui:
         {
+            title: "ギコっぽいっぽい",
+            subtitle: "非公式リメイク",
+            
             infobox_label_area: "ｴﾘｱ：",
             infobox_value_area: "海辺の町",
             infobox_label_room: "ｽﾃｰｼﾞ：",
             infobox_label_user_name: "名前：",
             infobox_label_user_count: "人数：",
-
+            
+            label_username: "ユーザー名：",
             label_stream: "ﾁｬﾝﾈﾙ{index}：",
             label_input: "入力：",
             label_log: "ログ：",
@@ -75,12 +79,16 @@ export const messages =
         default_user_name: "Anonymous",
         ui:
         {
+            title: "Gikopoipoi",
+            subtitle: "Unofficial remake",
+            
             infobox_label_area: "Area:",
             infobox_value_area: "Sea City",
             infobox_label_room: "Stage:",
             infobox_label_user_name: "Name:",
             infobox_label_user_count: "Users:",
-
+            
+            label_username: "User name:",
             label_stream: "Channel {index}: ",
             label_input: "Input:",
             label_log: "Log:",
