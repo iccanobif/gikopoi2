@@ -70,9 +70,7 @@ const vueApp = new Vue({
         {
             ev.preventDefault();
             this.isLoggingIn = true;
-
-            i18n.locale = this.areaId == "for" ? "en" : "ja";
-
+            
             await Promise.all([
                 characters.giko.loadImages(),
                 characters.naito.loadImages(),
@@ -94,6 +92,10 @@ const vueApp = new Vue({
             await this.connectToServer(this.username);
             this.isLoggingIn = false;
             this.paint();
+        },
+        setLanguage: function(code)
+        {
+            i18n.locale = code;
         },
         showWarningToast: function showWarningToast(text)
         {
@@ -135,8 +137,7 @@ const vueApp = new Vue({
                 this.connectionLost = true;
             });
 
-            this.socket.on(
-                "server-update-current-room-state",
+            this.socket.on("server-update-current-room-state",
                 async (roomDto, usersDto, streamsDto) =>
                 {
                     this.isLoadingRoom = true;
@@ -188,14 +189,16 @@ const vueApp = new Vue({
                 }
             );
 
-            this.socket.on("server-msg", (msgType, msg, userName) =>
+            this.socket.on("server-msg", (userName, msg) =>
             {
                 const chatLog = document.getElementById("chatLog");
-                if (msgType != "system" && this.isSoundEnabled)
+                if (this.isSoundEnabled)
                 {
                     document.getElementById("message-sound").play();
                 }
                 
+                const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
+
                 const messageDiv = document.createElement("div");
                 messageDiv.className = "message message-type-" + msgType;
                 
@@ -206,7 +209,8 @@ const vueApp = new Vue({
                     authorSpan.textContent = userName;
                     
                     messageDiv.append(authorSpan);
-                    messageDiv.append(document.createTextNode(": "));
+                    messageDiv.append(document.createTextNode(
+                        i18n.t("message_colon")));
                 }
                 
                 const bodySpan = document.createElement("span");
@@ -222,10 +226,11 @@ const vueApp = new Vue({
                 
                 messageDiv.append(bodySpan);
                 
-                
-                
                 chatLog.appendChild(messageDiv);
-                chatLog.scrollTop = chatLog.scrollHeight;
+                
+                if (isAtBottom)
+                    chatLog.scrollTop = chatLog.scrollHeight -
+                        chatLog.clientHeight;
             });
 
             this.socket.on("server-stats", (areaId, serverStats) =>
@@ -251,8 +256,7 @@ const vueApp = new Vue({
                 }
             });
 
-            this.socket.on(
-                "server-reject-movement",
+            this.socket.on("server-reject-movement",
                 () => (this.isWaitingForServerResponseOnMovement = false)
             );
 
@@ -614,15 +618,19 @@ const vueApp = new Vue({
             switch (event.key)
             {
                 case "ArrowLeft":
+                    event.preventDefault()
                     this.sendNewPositionToServer("left");
                     break;
                 case "ArrowRight":
+                    event.preventDefault()
                     this.sendNewPositionToServer("right");
                     break;
                 case "ArrowUp":
+                    event.preventDefault()
                     this.sendNewPositionToServer("up");
                     break;
                 case "ArrowDown":
+                    event.preventDefault()
                     this.sendNewPositionToServer("down");
                     break;
             }
