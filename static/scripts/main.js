@@ -200,18 +200,11 @@ const vueApp = new Vue({
                 const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
 
                 const messageDiv = document.createElement("div");
-                messageDiv.className = "message message-type-" + msgType;
+                messageDiv.className = "message";
                 
-                if (userName !== null)
-                {
-                    const authorSpan = document.createElement("span");
-                    authorSpan.className = "message-author";
-                    authorSpan.textContent = userName;
-                    
-                    messageDiv.append(authorSpan);
-                    messageDiv.append(document.createTextNode(
-                        i18n.t("message_colon")));
-                }
+                const authorSpan = document.createElement("span");
+                authorSpan.className = "message-author";
+                authorSpan.textContent = userName;
                 
                 const bodySpan = document.createElement("span");
                 bodySpan.className = "message-body";
@@ -224,6 +217,9 @@ const vueApp = new Vue({
                         return "<a href='" + href + "' target='_blank'>" + url + "</a>";
                     })
                 
+                messageDiv.append(authorSpan);
+                messageDiv.append(document.createTextNode(
+                    i18n.t("message_colon")));
                 messageDiv.append(bodySpan);
                 
                 chatLog.appendChild(messageDiv);
