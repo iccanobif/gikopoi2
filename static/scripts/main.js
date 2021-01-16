@@ -210,9 +210,9 @@ const vueApp = new Vue({
                         chatLog.clientHeight;
             });
 
-            this.socket.on("server-stats", (areaId, serverStats) =>
+            this.socket.on("server-stats", (serverStats) =>
             {
-                if (areaId == this.areaId) this.serverStats = serverStats;
+                this.serverStats = serverStats;
             });
 
             this.socket.on("server-move", (userId, x, y, direction, isInstant) =>

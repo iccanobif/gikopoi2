@@ -68,6 +68,7 @@ io.on("connection", function (socket: any)
             if (!user)
                 socket.emit("server-cant-log-you-in")
 
+            socket.join(user.areaId)
             socket.join(user.areaId + currentRoom.id)
 
             console.log("userId: " + userId + " name: " + user.name);
@@ -373,7 +374,7 @@ io.on("connection", function (socket: any)
 
 function emitServerStats(areaId: string)
 {
-    io.emit("server-stats", areaId, {
+    io.to(areaId).emit("server-stats", {
         userCount: getConnectedUserList(null, areaId).length
     })
 }
