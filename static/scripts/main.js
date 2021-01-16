@@ -210,7 +210,7 @@ const vueApp = new Vue({
                     .replace(/(https?:\/\/|www\.)[^\s]+/gi, (url, prefix) =>
                 {
                     const href = (prefix == "www." ? "http://" + url : url);
-                    return "<a href='" + href + "' target='_blank'>" + url + "</a>";
+                    return "<a href='" + href + "' target='_blank' tabindex='-1'>" + url + "</a>";
                 });
                 
                 messageDiv.append(authorSpan);
