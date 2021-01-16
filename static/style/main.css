@@ -5,36 +5,35 @@ body
 }
 
 header {
-    padding: 20px;
-    display: flex;
-}
-header div {
-    flex: 1 1;
+    margin: 5px 20px 20px 20px;
+    height: 70px
 }
 
 header h1 {
-    margin-top:-15px;
+    margin: 0;
 }
 
 header h2 {
-    margin-top: -18px;
+    margin: 0;
     font-size: medium;
 }
 
+
 #login-form {
-    padding: 0 20px 0 20px;
+    display: block;
+    margin: 20px;
+}
+
+#login-form > div {
+    padding: 3px 0 3px 0;
 }
 
 #change-log {
-    display: flex;
-}
-#change-log div {
-    flex: 1 1;
     font-family: 'Courier New', Courier, monospace;
-    padding: 12px;
+    margin: 12px;
 }
 
-[v-cloak] 
+[v-cloak]
 {
     display: none;
 }
@@ -238,4 +237,3 @@ video {
 #character-selection img {
     width: 50px;
 }
-

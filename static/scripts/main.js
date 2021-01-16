@@ -70,9 +70,7 @@ const vueApp = new Vue({
         {
             ev.preventDefault();
             this.isLoggingIn = true;
-
-            i18n.locale = this.areaId == "for" ? "en" : "ja";
-
+            
             await Promise.all([
                 characters.giko.loadImages(),
                 characters.naito.loadImages(),
@@ -94,6 +92,10 @@ const vueApp = new Vue({
             await this.connectToServer(this.username);
             this.isLoggingIn = false;
             this.paint();
+        },
+        setLanguage: function(code)
+        {
+            i18n.locale = code;
         },
         showWarningToast: function showWarningToast(text)
         {
@@ -594,15 +596,19 @@ const vueApp = new Vue({
             switch (event.key)
             {
                 case "ArrowLeft":
+                    event.preventDefault()
                     this.sendNewPositionToServer("left");
                     break;
                 case "ArrowRight":
+                    event.preventDefault()
                     this.sendNewPositionToServer("right");
                     break;
                 case "ArrowUp":
+                    event.preventDefault()
                     this.sendNewPositionToServer("up");
                     break;
                 case "ArrowDown":
+                    event.preventDefault()
                     this.sendNewPositionToServer("down");
                     break;
             }
