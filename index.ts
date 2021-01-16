@@ -66,7 +66,10 @@ io.on("connection", function (socket: any)
         {
             user = getUser(userId);
             if (!user)
+            {
                 socket.emit("server-cant-log-you-in")
+                return;
+            }
 
             socket.join(user.areaId)
             socket.join(user.areaId + currentRoom.id)
