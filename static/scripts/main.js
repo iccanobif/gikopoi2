@@ -200,12 +200,30 @@ const vueApp = new Vue({
                 }
                 
                 const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
+
+                const messageDiv = document.createElement("div");
+                messageDiv.className = "message";
                 
-                const chatLine = document.createElement("div")
-                chatLine.className = "message"
-                chatLine.innerHTML = userName + i18n.t("message_colon") + msg;
+                const authorSpan = document.createElement("span");
+                authorSpan.className = "message-author";
+                authorSpan.textContent = userName;
                 
-                chatLog.appendChild(chatLine)
+                const bodySpan = document.createElement("span");
+                bodySpan.className = "message-body";
+                bodySpan.textContent = msg;
+                bodySpan.innerHTML = bodySpan.innerHTML
+                    .replace(/(https?:\/\/|www\.)[^\s]+/gi, (url, prefix) =>
+                {
+                    const href = (prefix == "www." ? "http://" + url : url);
+                    return "<a href='" + href + "' target='_blank'>" + url + "</a>";
+                });
+                
+                messageDiv.append(authorSpan);
+                messageDiv.append(document.createTextNode(
+                    i18n.t("message_colon")));
+                messageDiv.append(bodySpan);
+                
+                chatLog.appendChild(messageDiv);
                 
                 if (isAtBottom)
                     chatLog.scrollTop = chatLog.scrollHeight -
@@ -440,7 +458,7 @@ const vueApp = new Vue({
                                 // draw users only when the room is fully loaded, so that the "physical position" calculations
                                 // are done with the correct room's data.
                                 this.drawCenteredText(
-                                    o.o.name.replace(/&gt;/g, ">").replace(/&lt;/g, "<"),
+                                    o.o.name,
                                     o.o.currentPhysicalPositionX + 40,
                                     o.o.currentPhysicalPositionY - 95
                                 );
