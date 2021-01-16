@@ -135,8 +135,7 @@ const vueApp = new Vue({
                 this.connectionLost = true;
             });
 
-            this.socket.on(
-                "server-update-current-room-state",
+            this.socket.on("server-update-current-room-state",
                 async (roomDto, usersDto, streamsDto) =>
                 {
                     this.isLoadingRoom = true;
@@ -195,9 +194,19 @@ const vueApp = new Vue({
                 {
                     document.getElementById("message-sound").play();
                 }
-
-                chatLog.innerHTML += userName + ": " + msg + "<br/>";
-                chatLog.scrollTop = chatLog.scrollHeight;
+                
+                const isAtBottom = chatLog.scrollTop == chatLog.scrollHeight -
+                    chatLog.clientHeight;
+                
+                const chatLine = document.createElement("div")
+                chatLine.className = "message"
+                chatLine.innerHTML = userName + i18n.t("message_colon") + msg;
+                
+                chatLog.appendChild(chatLine)
+                
+                if (isAtBottom)
+                    chatLog.scrollTop = chatLog.scrollHeight -
+                        chatLog.clientHeight;
             });
 
             this.socket.on("server-stats", (areaId, serverStats) =>
@@ -223,8 +232,7 @@ const vueApp = new Vue({
                 }
             });
 
-            this.socket.on(
-                "server-reject-movement",
+            this.socket.on("server-reject-movement",
                 () => (this.isWaitingForServerResponseOnMovement = false)
             );
 
