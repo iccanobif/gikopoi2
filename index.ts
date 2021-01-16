@@ -321,6 +321,40 @@ io.on("connection", function (socket: any)
             console.error(e.message + " " + e.stack);
         }
     })
+    
+    socket.on("user-room-list", function () //TODO
+    {
+        try
+        {
+            const roomList: Object[] = [];
+            for (const roomId in rooms)
+            {
+                if (rooms[roomId].secret) return;
+                const listRoom: {id: string, userCount: number, streamers: string[]} =
+                {
+                    id: roomId,
+                    userCount: getConnectedUserList(roomId, user.areaId).length,
+                    streamers: []
+                }
+                roomStates[user.areaId][roomId].streams.forEach(stream =>
+                {
+                    if (!stream.isActive || stream.userId == null) return;
+                    try
+                    {
+                        listRoom.streamers.push(getUser(stream.userId).name);
+                    }
+                    catch(e){}
+                })
+                roomList.push(listRoom)
+            }
+            
+            socket.emit("server-room-list", roomList)
+        }
+        catch (e)
+        {
+            console.error(e.message + " " + e.stack);
+        }
+    })
 
     function openRTCConnection()
     {

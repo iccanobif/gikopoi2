@@ -162,8 +162,36 @@
                 </div>
             </div>
             <div id="rula-menu" v-if="isRulaPopupOpen">
-                <button v-for="roomId in rulableRooms" v-on:click="rula(roomId)">{{ $t("room." + roomId) }}</button>
-                <button v-on:click="cancelRula()" id="cancel-rula-button">{{ $t("ui.cancel")}}</button>
+                <div id="rula-menu-title">{{ $t("ui.rula_menu_title") }}</div>
+                <div id="rula-menu-list">
+                    <table>
+                        <colgroup>
+                            <col id="rula-menu-column-room-name" />
+                            <col id="rula-menu-column-user-count" />
+                            <col id="rula-menu-column-streamers" />
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>{{ $t("ui.rula_menu_column_room_name") }}</th>
+                                <th>{{ $t("ui.rula_menu_column_user_count") }}</th>
+                                <th>{{ $t("ui.rula_menu_column_streamers") }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="rula-menu-room" v-for="room in roomList"
+                                v-bind:class="{'room-is-selected-for-rula': rulaRoomSelection == room.id}"
+                                v-on:click="selectRoomForRula(room.id)">
+                                <td>{{ $t("room." + room.id) }}</td>
+                                <td>{{ room.userCount }}</td>
+                                <td>{{ room.streamers.join(", ") }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="rula-menu-buttons">
+                    <button v-on:click="rula(rulaRoomSelection)">{{ $t("ui.rula_menu_button_rula") }}</button
+                    ><button v-on:click="cancelRula()" id="cancel-rula-button">{{ $t("ui.rula_menu_button_cancel") }}</button>
+                </div>
             </div>
 
             <audio id="message-sound" src="message.mp3"></audio>

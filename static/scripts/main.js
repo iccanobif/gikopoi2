@@ -50,6 +50,8 @@ const vueApp = new Vue({
         isLoggingIn: false,
         streams: [],
         areaId: "gen", // 'gen' or 'for'
+        roomList: [],
+        rulaRoomSelection: null,
 
         // Possibly redundant data:
         username: "",
@@ -264,7 +266,13 @@ const vueApp = new Vue({
                 this.streams = streams;
                 this.updateCurrentRoomStreams(streams);
             });
-
+            
+            this.socket.on("server-room-list", async (roomList) =>
+            {
+                this.roomList = roomList;
+                this.isRulaPopupOpen = true;
+            });
+            
             this.socket.on("server-ok-to-take-stream", async (slotId) => { });
 
             this.socket.on("server-rtc-offer", async (offer) =>
@@ -563,7 +571,7 @@ const vueApp = new Vue({
                 || message == '#ﾘｽﾄ'
                 || message == '#list'
             )
-                this.isRulaPopupOpen = true;
+                this.requestRoomList();
             else
                 this.socket.emit("user-msg", message);
             inputTextbox.value = "";
@@ -759,12 +767,15 @@ const vueApp = new Vue({
         },
         rula: function (roomId)
         {
+            if (!roomId) return;
             this.changeRoom(roomId);
             this.isRulaPopupOpen = false;
+            this.rulaRoomSelection = null;
         },
         cancelRula: function ()
         {
             this.isRulaPopupOpen = false;
+            this.rulaRoomSelection = null;
         },
         logout: async function ()
         {
@@ -780,5 +791,13 @@ const vueApp = new Vue({
 
             videoElement.volume = volumeSlider.value;
         },
+        requestRoomList: function()
+        {
+            this.socket.emit("user-room-list");
+        },
+        selectRoomForRula: function(roomId)
+        {
+            this.rulaRoomSelection = roomId;
+        }
     },
 });
