@@ -162,7 +162,24 @@
                 </div>
             </div>
             <div id="rula-menu" v-if="isRulaPopupOpen">
-                <button v-for="roomId in rulableRooms" v-on:click="rula(roomId)">{{ $t("room." + roomId) }}</button>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Room</th>
+                            <th>Users</th>
+                            <th>Streamers</th>
+                            <th>Rula</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="room in roomList">
+                            <td>{{ $t("room." + room.id) }}</td>
+                            <td>{{ room.userCount }}</td>
+                            <td>{{ room.streamers.join(", ") }}</td>
+                            <td><button v-on:click="rula(room.id)">Go</button></td>
+                        </tr>
+                    </tbody>
+                </table>
                 <button v-on:click="cancelRula()" id="cancel-rula-button">{{ $t("ui.cancel")}}</button>
             </div>
 

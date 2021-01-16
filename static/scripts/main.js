@@ -268,7 +268,8 @@ const vueApp = new Vue({
             
             this.socket.on("server-room-list", async (roomList) =>
             {
-                console.log(roomList);
+                this.roomList = roomList;
+                this.isRulaPopupOpen = true;
             });
             
             this.socket.on("server-ok-to-take-stream", async (slotId) => { });
@@ -569,10 +570,7 @@ const vueApp = new Vue({
                 || message == '#ﾘｽﾄ'
                 || message == '#list'
             )
-            {
-                this.isRulaPopupOpen = true;
                 this.requestRoomList();
-            }
             else
                 this.socket.emit("user-msg", message);
             inputTextbox.value = "";
@@ -791,7 +789,6 @@ const vueApp = new Vue({
         },
         requestRoomList: function()
         {
-            this.roomList = [];
             this.socket.emit("user-room-list");
         }
     },
