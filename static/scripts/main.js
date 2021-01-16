@@ -209,13 +209,12 @@ const vueApp = new Vue({
                 const bodySpan = document.createElement("span");
                 bodySpan.className = "message-body";
                 bodySpan.textContent = msg;
-                bodySpan.innerHTML = bodySpan.innerHTML.replace(
-                    /((https?:\/\/|www\.)[^\s]+)/gi,
-                    function (url, prefix)
-                    {
-                        let href = (prefix == "www." ? "http://" + url : url);
-                        return "<a href='" + href + "' target='_blank'>" + url + "</a>";
-                    })
+                bodySpan.innerHTML = bodySpan.innerHTML
+                    .replace(/(https?:\/\/|www\.)[^\s]+/gi, function (url, prefix)
+                {
+                    const href = (prefix == "www." ? "http://" + url : url);
+                    return "<a href='" + href + "' target='_blank'>" + url + "</a>";
+                });
                 
                 messageDiv.append(authorSpan);
                 messageDiv.append(document.createTextNode(
