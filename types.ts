@@ -47,6 +47,7 @@ export interface Room
         targetY: number
     }[];
     streamSlotCount: number;
+    secret: boolean;
 }
 
 export interface RoomState {

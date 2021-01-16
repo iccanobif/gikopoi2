@@ -74,6 +74,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 3, y: 7, targetRoomId: "basement", targetX: 0, targetY: 2 }
         ],
         streamSlotCount: 2,
+        secret: false
     },
     admin_st: {
         id: "admin_st",
@@ -145,6 +146,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 9, y: 0, targetRoomId: "admin_st", targetX: 5, targetY: 4 },
         ],
         streamSlotCount: 0,
+        secret: false
     },
     basement: {
         id: "basement",
@@ -173,6 +175,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 8, y: 0, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
         ],
         streamSlotCount: 0,
+        secret: false
     },
     admin: {
         id: "admin",
@@ -222,6 +225,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 10, y: 0, targetRoomId: "admin_st", targetX: 2, targetY: 4 }
         ],
         streamSlotCount: 2,
+        secret: false
     },
     radio_backstage: {
         id: "radio_backstage",
@@ -247,6 +251,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 2, y: 7, targetRoomId: "admin_st", targetX: 2, targetY: 4 }
         ],
         streamSlotCount: 0,
+        secret: false
     },
     school_st: {
         id: "school_st",
@@ -309,6 +314,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 4, y: 1, targetRoomId: "NOT_READY_YET", targetX: 8, targetY: 4 }, // manhole
         ],
         streamSlotCount: 0,
+        secret: false
     },
     bar_st: {
         id: "bar_st",
@@ -373,6 +379,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 8, y: 4, targetRoomId: "basement", targetX: 1, targetY: 3 }
         ],
         streamSlotCount: 0,
+        secret: false
     },
     takadai: {
         id: "takadai",
@@ -443,6 +450,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 6, y: 0, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
         ],
         streamSlotCount: 2,
+        secret: false
     }
 }
 

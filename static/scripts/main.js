@@ -50,6 +50,7 @@ const vueApp = new Vue({
         isLoggingIn: false,
         streams: [],
         areaId: "gen", // 'gen' or 'for'
+        roomList: [],
 
         // Possibly redundant data:
         username: "",
@@ -264,7 +265,12 @@ const vueApp = new Vue({
                 this.streams = streams;
                 this.updateCurrentRoomStreams(streams);
             });
-
+            
+            this.socket.on("server-room-list", async (roomList) =>
+            {
+                console.log(roomList);
+            });
+            
             this.socket.on("server-ok-to-take-stream", async (slotId) => { });
 
             this.socket.on("server-rtc-offer", async (offer) =>
@@ -563,7 +569,10 @@ const vueApp = new Vue({
                 || message == '#ﾘｽﾄ'
                 || message == '#list'
             )
+            {
                 this.isRulaPopupOpen = true;
+                this.requestRoomList();
+            }
             else
                 this.socket.emit("user-msg", message);
             inputTextbox.value = "";
@@ -780,5 +789,10 @@ const vueApp = new Vue({
 
             videoElement.volume = volumeSlider.value;
         },
+        requestRoomList: function()
+        {
+            this.roomList = [];
+            this.socket.emit("user-room-list");
+        }
     },
 });
