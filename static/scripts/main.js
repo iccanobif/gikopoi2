@@ -197,8 +197,7 @@ const vueApp = new Vue({
                     document.getElementById("message-sound").play();
                 }
                 
-                const isAtBottom = chatLog.scrollTop == chatLog.scrollHeight -
-                    chatLog.clientHeight;
+                const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
                 
                 const chatLine = document.createElement("div")
                 chatLine.className = "message"
