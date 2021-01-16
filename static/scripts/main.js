@@ -20,6 +20,7 @@ const vueApp = new Vue({
         selectedCharacter: null,
         socket: null,
         users: {},
+        roomLoadId: 0,
         currentRoom: {
             streams: [],
             objects: [],
@@ -141,6 +142,7 @@ const vueApp = new Vue({
                 async (roomDto, usersDto, streamsDto) =>
                 {
                     this.isLoadingRoom = true;
+                    const roomLoadId = this.roomLoadId = this.roomLoadId + 1;
 
                     this.currentRoom = roomDto;
 
@@ -151,6 +153,7 @@ const vueApp = new Vue({
 
                     loadImage(this.currentRoom.backgroundImageUrl).then((image) =>
                     {
+                        if (this.roomLoadId != roomLoadId) return;
                         this.currentRoom.backgroundImage = image;
                     });
                     for (const o of this.currentRoom.objects)
@@ -158,6 +161,7 @@ const vueApp = new Vue({
                         loadImage("rooms/" + this.currentRoom.id + "/" + o.url).then(
                             (image) =>
                             {
+                                if (this.roomLoadId != roomLoadId) return;
                                 o.image = image;
                                 const { x, y } = calculateRealCoordinates(
                                     this.currentRoom,
