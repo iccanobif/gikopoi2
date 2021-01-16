@@ -31,8 +31,13 @@ export const messages =
             button_stream_take: "受信",
             button_stream_drop: "受信停止",
             volume: "音量：",
-
-            cancel: "キャンセル"
+            
+            rula_menu_title: "ステージ情報",
+            rula_menu_column_room_name: "ステージ名",
+            rula_menu_column_user_count: "人数",
+            rula_menu_column_streamers: "配信者",
+            rula_menu_button_rula: "ルーラ",
+            rula_menu_button_cancel: "キャンセル"
         },
         msg:
         {
@@ -106,8 +111,13 @@ export const messages =
             button_stream_take: "Get stream",
             button_stream_drop: "Drop stream",
             volume: "Volume: ",
-
-            cancel: "Cancel"
+            
+            rula_menu_title: "Stage Info",
+            rula_menu_column_room_name: "Stage Name",
+            rula_menu_column_user_count: "Users",
+            rula_menu_column_streamers: "Streamers",
+            rula_menu_button_rula: "Rula",
+            rula_menu_button_cancel: "Cancel"
         },
         msg:
         {

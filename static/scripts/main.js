@@ -51,6 +51,7 @@ const vueApp = new Vue({
         streams: [],
         areaId: "gen", // 'gen' or 'for'
         roomList: [],
+        rulaRoomSelection: null,
 
         // Possibly redundant data:
         username: "",
@@ -766,12 +767,15 @@ const vueApp = new Vue({
         },
         rula: function (roomId)
         {
+            if (!roomId) return;
             this.changeRoom(roomId);
             this.isRulaPopupOpen = false;
+            this.rulaRoomSelection = null;
         },
         cancelRula: function ()
         {
             this.isRulaPopupOpen = false;
+            this.rulaRoomSelection = null;
         },
         logout: async function ()
         {
@@ -790,6 +794,10 @@ const vueApp = new Vue({
         requestRoomList: function()
         {
             this.socket.emit("user-room-list");
+        },
+        selectRoomForRula: function(roomId)
+        {
+            this.rulaRoomSelection = roomId;
         }
     },
 });
