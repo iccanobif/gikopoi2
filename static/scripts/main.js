@@ -210,7 +210,7 @@ const vueApp = new Vue({
                 bodySpan.className = "message-body";
                 bodySpan.textContent = msg;
                 bodySpan.innerHTML = bodySpan.innerHTML
-                    .replace(/(https?:\/\/|www\.)[^\s]+/gi, function (url, prefix)
+                    .replace(/(https?:\/\/|www\.)[^\s]+/gi, (url, prefix) =>
                 {
                     const href = (prefix == "www." ? "http://" + url : url);
                     return "<a href='" + href + "' target='_blank'>" + url + "</a>";
