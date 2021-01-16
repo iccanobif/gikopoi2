@@ -192,7 +192,7 @@ const vueApp = new Vue({
             this.socket.on("server-msg", (userName, msg) =>
             {
                 const chatLog = document.getElementById("chatLog");
-                if (userName != "SYSTEM" && this.isSoundEnabled)
+                if (this.isSoundEnabled)
                 {
                     document.getElementById("message-sound").play();
                 }

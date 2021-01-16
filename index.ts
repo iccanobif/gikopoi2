@@ -458,7 +458,6 @@ app.post("/login", (req, res) =>
         const user = addNewUser(sanitizedUserName, characterId, areaId);
         res.json(user.id)
 
-        io.to(areaId + user.roomId).emit("server-msg", "SYSTEM", sanitizedUserName + " connected");
         io.to(areaId + user.roomId).emit("server-user-joined-room", user);
     }
     catch (e)
@@ -498,7 +497,6 @@ function disconnectUser(user: Player)
     clearStream(user)
     removeUser(user)
 
-    io.to(user.areaId + user.roomId).emit("server-msg", "SYSTEM", user.name + " disconnected");
     io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
     emitServerStats(user.areaId)
 }
