@@ -101,7 +101,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 5, y: 8 },
         ],
         blocked: [
-            { x: 0, y: 5 },
+            // { x: 0, y: 5 },
             { x: 1, y: 5 },
             { x: 1, y: 6 },
             { x: 1, y: 8 },
@@ -109,7 +109,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 3, y: 5 },
             { x: 4, y: 5 },
             { x: 4, y: 6 },
-            { x: 4, y: 8 },
+            // { x: 4, y: 8 },
             { x: 6, y: 5 },
             { x: 7, y: 5 },
             { x: 8, y: 5 },
