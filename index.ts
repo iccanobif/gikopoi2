@@ -52,6 +52,8 @@ io.on("connection", function (socket: any)
     {
         try
         {
+            if (!user) return;
+
             user.isGhost = true
             io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
             clearStream(user)
