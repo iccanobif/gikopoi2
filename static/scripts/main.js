@@ -169,6 +169,12 @@ const vueApp = new Vue({
 
             const sendIdToServer = () =>
             {
+                // it can happen that the user is pressing the arrow keys while the
+                // socket is down, in which case the server will never answer to the
+                // user-move event, and isWaitingForServerResponseOnMovement would never
+                // be reset. So, just in case, I reset it at every socket reconnection.
+                this.isWaitingForServerResponseOnMovement = false
+
                 console.log("sending user-connect")
                 this.connectionLost = false;
                 this.socket.emit("user-connect", this.myUserID);
