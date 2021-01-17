@@ -407,112 +407,109 @@ const vueApp = new Vue({
                 context.fillStyle = "#c0c0c0";
                 context.fillRect(0, 0, 721, 511);
 
-                if (this.currentRoom)
-                {
-                    context.fillStyle = this.currentRoom.backgroundColor;
-                    context.fillRect(0, 0, 721, 511);
+                context.fillStyle = this.currentRoom.backgroundColor;
+                context.fillRect(0, 0, 721, 511);
 
-                    // draw background
-                    this.drawImage(
-                        this.currentRoom.backgroundImage,
-                        0,
-                        511,
-                        this.currentRoom.scale
-                    );
+                // draw background
+                this.drawImage(
+                    this.currentRoom.backgroundImage,
+                    0,
+                    511,
+                    this.currentRoom.scale
+                );
 
-                    const allObjects = this.currentRoom.objects
-                        .map((o) => ({
+                const allObjects = this.currentRoom.objects
+                    .map((o) => ({
+                        o,
+                        type: "room-object",
+                        priority: o.x + 1 + (this.currentRoom.size.y - o.y),
+                    }))
+                    .concat(
+                        Object.values(this.users).map((o) => ({
                             o,
-                            type: "room-object",
-                            priority: o.x + 1 + (this.currentRoom.size.y - o.y),
+                            type: "user",
+                            priority:
+                                o.logicalPositionX +
+                                1 +
+                                (this.currentRoom.size.y - o.logicalPositionY),
                         }))
-                        .concat(
-                            Object.values(this.users).map((o) => ({
-                                o,
-                                type: "user",
-                                priority:
-                                    o.logicalPositionX +
-                                    1 +
-                                    (this.currentRoom.size.y - o.logicalPositionY),
-                            }))
-                        )
-                        .sort((a, b) =>
-                        {
-                            if (a.priority < b.priority) return -1;
-                            if (a.priority > b.priority) return 1;
-                            return 0;
-                        });
-
-                    for (const o of allObjects)
+                    )
+                    .sort((a, b) =>
                     {
-                        if (o.type == "room-object")
+                        if (a.priority < b.priority) return -1;
+                        if (a.priority > b.priority) return 1;
+                        return 0;
+                    });
+
+                for (const o of allObjects)
+                {
+                    if (o.type == "room-object")
+                    {
+                        this.drawImage(
+                            o.o.image,
+                            o.o.physicalPositionX,
+                            o.o.physicalPositionY,
+                            this.currentRoom.scale * o.o.scale
+                        );
+                    } // o.type == "user"
+                    else
+                    {
+                        if (!this.isLoadingRoom)
                         {
-                            this.drawImage(
-                                o.o.image,
-                                o.o.physicalPositionX,
-                                o.o.physicalPositionY,
-                                this.currentRoom.scale * o.o.scale
+                            // draw users only when the room is fully loaded, so that the "physical position" calculations
+                            // are done with the correct room's data.
+                            this.drawCenteredText(
+                                o.o.name,
+                                o.o.currentPhysicalPositionX + 40,
+                                o.o.currentPhysicalPositionY - 95
                             );
-                        } // o.type == "user"
-                        else
-                        {
-                            if (!this.isLoadingRoom)
+
+                            switch (o.o.direction)
                             {
-                                // draw users only when the room is fully loaded, so that the "physical position" calculations
-                                // are done with the correct room's data.
-                                this.drawCenteredText(
-                                    o.o.name,
-                                    o.o.currentPhysicalPositionX + 40,
-                                    o.o.currentPhysicalPositionY - 95
-                                );
-
-                                switch (o.o.direction)
-                                {
-                                    case "up":
-                                    case "right":
-                                        this.drawHorizontallyFlippedImage(
-                                            o.o.getCurrentImage(this.currentRoom),
-                                            o.o.currentPhysicalPositionX,
-                                            o.o.currentPhysicalPositionY
-                                        );
-                                        break;
-                                    case "down":
-                                    case "left":
-                                        this.drawImage(
-                                            o.o.getCurrentImage(this.currentRoom),
-                                            o.o.currentPhysicalPositionX,
-                                            o.o.currentPhysicalPositionY
-                                        );
-                                        break;
-                                }
+                                case "up":
+                                case "right":
+                                    this.drawHorizontallyFlippedImage(
+                                        o.o.getCurrentImage(this.currentRoom),
+                                        o.o.currentPhysicalPositionX,
+                                        o.o.currentPhysicalPositionY
+                                    );
+                                    break;
+                                case "down":
+                                case "left":
+                                    this.drawImage(
+                                        o.o.getCurrentImage(this.currentRoom),
+                                        o.o.currentPhysicalPositionX,
+                                        o.o.currentPhysicalPositionY
+                                    );
+                                    break;
                             }
-
-                            o.o.spendTime(this.currentRoom);
                         }
-                    }
 
-                    if (localStorage.getItem("enableGridNumbers") == "true")
-                    {
-                        context.font = "bold 13px Arial, Helvetica, sans-serif";
-                        context.textBaseline = "bottom";
-                        context.textAlign = "right";
-                        context.fillStyle = "blue";
-
-                        for (let x = 0; x < this.currentRoom.size.x; x++)
-                            for (let y = 0; y < this.currentRoom.size.y; y++)
-                            {
-                                const realCoord = calculateRealCoordinates(
-                                    this.currentRoom,
-                                    x,
-                                    y
-                                );
-                                context.fillText(
-                                    x + "," + y,
-                                    realCoord.x + 40,
-                                    realCoord.y - 20
-                                );
-                            }
+                        o.o.spendTime(this.currentRoom);
                     }
+                }
+
+                if (localStorage.getItem("enableGridNumbers") == "true")
+                {
+                    context.font = "bold 13px Arial, Helvetica, sans-serif";
+                    context.textBaseline = "bottom";
+                    context.textAlign = "right";
+                    context.fillStyle = "blue";
+
+                    for (let x = 0; x < this.currentRoom.size.x; x++)
+                        for (let y = 0; y < this.currentRoom.size.y; y++)
+                        {
+                            const realCoord = calculateRealCoordinates(
+                                this.currentRoom,
+                                x,
+                                y
+                            );
+                            context.fillText(
+                                x + "," + y,
+                                realCoord.x + 40,
+                                realCoord.y - 20
+                            );
+                        }
                 }
                 this.changeRoomIfSteppingOnDoor();
             } catch (err)
