@@ -1,7 +1,7 @@
 import express from "express"
 import { readFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
-import { Direction, RoomState } from "./types";
+import { Direction, RoomState, RoomStateDto } from "./types";
 import { addNewUser, getConnectedUserList, getUser, Player, removeUser } from "./users";
 import { sleep } from "./utils";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
@@ -79,15 +79,11 @@ io.on("connection", function (socket: any)
             currentRoom = rooms[user.roomId]
 
             socket.emit("server-update-current-room-state",
-                {
+                <RoomStateDto>{
                     currentRoom,
                     connectedUsers: getConnectedUserList(user.roomId, user.areaId),
                     streams: roomStates[user.areaId][user.roomId].streams
                 })
-
-            // Does it make sense to call server-update-current-room-streams here? 
-            // server-update-current-room-state has already sent the stream list...
-            socket.emit("server-update-current-room-streams", roomStates[user.areaId][user.roomId].streams)
 
             emitServerStats(user.areaId)
         }
@@ -313,15 +309,12 @@ io.on("connection", function (socket: any)
             rtcPeer.close()
 
             socket.emit("server-update-current-room-state",
-                {
+                <RoomStateDto>{
                     currentRoom,
                     connectedUsers: getConnectedUserList(targetRoomId, user.areaId),
                     streams: roomStates[user.areaId][targetRoomId].streams
                 })
 
-            // Does it make sense to call server-update-current-room-streams here? 
-            // server-update-current-room-state has already sent the stream list...
-            socket.emit("server-update-current-room-streams", roomStates[user.areaId][targetRoomId].streams)
             socket.join(user.areaId + targetRoomId)
             socket.to(user.areaId + targetRoomId).emit("server-user-joined-room", user);
         }
@@ -432,12 +425,20 @@ app.use(express.static('static',
     { setHeaders: (res) => res.set("Cache-Control", "no-cache") }
 ));
 
-app.get("/rooms/:roomName", (req, res) =>
+app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
 {
     try
     {
-        const roomName = req.params.roomName
-        res.json(rooms[roomName])
+        const roomId = req.params.roomId
+        const areaId = req.params.areaId
+
+        const dto: RoomStateDto = {
+            currentRoom: rooms[roomId],
+            connectedUsers: getConnectedUserList(roomId, areaId),
+            streams: roomStates[areaId][roomId].streams
+        }
+
+        res.json(dto)
     }
     catch (e)
     {

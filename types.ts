@@ -1,3 +1,5 @@
+import { Player } from "./users";
+
 export type Direction = 'up' | 'down' | 'left' | 'right'
 
 export interface Coordinates
@@ -52,4 +54,11 @@ export interface Room
 
 export interface RoomState {
     streams: StreamSlot[]
+}
+
+export interface RoomStateDto
+{
+    currentRoom: Room,
+    connectedUsers: Player[],
+    streams: StreamSlot[],
 }

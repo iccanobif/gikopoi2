@@ -54,7 +54,6 @@ const vueApp = new Vue({
         loggedIn: false,
         wantToStream: false,
         iAmStreaming: false,
-        roomAllowsStreaming: false,
         currentStreamerName: "",
         connectionLost: false,
         steppingOnPortalToNonAvailableRoom: false,
@@ -135,9 +134,10 @@ const vueApp = new Vue({
                 );
             }
 
+            // stream stuff
             this.takenStreams = streamsDto.map(() => false);
-
-            this.updateCurrentRoomStreams(this.currentRoom.streams);
+            this.streams = streamsDto;
+            this.updateCurrentRoomStreams(streamsDto);
 
             // Force update of user coordinates using the current room's logics (origin coordinates, etc)
             this.forcePhysicalPositionRefresh();
@@ -148,9 +148,6 @@ const vueApp = new Vue({
             this.requestedRoomChange = false;
 
             if (this.rtcPeer !== null) this.rtcPeer.close();
-
-            // stream stuff
-            this.roomAllowsStreaming = streamsDto.length > 0;
         },
         connectToServer: async function ()
         {
@@ -161,6 +158,12 @@ const vueApp = new Vue({
             });
 
             this.myUserID = await loginResponse.json();
+
+            // load the room state before connecting the websocket, so that all
+            // code handling websocket events (and paint() events) can assume that
+            // currentRoom, streams etc... are all defined
+            const response = await fetch("/areas/" + this.areaId + "/rooms/admin_st")
+            this.updateRoomState(await response.json())
 
             this.socket = io();
 
