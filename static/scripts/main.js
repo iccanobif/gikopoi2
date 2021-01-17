@@ -169,6 +169,7 @@ const vueApp = new Vue({
 
             const sendIdToServer = () =>
             {
+                console.log("sending user-connect")
                 this.connectionLost = false;
                 this.socket.emit("user-connect", this.myUserID);
 
