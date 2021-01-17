@@ -78,7 +78,15 @@ io.on("connection", function (socket: any)
 
             currentRoom = rooms[user.roomId]
 
-            socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(user.roomId, user.areaId), roomStates[user.areaId][user.roomId].streams)
+            socket.emit("server-update-current-room-state",
+                {
+                    currentRoom,
+                    connectedUsers: getConnectedUserList(user.roomId, user.areaId),
+                    streams: roomStates[user.areaId][user.roomId].streams
+                })
+
+            // Does it make sense to call server-update-current-room-streams here? 
+            // server-update-current-room-state has already sent the stream list...
             socket.emit("server-update-current-room-streams", roomStates[user.areaId][user.roomId].streams)
 
             emitServerStats(user.areaId)
@@ -97,7 +105,7 @@ io.on("connection", function (socket: any)
             const userName = user.name
 
             console.log(userName + ": " + msg);
-            
+
             io.to(user.areaId + user.roomId).emit("server-msg", userName, msg);
         }
         catch (e)
@@ -304,7 +312,15 @@ io.on("connection", function (socket: any)
 
             rtcPeer.close()
 
-            socket.emit("server-update-current-room-state", currentRoom, getConnectedUserList(targetRoomId, user.areaId), roomStates[user.areaId][targetRoomId].streams)
+            socket.emit("server-update-current-room-state",
+                {
+                    currentRoom,
+                    connectedUsers: getConnectedUserList(targetRoomId, user.areaId),
+                    streams: roomStates[user.areaId][targetRoomId].streams
+                })
+
+            // Does it make sense to call server-update-current-room-streams here? 
+            // server-update-current-room-state has already sent the stream list...
             socket.emit("server-update-current-room-streams", roomStates[user.areaId][targetRoomId].streams)
             socket.join(user.areaId + targetRoomId)
             socket.to(user.areaId + targetRoomId).emit("server-user-joined-room", user);
@@ -314,7 +330,7 @@ io.on("connection", function (socket: any)
             console.error(e.message + " " + e.stack);
         }
     })
-    
+
     socket.on("user-room-list", function () //TODO
     {
         try
@@ -323,7 +339,7 @@ io.on("connection", function (socket: any)
             for (const roomId in rooms)
             {
                 if (rooms[roomId].secret) return;
-                const listRoom: {id: string, userCount: number, streamers: string[]} =
+                const listRoom: { id: string, userCount: number, streamers: string[] } =
                 {
                     id: roomId,
                     userCount: getConnectedUserList(roomId, user.areaId).length,
@@ -336,11 +352,11 @@ io.on("connection", function (socket: any)
                     {
                         listRoom.streamers.push(getUser(stream.userId).name);
                     }
-                    catch(e){}
+                    catch (e) { }
                 })
                 roomList.push(listRoom)
             }
-            
+
             socket.emit("server-room-list", roomList)
         }
         catch (e)
@@ -484,7 +500,7 @@ app.post("/login", (req, res) =>
             processedUserName = processedUserName + "◆" + tripcode(userName.substr(n + 1));
 
         console.log(processedUserName, "logging in")
-        
+
         const user = addNewUser(processedUserName, characterId, areaId);
         res.json(user.id)
 

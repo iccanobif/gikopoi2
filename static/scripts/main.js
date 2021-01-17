@@ -132,8 +132,12 @@ const vueApp = new Vue({
             });
 
             this.socket.on("server-update-current-room-state",
-                async (roomDto, usersDto, streamsDto) =>
+                async (dto) =>
                 {
+                    const roomDto = dto.currentRoom
+                    const usersDto = dto.connectedUsers
+                    const streamsDto = dto.streams
+                    
                     this.isLoadingRoom = true;
                     const roomLoadId = this.roomLoadId = this.roomLoadId + 1;
 
