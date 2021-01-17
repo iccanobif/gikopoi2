@@ -54,6 +54,8 @@ io.on("connection", function (socket: any)
         {
             if (!user) return;
 
+            console.log("disconnect")
+
             user.isGhost = true
             io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
             clearStream(user)
@@ -69,6 +71,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
+            console.log("user-connect", userId)
             user = getUser(userId);
             if (!user)
             {
@@ -298,6 +301,7 @@ io.on("connection", function (socket: any)
         try
         {
             await sleep(delay)
+            console.log("user-change-room")
 
             let { targetRoomId, targetX, targetY } = data
 
