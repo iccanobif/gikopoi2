@@ -28,11 +28,11 @@
                         International (_for)</label>
                 </div>
                 <div>
-                    <label>{{ $t("ui.label_username") }}</label> <input type="text" v-model="username" />
+                    <label>{{ $t("ui.label_username") }}</label> <input type="text" v-model="username" maxlength="20" />
                 </div>
                 <div id="character-selection">
                     <label for="giko-selection">
-                        <input type="radio" id="giko-selection" value="giko" v-model="characterId">
+                        <input type="radio" id="giko-selection" value="giko" v-model="characterId" >
                         <img src="characters/giko/front-standing.png" />
                     </label>
                     <label for="naito-selection">

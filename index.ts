@@ -499,13 +499,16 @@ app.post("/login", (req, res) =>
 {
     try
     {
-        const { userName, characterId, areaId } = req.body
+        let { userName, characterId, areaId } = req.body
         if (!userName)
         {
             res.statusCode = 500
             res.end("please specify a username")
             return;
         }
+        
+        if (userName.length > 20)
+            userName = userName.substr(0, 20)
 
         const n = userName.indexOf("#");
         let processedUserName = (n >= 0 ? userName.substr(0, n) : userName)
