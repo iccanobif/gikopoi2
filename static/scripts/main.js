@@ -64,7 +64,7 @@ const vueApp = new Vue({
         {
             ev.preventDefault();
             this.isLoggingIn = true;
-            
+
             await Promise.all([
                 characters.giko.loadImages(),
                 characters.naito.loadImages(),
@@ -87,7 +87,7 @@ const vueApp = new Vue({
             this.isLoggingIn = false;
             this.paint();
         },
-        setLanguage: function(code)
+        setLanguage: function (code)
         {
             i18n.locale = code;
         },
@@ -95,6 +95,62 @@ const vueApp = new Vue({
         {
             // TODO make this a nice, non-blocking message
             alert(text);
+        },
+        updateRoomState: async function (dto)
+        {
+            const roomDto = dto.currentRoom
+            const usersDto = dto.connectedUsers
+            const streamsDto = dto.streams
+
+            this.isLoadingRoom = true;
+            const roomLoadId = this.roomLoadId = this.roomLoadId + 1;
+
+            this.currentRoom = roomDto;
+
+            this.roomid = this.currentRoom.id;
+            this.users = {};
+
+            for (const u of usersDto) this.addUser(u);
+
+            loadImage(this.currentRoom.backgroundImageUrl).then((image) =>
+            {
+                if (this.roomLoadId != roomLoadId) return;
+                this.currentRoom.backgroundImage = image;
+            });
+            for (const o of this.currentRoom.objects)
+            {
+                loadImage("rooms/" + this.currentRoom.id + "/" + o.url).then(
+                    (image) =>
+                    {
+                        if (this.roomLoadId != roomLoadId) return;
+                        o.image = image;
+                        const { x, y } = calculateRealCoordinates(
+                            this.currentRoom,
+                            o.x,
+                            o.y
+                        );
+                        o.physicalPositionX = x + (o.xOffset || 0);
+                        o.physicalPositionY = y + (o.yOffset || 0);
+                    }
+                );
+            }
+
+            this.takenStreams = streamsDto.map(() => false);
+
+            this.updateCurrentRoomStreams(this.currentRoom.streams);
+
+            // Force update of user coordinates using the current room's logics (origin coordinates, etc)
+            this.forcePhysicalPositionRefresh();
+
+            document.getElementById("room-canvas").focus();
+            this.justSpawnedToThisRoom = true;
+            this.isLoadingRoom = false;
+            this.requestedRoomChange = false;
+
+            if (this.rtcPeer !== null) this.rtcPeer.close();
+
+            // stream stuff
+            this.roomAllowsStreaming = streamsDto.length > 0;
         },
         connectToServer: async function ()
         {
@@ -132,62 +188,7 @@ const vueApp = new Vue({
             });
 
             this.socket.on("server-update-current-room-state",
-                async (dto) =>
-                {
-                    const roomDto = dto.currentRoom
-                    const usersDto = dto.connectedUsers
-                    const streamsDto = dto.streams
-                    
-                    this.isLoadingRoom = true;
-                    const roomLoadId = this.roomLoadId = this.roomLoadId + 1;
-
-                    this.currentRoom = roomDto;
-
-                    this.roomid = this.currentRoom.id;
-                    this.users = {};
-
-                    for (const u of usersDto) this.addUser(u);
-
-                    loadImage(this.currentRoom.backgroundImageUrl).then((image) =>
-                    {
-                        if (this.roomLoadId != roomLoadId) return;
-                        this.currentRoom.backgroundImage = image;
-                    });
-                    for (const o of this.currentRoom.objects)
-                    {
-                        loadImage("rooms/" + this.currentRoom.id + "/" + o.url).then(
-                            (image) =>
-                            {
-                                if (this.roomLoadId != roomLoadId) return;
-                                o.image = image;
-                                const { x, y } = calculateRealCoordinates(
-                                    this.currentRoom,
-                                    o.x,
-                                    o.y
-                                );
-                                o.physicalPositionX = x + (o.xOffset || 0);
-                                o.physicalPositionY = y + (o.yOffset || 0);
-                            }
-                        );
-                    }
-
-                    this.takenStreams = streamsDto.map(() => false);
-
-                    this.updateCurrentRoomStreams(this.currentRoom.streams);
-
-                    // Force update of user coordinates using the current room's logics (origin coordinates, etc)
-                    this.forcePhysicalPositionRefresh();
-
-                    document.getElementById("room-canvas").focus();
-                    this.justSpawnedToThisRoom = true;
-                    this.isLoadingRoom = false;
-                    this.requestedRoomChange = false;
-
-                    if (this.rtcPeer !== null) this.rtcPeer.close();
-
-                    // stream stuff
-                    this.roomAllowsStreaming = streamsDto.length > 0;
-                }
+                (dto) => this.updateRoomState(dto)
             );
 
             this.socket.on("server-msg", (userName, msg) =>
@@ -197,33 +198,33 @@ const vueApp = new Vue({
                 {
                     document.getElementById("message-sound").play();
                 }
-                
+
                 const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
 
                 const messageDiv = document.createElement("div");
                 messageDiv.className = "message";
-                
+
                 const authorSpan = document.createElement("span");
                 authorSpan.className = "message-author";
                 authorSpan.textContent = userName;
-                
+
                 const bodySpan = document.createElement("span");
                 bodySpan.className = "message-body";
                 bodySpan.textContent = msg;
                 bodySpan.innerHTML = bodySpan.innerHTML
                     .replace(/(https?:\/\/|www\.)[^\s]+/gi, (url, prefix) =>
-                {
-                    const href = (prefix == "www." ? "http://" + url : url);
-                    return "<a href='" + href + "' target='_blank' tabindex='-1'>" + url + "</a>";
-                });
-                
+                    {
+                        const href = (prefix == "www." ? "http://" + url : url);
+                        return "<a href='" + href + "' target='_blank' tabindex='-1'>" + url + "</a>";
+                    });
+
                 messageDiv.append(authorSpan);
                 messageDiv.append(document.createTextNode(
                     i18n.t("message_colon")));
                 messageDiv.append(bodySpan);
-                
+
                 chatLog.appendChild(messageDiv);
-                
+
                 if (isAtBottom)
                     chatLog.scrollTop = chatLog.scrollHeight -
                         chatLog.clientHeight;
@@ -283,13 +284,13 @@ const vueApp = new Vue({
                 this.streams = streams;
                 this.updateCurrentRoomStreams(streams);
             });
-            
+
             this.socket.on("server-room-list", async (roomList) =>
             {
                 this.roomList = roomList;
                 this.isRulaPopupOpen = true;
             });
-            
+
             this.socket.on("server-ok-to-take-stream", async (slotId) => { });
 
             this.socket.on("server-rtc-offer", async (offer) =>
@@ -808,11 +809,11 @@ const vueApp = new Vue({
 
             videoElement.volume = volumeSlider.value;
         },
-        requestRoomList: function()
+        requestRoomList: function ()
         {
             this.socket.emit("user-room-list");
         },
-        selectRoomForRula: function(roomId)
+        selectRoomForRula: function (roomId)
         {
             this.rulaRoomSelection = roomId;
         }
