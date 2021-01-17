@@ -52,7 +52,10 @@ io.on("connection", function (socket: any)
     {
         try
         {
+            user.isGhost = true
+            io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
             clearStream(user)
+            emitServerStats(user.areaId)
         }
         catch (e)
         {
@@ -74,6 +77,8 @@ io.on("connection", function (socket: any)
             socket.join(user.areaId)
             socket.join(user.areaId + currentRoom.id)
 
+            user.isGhost = false
+
             console.log("userId: " + userId + " name: " + user.name);
 
             currentRoom = rooms[user.roomId]
@@ -84,6 +89,8 @@ io.on("connection", function (socket: any)
                     connectedUsers: getConnectedUserList(user.roomId, user.areaId),
                     streams: roomStates[user.areaId][user.roomId].streams
                 })
+
+            socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", user);
 
             emitServerStats(user.areaId)
         }
@@ -504,8 +511,6 @@ app.post("/login", (req, res) =>
 
         const user = addNewUser(processedUserName, characterId, areaId);
         res.json(user.id)
-
-        io.to(areaId + user.roomId).emit("server-user-joined-room", user);
     }
     catch (e)
     {
@@ -583,7 +588,7 @@ setInterval(() =>
     try
     {
         for (const user of getConnectedUserList(null, null))
-            if (Date.now() - user.lastPing > 80 * 1000)
+            if (Date.now() - user.lastPing > 1 * 60 * 1000)
                 disconnectUser(user)
     }
     catch (e)

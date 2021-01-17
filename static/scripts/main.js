@@ -171,8 +171,6 @@ const vueApp = new Vue({
             {
                 this.connectionLost = false;
                 this.socket.emit("user-connect", this.myUserID);
-                // TODO, give the server a way to reply "sorry, can't reconnect you"
-                // so we can show a decent error message
 
                 this.rtcPeer = new RTCPeer(defaultIceConfig, (type, msg) =>
                     this.emitRTCMessage(type, msg)

@@ -13,7 +13,7 @@ export class Player
     public name: string = "Anonymous";
     public position: { x: number, y: number } = { x: defaultRoom.spawnPoint.x, y: defaultRoom.spawnPoint.y };
     public direction: Direction = defaultRoom.spawnPoint.direction;
-    public connected: boolean = true;
+    public isGhost: boolean = false;
     public roomId: string = defaultRoom.id;
     public lastPing = Date.now();
     public mediaStream: MediaStream | null = null;
@@ -40,7 +40,7 @@ export function addNewUser(name: string, characterId: string, areaId: string)
 
 export function getConnectedUserList(roomId: string | null, areaId: string | null): Player[]
 {
-    let output = Object.values(users)
+    let output = Object.values(users).filter(u => !u.isGhost)
     if (roomId) output = output.filter(u => u.roomId == roomId)
     if (areaId) output = output.filter(u => u.areaId == areaId)
     return output
