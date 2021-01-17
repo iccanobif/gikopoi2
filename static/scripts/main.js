@@ -167,7 +167,7 @@ const vueApp = new Vue({
 
             this.socket = io();
 
-            this.socket.on("connect", () =>
+            const sendIdToServer = () =>
             {
                 this.connectionLost = false;
                 this.socket.emit("user-connect", this.myUserID);
@@ -175,7 +175,10 @@ const vueApp = new Vue({
                 this.rtcPeer = new RTCPeer(defaultIceConfig, (type, msg) =>
                     this.emitRTCMessage(type, msg)
                 );
-            });
+            }
+
+            this.socket.on("connect", sendIdToServer);
+            this.socket.on("reconnect", sendIdToServer);
 
             this.socket.on("disconnect", () =>
             {
