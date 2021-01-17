@@ -25,6 +25,7 @@ export interface Room
     originCoordinates: Coordinates;
     backgroundImageUrl: string;
     backgroundColor: string;
+    backgroundOffset?: Coordinates;
     spawnPoint: {
         x: number;
         y: number;

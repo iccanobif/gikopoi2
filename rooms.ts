@@ -332,7 +332,7 @@ export const rooms: { [roomId: string]: Room } = {
         sit: [
             { x: 0, y: 7 },
             { x: 0, y: 8 },
-            
+
             { x: 1, y: 0 },
             { x: 2, y: 0 },
             { x: 3, y: 0 },
@@ -349,7 +349,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 0, y: 6 },
             { x: 1, y: 7 },
             { x: 1, y: 8 },
-            
+
             // cola vending machines:
             { x: 0, y: 1 },
             { x: 0, y: 2 },
@@ -447,11 +447,80 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         doors: [
             { x: 2, y: 0, targetRoomId: "admin_st", targetX: 9, targetY: 2 },
-            { x: 6, y: 0, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
+            { x: 6, y: 0, targetRoomId: "silo", targetX: 11, targetY: 7 },
         ],
         streamSlotCount: 2,
         secret: false
-    }
+    },
+    silo: {
+        id: "silo",
+        scale: 1.18,
+        size: { x: 14, y: 14 },
+        originCoordinates: { x: -419, y: 688 },
+        spawnPoint: { x: 6, y: 7, direction: "left" },
+        backgroundImageUrl: "rooms/silo/testmap.svg",
+        backgroundColor: "#c0c0c0",
+        backgroundOffset: { x: -119, y: 28 },
+        objects: [],
+        sit: [],
+        blocked: [
+            // { x: 5, y: 7 }
+            { x: 8, y: 2 },
+            { x: 7, y: 1 },
+            { x: 6, y: 1 },
+            { x: 9, y: 2 },
+            { x: 10, y: 3 },
+            { x: 11, y: 4 },
+            { x: 11, y: 5 },
+            { x: 12, y: 6 },
+            { x: 12, y: 7 },
+            { x: 12, y: 8 },
+            { x: 12, y: 9 },
+            { x: 12, y: 10 },
+            { x: 11, y: 11 },
+            { x: 10, y: 12 },
+            { x: 9, y: 13 },
+            { x: 8, y: 13 },
+            { x: 3, y: 13 },
+            { x: 1, y: 12 },
+            { x: 0, y: 11 },
+            { x: 0, y: 10 },
+            { x: 2, y: 13 },
+            { x: 5, y: 1 },
+            { x: 4, y: 1 },
+            { x: 3, y: 2 },
+            { x: 1, y: 3 },
+            { x: 0, y: 4 },
+            { x: 0, y: 5 },
+            { x: 2, y: 2 },
+        ],
+        forbiddenMovements: [],
+        doors: [
+            { x: 6, y: 2, targetRoomId: "badend", targetX: -100, targetY: -100 }, // left
+            { x: 11, y: 7, targetRoomId: "takadai", targetX: 6, targetY: 0 }, // right
+        ],
+        streamSlotCount: 2,
+        secret: false
+    },
+    badend: {
+        id: "badend",
+        scale: 1.18,
+        size: { x: 0, y: 0 },
+        originCoordinates: { x: 0, y: 0 },
+        spawnPoint: { x: 6, y: 7, direction: "left" },
+        backgroundImageUrl: "rooms/badend/badend.jpg",
+        backgroundColor: "#000000",
+        backgroundOffset: { x: 0, y: 0 },
+        objects: [],
+        sit: [],
+        blocked: [],
+        forbiddenMovements: [],
+        doors: [],
+        streamSlotCount: 0,
+        secret: true
+    },
+
 }
 
 export const defaultRoom = rooms.admin_st
+

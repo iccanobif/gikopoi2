@@ -419,10 +419,12 @@ const vueApp = new Vue({
                 context.fillRect(0, 0, 721, 511);
 
                 // draw background
+                if (!this.currentRoom.backgroundOffset)
+                    this.currentRoom.backgroundOffset = { x: 0, y: 0 }
                 this.drawImage(
                     this.currentRoom.backgroundImage,
-                    0,
-                    511,
+                    0 + this.currentRoom.backgroundOffset.x,
+                    511 + this.currentRoom.backgroundOffset.y,
                     this.currentRoom.scale
                 );
 
@@ -502,11 +504,13 @@ const vueApp = new Vue({
                     context.font = "bold 13px Arial, Helvetica, sans-serif";
                     context.textBaseline = "bottom";
                     context.textAlign = "right";
-                    context.fillStyle = "blue";
 
                     for (let x = 0; x < this.currentRoom.size.x; x++)
                         for (let y = 0; y < this.currentRoom.size.y; y++)
                         {
+                            context.fillStyle = this.currentRoom.blocked.find(b => b.x == x && b.y == y) 
+                                                ? "red"
+                                                : "blue";
                             const realCoord = calculateRealCoordinates(
                                 this.currentRoom,
                                 x,

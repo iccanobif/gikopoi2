@@ -77,7 +77,9 @@ export const messages =
             school_rouka: "学校 廊下",
             school_international: "学校 国際科教室",
             school_pc: "学校 パソコンルーム",
-            enkai: "宴会場"
+            enkai: "宴会場",
+            silo: "サイロ",
+            badend: "転落死しました！"
         }
     },
     en:
@@ -158,6 +160,8 @@ export const messages =
             yatai: "Sushi Vendor",
             kaidan: "Hilltop Stairway",
             takadai: "Hilltop",
+            silo: "Silo",
+            badend: "You fell to your death!"
         }
     }
 }

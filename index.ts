@@ -341,10 +341,10 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            const roomList: Object[] = [];
+            const roomList: any[] = [];
             for (const roomId in rooms)
             {
-                if (rooms[roomId].secret) return;
+                if (rooms[roomId].secret) continue;
                 const listRoom: { id: string, userCount: number, streamers: string[] } =
                 {
                     id: roomId,
