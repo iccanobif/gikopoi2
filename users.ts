@@ -46,6 +46,11 @@ export function getConnectedUserList(roomId: string | null, areaId: string | nul
     return output
 };
 
+export function getGhostUsers(): Player[]
+{
+    return Object.values(users).filter(u => u.isGhost)
+}
+
 export function getUser(userId: string)
 {
     return users[userId];

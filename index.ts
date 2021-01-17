@@ -2,7 +2,7 @@ import express from "express"
 import { readFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
 import { Direction, RoomState, RoomStateDto } from "./types";
-import { addNewUser, getConnectedUserList, getUser, Player, removeUser } from "./users";
+import { addNewUser, getConnectedUserList, getGhostUsers, getUser, Player, removeUser } from "./users";
 import { sleep } from "./utils";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
 const app: express.Application = express()
@@ -589,7 +589,7 @@ setInterval(() =>
 {
     try
     {
-        for (const user of getConnectedUserList(null, null))
+        for (const user of getGhostUsers())
             if (Date.now() - user.lastPing > 1 * 60 * 1000)
                 disconnectUser(user)
     }
