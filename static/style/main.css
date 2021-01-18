@@ -48,6 +48,7 @@ header h2 {
     background-color: white;
     height: 150px;
     overflow-y: auto;
+    resize: both;
 }
 
 #canvas-container
