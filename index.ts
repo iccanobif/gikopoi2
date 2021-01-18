@@ -296,27 +296,34 @@ io.on("connection", function (socket: any)
         }
     })
 
-    socket.on("user-change-room", async function (data: { targetRoomId: string, targetX: number, targetY: number })
+    socket.on("user-change-room", async function (data: { targetRoomId: string, targetDoorId: string })
     {
         try
         {
             await sleep(delay)
             console.log("user-change-room")
 
-            let { targetRoomId, targetX, targetY } = data
+            let { targetRoomId, targetDoorId } = data
 
             currentRoom = rooms[targetRoomId]
-
-            if (targetX == undefined)
-                targetX = rooms[targetRoomId].spawnPoint.x
-            if (targetY == undefined)
-                targetY = rooms[targetRoomId].spawnPoint.y
 
             clearStream(user)
             io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
             socket.leave(user.areaId + user.roomId)
-
-            user.position = { x: targetX, y: targetY }
+            
+            if (targetDoorId == undefined)
+                targetDoorId = rooms[targetRoomId].spawnPoint;
+            
+            if (!(targetDoorId in rooms[targetRoomId].doors))
+            {
+                console.error("Could not find door " + targetDoorId + " in room " + targetRoomId);
+                return;
+            }
+            
+            const door = rooms[targetRoomId].doors[targetDoorId]
+            
+            user.position = { x: door.x, y: door.y }
+            if (door.direction !== null) user.direction = door.direction
             user.roomId = targetRoomId
 
             rtcPeer.close()
