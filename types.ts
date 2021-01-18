@@ -17,6 +17,17 @@ export interface StreamSlot
     userId: string | null,
 }
 
+export interface Door
+{
+    x: number;
+    y: number;
+    direction: Direction | null;
+    target: {
+        roomId: string
+        doorId: string
+    } | string | null;
+}
+
 export interface Room
 {
     id: string;
@@ -26,11 +37,7 @@ export interface Room
     backgroundImageUrl: string;
     backgroundColor: string;
     backgroundOffset?: Coordinates;
-    spawnPoint: {
-        x: number;
-        y: number;
-        direction: Direction;
-    };
+    spawnPoint: string;
     objects: {
         x: number;
         y: number;
@@ -42,13 +49,7 @@ export interface Room
     sit: Coordinates[];
     blocked: Coordinates[];
     forbiddenMovements: { xFrom: number, yFrom: number, xTo: number, yTo: number }[],
-    doors: {
-        x: number,
-        y: number,
-        targetRoomId: string,
-        targetX: number,
-        targetY: number
-    }[];
+    doors: { [doorId: string]: Door };
     streamSlotCount: number;
     secret: boolean;
 }

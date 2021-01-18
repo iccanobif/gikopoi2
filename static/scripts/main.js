@@ -542,30 +542,31 @@ const vueApp = new Vue({
             if (currentUser.isWalking) return;
 
             this.steppingOnPortalToNonAvailableRoom = false;
-
-            const door = this.currentRoom.doors.find(
+            
+            const door = Object.values(this.currentRoom.doors).find(
                 (d) =>
                     d.x == currentUser.logicalPositionX &&
                     d.y == currentUser.logicalPositionY
             );
 
-            if (!door) return;
+            if (!door || door.target === null) return;
 
-            const { targetRoomId, targetX, targetY } = door;
-
-            if (targetRoomId == "NOT_READY_YET")
+            if (door.target == "NOT_READY_YET")
             {
                 this.steppingOnPortalToNonAvailableRoom = true;
                 return;
             }
-            this.changeRoom(targetRoomId, targetX, targetY);
+            
+            const { roomId, doorId } = door.target;
+            
+            this.changeRoom(roomId, doorId);
         },
-        changeRoom: function (targetRoomId, targetX, targetY)
+        changeRoom: function (targetRoomId, targetDoorId)
         {
             if (this.webcamStream) this.stopStreaming();
 
             this.requestedRoomChange = true;
-            this.socket.emit("user-change-room", { targetRoomId, targetX, targetY });
+            this.socket.emit("user-change-room", { targetRoomId, targetDoorId });
         },
         forcePhysicalPositionRefresh: function ()
         {

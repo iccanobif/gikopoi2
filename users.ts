@@ -7,12 +7,14 @@ function generateId()
     return v4()
 }
 
+const defaultSpawn = defaultRoom.doors[defaultRoom.spawnPoint];
+
 export class Player
 {
     public id: string = generateId();
     public name: string = "Anonymous";
-    public position: { x: number, y: number } = { x: defaultRoom.spawnPoint.x, y: defaultRoom.spawnPoint.y };
-    public direction: Direction = defaultRoom.spawnPoint.direction;
+    public position: { x: number, y: number } = { x: defaultSpawn.x, y: defaultSpawn.y };
+    public direction: Direction = (defaultSpawn.direction !== null ? defaultSpawn.direction : "down");
     public isGhost: boolean = false;
     public roomId: string = defaultRoom.id;
     public lastPing = Date.now();
