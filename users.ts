@@ -7,7 +7,8 @@ function generateId()
     return v4()
 }
 
-const defaultSpawn = defaultRoom.doors[defaultRoom.spawnPoint];
+const doorId = ("world_spawn" in defaultRoom.doors ? "world_spawn" : defaultRoom.spawnPoint);
+const defaultSpawn = defaultRoom.doors[doorId];
 
 export class Player
 {
