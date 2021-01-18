@@ -316,7 +316,7 @@ io.on("connection", function (socket: any)
             
             if (!(targetDoorId in rooms[targetRoomId].doors))
             {
-                console.error("Door " + targetDoorId + " does not exist in " + targetRoomId);
+                console.error("Could not find door " + targetDoorId + " in room " + targetRoomId);
                 return;
             }
             
