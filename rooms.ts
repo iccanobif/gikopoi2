@@ -6,7 +6,7 @@ export const rooms: { [roomId: string]: Room } = {
         scale: 1,
         size: { x: 9, y: 9 },
         originCoordinates: { x: 0, y: 660 },
-        spawnPoint: { x: 8, y: 4, direction: "left" },
+        spawnPoint: "right",
         backgroundImageUrl: "rooms/bar/background.png",
         backgroundColor: "#c0c0c0",
         objects: [
@@ -68,11 +68,11 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 7, y: 8 },
         ],
         forbiddenMovements: [],
-        doors: [
-            { x: 0, y: 0, targetRoomId: "bar_st", targetX: 0, targetY: 8 },
-            { x: 8, y: 4, targetRoomId: "bar_st", targetX: 4, targetY: 5 },
-            { x: 3, y: 7, targetRoomId: "basement", targetX: 0, targetY: 2 }
-        ],
+        doors: {
+            right: { x: 8, y: 4, direction: "left", target: { roomId: "bar_st", doorId: "bar" } },
+            ladder: { x: 0, y: 0, direction: "right", target: { roomId: "bar_st", doorId: "bar_roof" } },
+            hatch: { x: 3, y: 7, direction: "down", target: { roomId: "basement", doorId: "left" } }
+        },
         streamSlotCount: 2,
         secret: false
     },
@@ -81,7 +81,7 @@ export const rooms: { [roomId: string]: Room } = {
         scale: 160 / 200,
         size: { x: 10, y: 9 },
         originCoordinates: { x: 18, y: 614 },
-        spawnPoint: { x: 5, y: 2, direction: "right" },
+        spawnPoint: "admin",
         backgroundImageUrl: "rooms/admin_st/background.png",
         backgroundColor: "#c0c0c0",
         objects: [
@@ -134,17 +134,19 @@ export const rooms: { [roomId: string]: Room } = {
             { xFrom: 9, yFrom: 4, xTo: 8, yTo: 4 },
 
         ],
-        doors: [
-            { x: 0, y: 2, targetRoomId: "bar_st", targetX: 9, targetY: 2 },
-            { x: 2, y: 4, targetRoomId: "admin", targetX: 10, targetY: 0 },
-            { x: 7, y: 4, targetRoomId: "radio_backstage", targetX: 2, targetY: 4 },
-            { x: 7, y: 0, targetRoomId: "NOT_READY_YET", targetX: 7, targetY: 8 },
-            { x: 9, y: 2, targetRoomId: "takadai", targetX: 2, targetY: 0 },
-            { x: 0, y: 8, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
-            { x: 2, y: 0, targetRoomId: "basement", targetX: 8, targetY: 3 }, // manhole left
-            { x: 9, y: 7, targetRoomId: "basement", targetX: 9, targetY: 3 }, // manhole left
-            { x: 9, y: 0, targetRoomId: "admin_st", targetX: 5, targetY: 4 },
-        ],
+        doors: {
+            world_spawn: { x: 5, y: 2, direction: "right", target: null },
+            left: { x: 0, y: 2, direction: "right", target: { roomId: "bar_st", doorId: "right" } },
+            admin: { x: 2, y: 4, direction: "down", target: { roomId: "admin", doorId: "down" } },
+            barrier: { x: 7, y: 4, direction: "down", target: { roomId: "radio_backstage", doorId: "right_center" } }, // Temp
+            down: { x: 7, y: 0, direction: "up", target: "NOT_READY_YET" },
+            right: { x: 9, y: 2, direction: "left", target: { roomId: "takadai", doorId: "down_left" } },
+            up_left: { x: 0, y: 8, direction: "down", target: "NOT_READY_YET" },
+            manhole_left: { x: 2, y: 0, direction: "up", target: { roomId: "basement", doorId: "up_right_1" } },
+            manhole_right: { x: 9, y: 7, direction: "up", target: { roomId: "basement", doorId: "up_right_2" } },
+            warp: { x: 9, y: 0, direction: "up", target: { roomId: "admin_st", doorId: "trash" } },
+            trash: { x: 5, y: 4, direction: "down", target: null },
+        },
         streamSlotCount: 0,
         secret: false
     },
@@ -153,7 +155,7 @@ export const rooms: { [roomId: string]: Room } = {
         scale: 160 / 200,
         size: { x: 10, y: 4 },
         originCoordinates: { x: 80, y: 534 },
-        spawnPoint: { x: 0, y: 0, direction: "right" },
+        spawnPoint: "secret_bar",
         backgroundImageUrl: "rooms/basement/basement.png",
         backgroundColor: "#c0c0c0",
         objects: [
@@ -164,16 +166,16 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [
         ],
-        doors: [
-            { x: 1, y: 0, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
-            { x: 0, y: 2, targetRoomId: "bar", targetX: 3, targetY: 7 },
-            { x: 1, y: 3, targetRoomId: "bar_st", targetX: 8, targetY: 4 },
-            { x: 3, y: 3, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 }, // secret bar
-            { x: 6, y: 3, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 }, // bar774
-            { x: 8, y: 3, targetRoomId: "admin_st", targetX: 2, targetY: 0 }, // kanrinin street left
-            { x: 9, y: 3, targetRoomId: "admin_st", targetX: 9, targetY: 7 }, // kanrinin street right
-            { x: 8, y: 0, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
-        ],
+        doors: {
+            left: { x: 0, y: 2, direction: "right", target: { roomId: "bar", doorId: "hatch" } },
+            up_left: { x: 1, y: 3, direction: "down", target: { roomId: "bar_st", doorId: "manhole" } },
+            secret_bar: { x: 3, y: 3, direction: "down", target: "NOT_READY_YET" },
+            bar777: { x: 6, y: 3, direction: "down", target: "NOT_READY_YET" },
+            up_right_1: { x: 8, y: 3, direction: "down", target: { roomId: "admin_st", doorId: "manhole_left" } },
+            up_right_2: { x: 9, y: 3, direction: "down", target: { roomId: "admin_st", doorId: "manhole_right" } },
+            down_left: { x: 1, y: 0, direction: "up", target: "NOT_READY_YET" },
+            down_right: { x: 8, y: 0, direction: "up", target: "NOT_READY_YET" },
+        },
         streamSlotCount: 0,
         secret: false
     },
@@ -182,7 +184,7 @@ export const rooms: { [roomId: string]: Room } = {
         scale: 160 / 200,
         size: { x: 12, y: 6 },
         originCoordinates: { x: 90, y: 530 },
-        spawnPoint: { x: 10, y: 0, direction: "up" },
+        spawnPoint: "down",
         backgroundImageUrl: "rooms/admin/background.png",
         backgroundColor: "#c0c0c0",
         objects: [],
@@ -221,9 +223,9 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 6, y: 5 },
         ],
         forbiddenMovements: [],
-        doors: [
-            { x: 10, y: 0, targetRoomId: "admin_st", targetX: 2, targetY: 4 }
-        ],
+        doors: {
+            down: { x: 10, y: 0, direction: "up", target: { roomId: "admin_st", doorId: "admin" } }
+        },
         streamSlotCount: 2,
         secret: false
     },
@@ -232,8 +234,7 @@ export const rooms: { [roomId: string]: Room } = {
         scale: 160 / 200,
         size: { x: 3, y: 9 },
         originCoordinates: { x: 37, y: 900 },
-        spawnPoint: { x: 2, y: 4, direction: "left" },
-        //spawnPoint: { x: 0, y: 0, direction: "up" },
+        spawnPoint: "spawn",
         backgroundImageUrl: "rooms/radio_backstage/radio_backstage.png",
         backgroundColor: "#333333",
         objects: [],
@@ -245,11 +246,12 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 0, y: 8 },
         ],
         forbiddenMovements: [],
-        doors: [
-            { x: 2, y: 1, targetRoomId: "bar", targetX: 8, targetY: 4 },
-            { x: 2, y: 4, targetRoomId: "admin", targetX: 10, targetY: 0 },
-            { x: 2, y: 7, targetRoomId: "admin_st", targetX: 2, targetY: 4 }
-        ],
+        doors: {
+            right_up: { x: 2, y: 1, direction: "left", target: { roomId: "bar", doorId: "right" } }, // Temp
+            right_center: { x: 2, y: 4, direction: "left", target: { roomId: "admin", doorId: "down" } }, // Temp
+            right_down: { x: 2, y: 7, direction: "left", target: { roomId: "admin_st", doorId: "admin" } }, // Temp
+            spawn: { x: 2, y: 2, direction: "left", target: null }
+        },
         streamSlotCount: 0,
         secret: false
     },
@@ -258,7 +260,7 @@ export const rooms: { [roomId: string]: Room } = {
         scale: 160 / 200,
         size: { x: 6, y: 8 },
         originCoordinates: { x: 52, y: 780 },
-        spawnPoint: { x: 0, y: 0, direction: "left" },
+        spawnPoint: "school",
         backgroundImageUrl: "rooms/school_st/giko-hell.png",
         // backgroundColor: "#c0c0c0",
         backgroundColor: "#990600",
@@ -306,22 +308,23 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 6, y: 2 },
         ],
         forbiddenMovements: [],
-        doors: [
-            { x: 0, y: 2, targetRoomId: "NOT_READY_YET", targetX: 8, targetY: 4 },
-            { x: 0, y: 5, targetRoomId: "NOT_READY_YET", targetX: 8, targetY: 4 }, // school entrance
-            { x: 3, y: 7, targetRoomId: "NOT_READY_YET", targetX: 8, targetY: 4 }, // to bar street
-            { x: 5, y: 2, targetRoomId: "NOT_READY_YET", targetX: 8, targetY: 4 }, // to kanrinin street
-            { x: 4, y: 1, targetRoomId: "NOT_READY_YET", targetX: 8, targetY: 4 }, // manhole
-        ],
+        doors: {
+            world_spawn: { x: 3, y: 4, direction: "down", target: null },
+            left: { x: 0, y: 2, direction: "right", target: "NOT_READY_YET" },
+            school: { x: 0, y: 5, direction: "right", target: "NOT_READY_YET" },
+            up: { x: 3, y: 7, direction: "down", target: "NOT_READY_YET" },
+            right: { x: 5, y: 2, direction: "left", target: "NOT_READY_YET" },
+            manhole: { x: 4, y: 1, direction: "down", target: "NOT_READY_YET" }
+        },
         streamSlotCount: 0,
-        secret: false
+        secret: true
     },
     bar_st: {
         id: "bar_st",
         scale: 160 / 200,
         size: { x: 10, y: 9 },
         originCoordinates: { x: 20, y: 580 },
-        spawnPoint: { x: 4, y: 3, direction: "right" },
+        spawnPoint: "spawn",
         backgroundImageUrl: "rooms/bar_st/bar_st.png",
         backgroundColor: "#c0c0c0",
         objects: [
@@ -370,14 +373,16 @@ export const rooms: { [roomId: string]: Room } = {
             { xFrom: 5, yFrom: 5, xTo: 4, yTo: 5 },
             { xFrom: 4, yFrom: 6, xTo: 4, yTo: 5 },
         ],
-        doors: [
-            { x: 4, y: 5, targetRoomId: "bar", targetX: 8, targetY: 4 },
-            { x: 7, y: 0, targetRoomId: "school_st", targetX: 3, targetY: 7 },
-            { x: 7, y: 8, targetRoomId: "admin_st", targetX: 7, targetY: 0 },
-            { x: 9, y: 8, targetRoomId: "NOT_READY_YET", targetX: 0, targetY: 0 },
-            { x: 9, y: 2, targetRoomId: "admin_st", targetX: 0, targetY: 2 },
-            { x: 8, y: 4, targetRoomId: "basement", targetX: 1, targetY: 3 }
-        ],
+        doors: {
+            bar_roof: { x: 0, y: 8, direction: "down", target: null },
+            bar: { x: 4, y: 5, direction: "right", target: { roomId: "bar", doorId: "right" } },
+            spawn: { x: 4, y: 5, direction: "down", target: null },
+            down: { x: 7, y: 0, direction: "up", target: { roomId: "school_st", doorId: "up" } },
+            up: { x: 7, y: 8, direction: "down", target: "NOT_READY_YET" },
+            up_right: { x: 9, y: 8, direction: "down", target: "NOT_READY_YET" },
+            right: { x: 9, y: 2, direction: "left", target: { roomId: "admin_st", doorId: "left" } },
+            manhole: { x: 8, y: 4, direction: "up", target: { roomId: "basement", doorId: "up_left" } }
+        },
         streamSlotCount: 0,
         secret: false
     },
@@ -386,7 +391,7 @@ export const rooms: { [roomId: string]: Room } = {
         scale: 160 / 200,
         size: { x: 9, y: 14 },
         originCoordinates: { x: -90, y: 620 },
-        spawnPoint: { x: 2, y: 0, direction: "right" },
+        spawnPoint: "spawn",
         backgroundImageUrl: "rooms/takadai/takadai-cropped.png",
         backgroundColor: "#c0c0c0",
         objects: [],
@@ -445,10 +450,11 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [
         ],
-        doors: [
-            { x: 2, y: 0, targetRoomId: "admin_st", targetX: 9, targetY: 2 },
-            { x: 6, y: 0, targetRoomId: "silo", targetX: 11, targetY: 7 },
-        ],
+        doors: {
+            down_left: { x: 2, y: 0, direction: "right", target: { roomId: "admin_st", doorId: "right" } },
+            spawn: { x: 2, y: 0, direction: "up", target: null },
+            down_right: { x: 6, y: 0, direction: "up", target: { roomId: "silo", doorId: "right" } },
+        },
         streamSlotCount: 2,
         secret: false
     },
@@ -457,7 +463,7 @@ export const rooms: { [roomId: string]: Room } = {
         scale: 1.18,
         size: { x: 14, y: 14 },
         originCoordinates: { x: -419, y: 688 },
-        spawnPoint: { x: 6, y: 7, direction: "left" },
+        spawnPoint: "spawn",
         backgroundImageUrl: "rooms/silo/testmap.svg",
         backgroundColor: "#c0c0c0",
         backgroundOffset: { x: -119, y: 28 },
@@ -495,10 +501,11 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 2, y: 2 },
         ],
         forbiddenMovements: [],
-        doors: [
-            { x: 6, y: 2, targetRoomId: "badend", targetX: -100, targetY: -100 }, // left
-            { x: 11, y: 7, targetRoomId: "takadai", targetX: 6, targetY: 0 }, // right
-        ],
+        doors: {
+            spawn: { x: 6, y: 7, direction: "down", target: null },
+            down: { x: 6, y: 2, direction: "up", target: { roomId: "badend", doorId: "rip" } },
+            right: { x: 11, y: 7, direction: "left", target: { roomId: "takadai", doorId: "down_right" } }
+        },
         streamSlotCount: 2,
         secret: false
     },
@@ -507,7 +514,7 @@ export const rooms: { [roomId: string]: Room } = {
         scale: 1.18,
         size: { x: 0, y: 0 },
         originCoordinates: { x: 0, y: 0 },
-        spawnPoint: { x: 6, y: 7, direction: "left" },
+        spawnPoint: "spawn",
         backgroundImageUrl: "rooms/badend/badend.jpg",
         backgroundColor: "#000000",
         backgroundOffset: { x: 0, y: 0 },
@@ -515,7 +522,10 @@ export const rooms: { [roomId: string]: Room } = {
         sit: [],
         blocked: [],
         forbiddenMovements: [],
-        doors: [],
+        doors: {
+            spawn: { x: 6, y: 7, direction: "left", target: null },
+            rip: { x: -100, y: -100, direction: "left", target: null }
+        },
         streamSlotCount: 0,
         secret: true
     },
@@ -523,4 +533,3 @@ export const rooms: { [roomId: string]: Room } = {
 }
 
 export const defaultRoom = rooms.admin_st
-
