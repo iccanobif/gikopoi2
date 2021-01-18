@@ -39,6 +39,10 @@
                         <input type="radio" id="naito-selection" value="naito" v-model="characterId">
                         <img src="characters/naito/front-standing.png" />
                     </label>
+                    <label for="furoshiki-selection">
+                        <input type="radio" id="furoshiki-selection" value="furoshiki" v-model="characterId">
+                        <img src="characters/furoshiki/front-standing.svg" />
+                    </label>
                 </div>
                 <button v-on:click="login" :disabled="isLoggingIn">Login</button>
             </form>
