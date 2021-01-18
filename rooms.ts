@@ -501,7 +501,7 @@ export const rooms: { [roomId: string]: Room } = {
         forbiddenMovements: [],
         doors: {
             spawn: { x: 6, y: 7, direction: "down", target: null },
-            left: { x: 6, y: 2, direction: "right", target: { roomId: "badend", doorId: "rip" } },
+            down: { x: 6, y: 2, direction: "up", target: { roomId: "badend", doorId: "rip" } },
             right: { x: 11, y: 7, direction: "left", target: { roomId: "takadai", doorId: "down_right" } }
         },
         streamSlotCount: 2,
