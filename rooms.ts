@@ -310,7 +310,7 @@ export const rooms: { [roomId: string]: Room } = {
         forbiddenMovements: [],
         doors: {
             spawn: { x: 3, y: 4, direction: "right", target: null },
-            left_down: { x: 0, y: 2, direction: "right", target: "NOT_READY_YET" },
+            left: { x: 0, y: 2, direction: "right", target: "NOT_READY_YET" },
             school: { x: 0, y: 5, direction: "right", target: "NOT_READY_YET" },
             up: { x: 3, y: 7, direction: "down", target: "NOT_READY_YET" },
             right: { x: 5, y: 2, direction: "left", target: "NOT_READY_YET" },
