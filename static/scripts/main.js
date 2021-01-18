@@ -545,12 +545,13 @@ const vueApp = new Vue({
             
             const door = Object.values(this.currentRoom.doors).find(
                 (d) =>
+                    d.target !== null &&
                     d.x == currentUser.logicalPositionX &&
                     d.y == currentUser.logicalPositionY
             );
-
-            if (!door || door.target === null) return;
-
+            
+            if (!door) return;
+            
             if (door.target == "NOT_READY_YET")
             {
                 this.steppingOnPortalToNonAvailableRoom = true;
