@@ -44,7 +44,7 @@ const vueApp = new Vue({
         areaId: "gen", // 'gen' or 'for'
         roomList: [],
         rulaRoomSelection: null,
-        
+
         isRedrawRequired: false,
         isDraggingCanvas: false,
         canvasDragStartPoint: null,
@@ -420,7 +420,7 @@ const vueApp = new Vue({
             {
                 this.canvasDimensions.w = canvasElement.offsetWidth;
                 this.canvasDimensions.h = canvasElement.offsetHeight;
-                
+
                 context.canvas.width = this.canvasDimensions.w;
                 context.canvas.height = this.canvasDimensions.h;
             }
@@ -431,27 +431,28 @@ const vueApp = new Vue({
                 x: this.canvasOffset.x,
                 y: this.canvasOffset.y
             };
-            
+
             if (this.isDraggingCanvas)
             {
                 canvasOffset.x += this.canvasDragOffset.x;
                 canvasOffset.y += this.canvasDragOffset.y;
             }
-            
+
             if (this.myUserID in this.users)
             {
                 const user = this.users[this.myUserID]
-                
-                canvasOffset.x -= user.currentPhysicalPositionX - (this.canvasDimensions.w/2 - BLOCK_WIDTH/4);
-                canvasOffset.y -= user.currentPhysicalPositionY - (this.canvasDimensions.h/2 + BLOCK_HEIGHT/2);
+
+                canvasOffset.x -= user.currentPhysicalPositionX - (this.canvasDimensions.w / 2 - BLOCK_WIDTH / 4);
+                canvasOffset.y -= user.currentPhysicalPositionY - (this.canvasDimensions.h / 2 + BLOCK_HEIGHT / 2);
             }
-            
+
             return canvasOffset;
         },
-        
+
         // TODO: Refactor this entire function
         paint: function (timestamp)
         {
+
             try
             {
                 if (this.forceUserInstantMove)
@@ -459,54 +460,30 @@ const vueApp = new Vue({
                     this.forcePhysicalPositionRefresh();
                     this.forceUserInstantMove = false;
                 }
-                
-                
+
+
                 const canvasElement = document.getElementById("room-canvas");
                 const context = canvasElement.getContext("2d");
-                
-                this.detectCanvasResize(canvasElement, context);
-                
-                const canvasOffset = this.getCanvasOffset();
-                
-                let isRedrawRequired = this.isRedrawRequired ||
-                    this.isDraggingCanvas;
 
-                const allObjects = this.currentRoom.objects
-                    .map((o) => ({
-                        o,
-                        type: "room-object",
-                        priority: o.x + 1 + (this.currentRoom.size.y - o.y),
-                    }))
-                    .concat(
-                        Object.values(this.users).map((o) => {
-                            if (o.checkIfRedrawRequired()) isRedrawRequired = true;
-                            return {
-                                o,
-                                type: "user",
-                                priority:
-                                    o.logicalPositionX +
-                                    1 +
-                                    (this.currentRoom.size.y - o.logicalPositionY),
-                            }
-                        })
-                    )
-                    .sort((a, b) =>
-                    {
-                        if (a.priority < b.priority) return -1;
-                        if (a.priority > b.priority) return 1;
-                        return 0;
-                    });
-                
+                this.detectCanvasResize(canvasElement, context);
+
+                const canvasOffset = this.getCanvasOffset();
+
+                let isRedrawRequired = this.isRedrawRequired
+                    || this.isDraggingCanvas
+                    || Object.values(this.users).find(u => u.checkIfRedrawRequired());
+
                 if (!isRedrawRequired)
                 {
                     requestAnimationFrame(this.paint);
                     return;
                 }
+
                 this.isRedrawRequired = false;
-                
+
                 context.fillStyle = this.currentRoom.backgroundColor;
                 context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
-                
+
                 // draw background
                 if (!this.currentRoom.backgroundOffset)
                     this.currentRoom.backgroundOffset = { x: 0, y: 0 }
@@ -516,6 +493,29 @@ const vueApp = new Vue({
                     this.canvasDimensions.h + this.currentRoom.backgroundOffset.y + canvasOffset.y,
                     this.currentRoom.scale
                 );
+
+                const allObjects = this.currentRoom.objects
+                    .map(o => ({
+                        o,
+                        type: "room-object",
+                        priority: o.x + 1 + (this.currentRoom.size.y - o.y),
+                    }))
+                    .concat(
+                        Object.values(this.users).map(o => ({
+                            o,
+                            type: "user",
+                            priority:
+                                o.logicalPositionX +
+                                1 +
+                                (this.currentRoom.size.y - o.logicalPositionY),
+                        }))
+                    )
+                    .sort((a, b) =>
+                    {
+                        if (a.priority < b.priority) return -1;
+                        if (a.priority > b.priority) return 1;
+                        return 0;
+                    });
 
                 for (const o of allObjects)
                 {
@@ -727,27 +727,27 @@ const vueApp = new Vue({
                     break;
             }
         },
-        handleCanvasMousedown: function(event)
+        handleCanvasMousedown: function (event)
         {
             this.isCanvasMousedown = true;
             this.canvasDragStartPoint = { x: event.offsetX, y: event.offsetY };
             this.canvasDragOffset = { x: 0, y: 0 };
         },
-        handleCanvasMousemove: function(event)
+        handleCanvasMousemove: function (event)
         {
             if (!this.isCanvasMousedown) return;
-            
+
             const dragOffset = {
                 x: -(this.canvasDragStartPoint.x - event.offsetX),
                 y: -(this.canvasDragStartPoint.y - event.offsetY)
             };
-            
+
             if (!this.isDraggingCanvas &&
                 (Math.sqrt(Math.pow(dragOffset.x, 2) + Math.pow(dragOffset.y, 2)) > 4))
             {
                 this.isDraggingCanvas = true;
             }
-            
+
             if (this.isDraggingCanvas)
             {
                 this.canvasDragOffset.x = dragOffset.x
