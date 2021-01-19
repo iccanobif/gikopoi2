@@ -44,6 +44,11 @@ const vueApp = new Vue({
         areaId: "gen", // 'gen' or 'for'
         roomList: [],
         rulaRoomSelection: null,
+        
+        isDraggingCanvas: false,
+        canvasDragStartPoint: null,
+        canvasDragOffset: null,
+        canvasOffset: { x: 0, y: 0 },
 
         // Possibly redundant data:
         username: "",
@@ -410,6 +415,17 @@ const vueApp = new Vue({
                     this.forcePhysicalPositionRefresh();
                     this.forceUserInstantMove = false;
                 }
+                
+                const canvasOffset = {
+                    x: this.canvasOffset.x,
+                    y: this.canvasOffset.y
+                };
+                
+                if (this.isDraggingCanvas)
+                {
+                    canvasOffset.x += this.canvasDragOffset.x;
+                    canvasOffset.y += this.canvasDragOffset.y;
+                }
 
                 const context = document.getElementById("room-canvas").getContext("2d");
                 context.fillStyle = "#c0c0c0";
@@ -423,8 +439,8 @@ const vueApp = new Vue({
                     this.currentRoom.backgroundOffset = { x: 0, y: 0 }
                 this.drawImage(
                     this.currentRoom.backgroundImage,
-                    0 + this.currentRoom.backgroundOffset.x,
-                    511 + this.currentRoom.backgroundOffset.y,
+                    0 + this.currentRoom.backgroundOffset.x + canvasOffset.x,
+                    511 + this.currentRoom.backgroundOffset.y + canvasOffset.y,
                     this.currentRoom.scale
                 );
 
@@ -457,8 +473,8 @@ const vueApp = new Vue({
                     {
                         this.drawImage(
                             o.o.image,
-                            o.o.physicalPositionX,
-                            o.o.physicalPositionY,
+                            o.o.physicalPositionX + canvasOffset.x,
+                            o.o.physicalPositionY + canvasOffset.y,
                             this.currentRoom.scale * o.o.scale
                         );
                     } // o.type == "user"
@@ -470,8 +486,8 @@ const vueApp = new Vue({
                             // are done with the correct room's data.
                             this.drawCenteredText(
                                 o.o.name,
-                                o.o.currentPhysicalPositionX + 40,
-                                o.o.currentPhysicalPositionY - 95
+                                (o.o.currentPhysicalPositionX + 40) + canvasOffset.x,
+                                (o.o.currentPhysicalPositionY - 95) + canvasOffset.y
                             );
 
                             switch (o.o.direction)
@@ -480,16 +496,16 @@ const vueApp = new Vue({
                                 case "right":
                                     this.drawHorizontallyFlippedImage(
                                         o.o.getCurrentImage(this.currentRoom),
-                                        o.o.currentPhysicalPositionX,
-                                        o.o.currentPhysicalPositionY
+                                        o.o.currentPhysicalPositionX + canvasOffset.x,
+                                        o.o.currentPhysicalPositionY + canvasOffset.y
                                     );
                                     break;
                                 case "down":
                                 case "left":
                                     this.drawImage(
                                         o.o.getCurrentImage(this.currentRoom),
-                                        o.o.currentPhysicalPositionX,
-                                        o.o.currentPhysicalPositionY
+                                        o.o.currentPhysicalPositionX + canvasOffset.x,
+                                        o.o.currentPhysicalPositionY + canvasOffset.y
                                     );
                                     break;
                             }
@@ -614,6 +630,16 @@ const vueApp = new Vue({
                 "focus",
                 () => (this.forceUserInstantMove = true)
             );
+            window.addEventListener('mouseup', e =>
+            {
+                if (this.isDraggingCanvas)
+                {
+                    this.canvasOffset.x += this.canvasDragOffset.x;
+                    this.canvasOffset.y += this.canvasDragOffset.y;
+                    this.isDraggingCanvas = false;
+                }
+                this.isCanvasMousedown = false;
+            });
         },
         toggleInfobox: function ()
         {
@@ -650,6 +676,33 @@ const vueApp = new Vue({
                     event.preventDefault()
                     this.sendNewPositionToServer("down");
                     break;
+            }
+        },
+        handleCanvasMousedown: function(event)
+        {
+            this.isCanvasMousedown = true;
+            this.canvasDragStartPoint = { x: event.offsetX, y: event.offsetY };
+            this.canvasDragOffset = { x: 0, y: 0 };
+        },
+        handleCanvasMousemove: function(event)
+        {
+            if (!this.isCanvasMousedown) return;
+            
+            const dragOffset = {
+                x: -(this.canvasDragStartPoint.x - event.offsetX),
+                y: -(this.canvasDragStartPoint.y - event.offsetY)
+            };
+            
+            if (!this.isDraggingCanvas &&
+                (Math.sqrt(Math.pow(dragOffset.x, 2) + Math.pow(dragOffset.y, 2)) > 4))
+            {
+                this.isDraggingCanvas = true;
+            }
+            
+            if (this.isDraggingCanvas)
+            {
+                this.canvasDragOffset.x = dragOffset.x
+                this.canvasDragOffset.y = dragOffset.y;
             }
         },
         handleMessageInputKeydown: function (event)
