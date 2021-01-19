@@ -43,8 +43,8 @@ export class Character
 }
 
 export const characters = {
-    giko: new Character("giko", "png", true),
-    naito: new Character("naito", "png", true),
+    giko: new Character("giko", "svg", false),
+    naito: new Character("naito", "svg", false),
     funkynaito: new Character("funkynaito", "png", true),
     furoshiki: new Character("furoshiki", "svg", false),
 }
