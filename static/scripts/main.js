@@ -415,35 +415,40 @@ const vueApp = new Vue({
             {
                 this.canvasDimensions.w = canvasElement.offsetWidth;
                 this.canvasDimensions.h = canvasElement.offsetHeight;
-                
+
                 context.canvas.width = this.canvasDimensions.w;
                 context.canvas.height = this.canvasDimensions.h;
             }
         },
         getCanvasOffset: function ()
         {
+            if (this.currentRoom.id == "silo"
+                || this.currentRoom.id == "takadai"
+                || this.currentRoom.id == "badend")
+                return { x: 0, y: 0 }
+
             const canvasOffset = {
                 x: this.canvasOffset.x,
                 y: this.canvasOffset.y
             };
-            
+
             if (this.isDraggingCanvas)
             {
                 canvasOffset.x += this.canvasDragOffset.x;
                 canvasOffset.y += this.canvasDragOffset.y;
             }
-            
+
             if (this.myUserID in this.users)
             {
                 const user = this.users[this.myUserID]
-                
-                canvasOffset.x -= user.currentPhysicalPositionX - (this.canvasDimensions.w/2 - BLOCK_WIDTH/4);
-                canvasOffset.y -= user.currentPhysicalPositionY - (this.canvasDimensions.h/2 + BLOCK_HEIGHT/2);
+
+                canvasOffset.x -= user.currentPhysicalPositionX - (this.canvasDimensions.w / 2 - BLOCK_WIDTH / 4);
+                canvasOffset.y -= user.currentPhysicalPositionY - (this.canvasDimensions.h / 2 + BLOCK_HEIGHT / 2);
             }
-            
+
             return canvasOffset;
         },
-        
+
         // TODO: Refactor this entire function
         paint: function (timestamp)
         {
@@ -454,11 +459,11 @@ const vueApp = new Vue({
                     this.forcePhysicalPositionRefresh();
                     this.forceUserInstantMove = false;
                 }
-                
-                
+
+
                 const canvasElement = document.getElementById("room-canvas");
                 const context = canvasElement.getContext("2d");
-                
+
                 this.detectCanvasResize(canvasElement, context);
 
                 context.fillStyle = this.currentRoom.backgroundColor;
@@ -708,27 +713,27 @@ const vueApp = new Vue({
                     break;
             }
         },
-        handleCanvasMousedown: function(event)
+        handleCanvasMousedown: function (event)
         {
             this.isCanvasMousedown = true;
             this.canvasDragStartPoint = { x: event.offsetX, y: event.offsetY };
             this.canvasDragOffset = { x: 0, y: 0 };
         },
-        handleCanvasMousemove: function(event)
+        handleCanvasMousemove: function (event)
         {
             if (!this.isCanvasMousedown) return;
-            
+
             const dragOffset = {
                 x: -(this.canvasDragStartPoint.x - event.offsetX),
                 y: -(this.canvasDragStartPoint.y - event.offsetY)
             };
-            
+
             if (!this.isDraggingCanvas &&
                 (Math.sqrt(Math.pow(dragOffset.x, 2) + Math.pow(dragOffset.y, 2)) > 4))
             {
                 this.isDraggingCanvas = true;
             }
-            
+
             if (this.isDraggingCanvas)
             {
                 this.canvasDragOffset.x = dragOffset.x
