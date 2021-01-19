@@ -47,4 +47,5 @@ export const characters = {
     naito: new Character("naito", "svg", false),
     funkynaito: new Character("funkynaito", "png", true),
     furoshiki: new Character("furoshiki", "svg", false),
+    naitoapple: new Character("naitoapple", "svg", false),
 }
