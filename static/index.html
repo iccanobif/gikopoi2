@@ -33,11 +33,19 @@
                 <div id="character-selection">
                     <label for="giko-selection">
                         <input type="radio" id="giko-selection" value="giko" v-model="characterId" >
-                        <img src="characters/giko/front-standing.png" />
+                        <img src="characters/giko/front-standing.svg" />
                     </label>
                     <label for="naito-selection">
                         <input type="radio" id="naito-selection" value="naito" v-model="characterId">
-                        <img src="characters/naito/front-standing.png" />
+                        <img src="characters/naito/front-standing.svg" />
+                    </label>
+                    <label for="furoshiki-selection">
+                        <input type="radio" id="furoshiki-selection" value="furoshiki" v-model="characterId">
+                        <img src="characters/furoshiki/front-standing.svg" />
+                    </label>
+                    <label for="naitoapple-selection">
+                        <input type="radio" id="naitoapple-selection" value="naitoapple" v-model="characterId">
+                        <img src="characters/naitoapple/front-standing.svg" />
                     </label>
                 </div>
                 <button v-on:click="login" :disabled="isLoggingIn">Login</button>

@@ -2,9 +2,11 @@ import { loadImage } from "./utils.js"
 
 export class Character
 {
-    constructor(name)
+    constructor(name, format, leftFacing)
     {
         this.characterName = name;
+        this.format = format;
+        this.leftFacing = leftFacing
 
         this.frontSittingImage = null;
         this.frontStandingImage = null;
@@ -19,14 +21,14 @@ export class Character
     async loadImages()
     {
         const results = await Promise.all([
-            loadImage("characters/" + this.characterName + "/front-sitting.png"),
-            loadImage("characters/" + this.characterName + "/front-standing.png"),
-            loadImage("characters/" + this.characterName + "/front-walking-1.png"),
-            loadImage("characters/" + this.characterName + "/front-walking-2.png"),
-            loadImage("characters/" + this.characterName + "/back-sitting.png"),
-            loadImage("characters/" + this.characterName + "/back-standing.png"),
-            loadImage("characters/" + this.characterName + "/back-walking-1.png"),
-            loadImage("characters/" + this.characterName + "/back-walking-2.png")
+            loadImage("characters/" + this.characterName + "/front-sitting." + this.format),
+            loadImage("characters/" + this.characterName + "/front-standing." + this.format),
+            loadImage("characters/" + this.characterName + "/front-walking-1." + this.format),
+            loadImage("characters/" + this.characterName + "/front-walking-2." + this.format),
+            loadImage("characters/" + this.characterName + "/back-sitting." + this.format),
+            loadImage("characters/" + this.characterName + "/back-standing." + this.format),
+            loadImage("characters/" + this.characterName + "/back-walking-1." + this.format),
+            loadImage("characters/" + this.characterName + "/back-walking-2." + this.format)
         ])
 
         this.frontSittingImage = results[0]
@@ -41,7 +43,9 @@ export class Character
 }
 
 export const characters = {
-    giko: new Character("giko"),
-    naito: new Character("naito"),
-    funkynaito: new Character("funkynaito"),
+    giko: new Character("giko", "svg", false),
+    naito: new Character("naito", "svg", false),
+    funkynaito: new Character("funkynaito", "png", true),
+    furoshiki: new Character("furoshiki", "svg", false),
+    naitoapple: new Character("naitoapple", "svg", false),
 }
