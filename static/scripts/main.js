@@ -3,7 +3,7 @@ localStorage.removeItem("debug");
 
 import { characters } from "./character.js";
 import User from "./user.js";
-import { loadImage, calculateRealCoordinates, globalScale, postJson, } from "./utils.js";
+import { loadImage, calculateRealCoordinates, globalScale, postJson, BLOCK_WIDTH, BLOCK_HEIGHT } from "./utils.js";
 import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 
@@ -432,6 +432,15 @@ const vueApp = new Vue({
                 canvasOffset.x += this.canvasDragOffset.x;
                 canvasOffset.y += this.canvasDragOffset.y;
             }
+            
+            if (this.myUserID in this.users)
+            {
+                const user = this.users[this.myUserID]
+                
+                canvasOffset.x -= user.currentPhysicalPositionX - (this.canvasDimensions.w/2 - BLOCK_WIDTH/4);
+                canvasOffset.y -= user.currentPhysicalPositionY - (this.canvasDimensions.h/2 + BLOCK_HEIGHT/4);
+            }
+            
             return canvasOffset;
         },
         
@@ -446,7 +455,6 @@ const vueApp = new Vue({
                     this.forceUserInstantMove = false;
                 }
                 
-                const canvasOffset = this.getCanvasOffset();
                 
                 const canvasElement = document.getElementById("room-canvas");
                 const context = canvasElement.getContext("2d");
@@ -455,6 +463,8 @@ const vueApp = new Vue({
 
                 context.fillStyle = this.currentRoom.backgroundColor;
                 context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
+                
+                const canvasOffset = this.getCanvasOffset();
 
                 // draw background
                 if (!this.currentRoom.backgroundOffset)
