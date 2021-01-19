@@ -49,6 +49,7 @@ const vueApp = new Vue({
         canvasDragStartPoint: null,
         canvasDragOffset: null,
         canvasOffset: { x: 0, y: 0 },
+        canvasDimensions: { w: 0, h: 0 },
 
         // Possibly redundant data:
         username: "",
@@ -405,6 +406,33 @@ const vueApp = new Vue({
             context.fillStyle = "blue";
             context.fillText(text, x, y);
         },
+        detectCanvasResize: function (canvasElement, context)
+        {
+            if (this.canvasDimensions.w != canvasElement.offsetWidth ||
+                this.canvasDimensions.h != canvasElement.offsetHeight)
+            {
+                this.canvasDimensions.w = canvasElement.offsetWidth;
+                this.canvasDimensions.h = canvasElement.offsetHeight;
+                
+                context.canvas.width = this.canvasDimensions.w;
+                context.canvas.height = this.canvasDimensions.h;
+            }
+        },
+        getCanvasOffset: function ()
+        {
+            const canvasOffset = {
+                x: this.canvasOffset.x,
+                y: this.canvasOffset.y
+            };
+            
+            if (this.isDraggingCanvas)
+            {
+                canvasOffset.x += this.canvasDragOffset.x;
+                canvasOffset.y += this.canvasDragOffset.y;
+            }
+            return canvasOffset;
+        },
+        
         // TODO: Refactor this entire function
         paint: function (timestamp)
         {
@@ -416,23 +444,15 @@ const vueApp = new Vue({
                     this.forceUserInstantMove = false;
                 }
                 
-                const canvasOffset = {
-                    x: this.canvasOffset.x,
-                    y: this.canvasOffset.y
-                };
+                const canvasOffset = this.getCanvasOffset();
                 
-                if (this.isDraggingCanvas)
-                {
-                    canvasOffset.x += this.canvasDragOffset.x;
-                    canvasOffset.y += this.canvasDragOffset.y;
-                }
-
-                const context = document.getElementById("room-canvas").getContext("2d");
-                context.fillStyle = "#c0c0c0";
-                context.fillRect(0, 0, 721, 511);
+                const canvasElement = document.getElementById("room-canvas");
+                const context = canvasElement.getContext("2d");
+                
+                this.detectCanvasResize(canvasElement, context);
 
                 context.fillStyle = this.currentRoom.backgroundColor;
-                context.fillRect(0, 0, 721, 511);
+                context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
 
                 // draw background
                 if (!this.currentRoom.backgroundOffset)
@@ -440,7 +460,7 @@ const vueApp = new Vue({
                 this.drawImage(
                     this.currentRoom.backgroundImage,
                     0 + this.currentRoom.backgroundOffset.x + canvasOffset.x,
-                    511 + this.currentRoom.backgroundOffset.y + canvasOffset.y,
+                    this.canvasDimensions.h + this.currentRoom.backgroundOffset.y + canvasOffset.y,
                     this.currentRoom.scale
                 );
 

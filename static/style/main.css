@@ -196,7 +196,8 @@ video {
 
 #room-canvas
 {
-    width: 100%;   
+    width: 721px;
+    height: 511px;
 }
 
 #canvas-container
