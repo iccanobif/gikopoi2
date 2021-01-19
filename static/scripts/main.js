@@ -45,6 +45,7 @@ const vueApp = new Vue({
         roomList: [],
         rulaRoomSelection: null,
         
+        isRedrawRequired: false,
         isDraggingCanvas: false,
         canvasDragStartPoint: null,
         canvasDragOffset: null,
@@ -123,6 +124,7 @@ const vueApp = new Vue({
             {
                 if (this.roomLoadId != roomLoadId) return;
                 this.currentRoom.backgroundImage = image;
+                this.isRedrawRequired = true;
             });
             for (const o of this.currentRoom.objects)
             {
@@ -138,6 +140,7 @@ const vueApp = new Vue({
                         );
                         o.physicalPositionX = x + (o.xOffset || 0);
                         o.physicalPositionY = y + (o.yOffset || 0);
+                        this.isRedrawRequired = true;
                     }
                 );
             }
@@ -280,11 +283,13 @@ const vueApp = new Vue({
             {
                 if (this.isSoundEnabled) document.getElementById("login-sound").play();
                 this.addUser(user);
+                this.isRedrawRequired = true;
             });
 
             this.socket.on("server-user-left-room", (userId) =>
             {
                 if (userId != this.myUserID) delete this.users[userId];
+                this.isRedrawRequired = true;
             });
 
             this.socket.on("server-not-ok-to-stream", (reason) =>
@@ -460,12 +465,48 @@ const vueApp = new Vue({
                 const context = canvasElement.getContext("2d");
                 
                 this.detectCanvasResize(canvasElement, context);
+                
+                const canvasOffset = this.getCanvasOffset();
+                
+                let isRedrawRequired = this.isRedrawRequired ||
+                    this.isDraggingCanvas;
 
+                const allObjects = this.currentRoom.objects
+                    .map((o) => ({
+                        o,
+                        type: "room-object",
+                        priority: o.x + 1 + (this.currentRoom.size.y - o.y),
+                    }))
+                    .concat(
+                        Object.values(this.users).map((o) => {
+                            if (o.checkIfRedrawRequired()) isRedrawRequired = true;
+                            return {
+                                o,
+                                type: "user",
+                                priority:
+                                    o.logicalPositionX +
+                                    1 +
+                                    (this.currentRoom.size.y - o.logicalPositionY),
+                            }
+                        })
+                    )
+                    .sort((a, b) =>
+                    {
+                        if (a.priority < b.priority) return -1;
+                        if (a.priority > b.priority) return 1;
+                        return 0;
+                    });
+                
+                if (!isRedrawRequired)
+                {
+                    requestAnimationFrame(this.paint);
+                    return;
+                }
+                this.isRedrawRequired = false;
+                
                 context.fillStyle = this.currentRoom.backgroundColor;
                 context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
                 
-                const canvasOffset = this.getCanvasOffset();
-
                 // draw background
                 if (!this.currentRoom.backgroundOffset)
                     this.currentRoom.backgroundOffset = { x: 0, y: 0 }
@@ -475,29 +516,6 @@ const vueApp = new Vue({
                     this.canvasDimensions.h + this.currentRoom.backgroundOffset.y + canvasOffset.y,
                     this.currentRoom.scale
                 );
-
-                const allObjects = this.currentRoom.objects
-                    .map((o) => ({
-                        o,
-                        type: "room-object",
-                        priority: o.x + 1 + (this.currentRoom.size.y - o.y),
-                    }))
-                    .concat(
-                        Object.values(this.users).map((o) => ({
-                            o,
-                            type: "user",
-                            priority:
-                                o.logicalPositionX +
-                                1 +
-                                (this.currentRoom.size.y - o.logicalPositionY),
-                        }))
-                    )
-                    .sort((a, b) =>
-                    {
-                        if (a.priority < b.priority) return -1;
-                        if (a.priority > b.priority) return 1;
-                        return 0;
-                    });
 
                 for (const o of allObjects)
                 {
@@ -624,6 +642,7 @@ const vueApp = new Vue({
                     u.logicalPositionY,
                     u.direction
                 );
+            this.isRedrawRequired = true;
         },
         sendNewPositionToServer: function (direction)
         {

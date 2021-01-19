@@ -14,6 +14,7 @@ export default class User
         this.currentPhysicalPositionX = 0;
         this.currentPhysicalPositionY = 0;
         this.isWalking = false;
+        this.isHalted = true;
         this.direction = "up";
         this.framesUntilNextStep = STEP_LENGTH
     }
@@ -28,6 +29,7 @@ export default class User
         this.currentPhysicalPositionX = realTargetCoordinates.x;
         this.currentPhysicalPositionY = realTargetCoordinates.y;
         this.direction = direction;
+        this.isHalted = true;
     }
 
     moveToPosition(logicalPositionX, logicalPositionY, direction)
@@ -38,6 +40,7 @@ export default class User
         this.logicalPositionX = logicalPositionX;
         this.logicalPositionY = logicalPositionY;
         this.direction = direction;
+        this.isHalted = true;
     }
 
     // TODO really, find a better name for this function
@@ -61,7 +64,10 @@ export default class User
         else if (this.currentPhysicalPositionY < realTargetCoordinates.y) this.currentPhysicalPositionY += yDelta
 
         if (xDelta === 0 && yDelta === 0)
-            this.isWalking = false
+        {
+            this.isHalted = true;
+            this.isWalking = false;
+        }
 
         this.framesUntilNextStep--
         if (this.framesUntilNextStep < 0)
@@ -95,6 +101,16 @@ export default class User
                 case "right":
                     return isSitting ? this.character.frontSittingImage : this.character.frontStandingImage;
             }
+        }
+    }
+    
+    checkIfRedrawRequired()
+    {
+        if (this.isWalking) return true;
+        if (this.isHalted)
+        {
+            this.isHalted = false;
+            return true;
         }
     }
 }
