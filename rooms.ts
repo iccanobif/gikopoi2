@@ -394,6 +394,7 @@ export const rooms: { [roomId: string]: Room } = {
         spawnPoint: "spawn",
         backgroundImageUrl: "rooms/takadai/takadai-cropped.png",
         backgroundColor: "#c0c0c0",
+        needsFixedCamera: true,
         objects: [],
         sit: [
             { x: 3, y: 5 },
@@ -467,6 +468,7 @@ export const rooms: { [roomId: string]: Room } = {
         backgroundImageUrl: "rooms/silo/testmap.svg",
         backgroundColor: "#c0c0c0",
         backgroundOffset: { x: -119, y: 28 },
+        needsFixedCamera: true,
         objects: [],
         sit: [],
         blocked: [
@@ -518,6 +520,7 @@ export const rooms: { [roomId: string]: Room } = {
         backgroundImageUrl: "rooms/badend/badend.jpg",
         backgroundColor: "#000000",
         backgroundOffset: { x: 0, y: 0 },
+        needsFixedCamera: true,
         objects: [],
         sit: [],
         blocked: [],

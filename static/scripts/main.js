@@ -44,7 +44,7 @@ const vueApp = new Vue({
         areaId: "gen", // 'gen' or 'for'
         roomList: [],
         rulaRoomSelection: null,
-        
+
         isDraggingCanvas: false,
         canvasDragStartPoint: null,
         canvasDragOffset: null,
@@ -112,6 +112,8 @@ const vueApp = new Vue({
             this.isLoadingRoom = true;
             const roomLoadId = this.roomLoadId = this.roomLoadId + 1;
 
+            if (this.currentRoom.needsFixedCamera)
+                this.canvasOffset = { x: 0, y: 0 }
             this.currentRoom = roomDto;
 
             this.roomid = this.currentRoom.id;
@@ -422,9 +424,7 @@ const vueApp = new Vue({
         },
         getCanvasOffset: function ()
         {
-            if (this.currentRoom.id == "silo"
-                || this.currentRoom.id == "takadai"
-                || this.currentRoom.id == "badend")
+            if (this.currentRoom.needsFixedCamera)
                 return { x: 0, y: 0 }
 
             const canvasOffset = {
@@ -468,7 +468,7 @@ const vueApp = new Vue({
 
                 context.fillStyle = this.currentRoom.backgroundColor;
                 context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
-                
+
                 const canvasOffset = this.getCanvasOffset();
 
                 // draw background

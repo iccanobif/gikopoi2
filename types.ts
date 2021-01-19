@@ -38,6 +38,7 @@ export interface Room
     backgroundColor: string;
     backgroundOffset?: Coordinates;
     spawnPoint: string;
+    needsFixedCamera?: boolean;
     objects: {
         x: number;
         y: number;
