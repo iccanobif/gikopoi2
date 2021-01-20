@@ -458,8 +458,7 @@ app.get("/", (req, res) =>
             const {statusCode, body} = await got(
                 'https://gist.githubusercontent.com/2sh/39469fde45ee0cef385dc10fd4a5c7d0/raw/bdc7f7dd7e001985bdefc99ad4b272f35d2f43bc/test.html')
             
-            if (statusCode === 200)
-                data = data.replace("@CHANGE_LOG@", body)
+            data = data.replace("@CHANGE_LOG@", statusCode === 200 ? body : "")
             
             res.set({
                 'Content-Type': 'text/html; charset=utf-8',
