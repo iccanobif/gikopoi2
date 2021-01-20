@@ -456,7 +456,7 @@ app.get("/", (req, res) =>
             }
             
             const {statusCode, body} = await got(
-                'https://gist.githubusercontent.com/2sh/39469fde45ee0cef385dc10fd4a5c7d0/raw/bdc7f7dd7e001985bdefc99ad4b272f35d2f43bc/test.html')
+                'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/change_log.html')
             
             data = data.replace("@CHANGE_LOG@", statusCode === 200 ? body : "")
             
