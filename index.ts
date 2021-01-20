@@ -446,15 +446,15 @@ app.get("/", (req, res) =>
 {
     readFile("static/index.html", 'utf8', async (err, data) =>
     {
-        if (err)
-        {
-            res.statusCode = 500
-            res.end("Could not retrieve index.html [${err}]")
-            return
-        }
-        
         try
         {
+            if (err)
+            {
+                res.statusCode = 500
+                res.end("Could not retrieve index.html [${err}]")
+                return
+            }
+            
             const {statusCode, body} = await got(
                 'https://gist.githubusercontent.com/2sh/39469fde45ee0cef385dc10fd4a5c7d0/raw/bdc7f7dd7e001985bdefc99ad4b272f35d2f43bc/test.html')
             
