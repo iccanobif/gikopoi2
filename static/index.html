@@ -118,6 +118,7 @@
                 <button id="btn-move-up" v-on:click="sendNewPositionToServer('up')">↑</button>
                 <button id="btn-move-down" v-on:click="sendNewPositionToServer('down')">↓</button>
                 <button id="btn-move-right" v-on:click="sendNewPositionToServer('right')">→</button>
+                <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
             </div>
             {{ $t("ui.label_log") }}
             <div id="chatLog">
