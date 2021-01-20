@@ -44,8 +44,11 @@ const vueApp = new Vue({
         areaId: "gen", // 'gen' or 'for'
         roomList: [],
         rulaRoomSelection: null,
-
-        isRedrawRequired: false,
+        
+        contextBackground: null,
+        contextForeground: null,
+        isBackgroundRedrawRequired: false,
+        isForegroundRedrawRequired: false,
         isDraggingCanvas: false,
         canvasDragStartPoint: null,
         canvasDragOffset: null,
@@ -93,6 +96,11 @@ const vueApp = new Vue({
             this.registerKeybindings();
             await this.connectToServer(this.username);
             this.isLoggingIn = false;
+            
+            this.contextBackground = document.getElementById("room-canvas-background")
+                .getContext("2d", {alpha: false});
+            this.contextForeground = document.getElementById("room-canvas-foreground")
+                .getContext("2d");
             this.paint();
         },
         setLanguage: function (code)
@@ -126,7 +134,7 @@ const vueApp = new Vue({
             {
                 if (this.roomLoadId != roomLoadId) return;
                 this.currentRoom.backgroundImage = image;
-                this.isRedrawRequired = true;
+                this.isBackgroundRedrawRequired = true;
             });
             for (const o of this.currentRoom.objects)
             {
@@ -142,7 +150,7 @@ const vueApp = new Vue({
                         );
                         o.physicalPositionX = x + (o.xOffset || 0);
                         o.physicalPositionY = y + (o.yOffset || 0);
-                        this.isRedrawRequired = true;
+                        this.isForegroundRedrawRequired = true;
                     }
                 );
             }
@@ -155,7 +163,7 @@ const vueApp = new Vue({
             // Force update of user coordinates using the current room's logics (origin coordinates, etc)
             this.forcePhysicalPositionRefresh();
 
-            document.getElementById("room-canvas").focus();
+            //this.contextForeground.canvas.focus();
             this.justSpawnedToThisRoom = true;
             this.isLoadingRoom = false;
             this.requestedRoomChange = false;
@@ -285,13 +293,13 @@ const vueApp = new Vue({
             {
                 if (this.isSoundEnabled) document.getElementById("login-sound").play();
                 this.addUser(user);
-                this.isRedrawRequired = true;
+                this.isForegroundRedrawRequired = true;
             });
 
             this.socket.on("server-user-left-room", (userId) =>
             {
                 if (userId != this.myUserID) delete this.users[userId];
-                this.isRedrawRequired = true;
+                this.isForegroundRedrawRequired = true;
             });
 
             this.socket.on("server-not-ok-to-stream", (reason) =>
@@ -383,13 +391,12 @@ const vueApp = new Vue({
             );
             this.users[userDTO.id] = newUser;
         },
-        drawImage: function (image, x, y, scale)
+        drawImage: function (context, image, x, y, scale)
         {
             if (!image) return; // image might be null when rendering a room that hasn't been fully loaded
 
             if (!scale) scale = 1;
 
-            const context = document.getElementById("room-canvas").getContext("2d");
             context.drawImage(
                 image,
                 Math.round(x),
@@ -398,16 +405,14 @@ const vueApp = new Vue({
                 Math.round(image.height * globalScale * scale)
             );
         },
-        drawHorizontallyFlippedImage: function (image, x, y)
+        drawHorizontallyFlippedImage: function (context, image, x, y)
         {
-            const context = document.getElementById("room-canvas").getContext("2d");
             context.scale(-1, 1);
-            this.drawImage(image, -x - image.width / 2, y);
+            this.drawImage(context, image, -x - image.width / 2, y);
             context.setTransform(1, 0, 0, 1, 0, 0); // clear transformation
         },
-        drawCenteredText: function (text, x, y)
+        drawCenteredText: function (context, text, x, y)
         {
-            const context = document.getElementById("room-canvas").getContext("2d");
             // const width = context.measureText(text).width
             context.font = "bold 13px Arial, Helvetica, sans-serif";
             context.textBaseline = "bottom";
@@ -415,16 +420,18 @@ const vueApp = new Vue({
             context.fillStyle = "blue";
             context.fillText(text, x, y);
         },
-        detectCanvasResize: function (canvasElement, context)
+        detectCanvasResize: function ()
         {
-            if (this.canvasDimensions.w != canvasElement.offsetWidth ||
-                this.canvasDimensions.h != canvasElement.offsetHeight)
+            if (this.canvasDimensions.w != this.contextBackground.canvas.offsetWidth ||
+                this.canvasDimensions.h != this.contextBackground.canvas.offsetHeight)
             {
-                this.canvasDimensions.w = canvasElement.offsetWidth;
-                this.canvasDimensions.h = canvasElement.offsetHeight;
+                this.canvasDimensions.w = this.contextBackground.canvas.offsetWidth;
+                this.canvasDimensions.h = this.contextBackground.canvas.offsetHeight;
 
-                context.canvas.width = this.canvasDimensions.w;
-                context.canvas.height = this.canvasDimensions.h;
+                this.contextBackground.canvas.width = this.canvasDimensions.w;
+                this.contextBackground.canvas.height = this.canvasDimensions.h;
+                this.contextForeground.canvas.width = this.canvasDimensions.w;
+                this.contextForeground.canvas.height = this.canvasDimensions.h;
             }
         },
         getCanvasOffset: function ()
@@ -453,11 +460,130 @@ const vueApp = new Vue({
 
             return canvasOffset;
         },
+        
+        paintBackground: function(canvasOffset)
+        {
+            const context = this.contextBackground;
+            
+            context.fillStyle = this.currentRoom.backgroundColor;
+            context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
+            
+            if (!this.currentRoom.backgroundOffset)
+                this.currentRoom.backgroundOffset = { x: 0, y: 0 }
+            this.drawImage(
+                context,
+                this.currentRoom.backgroundImage,
+                0 + this.currentRoom.backgroundOffset.x + canvasOffset.x,
+                this.canvasDimensions.h + this.currentRoom.backgroundOffset.y + canvasOffset.y,
+                this.currentRoom.scale
+            );
+        },
+        paintForeground: function(canvasOffset, usersRequiringRedraw)
+        {
+            const context = this.contextForeground;
+            
+            context.clearRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
+            
+            const allObjects = this.currentRoom.objects
+                .map(o => ({
+                    o,
+                    type: "room-object",
+                    priority: o.x + 1 + (this.currentRoom.size.y - o.y),
+                }))
+                .concat(
+                    Object.values(this.users).map(o => ({
+                        o,
+                        type: "user",
+                        priority:
+                            o.logicalPositionX +
+                            1 +
+                            (this.currentRoom.size.y - o.logicalPositionY),
+                    }))
+                )
+                .sort((a, b) =>
+                {
+                    if (a.priority < b.priority) return -1;
+                    if (a.priority > b.priority) return 1;
+                    return 0;
+                });
 
-        // TODO: Refactor this entire function
+            for (const o of allObjects)
+            {
+                if (o.type == "room-object")
+                {
+                    this.drawImage(
+                        context,
+                        o.o.image,
+                        o.o.physicalPositionX + canvasOffset.x,
+                        o.o.physicalPositionY + canvasOffset.y,
+                        this.currentRoom.scale * o.o.scale
+                    );
+                } // o.type == "user"
+                else
+                {
+                    if (!this.isLoadingRoom)
+                    {
+                        // draw users only when the room is fully loaded, so that the "physical position" calculations
+                        // are done with the correct room's data.
+                        this.drawCenteredText(
+                            context,
+                            o.o.name,
+                            (o.o.currentPhysicalPositionX + 40) + canvasOffset.x,
+                            (o.o.currentPhysicalPositionY - 95) + canvasOffset.y
+                        );
+
+                        let drawFunc;
+
+                        switch (o.o.direction)
+                        {
+                            case "up": case "right":
+                                drawFunc = o.o.character.leftFacing ? this.drawHorizontallyFlippedImage : this.drawImage
+                                break;
+                            case "down": case "left":
+                                drawFunc = o.o.character.leftFacing ? this.drawImage : this.drawHorizontallyFlippedImage
+                                break;
+                        }
+
+                        drawFunc(
+                            context,
+                            o.o.getCurrentImage(this.currentRoom),
+                            o.o.currentPhysicalPositionX + canvasOffset.x,
+                            o.o.currentPhysicalPositionY + canvasOffset.y
+                        );
+                    }
+
+                    o.o.spendTime(this.currentRoom);
+                }
+            }
+
+            if (localStorage.getItem("enableGridNumbers") == "true")
+            {
+                context.font = "bold 13px Arial, Helvetica, sans-serif";
+                context.textBaseline = "bottom";
+                context.textAlign = "right";
+
+                for (let x = 0; x < this.currentRoom.size.x; x++)
+                    for (let y = 0; y < this.currentRoom.size.y; y++)
+                    {
+                        context.fillStyle = this.currentRoom.blocked.find(b => b.x == x && b.y == y)
+                            ? "red"
+                            : "blue";
+                        const realCoord = calculateRealCoordinates(
+                            this.currentRoom,
+                            x,
+                            y
+                        );
+                        context.fillText(
+                            x + "," + y,
+                            realCoord.x + 40,
+                            realCoord.y - 20
+                        );
+                    }
+            }
+        },
+        
         paint: function (timestamp)
         {
-
             try
             {
                 if (this.forceUserInstantMove)
@@ -465,135 +591,31 @@ const vueApp = new Vue({
                     this.forcePhysicalPositionRefresh();
                     this.forceUserInstantMove = false;
                 }
-
-
-                const canvasElement = document.getElementById("room-canvas");
-                const context = canvasElement.getContext("2d");
-
-                this.detectCanvasResize(canvasElement, context);
-
-
-
-                let isRedrawRequired = this.isRedrawRequired
-                    || this.isDraggingCanvas
-                    || Object.values(this.users).find(u => u.checkIfRedrawRequired());
-
-                if (!isRedrawRequired)
-                {
-                    requestAnimationFrame(this.paint);
-                    return;
-                }
-
-                this.isRedrawRequired = false;
-
-                context.fillStyle = this.currentRoom.backgroundColor;
-                context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
+                
+                this.detectCanvasResize();
                 
                 const canvasOffset = this.getCanvasOffset();
-
-                // draw background
-                if (!this.currentRoom.backgroundOffset)
-                    this.currentRoom.backgroundOffset = { x: 0, y: 0 }
-                this.drawImage(
-                    this.currentRoom.backgroundImage,
-                    0 + this.currentRoom.backgroundOffset.x + canvasOffset.x,
-                    this.canvasDimensions.h + this.currentRoom.backgroundOffset.y + canvasOffset.y,
-                    this.currentRoom.scale
-                );
-
-                const allObjects = this.currentRoom.objects
-                    .map(o => ({
-                        o,
-                        type: "room-object",
-                        priority: o.x + 1 + (this.currentRoom.size.y - o.y),
-                    }))
-                    .concat(
-                        Object.values(this.users).map(o => ({
-                            o,
-                            type: "user",
-                            priority:
-                                o.logicalPositionX +
-                                1 +
-                                (this.currentRoom.size.y - o.logicalPositionY),
-                        }))
-                    )
-                    .sort((a, b) =>
-                    {
-                        if (a.priority < b.priority) return -1;
-                        if (a.priority > b.priority) return 1;
-                        return 0;
-                    });
-
-                for (const o of allObjects)
+                
+                const usersRequiringRedraw = [];
+                for (const [userId, user] of Object.entries(this.users))
+                    if(user.checkIfRedrawRequired()) usersRequiringRedraw.push(userId);
+                
+                if (this.isBackgroundRedrawRequired
+                    || this.isDraggingCanvas
+                    || (!this.currentRoom.needsFixedCamera && usersRequiringRedraw.includes(this.myUserID)))
                 {
-                    if (o.type == "room-object")
-                    {
-                        this.drawImage(
-                            o.o.image,
-                            o.o.physicalPositionX + canvasOffset.x,
-                            o.o.physicalPositionY + canvasOffset.y,
-                            this.currentRoom.scale * o.o.scale
-                        );
-                    } // o.type == "user"
-                    else
-                    {
-                        if (!this.isLoadingRoom)
-                        {
-                            // draw users only when the room is fully loaded, so that the "physical position" calculations
-                            // are done with the correct room's data.
-                            this.drawCenteredText(
-                                o.o.name,
-                                (o.o.currentPhysicalPositionX + 40) + canvasOffset.x,
-                                (o.o.currentPhysicalPositionY - 95) + canvasOffset.y
-                            );
-
-                            let drawFunc;
-
-                            switch (o.o.direction)
-                            {
-                                case "up": case "right":
-                                    drawFunc = o.o.character.leftFacing ? this.drawHorizontallyFlippedImage : this.drawImage
-                                    break;
-                                case "down": case "left":
-                                    drawFunc = o.o.character.leftFacing ? this.drawImage : this.drawHorizontallyFlippedImage
-                                    break;
-                            }
-
-                            drawFunc(
-                                o.o.getCurrentImage(this.currentRoom),
-                                o.o.currentPhysicalPositionX + canvasOffset.x,
-                                o.o.currentPhysicalPositionY + canvasOffset.y
-                            );
-                        }
-
-                        o.o.spendTime(this.currentRoom);
-                    }
+                    this.paintBackground(canvasOffset);
+                    this.isBackgroundRedrawRequired = false;
                 }
-
-                if (localStorage.getItem("enableGridNumbers") == "true")
+            
+                if (this.isForegroundRedrawRequired
+                    || this.isDraggingCanvas
+                    || usersRequiringRedraw.length)
                 {
-                    context.font = "bold 13px Arial, Helvetica, sans-serif";
-                    context.textBaseline = "bottom";
-                    context.textAlign = "right";
-
-                    for (let x = 0; x < this.currentRoom.size.x; x++)
-                        for (let y = 0; y < this.currentRoom.size.y; y++)
-                        {
-                            context.fillStyle = this.currentRoom.blocked.find(b => b.x == x && b.y == y)
-                                ? "red"
-                                : "blue";
-                            const realCoord = calculateRealCoordinates(
-                                this.currentRoom,
-                                x,
-                                y
-                            );
-                            context.fillText(
-                                x + "," + y,
-                                realCoord.x + 40,
-                                realCoord.y - 20
-                            );
-                        }
+                    this.paintForeground(canvasOffset);
+                    this.isForegroundRedrawRequired = false;
                 }
+                
                 this.changeRoomIfSteppingOnDoor();
             } catch (err)
             {
@@ -649,7 +671,7 @@ const vueApp = new Vue({
                     u.logicalPositionY,
                     u.direction
                 );
-            this.isRedrawRequired = true;
+            this.isForegroundRedrawRequired = true;
         },
         sendNewPositionToServer: function (direction)
         {
