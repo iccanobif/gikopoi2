@@ -392,10 +392,10 @@ const vueApp = new Vue({
             const context = document.getElementById("room-canvas").getContext("2d");
             context.drawImage(
                 image,
-                x,
-                y - image.height * globalScale * scale,
-                image.width * globalScale * scale,
-                image.height * globalScale * scale
+                Math.round(x),
+                Math.round(y - image.height * globalScale * scale),
+                Math.round(image.width * globalScale * scale),
+                Math.round(image.height * globalScale * scale)
             );
         },
         drawHorizontallyFlippedImage: function (image, x, y)
