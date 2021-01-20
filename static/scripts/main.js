@@ -162,8 +162,8 @@ const vueApp = new Vue({
 
             // Force update of user coordinates using the current room's logics (origin coordinates, etc)
             this.forcePhysicalPositionRefresh();
-
-            //this.contextForeground.canvas.focus();
+            
+            document.getElementById("room-canvas-background").focus();
             this.justSpawnedToThisRoom = true;
             this.isLoadingRoom = false;
             this.requestedRoomChange = false;
