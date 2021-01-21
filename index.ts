@@ -2,15 +2,16 @@ import express from "express"
 import { readFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
 import { Direction, RoomState, RoomStateDto } from "./types";
-import { addNewUser, getConnectedUserList, getGhostUsers, getUser, Player, removeUser } from "./users";
+import { addNewUser, getConnectedUserList, getGhostUsers, getUser, Player, removeUser, serializeState } from "./users";
 import { sleep } from "./utils";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
+import got from "got";
+import { writeFile } from "fs/promises";
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
 const tripcode = require('tripcode');
 const enforce = require('express-sslify');
-const got = require('got');
 
 const delay = 0
 
@@ -311,18 +312,18 @@ io.on("connection", function (socket: any)
             clearStream(user)
             io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
             socket.leave(user.areaId + user.roomId)
-            
+
             if (targetDoorId == undefined)
                 targetDoorId = rooms[targetRoomId].spawnPoint;
-            
+
             if (!(targetDoorId in rooms[targetRoomId].doors))
             {
                 console.error("Could not find door " + targetDoorId + " in room " + targetRoomId);
                 return;
             }
-            
+
             const door = rooms[targetRoomId].doors[targetDoorId]
-            
+
             user.position = { x: door.x, y: door.y }
             if (door.direction !== null) user.direction = door.direction
             user.roomId = targetRoomId
@@ -454,12 +455,12 @@ app.get("/", (req, res) =>
                 res.end("Could not retrieve index.html [${err}]")
                 return
             }
-            
-            const {statusCode, body} = await got(
+
+            const { statusCode, body } = await got(
                 'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/change_log.html')
-            
+
             data = data.replace("@CHANGE_LOG@", statusCode === 200 ? body : "")
-            
+
             res.set({
                 'Content-Type': 'text/html; charset=utf-8',
                 'Cache-Control': 'no-cache'
@@ -545,7 +546,7 @@ app.post("/login", (req, res) =>
             res.end("please specify a username")
             return;
         }
-        
+
         if (userName.length > 20)
             userName = userName.substr(0, 20)
 
@@ -644,6 +645,25 @@ setInterval(() =>
         console.error(e.message + " " + e.stack);
     }
 }, 1 * 1000)
+
+// Persist state every few seconds, so that people can seamless reconnect on a server restart
+
+async function persistState()
+{
+    const serializedState = serializeState()
+
+    if (process.env.NODE_ENV == "production")
+    {
+        // use external persistor
+    }
+    else
+    {
+        // use local file
+        writeFile("persisted-state", serializedState)
+    }
+}
+
+setInterval(() => persistState(), 5 * 1000)
 
 const port = process.env.PORT == undefined
     ? 8085

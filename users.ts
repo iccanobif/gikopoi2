@@ -31,7 +31,7 @@ export class Player
     }
 }
 
-const users: { [id: string]: Player; } = {}
+let users: { [id: string]: Player; } = {}
 
 export function addNewUser(name: string, characterId: string, areaId: string)
 {
@@ -62,4 +62,14 @@ export function getUser(userId: string)
 export function removeUser(user: Player)
 {
     delete users[user.id];
+}
+
+export function serializeState(): string
+{
+    return JSON.stringify(users)
+}
+
+export function deserializeState(serializedState: string)
+{
+    users = JSON.parse(serializedState)
 }
