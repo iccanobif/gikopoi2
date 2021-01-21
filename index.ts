@@ -10,6 +10,7 @@ const http = require('http').Server(app);
 const io = require("socket.io")(http);
 const tripcode = require('tripcode');
 const enforce = require('express-sslify');
+const got = require('got');
 
 const delay = 0
 
@@ -440,6 +441,37 @@ function emitServerStats(areaId: string)
 
 if (process.env.NODE_ENV == "production")
     app.use(enforce.HTTPS({ trustProtoHeader: true }))
+
+app.get("/", (req, res) =>
+{
+    readFile("static/index.html", 'utf8', async (err, data) =>
+    {
+        try
+        {
+            if (err)
+            {
+                res.statusCode = 500
+                res.end("Could not retrieve index.html [${err}]")
+                return
+            }
+            
+            const {statusCode, body} = await got(
+                'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/change_log.html')
+            
+            data = data.replace("@CHANGE_LOG@", statusCode === 200 ? body : "")
+            
+            res.set({
+                'Content-Type': 'text/html; charset=utf-8',
+                'Cache-Control': 'no-cache'
+            })
+            res.end(data)
+        }
+        catch (e)
+        {
+            res.end(e.message + " " + e.stack)
+        }
+    })
+})
 
 app.use(express.static('static',
     { setHeaders: (res) => res.set("Cache-Control", "no-cache") }
