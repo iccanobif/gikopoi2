@@ -181,13 +181,17 @@ export const rooms: { [roomId: string]: Room } = {
     },
     admin: {
         id: "admin",
-        scale: 160 / 200,
+        scale: 2,
         size: { x: 12, y: 6 },
-        originCoordinates: { x: 90, y: 530 },
+        originCoordinates: { x: 90, y: 540 },
         spawnPoint: "down",
-        backgroundImageUrl: "rooms/admin/background.png",
+        backgroundImageUrl: "rooms/admin/background.svg",
         backgroundColor: "#c0c0c0",
-        objects: [],
+        objects: [
+            { x: 2, y: 1, url: "long_table_left.svg", scale: 1, xOffset: -2, yOffset: 18 },
+            { x: 2, y: 3, url: "long_table_right.svg", scale: 1, xOffset: -3, yOffset: 3 },
+            { x: 8, y: 2, url: "round_table.svg", scale: 1, xOffset: 28, yOffset: 5 },
+        ],
         sit: [
             { x: 10, y: 2 },
             { x: 10, y: 3 },
