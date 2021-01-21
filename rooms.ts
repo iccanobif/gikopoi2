@@ -78,24 +78,24 @@ export const rooms: { [roomId: string]: Room } = {
     },
     admin_st: {
         id: "admin_st",
-        scale: 160 / 200,
+        scale: 2,
         size: { x: 10, y: 9 },
-        originCoordinates: { x: 18, y: 614 },
+        originCoordinates: { x: 0, y: 622 },
         spawnPoint: "admin",
-        backgroundImageUrl: "rooms/admin_st/background.png",
+        backgroundImageUrl: "rooms/admin_st/background.svg",
         backgroundColor: "#c0c0c0",
         objects: [
-            { x: 1, y: 5, url: "house1.svg", scale: 2.5, xOffset: -1, yOffset: 58 },
-            { x: 1, y: 5, url: "house2.svg", scale: 2.5, xOffset: -1, yOffset: 58 },
-            { x: 5, y: 4, url: "trash-bin1.svg", scale: 2.5, xOffset: 2, yOffset: -15 },
-            { x: 6, y: 4, url: "trash-bin2.svg", scale: 2.5, xOffset: -27, yOffset: -38 },
-            { x: 6, y: 4, url: "trash-bin2.svg", scale: 2.5, xOffset: -26, yOffset: -38 },
-            { x: 5, y: 7, url: "go-table.svg", scale: 2.5, xOffset: 10, yOffset: -7 },
-            { x: 5, y: 6, url: "chair.svg", scale: 2.5, xOffset: 28, yOffset: -18 },
-            { x: 5, y: 8, url: "chair.svg", scale: 2.5, xOffset: 28, yOffset: -18 },
+            { x: 1, y: 5, url: "house1.svg", scale: 1, xOffset: -1, yOffset: 58 + 3 },
+            { x: 1, y: 5, url: "house2.svg", scale: 1, xOffset: -1, yOffset: 58 + 3 },
+            { x: 5, y: 4, url: "trash-bin1.svg", scale: 1, xOffset: 3, yOffset: -16 + 3 },
+            { x: 6, y: 4, url: "trash-bin2.svg", scale: 1, xOffset: -26, yOffset: -40 + 3 },
+            { x: 6, y: 4, url: "trash-bin2.svg", scale: 1, xOffset: -27, yOffset: -40 + 3 },
+            { x: 5, y: 7, url: "go-table.svg", scale: 1, xOffset: 10, yOffset: -7 + 3 },
+            { x: 5, y: 6, url: "chair.svg", scale: 1, xOffset: 28, yOffset: -18 + 3 },
+            { x: 5, y: 8, url: "chair.svg", scale: 1, xOffset: 28, yOffset: -18 + 3 },
 
-            { x: 6, y: 5, url: "boom-barrier.svg", scale: 2.5, xOffset: -1, yOffset: -10 },
-            { x: 10, y: 4, url: "funkyboon.svg", scale: 2.5, xOffset: -35, yOffset: -28 },
+            { x: 6, y: 5, url: "boom-barrier.svg", scale: 1, xOffset: -1, yOffset: -11 + 3 },
+            { x: 10, y: 4, url: "funkyboon.svg", scale: 1, xOffset: -35, yOffset: -28 + 3 },
         ],
         sit: [
             { x: 5, y: 6 },
@@ -181,13 +181,17 @@ export const rooms: { [roomId: string]: Room } = {
     },
     admin: {
         id: "admin",
-        scale: 160 / 200,
+        scale: 2,
         size: { x: 12, y: 6 },
-        originCoordinates: { x: 90, y: 530 },
+        originCoordinates: { x: 90, y: 540 },
         spawnPoint: "down",
-        backgroundImageUrl: "rooms/admin/background.png",
+        backgroundImageUrl: "rooms/admin/background.svg",
         backgroundColor: "#c0c0c0",
-        objects: [],
+        objects: [
+            { x: 2, y: 1, url: "long_table_left.svg", scale: 1, xOffset: -2, yOffset: 18 },
+            { x: 2, y: 3, url: "long_table_right.svg", scale: 1, xOffset: -3, yOffset: 3 },
+            { x: 8, y: 2, url: "round_table.svg", scale: 1, xOffset: 28, yOffset: 5 },
+        ],
         sit: [
             { x: 10, y: 2 },
             { x: 10, y: 3 },
@@ -378,7 +382,7 @@ export const rooms: { [roomId: string]: Room } = {
             bar: { x: 4, y: 5, direction: "right", target: { roomId: "bar", doorId: "right" } },
             spawn: { x: 4, y: 5, direction: "down", target: null },
             down: { x: 7, y: 0, direction: "up", target: { roomId: "school_st", doorId: "up" } },
-            up: { x: 7, y: 8, direction: "down", target: "NOT_READY_YET" },
+            up: { x: 7, y: 8, direction: "down", target: { roomId: "long_st", doorId: "down" } },
             up_right: { x: 9, y: 8, direction: "down", target: "NOT_READY_YET" },
             right: { x: 9, y: 2, direction: "left", target: { roomId: "admin_st", doorId: "left" } },
             manhole: { x: 8, y: 4, direction: "up", target: { roomId: "basement", doorId: "up_left" } }
@@ -532,7 +536,30 @@ export const rooms: { [roomId: string]: Room } = {
         streamSlotCount: 0,
         secret: true
     },
-
+    long_st: {
+        id: "long_st",
+        scale: 2,
+        size: { x: 3, y: 33 },
+        originCoordinates: { x: 25, y: 900 },
+        spawnPoint: "down",
+        backgroundImageUrl: "rooms/long_st/long_st.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [],
+        sit: [
+            { x: 0, y: 0 }
+        ],
+        blocked: [
+            { x: 2, y: 32 }
+        ],
+        forbiddenMovements: [],
+        doors: {
+            down: { x: 1, y: 0, direction: "up", target: { roomId: "bar_st", doorId: "up" } },
+            up: { x: 1, y: 32, direction: "down", target: { roomId: "long_st", doorId: "down" } },
+            left: { x: 0, y: 30, direction: "up", target: "NOT_READY_YET" }
+        },
+        streamSlotCount: 0,
+        secret: false
+    },
 }
 
 export const defaultRoom = rooms.admin_st
