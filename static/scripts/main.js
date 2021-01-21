@@ -479,7 +479,7 @@ const vueApp = new Vue({
                 this.currentRoom.scale
             );
         },
-        paintForeground: function(canvasOffset, usersRequiringRedraw)
+        paintForeground: function(canvasOffset)
         {
             const context = this.contextForeground;
             
