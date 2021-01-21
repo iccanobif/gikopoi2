@@ -64,12 +64,12 @@ export function removeUser(user: Player)
     delete users[user.id];
 }
 
-export function serializeState(): string
+export function serializeUserState(): string
 {
     return JSON.stringify(users)
 }
 
-export function deserializeState(serializedState: string)
+export function deserializeUserState(serializedState: string)
 {
     users = JSON.parse(serializedState)
 }

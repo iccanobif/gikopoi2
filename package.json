@@ -16,7 +16,7 @@
   "license": "Beerware",
   "scripts": {
     "start": "node build/index.js",
-    "dev": "ts-node-dev --respawn index.ts",
+    "dev": "cross-env PERSISTOR_URL=http://localhost:8086 ts-node-dev --respawn index.ts",
     "dev-debug": "cross-env DEBUG=* ts-node-dev --respawn index.ts",
     "build": "npx tsc",
     "start-persistor": "node state-persistor.js"

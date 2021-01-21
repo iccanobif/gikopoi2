@@ -1,12 +1,11 @@
 import express from "express"
-import { readFile } from "fs";
+import { readFile, writeFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
 import { Direction, RoomState, RoomStateDto } from "./types";
-import { addNewUser, getConnectedUserList, getGhostUsers, getUser, Player, removeUser, serializeState } from "./users";
+import { addNewUser, deserializeUserState, getConnectedUserList, getGhostUsers, getUser, Player, removeUser, serializeUserState } from "./users";
 import { sleep } from "./utils";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
 import got from "got";
-import { writeFile } from "fs/promises";
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
@@ -650,7 +649,7 @@ setInterval(() =>
 
 async function persistState()
 {
-    const serializedState = serializeState()
+    const serializedUserState = serializeUserState()
 
     if (process.env.NODE_ENV == "production")
     {
@@ -659,8 +658,46 @@ async function persistState()
     else
     {
         // use local file
-        writeFile("persisted-state", serializedState)
+        writeFile("persisted-state",
+            serializedUserState,
+            { encoding: "utf-8" },
+            (err) =>
+            {
+                if (err) console.error(err)
+            })
     }
+}
+
+function restoreState()
+{
+    return new Promise<void>(async (resolve, reject) =>
+    {
+        if (process.env.PERSISTOR_URL)
+        {
+            const response = await got(process.env.PERSISTOR_URL)
+            // If there's an error, just don't deserialize anything
+            // and start with a fresh state
+            if (response.statusCode == 200)
+                deserializeUserState(response.body)
+            resolve()
+        }
+        else 
+        {
+            readFile("persisted-state", { encoding: "utf-8" }, (err, data) =>
+            {
+                if (err)
+                {
+
+                    console.log(err)
+                }
+                else
+                {
+                    deserializeUserState(data)
+                    resolve()
+                }
+            })
+        }
+    })
 }
 
 setInterval(() => persistState(), 5 * 1000)
@@ -669,6 +706,10 @@ const port = process.env.PORT == undefined
     ? 8085
     : Number.parseInt(process.env.PORT)
 
-http.listen(port, "0.0.0.0");
+restoreState().then(() =>
+{
+    http.listen(port, "0.0.0.0");
 
-console.log("Server running on http://localhost:" + port);
+    console.log("Server running on http://localhost:" + port);
+})
+    .catch(console.error)
