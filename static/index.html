@@ -63,6 +63,14 @@
                         <input type="radio" id="tinpopo-selection" value="tinpopo" v-model="characterId">
                         <img src="characters/tinpopo/front-standing.svg" />
                     </label>
+                    <label for="shii-hat-selection">
+                        <input type="radio" id="shii-hat-selection" value="shii_hat" v-model="characterId" >
+                        <img src="characters/shii_hat/front-standing.svg" />
+                    </label>
+                    <label for="giko-hat-selection">
+                        <input type="radio" id="giko-hat-selection" value="giko_hat" v-model="characterId" >
+                        <img src="characters/giko_hat/front-standing.svg" />
+                    </label>
                 </div>
                 <button v-on:click="login" :disabled="isLoggingIn">Login</button>
             </form>
