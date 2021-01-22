@@ -50,4 +50,5 @@ export const characters = {
     naitoapple: new Character("naitoapple", "svg", false),
     hikki: new Character("hikki", "svg", false),
     tinpopo: new Character("tinpopo", "svg", false),
+    shii: new Character("shii", "svg", false),
 }
