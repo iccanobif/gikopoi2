@@ -39,6 +39,10 @@
                         <input type="radio" id="naito-selection" value="naito" v-model="characterId">
                         <img src="characters/naito/front-standing.svg" />
                     </label>
+                    <label for="shii-selection">
+                        <input type="radio" id="shii-selection" value="shii" v-model="characterId" >
+                        <img src="characters/shii/front-standing.svg" />
+                    </label>
                     <label for="furoshiki-selection">
                         <input type="radio" id="furoshiki-selection" value="furoshiki" v-model="characterId">
                         <img src="characters/furoshiki/front-standing.svg" />
@@ -50,6 +54,10 @@
                     <label for="hikki-selection">
                         <input type="radio" id="hikki-selection" value="hikki" v-model="characterId">
                         <img src="characters/hikki/front-standing.svg" />
+                    </label>
+                    <label for="tinpopo-selection">
+                        <input type="radio" id="tinpopo-selection" value="tinpopo" v-model="characterId">
+                        <img src="characters/tinpopo/front-standing.svg" />
                     </label>
                 </div>
                 <button v-on:click="login" :disabled="isLoggingIn">Login</button>

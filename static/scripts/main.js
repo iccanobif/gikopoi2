@@ -78,6 +78,8 @@ const vueApp = new Vue({
                 characters.furoshiki.loadImages(),
                 characters.naitoapple.loadImages(),
                 characters.hikki.loadImages(),
+                characters.tinpopo.loadImages(),
+                characters.shii.loadImages(),
             ]);
             if (this.username === "") this.username = i18n.t("default_user_name");
 
