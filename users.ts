@@ -72,4 +72,5 @@ export function serializeUserState(): string
 export function deserializeUserState(serializedState: string)
 {
     users = JSON.parse(serializedState)
+    console.log("Restored user state (" + Object.values(users).length + " users)")
 }

@@ -649,11 +649,13 @@ setInterval(() =>
 
 async function persistState()
 {
+    console.log("persisting...")
     const serializedUserState = serializeUserState()
 
     if (process.env.NODE_ENV == "production")
     {
         // use external persistor
+        // remember to do it as defensive as possible
     }
     else
     {
@@ -670,16 +672,26 @@ async function persistState()
 
 function restoreState()
 {
+    // If there's an error, just don't deserialize anything
+    // and start with a fresh state
     return new Promise<void>(async (resolve, reject) =>
     {
+        console.log("Restoring state...")
         if (process.env.PERSISTOR_URL)
         {
-            const response = await got(process.env.PERSISTOR_URL)
-            // If there's an error, just don't deserialize anything
-            // and start with a fresh state
-            if (response.statusCode == 200)
-                deserializeUserState(response.body)
-            resolve()
+            // remember to do it as defensive as possible
+            try
+            {
+                const response = await got(process.env.PERSISTOR_URL)
+                if (response.statusCode == 200)
+                    deserializeUserState(response.body)
+                resolve()
+            }
+            catch (exc)
+            {
+                console.log(exc)
+                resolve()
+            }
         }
         else 
         {
@@ -687,7 +699,6 @@ function restoreState()
             {
                 if (err)
                 {
-
                     console.log(err)
                 }
                 else
