@@ -840,15 +840,20 @@ const vueApp = new Vue({
             }
         },
 
-        wantToStartStreaming: async function (streamSlotId, withVideo, withSound)
+        wantToStartStreaming: async function (streamSlotId)
         {
             try
             {
                 this.isStreamPopupOpen = false;
                 
                 const userMedia = {};
-                if (this.streamMode == "video_sound" ||
-                    this.streamMode == "video")
+                
+                const withVideo = this.streamMode == "video_sound" ||
+                    this.streamMode == "video";
+                const withSound = this.streamMode == "video_sound" ||
+                    this.streamMode == "sound"
+                
+                if (withVideo)
                 {
                     userMedia.video = {
                         width: 320,
@@ -860,8 +865,7 @@ const vueApp = new Vue({
                     };
                 }
                 
-                if (this.streamMode == "video_sound" ||
-                    this.streamMode == "sound")
+                if (withSound)
                 {
                     userMedia.audio = {
                         echoCancellation: this.streamEchoCancellation,
