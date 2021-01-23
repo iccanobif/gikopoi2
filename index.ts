@@ -459,7 +459,13 @@ app.get("/", (req, res) =>
                 'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/change_log.html')
 
             data = data.replace("@CHANGE_LOG@", statusCode === 200 ? body : "")
-
+            
+            for (const areaId in roomStates)
+            {
+                data = data.replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
+                    getConnectedUserList(null, areaId).length.toString())
+            }
+            
             res.set({
                 'Content-Type': 'text/html; charset=utf-8',
                 'Cache-Control': 'no-cache'
