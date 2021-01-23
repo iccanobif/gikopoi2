@@ -1,43 +1,48 @@
 import express from "express"
-import { readFile } from "fs";
+import { readFile, writeFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
 import { Direction, RoomState, RoomStateDto } from "./types";
-import { addNewUser, getConnectedUserList, getGhostUsers, getUser, Player, removeUser } from "./users";
+import { addNewUser, deserializeUserState, getConnectedUserList, getGhostUsers, getUser, Player, removeUser, serializeUserState } from "./users";
 import { sleep } from "./utils";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
+import got from "got";
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
 const tripcode = require('tripcode');
 const enforce = require('express-sslify');
-const got = require('got');
 
 const delay = 0
 
 // Initialize room states:
-const roomStates: {
+let roomStates: {
     [areaId: string]: { [roomId: string]: RoomState }
 } = {};
 
-for (const areaId of ["for", "gen"])
+function initializeRoomStates()
 {
-    roomStates[areaId] = {}
-    for (const roomId in rooms)
+    roomStates = {}
+    for (const areaId of ["for", "gen"])
     {
-        roomStates[areaId][roomId] = { streams: [] }
-        for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
+        roomStates[areaId] = {}
+        for (const roomId in rooms)
         {
-            roomStates[areaId][roomId].streams.push({
-                isActive: false,
-                isReady: false,
-                withSound: null,
-                withVideo: null,
-                userId: null
-            })
+            roomStates[areaId][roomId] = { streams: [] }
+            for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
+            {
+                roomStates[areaId][roomId].streams.push({
+                    isActive: false,
+                    isReady: false,
+                    withSound: null,
+                    withVideo: null,
+                    userId: null
+                })
+            }
         }
     }
-
 }
+
+initializeRoomStates()
 
 io.on("connection", function (socket: any)
 {
@@ -127,6 +132,7 @@ io.on("connection", function (socket: any)
     socket.on("user-move", async function (direction: Direction)
     {
         await sleep(delay)
+        console.log("user-move", direction)
 
         try
         {
@@ -313,18 +319,18 @@ io.on("connection", function (socket: any)
             clearStream(user)
             io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
             socket.leave(user.areaId + user.roomId)
-            
+
             if (targetDoorId == undefined)
                 targetDoorId = rooms[targetRoomId].spawnPoint;
-            
+
             if (!(targetDoorId in rooms[targetRoomId].doors))
             {
                 console.error("Could not find door " + targetDoorId + " in room " + targetRoomId);
                 return;
             }
-            
+
             const door = rooms[targetRoomId].doors[targetDoorId]
-            
+
             user.position = { x: door.x, y: door.y }
             if (door.direction !== null) user.direction = door.direction
             user.roomId = targetRoomId
@@ -446,6 +452,7 @@ if (process.env.NODE_ENV == "production")
 
 app.get("/", (req, res) =>
 {
+    console.log("Fetching root...")
     readFile("static/index.html", 'utf8', async (err, data) =>
     {
         try
@@ -456,17 +463,18 @@ app.get("/", (req, res) =>
                 res.end("Could not retrieve index.html [${err}]")
                 return
             }
-            
-            const {statusCode, body} = await got(
+
+            const { statusCode, body } = await got(
                 'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/change_log.html')
+
             data = data.replace("@CHANGE_LOG@", statusCode === 200 ? body : "")
-            
+
             for (const areaId in roomStates)
             {
                 data = data.replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
                     getConnectedUserList(null, areaId).length.toString())
             }
-            
+
             res.set({
                 'Content-Type': 'text/html; charset=utf-8',
                 'Cache-Control': 'no-cache'
@@ -552,7 +560,7 @@ app.post("/login", (req, res) =>
             res.end("please specify a username")
             return;
         }
-        
+
         if (userName.length > 20)
             userName = userName.substr(0, 20)
 
@@ -652,10 +660,100 @@ setInterval(() =>
     }
 }, 1 * 1000)
 
+// Persist state every few seconds, so that people can seamless reconnect on a server restart
+
+async function persistState()
+{
+    console.log("persisting...")
+    const serializedUserState = serializeUserState()
+    console.log(serializedUserState)
+    try
+    {
+
+        if (process.env.PERSISTOR_URL)
+        {
+            await got.post(process.env.PERSISTOR_URL, {
+                headers: {
+                    "persistor-secret": process.env.PERSISTOR_SECRET,
+                    "Content-Type": "text/plain"
+                },
+                body: serializedUserState
+            })
+        }
+        else
+        {
+            // use local file
+            writeFile("persisted-state",
+                serializedUserState,
+                { encoding: "utf-8" },
+                (err) =>
+                {
+                    if (err) console.error(err)
+                })
+        }
+    }
+    catch (exc)
+    {
+        console.log(exc)
+    }
+}
+
+function restoreState()
+{
+    initializeRoomStates()
+    // If there's an error, just don't deserialize anything
+    // and start with a fresh state
+    return new Promise<void>(async (resolve, reject) =>
+    {
+        console.log("Restoring state...")
+        if (process.env.PERSISTOR_URL)
+        {
+            // remember to do it as defensive as possible
+            try
+            {
+                const response = await got.get(process.env.PERSISTOR_URL, {
+                    headers: {
+                        "persistor-secret": process.env.PERSISTOR_SECRET
+                    }
+                })
+                if (response.statusCode == 200)
+                    deserializeUserState(response.body)
+                resolve()
+            }
+            catch (exc)
+            {
+                console.log(exc)
+                resolve()
+            }
+        }
+        else 
+        {
+            readFile("persisted-state", { encoding: "utf-8" }, (err, data) =>
+            {
+                if (err)
+                {
+                    console.log(err)
+                }
+                else
+                {
+                    deserializeUserState(data)
+                    resolve()
+                }
+            })
+        }
+    })
+}
+
+setInterval(() => persistState(), 5 * 1000)
+
 const port = process.env.PORT == undefined
     ? 8085
     : Number.parseInt(process.env.PORT)
 
-http.listen(port, "0.0.0.0");
+restoreState().then(() =>
+{
+    http.listen(port, "0.0.0.0");
 
-console.log("Server running on http://localhost:" + port);
+    console.log("Server running on http://localhost:" + port);
+})
+    .catch(console.error)

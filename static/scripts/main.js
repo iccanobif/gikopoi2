@@ -35,7 +35,7 @@ const vueApp = new Vue({
         streamSlotIdInWhichIWantToStream: null,
         isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
         rtcPeer: null,
-        takenStreams: [],
+        takenStreams: [], // streams taken by me
         isSoundEnabled: localStorage.getItem("isSoundEnabled") == "true",
         characterId: "giko",
         isLoggingIn: false,
@@ -65,6 +65,7 @@ const vueApp = new Vue({
         // Warning Toast
         isWarningToastOpen: false,
         warningToastMessage: "",
+        loggedIn: false,
 
         // Possibly redundant data:
         username: "",
@@ -72,10 +73,8 @@ const vueApp = new Vue({
         serverStats: {
             userCount: 0,
         },
-        loggedIn: false,
         wantToStream: false,
         iAmStreaming: false,
-        currentStreamerName: "",
         connectionLost: false,
         steppingOnPortalToNonAvailableRoom: false,
     },
@@ -173,7 +172,6 @@ const vueApp = new Vue({
 
             // stream stuff
             this.takenStreams = streamsDto.map(() => false);
-            this.streams = streamsDto;
             this.updateCurrentRoomStreams(streamsDto);
 
             // Force update of user coordinates using the current room's logics (origin coordinates, etc)
@@ -226,8 +224,6 @@ const vueApp = new Vue({
 
             this.socket.on("disconnect", () =>
             {
-                if (this.isSoundEnabled)
-                    document.getElementById("connection-lost-sound").play();
                 this.connectionLost = true;
             });
             this.socket.on("server-cant-log-you-in", () =>
@@ -331,7 +327,6 @@ const vueApp = new Vue({
             });
             this.socket.on("server-update-current-room-streams", (streams) =>
             {
-                this.streams = streams;
                 this.updateCurrentRoomStreams(streams);
             });
 
@@ -490,13 +485,10 @@ const vueApp = new Vue({
                     this.forceUserInstantMove = false;
                 }
 
-
                 const canvasElement = document.getElementById("room-canvas");
                 const context = canvasElement.getContext("2d");
 
                 this.detectCanvasResize(canvasElement, context);
-
-
 
                 let isRedrawRequired = this.isRedrawRequired
                     || this.isDraggingCanvas
@@ -512,7 +504,7 @@ const vueApp = new Vue({
 
                 context.fillStyle = this.currentRoom.backgroundColor;
                 context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
-                
+
                 const canvasOffset = this.getCanvasOffset();
 
                 // draw background
@@ -837,11 +829,23 @@ const vueApp = new Vue({
 
         updateCurrentRoomStreams: function (streams)
         {
+            this.streams = streams;
+            
+            this.iAmStreaming = false;
+            this.streamSlotIdInWhichIWantToStream = null;
+
             for (const slotId in streams)
             {
                 const stream = streams[slotId];
                 if (stream.isActive)
+                {
                     Vue.set(stream, "title", this.users[stream.userId].name);
+                    if (stream.userId == this.myUserID)
+                    {
+                        this.iAmStreaming = true;
+                        this.streamSlotIdInWhichIWantToStream = slotId;
+                    }
+                }
                 else Vue.set(stream, "title", "OFF");
                 if (!stream.isActive || !stream.isReady)
                     Vue.set(this.takenStreams, slotId, false);
