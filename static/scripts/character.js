@@ -52,4 +52,6 @@ export const characters = {
     tinpopo: new Character("tinpopo", "svg", false),
     shii: new Character("shii", "svg", false),
     shii_pianica: new Character("shii_pianica", "svg", false),
+    giko_hat: new Character("giko_hat", "svg", false),
+    shii_hat: new Character("shii_hat", "svg", false),
 }
