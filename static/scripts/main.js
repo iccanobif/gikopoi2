@@ -35,7 +35,7 @@ const vueApp = new Vue({
         streamSlotIdInWhichIWantToStream: null,
         isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
         rtcPeer: null,
-        takenStreams: [],
+        takenStreams: [], // streams taken by me
         isSoundEnabled: localStorage.getItem("isSoundEnabled") == "true",
         isRulaPopupOpen: false,
         characterId: "giko",
@@ -51,6 +51,7 @@ const vueApp = new Vue({
         canvasDragOffset: null,
         canvasOffset: { x: 0, y: 0 },
         canvasDimensions: { w: 0, h: 0 },
+        loggedIn: false,
 
         // Possibly redundant data:
         username: "",
@@ -58,10 +59,8 @@ const vueApp = new Vue({
         serverStats: {
             userCount: 0,
         },
-        loggedIn: false,
         wantToStream: false,
         iAmStreaming: false,
-        currentStreamerName: "",
         connectionLost: false,
         steppingOnPortalToNonAvailableRoom: false,
     },
@@ -155,7 +154,6 @@ const vueApp = new Vue({
 
             // stream stuff
             this.takenStreams = streamsDto.map(() => false);
-            this.streams = streamsDto;
             this.updateCurrentRoomStreams(streamsDto);
 
             // Force update of user coordinates using the current room's logics (origin coordinates, etc)
@@ -313,7 +311,6 @@ const vueApp = new Vue({
             });
             this.socket.on("server-update-current-room-streams", (streams) =>
             {
-                this.streams = streams;
                 this.updateCurrentRoomStreams(streams);
             });
 
@@ -816,11 +813,23 @@ const vueApp = new Vue({
 
         updateCurrentRoomStreams: function (streams)
         {
+            this.streams = streams;
+            
+            this.iAmStreaming = false;
+            this.streamSlotIdInWhichIWantToStream = null;
+
             for (const slotId in streams)
             {
                 const stream = streams[slotId];
                 if (stream.isActive)
+                {
                     Vue.set(stream, "title", this.users[stream.userId].name);
+                    if (stream.userId == this.myUserID)
+                    {
+                        this.iAmStreaming = true;
+                        this.streamSlotIdInWhichIWantToStream = slotId;
+                    }
+                }
                 else Vue.set(stream, "title", "OFF");
                 if (!stream.isActive || !stream.isReady)
                     Vue.set(this.takenStreams, slotId, false);

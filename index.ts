@@ -15,29 +15,34 @@ const enforce = require('express-sslify');
 const delay = 0
 
 // Initialize room states:
-const roomStates: {
+let roomStates: {
     [areaId: string]: { [roomId: string]: RoomState }
 } = {};
 
-for (const areaId of ["for", "gen"])
+function initializeRoomStates()
 {
-    roomStates[areaId] = {}
-    for (const roomId in rooms)
+    roomStates = {}
+    for (const areaId of ["for", "gen"])
     {
-        roomStates[areaId][roomId] = { streams: [] }
-        for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
+        roomStates[areaId] = {}
+        for (const roomId in rooms)
         {
-            roomStates[areaId][roomId].streams.push({
-                isActive: false,
-                isReady: false,
-                withSound: null,
-                withVideo: null,
-                userId: null
-            })
+            roomStates[areaId][roomId] = { streams: [] }
+            for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
+            {
+                roomStates[areaId][roomId].streams.push({
+                    isActive: false,
+                    isReady: false,
+                    withSound: null,
+                    withVideo: null,
+                    userId: null
+                })
+            }
         }
     }
-
 }
+
+initializeRoomStates()
 
 io.on("connection", function (socket: any)
 {
@@ -447,6 +452,7 @@ if (process.env.NODE_ENV == "production")
 
 app.get("/", (req, res) =>
 {
+    console.log("Fetching root...")
     readFile("static/index.html", 'utf8', async (err, data) =>
     {
         try
@@ -462,13 +468,13 @@ app.get("/", (req, res) =>
                 'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/change_log.html')
 
             data = data.replace("@CHANGE_LOG@", statusCode === 200 ? body : "")
-            
+
             for (const areaId in roomStates)
             {
                 data = data.replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
                     getConnectedUserList(null, areaId).length.toString())
             }
-            
+
             res.set({
                 'Content-Type': 'text/html; charset=utf-8',
                 'Cache-Control': 'no-cache'
@@ -681,6 +687,7 @@ async function persistState()
 
 function restoreState()
 {
+    initializeRoomStates()
     // If there's an error, just don't deserialize anything
     // and start with a fresh state
     return new Promise<void>(async (resolve, reject) =>
