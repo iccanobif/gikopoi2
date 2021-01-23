@@ -37,13 +37,10 @@ const vueApp = new Vue({
         rtcPeer: null,
         takenStreams: [],
         isSoundEnabled: localStorage.getItem("isSoundEnabled") == "true",
-        isRulaPopupOpen: false,
         characterId: "giko",
         isLoggingIn: false,
         streams: [],
         areaId: "gen", // 'gen' or 'for'
-        roomList: [],
-        rulaRoomSelection: null,
 
         isRedrawRequired: false,
         isDraggingCanvas: false,
@@ -51,6 +48,19 @@ const vueApp = new Vue({
         canvasDragOffset: null,
         canvasOffset: { x: 0, y: 0 },
         canvasDimensions: { w: 0, h: 0 },
+        
+        // rula stuff
+        isRulaPopupOpen: false,
+        roomList: [],
+        rulaRoomSelection: null,
+        
+        // stream settings
+        isStreamPopupOpen: false,
+        streamMode: "video_sound",
+        streamVoiceEnhancement: "on",
+        streamEchoCancellation: true,
+        streamNoiseSuppression: true,
+        streamAutoGain: true,
 
         // Possibly redundant data:
         username: "",
@@ -834,11 +844,12 @@ const vueApp = new Vue({
         {
             try
             {
-                this.wantToStream = true;
-                this.streamSlotIdInWhichIWantToStream = streamSlotId;
-
-                let userMedia = {};
-                if (withVideo)
+                this.isStreamPopupOpen = false;
+                
+                const userMedia = {};
+                if (this.streamMode == "video_sound" ||
+                    this.streamMode == "video")
+                {
                     userMedia.video = {
                         width: 320,
                         height: 240,
@@ -847,14 +858,38 @@ const vueApp = new Vue({
                             min: 10,
                         },
                     };
-                if (withSound) userMedia.audio = true;
+                }
+                
+                if (this.streamMode == "video_sound" ||
+                    this.streamMode == "sound")
+                {
+                    userMedia.audio = {
+                        echoCancellation: this.streamEchoCancellation,
+                        noiseSuppression: this.streamNoiseSuppression,
+                        autoGainControl: this.streamAutoGain,
+                        channelCount: 2
+                    };
+                    
+                    if (this.streamVoiceEnhancement == "on")
+                    {
+                        userMedia.audio.echoCancellation = true;
+                        userMedia.audio.noiseSuppression = true;
+                        userMedia.audio.autoGainControl = true;
+                    }
+                    else if (this.streamVoiceEnhancement == "off")
+                    {
+                        userMedia.audio.echoCancellation = false;
+                        userMedia.audio.noiseSuppression = false;
+                        userMedia.audio.autoGainControl = false;
+                    }
+                }
 
                 this.webcamStream = await navigator.mediaDevices.getUserMedia(
                     userMedia
                 );
 
                 this.socket.emit("user-want-to-stream", {
-                    streamSlotId: streamSlotId,
+                    streamSlotId: this.streamSlotIdInWhichIWantToStream,
                     withVideo: withVideo,
                     withSound: withSound,
                 });
@@ -919,10 +954,27 @@ const vueApp = new Vue({
             this.isRulaPopupOpen = false;
             this.rulaRoomSelection = null;
         },
-        cancelRula: function ()
+        closeRulaPopup: function ()
         {
             this.isRulaPopupOpen = false;
             this.rulaRoomSelection = null;
+        },
+        openStreamPopup: function (streamSlotId)
+        {
+            this.streamSlotIdInWhichIWantToStream = streamSlotId;
+            this.wantToStream = true;
+            
+            this.isStreamPopupOpen = true;
+            this.streamMode = "video_sound";
+            this.streamVoiceEnhancement = "on";
+            this.streamEchoCancellation = true;
+            this.streamNoiseSuppression = true;
+            this.streamAutoGain = true;  
+        },
+        closeStreamPopup: function ()
+        {
+            this.isStreamPopupOpen = false;
+            this.wantToStream = false;
         },
         logout: async function ()
         {

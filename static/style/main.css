@@ -254,6 +254,16 @@ video {
     border: 2px solid #afb1b1;
 }
 
+.popup-section
+{
+    margin: 10px;
+}
+
+.popup-subsection
+{
+    margin-left: 20px;
+}
+
 .popup-table
 {
     width: 100%;
