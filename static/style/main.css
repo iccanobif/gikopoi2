@@ -227,7 +227,7 @@ video {
     flex-grow: 1;
 }
 
-.subwindow {
+.popup {
     position: absolute;
     width: 600px;
     top: 50px;
@@ -237,7 +237,7 @@ video {
     outline: 2px solid #afb1b1;
 }
 
-.subwindow-title
+.popup-title
 {
     font-size: 20px;
     padding: 10px;
@@ -245,7 +245,7 @@ video {
     border-bottom: 2px solid #afb1b1;
 }
 
-.subwindow-content
+.popup-content
 {
     overflow-y: auto;
     overflow-x: hidden;
@@ -254,23 +254,23 @@ video {
     border: 2px solid #afb1b1;
 }
 
-.subwindow-table
+.popup-table
 {
     width: 100%;
     border-collapse: collapse;
 }
 
-.subwindow-table col
+.popup-table col
 {
     border-right: 1px solid #afb1b1;
 }
 
-.subwindow-table col:last-of-type
+.popup-table col:last-of-type
 {
     border-right: 0;
 }
 
-.subwindow-table th
+.popup-table th
 {
     text-align: left;
     font-weight: normal;
@@ -278,30 +278,30 @@ video {
     border-bottom: 1px solid #afb1b1;
 }
 
-.subwindow-table td,
-.subwindow-table th
+.popup-table td,
+.popup-table th
 {
     padding: 2px 5px;
 }
 
-.subwindow-selectable-table tr:hover td
+.popup-selectable-table tr:hover td
 {
     background-color: #e6ffe0;
     cursor: pointer;
 }
 
-.subwindow-selectable-table tr.subwindow-row-is-selected td
+.popup-selectable-table tr.popup-row-is-selected td
 {
     background-color: #cdffc1;
 }
 
-.subwindow-buttons
+.popup-buttons
 {
     text-align: right;
     margin: 5px 20px 5px 20px;
 }
 
-.subwindow-buttons button
+.popup-buttons button
 {
     display: inline-block;
     margin-left: 5px;
