@@ -80,6 +80,8 @@ io.on("connection", function (socket: any)
                 return;
             }
 
+            currentRoom = rooms[user.roomId]
+
             socket.join(user.areaId)
             socket.join(user.areaId + currentRoom.id)
 
