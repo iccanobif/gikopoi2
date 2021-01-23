@@ -72,5 +72,9 @@ export function serializeUserState(): string
 export function deserializeUserState(serializedState: string)
 {
     users = JSON.parse(serializedState)
+
+    // Initialize all users as ghosts (they'll be unflagged when users connect again through the websocket)
+    for (const user of Object.values(users))
+        user.isGhost = true;
     console.log("Restored user state (" + Object.values(users).length + " users)")
 }

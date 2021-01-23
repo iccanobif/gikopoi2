@@ -472,13 +472,10 @@ const vueApp = new Vue({
                     this.forceUserInstantMove = false;
                 }
 
-
                 const canvasElement = document.getElementById("room-canvas");
                 const context = canvasElement.getContext("2d");
 
                 this.detectCanvasResize(canvasElement, context);
-
-
 
                 let isRedrawRequired = this.isRedrawRequired
                     || this.isDraggingCanvas
@@ -494,7 +491,7 @@ const vueApp = new Vue({
 
                 context.fillStyle = this.currentRoom.backgroundColor;
                 context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
-                
+
                 const canvasOffset = this.getCanvasOffset();
 
                 // draw background
