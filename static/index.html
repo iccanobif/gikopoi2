@@ -273,6 +273,18 @@
                     ><button v-on:click="closeStreamPopup">{{ $t("ui.popup_button_cancel") }}</button>
                 </div>
             </div>
+            
+            <div class="popup" v-if="isWarningToastOpen">
+                <div class="popup-title">{{ $t("ui.warning_toast_title") }}</div>
+                <div class="popup-content">
+                    <div class="popup-section">
+                        {{ warningToastMessage }}
+                    </div>
+                </div>
+                <div class="popup-buttons">
+                    <button v-on:click="closeWarningToast">{{ $t("ui.popup_button_ok") }}</button>
+                </div>
+            </div>
 
             <audio id="message-sound" src="message.mp3"></audio>
             <audio id="login-sound" src="login.mp3"></audio>

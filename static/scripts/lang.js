@@ -33,7 +33,10 @@ export const messages =
             button_rula: "#ﾙｰﾗ",
             volume: "音量：",
             
+            popup_button_ok: "OK",
             popup_button_cancel: "キャンセル",
+            
+            warning_toast_title: "警告",
             
             rula_menu_title: "ステージ情報",
             rula_menu_column_room_name: "ステージ名",
@@ -58,7 +61,9 @@ export const messages =
         msg:
         {
             connection_lost: "接続できません、ページをリフレッシュしてください！",
-            room_unavailable: "まだ部屋の用意ができていません。ごめんね！"
+            room_unavailable: "まだ部屋の用意ができていません。ごめんね！",
+            
+            error_obtaining_media_device: "デバイスを取得できませんでした。"
         },
         room:
         {
@@ -131,7 +136,10 @@ export const messages =
             button_rula: "#rula",
             volume: "Volume: ",
             
+            popup_button_ok: "OK",
             popup_button_cancel: "Cancel",
+            
+            warning_toast_title: "Warning",
             
             rula_menu_title: "Stage Info",
             rula_menu_column_room_name: "Stage Name",
@@ -156,7 +164,9 @@ export const messages =
         msg:
         {
             connection_lost: "Connection lost, please refresh the page!",
-            room_unavailable: "This room is not available yet. Sorry!"
+            room_unavailable: "This room is not available yet. Sorry!",
+            
+            error_obtaining_media_device: "Unable to obtain media device."
         },
         room:
         {

@@ -31,7 +31,7 @@ const vueApp = new Vue({
         isLoadingRoom: false,
         requestedRoomChange: false,
         forceUserInstantMove: false,
-        webcamStream: null,
+        mediaStream: null,
         streamSlotIdInWhichIWantToStream: null,
         isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
         rtcPeer: null,
@@ -61,6 +61,10 @@ const vueApp = new Vue({
         streamEchoCancellation: true,
         streamNoiseSuppression: true,
         streamAutoGain: true,
+        
+        // Warning Toast
+        isWarningToastOpen: false,
+        warningToastMessage: "",
 
         // Possibly redundant data:
         username: "",
@@ -115,10 +119,14 @@ const vueApp = new Vue({
         {
             i18n.locale = code;
         },
-        showWarningToast: function showWarningToast(text)
+        showWarningToast: function(text)
         {
-            // TODO make this a nice, non-blocking message
-            alert(text);
+            this.warningToastMessage = text;
+            this.isWarningToastOpen = true;
+        },
+        closeWarningToast: function()
+        {
+            this.isWarningToastOpen = false;
         },
         updateRoomState: async function (dto)
         {
@@ -651,7 +659,7 @@ const vueApp = new Vue({
         },
         changeRoom: function (targetRoomId, targetDoorId)
         {
-            if (this.webcamStream) this.stopStreaming();
+            if (this.mediaStream) this.stopStreaming();
 
             this.requestedRoomChange = true;
             this.socket.emit("user-change-room", { targetRoomId, targetDoorId });
@@ -848,10 +856,8 @@ const vueApp = new Vue({
                 
                 const userMedia = {};
                 
-                const withVideo = this.streamMode == "video_sound" ||
-                    this.streamMode == "video";
-                const withSound = this.streamMode == "video_sound" ||
-                    this.streamMode == "sound"
+                const withVideo = this.streamMode != "sound";
+                const withSound = this.streamMode != "video";
                 
                 if (withVideo)
                 {
@@ -888,7 +894,7 @@ const vueApp = new Vue({
                     }
                 }
 
-                this.webcamStream = await navigator.mediaDevices.getUserMedia(
+                this.mediaStream = await navigator.mediaDevices.getUserMedia(
                     userMedia
                 );
 
@@ -899,33 +905,33 @@ const vueApp = new Vue({
                 });
             } catch (err)
             {
-                this.showWarningToast("sorry, can't find a webcam");
+                this.showWarningToast(i18n.t("msg.error_obtaining_media_device"));
                 console.error(err);
                 this.wantToStream = false;
-                this.webcamStream = false;
+                this.mediaStream = false;
             }
         },
         startStreaming: async function ()
         {
             this.openRTCConnection();
 
-            this.webcamStream
+            this.mediaStream
                 .getTracks()
                 .forEach((track) =>
-                    this.rtcPeer.conn.addTrack(track, this.webcamStream)
+                    this.rtcPeer.conn.addTrack(track, this.mediaStream)
                 );
 
             document.getElementById(
                 "local-video-" + this.streamSlotIdInWhichIWantToStream
-            ).srcObject = this.webcamStream;
+            ).srcObject = this.mediaStream;
         },
         stopStreaming: function ()
         {
             this.iAmStreaming = false;
-            for (const track of this.webcamStream.getTracks()) track.stop();
+            for (const track of this.mediaStream.getTracks()) track.stop();
             document.getElementById(
                 "local-video-" + this.streamSlotIdInWhichIWantToStream
-            ).srcObject = this.webcamStream = null;
+            ).srcObject = this.mediaStream = null;
             this.streamSlotIdInWhichIWantToStream = null;
             this.socket.emit("user-want-to-stop-stream");
         },
