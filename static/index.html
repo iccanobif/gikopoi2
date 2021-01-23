@@ -189,10 +189,10 @@
                     </button>
                 </div>
             </div>
-            <div id="rula-menu" v-if="isRulaPopupOpen">
-                <div id="rula-menu-title">{{ $t("ui.rula_menu_title") }}</div>
-                <div id="rula-menu-list">
-                    <table>
+            <div class="subwindow" v-if="isRulaPopupOpen">
+                <div class="subwindow-title">{{ $t("ui.rula_menu_title") }}</div>
+                <div class="subwindow-content">
+                    <table class="subwindow-table">
                         <colgroup>
                             <col id="rula-menu-column-room-name" />
                             <col id="rula-menu-column-user-count" />
@@ -206,8 +206,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="rula-menu-room" v-for="room in roomList"
-                                v-bind:class="{'room-is-selected-for-rula': rulaRoomSelection == room.id}"
+                            <tr v-for="room in roomList"
+                                v-bind:class="{'subwindow-row-is-selected': rulaRoomSelection == room.id}"
                                 v-on:click="selectRoomForRula(room.id)">
                                 <td>{{ $t("room." + room.id) }}</td>
                                 <td>{{ room.userCount }}</td>
@@ -216,10 +216,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div id="rula-menu-buttons">
+                <div class="subwindow-buttons">
                     <button v-on:click="rula(rulaRoomSelection)">{{ $t("ui.rula_menu_button_rula") }}</button><button
-                        v-on:click="cancelRula()" id="cancel-rula-button">{{ $t("ui.rula_menu_button_cancel")
-                        }}</button>
+                        v-on:click="cancelRula()">{{ $t("ui.rula_menu_button_cancel") }}</button>
                 </div>
             </div>
 
