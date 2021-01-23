@@ -31,19 +31,16 @@ const vueApp = new Vue({
         isLoadingRoom: false,
         requestedRoomChange: false,
         forceUserInstantMove: false,
-        webcamStream: null,
+        mediaStream: null,
         streamSlotIdInWhichIWantToStream: null,
         isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
         rtcPeer: null,
         takenStreams: [],
         isSoundEnabled: localStorage.getItem("isSoundEnabled") == "true",
-        isRulaPopupOpen: false,
         characterId: "giko",
         isLoggingIn: false,
         streams: [],
         areaId: "gen", // 'gen' or 'for'
-        roomList: [],
-        rulaRoomSelection: null,
 
         isRedrawRequired: false,
         isDraggingCanvas: false,
@@ -51,6 +48,23 @@ const vueApp = new Vue({
         canvasDragOffset: null,
         canvasOffset: { x: 0, y: 0 },
         canvasDimensions: { w: 0, h: 0 },
+        
+        // rula stuff
+        isRulaPopupOpen: false,
+        roomList: [],
+        rulaRoomSelection: null,
+        
+        // stream settings
+        isStreamPopupOpen: false,
+        streamMode: "video_sound",
+        streamVoiceEnhancement: "on",
+        streamEchoCancellation: true,
+        streamNoiseSuppression: true,
+        streamAutoGain: true,
+        
+        // Warning Toast
+        isWarningToastOpen: false,
+        warningToastMessage: "",
 
         // Possibly redundant data:
         username: "",
@@ -105,10 +119,14 @@ const vueApp = new Vue({
         {
             i18n.locale = code;
         },
-        showWarningToast: function showWarningToast(text)
+        showWarningToast: function(text)
         {
-            // TODO make this a nice, non-blocking message
-            alert(text);
+            this.warningToastMessage = text;
+            this.isWarningToastOpen = true;
+        },
+        closeWarningToast: function()
+        {
+            this.isWarningToastOpen = false;
         },
         updateRoomState: async function (dto)
         {
@@ -641,7 +659,7 @@ const vueApp = new Vue({
         },
         changeRoom: function (targetRoomId, targetDoorId)
         {
-            if (this.webcamStream) this.stopStreaming();
+            if (this.mediaStream) this.stopStreaming();
 
             this.requestedRoomChange = true;
             this.socket.emit("user-change-room", { targetRoomId, targetDoorId });
@@ -830,15 +848,19 @@ const vueApp = new Vue({
             }
         },
 
-        wantToStartStreaming: async function (streamSlotId, withVideo, withSound)
+        wantToStartStreaming: async function (streamSlotId)
         {
             try
             {
-                this.wantToStream = true;
-                this.streamSlotIdInWhichIWantToStream = streamSlotId;
-
-                let userMedia = {};
+                this.isStreamPopupOpen = false;
+                
+                const userMedia = {};
+                
+                const withVideo = this.streamMode != "sound";
+                const withSound = this.streamMode != "video";
+                
                 if (withVideo)
+                {
                     userMedia.video = {
                         width: 320,
                         height: 240,
@@ -847,46 +869,69 @@ const vueApp = new Vue({
                             min: 10,
                         },
                     };
-                if (withSound) userMedia.audio = true;
+                }
+                
+                if (withSound)
+                {
+                    userMedia.audio = {
+                        echoCancellation: this.streamEchoCancellation,
+                        noiseSuppression: this.streamNoiseSuppression,
+                        autoGainControl: this.streamAutoGain,
+                        channelCount: 2
+                    };
+                    
+                    if (this.streamVoiceEnhancement == "on")
+                    {
+                        userMedia.audio.echoCancellation = true;
+                        userMedia.audio.noiseSuppression = true;
+                        userMedia.audio.autoGainControl = true;
+                    }
+                    else if (this.streamVoiceEnhancement == "off")
+                    {
+                        userMedia.audio.echoCancellation = false;
+                        userMedia.audio.noiseSuppression = false;
+                        userMedia.audio.autoGainControl = false;
+                    }
+                }
 
-                this.webcamStream = await navigator.mediaDevices.getUserMedia(
+                this.mediaStream = await navigator.mediaDevices.getUserMedia(
                     userMedia
                 );
 
                 this.socket.emit("user-want-to-stream", {
-                    streamSlotId: streamSlotId,
+                    streamSlotId: this.streamSlotIdInWhichIWantToStream,
                     withVideo: withVideo,
                     withSound: withSound,
                 });
             } catch (err)
             {
-                this.showWarningToast("sorry, can't find a webcam");
+                this.showWarningToast(i18n.t("msg.error_obtaining_media_device"));
                 console.error(err);
                 this.wantToStream = false;
-                this.webcamStream = false;
+                this.mediaStream = false;
             }
         },
         startStreaming: async function ()
         {
             this.openRTCConnection();
 
-            this.webcamStream
+            this.mediaStream
                 .getTracks()
                 .forEach((track) =>
-                    this.rtcPeer.conn.addTrack(track, this.webcamStream)
+                    this.rtcPeer.conn.addTrack(track, this.mediaStream)
                 );
 
             document.getElementById(
                 "local-video-" + this.streamSlotIdInWhichIWantToStream
-            ).srcObject = this.webcamStream;
+            ).srcObject = this.mediaStream;
         },
         stopStreaming: function ()
         {
             this.iAmStreaming = false;
-            for (const track of this.webcamStream.getTracks()) track.stop();
+            for (const track of this.mediaStream.getTracks()) track.stop();
             document.getElementById(
                 "local-video-" + this.streamSlotIdInWhichIWantToStream
-            ).srcObject = this.webcamStream = null;
+            ).srcObject = this.mediaStream = null;
             this.streamSlotIdInWhichIWantToStream = null;
             this.socket.emit("user-want-to-stop-stream");
         },
@@ -919,10 +964,27 @@ const vueApp = new Vue({
             this.isRulaPopupOpen = false;
             this.rulaRoomSelection = null;
         },
-        cancelRula: function ()
+        closeRulaPopup: function ()
         {
             this.isRulaPopupOpen = false;
             this.rulaRoomSelection = null;
+        },
+        openStreamPopup: function (streamSlotId)
+        {
+            this.streamSlotIdInWhichIWantToStream = streamSlotId;
+            this.wantToStream = true;
+            
+            this.isStreamPopupOpen = true;
+            this.streamMode = "video_sound";
+            this.streamVoiceEnhancement = "on";
+            this.streamEchoCancellation = true;
+            this.streamNoiseSuppression = true;
+            this.streamAutoGain = true;  
+        },
+        closeStreamPopup: function ()
+        {
+            this.isStreamPopupOpen = false;
+            this.wantToStream = false;
         },
         logout: async function ()
         {

@@ -26,26 +26,44 @@ export const messages =
             button_send: "発言",
             button_toggle_sound_on: "🔊効果音",
             button_toggle_sound_off: "🔈効果音",
-            button_video_stream_start: "動画配信",
-            button_sound_stream_start: "音声配信",
-            button_video_sound_stream_start: "動画＋音声配信",
+            button_stream_start: "配信開始",
             button_stream_stop: "配信停止",
             button_stream_take: "受信",
             button_stream_drop: "受信停止",
             button_rula: "#ﾙｰﾗ",
             volume: "音量：",
             
+            popup_button_ok: "OK",
+            popup_button_cancel: "キャンセル",
+            
+            warning_toast_title: "警告",
+            
             rula_menu_title: "ステージ情報",
             rula_menu_column_room_name: "ステージ名",
             rula_menu_column_user_count: "人数",
             rula_menu_column_streamers: "配信者",
             rula_menu_button_rula: "ルーラ",
-            rula_menu_button_cancel: "キャンセル"
+            
+            stream_form_title: "配信設定",
+            stream_form_mode: "モード：",
+            stream_form_video_sound_mode: "動画＋音声",
+            stream_form_sound_only_mode: "音声のみ",
+            stream_form_video_only_mode: "動画のみ",
+            stream_form_voice_enhancement: "音声強化：",
+            stream_form_voice_enhancement_on: "オン",
+            stream_form_voice_enhancement_off: "オフ",
+            stream_form_voice_enhancement_advanced: "高度な設定",
+            stream_form_echo_cancellation: "エコーキャンセリング",
+            stream_form_noise_suppression: "ノイズリダクション",
+            stream_form_auto_gain: "自動利得制御",
+            stream_form_button_stream: "配信開始",
         },
         msg:
         {
             connection_lost: "接続できません、ページをリフレッシュしてください！",
-            room_unavailable: "まだ部屋の用意ができていません。ごめんね！"
+            room_unavailable: "まだ部屋の用意ができていません。ごめんね！",
+            
+            error_obtaining_media_device: "デバイスを取得できませんでした。"
         },
         room:
         {
@@ -111,26 +129,44 @@ export const messages =
             button_send: "Send",
             button_toggle_sound_on: "🔊Sound",
             button_toggle_sound_off: "🔈Sound",
-            button_video_stream_start: "Stream video",
-            button_sound_stream_start: "Stream voice",
-            button_video_sound_stream_start: "Stream video + voice",
+            button_stream_start: "Start stream",
             button_stream_stop: "Stop stream",
             button_stream_take: "Get stream",
             button_stream_drop: "Drop stream",
             button_rula: "#rula",
             volume: "Volume: ",
             
+            popup_button_ok: "OK",
+            popup_button_cancel: "Cancel",
+            
+            warning_toast_title: "Warning",
+            
             rula_menu_title: "Stage Info",
             rula_menu_column_room_name: "Stage Name",
             rula_menu_column_user_count: "Users",
             rula_menu_column_streamers: "Streamers",
             rula_menu_button_rula: "Rula",
-            rula_menu_button_cancel: "Cancel"
+            
+            stream_form_title: "Stream Settings",
+            stream_form_mode: "Mode:",
+            stream_form_video_sound_mode: "Video + Voice",
+            stream_form_sound_only_mode: "Voice only",
+            stream_form_video_only_mode: "Video only",
+            stream_form_voice_enhancement: "Voice enhancement: ",
+            stream_form_voice_enhancement_on: "On",
+            stream_form_voice_enhancement_off: "Off",
+            stream_form_voice_enhancement_advanced: "Advanced",
+            stream_form_echo_cancellation: "Echo cancellation",
+            stream_form_noise_suppression: "Noise Reduction",
+            stream_form_auto_gain: "Auto Gain Control",
+            stream_form_button_stream: "Start Streaming",
         },
         msg:
         {
             connection_lost: "Connection lost, please refresh the page!",
-            room_unavailable: "This room is not available yet. Sorry!"
+            room_unavailable: "This room is not available yet. Sorry!",
+            
+            error_obtaining_media_device: "Unable to obtain media device."
         },
         room:
         {

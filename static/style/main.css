@@ -227,7 +227,7 @@ video {
     flex-grow: 1;
 }
 
-#rula-menu {
+.popup {
     position: absolute;
     width: 600px;
     top: 50px;
@@ -237,7 +237,7 @@ video {
     outline: 2px solid #afb1b1;
 }
 
-#rula-menu-title
+.popup-title
 {
     font-size: 20px;
     padding: 10px;
@@ -245,32 +245,42 @@ video {
     border-bottom: 2px solid #afb1b1;
 }
 
-#rula-menu-list
+.popup-content
 {
     overflow-y: auto;
     overflow-x: hidden;
-    height: 300px;
+    max-height: 300px;
     margin: 5px;
     border: 2px solid #afb1b1;
 }
 
-#rula-menu-list table
+.popup-section
+{
+    margin: 10px;
+}
+
+.popup-subsection
+{
+    margin-left: 20px;
+}
+
+.popup-table
 {
     width: 100%;
     border-collapse: collapse;
 }
 
-#rula-menu-list col
+.popup-table col
 {
     border-right: 1px solid #afb1b1;
 }
 
-#rula-menu-list col:last-of-type
+.popup-table col:last-of-type
 {
     border-right: 0;
 }
 
-#rula-menu-list th
+.popup-table th
 {
     text-align: left;
     font-weight: normal;
@@ -278,30 +288,30 @@ video {
     border-bottom: 1px solid #afb1b1;
 }
 
-#rula-menu-list td,
-#rula-menu-list th
+.popup-table td,
+.popup-table th
 {
     padding: 2px 5px;
 }
 
-.rula-menu-room:hover td
+.popup-selectable-table tr:hover td
 {
     background-color: #e6ffe0;
     cursor: pointer;
 }
 
-.rula-menu-room.room-is-selected-for-rula td
+.popup-selectable-table tr.popup-row-is-selected td
 {
     background-color: #cdffc1;
 }
 
-#rula-menu-buttons
+.popup-buttons
 {
     text-align: right;
     margin: 5px 20px 5px 20px;
 }
 
-#rula-menu-buttons button
+.popup-buttons button
 {
     display: inline-block;
     margin-left: 5px;

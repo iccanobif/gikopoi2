@@ -163,23 +163,17 @@
                         v-show="takenStreams[index] && streamSlot.withVideo && index != streamSlotIdInWhichIWantToStream"
                         autoplay></video>
 
-                    <div v-show="streamSlot.isActive && index != streamSlotIdInWhichIWantToStream">
+                    <div v-show="streamSlot.isActive && streamSlot.withSound && index != streamSlotIdInWhichIWantToStream">
                         <label for="volume">{{ $t("ui.volume") }}</label>
                         <input type="range" :id="'volume-' + index" v-on:change="changeVolume(index)" name="volume"
                             min="0" max="1" step="0.01" value="1">
                     </div>
 
-                    <div v-if="!streamSlot.isActive && !iAmStreaming && !wantToStream">
-                        <button class="start-streaming-button" :id="'start-video-streaming-button-' + index"
-                            v-on:click="wantToStartStreaming(index, true, false)">{{ $t("ui.button_video_stream_start")
-                            }}</button>
-                        <button class="start-streaming-button" :id="'start-sound-streaming-button-' + index"
-                            v-on:click="wantToStartStreaming(index, false, true)">{{ $t("ui.button_sound_stream_start")
-                            }}</button>
-                        <button class="start-streaming-button" :id="'start-video-sound-streaming-button-' + index"
-                            v-on:click="wantToStartStreaming(index, true, true)">{{
-                            $t("ui.button_video_sound_stream_start") }}</button>
-                    </div>
+                    <button class="start-streaming-button" :id="'start-video-streaming-button-' + index"
+                        v-if="!streamSlot.isActive && !iAmStreaming && !wantToStream"
+                        v-on:click="openStreamPopup(index)">
+                        {{ $t("ui.button_stream_start") }}
+                    </button>
                     <button :id="'stop-streaming-button-' + index"
                         v-if="iAmStreaming && streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
                         {{ $t("ui.button_stream_stop") }}
@@ -197,10 +191,11 @@
                     </button>
                 </div>
             </div>
-            <div id="rula-menu" v-if="isRulaPopupOpen">
-                <div id="rula-menu-title">{{ $t("ui.rula_menu_title") }}</div>
-                <div id="rula-menu-list">
-                    <table>
+            
+            <div class="popup" v-if="isRulaPopupOpen">
+                <div class="popup-title">{{ $t("ui.rula_menu_title") }}</div>
+                <div class="popup-content">
+                    <table class="popup-table popup-selectable-table">
                         <colgroup>
                             <col id="rula-menu-column-room-name" />
                             <col id="rula-menu-column-user-count" />
@@ -214,8 +209,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="rula-menu-room" v-for="room in roomList"
-                                v-bind:class="{'room-is-selected-for-rula': rulaRoomSelection == room.id}"
+                            <tr v-for="room in roomList"
+                                v-bind:class="{'popup-row-is-selected': rulaRoomSelection == room.id}"
                                 v-on:click="selectRoomForRula(room.id)">
                                 <td>{{ $t("room." + room.id) }}</td>
                                 <td>{{ room.userCount }}</td>
@@ -224,10 +219,70 @@
                         </tbody>
                     </table>
                 </div>
-                <div id="rula-menu-buttons">
-                    <button v-on:click="rula(rulaRoomSelection)">{{ $t("ui.rula_menu_button_rula") }}</button><button
-                        v-on:click="cancelRula()" id="cancel-rula-button">{{ $t("ui.rula_menu_button_cancel")
-                        }}</button>
+                <div class="popup-buttons">
+                    <button v-on:click="rula(rulaRoomSelection)">{{ $t("ui.rula_menu_button_rula") }}</button
+                    ><button v-on:click="closeRulaPopup">{{ $t("ui.popup_button_cancel") }}</button>
+                </div>
+            </div>
+            
+            <div class="popup" v-if="isStreamPopupOpen">
+                <div class="popup-title">{{ $t("ui.stream_form_title") }}</div>
+                <div class="popup-content">
+                    <div class='popup-section'>
+                        <span>{{ $t("ui.stream_form_mode") }}</span
+                        ><input type="radio" id="stream-form-video-sound-mode" value="video_sound" v-model="streamMode"
+                        ><label for="stream-form-video-sound-mode">{{ $t("ui.stream_form_video_sound_mode") }}</label>
+
+                        <input type="radio" id="stream-form-sound-only-mode" value="sound" v-model="streamMode"
+                        ><label for="stream-form-sound-only-mode">{{ $t("ui.stream_form_sound_only_mode") }}</label>
+
+                        <input type="radio" id="stream-form-video-only-mode" value="video" v-model="streamMode"
+                        ><label for="stream-form-video-only-mode">{{ $t("ui.stream_form_video_only_mode") }}</label>
+                    </div>
+                    <div class='popup-section' v-if="streamMode != 'video'">
+                        <span>{{ $t("ui.stream_form_voice_enhancement") }}</span
+                        ><input type="radio" id="stream-form-voice-enhancement-on" value="on"
+                            v-model="streamVoiceEnhancement"
+                        ><label for="stream-form-voice-enhancement-on">{{ $t("ui.stream_form_voice_enhancement_on") }}</label>
+
+                        <input type="radio" id="stream-form-voice-enhancement-off" value="off"
+                            v-model="streamVoiceEnhancement"
+                        ><label for="stream-form-voice-enhancement-off">{{ $t("ui.stream_form_voice_enhancement_off") }}</label>
+
+                        <input type="radio" id="stream-form-voice-enhancement-advanced" value="advanced"
+                            v-model="streamVoiceEnhancement"
+                        ><label for="stream-form-voice-enhancement-advanced">{{ $t("ui.stream_form_voice_enhancement_advanced") }}</label>
+                        <div class='popup-subsection' v-if="streamVoiceEnhancement == 'advanced'">
+                            <div>
+                                <input type="checkbox" id="stream-form-echo-cancellation" v-model="streamEchoCancellation"
+                                ><label for="stream-form-echo-cancellation">{{ $t("ui.stream_form_echo_cancellation") }}</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="stream-form-noise-suppression" v-model="streamNoiseSuppression"
+                                ><label for="stream-form-noise-suppression">{{ $t("ui.stream_form_noise_suppression") }}</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="stream-form-auto-gain" v-model="streamAutoGain"
+                                ><label for="stream-form-auto-gain">{{ $t("ui.stream_form_auto_gain") }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup-buttons">
+                    <button v-on:click="wantToStartStreaming">{{ $t("ui.stream_form_button_stream") }}</button
+                    ><button v-on:click="closeStreamPopup">{{ $t("ui.popup_button_cancel") }}</button>
+                </div>
+            </div>
+            
+            <div class="popup" v-if="isWarningToastOpen">
+                <div class="popup-title">{{ $t("ui.warning_toast_title") }}</div>
+                <div class="popup-content">
+                    <div class="popup-section">
+                        {{ warningToastMessage }}
+                    </div>
+                </div>
+                <div class="popup-buttons">
+                    <button v-on:click="closeWarningToast">{{ $t("ui.popup_button_ok") }}</button>
                 </div>
             </div>
 
