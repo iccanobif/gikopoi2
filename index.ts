@@ -80,6 +80,8 @@ io.on("connection", function (socket: any)
                 return;
             }
 
+            currentRoom = rooms[user.roomId]
+
             socket.join(user.areaId)
             socket.join(user.areaId + currentRoom.id)
 
@@ -457,8 +459,13 @@ app.get("/", (req, res) =>
             
             const {statusCode, body} = await got(
                 'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/change_log.html')
-            
             data = data.replace("@CHANGE_LOG@", statusCode === 200 ? body : "")
+            
+            for (const areaId in roomStates)
+            {
+                data = data.replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
+                    getConnectedUserList(null, areaId).length.toString())
+            }
             
             res.set({
                 'Content-Type': 'text/html; charset=utf-8',

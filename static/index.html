@@ -22,10 +22,10 @@
                 <div id="area-selection">
                     <label for="gen-selection"><input type="radio" id="gen-selection" value="gen" v-model="areaId"
                             v-on:click="setLanguage('ja')">
-                        一般 (_gen)</label>
+                        一般 (_gen) [{{ $t("ui.login_user_count") }}@USER_COUNT_GEN@]</label>
                     <label for="for-selection"><input type="radio" id="for-selection" value="for" v-model="areaId"
                             v-on:click="setLanguage('en')">
-                        International (_for)</label>
+                        International (_for) [{{ $t("ui.login_user_count") }}@USER_COUNT_FOR@]</label>
                 </div>
                 <div>
                     <label>{{ $t("ui.label_username") }}</label> <input type="text" v-model="username" maxlength="20" />
@@ -62,6 +62,14 @@
                     <label for="tinpopo-selection">
                         <input type="radio" id="tinpopo-selection" value="tinpopo" v-model="characterId">
                         <img src="characters/tinpopo/front-standing.svg" />
+                    </label>
+                    <label for="shii-hat-selection">
+                        <input type="radio" id="shii-hat-selection" value="shii_hat" v-model="characterId" >
+                        <img src="characters/shii_hat/front-standing.svg" />
+                    </label>
+                    <label for="giko-hat-selection">
+                        <input type="radio" id="giko-hat-selection" value="giko_hat" v-model="characterId" >
+                        <img src="characters/giko_hat/front-standing.svg" />
                     </label>
                 </div>
                 <button v-on:click="login" :disabled="isLoggingIn">Login</button>
