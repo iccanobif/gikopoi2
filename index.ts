@@ -666,22 +666,35 @@ async function persistState()
 {
     console.log("persisting...")
     const serializedUserState = serializeUserState()
+    console.log(serializedUserState)
+    try
+    {
 
-    if (process.env.NODE_ENV == "production")
-    {
-        // use external persistor
-        // remember to do it as defensive as possible
-    }
-    else
-    {
-        // use local file
-        writeFile("persisted-state",
-            serializedUserState,
-            { encoding: "utf-8" },
-            (err) =>
-            {
-                if (err) console.error(err)
+        if (process.env.PERSISTOR_URL)
+        {
+            await got.post(process.env.PERSISTOR_URL, {
+                headers: {
+                    "persistor-secret": process.env.PERSISTOR_SECRET,
+                    "Content-Type": "text/plain"
+                },
+                body: serializedUserState
             })
+        }
+        else
+        {
+            // use local file
+            writeFile("persisted-state",
+                serializedUserState,
+                { encoding: "utf-8" },
+                (err) =>
+                {
+                    if (err) console.error(err)
+                })
+        }
+    }
+    catch (exc)
+    {
+        console.log(exc)
     }
 }
 
@@ -698,7 +711,11 @@ function restoreState()
             // remember to do it as defensive as possible
             try
             {
-                const response = await got(process.env.PERSISTOR_URL)
+                const response = await got.get(process.env.PERSISTOR_URL, {
+                    headers: {
+                        "persistor-secret": process.env.PERSISTOR_SECRET
+                    }
+                })
                 if (response.statusCode == 200)
                     deserializeUserState(response.body)
                 resolve()

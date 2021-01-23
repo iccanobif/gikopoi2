@@ -9,40 +9,56 @@ const port = 8086
 // to test POST with CURL:
 // curl -X POST http://localhost:8086 -H "Content-Type: text/plain" -d "content of the state"
 
+// to test persistor:
+// npx cross-env PERSISTOR_SECRET=xxx nodemon state-persistor.js
+
+app.use((req, res, next) =>
+{
+    const secret = req.headers["persistor-secret"]
+    console.log(secret)
+    if (secret === process.env.PERSISTOR_SECRET)
+        next()
+    else
+        res.sendStatus(403)
+})
+
 app.get("/", async (req, res) =>
 {
     try
     {
+        console.log("get")
         fs.readFile("persisted-state")
             .then((state) => res.end(state))
             .catch((err) =>
             {
                 console.error(err)
-                res.end("")
+                res.sendStatus(500)
             })
     }
     catch (e)
     {
-        res.end(e)
+        console.log(e)
+        res.sendStatus(500)
     }
 })
 
 app.use(express.text());
 
-
 app.post("/", async (req, res) =>
 {
     try
     {
-        console.log("received state", req.body)
+        console.log("post")
         const state = req.body
+        console.log(state)
 
         await fs.writeFile("persisted-state", state)
         res.end()
     }
     catch (e)
     {
-        res.end(e)
+        console.log(e)
+        res.sendStatus(500)
     }
 })
 

@@ -17,10 +17,10 @@
   "scripts": {
     "start": "node build/index.js",
     "dev": "ts-node-dev --respawn index.ts",
-    "dev-remote-persistor": "cross-env PERSISTOR_URL=http://localhost:8086 ts-node-dev --respawn index.ts",
+    "dev-remote-persistor": "cross-env PERSISTOR_URL=http://localhost:8086 PERSISTOR_SECRET=hello ts-node-dev --respawn index.ts",
     "dev-debug": "cross-env DEBUG=* ts-node-dev --respawn index.ts",
     "build": "npx tsc",
-    "start-persistor": "node state-persistor.js"
+    "start-persistor": "cross-env PERSISTOR_SECRET=hello node state-persistor.js"
   },
   "devDependencies": {
     "@types/express": "^4.17.9",
