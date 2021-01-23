@@ -206,8 +206,6 @@ const vueApp = new Vue({
 
             this.socket.on("disconnect", () =>
             {
-                if (this.isSoundEnabled)
-                    document.getElementById("connection-lost-sound").play();
                 this.connectionLost = true;
             });
             this.socket.on("server-cant-log-you-in", () =>

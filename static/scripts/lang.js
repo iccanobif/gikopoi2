@@ -44,7 +44,7 @@ export const messages =
         },
         msg:
         {
-            connection_lost: "接続できません、ページをリフレッシュしてください！",
+            connection_lost: "再接続中",
             room_unavailable: "まだ部屋の用意ができていません。ごめんね！"
         },
         room:
@@ -129,7 +129,7 @@ export const messages =
         },
         msg:
         {
-            connection_lost: "Connection lost, please refresh the page!",
+            connection_lost: "Reconnecting...",
             room_unavailable: "This room is not available yet. Sorry!"
         },
         room:
