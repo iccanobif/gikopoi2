@@ -9,6 +9,8 @@ export const messages =
             title: "ギコっぽいっぽい",
             subtitle: "非公式リメイク",
             
+            login_user_count: "人数：",
+            
             infobox_label_area: "ｴﾘｱ：",
             infobox_value_area: "海辺の町",
             infobox_label_room: "ｽﾃｰｼﾞ：",
@@ -91,6 +93,8 @@ export const messages =
         {
             title: "Gikopoipoi",
             subtitle: "Unofficial remake",
+            
+            login_user_count: "Users: ",
             
             infobox_label_area: "Area:",
             infobox_value_area: "Sea City",

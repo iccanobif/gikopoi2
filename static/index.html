@@ -22,10 +22,10 @@
                 <div id="area-selection">
                     <label for="gen-selection"><input type="radio" id="gen-selection" value="gen" v-model="areaId"
                             v-on:click="setLanguage('ja')">
-                        一般 (_gen)</label>
+                        一般 (_gen) [{{ $t("ui.login_user_count") }}@USER_COUNT_GEN@]</label>
                     <label for="for-selection"><input type="radio" id="for-selection" value="for" v-model="areaId"
                             v-on:click="setLanguage('en')">
-                        International (_for)</label>
+                        International (_for) [{{ $t("ui.login_user_count") }}@USER_COUNT_FOR@]</label>
                 </div>
                 <div>
                     <label>{{ $t("ui.label_username") }}</label> <input type="text" v-model="username" maxlength="20" />
