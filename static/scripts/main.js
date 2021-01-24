@@ -84,6 +84,10 @@ const vueApp = new Vue({
             ev.preventDefault();
             this.isLoggingIn = true;
 
+            window.addEventListener("resize", () => {
+                this.isRedrawRequired = true
+            })
+
             await Promise.all([
                 characters.giko.loadImages(),
                 characters.naito.loadImages(),
