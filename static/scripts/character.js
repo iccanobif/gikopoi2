@@ -45,7 +45,7 @@ export class Character
 export const characters = {
     giko: new Character("giko", "svg", false),
     naito: new Character("naito", "svg", false),
-    funkynaito: new Character("funkynaito", "png", true),
+    funkynaito: new Character("funkynaito", "png", false),
     furoshiki: new Character("furoshiki", "svg", false),
     naitoapple: new Character("naitoapple", "svg", false),
     hikki: new Character("hikki", "svg", false),
