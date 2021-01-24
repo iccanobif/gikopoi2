@@ -72,7 +72,8 @@
                         <img src="characters/giko_hat/front-standing.svg" />
                     </label>
                     <label for="hungry-giko-selection" style="display: none">
-                        <!-- please don't tell anyone how to enable hungry giko -->
+                        <!-- this is a secret, please don't tell anyone. -->
+                        <!-- これは秘密です、誰にも言わないでください。 -->
                         <input type="radio" id="hungry-giko-selection" value="hungry_giko" v-model="characterId" >
                         <img src="characters/hungry_giko/front-standing.svg" />
                     </label>
@@ -89,6 +90,9 @@
             </h2>
             <h2 class="big-red-alert" v-if="steppingOnPortalToNonAvailableRoom">
                 {{ $t("msg.room_unavailable") }}
+            </h2>
+            <h2 class="big-red-alert" v-if="pageRefreshRequired">
+                {{ $t("msg.page_refresh_required") }}
             </h2>
             <div id="canvas-container">
                 <canvas id="room-canvas" tabindex="1" v-on:keydown="handleCanvasKeydown($event)"

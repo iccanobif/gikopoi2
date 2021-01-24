@@ -77,6 +77,9 @@ const vueApp = new Vue({
         iAmStreaming: false,
         connectionLost: false,
         steppingOnPortalToNonAvailableRoom: false,
+
+        pageRefreshRequired: false,
+        expectedServerVersion: null,
     },
     methods: {
         login: async function (ev)
@@ -108,7 +111,6 @@ const vueApp = new Vue({
             if (this.characterId === "naito")
             {
                 const die = Math.random()
-                console.log(die)
                 if (die < 0.25)
                     this.characterId = "funkynaito"
             }
@@ -116,7 +118,9 @@ const vueApp = new Vue({
             this.loggedIn = true;
             this.selectedCharacter = characters[this.characterId];
             this.registerKeybindings();
+
             await this.connectToServer(this.username);
+
             this.isLoggingIn = false;
             this.paint();
 
@@ -218,10 +222,16 @@ const vueApp = new Vue({
             // currentRoom, streams etc... are all defined
             const response = await fetch("/areas/" + this.areaId + "/rooms/admin_st")
             this.updateRoomState(await response.json())
+            
+            const pingResponse = await postJson("/ping/" + this.myUserID, {
+                userId: this.myUserID,
+            });
+            const { version: newVersion } = await pingResponse.json();
+            this.expectedServerVersion = newVersion
 
             this.socket = io();
 
-            const sendIdToServer = () =>
+            const immanentizeConnection = () =>
             {
                 // it can happen that the user is pressing the arrow keys while the
                 // socket is down, in which case the server will never answer to the
@@ -229,17 +239,18 @@ const vueApp = new Vue({
                 // be reset. So, just in case, I reset it at every socket reconnection.
                 this.isWaitingForServerResponseOnMovement = false
 
-                console.log("sending user-connect")
                 this.connectionLost = false;
                 this.socket.emit("user-connect", this.myUserID);
 
                 this.rtcPeer = new RTCPeer(defaultIceConfig, (type, msg) =>
                     this.emitRTCMessage(type, msg)
                 );
+
+                this.ping()
             }
 
-            this.socket.on("connect", sendIdToServer);
-            this.socket.on("reconnect", sendIdToServer);
+            this.socket.on("connect", immanentizeConnection);
+            this.socket.on("reconnect", immanentizeConnection);
 
             this.socket.on("disconnect", () =>
             {
@@ -396,27 +407,18 @@ const vueApp = new Vue({
                 }
             });
 
-            let version = Infinity;
-
-            const ping = async () =>
+            setInterval(this.ping, 1000 * 60);
+        },
+        ping: async function () {
+            if (this.connectionLost) return;
+            const response = await postJson("/ping/" + this.myUserID, {
+                userId: this.myUserID,
+            });
+            const { version: newVersion } = await response.json();
+            if (newVersion > this.expectedServerVersion)
             {
-                if (this.connectionLost) return;
-                const response = await postJson("/ping/" + this.myUserID, {
-                    userId: this.myUserID,
-                });
-                const { version: newVersion } = await response.json();
-                // if (newVersion > version)
-                // {
-                //     // TODO refresh page while keeping username ,selected character and room
-                //     showWarningToast("Sorry, a new version of gikopoi2 is ready, please refresh this page!")
-                // }
-                // else
-                // {
-                //     version = newVersion
-                // }
-            };
-
-            setInterval(ping, 1000 * 60);
+                this.pageRefreshRequired = true
+            }
         },
         addUser: function (userDTO)
         {
@@ -655,7 +657,7 @@ const vueApp = new Vue({
                 this.changeRoomIfSteppingOnDoor();
             } catch (err)
             {
-                console.log(err);
+                console.error(err);
             }
 
             requestAnimationFrame(this.paint);
@@ -1043,7 +1045,6 @@ const vueApp = new Vue({
             const volumeSlider = document.getElementById("sound-effect-volume");
 
             this.soundEffectVolume = volumeSlider.value
-            console.log(this.soundEffectVolume)
 
             this.updateAudioElementsVolume()
             localStorage.setItem(this.areaId + "soundEffectVolume", this.soundEffectVolume);

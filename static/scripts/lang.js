@@ -61,8 +61,8 @@ export const messages =
         {
             connection_lost: "再接続中",
             room_unavailable: "まだ部屋の用意ができていません。ごめんね！",
-            
-            error_obtaining_media_device: "デバイスを取得できませんでした。"
+            page_refresh_required: "このサイトは更新されましたからページをリフレッシュしてください。",
+            error_obtaining_media_device: "デバイスを取得できませんでした。",
         },
         room:
         {
@@ -163,6 +163,7 @@ export const messages =
         {
             connection_lost: "Reconnecting...",
             room_unavailable: "This room is not available yet. Sorry!",
+            page_refresh_required: "An update is ready, so please refresh this page.",
             
             error_obtaining_media_device: "Unable to obtain media device."
         },
