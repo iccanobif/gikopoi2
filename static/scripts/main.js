@@ -36,7 +36,7 @@ const vueApp = new Vue({
         isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
         rtcPeer: null,
         takenStreams: [], // streams taken by me
-        isSoundEnabled: localStorage.getItem("isSoundEnabled") == "true",
+        soundEffectVolume: 0,
         characterId: "giko",
         isLoggingIn: false,
         streams: [],
@@ -118,6 +118,9 @@ const vueApp = new Vue({
             await this.connectToServer(this.username);
             this.isLoggingIn = false;
             this.paint();
+
+            this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
+            this.updateAudioElementsVolume()
         },
         setLanguage: function (code)
         {
@@ -243,10 +246,7 @@ const vueApp = new Vue({
             this.socket.on("server-msg", async (userId, userName, msg) =>
             {
                 const chatLog = document.getElementById("chatLog");
-                if (this.isSoundEnabled)
-                {
-                    document.getElementById("message-sound").play();
-                }
+                document.getElementById("message-sound").play();
 
                 const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
 
@@ -319,7 +319,7 @@ const vueApp = new Vue({
 
             this.socket.on("server-user-joined-room", async (user) =>
             {
-                if (this.isSoundEnabled) document.getElementById("login-sound").play();
+                document.getElementById("login-sound").play();
                 this.addUser(user);
                 this.isRedrawRequired = true;
             });
@@ -755,14 +755,6 @@ const vueApp = new Vue({
                 (this.isInfoboxVisible = !this.isInfoboxVisible)
             );
         },
-        toggleSound: function ()
-        {
-            localStorage.setItem(
-                "isSoundEnabled",
-                (this.isSoundEnabled = !this.isSoundEnabled)
-            );
-            console.log(localStorage.getItem("isSoundEnabled"));
-        },
         handleCanvasKeydown: function (event)
         {
             switch (event.key)
@@ -1029,7 +1021,7 @@ const vueApp = new Vue({
         {
             await postJson("/logout", { userID: this.myUserID });
         },
-        changeVolume: function (streamSlotId)
+        changeStreamVolume: function (streamSlotId)
         {
             const volumeSlider = document.getElementById("volume-" + streamSlotId);
 
@@ -1038,6 +1030,24 @@ const vueApp = new Vue({
             );
 
             videoElement.volume = volumeSlider.value;
+        },
+        changeSoundEffectVolume: function ()
+        {
+            const volumeSlider = document.getElementById("sound-effect-volume");
+
+            this.soundEffectVolume = volumeSlider.value
+            console.log(this.soundEffectVolume)
+
+            this.updateAudioElementsVolume()
+            localStorage.setItem(this.areaId + "soundEffectVolume", this.soundEffectVolume);
+        },
+        updateAudioElementsVolume: function ()
+        {
+            for (const elementId of ["message-sound", "login-sound"])
+            {
+                const el = document.getElementById(elementId)
+                el.volume = this.soundEffectVolume
+            }
         },
         requestRoomList: function ()
         {

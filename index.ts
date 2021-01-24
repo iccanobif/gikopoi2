@@ -132,7 +132,6 @@ io.on("connection", function (socket: any)
     socket.on("user-move", async function (direction: Direction)
     {
         await sleep(delay)
-        console.log("user-move", direction)
 
         try
         {
@@ -664,9 +663,7 @@ setInterval(() =>
 
 async function persistState()
 {
-    console.log("persisting...")
     const serializedUserState = serializeUserState()
-    console.log(serializedUserState)
     try
     {
 
