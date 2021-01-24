@@ -583,12 +583,8 @@ const vueApp = new Vue({
 
                             switch (o.o.direction)
                             {
-                                case "up": case "right":
-                                    drawFunc = o.o.character.leftFacing ? this.drawHorizontallyFlippedImage : this.drawImage
-                                    break;
-                                case "down": case "left":
-                                    drawFunc = o.o.character.leftFacing ? this.drawImage : this.drawHorizontallyFlippedImage
-                                    break;
+                                case "up": case "right": drawFunc = this.drawImage; break;
+                                case "down": case "left": drawFunc = this.drawHorizontallyFlippedImage; break;
                             }
 
                             // context.globalAlpha = 0.3
