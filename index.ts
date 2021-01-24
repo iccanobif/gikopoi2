@@ -651,7 +651,10 @@ setInterval(() =>
     {
         for (const user of getGhostUsers())
             if (Date.now() - user.lastPing > 1 * 60 * 1000)
+            {
+                console.log(Date.now(), user.lastPing, Date.now() - user.lastPing)
                 disconnectUser(user)
+            }
     }
     catch (e)
     {
@@ -755,4 +758,3 @@ restoreState().then(() =>
 })
     .catch(console.error)
 
-    
