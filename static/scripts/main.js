@@ -166,13 +166,23 @@ const vueApp = new Vue({
                     {
                         if (this.roomLoadId != roomLoadId) return;
                         o.image = image;
-                        const { x, y } = calculateRealCoordinates(
-                            this.currentRoom,
-                            o.x,
-                            o.y
-                        );
-                        o.physicalPositionX = x + (o.xOffset || 0);
-                        o.physicalPositionY = y + (o.yOffset || 0);
+                        
+                        if (o.offset)
+                        {
+                            o.physicalPositionX = o.offset.x
+                            o.physicalPositionY = (o.offset.y + (image.height * globalScale * (o.scale * this.currentRoom.scale))) + (this.canvasDimensions.h - this.currentRoom.backgroundImage.height * globalScale * this.currentRoom.scale)
+                        }
+                        else
+                        {
+                            const { x, y } = calculateRealCoordinates(
+                                this.currentRoom,
+                                o.x,
+                                o.y
+                            );
+                            
+                            o.physicalPositionX = x + (o.xOffset || 0);
+                            o.physicalPositionY = y + (o.yOffset || 0);
+                        }
                         this.isRedrawRequired = true;
                     }
                 );

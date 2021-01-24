@@ -188,9 +188,9 @@ export const rooms: { [roomId: string]: Room } = {
         backgroundImageUrl: "rooms/admin/background.svg",
         backgroundColor: "#c0c0c0",
         objects: [
-            { x: 2, y: 1, url: "long_table_left.svg", scale: 1, xOffset: -2, yOffset: 18 },
-            { x: 2, y: 3, url: "long_table_right.svg", scale: 1, xOffset: -3, yOffset: 3 },
-            { x: 8, y: 2, url: "round_table.svg", scale: 1, xOffset: 28, yOffset: 5 },
+            { x: 2, y: 1, url: "long_table_left.svg", scale: 1, offset: { x: 164, y: 194 } },
+            { x: 2, y: 3, url: "long_table_right.svg", scale: 1, offset: { x: 237, y: 164 } },
+            { x: 8, y: 2, url: "round_table.svg", scale: 1, offset: { x: 473, y: 313 } },
         ],
         sit: [
             { x: 10, y: 2 },
