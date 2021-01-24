@@ -175,7 +175,7 @@ const vueApp = new Vue({
                         if (o.offset)
                         {
                             o.physicalPositionX = o.offset.x
-                            o.physicalPositionY = (o.offset.y + (image.height * globalScale * (o.scale * this.currentRoom.scale))) + (this.canvasDimensions.h - this.currentRoom.backgroundImage.height * globalScale * this.currentRoom.scale)
+                            o.physicalPositionY = o.offset.y
                         }
                         else
                         {
@@ -573,10 +573,17 @@ const vueApp = new Vue({
                 {
                     if (o.type == "room-object")
                     {
+                        let temporaryBodgeYOffset = 0;
+                        if (o.o.offset)
+                        {
+                            if (!this.currentRoom.backgroundImage || !this.currentRoom.backgroundImage.height) continue;
+                            temporaryBodgeYOffset = (o.o.image.height * globalScale * (o.o.scale * this.currentRoom.scale)) + (this.canvasDimensions.h - this.currentRoom.backgroundImage.height * globalScale * this.currentRoom.scale);
+                        }
+                        
                         this.drawImage(
                             o.o.image,
                             o.o.physicalPositionX + canvasOffset.x,
-                            o.o.physicalPositionY + canvasOffset.y,
+                            o.o.physicalPositionY + canvasOffset.y + temporaryBodgeYOffset,
                             this.currentRoom.scale * o.o.scale
                         );
                     } // o.type == "user"
