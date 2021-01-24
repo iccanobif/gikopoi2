@@ -4,6 +4,7 @@ body
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
+    padding: 5px;    
 }
 
 header {
@@ -51,6 +52,7 @@ header h2 {
     height: 150px;
     overflow-y: auto;
     resize: both;
+    padding-left: 5px;
 }
 
 .message
