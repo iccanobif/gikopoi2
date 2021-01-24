@@ -44,6 +44,10 @@ export interface Room
         y: number;
         url: string;
         scale?: number;
+        offset?: {
+            x: number;
+            y: number;
+        }
         xOffset?: number;
         yOffset?: number;
     }[];
