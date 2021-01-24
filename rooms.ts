@@ -468,7 +468,7 @@ export const rooms: { [roomId: string]: Room } = {
         size: { x: 14, y: 14 },
         originCoordinates: { x: -419, y: 688 },
         spawnPoint: "spawn",
-        backgroundImageUrl: "rooms/silo/testmap.svg",
+        backgroundImageUrl: "rooms/silo/silo.svg",
         backgroundColor: "#c0c0c0",
         backgroundOffset: { x: -119, y: 28 },
         needsFixedCamera: true,
