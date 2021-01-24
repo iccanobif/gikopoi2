@@ -303,7 +303,7 @@ const vueApp = new Vue({
 
                 const permission = await Notification.requestPermission()
 
-                if (permission == "granted" && userId != this.myUserID)
+                if (permission == "granted" && document.visibilityState != "visible" &&  userId != this.myUserID)
                 {
                     const character = this.users[userId].character
                     new Notification(userName + ": " + msg,
