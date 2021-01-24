@@ -575,15 +575,34 @@ const vueApp = new Vue({
                                     break;
                             }
 
+                            // context.globalAlpha = 0.3
+
                             drawFunc(
                                 o.o.getCurrentImage(this.currentRoom),
                                 o.o.currentPhysicalPositionX + canvasOffset.x,
                                 o.o.currentPhysicalPositionY + canvasOffset.y
                             );
+
+                            // context.globalAlpha = 1
                         }
 
-                        o.o.spendTime(this.currentRoom);
+
                     }
+                }
+
+                // Draw usernames on top of everything else
+                for (const o of allObjects.filter(o => o.type == "user"))
+                {
+                    if (!this.isLoadingRoom)
+                    {
+                        this.drawCenteredText(
+                            o.o.name,
+                            (o.o.currentPhysicalPositionX + 40) + canvasOffset.x,
+                            (o.o.currentPhysicalPositionY - 95) + canvasOffset.y
+                        );
+                    }
+
+                    o.o.spendTime(this.currentRoom);
                 }
 
                 if (localStorage.getItem("enableGridNumbers") == "true")
