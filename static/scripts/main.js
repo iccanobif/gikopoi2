@@ -36,7 +36,7 @@ const vueApp = new Vue({
         isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
         rtcPeer: null,
         takenStreams: [], // streams taken by me
-        isSoundEnabled: localStorage.getItem("isSoundEnabled") == "true",
+        soundEffectVolume: 0,
         characterId: "giko",
         isLoggingIn: false,
         streams: [],
@@ -48,12 +48,12 @@ const vueApp = new Vue({
         canvasDragOffset: null,
         canvasOffset: { x: 0, y: 0 },
         canvasDimensions: { w: 0, h: 0 },
-        
+
         // rula stuff
         isRulaPopupOpen: false,
         roomList: [],
         rulaRoomSelection: null,
-        
+
         // stream settings
         isStreamPopupOpen: false,
         streamMode: "video_sound",
@@ -61,7 +61,7 @@ const vueApp = new Vue({
         streamEchoCancellation: true,
         streamNoiseSuppression: true,
         streamAutoGain: true,
-        
+
         // Warning Toast
         isWarningToastOpen: false,
         warningToastMessage: "",
@@ -83,6 +83,11 @@ const vueApp = new Vue({
         {
             ev.preventDefault();
             this.isLoggingIn = true;
+
+            window.addEventListener("resize", () =>
+            {
+                this.isRedrawRequired = true
+            })
 
             await Promise.all([
                 characters.giko.loadImages(),
@@ -114,17 +119,20 @@ const vueApp = new Vue({
             await this.connectToServer(this.username);
             this.isLoggingIn = false;
             this.paint();
+
+            this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
+            this.updateAudioElementsVolume()
         },
         setLanguage: function (code)
         {
             i18n.locale = code;
         },
-        showWarningToast: function(text)
+        showWarningToast: function (text)
         {
             this.warningToastMessage = text;
             this.isWarningToastOpen = true;
         },
-        closeWarningToast: function()
+        closeWarningToast: function ()
         {
             this.isWarningToastOpen = false;
         },
@@ -236,13 +244,10 @@ const vueApp = new Vue({
                 (dto) => this.updateRoomState(dto)
             );
 
-            this.socket.on("server-msg", (userName, msg) =>
+            this.socket.on("server-msg", async (userId, userName, msg) =>
             {
                 const chatLog = document.getElementById("chatLog");
-                if (this.isSoundEnabled)
-                {
-                    document.getElementById("message-sound").play();
-                }
+                document.getElementById("message-sound").play();
 
                 const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
 
@@ -273,6 +278,17 @@ const vueApp = new Vue({
                 if (isAtBottom)
                     chatLog.scrollTop = chatLog.scrollHeight -
                         chatLog.clientHeight;
+
+                const permission = await Notification.requestPermission()
+
+                if (permission == "granted" && userId != this.myUserID)
+                {
+                    const character = this.users[userId].character
+                    new Notification(userName + ": " + msg,
+                        {
+                            icon: "characters/" + character.characterName + "/front-standing." + character.format
+                        })
+                }
             });
 
             this.socket.on("server-stats", (serverStats) =>
@@ -304,7 +320,7 @@ const vueApp = new Vue({
 
             this.socket.on("server-user-joined-room", async (user) =>
             {
-                if (this.isSoundEnabled) document.getElementById("login-sound").play();
+                document.getElementById("login-sound").play();
                 this.addUser(user);
                 this.isRedrawRequired = true;
             });
@@ -568,23 +584,38 @@ const vueApp = new Vue({
 
                             switch (o.o.direction)
                             {
-                                case "up": case "right":
-                                    drawFunc = o.o.character.leftFacing ? this.drawHorizontallyFlippedImage : this.drawImage
-                                    break;
-                                case "down": case "left":
-                                    drawFunc = o.o.character.leftFacing ? this.drawImage : this.drawHorizontallyFlippedImage
-                                    break;
+                                case "up": case "right": drawFunc = this.drawImage; break;
+                                case "down": case "left": drawFunc = this.drawHorizontallyFlippedImage; break;
                             }
+
+                            // context.globalAlpha = 0.3
 
                             drawFunc(
                                 o.o.getCurrentImage(this.currentRoom),
                                 o.o.currentPhysicalPositionX + canvasOffset.x,
                                 o.o.currentPhysicalPositionY + canvasOffset.y
                             );
+
+                            // context.globalAlpha = 1
                         }
 
-                        o.o.spendTime(this.currentRoom);
+
                     }
+                }
+
+                // Draw usernames on top of everything else
+                for (const o of allObjects.filter(o => o.type == "user"))
+                {
+                    if (!this.isLoadingRoom)
+                    {
+                        this.drawCenteredText(
+                            o.o.name,
+                            (o.o.currentPhysicalPositionX + 40) + canvasOffset.x,
+                            (o.o.currentPhysicalPositionY - 95) + canvasOffset.y
+                        );
+                    }
+
+                    o.o.spendTime(this.currentRoom);
                 }
 
                 if (localStorage.getItem("enableGridNumbers") == "true")
@@ -721,14 +752,6 @@ const vueApp = new Vue({
                 (this.isInfoboxVisible = !this.isInfoboxVisible)
             );
         },
-        toggleSound: function ()
-        {
-            localStorage.setItem(
-                "isSoundEnabled",
-                (this.isSoundEnabled = !this.isSoundEnabled)
-            );
-            console.log(localStorage.getItem("isSoundEnabled"));
-        },
         handleCanvasKeydown: function (event)
         {
             switch (event.key)
@@ -831,7 +854,7 @@ const vueApp = new Vue({
         updateCurrentRoomStreams: function (streams)
         {
             this.streams = streams;
-            
+
             this.iAmStreaming = false;
             this.streamSlotIdInWhichIWantToStream = null;
 
@@ -858,12 +881,12 @@ const vueApp = new Vue({
             try
             {
                 this.isStreamPopupOpen = false;
-                
+
                 const userMedia = {};
-                
+
                 const withVideo = this.streamMode != "sound";
                 const withSound = this.streamMode != "video";
-                
+
                 if (withVideo)
                 {
                     userMedia.video = {
@@ -875,7 +898,7 @@ const vueApp = new Vue({
                         },
                     };
                 }
-                
+
                 if (withSound)
                 {
                     userMedia.audio = {
@@ -884,7 +907,7 @@ const vueApp = new Vue({
                         autoGainControl: this.streamAutoGain,
                         channelCount: 2
                     };
-                    
+
                     if (this.streamVoiceEnhancement == "on")
                     {
                         userMedia.audio.echoCancellation = true;
@@ -978,13 +1001,13 @@ const vueApp = new Vue({
         {
             this.streamSlotIdInWhichIWantToStream = streamSlotId;
             this.wantToStream = true;
-            
+
             this.isStreamPopupOpen = true;
             this.streamMode = "video_sound";
             this.streamVoiceEnhancement = "on";
             this.streamEchoCancellation = true;
             this.streamNoiseSuppression = true;
-            this.streamAutoGain = true;  
+            this.streamAutoGain = true;
         },
         closeStreamPopup: function ()
         {
@@ -995,7 +1018,7 @@ const vueApp = new Vue({
         {
             await postJson("/logout", { userID: this.myUserID });
         },
-        changeVolume: function (streamSlotId)
+        changeStreamVolume: function (streamSlotId)
         {
             const volumeSlider = document.getElementById("volume-" + streamSlotId);
 
@@ -1004,6 +1027,24 @@ const vueApp = new Vue({
             );
 
             videoElement.volume = volumeSlider.value;
+        },
+        changeSoundEffectVolume: function ()
+        {
+            const volumeSlider = document.getElementById("sound-effect-volume");
+
+            this.soundEffectVolume = volumeSlider.value
+            console.log(this.soundEffectVolume)
+
+            this.updateAudioElementsVolume()
+            localStorage.setItem(this.areaId + "soundEffectVolume", this.soundEffectVolume);
+        },
+        updateAudioElementsVolume: function ()
+        {
+            for (const elementId of ["message-sound", "login-sound"])
+            {
+                const el = document.getElementById(elementId)
+                el.volume = this.soundEffectVolume
+            }
         },
         requestRoomList: function ()
         {

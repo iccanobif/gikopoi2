@@ -24,14 +24,13 @@ export const messages =
 
             button_switch_language: "English",
             button_send: "発言",
-            button_toggle_sound_on: "🔊効果音",
-            button_toggle_sound_off: "🔈効果音",
             button_stream_start: "配信開始",
             button_stream_stop: "配信停止",
             button_stream_take: "受信",
             button_stream_drop: "受信停止",
             button_rula: "#ﾙｰﾗ",
             volume: "音量：",
+            sound_effect: "効果音：",
             
             popup_button_ok: "OK",
             popup_button_cancel: "キャンセル",
@@ -127,14 +126,13 @@ export const messages =
 
             button_switch_language: "日本語",
             button_send: "Send",
-            button_toggle_sound_on: "🔊Sound",
-            button_toggle_sound_off: "🔈Sound",
             button_stream_start: "Start stream",
             button_stream_stop: "Stop stream",
             button_stream_take: "Get stream",
             button_stream_drop: "Drop stream",
             button_rula: "#rula",
             volume: "Volume: ",
+            sound_effect: "Vol.",
             
             popup_button_ok: "OK",
             popup_button_cancel: "Cancel",
