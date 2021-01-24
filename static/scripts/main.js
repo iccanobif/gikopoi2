@@ -91,22 +91,9 @@ const vueApp = new Vue({
             {
                 this.isRedrawRequired = true
             })
-
-            await Promise.all([
-                characters.giko.loadImages(),
-                characters.naito.loadImages(),
-                characters.funkynaito.loadImages(),
-                characters.furoshiki.loadImages(),
-                characters.naitoapple.loadImages(),
-                characters.hikki.loadImages(),
-                characters.tinpopo.loadImages(),
-                characters.shii.loadImages(),
-                characters.shii_pianica.loadImages(),
-                characters.shii_hat.loadImages(),
-                characters.giko_hat.loadImages(),
-                characters.hungry_giko.loadImages(),
-                characters.rikishi_naito.loadImages(),
-            ]);
+            
+            await Promise.all(Object.values(characters).map(c => c.loadImages()));
+            
             if (this.username === "") this.username = i18n.t("default_user_name");
 
             if (this.characterId === "naito")
