@@ -122,7 +122,7 @@ io.on("connection", function (socket: any)
 
             console.log(userName + ": " + msg);
 
-            io.to(user.areaId + user.roomId).emit("server-msg", userName, msg);
+            io.to(user.areaId + user.roomId).emit("server-msg", user.id, userName, msg);
         }
         catch (e)
         {

@@ -48,12 +48,12 @@ const vueApp = new Vue({
         canvasDragOffset: null,
         canvasOffset: { x: 0, y: 0 },
         canvasDimensions: { w: 0, h: 0 },
-        
+
         // rula stuff
         isRulaPopupOpen: false,
         roomList: [],
         rulaRoomSelection: null,
-        
+
         // stream settings
         isStreamPopupOpen: false,
         streamMode: "video_sound",
@@ -61,7 +61,7 @@ const vueApp = new Vue({
         streamEchoCancellation: true,
         streamNoiseSuppression: true,
         streamAutoGain: true,
-        
+
         // Warning Toast
         isWarningToastOpen: false,
         warningToastMessage: "",
@@ -84,7 +84,8 @@ const vueApp = new Vue({
             ev.preventDefault();
             this.isLoggingIn = true;
 
-            window.addEventListener("resize", () => {
+            window.addEventListener("resize", () =>
+            {
                 this.isRedrawRequired = true
             })
 
@@ -122,12 +123,12 @@ const vueApp = new Vue({
         {
             i18n.locale = code;
         },
-        showWarningToast: function(text)
+        showWarningToast: function (text)
         {
             this.warningToastMessage = text;
             this.isWarningToastOpen = true;
         },
-        closeWarningToast: function()
+        closeWarningToast: function ()
         {
             this.isWarningToastOpen = false;
         },
@@ -239,7 +240,7 @@ const vueApp = new Vue({
                 (dto) => this.updateRoomState(dto)
             );
 
-            this.socket.on("server-msg", (userName, msg) =>
+            this.socket.on("server-msg", async (userId, userName, msg) =>
             {
                 const chatLog = document.getElementById("chatLog");
                 if (this.isSoundEnabled)
@@ -276,6 +277,17 @@ const vueApp = new Vue({
                 if (isAtBottom)
                     chatLog.scrollTop = chatLog.scrollHeight -
                         chatLog.clientHeight;
+
+                const permission = await Notification.requestPermission()
+
+                if (permission == "granted" && userId != this.myUserID)
+                {
+                    const character = this.users[userId].character
+                    new Notification(userName + ": " + msg,
+                        {
+                            icon: "characters/" + character.characterName + "/front-standing." + character.format
+                        })
+                }
             });
 
             this.socket.on("server-stats", (serverStats) =>
@@ -853,7 +865,7 @@ const vueApp = new Vue({
         updateCurrentRoomStreams: function (streams)
         {
             this.streams = streams;
-            
+
             this.iAmStreaming = false;
             this.streamSlotIdInWhichIWantToStream = null;
 
@@ -880,12 +892,12 @@ const vueApp = new Vue({
             try
             {
                 this.isStreamPopupOpen = false;
-                
+
                 const userMedia = {};
-                
+
                 const withVideo = this.streamMode != "sound";
                 const withSound = this.streamMode != "video";
-                
+
                 if (withVideo)
                 {
                     userMedia.video = {
@@ -897,7 +909,7 @@ const vueApp = new Vue({
                         },
                     };
                 }
-                
+
                 if (withSound)
                 {
                     userMedia.audio = {
@@ -906,7 +918,7 @@ const vueApp = new Vue({
                         autoGainControl: this.streamAutoGain,
                         channelCount: 2
                     };
-                    
+
                     if (this.streamVoiceEnhancement == "on")
                     {
                         userMedia.audio.echoCancellation = true;
@@ -1000,13 +1012,13 @@ const vueApp = new Vue({
         {
             this.streamSlotIdInWhichIWantToStream = streamSlotId;
             this.wantToStream = true;
-            
+
             this.isStreamPopupOpen = true;
             this.streamMode = "video_sound";
             this.streamVoiceEnhancement = "on";
             this.streamEchoCancellation = true;
             this.streamNoiseSuppression = true;
-            this.streamAutoGain = true;  
+            this.streamAutoGain = true;
         },
         closeStreamPopup: function ()
         {
