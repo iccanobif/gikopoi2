@@ -53,4 +53,5 @@ export const characters = {
     shii_pianica: new Character("shii_pianica", "svg"),
     giko_hat: new Character("giko_hat", "svg"),
     shii_hat: new Character("shii_hat", "svg"),
+    hungry_giko: new Character("hungry_giko", "svg"),
 }

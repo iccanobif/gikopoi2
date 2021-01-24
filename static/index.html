@@ -71,6 +71,10 @@
                         <input type="radio" id="giko-hat-selection" value="giko_hat" v-model="characterId">
                         <img src="characters/giko_hat/front-standing.svg" />
                     </label>
+                    <label for="hungry-giko-selection">
+                        <input type="radio" id="hungry-giko-selection" value="hungry_giko" v-model="characterId" >
+                        <img src="characters/hungry_giko/front-standing.svg" />
+                    </label>
                 </div>
                 <button v-on:click="login" :disabled="isLoggingIn">Login</button>
             </form>
