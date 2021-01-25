@@ -643,14 +643,12 @@ app.post("/logout", (req, res) =>
     }
 })
 
-// Disconnect users that have failed to ping in the last 30 seconds
-
 setInterval(() =>
 {
     try
     {
         for (const user of getGhostUsers())
-            if (Date.now() - user.lastPing > 1 * 60 * 1000)
+            if (Date.now() - user.lastPing > 5 * 60 * 1000)
             {
                 console.log(Date.now(), user.lastPing, Date.now() - user.lastPing)
                 disconnectUser(user)
@@ -737,8 +735,8 @@ function restoreState()
                 else
                 {
                     deserializeUserState(data)
-                    resolve()
                 }
+                resolve()
             })
         }
     })
