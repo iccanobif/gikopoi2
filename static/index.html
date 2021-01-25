@@ -95,6 +95,12 @@
                         <input type="radio" id="shar-naito-selection" value="shar_naito" v-model="characterId" >
                         <img src="characters/shar_naito/front-standing.svg" />
                     </label>
+                    <label for="dark-naito-walking-selection" style="display: none">
+                        <!-- this is a secret, please don't tell anyone. -->
+                        <!-- これは秘密です、誰にも言わないでください。 -->
+                        <input type="radio" id="dark-naito-walking-selection" value="dark_naito_walking" v-model="characterId" >
+                        <img src="characters/dark_naito_walking/front-standing.svg" />
+                    </label>
                 </div>
                 <button v-on:click="login" :disabled="isLoggingIn">Login</button>
             </form>

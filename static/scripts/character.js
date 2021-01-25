@@ -57,4 +57,5 @@ export const characters = {
     rikishi_naito: new Character("rikishi_naito", "svg"),
     hentai_giko: new Character("hentai_giko", "svg"),
     shar_naito: new Character("shar_naito", "svg"),
+    dark_naito_walking: new Character("dark_naito_walking", "svg"),
 }
