@@ -564,7 +564,7 @@ const vueApp = new Vue({
                         let temporaryBodgeYOffset = 0;
                         if (o.o.offset)
                         {
-                            if (!this.currentRoom.backgroundImage || !this.currentRoom.backgroundImage.height) continue;
+                            if (!o.o.image || !this.currentRoom.backgroundImage) continue;
                             temporaryBodgeYOffset = (o.o.image.height * globalScale * (o.o.scale * this.currentRoom.scale)) + (this.canvasDimensions.h - this.currentRoom.backgroundImage.height * globalScale * this.currentRoom.scale);
                         }
                         
