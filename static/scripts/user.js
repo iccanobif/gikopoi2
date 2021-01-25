@@ -46,8 +46,8 @@ export default class User
     // TODO really, find a better name for this function
     spendTime(room)
     {
-        const walkingSpeedX = BLOCK_WIDTH / 80
-        const walkingSpeedY = BLOCK_HEIGHT / 80
+        const walkingSpeedX = BLOCK_WIDTH / ( this.character.characterName == "shar_naito" ? 40 : 80)
+        const walkingSpeedY = BLOCK_HEIGHT / ( this.character.characterName == "shar_naito" ? 40 : 80)
 
         if (!this.isWalking)
             return

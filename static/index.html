@@ -19,6 +19,7 @@
                 </div>
             </header>
             <form id="login-form">
+                <input v-if="passwordInputVisible" type="text" v-model="password"></input>
                 <div id="area-selection">
                     <label for="gen-selection"><input type="radio" id="gen-selection" value="gen" v-model="areaId"
                             v-on:click="setLanguage('ja')">
@@ -31,69 +32,14 @@
                     <label>{{ $t("ui.label_username") }}</label> <input type="text" v-model="username" maxlength="20" />
                 </div>
                 <div id="character-selection">
-                    <label for="giko-selection">
-                        <input type="radio" id="giko-selection" value="giko" v-model="characterId">
-                        <img src="characters/giko/front-standing.svg" />
-                    </label>
-                    <label for="naito-selection">
-                        <input type="radio" id="naito-selection" value="naito" v-model="characterId">
-                        <img src="characters/naito/front-standing.svg" />
-                    </label>
-                    <label for="shii-selection">
-                        <input type="radio" id="shii-selection" value="shii" v-model="characterId">
-                        <img src="characters/shii/front-standing.svg" />
-                    </label>
-                    <label for="shii-pianica-selection">
-                        <input type="radio" id="shii-pianica-selection" value="shii_pianica" v-model="characterId">
-                        <img src="characters/shii_pianica/front-standing.svg" />
-                    </label>
-                    <label for="furoshiki-selection">
-                        <input type="radio" id="furoshiki-selection" value="furoshiki" v-model="characterId">
-                        <img src="characters/furoshiki/front-standing.svg" />
-                    </label>
-                    <label for="naitoapple-selection">
-                        <input type="radio" id="naitoapple-selection" value="naitoapple" v-model="characterId">
-                        <img src="characters/naitoapple/front-standing.svg" />
-                    </label>
-                    <label for="hikki-selection">
-                        <input type="radio" id="hikki-selection" value="hikki" v-model="characterId">
-                        <img src="characters/hikki/front-standing.svg" />
-                    </label>
-                    <label for="tinpopo-selection">
-                        <input type="radio" id="tinpopo-selection" value="tinpopo" v-model="characterId">
-                        <img src="characters/tinpopo/front-standing.svg" />
-                    </label>
-                    <label for="shii-hat-selection">
-                        <input type="radio" id="shii-hat-selection" value="shii_hat" v-model="characterId">
-                        <img src="characters/shii_hat/front-standing.svg" />
-                    </label>
-                    <label for="giko-hat-selection">
-                        <input type="radio" id="giko-hat-selection" value="giko_hat" v-model="characterId">
-                        <img src="characters/giko_hat/front-standing.svg" />
-                    </label>
-                    <label for="hungry-giko-selection" style="display: none">
-                        <!-- this is a secret, please don't tell anyone. -->
-                        <!-- これは秘密です、誰にも言わないでください。 -->
-                        <input type="radio" id="hungry-giko-selection" value="hungry_giko" v-model="characterId" >
-                        <img src="characters/hungry_giko/front-standing.svg" />
-                    </label>
-                    <label for="rikishi-naito-selection" style="display: none">
-                        <!-- this is a secret, please don't tell anyone. -->
-                        <!-- これは秘密です、誰にも言わないでください。 -->
-                        <input type="radio" id="rikishi-naito-selection" value="rikishi_naito" v-model="characterId" >
-                        <img src="characters/rikishi_naito/front-standing.svg" />
-                    </label>
-                    <label for="hentai-giko-selection" style="display: none">
-                        <!-- this is a secret, please don't tell anyone. -->
-                        <!-- これは秘密です、誰にも言わないでください。 -->
-                        <input type="radio" id="hentai-giko-selection" value="hentai_giko" v-model="characterId" >
-                        <img src="characters/hentai_giko/front-standing.svg" />
-                    </label>
-                    <label for="shar-naito-selection" style="display: none">
-                        <!-- this is a secret, please don't tell anyone. -->
-                        <!-- これは秘密です、誰にも言わないでください。 -->
-                        <input type="radio" id="shar-naito-selection" value="shar_naito" v-model="characterId" >
-                        <img src="characters/shar_naito/front-standing.svg" />
+                    <label v-for="character in allCharacters" :for="character.characterName + '-selection'" v-show="!character.isHidden">
+                        <template v-if="character.isHidden">
+                            This is a secret, please don't tell anyone. これは秘密です、誰にも言わないでください。
+                        </template>
+                        <input type="radio" :id="character.characterName + '-selection'"
+                            :value="character.characterName" v-model="characterId">
+                        <img :src="'characters/' + character.characterName + '/front-standing.' + character.format"
+                            v-bind:class="{'character-selected': character.characterName == characterId}" />
                     </label>
                     <label for="dark-naito-walking-selection" style="display: none">
                         <!-- this is a secret, please don't tell anyone. -->
