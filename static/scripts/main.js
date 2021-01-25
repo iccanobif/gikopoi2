@@ -517,8 +517,7 @@ const vueApp = new Vue({
             
             context.fillStyle = this.currentRoom.backgroundColor;
             context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
-
-            // draw background
+            
             if (!this.currentRoom.backgroundOffset)
                 this.currentRoom.backgroundOffset = { x: 0, y: 0 }
             this.drawImage(
