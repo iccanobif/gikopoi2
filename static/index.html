@@ -59,7 +59,9 @@
                 {{ $t("msg.page_refresh_required") }}
             </h2>
             <div id="canvas-container">
-                <canvas id="room-canvas" tabindex="1" v-on:keydown="handleCanvasKeydown($event)"
+                <canvas id="room-canvas-background"></canvas>
+                <canvas id="room-canvas-foreground" tabindex="1"
+                    v-on:keydown="handleCanvasKeydown($event)"
                     v-on:mousedown="handleCanvasMousedown($event)"
                     v-on:mousemove="handleCanvasMousemove($event)"></canvas>
                 <div id="infobox-container">
