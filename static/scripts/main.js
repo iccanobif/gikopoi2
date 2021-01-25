@@ -88,8 +88,10 @@ const vueApp = new Vue({
 
         allCharacters: Object.values(characters),
     },
-    mounted: function () {
-        window.addEventListener("keydown", (ev) => {
+    mounted: function ()
+    {
+        window.addEventListener("keydown", (ev) =>
+        {
             if (ev.shiftKey && ev.ctrlKey && ev.code == "Digit9")
                 this.passwordInputVisible = true
         })
@@ -105,9 +107,9 @@ const vueApp = new Vue({
                 this.isBackgroundRedrawRequired = true;
                 this.isForegroundRedrawRequired = true;
             })
-            
+
             await Promise.all(Object.values(characters).map(c => c.loadImages()));
-            
+
             if (this.username === "") this.username = i18n.t("default_user_name");
 
             if (this.characterId === "naito")
@@ -116,7 +118,7 @@ const vueApp = new Vue({
                 if (die < 0.25)
                     this.characterId = "funkynaito"
             }
-            
+
             if (this.password == "iapetus56")
                 this.characterId = "shar_naito"
 
@@ -127,9 +129,9 @@ const vueApp = new Vue({
             await this.connectToServer(this.username);
 
             this.isLoggingIn = false;
-            
+
             this.contextBackground = document.getElementById("room-canvas-background")
-                .getContext("2d", {alpha: false});
+                .getContext("2d", { alpha: false });
             this.contextForeground = document.getElementById("room-canvas-foreground")
                 .getContext("2d");
             this.paint();
@@ -181,7 +183,7 @@ const vueApp = new Vue({
                     {
                         if (this.roomLoadId != roomLoadId) return;
                         o.image = image;
-                        
+
                         if (o.offset)
                         {
                             o.physicalPositionX = o.offset.x
@@ -194,7 +196,7 @@ const vueApp = new Vue({
                                 o.x,
                                 o.y
                             );
-                            
+
                             o.physicalPositionX = x + (o.xOffset || 0);
                             o.physicalPositionY = y + (o.yOffset || 0);
                         }
@@ -232,7 +234,7 @@ const vueApp = new Vue({
             // currentRoom, streams etc... are all defined
             const response = await fetch("/areas/" + this.areaId + "/rooms/admin_st")
             this.updateRoomState(await response.json())
-            
+
             const pingResponse = await postJson("/ping/" + this.myUserID, {
                 userId: this.myUserID,
             });
@@ -312,7 +314,7 @@ const vueApp = new Vue({
 
                 const permission = await Notification.requestPermission()
 
-                if (permission == "granted" && document.visibilityState != "visible" &&  userId != this.myUserID)
+                if (permission == "granted" && document.visibilityState != "visible" && userId != this.myUserID)
                 {
                     const character = this.users[userId].character
                     new Notification(userName + ": " + msg,
@@ -419,7 +421,8 @@ const vueApp = new Vue({
 
             setInterval(this.ping, 1000 * 60);
         },
-        ping: async function () {
+        ping: async function ()
+        {
             if (this.connectionLost) return;
             const response = await postJson("/ping/" + this.myUserID, {
                 userId: this.myUserID,
@@ -446,7 +449,7 @@ const vueApp = new Vue({
             if (!image) return; // image might be null when rendering a room that hasn't been fully loaded
 
             if (!scale) scale = 1;
-            
+
             context.drawImage(
                 image,
                 Math.round(x),
@@ -508,16 +511,26 @@ const vueApp = new Vue({
                 canvasOffset.y -= user.currentPhysicalPositionY - (this.canvasDimensions.h / 2 + BLOCK_HEIGHT / 2);
             }
 
+            // Prevent going outside of the background picture borders
+            // if (canvasOffset.x > 0) canvasOffset.x = 0;
+            // if (canvasOffset.y > 0) canvasOffset.y = 0;
+            // if (this.canvasDimensions.w < this.currentRoom.backgroundImage.width)
+            //     if (canvasOffset.x < this.canvasDimensions.w - this.currentRoom.backgroundImage.width)
+            //         canvasOffset.x = this.canvasDimensions.w - this.currentRoom.backgroundImage.width
+            // if (this.canvasDimensions.h < this.currentRoom.backgroundImage.height)
+            //     if (canvasOffset.y < this.canvasDimensions.h - this.currentRoom.backgroundImage.height)
+            //         canvasOffset.y = this.canvasDimensions.h - this.currentRoom.backgroundImage.height
+
             return canvasOffset;
         },
-        
-        paintBackground: function(canvasOffset)
+
+        paintBackground: function (canvasOffset)
         {
             const context = this.contextBackground;
-            
+
             context.fillStyle = this.currentRoom.backgroundColor;
             context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
-            
+
             if (!this.currentRoom.backgroundOffset)
                 this.currentRoom.backgroundOffset = { x: 0, y: 0 }
             this.drawImage(
@@ -528,13 +541,13 @@ const vueApp = new Vue({
                 this.currentRoom.scale
             );
         },
-        
-        paintForeground: function(canvasOffset)
+
+        paintForeground: function (canvasOffset)
         {
             const context = this.contextForeground;
-            
+
             context.clearRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
-            
+
             const allObjects = this.currentRoom.objects
                 .map(o => ({
                     o,
@@ -568,7 +581,7 @@ const vueApp = new Vue({
                         if (!o.o.image || !this.currentRoom.backgroundImage) continue;
                         temporaryBodgeYOffset = (o.o.image.height * globalScale * (o.o.scale * this.currentRoom.scale)) + (this.canvasDimensions.h - this.currentRoom.backgroundImage.height * globalScale * this.currentRoom.scale);
                     }
-                    
+
                     this.drawImage(
                         context,
                         o.o.image,
@@ -649,7 +662,7 @@ const vueApp = new Vue({
                     }
             }
         },
-        
+
         paint: function (timestamp)
         {
 
@@ -662,14 +675,14 @@ const vueApp = new Vue({
                 }
 
                 this.detectCanvasResize();
-                
+
                 const canvasOffset = this.getCanvasOffset();
-                
-                
+
+
                 const usersRequiringRedraw = [];
                 for (const [userId, user] of Object.entries(this.users))
-                    if(user.checkIfRedrawRequired()) usersRequiringRedraw.push(userId);
-                
+                    if (user.checkIfRedrawRequired()) usersRequiringRedraw.push(userId);
+
                 if (this.isBackgroundRedrawRequired
                     || this.isDraggingCanvas
                     || (!this.currentRoom.needsFixedCamera && usersRequiringRedraw.includes(this.myUserID)))
@@ -677,7 +690,7 @@ const vueApp = new Vue({
                     this.paintBackground(canvasOffset);
                     this.isBackgroundRedrawRequired = false;
                 }
-            
+
                 if (this.isForegroundRedrawRequired
                     || this.isDraggingCanvas
                     || usersRequiringRedraw.length)
@@ -685,7 +698,7 @@ const vueApp = new Vue({
                     this.paintForeground(canvasOffset);
                     this.isForegroundRedrawRequired = false;
                 }
-                
+
                 this.changeRoomIfSteppingOnDoor();
             } catch (err)
             {
@@ -784,6 +797,10 @@ const vueApp = new Vue({
                 {
                     this.canvasOffset.x += this.canvasDragOffset.x;
                     this.canvasOffset.y += this.canvasDragOffset.y;
+
+                    // if (this.canvasOffset.x > 0) this.canvasOffset.x = 0
+                    // if (this.canvasOffset.y > 0) this.canvasOffset.y = 0
+
                     this.isDraggingCanvas = false;
                 }
                 this.isCanvasMousedown = false;
