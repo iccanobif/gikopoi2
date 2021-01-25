@@ -2,10 +2,11 @@ import { loadImage } from "./utils.js"
 
 export class Character
 {
-    constructor(name, format)
+    constructor(name, format, isHidden)
     {
         this.characterName = name;
         this.format = format;
+        this.isHidden = isHidden
 
         this.frontSittingImage = null;
         this.frontStandingImage = null;
@@ -42,19 +43,19 @@ export class Character
 }
 
 export const characters = {
-    giko: new Character("giko", "svg"),
-    naito: new Character("naito", "svg"),
-    funkynaito: new Character("funkynaito", "png"),
-    furoshiki: new Character("furoshiki", "svg"),
-    naitoapple: new Character("naitoapple", "svg"),
-    hikki: new Character("hikki", "svg"),
-    tinpopo: new Character("tinpopo", "svg"),
-    shii: new Character("shii", "svg"),
-    shii_pianica: new Character("shii_pianica", "svg"),
-    giko_hat: new Character("giko_hat", "svg"),
-    shii_hat: new Character("shii_hat", "svg"),
-    hungry_giko: new Character("hungry_giko", "svg"),
-    rikishi_naito: new Character("rikishi_naito", "svg"),
-    hentai_giko: new Character("hentai_giko", "svg"),
-    shar_naito: new Character("shar_naito", "svg"),
+    giko: new Character("giko", "svg", false),
+    naito: new Character("naito", "svg", false),
+    funkynaito: new Character("funkynaito", "png", false),
+    furoshiki: new Character("furoshiki", "svg", false),
+    naitoapple: new Character("naitoapple", "svg", false),
+    hikki: new Character("hikki", "svg", false),
+    tinpopo: new Character("tinpopo", "svg", false),
+    shii: new Character("shii", "svg", false),
+    shii_pianica: new Character("shii_pianica", "svg", false),
+    giko_hat: new Character("giko_hat", "svg", false),
+    shii_hat: new Character("shii_hat", "svg", false),
+    hungry_giko: new Character("hungry_giko", "svg", true),
+    rikishi_naito: new Character("rikishi_naito", "svg", true),
+    hentai_giko: new Character("hentai_giko", "svg", true),
+    shar_naito: new Character("shar_naito", "svg", true),
 }

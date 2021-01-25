@@ -320,6 +320,16 @@ video {
 
 #character-selection img {
     width: 50px;
+    margin: 2px;
+}
+
+#character-selection .character-selected {
+    border: solid 2px blue;
+    margin: 0px;
+}
+
+#character-selection input {
+    display: none;
 }
 
 #sound-effect-volume {

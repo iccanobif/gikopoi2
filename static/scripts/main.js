@@ -82,6 +82,8 @@ const vueApp = new Vue({
         expectedServerVersion: null,
         passwordInputVisible: false,
         password: "",
+
+        allCharacters: Object.values(characters),
     },
     mounted: function () {
         window.addEventListener("keydown", (ev) => {
