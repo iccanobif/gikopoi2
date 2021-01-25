@@ -58,6 +58,12 @@
             <h2 class="big-red-alert" v-if="pageRefreshRequired">
                 {{ $t("msg.page_refresh_required") }}
             </h2>
+            canvasDragOffset: {{ canvasDragOffset }}
+            canvasOffset: {{ canvasOffset }}
+            canvasDimensions: {{ canvasDimensions }}
+            getCanvasOffset(): {{ getCanvasOffset() }}
+            currentRoom.backgroundImage.width: {{ currentRoom && currentRoom.backgroundImage && currentRoom.backgroundImage.width }}
+            currentRoom.backgroundImage.height: {{ currentRoom && currentRoom.backgroundImage && currentRoom.backgroundImage.height }}
             <div id="canvas-container">
                 <canvas id="room-canvas-background"></canvas>
                 <canvas id="room-canvas-foreground" tabindex="1"

@@ -13,6 +13,7 @@ const i18n = new VueI18n({
     messages,
 });
 
+
 const vueApp = new Vue({
     i18n,
     el: "#vue-app",
@@ -50,7 +51,7 @@ const vueApp = new Vue({
         canvasDragStartPoint: null,
         canvasDragOffset: null,
         canvasOffset: { x: 0, y: 0 },
-        canvasDimensions: { w: 0, h: 0 },
+        canvasDimensions: { width: 0, height: 0 },
 
         // rula stuff
         isRulaPopupOpen: false,
@@ -475,16 +476,16 @@ const vueApp = new Vue({
         },
         detectCanvasResize: function ()
         {
-            if (this.canvasDimensions.w != this.contextBackground.canvas.offsetWidth ||
-                this.canvasDimensions.h != this.contextBackground.canvas.offsetHeight)
+            if (this.canvasDimensions.width != this.contextBackground.canvas.offsetWidth ||
+                this.canvasDimensions.height != this.contextBackground.canvas.offsetHeight)
             {
-                this.canvasDimensions.w = this.contextBackground.canvas.offsetWidth;
-                this.canvasDimensions.h = this.contextBackground.canvas.offsetHeight;
+                this.canvasDimensions.width = this.contextBackground.canvas.offsetWidth;
+                this.canvasDimensions.height = this.contextBackground.canvas.offsetHeight;
 
-                this.contextBackground.canvas.width = this.canvasDimensions.w;
-                this.contextBackground.canvas.height = this.canvasDimensions.h;
-                this.contextForeground.canvas.width = this.canvasDimensions.w;
-                this.contextForeground.canvas.height = this.canvasDimensions.h;
+                this.contextBackground.canvas.width = this.canvasDimensions.width;
+                this.contextBackground.canvas.height = this.canvasDimensions.height;
+                this.contextForeground.canvas.width = this.canvasDimensions.width;
+                this.contextForeground.canvas.height = this.canvasDimensions.height;
             }
         },
         getCanvasOffset: function ()
@@ -507,19 +508,11 @@ const vueApp = new Vue({
             {
                 const user = this.users[this.myUserID]
 
-                canvasOffset.x -= user.currentPhysicalPositionX - (this.canvasDimensions.w / 2 - BLOCK_WIDTH / 4);
-                canvasOffset.y -= user.currentPhysicalPositionY - (this.canvasDimensions.h / 2 + BLOCK_HEIGHT / 2);
+                canvasOffset.x -= user.currentPhysicalPositionX - (this.canvasDimensions.width / 2 - BLOCK_WIDTH / 4);
+                canvasOffset.y -= user.currentPhysicalPositionY - (this.canvasDimensions.height / 2 + BLOCK_HEIGHT / 2);
             }
 
-            // Prevent going outside of the background picture borders
-            // if (canvasOffset.x > 0) canvasOffset.x = 0;
-            // if (canvasOffset.y > 0) canvasOffset.y = 0;
-            // if (this.canvasDimensions.w < this.currentRoom.backgroundImage.width)
-            //     if (canvasOffset.x < this.canvasDimensions.w - this.currentRoom.backgroundImage.width)
-            //         canvasOffset.x = this.canvasDimensions.w - this.currentRoom.backgroundImage.width
-            // if (this.canvasDimensions.h < this.currentRoom.backgroundImage.height)
-            //     if (canvasOffset.y < this.canvasDimensions.h - this.currentRoom.backgroundImage.height)
-            //         canvasOffset.y = this.canvasDimensions.h - this.currentRoom.backgroundImage.height
+            this.keepWithinBoundaries(canvasOffset)
 
             return canvasOffset;
         },
@@ -529,7 +522,7 @@ const vueApp = new Vue({
             const context = this.contextBackground;
 
             context.fillStyle = this.currentRoom.backgroundColor;
-            context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
+            context.fillRect(0, 0, this.canvasDimensions.width, this.canvasDimensions.height);
 
             if (!this.currentRoom.backgroundOffset)
                 this.currentRoom.backgroundOffset = { x: 0, y: 0 }
@@ -537,7 +530,7 @@ const vueApp = new Vue({
                 context,
                 this.currentRoom.backgroundImage,
                 0 + this.currentRoom.backgroundOffset.x + canvasOffset.x,
-                this.canvasDimensions.h + this.currentRoom.backgroundOffset.y + canvasOffset.y,
+                this.canvasDimensions.height + this.currentRoom.backgroundOffset.y + canvasOffset.y,
                 this.currentRoom.scale
             );
         },
@@ -546,7 +539,7 @@ const vueApp = new Vue({
         {
             const context = this.contextForeground;
 
-            context.clearRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
+            context.clearRect(0, 0, this.canvasDimensions.width, this.canvasDimensions.height);
 
             const allObjects = this.currentRoom.objects
                 .map(o => ({
@@ -579,7 +572,7 @@ const vueApp = new Vue({
                     if (o.o.offset)
                     {
                         if (!o.o.image || !this.currentRoom.backgroundImage) continue;
-                        temporaryBodgeYOffset = (o.o.image.height * globalScale * (o.o.scale * this.currentRoom.scale)) + (this.canvasDimensions.h - this.currentRoom.backgroundImage.height * globalScale * this.currentRoom.scale);
+                        temporaryBodgeYOffset = (o.o.image.height * globalScale * (o.o.scale * this.currentRoom.scale)) + (this.canvasDimensions.height - this.currentRoom.backgroundImage.height * globalScale * this.currentRoom.scale);
                     }
 
                     this.drawImage(
@@ -798,8 +791,7 @@ const vueApp = new Vue({
                     this.canvasOffset.x += this.canvasDragOffset.x;
                     this.canvasOffset.y += this.canvasDragOffset.y;
 
-                    // if (this.canvasOffset.x > 0) this.canvasOffset.x = 0
-                    // if (this.canvasOffset.y > 0) this.canvasOffset.y = 0
+                    this.keepWithinBoundaries(this.canvasOffset)
 
                     this.isDraggingCanvas = false;
                 }
@@ -1117,6 +1109,26 @@ const vueApp = new Vue({
         showPasswordInput: function ()
         {
             this.passwordInputVisible = true;
+        },
+        keepWithinBoundaries: function (offset)
+        {
+            if (offset.x > 0) offset.x = 0;
+            if (offset.y > 0) offset.y = 0;
+
+            if (this.currentRoom.backgroundImage)
+            {
+                if (this.currentRoom.backgroundImage.width <= this.canvasDimensions.width)
+                    offset.x = 0
+                else
+                    if (offset.x < this.canvasDimensions.width - this.currentRoom.backgroundImage.width)
+                        offset.x = this.canvasDimensions.width - this.currentRoom.backgroundImage.width
+
+                if (this.currentRoom.backgroundImage.height <= this.canvasDimensions.height)
+                    offset.y = 0
+                else
+                    if (offset.y < this.canvasDimensions.height - this.currentRoom.backgroundImage.height)
+                        offset.y = this.canvasDimensions.height - this.currentRoom.backgroundImage.height
+            }
         }
     },
 });
