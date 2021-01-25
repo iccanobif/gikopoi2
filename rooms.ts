@@ -504,6 +504,11 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 0, y: 4 },
             { x: 0, y: 5 },
             { x: 2, y: 2 },
+            // piano:
+            { x: 4, y: 8 },
+            { x: 4, y: 9 },
+            { x: 3, y: 8 },
+            { x: 3, y: 9 },
         ],
         forbiddenMovements: [],
         doors: {
