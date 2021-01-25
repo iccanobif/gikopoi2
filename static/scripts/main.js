@@ -80,6 +80,14 @@ const vueApp = new Vue({
 
         pageRefreshRequired: false,
         expectedServerVersion: null,
+        passwordInputVisible: false,
+        password: "",
+    },
+    mounted: function () {
+        window.addEventListener("keydown", (ev) => {
+            if (ev.shiftKey && ev.ctrlKey && ev.code == "Digit9")
+                this.passwordInputVisible = true
+        })
     },
     methods: {
         login: async function (ev)
@@ -102,6 +110,9 @@ const vueApp = new Vue({
                 if (die < 0.25)
                     this.characterId = "funkynaito"
             }
+            
+            if (this.password == "iapetus56")
+                this.characterId = "shar_naito"
 
             this.loggedIn = true;
             this.selectedCharacter = characters[this.characterId];
@@ -1059,6 +1070,10 @@ const vueApp = new Vue({
         selectRoomForRula: function (roomId)
         {
             this.rulaRoomSelection = roomId;
+        },
+        showPasswordInput: function ()
+        {
+            this.passwordInputVisible = true;
         }
     },
 });

@@ -19,6 +19,7 @@
                 </div>
             </header>
             <form id="login-form">
+                <input v-if="passwordInputVisible" type="text" v-model="password"></input>
                 <div id="area-selection">
                     <label for="gen-selection"><input type="radio" id="gen-selection" value="gen" v-model="areaId"
                             v-on:click="setLanguage('ja')">
@@ -88,12 +89,6 @@
                         <!-- これは秘密です、誰にも言わないでください。 -->
                         <input type="radio" id="hentai-giko-selection" value="hentai_giko" v-model="characterId" >
                         <img src="characters/hentai_giko/front-standing.svg" />
-                    </label>
-                    <label for="shar-naito-selection" style="display: none">
-                        <!-- this is a secret, please don't tell anyone. -->
-                        <!-- これは秘密です、誰にも言わないでください。 -->
-                        <input type="radio" id="shar-naito-selection" value="shar_naito" v-model="characterId" >
-                        <img src="characters/shar_naito/front-standing.svg" />
                     </label>
                 </div>
                 <button v-on:click="login" :disabled="isLoggingIn">Login</button>
