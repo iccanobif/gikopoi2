@@ -584,12 +584,6 @@ const vueApp = new Vue({
                     {
                         // draw users only when the room is fully loaded, so that the "physical position" calculations
                         // are done with the correct room's data.
-                        this.drawCenteredText(
-                            context,
-                            o.o.name,
-                            (o.o.currentPhysicalPositionX + 40) + canvasOffset.x,
-                            (o.o.currentPhysicalPositionY - 95) + canvasOffset.y
-                        );
 
                         let drawFunc;
 
