@@ -83,6 +83,18 @@
                         <input type="radio" id="rikishi-naito-selection" value="rikishi_naito" v-model="characterId" >
                         <img src="characters/rikishi_naito/front-standing.svg" />
                     </label>
+                    <label for="hentai-giko-selection" style="display: none">
+                        <!-- this is a secret, please don't tell anyone. -->
+                        <!-- これは秘密です、誰にも言わないでください。 -->
+                        <input type="radio" id="hentai-giko-selection" value="hentai_giko" v-model="characterId" >
+                        <img src="characters/hentai_giko/front-standing.svg" />
+                    </label>
+                    <label for="shar-naito-selection" style="display: none">
+                        <!-- this is a secret, please don't tell anyone. -->
+                        <!-- これは秘密です、誰にも言わないでください。 -->
+                        <input type="radio" id="shar-naito-selection" value="shar_naito" v-model="characterId" >
+                        <img src="characters/shar_naito/front-standing.svg" />
+                    </label>
                 </div>
                 <button v-on:click="login" :disabled="isLoggingIn">Login</button>
             </form>

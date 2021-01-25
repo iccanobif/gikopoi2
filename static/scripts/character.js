@@ -55,4 +55,6 @@ export const characters = {
     shii_hat: new Character("shii_hat", "svg"),
     hungry_giko: new Character("hungry_giko", "svg"),
     rikishi_naito: new Character("rikishi_naito", "svg"),
+    hentai_giko: new Character("hentai_giko", "svg"),
+    shar_naito: new Character("shar_naito", "svg"),
 }
