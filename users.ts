@@ -18,10 +18,12 @@ export class Player
     public direction: Direction = (defaultSpawn.direction !== null ? defaultSpawn.direction : "down");
     public isGhost: boolean = true;
     public roomId: string = defaultRoom.id;
-    public lastPing = Date.now();
+    public lastAction = Date.now();
+    public disconnectionTime: number | null = null;
     public mediaStream: MediaStream | null = null;
     public characterId: string;
     public areaId: string;
+    public isInactive = false;
 
     constructor(options: { name?: string, characterId: string, areaId: string })
     {
@@ -49,9 +51,9 @@ export function getConnectedUserList(roomId: string | null, areaId: string | nul
     return output
 };
 
-export function getGhostUsers(): Player[]
+export function getAllUsers(): Player[]
 {
-    return Object.values(users).filter(u => u.isGhost)
+    return Object.values(users)
 }
 
 export function getUser(userId: string)

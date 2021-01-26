@@ -41,7 +41,7 @@ const vueApp = new Vue({
         isLoggingIn: false,
         streams: [],
         areaId: "gen", // 'gen' or 'for'
-        
+
         contextBackground: null,
         contextForeground: null,
         isBackgroundRedrawRequired: false,
@@ -282,6 +282,8 @@ const vueApp = new Vue({
                 const chatLog = document.getElementById("chatLog");
                 document.getElementById("message-sound").play();
 
+                this.users[userId].isInactive = false
+
                 const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
 
                 const messageDiv = document.createElement("div");
@@ -314,6 +316,7 @@ const vueApp = new Vue({
 
                 const permission = await Notification.requestPermission()
 
+
                 if (permission == "granted" && document.visibilityState != "visible" && userId != this.myUserID)
                 {
                     const character = this.users[userId].character
@@ -332,6 +335,8 @@ const vueApp = new Vue({
             this.socket.on("server-move", (userId, x, y, direction, isInstant) =>
             {
                 const user = this.users[userId];
+
+                user.isInactive = false
 
                 const oldX = user.logicalPositionX;
                 const oldY = user.logicalPositionY;
@@ -361,6 +366,12 @@ const vueApp = new Vue({
             this.socket.on("server-user-left-room", (userId) =>
             {
                 if (userId != this.myUserID) delete this.users[userId];
+                this.isForegroundRedrawRequired = true;
+            });
+
+            this.socket.on("server-user-inactive", (userId) =>
+            {
+                this.users[userId].isInactive = true;
                 this.isForegroundRedrawRequired = true;
             });
 
@@ -418,8 +429,6 @@ const vueApp = new Vue({
                     console.error(e.message + " " + e.stack);
                 }
             });
-
-            setInterval(this.ping, 1000 * 60);
         },
         ping: async function ()
         {
@@ -605,7 +614,8 @@ const vueApp = new Vue({
                             case "down": case "left": drawFunc = this.drawHorizontallyFlippedImage; break;
                         }
 
-                        // context.globalAlpha = 0.3
+                        if (o.o.isInactive)
+                            context.globalAlpha = 0.5
 
                         drawFunc(
                             context,
@@ -614,10 +624,8 @@ const vueApp = new Vue({
                             o.o.currentPhysicalPositionY + canvasOffset.y
                         );
 
-                        // context.globalAlpha = 1
+                        context.globalAlpha = 1
                     }
-
-
                 }
             }
 
@@ -677,7 +685,7 @@ const vueApp = new Vue({
                 this.detectCanvasResize();
 
                 const canvasOffset = this.getCanvasOffset();
-                
+
                 const usersRequiringRedraw = [];
                 for (const [userId, user] of Object.entries(this.users))
                     if (user.checkIfRedrawRequired()) usersRequiringRedraw.push(userId);

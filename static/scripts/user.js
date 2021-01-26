@@ -16,7 +16,8 @@ export default class User
         this.isWalking = false;
         this.isHalted = true;
         this.direction = "up";
-        this.framesUntilNextStep = STEP_LENGTH
+        this.framesUntilNextStep = STEP_LENGTH;
+        this.isInactive = false;
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)
