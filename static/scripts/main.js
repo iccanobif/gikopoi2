@@ -648,8 +648,8 @@ const vueApp = new Vue({
                         );
                         context.fillText(
                             x + "," + y,
-                            realCoord.x + 40,
-                            realCoord.y - 20
+                            (realCoord.x + 40) + canvasOffset.x,
+                            (realCoord.y - 20) + canvasOffset.y
                         );
                     }
             }
