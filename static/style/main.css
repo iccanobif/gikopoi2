@@ -205,18 +205,7 @@ video {
     height: 100%;
 }
 
-#room-canvas-background
-{
-    z-index: -1;
-}
-
-#room-canvas-foreground
-{
-    z-index: 0;
-}
-
-#room-canvas-background,
-#room-canvas-foreground
+#room-canvas
 {
     position: absolute;
     width: 100%;
