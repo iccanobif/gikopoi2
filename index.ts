@@ -601,7 +601,7 @@ function clearStream(user: Player)
     }
     catch (error)
     {
-        console.log(error)
+        console.error(error)
     }
 }
 
@@ -692,7 +692,7 @@ async function persistState()
     }
     catch (exc)
     {
-        console.log(exc)
+        console.error(exc)
     }
 }
 
@@ -720,7 +720,7 @@ function restoreState()
             }
             catch (exc)
             {
-                console.log(exc)
+                console.error(exc)
                 resolve()
             }
         }
@@ -730,7 +730,7 @@ function restoreState()
             {
                 if (err)
                 {
-                    console.log(err)
+                    console.error(err)
                 }
                 else
                 {
