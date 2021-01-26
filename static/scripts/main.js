@@ -42,8 +42,10 @@ const vueApp = new Vue({
         streams: [],
         areaId: "gen", // 'gen' or 'for'
         
-        canvasContext: null,
-        isRedrawRequired: false,
+        contextBackground: null,
+        contextForeground: null,
+        isBackgroundRedrawRequired: false,
+        isForegroundRedrawRequired: false,
         isDraggingCanvas: false,
         canvasDragStartPoint: null,
         canvasDragOffset: null,
@@ -128,8 +130,10 @@ const vueApp = new Vue({
 
             this.isLoggingIn = false;
 
-            this.canvasContext = document.getElementById("room-canvas")
-                .getContext("2d", { alpha: false });
+            this.contextBackground = document.getElementById("room-canvas-background")
+                .getContext("2d");
+            this.contextForeground = document.getElementById("room-canvas-foreground")
+                .getContext("2d");
             this.paint();
 
             this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
@@ -170,7 +174,7 @@ const vueApp = new Vue({
             {
                 if (this.roomLoadId != roomLoadId) return;
                 this.currentRoom.backgroundImage = image;
-                this.isRedrawRequired = true;
+                this.isBackgroundRedrawRequired = true;
             });
             for (const o of this.currentRoom.objects)
             {
@@ -196,7 +200,7 @@ const vueApp = new Vue({
                             o.physicalPositionX = x + (o.xOffset || 0);
                             o.physicalPositionY = y + (o.yOffset || 0);
                         }
-                        this.isRedrawRequired = true;
+                        this.isForegroundRedrawRequired = true;
                     }
                 );
             }
@@ -208,7 +212,7 @@ const vueApp = new Vue({
             // Force update of user coordinates using the current room's logics (origin coordinates, etc)
             this.forcePhysicalPositionRefresh();
 
-            document.getElementById("room-canvas").focus();
+            document.getElementById("room-canvas-foreground").focus();
             this.justSpawnedToThisRoom = true;
             this.isLoadingRoom = false;
             this.requestedRoomChange = false;
@@ -253,7 +257,7 @@ const vueApp = new Vue({
                 this.rtcPeer = new RTCPeer(defaultIceConfig, (type, msg) =>
                     this.emitRTCMessage(type, msg)
                 );
-
+                
                 this.ping()
             }
 
@@ -351,13 +355,13 @@ const vueApp = new Vue({
             {
                 document.getElementById("login-sound").play();
                 this.addUser(user);
-                this.isRedrawRequired = true;
+                this.isForegroundRedrawRequired = true;
             });
 
             this.socket.on("server-user-left-room", (userId) =>
             {
                 if (userId != this.myUserID) delete this.users[userId];
-                this.isRedrawRequired = true;
+                this.isForegroundRedrawRequired = true;
             });
 
             this.socket.on("server-not-ok-to-stream", (reason) =>
@@ -471,14 +475,16 @@ const vueApp = new Vue({
         },
         detectCanvasResize: function ()
         {
-            if (this.canvasDimensions.w != this.canvasContext.canvas.offsetWidth ||
-                this.canvasDimensions.h != this.canvasContext.canvas.offsetHeight)
+            if (this.canvasDimensions.w != this.contextBackground.canvas.offsetWidth ||
+                this.canvasDimensions.h != this.contextBackground.canvas.offsetHeight)
             {
-                this.canvasDimensions.w = this.canvasContext.canvas.offsetWidth;
-                this.canvasDimensions.h = this.canvasContext.canvas.offsetHeight;
+                this.canvasDimensions.w = this.contextBackground.canvas.offsetWidth;
+                this.canvasDimensions.h = this.contextBackground.canvas.offsetHeight;
 
-                this.canvasContext.canvas.width = this.canvasDimensions.w;
-                this.canvasContext.canvas.height = this.canvasDimensions.h;
+                this.contextBackground.canvas.width = this.canvasDimensions.w;
+                this.contextBackground.canvas.height = this.canvasDimensions.h;
+                this.contextForeground.canvas.width = this.canvasDimensions.w;
+                this.contextForeground.canvas.height = this.canvasDimensions.h;
             }
         },
         getCanvasOffset: function ()
@@ -520,7 +526,7 @@ const vueApp = new Vue({
 
         paintBackground: function (canvasOffset)
         {
-            const context = this.canvasContext;
+            const context = this.contextBackground;
 
             context.fillStyle = this.currentRoom.backgroundColor;
             context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
@@ -538,7 +544,9 @@ const vueApp = new Vue({
 
         paintForeground: function (canvasOffset)
         {
-            const context = this.canvasContext;
+            const context = this.contextForeground;
+
+            context.clearRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
 
             const allObjects = this.currentRoom.objects
                 .map(o => ({
@@ -673,14 +681,21 @@ const vueApp = new Vue({
                 const usersRequiringRedraw = [];
                 for (const [userId, user] of Object.entries(this.users))
                     if (user.checkIfRedrawRequired()) usersRequiringRedraw.push(userId);
-                
-                if (this.isRedrawRequired
+
+                if (this.isBackgroundRedrawRequired
+                    || this.isDraggingCanvas
+                    || (!this.currentRoom.needsFixedCamera && usersRequiringRedraw.includes(this.myUserID)))
+                {
+                    this.paintBackground(canvasOffset);
+                    this.isBackgroundRedrawRequired = false;
+                }
+
+                if (this.isForegroundRedrawRequired
                     || this.isDraggingCanvas
                     || usersRequiringRedraw.length)
                 {
-                    this.paintBackground(canvasOffset);
                     this.paintForeground(canvasOffset);
-                    this.isRedrawRequired = false;
+                    this.isForegroundRedrawRequired = false;
                 }
 
                 this.changeRoomIfSteppingOnDoor();
@@ -738,7 +753,7 @@ const vueApp = new Vue({
                     u.logicalPositionY,
                     u.direction
                 );
-            this.isRedrawRequired = true;
+            this.isForegroundRedrawRequired = true;
         },
         sendNewPositionToServer: function (direction)
         {
