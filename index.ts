@@ -2,7 +2,7 @@ import express from "express"
 import { readFile, writeFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
 import { Direction, RoomState, RoomStateDto } from "./types";
-import { addNewUser, deserializeUserState, getConnectedUserList, getGhostUsers, getUser, Player, removeUser, serializeUserState } from "./users";
+import { addNewUser, deserializeUserState, getConnectedUserList, getAllUsers, getUser, Player, removeUser, serializeUserState } from "./users";
 import { sleep } from "./utils";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
 import got from "got";
@@ -60,9 +60,10 @@ io.on("connection", function (socket: any)
         {
             if (!user) return;
 
-            console.log("disconnect")
+            console.log("disconnect", user.id)
 
             user.isGhost = true
+            user.disconnectionTime = Date.now()
             io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
             clearStream(user)
             emitServerStats(user.areaId)
@@ -116,11 +117,15 @@ io.on("connection", function (socket: any)
     {
         try
         {
+            user.isInactive = false
+
             msg = msg.substr(0, 500)
 
             const userName = user.name
 
-            console.log(userName + ": " + msg);
+            console.log("MSG:", user.id, userName + ": " + msg);
+
+            user.lastAction = Date.now()
 
             io.to(user.areaId + user.roomId).emit("server-msg", user.id, userName, msg);
         }
@@ -135,6 +140,9 @@ io.on("connection", function (socket: any)
 
         try
         {
+            console.log("user-move", user.id, direction)
+            user.isInactive = false
+            user.lastAction = Date.now()
             if (user.direction != direction)
             {
                 // ONLY CHANGE DIRECTION
@@ -154,7 +162,11 @@ io.on("connection", function (socket: any)
                     case "right": newX++; break;
                 }
 
-                const rejectMovement = () => socket.emit("server-reject-movement")
+                const rejectMovement = () =>
+                {
+                    console.log("movement rejected")
+                    socket.emit("server-reject-movement")
+                }
 
                 // prevent going outside of the map
                 if (newX < 0) { rejectMovement(); return }
@@ -199,6 +211,8 @@ io.on("connection", function (socket: any)
         try
         {
             const { streamSlotId, withVideo, withSound } = streamRequest
+
+            console.log("user-want-to-stream", user.id)
 
             const streams = roomStates[user.areaId][user.roomId].streams
 
@@ -390,6 +404,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
+            console.log("openRTCConnection()")
             rtcPeer.open()
             if (rtcPeer.conn === null) return;
             rtcPeer.conn.addEventListener('iceconnectionstatechange',
@@ -402,11 +417,13 @@ io.on("connection", function (socket: any)
     {
         try
         {
+            console.log(user.id, "handleIceConnectionStateChange()")
             if (rtcPeer.conn === null) return;
             const state = rtcPeer.conn.iceConnectionState;
 
             if (["failed", "disconnected", "closed"].includes(state))
             {
+                console.log(user.id, "rtcPeer.close()")
                 rtcPeer.close()
                 clearStream(user)
             }
@@ -416,25 +433,41 @@ io.on("connection", function (socket: any)
 
     function emitRTCMessage(type: string, message: any)
     {
-        try { socket.emit('server-rtc-' + type, message) }
+        try
+        {
+            console.log(user.id, "emitRTCMessage(", type, ")")
+            socket.emit('server-rtc-' + type, message)
+        }
         catch (e) { console.error(e.message + " " + e.stack); }
     }
 
     socket.on("user-rtc-offer", (offer: RTCSessionDescription) =>
     {
-        try { rtcPeer.acceptOffer(offer) }
+        try
+        {
+            console.log(user.id, "user-rtc-offer")
+            rtcPeer.acceptOffer(offer)
+        }
         catch (e) { console.error(e.message + " " + e.stack); }
     })
 
     socket.on("user-rtc-answer", (answer: RTCSessionDescription) =>
     {
-        try { rtcPeer.acceptAnswer(answer) }
+        try
+        {
+            console.log(user.id, "user-rtc-answer")
+            rtcPeer.acceptAnswer(answer)
+        }
         catch (e) { console.error(e.message + " " + e.stack); }
     })
 
     socket.on("user-rtc-candidate", (candidate: RTCIceCandidate) =>
     {
-        try { rtcPeer.addCandidate(candidate) }
+        try
+        {
+            console.log(user.id, "user-rtc-candidate")
+            rtcPeer.addCandidate(candidate)
+        }
         catch (e) { console.error(e.message + " " + e.stack); }
     })
 });
@@ -530,8 +563,6 @@ app.post("/ping/:userId", async (req, res) =>
                 if (!user)
                     return
 
-                user.lastPing = Date.now()
-
                 // Return software version, so that the client can refresh the page
                 // if there has been a new deploy.
                 const str = data.toString()
@@ -607,7 +638,7 @@ function clearStream(user: Player)
 
 function disconnectUser(user: Player)
 {
-    console.log("Disconnecting user ", user.id, user.name, user.areaId)
+    console.log("Removing user ", user.id, user.name, user.areaId)
     clearStream(user)
     removeUser(user)
 
@@ -647,12 +678,33 @@ setInterval(() =>
 {
     try
     {
-        for (const user of getGhostUsers())
-            if (Date.now() - user.lastPing > 5 * 60 * 1000)
+        for (const user of getAllUsers())
+        {
+            if (user.disconnectionTime)
             {
-                console.log(Date.now(), user.lastPing, Date.now() - user.lastPing)
+                // Remove ghosts (that is, users for which there is no active websocket)
+                if (Date.now() - user.disconnectionTime > 5 * 60 * 1000)
+                {
+                    console.log(Date.now(), user.disconnectionTime, Date.now() - user.disconnectionTime)
+                    disconnectUser(user)
+                }
+            }
+            else if (user.isGhost)
+            {
+                console.log(user.id, "is a ghost without disconnection time")
                 disconnectUser(user)
             }
+            else
+            {
+                // Make user transparent after 30 minutes without moving or talking
+                if (!user.isInactive && Date.now() - user.lastAction > 30 * 60 * 1000)
+                {
+                    io.to(user.areaId + user.roomId).emit("server-user-inactive", user.id);
+                    user.isInactive = true
+                    console.log(user.id, "is inactive", Date.now(), user.lastAction);
+                }
+            }
+        }
     }
     catch (e)
     {
