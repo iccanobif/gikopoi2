@@ -503,8 +503,14 @@ app.get("/", (req, res) =>
 
             for (const areaId in roomStates)
             {
-                data = data.replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
-                    getConnectedUserList(null, areaId).length.toString())
+                data = data
+                    .replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
+                             getConnectedUserList(null, areaId)
+                                .length.toString())
+                    .replace("@STREAMER_COUNT_" + areaId.toUpperCase() + "@",
+                             getConnectedUserList(null, areaId)
+                                .filter(u => u.mediaStream)
+                                .length.toString())
             }
 
             res.set({
@@ -619,8 +625,8 @@ function clearStream(user: Player)
 
         console.log("trying clearStream:", user.areaId, user.roomId)
 
+        user.mediaStream = null
         const streams = roomStates[user.areaId][user.roomId].streams
-
         const stream = streams.find(s => s.userId == user.id)
         if (stream)
         {
