@@ -279,6 +279,7 @@ const vueApp = new Vue({
                 const chatLog = document.getElementById("chatLog");
                 document.getElementById("message-sound").play();
 
+                this.isRedrawRequired = true
                 this.users[userId].isInactive = false
 
                 const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
