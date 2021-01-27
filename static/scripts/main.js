@@ -448,6 +448,8 @@ const vueApp = new Vue({
                 userDTO.position.y,
                 userDTO.direction
             );
+            newUser.isInactive = userDTO.isInactive;
+            
             this.users[userDTO.id] = newUser;
         },
         drawImage: function (context, image, x, y, scale)
