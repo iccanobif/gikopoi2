@@ -689,7 +689,7 @@ setInterval(() =>
                     disconnectUser(user)
                 }
             }
-            else if (user.isGhost)
+            else if (!user.connectionTime && user.isGhost)
             {
                 console.log(user.id, "is a ghost without disconnection time")
                 disconnectUser(user)
