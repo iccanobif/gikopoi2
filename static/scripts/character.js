@@ -1,4 +1,5 @@
 import { loadImage } from "./utils.js"
+import { ImageRenderer } from "./image_renderer.js";
 
 export class Character
 {
@@ -31,14 +32,14 @@ export class Character
             loadImage("characters/" + this.characterName + "/back-walking-2." + this.format)
         ])
 
-        this.frontSittingImage = results[0]
-        this.frontStandingImage = results[1]
-        this.frontWalking1Image = results[2]
-        this.frontWalking2Image = results[3]
-        this.backSittingImage = results[4]
-        this.backStandingImage = results[5]
-        this.backWalking1Image = results[6]
-        this.backWalking2Image = results[7]
+        this.frontSittingImage = new ImageRenderer(results[0])
+        this.frontStandingImage = new ImageRenderer(results[1])
+        this.frontWalking1Image = new ImageRenderer(results[2])
+        this.frontWalking2Image = new ImageRenderer(results[3])
+        this.backSittingImage = new ImageRenderer(results[4])
+        this.backStandingImage = new ImageRenderer(results[5])
+        this.backWalking1Image = new ImageRenderer(results[6])
+        this.backWalking2Image = new ImageRenderer(results[7])
     }
 }
 

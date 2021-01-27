@@ -6,6 +6,7 @@ import User from "./user.js";
 import { loadImage, calculateRealCoordinates, globalScale, postJson, BLOCK_WIDTH, BLOCK_HEIGHT } from "./utils.js";
 import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
+import { ImageRenderer } from "./image_renderer.js";
 
 const i18n = new VueI18n({
     locale: "ja",
@@ -169,7 +170,7 @@ const vueApp = new Vue({
             loadImage(this.currentRoom.backgroundImageUrl).then((image) =>
             {
                 if (this.roomLoadId != roomLoadId) return;
-                this.currentRoom.backgroundImage = image;
+                this.currentRoom.backgroundImage = new ImageRenderer(image);
                 this.isRedrawRequired = true;
             });
             for (const o of this.currentRoom.objects)
@@ -178,7 +179,7 @@ const vueApp = new Vue({
                     (image) =>
                     {
                         if (this.roomLoadId != roomLoadId) return;
-                        o.image = image;
+                        o.image = new ImageRenderer(image);
 
                         if (o.offset)
                         {
@@ -454,14 +455,27 @@ const vueApp = new Vue({
             if (!image) return; // image might be null when rendering a room that hasn't been fully loaded
 
             if (!scale) scale = 1;
-
-            context.drawImage(
-                image,
-                Math.round(x),
-                Math.round(y - image.height * globalScale * scale),
-                Math.round(image.width * globalScale * scale),
-                Math.round(image.height * globalScale * scale)
-            );
+            
+            if (image instanceof ImageRenderer)
+            {
+                const renderedImage = image.getImage(globalScale * scale)
+                
+                context.drawImage(
+                    renderedImage,
+                    Math.round(x),
+                    Math.round(y - renderedImage.height)
+                );
+            }
+            else
+            {
+                context.drawImage(
+                    image,
+                    Math.round(x),
+                    Math.round(y - image.height * globalScale * scale),
+                    Math.round(image.width * globalScale * scale),
+                    Math.round(image.height * globalScale * scale)
+                );
+            }
         },
         drawHorizontallyFlippedImage: function (context, image, x, y)
         {
