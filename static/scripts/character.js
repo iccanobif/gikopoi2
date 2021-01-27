@@ -1,5 +1,5 @@
 import { loadImage } from "./utils.js"
-import { RenderCache } from "./image_renderer.js";
+import { RenderCache } from "./rendercache.js";
 
 export class Character
 {
