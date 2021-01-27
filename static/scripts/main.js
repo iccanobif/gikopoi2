@@ -6,7 +6,7 @@ import User from "./user.js";
 import { loadImage, calculateRealCoordinates, globalScale, postJson, BLOCK_WIDTH, BLOCK_HEIGHT } from "./utils.js";
 import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
-import { ImageRenderer } from "./image_renderer.js";
+import { RenderCache } from "./image_renderer.js";
 
 const i18n = new VueI18n({
     locale: "ja",
@@ -170,7 +170,7 @@ const vueApp = new Vue({
             loadImage(this.currentRoom.backgroundImageUrl).then((image) =>
             {
                 if (this.roomLoadId != roomLoadId) return;
-                this.currentRoom.backgroundImage = new ImageRenderer(image);
+                this.currentRoom.backgroundImage = RenderCache.Image(image);
                 this.isRedrawRequired = true;
             });
             for (const o of this.currentRoom.objects)
@@ -179,7 +179,7 @@ const vueApp = new Vue({
                     (image) =>
                     {
                         if (this.roomLoadId != roomLoadId) return;
-                        o.image = new ImageRenderer(image);
+                        o.image = RenderCache.Image(image);
 
                         if (o.offset)
                         {
@@ -456,7 +456,7 @@ const vueApp = new Vue({
 
             if (!scale) scale = 1;
             
-            if (image instanceof ImageRenderer)
+            if (image instanceof RenderCache)
             {
                 const renderedImage = image.getImage(globalScale * scale)
                 

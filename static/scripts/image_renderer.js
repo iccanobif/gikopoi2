@@ -1,35 +1,23 @@
-export class ImageRenderer
+export class RenderCache
 {
-    constructor(image, imageScale)
+    constructor(drawFunction)
     {
-		if (typeof imageScale == "undefined") imageScale = 1;
-		
-		this.image = image;
-		this.imageScale = imageScale;
+		this.drawFunction = drawFunction;
 		this.renderedImage = null;
 		this.renderedScale = null;
-		
-		if (this.image.complete && this.image.naturalWidth !== 0)
-		{
-			this.width = this.image.naturalWidth;
-			this.height = this.image.naturalHeight;
-		}
-		else
-		{
-			this.width = this.image.width;
-			this.height = this.image.height;
-		}
 	}
 	
-	getImage(scale)
+	static Image(image, imageScale)
 	{
-		if (this.renderedImage != null && this.renderedScale == scale)
-			return this.renderedImage;
+		if (typeof imageScale == "undefined") imageScale = 1;
 		
-		const renderedImage = document.createElement('canvas');
-		
-		if (this.image.complete && this.image.naturalHeight !== 0)
+		const renderCache = new RenderCache(function(scale)
 		{
+			if (!this.image.complete ||
+				this.image.naturalHeight === 0) return null;
+			
+			const renderedImage = document.createElement('canvas');
+			
 			if (this.width == 0)
 			{
 				this.width = this.image.naturalWidth;
@@ -43,14 +31,44 @@ export class ImageRenderer
 			
 			renderedImage.getContext('2d').drawImage(this.image,
 				0, 0, scaledWidth, scaledHeight);
+			return renderedImage;
+		})
+		
+		renderCache.image = image;
+		renderCache.imageScale = imageScale;
+		
+		if (image.complete && image.naturalWidth !== 0)
+		{
+			renderCache.width = image.naturalWidth;
+			renderCache.height = image.naturalHeight;
+		}
+		else
+		{
+			renderCache.width = image.width;
+			renderCache.height = image.height;
+		}
+		return renderCache;
+	}
+	
+	getImage(scale)
+	{
+		if (this.renderedImage != null && this.renderedScale == scale)
+			return this.renderedImage;
+		
+		const renderedImage = this.drawFunction.call(this, scale)
+		
+		if (renderedImage)
+		{
 			this.renderedImage = renderedImage;
 			this.renderedScale = scale;
 		}
 		else
 		{
+			const renderedImage = document.createElement('canvas');
 			renderedImage.width = 1;
 			renderedImage.height = 1;
 		}
+		
 		return renderedImage;
 	}
 }
