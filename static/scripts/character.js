@@ -1,4 +1,5 @@
 import { loadImage } from "./utils.js"
+import { RenderCache } from "./rendercache.js";
 
 export class Character
 {
@@ -31,14 +32,14 @@ export class Character
             loadImage("characters/" + this.characterName + "/back-walking-2." + this.format)
         ])
 
-        this.frontSittingImage = results[0]
-        this.frontStandingImage = results[1]
-        this.frontWalking1Image = results[2]
-        this.frontWalking2Image = results[3]
-        this.backSittingImage = results[4]
-        this.backStandingImage = results[5]
-        this.backWalking1Image = results[6]
-        this.backWalking2Image = results[7]
+        this.frontSittingImage = RenderCache.Image(results[0])
+        this.frontStandingImage = RenderCache.Image(results[1])
+        this.frontWalking1Image = RenderCache.Image(results[2])
+        this.frontWalking2Image = RenderCache.Image(results[3])
+        this.backSittingImage = RenderCache.Image(results[4])
+        this.backStandingImage = RenderCache.Image(results[5])
+        this.backWalking1Image = RenderCache.Image(results[6])
+        this.backWalking2Image = RenderCache.Image(results[7])
     }
 }
 
