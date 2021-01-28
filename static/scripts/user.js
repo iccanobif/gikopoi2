@@ -1,4 +1,5 @@
 import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils.js";
+import { RenderCache } from "./rendercache.js";
 
 const STEP_LENGTH = 8;
 
@@ -18,6 +19,8 @@ export default class User
         this.direction = "up";
         this.framesUntilNextStep = STEP_LENGTH;
         this.isInactive = false;
+        
+        this.nameImage = null;
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)
@@ -47,8 +50,8 @@ export default class User
     // TODO really, find a better name for this function
     spendTime(room)
     {
-        const walkingSpeedX = BLOCK_WIDTH / ( this.character.characterName == "shar_naito" ? 40 : 80)
-        const walkingSpeedY = BLOCK_HEIGHT / ( this.character.characterName == "shar_naito" ? 40 : 80)
+        const walkingSpeedX = BLOCK_WIDTH / ( this.character.characterName == "shar_naito" ? 20 : 40)
+        const walkingSpeedY = BLOCK_HEIGHT / ( this.character.characterName == "shar_naito" ? 20 : 40)
 
         if (!this.isWalking)
             return
@@ -79,14 +82,17 @@ export default class User
     {
         if (this.isWalking)
         {
+            const walkCycle = this.framesUntilNextStep > STEP_LENGTH / 2
             switch (this.direction)
             {
                 case "up":
+                    return walkCycle ? this.character.backWalking1Image : this.character.backWalking2Image;
                 case "left":
-                    return this.framesUntilNextStep > STEP_LENGTH / 2 ? this.character.backWalking1Image : this.character.backWalking2Image;
+                    return walkCycle ? this.character.backWalking1FlippedImage : this.character.backWalking2FlippedImage;
                 case "down":
+                    return walkCycle ? this.character.frontWalking1FlippedImage : this.character.frontWalking2FlippedImage;
                 case "right":
-                    return this.framesUntilNextStep > STEP_LENGTH / 2 ? this.character.frontWalking1Image : this.character.frontWalking2Image;
+                    return walkCycle ? this.character.frontWalking1Image : this.character.frontWalking2Image;
             }
         }
         else
@@ -96,9 +102,11 @@ export default class User
             switch (this.direction)
             {
                 case "up":
-                case "left":
                     return isSitting ? this.character.backSittingImage : this.character.backStandingImage;
+                case "left":
+                    return isSitting ? this.character.backSittingFlippedImage : this.character.backStandingFlippedImage;
                 case "down":
+                    return isSitting ? this.character.frontSittingFlippedImage : this.character.frontStandingFlippedImage;
                 case "right":
                     return isSitting ? this.character.frontSittingImage : this.character.frontStandingImage;
             }

@@ -3,11 +3,12 @@ import { RenderCache } from "./rendercache.js";
 
 export class Character
 {
-    constructor(name, format, isHidden)
+    constructor(name, format, isHidden, scale)
     {
         this.characterName = name;
         this.format = format;
         this.isHidden = isHidden
+        this.scale = scale || 0.5
 
         this.frontSittingImage = null;
         this.frontStandingImage = null;
@@ -31,15 +32,24 @@ export class Character
             loadImage("characters/" + this.characterName + "/back-walking-1." + this.format),
             loadImage("characters/" + this.characterName + "/back-walking-2." + this.format)
         ])
-
-        this.frontSittingImage = RenderCache.Image(results[0])
-        this.frontStandingImage = RenderCache.Image(results[1])
-        this.frontWalking1Image = RenderCache.Image(results[2])
-        this.frontWalking2Image = RenderCache.Image(results[3])
-        this.backSittingImage = RenderCache.Image(results[4])
-        this.backStandingImage = RenderCache.Image(results[5])
-        this.backWalking1Image = RenderCache.Image(results[6])
-        this.backWalking2Image = RenderCache.Image(results[7])
+        
+        this.frontSittingImage = RenderCache.Image(results[0], this.scale)
+        this.frontStandingImage = RenderCache.Image(results[1], this.scale)
+        this.frontWalking1Image = RenderCache.Image(results[2], this.scale)
+        this.frontWalking2Image = RenderCache.Image(results[3], this.scale)
+        this.backSittingImage = RenderCache.Image(results[4], this.scale)
+        this.backStandingImage = RenderCache.Image(results[5], this.scale)
+        this.backWalking1Image = RenderCache.Image(results[6], this.scale)
+        this.backWalking2Image = RenderCache.Image(results[7], this.scale)
+        
+        this.frontSittingFlippedImage = RenderCache.Image(results[0], this.scale, true)
+        this.frontStandingFlippedImage = RenderCache.Image(results[1], this.scale, true)
+        this.frontWalking1FlippedImage = RenderCache.Image(results[2], this.scale, true)
+        this.frontWalking2FlippedImage = RenderCache.Image(results[3], this.scale, true)
+        this.backSittingFlippedImage = RenderCache.Image(results[4], this.scale, true)
+        this.backStandingFlippedImage = RenderCache.Image(results[5], this.scale, true)
+        this.backWalking1FlippedImage = RenderCache.Image(results[6], this.scale, true)
+        this.backWalking2FlippedImage = RenderCache.Image(results[7], this.scale, true)
     }
 }
 
