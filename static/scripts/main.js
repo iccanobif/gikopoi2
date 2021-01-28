@@ -489,11 +489,11 @@ const vueApp = new Vue({
         {
             if (this.currentRoom.needsFixedCamera)
             {
-                if (!this.currentRoom.backgroundOffset) return { x: 0, y: 0 }
-                return {
-                    x: -this.currentRoom.backgroundOffset.x,
-                    y: -this.currentRoom.backgroundOffset.y
-                }
+                const fixedCameraOffset = this.currentRoom.backgroundOffset ||
+                    { x: 0, y: 0 };
+                this.canvasGlobalOffset.x = -fixedCameraOffset.x
+                this.canvasGlobalOffset.y = -fixedCameraOffset.y
+                return;
             }
             
             const canvasOffset = {
