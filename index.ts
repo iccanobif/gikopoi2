@@ -505,12 +505,12 @@ app.get("/", (req, res) =>
             {
                 data = data
                     .replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
-                             getConnectedUserList(null, areaId)
-                                .length.toString())
+                        getConnectedUserList(null, areaId)
+                            .length.toString())
                     .replace("@STREAMER_COUNT_" + areaId.toUpperCase() + "@",
-                             getConnectedUserList(null, areaId)
-                                .filter(u => u.mediaStream)
-                                .length.toString())
+                        getConnectedUserList(null, areaId)
+                            .filter(u => u.mediaStream)
+                            .length.toString())
             }
 
             res.set({
@@ -792,7 +792,14 @@ function restoreState()
                 }
                 else
                 {
-                    deserializeUserState(data)
+                    try
+                    {
+                        deserializeUserState(data)
+                    }
+                    catch (exc)
+                    {
+                        console.log(exc)
+                    }
                 }
                 resolve()
             })
