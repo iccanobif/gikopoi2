@@ -10,6 +10,7 @@ export const messages =
             subtitle: "非公式リメイク",
             
             login_user_count: "人数：",
+            login_streamer_count: "配信者：",
             
             infobox_label_area: "ｴﾘｱ：",
             infobox_value_area: "海辺の町",
@@ -112,6 +113,7 @@ export const messages =
             subtitle: "Unofficial remake",
             
             login_user_count: "Users: ",
+            login_streamer_count: "Streamers：",
             
             infobox_label_area: "Area:",
             infobox_value_area: "Sea City",
