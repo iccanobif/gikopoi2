@@ -7,64 +7,53 @@ export class RenderCache
 		this.renderedScale = null;
 	}
 	
-	static Image(image, imageScale)
+	static Image(image, imageScale, flipped)
 	{
 		if (typeof imageScale == "undefined") imageScale = 1;
+		if (typeof flipped == "undefined") flipped = false;
 		
-		const renderCache = new RenderCache(function(scale)
+		const renderCache = new RenderCache(function(renderedImage, scale)
 		{
-			if (!this.image.complete ||
-				this.image.naturalHeight === 0) return null;
+			if (!image.complete ||
+				image.naturalHeight === 0) return false;
 			
-			const renderedImage = document.createElement('canvas');
-			
-			if (this.width == 0)
-			{
-				this.width = this.image.naturalWidth;
-				this.height = this.image.naturalHeight;
-			}
-			const scaledWidth = this.width * this.imageScale * scale;
-			const scaledHeight = this.height * this.imageScale * scale;
+			const scaledWidth = image.naturalWidth * imageScale * scale;
+			const scaledHeight = image.naturalHeight * imageScale * scale;
 			
 			renderedImage.width = Math.ceil(scaledWidth);
 			renderedImage.height = Math.ceil(scaledHeight);
 			
-			renderedImage.getContext('2d').drawImage(this.image,
-				0, 0, scaledWidth, scaledHeight);
-			return renderedImage;
+			const context = renderedImage.getContext('2d');
+			
+			let x = 0;
+			if (flipped)
+			{
+				context.scale(-1, 1);
+				x = -scaledWidth;
+			}
+			
+			context.drawImage(image, x, 0, scaledWidth, scaledHeight);
+            
+			return true;
 		})
 		
-		renderCache.image = image;
-		renderCache.imageScale = imageScale;
-		
-		if (image.complete && image.naturalWidth !== 0)
-		{
-			renderCache.width = image.naturalWidth;
-			renderCache.height = image.naturalHeight;
-		}
-		else
-		{
-			renderCache.width = image.width;
-			renderCache.height = image.height;
-		}
 		return renderCache;
 	}
 	
 	getImage(scale)
 	{
+		if (typeof scale == "undefined") scale = 1;
 		if (this.renderedImage != null && this.renderedScale == scale)
 			return this.renderedImage;
 		
-		const renderedImage = this.drawFunction.call(this, scale)
-		
-		if (renderedImage)
+		const renderedImage = document.createElement('canvas');
+		if (this.drawFunction.call(this, renderedImage, scale) != false)
 		{
 			this.renderedImage = renderedImage;
 			this.renderedScale = scale;
 		}
 		else
 		{
-			const renderedImage = document.createElement('canvas');
 			renderedImage.width = 1;
 			renderedImage.height = 1;
 		}

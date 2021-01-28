@@ -3,7 +3,7 @@ localStorage.removeItem("debug");
 
 import { characters } from "./character.js";
 import User from "./user.js";
-import { loadImage, calculateRealCoordinates, globalScale, postJson, BLOCK_WIDTH, BLOCK_HEIGHT } from "./utils.js";
+import { loadImage, calculateRealCoordinates, postJson, BLOCK_WIDTH, BLOCK_HEIGHT } from "./utils.js";
 import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";
@@ -48,7 +48,8 @@ const vueApp = new Vue({
         isDraggingCanvas: false,
         canvasDragStartPoint: null,
         canvasDragOffset: null,
-        canvasOffset: { x: 0, y: 0 },
+        canvasManualOffset: { x: 0, y: 0 },
+        canvasGlobalOffset: { x: 0, y: 0 },
         canvasDimensions: { w: 0, h: 0 },
 
         // rula stuff
@@ -159,7 +160,7 @@ const vueApp = new Vue({
             const roomLoadId = this.roomLoadId = this.roomLoadId + 1;
 
             if (this.currentRoom.needsFixedCamera)
-                this.canvasOffset = { x: 0, y: 0 }
+                this.canvasManualOffset = { x: 0, y: 0 }
             this.currentRoom = roomDto;
 
             this.roomid = this.currentRoom.id;
@@ -170,7 +171,7 @@ const vueApp = new Vue({
             loadImage(this.currentRoom.backgroundImageUrl).then((image) =>
             {
                 if (this.roomLoadId != roomLoadId) return;
-                this.currentRoom.backgroundImage = RenderCache.Image(image);
+                this.currentRoom.backgroundImage = RenderCache.Image(image, this.currentRoom.scale);
                 this.isRedrawRequired = true;
             });
             for (const o of this.currentRoom.objects)
@@ -178,25 +179,12 @@ const vueApp = new Vue({
                 loadImage("rooms/" + this.currentRoom.id + "/" + o.url).then(
                     (image) =>
                     {
+                        const scale = o.scale ? o.scale : 1;
                         if (this.roomLoadId != roomLoadId) return;
-                        o.image = RenderCache.Image(image);
-
-                        if (o.offset)
-                        {
-                            o.physicalPositionX = o.offset.x
-                            o.physicalPositionY = o.offset.y
-                        }
-                        else
-                        {
-                            const { x, y } = calculateRealCoordinates(
-                                this.currentRoom,
-                                o.x,
-                                o.y
-                            );
-
-                            o.physicalPositionX = x + (o.xOffset || 0);
-                            o.physicalPositionY = y + (o.yOffset || 0);
-                        }
+                        o.image = RenderCache.Image(image, scale);
+                        
+                        o.physicalPositionX = o.offset ? o.offset.x * scale : 0
+                        o.physicalPositionY = o.offset ? o.offset.y * scale : 0
                         this.isRedrawRequired = true;
                     }
                 );
@@ -452,47 +440,15 @@ const vueApp = new Vue({
             
             this.users[userDTO.id] = newUser;
         },
-        drawImage: function (context, image, x, y, scale)
+        drawImage: function (context, image, x, y)
         {
-            if (!image) return; // image might be null when rendering a room that hasn't been fully loaded
-
-            if (!scale) scale = 1;
-            
-            if (image instanceof RenderCache)
-            {
-                const renderedImage = image.getImage(globalScale * scale)
-                
-                context.drawImage(
-                    renderedImage,
-                    Math.round(x),
-                    Math.round(y - renderedImage.height)
-                );
-            }
-            else
-            {
-                context.drawImage(
-                    image,
-                    Math.round(x),
-                    Math.round(y - image.height * globalScale * scale),
-                    Math.round(image.width * globalScale * scale),
-                    Math.round(image.height * globalScale * scale)
-                );
-            }
-        },
-        drawHorizontallyFlippedImage: function (context, image, x, y)
-        {
-            context.scale(-1, 1);
-            this.drawImage(context, image, -x - image.width / 2, y);
-            context.setTransform(1, 0, 0, 1, 0, 0); // clear transformation
-        },
-        drawCenteredText: function (context, text, x, y)
-        {
-            // const width = context.measureText(text).width
-            context.font = "bold 13px Arial, Helvetica, sans-serif";
-            context.textBaseline = "bottom";
-            context.textAlign = "center";
-            context.fillStyle = "blue";
-            context.fillText(text, x, y);
+            if (!x) x = 0;
+            if (!y) y = 0;
+            context.drawImage(
+                image,
+                Math.round(x + this.canvasGlobalOffset.x),
+                Math.round(y + this.canvasGlobalOffset.y)
+            );
         },
         detectCanvasResize: function ()
         {
@@ -506,14 +462,20 @@ const vueApp = new Vue({
                 this.canvasContext.canvas.height = this.canvasDimensions.h;
             }
         },
-        getCanvasOffset: function ()
+        setCanvasGlobalOffset: function ()
         {
             if (this.currentRoom.needsFixedCamera)
-                return { x: 0, y: 0 }
-
+            {
+                if (!this.currentRoom.backgroundOffset) return { x: 0, y: 0 }
+                return {
+                    x: -this.currentRoom.backgroundOffset.x,
+                    y: -this.currentRoom.backgroundOffset.y
+                }
+            }
+            
             const canvasOffset = {
-                x: this.canvasOffset.x,
-                y: this.canvasOffset.y
+                x: this.canvasManualOffset.x,
+                y: this.canvasManualOffset.y
             };
 
             if (this.isDraggingCanvas)
@@ -526,10 +488,10 @@ const vueApp = new Vue({
             {
                 const user = this.users[this.myUserID]
 
-                canvasOffset.x -= user.currentPhysicalPositionX - (this.canvasDimensions.w / 2 - BLOCK_WIDTH / 4);
-                canvasOffset.y -= user.currentPhysicalPositionY - (this.canvasDimensions.h / 2 + BLOCK_HEIGHT / 2);
+                canvasOffset.x -= user.currentPhysicalPositionX - (this.canvasDimensions.w / 2 - BLOCK_WIDTH / 2);
+                canvasOffset.y -= user.currentPhysicalPositionY - (this.canvasDimensions.h / 2 + BLOCK_HEIGHT);
             }
-
+            
             // Prevent going outside of the background picture borders
             // if (canvasOffset.x > 0) canvasOffset.x = 0;
             // if (canvasOffset.y > 0) canvasOffset.y = 0;
@@ -539,29 +501,27 @@ const vueApp = new Vue({
             // if (this.canvasDimensions.h < this.currentRoom.backgroundImage.height)
             //     if (canvasOffset.y < this.canvasDimensions.h - this.currentRoom.backgroundImage.height)
             //         canvasOffset.y = this.canvasDimensions.h - this.currentRoom.backgroundImage.height
-
-            return canvasOffset;
+            
+            this.canvasGlobalOffset.x = canvasOffset.x
+            this.canvasGlobalOffset.y = canvasOffset.y
         },
 
-        paintBackground: function (canvasOffset)
+        paintBackground: function ()
         {
+            if (!this.currentRoom.backgroundImage) return;
+            
             const context = this.canvasContext;
-
+            
             context.fillStyle = this.currentRoom.backgroundColor;
             context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
-
-            if (!this.currentRoom.backgroundOffset)
-                this.currentRoom.backgroundOffset = { x: 0, y: 0 }
+            
             this.drawImage(
                 context,
-                this.currentRoom.backgroundImage,
-                0 + this.currentRoom.backgroundOffset.x + canvasOffset.x,
-                this.canvasDimensions.h + this.currentRoom.backgroundOffset.y + canvasOffset.y,
-                this.currentRoom.scale
+                this.currentRoom.backgroundImage.getImage()
             );
         },
 
-        paintForeground: function (canvasOffset)
+        paintForeground: function ()
         {
             const context = this.canvasContext;
 
@@ -592,19 +552,13 @@ const vueApp = new Vue({
             {
                 if (o.type == "room-object")
                 {
-                    let temporaryBodgeYOffset = 0;
-                    if (o.o.offset)
-                    {
-                        if (!o.o.image || !this.currentRoom.backgroundImage) continue;
-                        temporaryBodgeYOffset = (o.o.image.height * globalScale * (o.o.scale * this.currentRoom.scale)) + (this.canvasDimensions.h - this.currentRoom.backgroundImage.height * globalScale * this.currentRoom.scale);
-                    }
-
+                    if (!o.o.image) continue;
+                    
                     this.drawImage(
                         context,
-                        o.o.image,
-                        o.o.physicalPositionX + canvasOffset.x,
-                        o.o.physicalPositionY + canvasOffset.y + temporaryBodgeYOffset,
-                        this.currentRoom.scale * o.o.scale
+                        o.o.image.getImage(),
+                        o.o.physicalPositionX,
+                        o.o.physicalPositionY
                     );
                 } // o.type == "user"
                 else
@@ -613,26 +567,21 @@ const vueApp = new Vue({
                     {
                         // draw users only when the room is fully loaded, so that the "physical position" calculations
                         // are done with the correct room's data.
-
-                        let drawFunc;
-
-                        switch (o.o.direction)
-                        {
-                            case "up": case "right": drawFunc = this.drawImage; break;
-                            case "down": case "left": drawFunc = this.drawHorizontallyFlippedImage; break;
-                        }
-
+                        
+                        context.save();
+                        
                         if (o.o.isInactive)
                             context.globalAlpha = 0.5
-
-                        drawFunc(
+                        
+                        const image = o.o.getCurrentImage(this.currentRoom).getImage()
+                        this.drawImage(
                             context,
-                            o.o.getCurrentImage(this.currentRoom),
-                            o.o.currentPhysicalPositionX + canvasOffset.x,
-                            o.o.currentPhysicalPositionY + canvasOffset.y
+                            image,
+                            o.o.currentPhysicalPositionX,
+                            (o.o.currentPhysicalPositionY - image.height)
                         );
-
-                        context.globalAlpha = 1
+                        
+                        context.restore()
                     }
                 }
             }
@@ -642,29 +591,63 @@ const vueApp = new Vue({
             {
                 if (!this.isLoadingRoom)
                 {
-                    this.drawCenteredText(
+                    const image = o.o.nameImage.getImage()
+                    
+                    this.drawImage(
                         context,
-                        o.o.name,
-                        (o.o.currentPhysicalPositionX + 40) + canvasOffset.x,
-                        (o.o.currentPhysicalPositionY - 95) + canvasOffset.y
+                        image,
+                        (o.o.currentPhysicalPositionX - image.width/2) + BLOCK_WIDTH/2,
+                        (o.o.currentPhysicalPositionY - 110)
                     );
                 }
 
                 o.o.spendTime(this.currentRoom);
             }
-
+            
             if (localStorage.getItem("enableGridNumbers") == "true")
             {
+                context.strokeStyle = "#ff0000";
+                
+                const co = this.canvasGlobalOffset;
+                
+                context.beginPath();
+                context.moveTo(co.x+11, co.y-1);
+                context.lineTo(co.x-1, co.y-1);
+                context.lineTo(co.x-1, co.y+10);
+                context.stroke();
+                
+                const origin = calculateRealCoordinates(this.currentRoom, 0, 0)
+                
+                const cr_x = co.x+origin.x;
+                const cr_y = co.y+origin.y;
+                
+                context.beginPath();
+                context.rect(cr_x-1, cr_y+1, BLOCK_WIDTH+2, -BLOCK_HEIGHT-2);
+                context.stroke();
+                
+                const cc_x = co.x+this.currentRoom.originCoordinates.x;
+                const cc_y = co.y+this.currentRoom.originCoordinates.y;
+                
+                context.strokeStyle = "#0000ff";
+                
+                context.beginPath();
+                context.moveTo(co.x-1, co.y);
+                context.lineTo(cc_x, co.y);
+                context.lineTo(cc_x, cc_y);
+                context.stroke();
+                
                 context.font = "bold 13px Arial, Helvetica, sans-serif";
                 context.textBaseline = "bottom";
-                context.textAlign = "right";
+                context.textAlign = "center";
 
                 for (let x = 0; x < this.currentRoom.size.x; x++)
                     for (let y = 0; y < this.currentRoom.size.y; y++)
                     {
-                        context.fillStyle = this.currentRoom.blocked.find(b => b.x == x && b.y == y)
-                            ? "red"
-                            : "blue";
+                        context.fillStyle = "#0000ff";
+                        if (Object.values(this.currentRoom.doors).find(d => d.x == x && d.y == y))
+                            context.fillStyle = "#00cc00";
+                        if (this.currentRoom.blocked.find(b => b.x == x && b.y == y))
+                            context.fillStyle = "#ff0000";
                         const realCoord = calculateRealCoordinates(
                             this.currentRoom,
                             x,
@@ -672,8 +655,8 @@ const vueApp = new Vue({
                         );
                         context.fillText(
                             x + "," + y,
-                            (realCoord.x + 40) + canvasOffset.x,
-                            (realCoord.y - 20) + canvasOffset.y
+                            (realCoord.x + BLOCK_WIDTH/2) + this.canvasGlobalOffset.x,
+                            (realCoord.y - BLOCK_HEIGHT/3) + this.canvasGlobalOffset.y
                         );
                     }
             }
@@ -692,7 +675,7 @@ const vueApp = new Vue({
 
                 this.detectCanvasResize();
 
-                const canvasOffset = this.getCanvasOffset();
+                this.setCanvasGlobalOffset();
 
                 const usersRequiringRedraw = [];
                 for (const [userId, user] of Object.entries(this.users))
@@ -702,15 +685,16 @@ const vueApp = new Vue({
                     || this.isDraggingCanvas
                     || usersRequiringRedraw.length)
                 {
-                    this.paintBackground(canvasOffset);
-                    this.paintForeground(canvasOffset);
+                    this.paintBackground();
+                    this.paintForeground();
                     this.isRedrawRequired = false;
                 }
 
                 this.changeRoomIfSteppingOnDoor();
-            } catch (err)
+            }
+            catch (err)
             {
-                console.error(err);
+                console.error(err, err.lineNumber);
             }
 
             requestAnimationFrame(this.paint);
@@ -803,11 +787,8 @@ const vueApp = new Vue({
             {
                 if (this.isDraggingCanvas)
                 {
-                    this.canvasOffset.x += this.canvasDragOffset.x;
-                    this.canvasOffset.y += this.canvasDragOffset.y;
-
-                    // if (this.canvasOffset.x > 0) this.canvasOffset.x = 0
-                    // if (this.canvasOffset.y > 0) this.canvasOffset.y = 0
+                    this.canvasManualOffset.x += this.canvasDragOffset.x;
+                    this.canvasManualOffset.y += this.canvasDragOffset.y;
 
                     this.isDraggingCanvas = false;
                 }
