@@ -450,6 +450,28 @@ const vueApp = new Vue({
                 Math.round(y + this.canvasGlobalOffset.y)
             );
         },
+        getNameImage: function(name)
+        {
+            return new RenderCache(function(canvas, scale)
+            {
+                const height = 13 * scale;
+                const font = "bold " + height + "px Arial, Helvetica, sans-serif";
+                
+                const context = canvas.getContext('2d');
+                context.font = font;
+                const width = Math.ceil(context.measureText(name).width);
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                context.font = font;
+                context.textBaseline = "top";
+                context.textAlign = "center"
+                context.fillStyle = "blue";
+                
+                context.fillText(name, width/2, 0);
+            });
+        },
         detectCanvasResize: function ()
         {
             if (this.canvasDimensions.w != this.canvasContext.canvas.offsetWidth ||
@@ -591,6 +613,9 @@ const vueApp = new Vue({
             {
                 if (!this.isLoadingRoom)
                 {
+                    if (o.o.nameImage == null)
+                        o.o.nameImage = this.getNameImage(o.o.name);
+                    
                     const image = o.o.nameImage.getImage()
                     
                     this.drawImage(

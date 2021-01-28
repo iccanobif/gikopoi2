@@ -20,27 +20,7 @@ export default class User
         this.framesUntilNextStep = STEP_LENGTH;
         this.isInactive = false;
         
-        this.nameImage = new RenderCache(function(scale)
-        {
-            const height = 13 * scale;
-            const font = "bold " + height + "px Arial, Helvetica, sans-serif";
-            
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            context.font = font;
-            const width = Math.ceil(context.measureText(name).width);
-            
-            canvas.width = width;
-            canvas.height = height;
-            
-            context.font = font;
-            context.textBaseline = "top";
-            context.textAlign = "center"
-            context.fillStyle = "blue";
-            
-            context.fillText(name, width/2, 0);
-            return canvas;
-        });
+        this.nameImage = null;
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)
