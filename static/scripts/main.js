@@ -104,8 +104,7 @@ const vueApp = new Vue({
 
             window.addEventListener("resize", () =>
             {
-                this.isBackgroundRedrawRequired = true;
-                this.isForegroundRedrawRequired = true;
+                this.isRedrawRequired = true;
             })
 
             await Promise.all(Object.values(characters).map(c => c.loadImages()));
