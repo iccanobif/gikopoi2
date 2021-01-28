@@ -966,10 +966,10 @@ const vueApp = new Vue({
                 if (withVideo)
                 {
                     userMedia.video = {
-                        width: 320,
-                        height: 240,
+                        width: 248,
+                        height: 180,
                         frameRate: {
-                            ideal: 60,
+                            ideal: 24,
                             min: 10,
                         },
                     };
