@@ -78,6 +78,9 @@ export function deserializeUserState(serializedState: string)
 
     // Initialize all users as ghosts (they'll be unflagged when users connect again through the websocket)
     for (const user of Object.values(users))
+    {
         user.isGhost = true;
+        user.mediaStream = null;
+    }
     console.log("Restored user state (" + Object.values(users).length + " users)")
 }
