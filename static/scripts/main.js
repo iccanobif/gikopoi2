@@ -278,7 +278,6 @@ const vueApp = new Vue({
                 document.getElementById("message-sound").play();
 
                 this.isRedrawRequired = true
-                this.users[userId].isInactive = false
 
                 const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
 
@@ -321,6 +320,8 @@ const vueApp = new Vue({
                             icon: "characters/" + character.characterName + "/front-standing." + character.format
                         })
                 }
+
+                this.users[userId].isInactive = false
             });
 
             this.socket.on("server-stats", (serverStats) =>
