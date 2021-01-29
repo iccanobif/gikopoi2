@@ -479,7 +479,7 @@ function emitServerStats(areaId: string)
     })
 }
 
-if (process.env.NODE_ENV == "production")
+if (process.env.GIKO2_ENABLE_SSL == "true")
     app.use(enforce.HTTPS({ trustProtoHeader: true }))
 
 app.get("/", (req, res) =>
