@@ -13,6 +13,9 @@ const tripcode = require('tripcode');
 const enforce = require('express-sslify');
 
 const delay = 0
+const persistInterval = 5 * 1000
+const maxGhostRetention = 5 * 60 * 1000
+const inactivityTimeout = 30 * 60 * 1000
 
 // Initialize room states:
 let roomStates: {
@@ -684,12 +687,13 @@ setInterval(() =>
 {
     try
     {
+        console.log("Houskeeping daemon start")
         for (const user of getAllUsers())
         {
             if (user.disconnectionTime)
             {
                 // Remove ghosts (that is, users for which there is no active websocket)
-                if (Date.now() - user.disconnectionTime > 5 * 60 * 1000)
+                if (Date.now() - user.disconnectionTime > maxGhostRetention)
                 {
                     console.log(Date.now(), user.disconnectionTime, Date.now() - user.disconnectionTime)
                     disconnectUser(user)
@@ -703,7 +707,7 @@ setInterval(() =>
             else
             {
                 // Make user transparent after 30 minutes without moving or talking
-                if (!user.isInactive && Date.now() - user.lastAction > 30 * 60 * 1000)
+                if (!user.isInactive && Date.now() - user.lastAction > inactivityTimeout)
                 {
                     io.to(user.areaId + user.roomId).emit("server-user-inactive", user.id);
                     user.isInactive = true
@@ -711,6 +715,7 @@ setInterval(() =>
                 }
             }
         }
+        console.log("Houskeeping daemon end")
     }
     catch (e)
     {
@@ -807,7 +812,7 @@ function restoreState()
     })
 }
 
-setInterval(() => persistState(), 5 * 1000)
+setInterval(() => persistState(), persistInterval)
 
 const port = process.env.PORT == undefined
     ? 8085
