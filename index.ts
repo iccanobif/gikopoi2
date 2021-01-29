@@ -92,6 +92,7 @@ io.on("connection", function (socket: any)
             socket.join(user.areaId + currentRoom.id)
 
             user.isGhost = false
+            user.disconnectionTime = null
 
             console.log("userId: " + userId + " name: " + user.name);
 
@@ -691,7 +692,7 @@ setInterval(() =>
                 // Remove ghosts (that is, users for which there is no active websocket)
                 if (Date.now() - user.disconnectionTime > 5 * 60 * 1000)
                 {
-                    console.log(Date.now(), user.disconnectionTime, Date.now() - user.disconnectionTime)
+                    console.log(user.id, Date.now(), user.disconnectionTime, Date.now() - user.disconnectionTime)
                     disconnectUser(user)
                 }
             }
