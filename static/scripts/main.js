@@ -474,7 +474,8 @@ const vueApp = new Vue({
         {
             return new RenderCache(function(canvas, scale)
             {
-                const font = "bold " + (13 * scale) + "px Arial, Helvetica, sans-serif";
+                const height = 13 * scale;
+                const font = "bold " + height + "px Arial, Helvetica, sans-serif";
                 
                 const context = canvas.getContext('2d');
                 context.font = font;
@@ -483,10 +484,10 @@ const vueApp = new Vue({
                 const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
                 
                 canvas.width = width;
-                canvas.height = height;
+                canvas.height = height*2;
                 
                 context.font = font;
-                context.textBaseline = "top";
+                context.textBaseline = "bottom";
                 context.textAlign = "center"
                 context.fillStyle = "blue";
                 
