@@ -337,3 +337,18 @@ video {
 #sound-effect-volume {
     width: 50px;
 }
+
+
+div[id^="vu-meter-container"]
+{
+    background-color: black;
+    height: 10px;
+    width: 219px;
+}
+
+div[id^="vu-meter-bar-"]
+{
+    background-color: red;
+    height: 10px;
+    width: 100%;
+}

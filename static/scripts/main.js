@@ -89,6 +89,8 @@ const vueApp = new Vue({
         password: "",
 
         allCharacters: Object.values(characters),
+
+        vuMeterTimer: null,
     },
     mounted: function ()
     {
@@ -1036,6 +1038,30 @@ const vueApp = new Vue({
                     userMedia
                 );
 
+                // VU Meter
+                if (withSound)
+                {
+                    const context = new AudioContext();
+                    const microphone = context.createMediaStreamSource(this.mediaStream);
+                    const analyser = context.createAnalyser()
+                    analyser.minDecibels = -60;
+                    analyser.maxDecibels = 0;
+                    analyser.smoothingTimeConstant = 0.01;
+                    analyser.fftSize = 32
+                    const bufferLengthAlt = analyser.frequencyBinCount;
+                    const dataArrayAlt = new Uint8Array(bufferLengthAlt);
+                    microphone.connect(analyser);
+
+                    this.vuMeterTimer = setInterval(() => {
+                        analyser.getByteFrequencyData(dataArrayAlt)
+                        
+                        const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
+                        const level = max / 255
+                        const vuMeterBar = document.getElementById("vu-meter-bar-" + this.streamSlotIdInWhichIWantToStream)
+                        vuMeterBar.style.width = level * 100 + "%"
+                    }, 100)
+                }
+
                 this.socket.emit("user-want-to-stream", {
                     streamSlotId: this.streamSlotIdInWhichIWantToStream,
                     withVideo: withVideo,
@@ -1059,9 +1085,12 @@ const vueApp = new Vue({
                     this.rtcPeer.conn.addTrack(track, this.mediaStream)
                 );
 
+                
             document.getElementById(
                 "local-video-" + this.streamSlotIdInWhichIWantToStream
-            ).srcObject = this.mediaStream;
+                ).srcObject = this.mediaStream;
+                    
+
         },
         stopStreaming: function ()
         {
@@ -1071,6 +1100,8 @@ const vueApp = new Vue({
                 "local-video-" + this.streamSlotIdInWhichIWantToStream
             ).srcObject = this.mediaStream = null;
             this.streamSlotIdInWhichIWantToStream = null;
+            if (this.vuMeterTimer)
+                clearInterval(this.vuMeterTimer)
             this.socket.emit("user-want-to-stop-stream");
         },
         wantToTakeStream: function (streamSlotId)
