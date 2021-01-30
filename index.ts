@@ -60,6 +60,16 @@ io.on("connection", function (socket: any)
 
     let rtcPeer: RTCPeer = new RTCPeer(defaultIceConfig, emitRTCMessage);
 
+    const sendCurrentRoomState = () => 
+    {
+        socket.emit("server-update-current-room-state",
+            <RoomStateDto>{
+                currentRoom,
+                connectedUsers: getConnectedUserList(user.roomId, user.areaId),
+                streams: roomStates[user.areaId][user.roomId].streams
+            })
+    }
+
     socket.on("disconnect", function ()
     {
         try
@@ -104,12 +114,7 @@ io.on("connection", function (socket: any)
 
             currentRoom = rooms[user.roomId]
 
-            socket.emit("server-update-current-room-state",
-                <RoomStateDto>{
-                    currentRoom,
-                    connectedUsers: getConnectedUserList(user.roomId, user.areaId),
-                    streams: roomStates[user.areaId][user.roomId].streams
-                })
+            sendCurrentRoomState()
 
             socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", user);
 
@@ -195,6 +200,14 @@ io.on("connection", function (socket: any)
                 {
                     rejectMovement()
                     return
+                }
+
+                // Become fat if you're at position 2,4 in yoshinoya room
+                if (currentRoom.id == "yoshinoya" && user.position.x == 2 && user.position.y == 4)
+                {
+                    user.characterId = "hungry_giko"
+                    // sendCurrentRoomState()
+                    io.to(user.areaId + user.roomId).emit("server-character-changed", user.id, user.characterId)
                 }
 
                 user.position.x = newX
@@ -330,7 +343,7 @@ io.on("connection", function (socket: any)
         try
         {
             await sleep(delay)
-            
+
             let { targetRoomId, targetDoorId } = data
 
             log.info("user-change-room", user.id, targetDoorId)
@@ -358,12 +371,8 @@ io.on("connection", function (socket: any)
 
             rtcPeer.close()
 
-            socket.emit("server-update-current-room-state",
-                <RoomStateDto>{
-                    currentRoom,
-                    connectedUsers: getConnectedUserList(targetRoomId, user.areaId),
-                    streams: roomStates[user.areaId][targetRoomId].streams
-                })
+
+            sendCurrentRoomState()
 
             socket.join(user.areaId + targetRoomId)
             socket.to(user.areaId + targetRoomId).emit("server-user-joined-room", user);
