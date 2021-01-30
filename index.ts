@@ -6,6 +6,7 @@ import { addNewUser, deserializeUserState, getConnectedUserList, getAllUsers, ge
 import { sleep } from "./utils";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
 import got from "got";
+import log from "loglevel";
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
@@ -16,6 +17,8 @@ const delay = 0
 const persistInterval = 5 * 1000
 const maxGhostRetention = 5 * 60 * 1000
 const inactivityTimeout = 30 * 60 * 1000
+
+log.setLevel(log.levels.DEBUG)
 
 // Initialize room states:
 let roomStates: {
@@ -49,7 +52,7 @@ initializeRoomStates()
 
 io.on("connection", function (socket: any)
 {
-    console.log("Connection attempt");
+    log.info("Connection attempt");
 
     let user: Player;
     let currentRoom = defaultRoom;
@@ -63,7 +66,7 @@ io.on("connection", function (socket: any)
         {
             if (!user) return;
 
-            console.log("disconnect", user.id)
+            log.info("disconnect", user.id)
 
             user.isGhost = true
             user.disconnectionTime = Date.now()
@@ -73,7 +76,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.error(e.message + " " + e.stack);
+            log.error(e.message + " " + e.stack);
         }
     })
 
@@ -81,7 +84,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            console.log("user-connect", userId)
+            log.info("user-connect", userId)
             user = getUser(userId);
             if (!user)
             {
@@ -97,7 +100,7 @@ io.on("connection", function (socket: any)
             user.isGhost = false
             user.disconnectionTime = null
 
-            console.log("userId: " + userId + " name: " + user.name);
+            log.info("userId: " + userId + " name: " + user.name);
 
             currentRoom = rooms[user.roomId]
 
@@ -114,7 +117,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.error(e.message + " " + e.stack);
+            log.error(e.message + " " + e.stack);
         }
     });
     socket.on("user-msg", function (msg: string)
@@ -127,7 +130,7 @@ io.on("connection", function (socket: any)
 
             const userName = user.name
 
-            console.log("MSG:", user.id, userName + ": " + msg);
+            log.info("MSG:", user.id, user.areaId, user.roomId, userName + ": " + msg);
 
             user.lastAction = Date.now()
 
@@ -135,7 +138,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.error(e.message + " " + e.stack);
+            log.error(e.message + " " + e.stack);
         }
     });
     socket.on("user-move", async function (direction: Direction)
@@ -144,7 +147,7 @@ io.on("connection", function (socket: any)
 
         try
         {
-            console.log("user-move", user.id, direction)
+            log.info("user-move", user.id, direction)
             user.isInactive = false
             user.lastAction = Date.now()
             if (user.direction != direction)
@@ -168,7 +171,7 @@ io.on("connection", function (socket: any)
 
                 const rejectMovement = () =>
                 {
-                    console.log("movement rejected")
+                    log.info("movement rejected", user.id)
                     socket.emit("server-reject-movement")
                 }
 
@@ -207,7 +210,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.error(e.message + " " + e.stack);
+            log.error(e.message + " " + e.stack);
         }
     });
     socket.on("user-want-to-stream", function (streamRequest: { streamSlotId: number, withVideo: boolean, withSound: boolean })
@@ -216,7 +219,7 @@ io.on("connection", function (socket: any)
         {
             const { streamSlotId, withVideo, withSound } = streamRequest
 
-            console.log("user-want-to-stream", user.id)
+            log.info("user-want-to-stream", user.id)
 
             const streams = roomStates[user.areaId][user.roomId].streams
 
@@ -249,7 +252,7 @@ io.on("connection", function (socket: any)
                 }
                 catch (e)
                 {
-                    console.error(e.message + " " + e.stack);
+                    log.error(e.message + " " + e.stack);
                 }
             };
             rtcPeer.conn.addEventListener('track', handleTrack);
@@ -257,7 +260,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.error(e.message + " " + e.stack);
+            log.error(e.message + " " + e.stack);
         }
     })
     socket.on("user-want-to-stop-stream", function () //TODO
@@ -268,7 +271,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.error(e.message + " " + e.stack);
+            log.error(e.message + " " + e.stack);
         }
     })
 
@@ -293,7 +296,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.error(e.message + " " + e.stack);
+            log.error(e.message + " " + e.stack);
         }
     })
 
@@ -318,7 +321,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.error(e.message + " " + e.stack);
+            log.error(e.message + " " + e.stack);
         }
     })
 
@@ -327,9 +330,10 @@ io.on("connection", function (socket: any)
         try
         {
             await sleep(delay)
-            console.log("user-change-room")
-
+            
             let { targetRoomId, targetDoorId } = data
+
+            log.info("user-change-room", user.id, targetDoorId)
 
             currentRoom = rooms[targetRoomId]
 
@@ -342,7 +346,7 @@ io.on("connection", function (socket: any)
 
             if (!(targetDoorId in rooms[targetRoomId].doors))
             {
-                console.error("Could not find door " + targetDoorId + " in room " + targetRoomId);
+                log.error(user.id, "Could not find door " + targetDoorId + " in room " + targetRoomId);
                 return;
             }
 
@@ -366,7 +370,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.error(e.message + " " + e.stack);
+            log.error(e.message + " " + e.stack);
         }
     })
 
@@ -400,7 +404,7 @@ io.on("connection", function (socket: any)
         }
         catch (e)
         {
-            console.error(e.message + " " + e.stack);
+            log.error(e.message + " " + e.stack);
         }
     })
 
@@ -408,71 +412,71 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            console.log("openRTCConnection()")
+            log.info("openRTCConnection()", user.id)
             rtcPeer.open()
             if (rtcPeer.conn === null) return;
             rtcPeer.conn.addEventListener('iceconnectionstatechange',
                 handleIceConnectionStateChange);
         }
-        catch (e) { console.error(e.message + " " + e.stack); }
+        catch (e) { log.error(e.message + " " + e.stack); }
     }
 
     function handleIceConnectionStateChange(event: Event)
     {
         try
         {
-            console.log(user.id, "handleIceConnectionStateChange()")
+            log.info(user.id, "handleIceConnectionStateChange()")
             if (rtcPeer.conn === null) return;
             const state = rtcPeer.conn.iceConnectionState;
 
             if (["failed", "disconnected", "closed"].includes(state))
             {
-                console.log(user.id, "rtcPeer.close()")
+                log.info(user.id, "rtcPeer.close()")
                 rtcPeer.close()
                 clearStream(user)
             }
         }
-        catch (e) { console.error(e.message + " " + e.stack); }
+        catch (e) { log.error(e.message + " " + e.stack); }
     }
 
     function emitRTCMessage(type: string, message: any)
     {
         try
         {
-            console.log(user.id, "emitRTCMessage(", type, ")")
+            log.info(user.id, "emitRTCMessage(", type, ")")
             socket.emit('server-rtc-' + type, message)
         }
-        catch (e) { console.error(e.message + " " + e.stack); }
+        catch (e) { log.error(e.message + " " + e.stack); }
     }
 
     socket.on("user-rtc-offer", (offer: RTCSessionDescription) =>
     {
         try
         {
-            console.log(user.id, "user-rtc-offer")
+            log.info(user.id, "user-rtc-offer")
             rtcPeer.acceptOffer(offer)
         }
-        catch (e) { console.error(e.message + " " + e.stack); }
+        catch (e) { log.error(e.message + " " + e.stack); }
     })
 
     socket.on("user-rtc-answer", (answer: RTCSessionDescription) =>
     {
         try
         {
-            console.log(user.id, "user-rtc-answer")
+            log.info(user.id, "user-rtc-answer")
             rtcPeer.acceptAnswer(answer)
         }
-        catch (e) { console.error(e.message + " " + e.stack); }
+        catch (e) { log.error(e.message + " " + e.stack); }
     })
 
     socket.on("user-rtc-candidate", (candidate: RTCIceCandidate) =>
     {
         try
         {
-            console.log(user.id, "user-rtc-candidate")
+            log.info(user.id, "user-rtc-candidate")
             rtcPeer.addCandidate(candidate)
         }
-        catch (e) { console.error(e.message + " " + e.stack); }
+        catch (e) { log.error(e.message + " " + e.stack); }
     })
 });
 
@@ -488,7 +492,7 @@ if (process.env.GIKO2_ENABLE_SSL == "true")
 
 app.get("/", (req, res) =>
 {
-    console.log("Fetching root...")
+    log.info("Fetching root...")
     readFile("static/index.html", 'utf8', async (err, data) =>
     {
         try
@@ -565,7 +569,6 @@ app.post("/ping/:userId", async (req, res) =>
         {
             try
             {
-
                 // Update last ping date for the user
                 const { userId } = req.params
                 const user = getUser(userId)
@@ -610,9 +613,8 @@ app.post("/login", (req, res) =>
         if (n >= 0)
             processedUserName = processedUserName + "◆" + tripcode(userName.substr(n + 1));
 
-        console.log(processedUserName, "logging in")
-
         const user = addNewUser(processedUserName, characterId, areaId);
+        log.info("Logged in", user.id, user.name)
         res.json(user.id)
     }
     catch (e)
@@ -627,7 +629,7 @@ function clearStream(user: Player)
     {
         if (!user) return
 
-        console.log("trying clearStream:", user.areaId, user.roomId)
+        log.info(user.id, "trying clearStream:", user.areaId, user.roomId)
 
         user.mediaStream = null
         const streams = roomStates[user.areaId][user.roomId].streams
@@ -642,13 +644,13 @@ function clearStream(user: Player)
     }
     catch (error)
     {
-        console.error(error)
+        log.error(error)
     }
 }
 
 function disconnectUser(user: Player)
 {
-    console.log("Removing user ", user.id, user.name, user.areaId)
+    log.info("Removing user ", user.id, user.name, user.areaId)
     clearStream(user)
     removeUser(user)
 
@@ -656,39 +658,10 @@ function disconnectUser(user: Player)
     emitServerStats(user.areaId)
 }
 
-app.post("/logout", (req, res) =>
-{
-    try
-    {
-
-        // this has never been tested
-        const { userID } = req.body
-        if (!userID)
-        {
-            res.statusCode = 500
-            res.end("please specify a username")
-        }
-        else
-        {
-            const user = getUser(userID);
-            if (!user) return;
-
-            removeUser(user)
-
-            res.end()
-        }
-    }
-    catch (e)
-    {
-        res.end(e.message + " " + e.stack)
-    }
-})
-
 setInterval(() =>
 {
     try
     {
-        console.log("Houskeeping daemon start")
         for (const user of getAllUsers())
         {
             if (user.disconnectionTime)
@@ -696,13 +669,13 @@ setInterval(() =>
                 // Remove ghosts (that is, users for which there is no active websocket)
                 if (Date.now() - user.disconnectionTime > maxGhostRetention)
                 {
-                    console.log(user.id, Date.now(), user.disconnectionTime, Date.now() - user.disconnectionTime)
+                    log.info(user.id, Date.now(), user.disconnectionTime, Date.now() - user.disconnectionTime)
                     disconnectUser(user)
                 }
             }
             else if (!user.connectionTime && user.isGhost)
             {
-                console.log(user.id, "is a ghost without disconnection time")
+                log.info(user.id, "is a ghost without disconnection time")
                 disconnectUser(user)
             }
             else
@@ -712,15 +685,14 @@ setInterval(() =>
                 {
                     io.to(user.areaId + user.roomId).emit("server-user-inactive", user.id);
                     user.isInactive = true
-                    console.log(user.id, "is inactive", Date.now(), user.lastAction);
+                    log.info(user.id, "is inactive", Date.now(), user.lastAction);
                 }
             }
         }
-        console.log("Houskeeping daemon end")
     }
     catch (e)
     {
-        console.error(e.message + " " + e.stack);
+        log.error(e.message + " " + e.stack);
     }
 }, 1 * 1000)
 
@@ -728,12 +700,11 @@ setInterval(() =>
 
 async function persistState()
 {
-    const serializedUserState = serializeUserState()
     try
     {
-
         if (process.env.PERSISTOR_URL)
         {
+            const serializedUserState = serializeUserState(false)
             await got.post(process.env.PERSISTOR_URL, {
                 headers: {
                     "persistor-secret": process.env.PERSISTOR_SECRET,
@@ -744,19 +715,20 @@ async function persistState()
         }
         else
         {
+            const serializedUserState = serializeUserState(true)
             // use local file
             writeFile("persisted-state",
                 serializedUserState,
                 { encoding: "utf-8" },
                 (err) =>
                 {
-                    if (err) console.error(err)
+                    if (err) log.error(err)
                 })
         }
     }
     catch (exc)
     {
-        console.error(exc)
+        log.error(exc)
     }
 }
 
@@ -767,7 +739,7 @@ function restoreState()
     // and start with a fresh state
     return new Promise<void>(async (resolve, reject) =>
     {
-        console.log("Restoring state...")
+        log.info("Restoring state...")
         if (process.env.PERSISTOR_URL)
         {
             // remember to do it as defensive as possible
@@ -784,7 +756,7 @@ function restoreState()
             }
             catch (exc)
             {
-                console.error(exc)
+                log.error(exc)
                 resolve()
             }
         }
@@ -794,7 +766,7 @@ function restoreState()
             {
                 if (err)
                 {
-                    console.error(err)
+                    log.error(err)
                 }
                 else
                 {
@@ -804,7 +776,7 @@ function restoreState()
                     }
                     catch (exc)
                     {
-                        console.log(exc)
+                        log.error(exc)
                     }
                 }
                 resolve()
@@ -823,7 +795,7 @@ restoreState().then(() =>
 {
     http.listen(port, "0.0.0.0");
 
-    console.log("Server running on http://localhost:" + port);
+    log.info("Server running on http://localhost:" + port);
 })
-    .catch(console.error)
+    .catch(log.error)
 

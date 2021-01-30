@@ -1,3 +1,5 @@
+import log from "loglevel"
+
 const { RTCPeerConnection } = require('wrtc')
 
 interface SendCallbackInterface {
@@ -13,7 +15,7 @@ export class RTCPeer
     public iceConfig: any
     public sendCallback: SendCallbackInterface
     public errorCallback: ErrorCallbackInterface =
-        (error, event) => console.error(error, event)
+        (error, event) => log.error(error, event)
     
     public conn: RTCPeerConnection | null = null
     

@@ -1110,10 +1110,6 @@ const vueApp = new Vue({
             this.isStreamPopupOpen = false;
             this.wantToStream = false;
         },
-        logout: async function ()
-        {
-            await postJson("/logout", { userID: this.myUserID });
-        },
         changeStreamVolume: function (streamSlotId)
         {
             const volumeSlider = document.getElementById("volume-" + streamSlotId);

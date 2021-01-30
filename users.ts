@@ -67,9 +67,13 @@ export function removeUser(user: Player)
     delete users[user.id];
 }
 
-export function serializeUserState(): string
+export function serializeUserState(prettify: boolean): string
 {
-    return JSON.stringify(users)
+    if (prettify)
+        return JSON.stringify(users, null, 2)
+    else
+        return JSON.stringify(users)
+
 }
 
 export function deserializeUserState(serializedState: string)
@@ -82,5 +86,5 @@ export function deserializeUserState(serializedState: string)
         user.isGhost = true;
         user.mediaStream = null;
     }
-    console.log("Restored user state (" + Object.values(users).length + " users)")
+    console.info("Restored user state (" + Object.values(users).length + " users)")
 }
