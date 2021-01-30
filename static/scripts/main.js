@@ -99,43 +99,49 @@ const vueApp = new Vue({
     methods: {
         login: async function (ev)
         {
-            ev.preventDefault();
-            this.isLoggingIn = true;
+            try {
+                ev.preventDefault();
+                this.isLoggingIn = true;
 
-            window.addEventListener("resize", () =>
-            {
-                this.isBackgroundRedrawRequired = true;
-                this.isForegroundRedrawRequired = true;
-            })
+                window.addEventListener("resize", () =>
+                {
+                    this.isRedrawRequired = true;
+                })
 
-            await Promise.all(Object.values(characters).map(c => c.loadImages()));
+                await Promise.all(Object.values(characters).map(c => c.loadImages()));
 
-            if (this.username === "") this.username = i18n.t("default_user_name");
+                if (this.username === "") this.username = i18n.t("default_user_name");
 
-            if (this.characterId === "naito")
-            {
-                const die = Math.random()
-                if (die < 0.25)
-                    this.characterId = "funkynaito"
+                if (this.characterId === "naito")
+                {
+                    const die = Math.random()
+                    if (die < 0.25)
+                        this.characterId = "funkynaito"
+                }
+
+                if (this.password == "iapetus56")
+                    this.characterId = "shar_naito"
+
+                this.loggedIn = true;
+                this.selectedCharacter = characters[this.characterId];
+                this.registerKeybindings();
+
+                await this.connectToServer(this.username);
+
+                this.isLoggingIn = false;
+
+                this.canvasContext = document.getElementById("room-canvas")
+                    .getContext("2d");
+                this.paint();
+
+                this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
+                this.updateAudioElementsVolume()
             }
-
-            if (this.password == "iapetus56")
-                this.characterId = "shar_naito"
-
-            this.loggedIn = true;
-            this.selectedCharacter = characters[this.characterId];
-            this.registerKeybindings();
-
-            await this.connectToServer(this.username);
-
-            this.isLoggingIn = false;
-
-            this.canvasContext = document.getElementById("room-canvas")
-                .getContext("2d");
-            this.paint();
-
-            this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
-            this.updateAudioElementsVolume()
+            catch (exc)
+            {
+                console.log(exc)
+                alert("Connection failed :(")
+            }
         },
         setLanguage: function (code)
         {
@@ -217,14 +223,18 @@ const vueApp = new Vue({
             // load the room state before connecting the websocket, so that all
             // code handling websocket events (and paint() events) can assume that
             // currentRoom, streams etc... are all defined
+
             const response = await fetch("/areas/" + this.areaId + "/rooms/admin_st")
             this.updateRoomState(await response.json())
-
+            
             const pingResponse = await postJson("/ping/" + this.myUserID, {
                 userId: this.myUserID,
             });
-            const { version: newVersion } = await pingResponse.json();
-            this.expectedServerVersion = newVersion
+            if (pingResponse.ok)
+            {
+                const { version: newVersion } = await pingResponse.json();
+                this.expectedServerVersion = newVersion
+            }
 
             this.socket = io();
 
@@ -268,7 +278,6 @@ const vueApp = new Vue({
                 document.getElementById("message-sound").play();
 
                 this.isRedrawRequired = true
-                this.users[userId].isInactive = false
 
                 const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
 
@@ -311,6 +320,8 @@ const vueApp = new Vue({
                             icon: "characters/" + character.characterName + "/front-standing." + character.format
                         })
                 }
+
+                this.users[userId].isInactive = false
             });
 
             this.socket.on("server-stats", (serverStats) =>
@@ -418,14 +429,23 @@ const vueApp = new Vue({
         },
         ping: async function ()
         {
-            if (this.connectionLost) return;
-            const response = await postJson("/ping/" + this.myUserID, {
-                userId: this.myUserID,
-            });
-            const { version: newVersion } = await response.json();
-            if (newVersion > this.expectedServerVersion)
+            try {
+                if (this.connectionLost) return;
+                
+                const response = await postJson("/ping/" + this.myUserID, {
+                    userId: this.myUserID,
+                });
+                if (!response.ok)
+                    throw new Error(response)
+                const { version: newVersion } = await response.json();
+                if (newVersion > this.expectedServerVersion)
+                {
+                    this.pageRefreshRequired = true
+                }
+            }
+            catch (exc)
             {
-                this.pageRefreshRequired = true
+                console.log(exc)
             }
         },
         addUser: function (userDTO)

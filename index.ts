@@ -95,6 +95,7 @@ io.on("connection", function (socket: any)
             socket.join(user.areaId + currentRoom.id)
 
             user.isGhost = false
+            user.disconnectionTime = null
 
             console.log("userId: " + userId + " name: " + user.name);
 
@@ -482,7 +483,7 @@ function emitServerStats(areaId: string)
     })
 }
 
-if (process.env.NODE_ENV == "production")
+if (process.env.GIKO2_ENABLE_SSL == "true")
     app.use(enforce.HTTPS({ trustProtoHeader: true }))
 
 app.get("/", (req, res) =>
@@ -695,7 +696,7 @@ setInterval(() =>
                 // Remove ghosts (that is, users for which there is no active websocket)
                 if (Date.now() - user.disconnectionTime > maxGhostRetention)
                 {
-                    console.log(Date.now(), user.disconnectionTime, Date.now() - user.disconnectionTime)
+                    console.log(user.id, Date.now(), user.disconnectionTime, Date.now() - user.disconnectionTime)
                     disconnectUser(user)
                 }
             }
