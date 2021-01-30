@@ -486,11 +486,11 @@ const vueApp = new Vue({
                 canvas.height = height*2;
                 
                 context.font = font;
-                context.textBaseline = "top";
+                context.textBaseline = "middle";
                 context.textAlign = "center"
                 context.fillStyle = "blue";
                 
-                context.fillText(name, width/2, 0);
+                context.fillText(name, width/2, height);
             });
         },
         detectCanvasResize: function ()
@@ -643,7 +643,7 @@ const vueApp = new Vue({
                         context,
                         image,
                         (o.o.currentPhysicalPositionX - image.width/2) + BLOCK_WIDTH/2,
-                        (o.o.currentPhysicalPositionY - 110)
+                        (o.o.currentPhysicalPositionY - 120)
                     );
                 }
 
