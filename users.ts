@@ -67,9 +67,13 @@ export function removeUser(user: Player)
     delete users[user.id];
 }
 
-export function serializeUserState(): string
+export function serializeUserState(prettify: boolean): string
 {
-    return JSON.stringify(users)
+    if (prettify)
+        return JSON.stringify(users, null, 2)
+    else
+        return JSON.stringify(users)
+
 }
 
 export function deserializeUserState(serializedState: string)
@@ -78,6 +82,9 @@ export function deserializeUserState(serializedState: string)
 
     // Initialize all users as ghosts (they'll be unflagged when users connect again through the websocket)
     for (const user of Object.values(users))
+    {
         user.isGhost = true;
-    console.log("Restored user state (" + Object.values(users).length + " users)")
+        user.mediaStream = null;
+    }
+    console.info("Restored user state (" + Object.values(users).length + " users)")
 }

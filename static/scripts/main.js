@@ -70,6 +70,8 @@ const vueApp = new Vue({
         warningToastMessage: "",
         loggedIn: false,
 
+        enableGridNumbers: false,
+
         // Possibly redundant data:
         username: "",
         roomid: "admin_st",
@@ -93,7 +95,12 @@ const vueApp = new Vue({
         window.addEventListener("keydown", (ev) =>
         {
             if (ev.shiftKey && ev.ctrlKey && ev.code == "Digit9")
-                this.passwordInputVisible = true
+            this.passwordInputVisible = true
+            if (ev.shiftKey && ev.ctrlKey && ev.code == "Digit8")
+            {
+                this.enableGridNumbers = !this.enableGridNumbers
+                this.isRedrawRequired = true
+            }
         })
     },
     methods: {
@@ -278,7 +285,6 @@ const vueApp = new Vue({
                 document.getElementById("message-sound").play();
 
                 this.isRedrawRequired = true
-                this.users[userId].isInactive = false
 
                 const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
 
@@ -321,6 +327,8 @@ const vueApp = new Vue({
                             icon: "characters/" + character.characterName + "/front-standing." + character.format
                         })
                 }
+
+                this.users[userId].isInactive = false
             });
 
             this.socket.on("server-stats", (serverStats) =>
@@ -425,6 +433,10 @@ const vueApp = new Vue({
                     console.error(e.message + " " + e.stack);
                 }
             });
+
+            this.socket.on("server-character-changed", (userId, characterId) => {
+                this.users[userId].character = characters[characterId]
+            })
         },
         ping: async function ()
         {
@@ -650,7 +662,7 @@ const vueApp = new Vue({
                 o.o.spendTime(this.currentRoom);
             }
             
-            if (localStorage.getItem("enableGridNumbers") == "true")
+            if (this.enableGridNumbers)
             {
                 context.strokeStyle = "#ff0000";
                 
@@ -694,6 +706,8 @@ const vueApp = new Vue({
                             context.fillStyle = "#00cc00";
                         if (this.currentRoom.blocked.find(b => b.x == x && b.y == y))
                             context.fillStyle = "#ff0000";
+                        if (this.currentRoom.sit.find(b => b.x == x && b.y == y))
+                            context.fillStyle = "yellow";
                         const realCoord = calculateRealCoordinates(
                             this.currentRoom,
                             x,
@@ -729,7 +743,8 @@ const vueApp = new Vue({
 
                 if (this.isRedrawRequired
                     || this.isDraggingCanvas
-                    || usersRequiringRedraw.length)
+                    || usersRequiringRedraw.length
+                    || this.enableGridNumbers)
                 {
                     this.paintBackground();
                     this.paintForeground();
@@ -1109,10 +1124,6 @@ const vueApp = new Vue({
         {
             this.isStreamPopupOpen = false;
             this.wantToStream = false;
-        },
-        logout: async function ()
-        {
-            await postJson("/logout", { userID: this.myUserID });
         },
         changeStreamVolume: function (streamSlotId)
         {

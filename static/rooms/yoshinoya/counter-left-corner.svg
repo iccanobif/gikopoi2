@@ -1,0 +1,2027 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="21.149488mm"
+   height="18.55652mm"
+   viewBox="0 0 21.149488 18.55652"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   sodipodi:docname="counter-left-corner.svg">
+  <defs
+     id="defs2">
+    <g
+       id="sprite0"
+       transform="translate(480,20)">
+      <use
+         height="40"
+         width="80"
+         xlink:href="#shape0"
+         id="use95"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(0,40)"
+         width="80"
+         xlink:href="#shape0"
+         id="use97"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(40,20)"
+         width="80"
+         xlink:href="#shape0"
+         id="use99"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-40,-20)"
+         width="80"
+         xlink:href="#shape0"
+         id="use101"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-80)"
+         width="80"
+         xlink:href="#shape0"
+         id="use103"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-120,20)"
+         width="80"
+         xlink:href="#shape0"
+         id="use105"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-160,40)"
+         width="80"
+         xlink:href="#shape0"
+         id="use107"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-120,60)"
+         width="80"
+         xlink:href="#shape0"
+         id="use109"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-80,80)"
+         width="80"
+         xlink:href="#shape0"
+         id="use111"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(40,60)"
+         width="80"
+         xlink:href="#shape0"
+         id="use113"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(80,80)"
+         width="80"
+         xlink:href="#shape0"
+         id="use115"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(120,100)"
+         width="80"
+         xlink:href="#shape0"
+         id="use117"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(160,120)"
+         width="80"
+         xlink:href="#shape0"
+         id="use119"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(80,160)"
+         width="80"
+         xlink:href="#shape0"
+         id="use121"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(200,140)"
+         width="80"
+         xlink:href="#shape0"
+         id="use123"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(240,160)"
+         width="80"
+         xlink:href="#shape0"
+         id="use125"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(200,180)"
+         width="80"
+         xlink:href="#shape0"
+         id="use127"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(160,200)"
+         width="80"
+         xlink:href="#shape0"
+         id="use129"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(120,220)"
+         width="80"
+         xlink:href="#shape0"
+         id="use131"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(80,240)"
+         width="80"
+         xlink:href="#shape0"
+         id="use133"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(40,220)"
+         width="80"
+         xlink:href="#shape0"
+         id="use135"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(0,200)"
+         width="80"
+         xlink:href="#shape0"
+         id="use137"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-40,180)"
+         width="80"
+         xlink:href="#shape0"
+         id="use139"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-80,160)"
+         width="80"
+         xlink:href="#shape0"
+         id="use141"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-120,140)"
+         width="80"
+         xlink:href="#shape0"
+         id="use143"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-160,120)"
+         width="80"
+         xlink:href="#shape0"
+         id="use145"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(40,140)"
+         width="80"
+         xlink:href="#shape0"
+         id="use147"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-40,100)"
+         width="80"
+         xlink:href="#shape0"
+         id="use149"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(0,120)"
+         width="80"
+         xlink:href="#shape0"
+         id="use151"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(40,260)"
+         width="80"
+         xlink:href="#shape0"
+         id="use153"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(0,240)"
+         width="80"
+         xlink:href="#shape0"
+         id="use155"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-40,220)"
+         width="80"
+         xlink:href="#shape0"
+         id="use157"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-80,200)"
+         width="80"
+         xlink:href="#shape0"
+         id="use159"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-120,180)"
+         width="80"
+         xlink:href="#shape0"
+         id="use161"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-160,160)"
+         width="80"
+         xlink:href="#shape0"
+         id="use163"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-200,140)"
+         width="80"
+         xlink:href="#shape0"
+         id="use165"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(0,280)"
+         width="80"
+         xlink:href="#shape0"
+         id="use167"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-40,260)"
+         width="80"
+         xlink:href="#shape0"
+         id="use169"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-80,240)"
+         width="80"
+         xlink:href="#shape0"
+         id="use171"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-120,220)"
+         width="80"
+         xlink:href="#shape0"
+         id="use173"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-160,200)"
+         width="80"
+         xlink:href="#shape0"
+         id="use175"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-200,180)"
+         width="80"
+         xlink:href="#shape0"
+         id="use177"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-240,160)"
+         width="80"
+         xlink:href="#shape0"
+         id="use179"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-160,280)"
+         width="80"
+         xlink:href="#shape0"
+         id="use181"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-200,260)"
+         width="80"
+         xlink:href="#shape0"
+         id="use183"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-240,240)"
+         width="80"
+         xlink:href="#shape0"
+         id="use185"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-280,220)"
+         width="80"
+         xlink:href="#shape0"
+         id="use187"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-320,200)"
+         width="80"
+         xlink:href="#shape0"
+         id="use189"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-360,180)"
+         width="80"
+         xlink:href="#shape0"
+         id="use191"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-400,160)"
+         width="80"
+         xlink:href="#shape0"
+         id="use193"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-160,360)"
+         width="80"
+         xlink:href="#shape0"
+         id="use195"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-200,340)"
+         width="80"
+         xlink:href="#shape0"
+         id="use197"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-240,320)"
+         width="80"
+         xlink:href="#shape0"
+         id="use199"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-280,300)"
+         width="80"
+         xlink:href="#shape0"
+         id="use201"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-320,280)"
+         width="80"
+         xlink:href="#shape0"
+         id="use203"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-360,260)"
+         width="80"
+         xlink:href="#shape0"
+         id="use205"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-400,240)"
+         width="80"
+         xlink:href="#shape0"
+         id="use207"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(280,180)"
+         width="80"
+         xlink:href="#shape0"
+         id="use209"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(240,200)"
+         width="80"
+         xlink:href="#shape0"
+         id="use211"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(200,220)"
+         width="80"
+         xlink:href="#shape0"
+         id="use213"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(160,240)"
+         width="80"
+         xlink:href="#shape0"
+         id="use215"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(120,260)"
+         width="80"
+         xlink:href="#shape0"
+         id="use217"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(80,280)"
+         width="80"
+         xlink:href="#shape0"
+         id="use219"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(40,300)"
+         width="80"
+         xlink:href="#shape0"
+         id="use221"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(0,320)"
+         width="80"
+         xlink:href="#shape0"
+         id="use223"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-40,340)"
+         width="80"
+         xlink:href="#shape0"
+         id="use225"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-80,360)"
+         width="80"
+         xlink:href="#shape0"
+         id="use227"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-120,380)"
+         width="80"
+         xlink:href="#shape0"
+         id="use229"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-40,300)"
+         width="80"
+         xlink:href="#shape0"
+         id="use231"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-80,320)"
+         width="80"
+         xlink:href="#shape0"
+         id="use233"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-120,340)"
+         width="80"
+         xlink:href="#shape0"
+         id="use235"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-360,140)"
+         width="80"
+         xlink:href="#shape0"
+         id="use237"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-320,120)"
+         width="80"
+         xlink:href="#shape0"
+         id="use239"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-280,100)"
+         width="80"
+         xlink:href="#shape0"
+         id="use241"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-240,80)"
+         width="80"
+         xlink:href="#shape0"
+         id="use243"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-200,60)"
+         width="80"
+         xlink:href="#shape0"
+         id="use245"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(80,40)"
+         width="80"
+         xlink:href="#shape0"
+         id="use247"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(120,60)"
+         width="80"
+         xlink:href="#shape0"
+         id="use249"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(160,80)"
+         width="80"
+         xlink:href="#shape0"
+         id="use251"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(200,100)"
+         width="80"
+         xlink:href="#shape0"
+         id="use253"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(240,120)"
+         width="80"
+         xlink:href="#shape0"
+         id="use255"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(280,140)"
+         width="80"
+         xlink:href="#shape0"
+         id="use257"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(320,160)"
+         width="80"
+         xlink:href="#shape0"
+         id="use259"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-440,260)"
+         width="80"
+         xlink:href="#shape0"
+         id="use261"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-400,280)"
+         width="80"
+         xlink:href="#shape0"
+         id="use263"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-360,300)"
+         width="80"
+         xlink:href="#shape0"
+         id="use265"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-320,320)"
+         width="80"
+         xlink:href="#shape0"
+         id="use267"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-280,340)"
+         width="80"
+         xlink:href="#shape0"
+         id="use269"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-240,360)"
+         width="80"
+         xlink:href="#shape0"
+         id="use271"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-200,380)"
+         width="80"
+         xlink:href="#shape0"
+         id="use273"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-160,400)"
+         width="80"
+         xlink:href="#shape0"
+         id="use275"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-480,280)"
+         width="80"
+         xlink:href="#shape0"
+         id="use277"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-400,320)"
+         width="80"
+         xlink:href="#shape0"
+         id="use279"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-360,340)"
+         width="80"
+         xlink:href="#shape0"
+         id="use281"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-320,360)"
+         width="80"
+         xlink:href="#shape0"
+         id="use283"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-240,400)"
+         width="80"
+         xlink:href="#shape0"
+         id="use285"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-200,420)"
+         width="80"
+         xlink:href="#shape0"
+         id="use287"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-440,300)"
+         width="80"
+         xlink:href="#shape0"
+         id="use289"
+         x="0"
+         y="0" />
+      <use
+         height="40"
+         transform="translate(-280,380)"
+         width="80"
+         xlink:href="#shape0"
+         id="use291"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="shape0"
+       transform="translate(40,20)">
+      <path
+         d="M 40,0 0,20 -40,0 0,-20 40,0"
+         fill="#bcbcbc"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path294" />
+    </g>
+    <g
+       id="shape1"
+       transform="translate(200.5,150.5)">
+      <path
+         d="m 80,0 -10,-5 -15,-7.5 -81.5,-40.75 -16.05,-8 -15.9,-7.95 -15.3,-7.65 L -80,-80 v 60 l 6.25,3.15 15.2,7.6 0.1,0.05 15.9,7.95 16.05,8 L 55,47.5 70,55 80,60 V 0 m 120,130 -320,-160 -80,-40 v -80 l 80,40 320,160 v 80"
+         fill="#ffe7ce"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path297" />
+      <path
+         d="m -80,-80 6.25,3.15 15.3,7.65 15.9,7.95 16.05,8 L 55,-12.5 70,-5 80,0 V 60 L 70,55 55,47.5 -26.5,6.75 l -16.05,-8 -15.9,-7.95 -0.1,-0.05 -15.2,-7.6 L -80,-20 v -60 m -40,70 -80,-40 v -20 l 80,40 320,160 v 20 L -120,-10 m 93.5,16.75 v -60 60 M 55,47.5 v -60 60 M 70,55 V -5 55 M -42.55,-1.25 v -60 60 m -16,-8 0.1,-59.95 -0.1,59.95 m -15.2,-7.6 v -60 60"
+         fill="#e98d3b"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path299" />
+      <path
+         d="m -80,-80 6.25,3.15 15.3,7.65 15.9,7.95 16.05,8 L 55,-12.5 70,-5 80,0 M 80,60 70,55 55,47.5 -26.5,6.75 l -16.05,-8 -15.9,-7.95 m -0.1,-0.05 -15.2,-7.6 L -80,-20 m -120,-50 v 20 l 80,40 m 320,160 v -20 m -320,-160 -80,-40 v -80 l 80,40 M 200,50 v 80"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path301" />
+      <path
+         d="M 80,0 V 60 M -80,-20 v -60 m -40,70 320,160 m 0,-20 -320,-160 m 0,-80 320,160"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path303" />
+      <path
+         d="m -58.45,-9.2 -0.1,-0.05 m -15.2,-67.6 v 60 m 15.3,-52.35 -0.1,59.95 m 16,-52 v 60 M 70,-5 V 55 M 55,-12.5 v 60 M -26.5,-53.25 v 60"
+         fill="none"
+         stroke="#c56118"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="0.05"
+         id="path305" />
+    </g>
+    <g
+       id="text0"
+       transform="translate(-1.45,-0.65)">
+      <g
+         id="g310">
+        <use
+           fill="#000000"
+           height="28.75"
+           transform="matrix(0.1953,0,0,0.1953,1,8.6)"
+           width="12.35"
+           xlink:href="#font___________0"
+           id="use308"
+           x="0"
+           y="0" />
+      </g>
+      <g
+         id="g314">
+        <use
+           fill="#000000"
+           height="28.75"
+           transform="matrix(0.1953,0,0,0.1953,1,18.6)"
+           width="12.35"
+           xlink:href="#font___________1"
+           id="use312"
+           x="0"
+           y="0" />
+      </g>
+      <g
+         id="g318">
+        <use
+           fill="#000000"
+           height="28.75"
+           transform="matrix(0.1953,0,0,0.1953,2.3,28.6)"
+           width="12.35"
+           xlink:href="#font___________2"
+           id="use316"
+           x="0"
+           y="0" />
+      </g>
+    </g>
+    <g
+       id="font___________0">
+      <path
+         d="m 27.6,-30 h 19.2 v 4.4 H 28 Q 32.2,-9 48.4,-2 L 45.8,2.8 Q 31.8,-3.6 26,-18.8 22.6,-2.4 5,3.8 L 3.2,-1 Q 21.6,-7.4 22.6,-25.6 H 4.6 V -30 H 23 v -10.6 h 4.4 q 2,0.4 0.2,1.6 v 9"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path321" />
+    </g>
+    <g
+       id="font___________1">
+      <path
+         d="m 37,-41 q 2.8,1.2 5.2,3 l -1.8,2.6 h 6.8 v 3.2 H 31 q 1,4.2 3.4,8.6 2.4,-2.2 5.6,-7.4 l 3,2.2 q 1.4,1 -0.4,1.4 -3.6,5.4 -5.8,7 3.2,2.8 6,2.8 1.4,0 2.4,-4.4 l 3.6,1.6 q -1.6,6.8 -4.8,6.8 -5.8,0 -10,-4.2 -2.8,2.6 -7.2,4.8 h 14.4 v 12.8 h 7.4 V 3 H 3.2 v -3.2 h 7.2 V -13 h 16 l -2.6,-3.4 q 3.8,-1.6 7.6,-4.6 -3,-4.6 -4.4,-11.2 H 10.6 v 4 h 13.8 l -1,8.4 q -0.4,3.2 -3.2,3.2 h -5.6 l -1,-3.2 h 4.8 q 1.4,0 1.6,-1.2 l 0.6,-4 h -10 q -0.4,8.8 -5,13.8 L 2.4,-14 q 4.2,-4.4 4.2,-10.4 v -11 h 19.8 l -0.8,-6.6 4.6,0.2 q 0.6,0.6 -0.4,1.2 l 0.6,5.2 h 9.4 l -5.2,-3 L 37,-41 M 19.6,-9.8 h -5.2 v 9.6 h 5.2 v -9.6 m 3.4,9.6 h 5.6 V -9.8 H 23 v 9.6 M 37.2,-9.8 H 32 v 9.6 h 5.2 v -9.6"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path324" />
+    </g>
+    <g
+       id="font___________2">
+      <path
+         d="m 30.8,-39.6 q 2.2,0.2 0.4,1.6 0.6,6.4 0.6,19.6 0,15 -14.2,22.6 L 14.2,0.8 q 13.4,-6.4 13.4,-19.4 0,-13.6 -0.8,-21 h 4 M 11.2,-37 q -1,4.8 -1,13.2 0,8.6 0.8,8.6 0.6,0 1.6,-0.8 1.4,-1.2 4.6,-5.4 l 3,3 q -3.4,4.2 -6.2,6.4 -1.8,1.4 -4,1.4 -1.4,0 -2.6,-1.2 -1.4,-1.4 -1.4,-12 0,-8 0.8,-14.6 h 4.4 q 1.6,0.6 0,1.4"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path327" />
+    </g>
+    <g
+       id="text1"
+       transform="translate(-1.45,-0.7)">
+      <g
+         id="g332">
+        <use
+           fill="#000000"
+           height="38.549999"
+           transform="matrix(0.1953,0,0,0.1953,1,8.6)"
+           width="10.3"
+           xlink:href="#font___________3"
+           id="use330"
+           x="0"
+           y="0" />
+      </g>
+      <g
+         id="g336">
+        <use
+           fill="#000000"
+           height="38.549999"
+           transform="matrix(0.1953,0,0,0.1953,1.5,18.6)"
+           width="10.3"
+           xlink:href="#font___________4"
+           id="use334"
+           x="0"
+           y="0" />
+      </g>
+      <g
+         id="g340">
+        <use
+           fill="#000000"
+           height="38.549999"
+           transform="matrix(0.1953,0,0,0.1953,1.4,28.6)"
+           width="10.3"
+           xlink:href="#font___________5"
+           id="use338"
+           x="0"
+           y="0" />
+      </g>
+      <g
+         id="g344">
+        <use
+           fill="#000000"
+           height="38.549999"
+           transform="matrix(0.1953,0,0,0.1953,3.05,38.6)"
+           width="10.3"
+           xlink:href="#font___________6"
+           id="use342"
+           x="0"
+           y="0" />
+      </g>
+    </g>
+    <g
+       id="font___________3">
+      <path
+         d="m 20.2,-27.8 -3.2,4.2 v 1.8 q 9.4,-8 17.6,-8 4.8,0 7.4,2.6 2.6,2.6 2.6,11.4 0,4.6 -0.6,7.8 2.6,1.2 5.2,2.8 L 46.4,-1 42.6,-3.8 Q 40,2 33,2 28.2,2 26.2,0 q -2,-2 -2,-4.8 0,-2.6 1.8,-4.4 2.2,-2.2 5.8,-2.2 4,0 8,1.6 0.4,-2.4 0.4,-6.2 0,-6.6 -1.8,-8.4 -1.4,-1.4 -4.2,-1.4 -7.6,0 -17.2,8.8 V 3.4 H 13 V -13 L 5.4,-3.6 2.2,-6.4 q 7,-7 10.8,-14.4 v -3 l -9.4,2.2 -0.8,-4.2 10.2,-1.8 v -12.8 h 3.6 q 2.2,0.4 0.4,1.6 v 8.8 l 3.2,2.2 m 7.6,23.2 q 0,1.2 0.8,2 1.2,1.2 3.6,1.2 5,0 7,-4.6 -4.6,-2 -6.4,-2 -2.8,0 -4,1.2 -1,1 -1,2.2"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path347" />
+    </g>
+    <g
+       id="font___________4">
+      <path
+         d="m 34.2,-38.6 8.2,5.6 -2,2.8 Q 36,-33.6 32,-36 l 2.2,-2.6 M 37,-43 q 4.4,2.6 8.2,5.8 l -2,2.6 q -4.4,-3.6 -8.2,-5.8 l 2,-2.6 m -13.2,13.8 q 0.8,2.4 2.4,5 6.4,-1 12.6,-2.8 l 1.8,4.2 q -5.2,1.2 -12.2,2.2 3,4 7.8,7.6 l -3.4,3.4 q -7.2,-1.6 -11.4,-1.6 -8,0 -10.4,2.4 -1.4,1.4 -1.4,3 0,2 1.2,3.2 1.6,1.6 9,1.6 H 32 L 31.2,3.4 H 19 Q 11,3.4 7.8,0.2 5.4,-2.2 5.4,-6 q 0,-3 2.2,-5.2 3.4,-3.4 14,-3.4 l 7.2,0.6 -5,-5.8 -20.6,1.2 -0.6,-4.2 19.2,-0.8 q -1.4,-2.6 -2.2,-5 L 4.2,-28 3.8,-32 q 8.2,0.2 14.8,-0.4 -1,-3.6 -1.6,-8.2 h 4.4 q 2,0.4 0.2,1.6 l 1,6 q 5.2,-0.6 10.6,-2 l 1.4,4 -10.8,1.8"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path350" />
+    </g>
+    <g
+       id="font___________5">
+      <path
+         d="m 34,-37.2 q 3.6,2.2 7.8,5.2 l -1.8,2.8 -7.8,-5.2 1.8,-2.8 m 4,-4 q 3.2,1.8 7.8,5.2 l -1.8,2.8 q -4.4,-3.2 -7.8,-5.2 L 38,-41.2 M 26,-27.6 16.2,-26 Q 13.2,-8.2 8.8,2.2 L 4.4,0.8 Q 9.8,-11.8 12,-25.6 l -8.6,0.4 -0.8,-4 10,-0.4 1.4,-10.8 4,0.8 q 2.2,0.6 0.4,1.6 l -1.6,8 q 4.6,-0.6 8.4,-1.6 l 0.8,4 M 23.4,-20 Q 32,-23.4 42,-23.4 l 0.8,4.2 q -11.6,0.4 -18.2,3.2 l -1.2,-4 m -1,14.6 q 5.2,2.8 12.6,2.8 h 8.8 V 1.8 H 35 q -7.6,0 -14.4,-3.6 l 1.8,-3.6"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path353" />
+    </g>
+    <g
+       id="font___________6">
+      <path
+         d="m 26,-38.2 q 1.8,2 -1,1.6 -3,4.4 -15.8,16.4 -0.8,0.8 -0.8,1.4 0,1.2 0.8,1.8 11.2,8.8 18,16.6 l -3.6,3.6 q -7,-8.2 -17.2,-17 -3,-2.6 -3,-4.6 0,-2.2 2.2,-4.2 13,-12.2 16.8,-18.4 l 3.6,2.8"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path356" />
+    </g>
+    <g
+       id="text2"
+       transform="translate(-1.65,-0.15)">
+      <g
+         id="g361">
+        <use
+           fill="#000000"
+           height="29.200001"
+           transform="matrix(0.1953,0,0,0.1953,1.2,8.6)"
+           width="11.2"
+           xlink:href="#font___________7"
+           id="use359"
+           x="0"
+           y="0" />
+      </g>
+      <g
+         id="g365">
+        <use
+           fill="#000000"
+           height="29.200001"
+           transform="matrix(0.1953,0,0,0.1953,2.85,18.6)"
+           width="11.2"
+           xlink:href="#font___________8"
+           id="use363"
+           x="0"
+           y="0" />
+      </g>
+      <g
+         id="g369">
+        <use
+           fill="#000000"
+           height="29.200001"
+           transform="matrix(0.1953,0,0,0.1953,2,28.6)"
+           width="11.2"
+           xlink:href="#font___________9"
+           id="use367"
+           x="0"
+           y="0" />
+      </g>
+    </g>
+    <g
+       id="font___________7">
+      <path
+         d="m 36.4,-41.4 q 2.8,2.4 5.6,6.4 l -2.6,2 q -3.2,-4.6 -5.2,-6.2 l 2.2,-2.2 m -12.8,10.4 14.6,-2 0.8,4.2 -14.2,1.8 2,9.4 18.8,-2.2 0.8,4.2 -18.6,2 3.8,16.2 -4.4,1 -3.8,-16.6 -20.4,2.4 -0.6,-4.2 20,-2.2 -2,-9.4 -13.6,1.6 -0.8,-4.2 13.2,-1.4 -2,-9.2 4.2,-0.6 q 1.8,-0.2 0.6,1.4 l 1.6,7.8 m 22.2,-3.4 q -3,-4 -5.8,-6.6 l 2.4,-2.2 q 3,2.8 6,6.6 l -2.6,2.2"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path372" />
+    </g>
+    <g
+       id="font___________8">
+      <path
+         d="m 3.6,-16 h 19.2 v -8 H 2.4 v -3.8 h 24.4 v 30 h -4 V 0 H 2.4 v -3.8 h 20.4 v -8.4 H 3.6 V -16"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path375" />
+    </g>
+    <g
+       id="font___________9">
+      <path
+         d="M 37.2,-27.4 Q 33.4,-5.6 12.2,3.8 L 8.6,0 q 19.6,-8 23.6,-27.6 h -16 Q 11.6,-20 6.6,-15.4 L 2.6,-18 Q 13,-27.4 16,-40 l 4.6,1.6 q 1.2,0.6 -0.4,1.2 -0.8,2.6 -2.2,5.2 h 14.4 l 1.8,-1 3.6,3.6 q 1.4,1.4 -0.6,2"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path378" />
+    </g>
+    <g
+       id="text3"
+       transform="translate(-1.4,-0.55)">
+      <g
+         id="g383">
+        <use
+           fill="#000000"
+           height="39.049999"
+           transform="matrix(0.1953,0,0,0.1953,1,8.6)"
+           width="12.4"
+           xlink:href="#font___________10"
+           id="use381"
+           x="0"
+           y="0" />
+      </g>
+      <g
+         id="g387">
+        <use
+           fill="#000000"
+           height="39.049999"
+           transform="matrix(0.1953,0,0,0.1953,1,18.6)"
+           width="12.4"
+           xlink:href="#font___________11"
+           id="use385"
+           x="0"
+           y="0" />
+      </g>
+      <g
+         id="g391">
+        <use
+           fill="#000000"
+           height="39.049999"
+           transform="matrix(0.1953,0,0,0.1953,1,28.6)"
+           width="12.4"
+           xlink:href="#font___________12"
+           id="use389"
+           x="0"
+           y="0" />
+      </g>
+      <g
+         id="g395">
+        <use
+           fill="#000000"
+           height="39.049999"
+           transform="matrix(0.1953,0,0,0.1953,1,38.6)"
+           width="12.4"
+           xlink:href="#font___________13"
+           id="use393"
+           x="0"
+           y="0" />
+      </g>
+    </g>
+    <g
+       id="font___________10">
+      <path
+         d="m 24,-41.2 h 4.4 q 1.6,0.2 0.2,1.2 v 10 H 43 v 3.8 H 28.6 v 10.4 h 19 v 4.4 h -19 V 4 H 24 V -11.4 H 4 v -4.4 H 24 V -26.2 H 13.8 q -2,4.2 -5.6,8 l -3.4,-3.2 q 5.4,-5.2 8.4,-16.2 l 4.6,1.4 q 0.8,0.8 -0.6,1 L 15.4,-30 H 24 v -11.2"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path398" />
+    </g>
+    <g
+       id="font___________11">
+      <path
+         d="m 38.6,-34.6 h 7.2 v 3.8 H 38.6 V -24 H 48 v 3.8 H 25.6 V -24 h 9 v -6.8 h -7.4 v -3.8 h 7.4 v -6.6 h 3.8 q 1.6,0.2 0.2,1.2 v 5.4 M 22.2,-36 18.4,-29.2 H 24 V -8.8 H 6.6 v -16.6 l -3,3.2 -1.6,-4 q 6.8,-6.4 9.2,-15 l 4,0.6 q 0.8,0.8 -0.6,1 l -0.4,1.2 h 5.2 l 0.4,-0.6 3,2.4 -0.6,0.6 m -9.2,0.8 q -1.4,3.2 -3.4,6 h 5.2 l 3,-6 H 13 m -3,9.2 v 5.6 h 3.6 V -26 H 10 M 9.2,-5.8 Q 8.8,-0.6 6.4,4.4 l -4,-1.6 q 2.4,-5 3,-9.6 l 3.8,1 m 10,-0.6 q 2.2,4.4 2.4,8.2 l -4,1 q -0.4,-4.4 -1.8,-8.4 l 3.4,-0.8 M 14,-5.8 q 1.2,4 0.8,9 L 10.6,3.6 Q 11,-1 10.4,-5.8 H 14 m 3,-6.2 h 3.6 v -5.2 H 17 v 5.2 m -3.4,0 v -5.2 H 10 v 5.2 h 3.6 m 25,-1.2 h 7.6 v 3.8 H 38.6 V -1 H 48.8 V 2.8 H 24 L 24.2,-1 q -1.4,-3.6 -2.8,-5.4 l 3,-1.4 q 2,2.2 3.2,5.4 L 24.8,-1 h 9.8 v -8.4 h -7.4 v -3.8 h 7.4 v -5.6 h 3.8 q 1.6,0.2 0.2,1.2 v 4.4 M 17,-20.4 h 3.6 V -26 H 17 v 5.6"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path401" />
+    </g>
+    <g
+       id="font___________12">
+      <path
+         d="M 27.8,-35.6 H 46.2 V -25 h -4 v -6.8 H 9 v 7.2 H 5 v -11 h 18.2 v -5.8 h 4.4 q 2,0.4 0.2,1.6 v 4.2 m -10.2,18.2 q 0.6,0.6 -0.4,1.2 l -1,7.2 q 3,3.6 7.8,6.2 V -22.2 H 10.4 V -26 h 30.2 v 3.8 H 28 v 7.4 H 42 V -11 H 28 v 9.6 q 3,0.8 6,0.8 H 47.2 L 46.4,3.2 H 34 Q 22.4,3.2 15,-5.2 12,1.4 6.6,4.8 L 3.4,1 q 9.8,-6 9.6,-19.2 l 4.6,0.8"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path404" />
+    </g>
+    <g
+       id="font___________13">
+      <path
+         d="m 27.6,-39.4 q 7,7.8 21,11.2 l -2.4,4.2 q -2.6,-0.4 -8,-2.8 v 15.6 l 2.6,-2.6 3.6,3.6 q 0.2,1 -1,0.6 l -9.6,6.2 q 3.8,2.6 13.8,3.6 L 45.8,4.4 Q 28.4,2.8 23.6,-10.4 h -7.4 v 9 L 27.8,-2.8 V 0.8 L 7.8,4 Q 7.6,5.6 6.8,4.6 L 5.6,-0.6 12.2,-1 v -25.8 q -4.2,2.2 -8,3.6 l -1.6,-4.2 q 15.6,-4.8 20.2,-14.2 l 5.4,0.6 q 0.8,0.8 -0.6,1 v 0.6 m -4.2,7 h 3.8 q 1.6,0.2 0.2,1.2 v 4 h 10 q -6,-2.8 -12.4,-10 -4.4,5.8 -12,10 h 10.4 v -5.2 m -7.2,12 h 18 V -24 h -18 v 3.6 m 0,6.8 h 18 v -3.6 h -18 v 3.6 m 11.2,3.2 q 0.8,2.2 3.6,5 l 6.2,-5 h -9.8"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path407" />
+    </g>
+    <g
+       id="sprite1"
+       transform="translate(24.7,30.5)">
+      <use
+         height="61"
+         transform="translate(-24.7,-30.5)"
+         width="49.450001"
+         xlink:href="#shape2"
+         id="use410"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="shape2"
+       transform="translate(24.7,30.5)">
+      <pattern
+         height="158"
+         id="PatternID_109_1"
+         overflow="visible"
+         patternTransform="matrix(0.3861, 0.0, 0.0, 0.3861, -24.7, -30.5)"
+         patternUnits="userSpaceOnUse"
+         viewBox="0 0 128 158"
+         width="128">
+        <image
+           height="158"
+           width="128"
+           xlink:href="data:image/PNG;base64,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"
+           id="image413" />
+      </pattern>
+      <path
+         d="m -24.7,-30.5 h 49.45 v 61 H -24.7 v -61"
+         style="fill:url(#PatternID_109_1)"
+         id="path416" />
+    </g>
+    <g
+       id="shape3"
+       transform="translate(200.5,150.5)">
+      <path
+         d="M -200,130 V 50 l 400,-200 v 80 l -400,200"
+         fill="#ffdbb7"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path419" />
+      <path
+         d="M -200,130 200,-70 v 20 l -400,200 v -20"
+         fill="#e6792b"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path421" />
+      <path
+         d="m 200,-70 v -80 L -200,50 v 80 L 200,-70 v 20 l -400,200 v -20"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path423" />
+    </g>
+    <g
+       id="sprite2"
+       transform="translate(80.5,120.5)">
+      <use
+         height="161"
+         transform="translate(-80.5,-120.5)"
+         width="121"
+         xlink:href="#shape4"
+         id="use426"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="shape4"
+       transform="translate(80.5,120.5)">
+      <path
+         d="M 40,-20 V 0 L -40,40 V 20 l 80,-40"
+         fill="#e6792b"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path429" />
+      <path
+         d="m 40,-100 v 80 l -80,40 v -80 l 80,-40"
+         fill="#ffdbb7"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path431" />
+      <path
+         d="m -80,0 v -80 l 80,-40 40,20 -80,40 V 20 L -80,0 m 0,-80 40,20 -40,-20"
+         fill="#ffe7ce"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path433" />
+      <path
+         d="M -40,40 -80,20 V 0 l 40,20 v 20"
+         fill="#e98d3b"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path435" />
+      <path
+         d="m -80,0 v -80 l 80,-40 40,20 V -20 0 L -40,40 -80,20 V 0 l 40,20 V -60 L -80,-80 M -40,40 V 20 l 80,-40 m -80,-40 80,-40"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path437" />
+    </g>
+    <g
+       id="sprite3"
+       transform="translate(120.5,140.5)">
+      <use
+         height="221"
+         transform="translate(-120.5,-140.5)"
+         width="161"
+         xlink:href="#shape5"
+         id="use440"
+         x="0"
+         y="0" />
+      <use
+         height="61"
+         transform="matrix(1,-0.5061,0,1,-75.7,-33.5004)"
+         width="49.450001"
+         xlink:href="#sprite1"
+         id="use442"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="shape5"
+       transform="translate(120.5,140.5)">
+      <path
+         d="M 40,-20 V 0 l -80,40 -80,40 V 60 l 80,-40 80,-40"
+         fill="#e6792b"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path445" />
+      <path
+         d="m 40,-100 v 80 l -80,40 -80,40 v -80 l 80,-40 80,-40"
+         fill="#ffdbb7"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path447" />
+      <path
+         d="m 0,-120 40,20 -80,40 v -80 l 40,20"
+         fill="#ffe7ce"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path449" />
+      <path
+         d="m 40,-100 v 80 20 l -80,40 m 0,-100 v -80 l 40,20 m 40,20 -80,40 m 0,80 80,-40"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path451" />
+      <path
+         d="m 0,-120 40,20 M -40,40 -120,80 V 60 -20 l 80,-40 m 0,80 -80,40"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path453" />
+    </g>
+    <g
+       id="sprite4"
+       transform="translate(40.5,55.25)">
+      <use
+         height="75.75"
+         transform="translate(-40.5,-55.25)"
+         width="81"
+         xlink:href="#shape6"
+         id="use456"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="shape6"
+       transform="translate(40.5,55.25)">
+      <path
+         d="m 34.95,-54.75 5.05,2.5 -40,20 v 47.1 L -5.05,12.35 -40,-5.15 v -20 l 34.95,17.5 v -27.1 L 13.9,-44.2 34.95,-54.75 m -40,47.1 v 20 -20"
+         fill="#e98d3b"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path459" />
+      <path
+         d="m -40,-25.15 v -6 l 40,-20 13.9,6.95 -18.95,9.45 v 27.1 L -40,-25.15"
+         fill="#ffe7ce"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path461" />
+      <path
+         d="M 40,-5.15 V 0 L 0,20 -40,0 V -5.15 L -5.05,12.35 0,14.85 V 20 14.85 l 40,-20"
+         fill="#bcbcbc"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path463" />
+      <path
+         d="m 40,-52.25 v 47.1 l -40,20 v -47.1 l 40,-20"
+         fill="#e6792b"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path465" />
+      <path
+         d="M 40,0 0,20 -40,0 M 0,14.85 V 20 m 0,-5.15 40,-20 m -80,-20 34.95,17.5 v -27.1 m 0,47.1 v -20 M -40,-5.15 -5.05,12.35 0,14.85"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path467" />
+      <path
+         d="M 40,-5.15 V 0 m -80,0 v -5.15 -20 M 13.9,-44.2 34.95,-54.75 M 0,-32.25 l 40,-20 m -45.05,17.5 18.95,-9.45"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path469" />
+    </g>
+    <g
+       id="sprite5"
+       transform="translate(491.05,51.15)">
+      <use
+         height="22.700001"
+         transform="translate(-91.05,-51.15)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use472"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-51.05,-31.15)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use474"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-11.05,-11.15)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use476"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(68.95,28.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use478"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-251.05,28.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use480"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-211.05,48.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use482"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-171.05,68.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use484"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-131.05,88.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use486"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-91.05,108.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use488"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(28.95,128.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use490"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(68.95,108.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use492"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(108.95,88.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use494"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(28.95,8.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use496"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-331.05,68.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use498"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-291.05,88.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use500"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-251.05,108.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use502"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-211.05,128.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use504"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-171.05,148.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use506"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-491.05,148.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use508"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-451.05,168.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use510"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-411.05,188.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use512"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-371.05,208.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use514"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-331.05,228.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use516"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-211.05,248.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use518"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-171.05,228.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use520"
+         x="0"
+         y="0" />
+      <use
+         height="22.700001"
+         transform="translate(-131.05,208.85)"
+         width="22.549999"
+         xlink:href="#shape7"
+         id="use522"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="shape7"
+       transform="translate(11.05,17.15)">
+      <path
+         d="M 5,-2.85 7.75,-2 q 3.15,1.25 3.2,3.1 v 0.1 q -0.1,1.45 -2.1,2.55 l -1.1,0.5 Q 5.65,5.1 3,5.4 L 0.15,5.55 -2.5,5.45 Q -5.3,5.15 -7.45,4.25 L -8.5,3.75 q -1.9,-1 -2.1,-2.3 V 1.15 1.1 q 0,-1.85 3.15,-3.1 l 2.85,-0.85 0.55,0.1 1.6,0.2 0.5,0.05 0.45,0.05 v 0.6 q -1.75,0.15 -3.05,0.75 l -0.4,0.15 Q -6.5,-0.2 -6.5,0.8 v 0.05 0.2 q 0.1,0.8 1.3,1.4 L -4.55,2.8 -1.45,3.5 0.2,3.6 1.95,3.5 4.9,2.8 5.6,2.45 Q 6.85,1.75 6.9,0.9 V 0.8 Q 6.85,-0.2 5.3,-0.95 L 4.9,-1.1 1.75,-1.85 v -0.6 L 2.4,-2.5 3,-2.55 4.45,-2.75 5,-2.85"
+         fill="#000000"
+         fill-opacity="0.501961"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path525" />
+      <path
+         d="m -10.55,-11.9 v -0.3 -0.05 q 0,-1.85 3.15,-3.1 3.15,-1.3 7.6,-1.3 4.45,0 7.6,1.3 3.15,1.25 3.2,3.1 v 0.1 Q 10.9,-10.7 8.9,-9.6 L 7.8,-9.1 Q 5.7,-8.25 3.05,-7.95 L 0.2,-7.8 -2.45,-7.9 q -2.8,-0.3 -4.95,-1.2 l -1.05,-0.5 q -1.9,-1 -2.1,-2.3"
+         fill="url(#gradient0)"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path527" />
+      <path
+         d="m -10.55,-11.9 q 0.2,1.3 2.1,2.3 l 1.05,0.5 q 2.15,0.9 4.95,1.2 L 0.2,-7.8 3.05,-7.95 Q 5.7,-8.25 7.8,-9.1 l 1.1,-0.5 q 2,-1.1 2.1,-2.55 v 5.3 q -0.05,1.7 -2.75,2.95 L 7.8,-3.7 5.65,-3 5,-2.85 4.45,-2.75 3,-2.55 2.4,-2.5 1.75,-2.45 0.2,-2.4 -1.5,-2.45 -1.95,-2.5 l -0.5,-0.05 -1.6,-0.2 -0.55,-0.1 -0.7,-0.2 -2.1,-0.65 -0.45,-0.2 q -2.7,-1.25 -2.7,-2.95 v -5.05"
+         fill="url(#gradient1)"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path529" />
+      <path
+         d="m 1.75,-2.45 v 0.6 L 4.9,-1.1 5.3,-0.95 Q 6.85,-0.2 6.9,0.8 V 0.9 Q 6.85,1.75 5.6,2.45 L 4.9,2.8 1.95,3.5 0.2,3.6 -1.45,3.5 -4.55,2.8 -5.2,2.45 Q -6.4,1.85 -6.5,1.05 V 0.85 0.8 q 0,-1 1.55,-1.75 l 0.4,-0.15 q 1.3,-0.6 3.05,-0.75 v -0.6 l 1.7,0.05 1.55,-0.05 m 0,0.6 V 0.8 L 1.45,1.15 1.25,1.25 0.55,1.4 0.1,1.45 H -0.3 L -1.1,1.25 -1.25,1.15 -1.55,0.8 V 0.75 l 0.05,-0.2 v -2.4 2.4 l -0.05,0.2 V 0.8 l 0.3,0.35 0.15,0.1 0.8,0.2 H 0.1 L 0.55,1.4 1.25,1.25 1.45,1.15 1.75,0.8 v -2.65"
+         fill="#cdcdcd"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path531" />
+      <path
+         d="m 11,-12.15 v -0.1 q -0.05,-1.85 -3.2,-3.1 -3.15,-1.3 -7.6,-1.3 -4.45,0 -7.6,1.3 -3.15,1.25 -3.15,3.1 v 0.05 0.3 q 0.2,1.3 2.1,2.3 l 1.05,0.5 q 2.15,0.9 4.95,1.2 L 0.2,-7.8 3.05,-7.95 Q 5.7,-8.25 7.8,-9.1 l 1.1,-0.5 q 2,-1.1 2.1,-2.55 v 5.3 q -0.05,1.7 -2.75,2.95 L 7.8,-3.7 5.65,-3 5,-2.85 4.45,-2.75 3,-2.55 2.4,-2.5 1.75,-2.45 v 0.6 L 4.9,-1.1 5.3,-0.95 Q 6.85,-0.2 6.9,0.8 M -4.6,-2.85 -5.3,-3.05 -7.4,-3.7 -7.85,-3.9 q -2.7,-1.25 -2.7,-2.95 V -11.9 M 6.9,0.9 Q 6.85,1.75 5.6,2.45 L 4.9,2.8 1.95,3.5 0.2,3.6 -1.45,3.5 -4.55,2.8 -5.2,2.45 q -1.2,-0.6 -1.3,-1.4 v -0.2 m 0,-0.05 q 0,-1 1.55,-1.75 l 0.4,-0.15 q 1.3,-0.6 3.05,-0.75 v -0.6 l -0.45,-0.05 -0.5,-0.05 -1.6,-0.2 -0.55,-0.1 m 6.35,0.4 -1.55,0.05 -1.7,-0.05 m 0,0.6 v 2.4 l -0.05,0.2 V 0.8 l 0.3,0.35 0.15,0.1 0.8,0.2 H 0.1 L 0.55,1.4 1.25,1.25 1.45,1.15 1.75,0.8 v -2.65"
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path533" />
+    </g>
+    <radialGradient
+       cx="0"
+       cy="0"
+       gradientTransform="matrix(0.0132,0,0,0.0132,0.2,-12.35)"
+       gradientUnits="userSpaceOnUse"
+       id="gradient0"
+       r="819.20001"
+       spreadMethod="pad">
+      <stop
+         offset="0.0"
+         stop-color="#ff0000"
+         id="stop536" />
+      <stop
+         offset="1.0"
+         stop-color="#7d0000"
+         id="stop538" />
+    </radialGradient>
+    <radialGradient
+       cx="0"
+       cy="0"
+       gradientTransform="matrix(0.0156,0,0,0.0156,0.2,-5.25)"
+       gradientUnits="userSpaceOnUse"
+       id="gradient1"
+       r="819.20001"
+       spreadMethod="pad">
+      <stop
+         offset="0.0"
+         stop-color="#ff0000"
+         id="stop541" />
+      <stop
+         offset="1.0"
+         stop-color="#7d0000"
+         id="stop543" />
+    </radialGradient>
+    <g
+       id="sprite6"
+       transform="translate(40.5,51.65)">
+      <use
+         height="40"
+         transform="translate(-40,-20)"
+         width="80"
+         xlink:href="#shape0"
+         id="use546"
+         x="0"
+         y="0" />
+      <use
+         height="72.150002"
+         transform="translate(-40.5,-51.65)"
+         width="81"
+         xlink:href="#shape8"
+         id="use548"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="shape8"
+       transform="translate(40.5,51.65)">
+      <path
+         d="M 18.45,-10.8 40,-0.05 18.45,10.75 V 5.65 -10.8"
+         fill="#000000"
+         fill-opacity="0.501961"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path551" />
+      <path
+         d="m 34.15,-22.2 -0.05,-6 -40,-20 5.9,-2.95 40,20 v 6 l -5.85,2.95 m -74.15,-2.95 40,20 18.45,-9.2 V -10.8 5.65 L 0,14.85 v -20 20 L -18.7,5.5 h -0.05 0.05 -0.05 L -40,-5.15 v -20"
+         fill="#e98d3b"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path553" />
+      <path
+         d="m -5.9,-48.2 40,20 0.05,6 -15.7,7.85 -18.45,9.2 -40,-20 v -6 L -5.9,-48.2 m 5.9,37.05 -40,-20 40,20"
+         fill="#ffe7ce"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path555" />
+      <path
+         d="M 18.45,10.75 0,20 -18.75,10 -40,-0.65 v -4.5 L -18.75,5.5 h 0.05 L 0,14.85 V 20 14.85 l 18.45,-9.2 v 5.1"
+         fill="#bcbcbc"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path557" />
+      <path
+         d="m -5.9,-48.2 40,20 0.05,6 5.85,-2.95 v -6 l -40,-20 m -40,20 40,20 m -40,-14 40,20 18.45,-9.2 15.7,-7.85 m -15.7,7.85 v 3.55 m 0,21.55 L 0,20 -18.75,10 -40,-0.65 v -4.5 -20 m 40,40 V 20 M 0,14.85 18.45,5.65 V -10.8 M 0,14.85 v -20 M -18.75,5.5 h 0.05 -0.05 L -40,-5.15 m 40,20 -18.7,-9.35"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path559" />
+      <path
+         d="m 18.45,5.65 v 5.1"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path561" />
+    </g>
+    <g
+       id="sprite7"
+       transform="translate(40.5,51.65)">
+      <use
+         height="40"
+         transform="translate(-40,-20)"
+         width="80"
+         xlink:href="#shape0"
+         id="use564"
+         x="0"
+         y="0" />
+      <use
+         height="71.650002"
+         transform="translate(-40.5,-51.65)"
+         width="62.450001"
+         xlink:href="#shape9"
+         id="use566"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="shape9"
+       transform="translate(40.5,51.65)">
+      <path
+         d="M 0,-11.15 3.7,-13 8.45,-15.65 q 10.5,-6.4 12.55,-12.7 0.4,-1.45 0.45,-2.8 -0.05,1.35 -0.45,2.8 -2.05,6.3 -12.55,12.7 L 3.7,-13 0,-11.15 m 21.45,-20.4 v 0.4 5.55 0.15 Q 21.5,-19.15 13,-12.7 9.2,-9.85 3.7,-7 L 0,-5.15 -5.9,-8.1 v -6 q 5.05,-2.25 8.85,-4.4 27.9,-16 -8.9,-29.65 l 5.95,-3 6.95,3.5 q 14.35,7.95 14.5,16.1 M -40,-5.15 v -20 l 21.3,10.65 -0.05,20 h 0.05 -0.05 L -40,-5.15"
+         fill="#e98d3b"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path569" />
+      <path
+         d="m 13,-12.7 q 2.95,2.15 4.9,4.4 3.5,3.9 3.55,7.9 V 0 L 21,2.8 Q 18.5,10.4 3.7,18.15 L 0,20 -18.7,10 0,0.65 v -4.5 -1.3 L 3.7,-7 q 5.5,-2.85 9.3,-5.7"
+         fill="#000000"
+         fill-opacity="0.501961"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path571" />
+      <path
+         d="m 0,-5.15 v 1.3 L -18.7,5.5 h -0.05 l 0.05,-20 12.8,6.4 5.9,2.95"
+         fill="#c96318"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path573" />
+      <path
+         d="m -18.7,10 h -0.05 L -40,-0.65 v -4.5 L -18.75,5.5 h 0.05 L 0,-3.85 v 4.5 L -18.7,10 V 5.55 10 m 0,-4.5 V 5.55 5.5"
+         fill="#bcbcbc"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path575" />
+      <path
+         d="m -40,-25.15 v -6 l 34.05,-17 q 36.8,13.65 8.9,29.65 -3.8,2.15 -8.85,4.4 v 6 L -18.7,-14.5 -40,-25.15"
+         fill="#ffe7ce"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path577" />
+      <path
+         d="m 21.45,-31.15 q -0.05,1.35 -0.45,2.8 -2.05,6.3 -12.55,12.7 L 3.7,-13 0,-11.15 m 21.45,-14.3 Q 21.5,-19.15 13,-12.7 9.2,-9.85 3.7,-7 L 0,-5.15 -5.9,-8.1 v -6 M -18.7,10 h -0.05 L -40,-0.65 v -4.5 -20 -6 m 40,-20 6.95,3.5 q 14.35,7.95 14.5,16.1 M 0,0.65 -18.7,10 m 0,-4.45 V 5.5 h -0.05 L -40,-5.15 m 0,-20 21.3,10.65 12.8,6.4 M -18.7,5.5 h -0.05 l 0.05,-20 M 0,-3.85 -18.7,5.5"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path579" />
+      <path
+         d="m 21.45,-31.55 v 0.4 5.55 0.15 M 0,-5.15 v 1.3 4.5 M -18.7,10 V 5.55 M -5.9,-14.1 q 5.05,-2.25 8.85,-4.4 27.9,-16 -8.9,-29.65"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path581" />
+    </g>
+    <g
+       id="sprite8"
+       transform="translate(40.5,51.65)">
+      <use
+         height="40"
+         transform="translate(-40,-20)"
+         width="80"
+         xlink:href="#shape0"
+         id="use584"
+         x="0"
+         y="0" />
+      <use
+         height="71.650002"
+         transform="translate(-40.5,-51.65)"
+         width="81"
+         xlink:href="#shape10"
+         id="use586"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="shape10"
+       transform="translate(40.5,51.65)">
+      <path
+         d="m -40,-5.15 v -20 l 21.3,10.65 -0.05,20 h 0.05 -0.05 L -40,-5.15 m 74.1,-28.95 5.9,2.95 v 6 L 21.25,-15.75 0,-5.15 -5.9,-8.1 v -6 l 40,-20 M 0,-11.15 l 40,-20 -40,20"
+         fill="#e98d3b"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path589" />
+      <path
+         d="m 21.25,-15.75 v 1.25 l -39.95,20 h -0.05 l 0.05,-20 12.8,6.4 5.9,2.95 21.25,-10.6"
+         fill="#c96318"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path591" />
+      <path
+         d="m 21.25,-14.5 v 0.05 4.45 L -18.7,10 h -0.05 L -40,-0.65 v -4.5 L -18.75,5.5 h 0.05 l 39.95,-20 M -18.7,5.55 V 5.5 5.55 10 5.55"
+         fill="#bcbcbc"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path593" />
+      <path
+         d="m -40,-25.15 v -6 l 40,-20 34.1,17.05 -40,20 v 6 L -18.7,-14.5 -40,-25.15"
+         fill="#ffe7ce"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path595" />
+      <path
+         d="M 21.25,-10 40,0 0,20 -18.7,10 21.25,-10"
+         fill="#000000"
+         fill-opacity="0.501961"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path597" />
+      <path
+         d="m 21.25,-14.5 v 0.05 M -18.7,10 h -0.05 L -40,-0.65 v -4.5 -20 -6 l 40,-20 m 40,26 -18.75,9.4 v 1.25 l -39.95,20 v 0.05 m 0,4.45 39.95,-20 m 0,-5.75 L 0,-5.15 -5.9,-8.1 l -12.8,-6.4 -0.05,20 h 0.05 -0.05 L -40,-5.15 m 80,-26 -40,20 m 34.1,-22.95 -40,20 v 6 M -40,-25.15 -18.7,-14.5"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path599" />
+      <path
+         d="M 21.25,-14.45 V -10 M -18.7,5.55 V 10"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path601" />
+    </g>
+    <g
+       id="sprite9"
+       transform="translate(40.5,51.15)">
+      <use
+         height="40"
+         transform="translate(-40,-20)"
+         width="80"
+         xlink:href="#shape0"
+         id="use604"
+         x="0"
+         y="0" />
+      <use
+         height="62.400002"
+         transform="translate(-40.5,-51.15)"
+         width="81"
+         xlink:href="#shape11"
+         id="use606"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="shape11"
+       transform="translate(40.5,51.15)">
+      <path
+         d="m -40,-31.15 9.55,4.8 q 15.05,6.45 30.25,6.45 15.95,0 32.05,-7.15 l 8.15,-4.1 -8.15,4.1 q -16.1,7.15 -32.05,7.15 -15.2,0 -30.25,-6.45 l -9.55,-4.8 q 3,-1.5 5.95,-2.95 l 3.6,1.8 Q 0.4,-19.05 31.85,-33 l 2.25,-1.1 5.9,2.95 v 6 l -8.15,4.1 q -5.3,2.35 -10.6,3.95 Q 10.6,-13.95 0,-13.9 l -10.65,-0.75 q -4.05,-0.6 -8.1,-1.65 l -2.5,-0.7 q -4.6,-1.4 -9.2,-3.35 l -9.55,-4.8 v -6 m 21.3,16.65 -0.05,1.25 v -1.25 h 0.05 m -0.05,20 h 0.05 -0.05"
+         fill="#e98d3b"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path609" />
+      <path
+         d="m 34.1,-34.1 -2.25,1.1 q -31.45,13.95 -62.3,0.7 l -3.6,-1.8 L 0,-51.15 34.1,-34.1"
+         fill="#ffe7ce"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path611" />
+      <path
+         d="m -21.25,-17 2.5,0.7 q 4.05,1.05 8.1,1.65 L 0,-13.9 q 10.6,-0.05 21.25,-3.2 v 1.35 1.25 L 0,-3.85 V -13.9 -3.85 l -18.75,-9.4 -2.5,-1.25 V -17 m 2.55,2.5 h -0.05 v 1.25 l 0.05,-1.25"
+         fill="#c96318"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path613" />
+      <path
+         d="m 21.25,-14.5 v 0.05 4.45 L 0,0.65 v -4.5 4.5 L -21.25,-10 v -4.5 l 2.5,1.25 L 0,-3.85 21.25,-14.5"
+         fill="#bcbcbc"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path615" />
+      <path
+         d="M 0,0.65 21.25,-10 40,0 31.65,4.2 Q 3.25,16.7 -24.65,7.05 L -39.3,-0.3 h -0.05 l 0.55,-0.3 0.15,-0.05 L -21.25,-10 0,0.65 m -39.3,-0.95 0.5,-0.3 -0.5,0.3 m 20.55,5.8 h 0.05 -0.05"
+         fill="#000000"
+         fill-opacity="0.501961"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path617" />
+      <path
+         d="m 40,-31.15 -8.15,4.1 q -16.1,7.15 -32.05,7.15 -15.2,0 -30.25,-6.45 l -9.55,-4.8 m 0,6 9.55,4.8 q 4.6,1.95 9.2,3.35 l 2.5,0.7 q 4.05,1.05 8.1,1.65 L 0,-13.9 q 10.6,-0.05 21.25,-3.2 5.3,-1.6 10.6,-3.95 l 8.15,-4.1 m -5.9,-8.95 -2.25,1.1 q -31.45,13.95 -62.3,0.7 l -3.6,-1.8 m 55.3,19.6 v 0.05 m 0,-0.05 L 0,-3.85 M 0,0.65 21.25,-10 m -42.5,-4.5 2.5,1.25 L 0,-3.85 M -21.25,-10 0,0.65"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path619" />
+      <path
+         d="M 0,-3.85 V -13.9 m 21.25,-0.55 v -1.3 -1.35 M 0,-3.85 v 4.5 M 21.25,-10 v -4.45 m -42.5,4.45 v -4.5 -2.5"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path621" />
+      <path
+         d="m -38.8,-0.6 0.15,-0.05 m -0.15,0.05 -0.5,0.3"
+         fill="none"
+         stroke="#999999"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="0.05"
+         id="path623" />
+    </g>
+    <g
+       id="sprite10"
+       transform="translate(20,9.25)">
+      <use
+         height="26"
+         transform="translate(-20,-9.25)"
+         width="51"
+         xlink:href="#shape12"
+         id="use626"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="shape12"
+       transform="translate(20,9.25)">
+      <path
+         d="m 20.5,-8.75 -10,5 20,10 -20,10 -20,-10 -10,5 v -20 h 40"
+         fill="#ffff00"
+         fill-rule="evenodd"
+         stroke="none"
+         id="path629" />
+      <path
+         d="m 20.5,-8.75 h -40 v 20 l 10,-5 20,10 20,-10 -20,-10 z"
+         fill="none"
+         stroke="#ff0000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path631" />
+    </g>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="5.6160928"
+     inkscape:cx="86.041367"
+     inkscape:cy="25.427656"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1057"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="レイヤー 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-143.43814,-78.073864)">
+    <use
+       height="71.150002"
+       transform="matrix(0.2611048,0,0,0.26080843,143.43814,78.073864)"
+       width="81"
+       xlink:href="#sprite9"
+       id="use90"
+       x="0"
+       y="0"
+       style="stroke-width:0.908575" />
+  </g>
+</svg>

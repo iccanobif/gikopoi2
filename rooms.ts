@@ -138,7 +138,7 @@ export const rooms: { [roomId: string]: Room } = {
             left: { x: 0, y: 2, direction: "right", target: { roomId: "bar_st", doorId: "right" } },
             admin: { x: 2, y: 4, direction: "down", target: { roomId: "admin", doorId: "down" } },
             barrier: { x: 7, y: 4, direction: "down", target: { roomId: "radio_backstage", doorId: "right_center" } }, // Temp
-            down: { x: 7, y: 0, direction: "up", target: "NOT_READY_YET" },
+            down: { x: 7, y: 0, direction: "up", target: { roomId: "yoshinoya", doorId: "door" } },
             right: { x: 9, y: 2, direction: "left", target: { roomId: "takadai", doorId: "down_left" } },
             up_left: { x: 0, y: 8, direction: "down", target: "NOT_READY_YET" },
             manhole_left: { x: 2, y: 0, direction: "up", target: { roomId: "basement", doorId: "up_right_1" } },
@@ -400,7 +400,7 @@ export const rooms: { [roomId: string]: Room } = {
         needsFixedCamera: false,
         objects: [
             { x: 9, y: 0, url: "fences_and_thicket.svg", offset: { x: 176, y: 849 } },
-            
+
             { x: 1, y: 1, url: "house.svg", offset: { x: 923, y: 911 } },
             { x: 0, y: 5, url: "house_under.svg", offset: { x: 927, y: 939 } },
             { x: 2, y: 6, url: "hanging_thing.svg", offset: { x: 1178, y: 978 } },
@@ -416,7 +416,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 8, y: 3, url: "jizou.svg", offset: { x: 1317, y: 1171 } },
             { x: 8, y: 4, url: "jizou.svg", offset: { x: 1357, y: 1151 } },
             { x: 8, y: 5, url: "jizou.svg", offset: { x: 1397, y: 1131 } },
-            
+
             { x: 9, y: 7, url: "wall_front_with_bush.svg", offset: { x: 1509, y: 1098 } },
             { x: 8, y: 7, url: "wall_front_with_bush_and_hole.svg", offset: { x: 1469, y: 1078 } },
             { x: 7, y: 7, url: "wall_front_with_bush.svg", offset: { x: 1429, y: 1058 } },
@@ -425,13 +425,13 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 6, y: 6, url: "bush_cover.svg", offset: { x: 1388, y: 1082 } },
             { x: 7, y: 6, url: "bush_cover.svg", offset: { x: 1429, y: 1102 } },
             { x: 8, y: 6, url: "bush_cover.svg", offset: { x: 1469, y: 1122 } },
-            
+
             { x: 6, y: 8, url: "wall_back_with_bush_and_sign.svg", offset: { x: 1385, y: 1010 } },
             { x: 6, y: 9, url: "wall_back.svg", offset: { x: 1452, y: 990 } },
             { x: 6, y: 10, url: "wall_back_with_hole.svg", offset: { x: 1492, y: 970 } },
             { x: 6, y: 11, url: "wall_back.svg", offset: { x: 1532, y: 950 } },
             { x: 4, y: 11, url: "wall_front.svg", offset: { x: 1504, y: 918 } },
-            
+
             { x: 7, y: 12, url: "tree.svg", offset: { x: 1549, y: 863 } },
             { x: 8, y: 13, url: "mp_sign.svg", offset: { x: 1719, y: 979 } },
             { x: 9, y: 9, url: "tub_front.svg", offset: { x: 1524, y: 1006 } },
@@ -442,7 +442,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 2, y: 5 },
             { x: 2, y: 6 },
             { x: 1, y: 6 },
-            
+
             { x: 6, y: 9 },
             { x: 6, y: 10 },
         ],
@@ -461,7 +461,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 0, y: 12 },
             { x: 5, y: 8 },
             { x: 5, y: 9 },
-            
+
             { x: 6, y: 8 },
             { x: 7, y: 8 },
             { x: 8, y: 8 },
@@ -472,12 +472,12 @@ export const rooms: { [roomId: string]: Room } = {
 
             { x: 7, y: 0 },
             { x: 7, y: 1 },
-            
+
             { x: 8, y: 2 },
             { x: 8, y: 3 },
             { x: 8, y: 4 },
             { x: 8, y: 5 },
-            
+
             { x: 6, y: 12 },
             { x: 8, y: 13 },
         ],
@@ -486,17 +486,17 @@ export const rooms: { [roomId: string]: Room } = {
             { xFrom: 2, yFrom: 3, xTo: 1, yTo: 3 },
             { xFrom: 1, yFrom: 2, xTo: 2, yTo: 2 },
             { xFrom: 1, yFrom: 3, xTo: 2, yTo: 3 },
-            
+
             { xFrom: 5, yFrom: 10, xTo: 6, yTo: 10 },
             { xFrom: 6, yFrom: 10, xTo: 5, yTo: 10 },
             { xFrom: 5, yFrom: 11, xTo: 6, yTo: 11 },
             { xFrom: 6, yFrom: 11, xTo: 5, yTo: 11 },
-            
+
             { xFrom: 5, yFrom: 11, xTo: 5, yTo: 12 },
             { xFrom: 5, yFrom: 12, xTo: 5, yTo: 11 },
             { xFrom: 4, yFrom: 11, xTo: 4, yTo: 12 },
             { xFrom: 4, yFrom: 12, xTo: 4, yTo: 11 },
-            
+
             { xFrom: 6, yFrom: 10, xTo: 7, yTo: 10 },
             { xFrom: 7, yFrom: 10, xTo: 6, yTo: 10 },
             { xFrom: 7, yFrom: 11, xTo: 7, yTo: 10 },
@@ -529,16 +529,16 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 1, y: 1 },
             { x: 2, y: 0 },
             { x: 3, y: 0 },
-            
+
             { x: 9, y: 0 },
             { x: 10, y: 1 },
             { x: 11, y: 2 },
-            
+
             { x: 11, y: 8 },
             { x: 11, y: 9 },
             { x: 10, y: 10 },
             { x: 8, y: 11 },
-            
+
             { x: 4, y: 11 },
             { x: 3, y: 11 },
             { x: 2, y: 11 },
@@ -579,6 +579,153 @@ export const rooms: { [roomId: string]: Room } = {
         streamSlotCount: 0,
         secret: true
     },
+    yoshinoya: {
+        id: "yoshinoya",
+        scale: 1,
+        size: { x: 12, y: 14 },
+        originCoordinates: { x: 13, y: 355 },
+        spawnPoint: "spawn",
+        backgroundImageUrl: "rooms/yoshinoya/yoshinoya.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [
+            { x: 3, y: 11, url: "wall-with-squid.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 570, y: 39 } },
+
+            // left table
+            { x: 0 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294, y: 304 } },
+            { x: 1 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294 + 1 * 40, y: 304 + 1 * 20 } },
+            { x: 2 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294 + 2 * 40, y: 304 + 2 * 20 } },
+            { x: 3 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294 + 3 * 40, y: 304 + 3 * 20 } },
+            { x: 4 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294 + 4 * 40, y: 304 + 4 * 20 } },
+
+            { x: 0 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373, y: 265 } },
+            { x: 1 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373 + 1 * 40, y: 265 + 1 * 20 } },
+            { x: 2 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373 + 2 * 40, y: 265 + 2 * 20 } },
+            { x: 3 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373 + 3 * 40, y: 265 + 3 * 20 } },
+            { x: 4 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373 + 4 * 40, y: 265 + 4 * 20 } },
+
+            { x: 5 + 4, y: 4, url: "counter-middle.svg", scale: 1, xOffset: 1, yOffset: -1, offset: { x: 531, y: 383 } },
+            { x: 5 + 4, y: 3, url: "counter-left-corner.svg", scale: 1, xOffset: 1, yOffset: -1, offset: { x: 492, y: 403 } },
+            { x: 5 + 4, y: 5, url: "counter-right-corner.svg", scale: 1, xOffset: 2, yOffset: -1, offset: { x: 570, y: 363 } },
+
+            // right table
+            { x: 5 + 4, y: 3 + 6, url: "counter-left-corner.svg", scale: 1, xOffset: 1, yOffset: -1, offset: { x: 728, y: 285 } },
+            { x: 5 + 4, y: 4 + 6, url: "counter-middle.svg", scale: 1, xOffset: 1, yOffset: -1, offset: { x: 768, y: 265 } },
+            { x: 5 + 4, y: 5 + 6, url: "counter-right-corner.svg", scale: 1, xOffset: 2, yOffset: -1, offset: { x: 807, y: 245 } },
+            { x: 0 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531, y: 186 } },
+            { x: 1 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531 + 1 * 40, y: 186 + 1 * 20 } },
+            { x: 2 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531 + 2 * 40, y: 186 + 2 * 20 } },
+            { x: 3 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531 + 3 * 40, y: 186 + 3 * 20 } },
+            { x: 4 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531 + 4 * 40, y: 186 + 4 * 20 } },
+            { x: 0 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610, y: 146 } },
+            { x: 1 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610 + 1 * 40, y: 146 + 1 * 20 } },
+            { x: 2 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610 + 2 * 40, y: 146 + 2 * 20 } },
+            { x: 3 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610 + 3 * 40, y: 146 + 3 * 20 } },
+            { x: 4 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610 + 4 * 40, y: 146 + 4 * 20 } },
+
+            // cooking table
+            { x: 3, y: 5, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 0 * 40, y: 241 - 0 * 20 } },
+            { x: 3, y: 6, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 1 * 40, y: 241 - 1 * 20 } },
+            { x: 3, y: 7, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 2 * 40, y: 241 - 2 * 20 } },
+            { x: 3, y: 8, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 3 * 40, y: 241 - 3 * 20 } },
+            { x: 3, y: 9, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 4 * 40, y: 241 - 4 * 20 } },
+
+            { x: 0, y: 0, url: "left-wall.svg", scale: 1, xOffset: 2, yOffset: -3, offset: { x: 176, y: 197 } },
+        ],
+        sit: [
+            // left table
+            { x: 0 + 4, y: 2 },
+            { x: 1 + 4, y: 2 },
+            { x: 2 + 4, y: 2 },
+            { x: 3 + 4, y: 2 },
+            { x: 4 + 4, y: 2 },
+            { x: 6 + 4, y: 3 },
+            { x: 6 + 4, y: 4 },
+            { x: 6 + 4, y: 5 },
+            { x: 0 + 4, y: 6 },
+            { x: 1 + 4, y: 6 },
+            { x: 2 + 4, y: 6 },
+            { x: 3 + 4, y: 6 },
+            { x: 4 + 4, y: 6 },
+            // right table
+            { x: 0 + 4, y: 2 + 6 },
+            { x: 1 + 4, y: 2 + 6 },
+            { x: 2 + 4, y: 2 + 6 },
+            { x: 3 + 4, y: 2 + 6 },
+            { x: 4 + 4, y: 2 + 6 },
+            { x: 6 + 4, y: 3 + 6 },
+            { x: 6 + 4, y: 4 + 6 },
+            { x: 6 + 4, y: 5 + 6 },
+            { x: 0 + 4, y: 6 + 6 },
+            { x: 1 + 4, y: 6 + 6 },
+            { x: 2 + 4, y: 6 + 6 },
+            { x: 3 + 4, y: 6 + 6 },
+            { x: 4 + 4, y: 6 + 6 },
+        ],
+        blocked: [
+            // left wall
+            { x: 3, y: 0 },
+            { x: 3, y: 1 },
+            { x: 3, y: 2 },
+            { x: 3, y: 3 },
+            { x: 3, y: 7 },
+            { x: 3, y: 8 },
+            { x: 3, y: 9 },
+            //left table
+            { x: 0 + 4, y: 3 },
+            { x: 1 + 4, y: 3 },
+            { x: 2 + 4, y: 3 },
+            { x: 3 + 4, y: 3 },
+            { x: 4 + 4, y: 3 },
+            { x: 5 + 4, y: 3 },
+            { x: 0 + 4, y: 5 },
+            { x: 1 + 4, y: 5 },
+            { x: 2 + 4, y: 5 },
+            { x: 3 + 4, y: 5 },
+            { x: 4 + 4, y: 5 },
+            { x: 5 + 4, y: 5 },
+            { x: 5 + 4, y: 4 },
+            // right table
+            { x: 0 + 4, y: 3 + 6 },
+            { x: 1 + 4, y: 3 + 6 },
+            { x: 2 + 4, y: 3 + 6 },
+            { x: 3 + 4, y: 3 + 6 },
+            { x: 4 + 4, y: 3 + 6 },
+            { x: 5 + 4, y: 3 + 6 },
+            { x: 0 + 4, y: 5 + 6 },
+            { x: 1 + 4, y: 5 + 6 },
+            { x: 2 + 4, y: 5 + 6 },
+            { x: 3 + 4, y: 5 + 6 },
+            { x: 4 + 4, y: 5 + 6 },
+            { x: 5 + 4, y: 5 + 6 },
+            { x: 5 + 4, y: 4 + 6 },
+
+            // wall
+            { x: 1, y: 4 },
+            { x: 1, y: 5 },
+            { x: 1, y: 6 },
+            { x: 1, y: 7 },
+            { x: 1, y: 8 },
+            { x: 1, y: 9 },
+            { x: 1, y: 10 },
+            { x: 1, y: 11 },
+            { x: 1, y: 12 },
+            { x: 1, y: 13 },
+            { x: 2, y: 3 },
+
+
+            { x: 3, y: 11 },
+            { x: 3, y: 12 },
+            { x: 3, y: 5 },
+        ],
+        forbiddenMovements: [
+        ],
+        doors: {
+            spawn: { x: 6, y: 7, direction: "up", target: null },
+            door: { x: 11, y: 7, direction: "left", target: { roomId: "admin_st", doorId: "down" } }
+        },
+        streamSlotCount: 0,
+        secret: false
+    },
     long_st: {
         id: "long_st",
         scale: 1,
@@ -603,6 +750,7 @@ export const rooms: { [roomId: string]: Room } = {
         streamSlotCount: 0,
         secret: false
     },
-}
+};
 
 export const defaultRoom = rooms.admin_st
+
