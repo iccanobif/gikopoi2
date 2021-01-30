@@ -481,13 +481,12 @@ const vueApp = new Vue({
                 context.font = font;
                 const metrics = context.measureText(name);
                 const width = Math.ceil(metrics.width);
-                const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
                 
                 canvas.width = width;
                 canvas.height = height*2;
                 
                 context.font = font;
-                context.textBaseline = "bottom";
+                context.textBaseline = "top";
                 context.textAlign = "center"
                 context.fillStyle = "blue";
                 
