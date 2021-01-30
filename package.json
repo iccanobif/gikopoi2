@@ -11,8 +11,7 @@
     "loglevel": "^1.7.1",
     "socket.io": "^3.0.4",
     "tripcode": "^1.3.4",
-    "uuid": "^8.3.2",
-    "wrtc": "^0.4.6"
+    "uuid": "^8.3.2"
   },
   "license": "Beerware",
   "scripts": {
