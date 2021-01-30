@@ -9,7 +9,10 @@ import got from "got";
 import log from "loglevel";
 const app: express.Application = express()
 const http = require('http').Server(app);
-const io = require("socket.io")(http);
+const io = require("socket.io")(http, {
+    pingInterval: 60 * 1000,
+    pingTimeout: 30 * 1000
+});
 const tripcode = require('tripcode');
 const enforce = require('express-sslify');
 
