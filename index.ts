@@ -10,7 +10,7 @@ import log from "loglevel";
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http, {
-    pingInterval: 60 * 1000,
+    pingInterval: 50 * 1000, // Heroku fails with "H15 Idle connection" if a socket is inactive for more than 55 seconds with
     pingTimeout: 30 * 1000
 });
 const tripcode = require('tripcode');

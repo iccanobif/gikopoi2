@@ -723,7 +723,7 @@ export const rooms: { [roomId: string]: Room } = {
             spawn: { x: 6, y: 7, direction: "up", target: null },
             door: { x: 11, y: 7, direction: "left", target: { roomId: "admin_st", doorId: "down" } }
         },
-        streamSlotCount: 0,
+        streamSlotCount: 1,
         secret: false
     },
     long_st: {
