@@ -1058,8 +1058,10 @@ const vueApp = new Vue({
                         
                         const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
                         const level = max / 255
-                        const vuMeterBar = document.getElementById("vu-meter-bar-" + this.streamSlotIdInWhichIWantToStream)
-                        vuMeterBar.style.width = level * 100 + "%"
+                        const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream)
+                        const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream)
+                        vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
+                        vuMeterBarPrimary.style.width = level * 100 + "%"
                     }, 100)
                 }
 

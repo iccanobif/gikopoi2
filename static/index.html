@@ -134,7 +134,8 @@
                         v-show="takenStreams[index] && streamSlot.withVideo && index != streamSlotIdInWhichIWantToStream"
                         autoplay></video>
                     <div :id="'vu-meter-container-' + index" v-show="streamSlot.isActive && streamSlot.withSound && index == streamSlotIdInWhichIWantToStream">
-                        <div :id="'vu-meter-bar-' + index"></div>
+                        <div :id="'vu-meter-bar-primary-' + index"></div>
+                        <div :id="'vu-meter-bar-secondary-' + index"></div>
                     </div>
                     <div
                         v-show="streamSlot.isActive && streamSlot.withSound && index != streamSlotIdInWhichIWantToStream">
