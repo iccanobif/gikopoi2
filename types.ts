@@ -1,4 +1,5 @@
 import { Player } from "./users";
+import { JanusServer } from "./janus";
 
 export type Direction = 'up' | 'down' | 'left' | 'right'
 
@@ -60,7 +61,8 @@ export interface Room
 }
 
 export interface RoomState {
-    streams: StreamSlot[]
+    streams: StreamSlot[],
+    janusServer: JanusServer | null,
 }
 
 export interface RoomStateDto

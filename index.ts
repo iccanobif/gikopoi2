@@ -4,6 +4,7 @@ import { defaultRoom, rooms } from "./rooms";
 import { Direction, RoomState, RoomStateDto } from "./types";
 import { addNewUser, deserializeUserState, getConnectedUserList, getAllUsers, getUser, Player, removeUser, serializeUserState } from "./users";
 import { sleep } from "./utils";
+import { JanusServer, JanusMessage } from "./janus";
 import got from "got";
 import log from "loglevel";
 const app: express.Application = express()
@@ -19,6 +20,13 @@ const inactivityTimeout = 30 * 60 * 1000
 
 log.setLevel(log.levels.DEBUG)
 
+const janusServers = [
+    new JanusServer("maf", "wss://janus.maf.moe/ws", "", handleJanusMessage)
+]
+const janusServersObject = Object.fromEntries(janusServers.map(s => [s.serverId, s]));
+console.log(janusServersObject)
+let janusServerIndex = 0;
+
 // Initialize room states:
 let roomStates: {
     [areaId: string]: { [roomId: string]: RoomState }
@@ -32,7 +40,10 @@ function initializeRoomStates()
         roomStates[areaId] = {}
         for (const roomId in rooms)
         {
-            roomStates[areaId][roomId] = { streams: [] }
+            roomStates[areaId][roomId] = {
+                streams: [],
+                janusServer: null,
+            }
             for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
             {
                 roomStates[areaId][roomId].streams.push({
@@ -222,32 +233,78 @@ io.on("connection", function (socket: any)
             log.error(e.message + " " + e.stack);
         }
     });
-    socket.on("user-want-to-stream", function (streamRequest: { streamSlotId: number, withVideo: boolean, withSound: boolean })
+    socket.on("user-want-to-stream", function (data: { streamSlotId: number, withVideo: boolean, withSound: boolean, offer: any })
     {
         try
         {
-            const { streamSlotId, withVideo, withSound } = streamRequest
+            const { streamSlotId, withVideo, withSound, offer } = data
+            
+            console.log(streamSlotId, withVideo, withSound, offer)
 
             log.info("user-want-to-stream", user.id)
 
             const streams = roomStates[user.areaId][user.roomId].streams
-
-            if (streams[streamSlotId].isActive)
+            
+            const roomState = roomStates[user.areaId][user.roomId];
+            const stream = streams[streamSlotId]
+            
+            if (stream.isActive)
             {
-                socket.emit("server-not-ok-to-stream", "sorry, someone else is already streaming in this slot")
+                socket.emit("server-not-ok-to-stream", "Sorry, someone else is already streaming in this slot")
                 return;
             }
-
-            // TODO open stream
             
-            streams[streamSlotId].isActive = true
-            streams[streamSlotId].isReady = false
-            streams[streamSlotId].withVideo = withVideo
-            streams[streamSlotId].withSound = withSound
-            streams[streamSlotId].userId = user.id
+            // get janus server
+            if (roomState.janusServer === null)
+            {
+                roomState.janusServer = janusServers[janusServerIndex]
+                
+                janusServerIndex++;
+                if (janusServerIndex >= janusServers.length)
+                    janusServerIndex = 0
+            }
+            const janusServer = roomState.janusServer;
+            
+            
+            const janusRoom = user.areaId + user.roomId;
+            let session_id: string | null = null;
+            let handle_id: string | null = null;
+            
+            const onError = (error: any) =>
+            {
+                console.error("Could not start stream", error)
+                socket.emit("server-not-ok-to-stream", "Sorry, could not start stream")
+            }
+            
+            janusServer.open(() =>
+            {
+                janusServer.createSession((id) =>
+                {
+                    session_id = id;
+                    janusServer.attachPlugin(session_id, "janus.plugin.videoroom", (id) =>
+                    {
+                        if(session_id == null) return;
+                        handle_id = id;
+                        janusServer.createRoom(session_id, handle_id, janusRoom, () =>
+                        {
+                            console.log("Room created or already exists. Hooray")
+                            // TODO more stuff after this.
+                        }, onError);
+                    }, onError)
+                }, onError)
+            }, onError)
+            
+            /*
+            stream.isActive = true
+            stream.isReady = false
+            stream.withVideo = withVideo
+            stream.withSound = withSound
+            stream.userId = user.id
+
             io.to(user.areaId + user.roomId).emit("server-update-current-room-streams", streams)
             
             socket.emit("server-ok-to-stream")
+            */
         }
         catch (e)
         {
@@ -525,6 +582,11 @@ app.post("/login", (req, res) =>
         res.end(e.message + " " + e.stack)
     }
 })
+
+function handleJanusMessage(message: JanusMessage, serverId: string)
+{
+    console.log(message, serverId)
+}
 
 /*
 function clearStream(user: Player)
