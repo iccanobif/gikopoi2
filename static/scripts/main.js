@@ -867,28 +867,64 @@ const vueApp = new Vue({
         },
         handleCanvasKeydown: function (event)
         {
-            switch (event.key)
+            if (event.shiftKey && !event.altKey && !event.ctrlKey)
             {
-                case "ArrowLeft":
-                case "a":
-                    event.preventDefault()
-                    this.sendNewPositionToServer("left");
-                    break;
-                case "ArrowRight":
-                case "d":
-                    event.preventDefault()
-                    this.sendNewPositionToServer("right");
-                    break;
-                case "ArrowUp":
-                case "w":
-                    event.preventDefault()
-                    this.sendNewPositionToServer("up");
-                    break;
-                case "ArrowDown":
-                case "s":
-                    event.preventDefault()
-                    this.sendNewPositionToServer("down");
-                    break;
+                // Move camera
+                switch (event.code)
+                {
+                    case "ArrowLeft":
+                    case "KeyA":
+                        event.preventDefault()
+                        this.canvasManualOffset.x += 10
+                        this.isRedrawRequired = true
+                        break;
+                    case "ArrowRight":
+                    case "KeyD":
+                        event.preventDefault()
+                        this.canvasManualOffset.x -= 10
+                        this.isRedrawRequired = true
+                        break;
+                    case "ArrowUp":
+                    case "KeyW":
+                        event.preventDefault()
+                        this.canvasManualOffset.y += 10
+                        this.isRedrawRequired = true
+                        break;
+                    case "ArrowDown":
+                    case "KeyS":
+                        event.preventDefault()
+                        this.canvasManualOffset.y -= 10
+                        this.isRedrawRequired = true
+                        break;
+                }
+            }
+            if (!event.shiftKey && !event.altKey && !event.ctrlKey)
+            {
+                // Move avatar
+                event.preventDefault()
+                switch (event.key)
+                {
+                    case "ArrowLeft":
+                    case "a":
+                        event.preventDefault()
+                        this.sendNewPositionToServer("left");
+                        break;
+                    case "ArrowRight":
+                    case "d":
+                        event.preventDefault()
+                        this.sendNewPositionToServer("right");
+                        break;
+                    case "ArrowUp":
+                    case "w":
+                        event.preventDefault()
+                        this.sendNewPositionToServer("up");
+                        break;
+                    case "ArrowDown":
+                    case "s":
+                        event.preventDefault()
+                        this.sendNewPositionToServer("down");
+                        break;
+                }
             }
         },
         handleCanvasMousedown: function (event)
