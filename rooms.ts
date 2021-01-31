@@ -667,6 +667,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 3, y: 1 },
             { x: 3, y: 2 },
             { x: 3, y: 3 },
+            { x: 3, y: 6 },
             { x: 3, y: 7 },
             { x: 3, y: 8 },
             { x: 3, y: 9 },
