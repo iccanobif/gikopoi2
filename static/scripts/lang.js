@@ -91,6 +91,7 @@ export const messages =
             yatai: "屋台",
             kaidan: "高台の階段",
             takadai: "高台",
+            yoshinoya: "吉野家",
             radio_gakuya: "ラヂヲ局 楽屋",
             radio_backstage: "ラヂヲ局 舞台裏",
             radio_room2: "ラヂヲ局 第2スタジオ BEAT GIKO",
@@ -203,6 +204,7 @@ export const messages =
             yatai: "Sushi Vendor",
             kaidan: "Hilltop Stairway",
             takadai: "Hilltop",
+            yoshinoya: "Yoshinoya",
             silo: "Silo",
             badend: "You fell to your death!"
         }

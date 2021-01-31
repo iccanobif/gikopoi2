@@ -89,6 +89,8 @@ const vueApp = new Vue({
         password: "",
 
         allCharacters: Object.values(characters),
+
+        vuMeterTimer: null,
     },
     mounted: function ()
     {
@@ -865,24 +867,64 @@ const vueApp = new Vue({
         },
         handleCanvasKeydown: function (event)
         {
-            switch (event.key)
+            if (event.shiftKey && !event.altKey && !event.ctrlKey)
             {
-                case "ArrowLeft":
-                    event.preventDefault()
-                    this.sendNewPositionToServer("left");
-                    break;
-                case "ArrowRight":
-                    event.preventDefault()
-                    this.sendNewPositionToServer("right");
-                    break;
-                case "ArrowUp":
-                    event.preventDefault()
-                    this.sendNewPositionToServer("up");
-                    break;
-                case "ArrowDown":
-                    event.preventDefault()
-                    this.sendNewPositionToServer("down");
-                    break;
+                // Move camera
+                switch (event.code)
+                {
+                    case "ArrowLeft":
+                    case "KeyA":
+                        event.preventDefault()
+                        this.canvasManualOffset.x += 10
+                        this.isRedrawRequired = true
+                        break;
+                    case "ArrowRight":
+                    case "KeyD":
+                        event.preventDefault()
+                        this.canvasManualOffset.x -= 10
+                        this.isRedrawRequired = true
+                        break;
+                    case "ArrowUp":
+                    case "KeyW":
+                        event.preventDefault()
+                        this.canvasManualOffset.y += 10
+                        this.isRedrawRequired = true
+                        break;
+                    case "ArrowDown":
+                    case "KeyS":
+                        event.preventDefault()
+                        this.canvasManualOffset.y -= 10
+                        this.isRedrawRequired = true
+                        break;
+                }
+            }
+            if (!event.shiftKey && !event.altKey && !event.ctrlKey)
+            {
+                // Move avatar
+                event.preventDefault()
+                switch (event.key)
+                {
+                    case "ArrowLeft":
+                    case "a":
+                        event.preventDefault()
+                        this.sendNewPositionToServer("left");
+                        break;
+                    case "ArrowRight":
+                    case "d":
+                        event.preventDefault()
+                        this.sendNewPositionToServer("right");
+                        break;
+                    case "ArrowUp":
+                    case "w":
+                        event.preventDefault()
+                        this.sendNewPositionToServer("up");
+                        break;
+                    case "ArrowDown":
+                    case "s":
+                        event.preventDefault()
+                        this.sendNewPositionToServer("down");
+                        break;
+                }
             }
         },
         handleCanvasMousedown: function (event)
@@ -1037,6 +1079,32 @@ const vueApp = new Vue({
                     userMedia
                 );
 
+                // VU Meter
+                if (withSound)
+                {
+                    const context = new AudioContext();
+                    const microphone = context.createMediaStreamSource(this.mediaStream);
+                    const analyser = context.createAnalyser()
+                    analyser.minDecibels = -60;
+                    analyser.maxDecibels = 0;
+                    analyser.smoothingTimeConstant = 0.01;
+                    analyser.fftSize = 32
+                    const bufferLengthAlt = analyser.frequencyBinCount;
+                    const dataArrayAlt = new Uint8Array(bufferLengthAlt);
+                    microphone.connect(analyser);
+
+                    this.vuMeterTimer = setInterval(() => {
+                        analyser.getByteFrequencyData(dataArrayAlt)
+                        
+                        const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
+                        const level = max / 255
+                        const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream)
+                        const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream)
+                        vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
+                        vuMeterBarPrimary.style.width = level * 100 + "%"
+                    }, 100)
+                }
+
                 this.socket.emit("user-want-to-stream", {
                     streamSlotId: this.streamSlotIdInWhichIWantToStream,
                     withVideo: withVideo,
@@ -1060,9 +1128,12 @@ const vueApp = new Vue({
                     this.rtcPeer.conn.addTrack(track, this.mediaStream)
                 );
 
+                
             document.getElementById(
                 "local-video-" + this.streamSlotIdInWhichIWantToStream
-            ).srcObject = this.mediaStream;
+                ).srcObject = this.mediaStream;
+                    
+
         },
         stopStreaming: function ()
         {
@@ -1072,6 +1143,8 @@ const vueApp = new Vue({
                 "local-video-" + this.streamSlotIdInWhichIWantToStream
             ).srcObject = this.mediaStream = null;
             this.streamSlotIdInWhichIWantToStream = null;
+            if (this.vuMeterTimer)
+                clearInterval(this.vuMeterTimer)
             this.socket.emit("user-want-to-stop-stream");
         },
         wantToTakeStream: function (streamSlotId)

@@ -667,6 +667,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 3, y: 1 },
             { x: 3, y: 2 },
             { x: 3, y: 3 },
+            { x: 3, y: 6 },
             { x: 3, y: 7 },
             { x: 3, y: 8 },
             { x: 3, y: 9 },
@@ -723,7 +724,7 @@ export const rooms: { [roomId: string]: Room } = {
             spawn: { x: 6, y: 7, direction: "up", target: null },
             door: { x: 11, y: 7, direction: "left", target: { roomId: "admin_st", doorId: "down" } }
         },
-        streamSlotCount: 0,
+        streamSlotCount: 1,
         secret: false
     },
     long_st: {
