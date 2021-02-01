@@ -886,7 +886,6 @@ const vueApp = new Vue({
             if (!event.shiftKey && !event.altKey && !event.ctrlKey)
             {
                 // Move avatar
-                event.preventDefault()
                 switch (event.key)
                 {
                     case "ArrowLeft":

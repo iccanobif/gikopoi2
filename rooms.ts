@@ -586,7 +586,7 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 13, y: 355 },
         spawnPoint: "spawn",
         backgroundImageUrl: "rooms/yoshinoya/yoshinoya.svg",
-        backgroundColor: "#c0c0c0",
+        backgroundColor: "#222",
         objects: [
             { x: 3, y: 11, url: "wall-with-squid.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 570, y: 39 } },
 
