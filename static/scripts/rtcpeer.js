@@ -10,6 +10,8 @@ export class RTCPeer
         this.sendCallback = sendCallback
         this.errorCallback = (error, event) => console.error(error, event)
         
+        this._offer = null
+        
         this.conn = null
     }
     
@@ -43,31 +45,39 @@ export class RTCPeer
             offerToReceiveAudio: true,
             offerToReceiveVideo: true
         })
-        await this.conn.setLocalDescription(offer);
-        this.sendCallback('offer', offer)
+        this._offer = offer.sdp
+        this.sendCallback('offer', offer.sdp)
     }
     
     async acceptOffer(offer) // : RTCSessionDescription
     {
         if (this.conn === null) return;
-        await this.conn.setRemoteDescription(offer);
+        await this.conn.setRemoteDescription(
+            new RTCSessionDescription({type: 'offer', sdp: offer}));
         const answer = await this.conn.createAnswer({
             offerToReceiveAudio: true,
             offerToReceiveVideo: true
         })
         await this.conn.setLocalDescription(answer);
-        this.sendCallback('answer', answer)
+        this.sendCallback('answer', answer.sdp)
     }
     
     async acceptAnswer(answer) // : RTCSessionDescription
     {
         if (this.conn === null) return;
-        await this.conn.setRemoteDescription(answer)
+        if (this._offer !== null)
+        {
+            await this.conn.setLocalDescription(
+                new RTCSessionDescription({type: 'offer', sdp: this._offer}));
+            this._offer = null;
+        }
+        await this.conn.setRemoteDescription(
+            new RTCSessionDescription({type: 'answer', sdp: answer}))
     }
     
     handleCandidateEvent(event) // private
     {
-        if (event.candidate && event.candidate.candidate)
+        if (event.candidate)
             this.sendCallback('candidate', event.candidate)
     }
     

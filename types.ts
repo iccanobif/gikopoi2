@@ -1,5 +1,5 @@
 import { Player } from "./users";
-import { JanusServer } from "./janus";
+const JanusClient = require('janus-videoroom-client').Janus;
 
 export type Direction = 'up' | 'down' | 'left' | 'right'
 
@@ -16,6 +16,7 @@ export interface StreamSlot
     withSound: boolean | null,
     withVideo: boolean | null,
     userId: string | null,
+    publisherId: number | null,
 }
 
 export interface Door
@@ -60,9 +61,16 @@ export interface Room
     secret: boolean;
 }
 
+export interface JanusServer {
+    id: string;
+    client: typeof JanusClient;
+}
+
 export interface RoomState {
     streams: StreamSlot[],
-    janusServer: JanusServer | null,
+    janusRoomServer: JanusServer | null,
+    janusRoomIntName: number | null,
+    janusRoomName: string | null,
 }
 
 export interface RoomStateDto

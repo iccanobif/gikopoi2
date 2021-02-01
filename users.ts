@@ -21,10 +21,10 @@ export class Player
     public lastAction = Date.now();
     public connectionTime = Date.now();
     public disconnectionTime: number | null = null;
-    public mediaStream: MediaStream | null = null;
     public characterId: string;
     public areaId: string;
     public isInactive = false;
+    public isStreaming = false;
 
     constructor(options: { name?: string, characterId: string, areaId: string })
     {
@@ -84,7 +84,6 @@ export function deserializeUserState(serializedState: string)
     for (const user of Object.values(users))
     {
         user.isGhost = true;
-        user.mediaStream = null;
     }
     console.info("Restored user state (" + Object.values(users).length + " users)")
 }
