@@ -1,4 +1,6 @@
 {
     "janusServerUrl": "",
-    "janusApiSecret": ""
+    "janusApiSecret": "",
+    "janusRoomNamePrefix": "prod",
+    "janusRoomNameIntPrefix": 1
 }

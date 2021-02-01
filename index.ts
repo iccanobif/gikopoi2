@@ -24,9 +24,6 @@ const inactivityTimeout = 30 * 60 * 1000
 
 log.setLevel(log.levels.DEBUG)
 
-const janusRoomNamePrefix = "prod";
-const janusRoomNameIntPrefix = 0;
-
 console.log(settings.janusServerUrl)
 
 const janusServers: JanusServer[] =
@@ -57,8 +54,8 @@ function initializeRoomStates()
             roomStates[areaId][roomId] = {
                 streams: [],
                 janusRoomServer: null,
-                janusRoomName: janusRoomNamePrefix + ":" + areaId + ":" + roomId,
-                janusRoomIntName: (janusRoomNameIntPrefix * 10000000) + (areaNumberId * 10000) + roomNumberId,
+                janusRoomName: settings.janusRoomNamePrefix + ":" + areaId + ":" + roomId,
+                janusRoomIntName: (settings.janusRoomNameIntPrefix * 10000000) + (areaNumberId * 10000) + roomNumberId,
             }
             for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
             {
