@@ -1083,6 +1083,10 @@ const vueApp = new Vue({
                     withVideo: withVideo,
                     withSound: withSound,
                 });
+
+                // On small screens, displaying the <video> element seems to cause a reflow in a way that
+                // makes the canvas completely gray, so i force a redraw
+                this.isRedrawRequired = true; 
             } catch (err)
             {
                 this.showWarningToast(i18n.t("msg.error_obtaining_media_device"));
@@ -1121,6 +1125,10 @@ const vueApp = new Vue({
             
             this.streamSlotIdInWhichIWantToStream = null;
             this.socket.emit("user-want-to-stop-stream");
+
+            // On small screens, displaying the <video> element seems to cause a reflow in a way that
+            // makes the canvas completely gray, so i force a redraw
+            this.isRedrawRequired = true; 
         },
         wantToTakeStream: function (streamSlotId)
         {

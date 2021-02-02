@@ -115,7 +115,7 @@
             </div>
 
 
-            <div id="video-streams">
+            <div id="video-streams" v-if="streams.length > 0">
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
                     <hr v-if="index != 0" />
                     <div>
@@ -163,7 +163,7 @@
                 </div>
             </div>
 
-            <div class="popup" v-if="isRulaPopupOpen">
+            <div id="rula-popup" class="popup" v-if="isRulaPopupOpen">
                 <div class="popup-title">{{ $t("ui.rula_menu_title") }}</div>
                 <div class="popup-content">
                     <table class="popup-table popup-selectable-table">

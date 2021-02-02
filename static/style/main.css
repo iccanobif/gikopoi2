@@ -70,7 +70,7 @@ video {
     width: 219px;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 947px) {
     #video-streams {
         position: absolute;
         left: 700px;
@@ -248,9 +248,12 @@ video {
     flex-grow: 1;
 }
 
-.popup {
+#rula-popup {
     max-width: 600px;
+    width: 90%;
+}
 
+.popup {
     position: fixed;
     top: 50%;
     left: 50%;
