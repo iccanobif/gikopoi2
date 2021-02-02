@@ -135,11 +135,11 @@ io.on("connection", function (socket: any)
 
             socket.join(user.areaId)
             socket.join(user.areaId + currentRoom.id)
+            
+            log.info("userId:", userId, "name:", user.name, "disconnectionTime:", user.disconnectionTime);
 
             user.isGhost = false
             user.disconnectionTime = null
-
-            log.info("userId: " + userId + " name: " + user.name);
 
             currentRoom = rooms[user.roomId]
 
@@ -269,6 +269,7 @@ io.on("connection", function (socket: any)
 
             if (stream.isActive)
             {
+                log.info("server-not-ok-to-stream", user.id)
                 socket.emit("server-not-ok-to-stream", "Sorry, someone else is already streaming in this slot")
                 return;
             }
@@ -360,7 +361,7 @@ io.on("connection", function (socket: any)
         try
         {
             const { streamSlotId, type, msg } = data
-            log.debug(streamSlotId, type, msg);
+            log.debug("user-rtc-message start", user.id, streamSlotId, type, msg);
 
             if (type == "offer")
             {
@@ -381,7 +382,7 @@ io.on("connection", function (socket: any)
                 try
                 {
                     await videoRoomHandle.create({ room: roomState.janusRoomIntName })
-                    log.info("Janus room " + roomState.janusRoomIntName
+                    log.info("user-rtc-message", user.id, "Janus room " + roomState.janusRoomIntName
                         + "(" + roomState.janusRoomName + ") created on server "
                         + roomState.janusRoomServer.id)
                 }
@@ -478,6 +479,7 @@ io.on("connection", function (socket: any)
             user.position = { x: door.x, y: door.y }
             if (door.direction !== null) user.direction = door.direction
             user.roomId = targetRoomId
+            user.isInactive = false
 
             sendCurrentRoomState()
             setupJanusHandleSlots()
