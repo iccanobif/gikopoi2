@@ -615,13 +615,6 @@ app.post("/ping/:userId", async (req, res) =>
         {
             try
             {
-                // Update last ping date for the user
-                const { userId } = req.params
-                const user = getUser(userId)
-
-                if (!user)
-                    return
-
                 // Return software version, so that the client can refresh the page
                 // if there has been a new deploy.
                 const str = data.toString()
