@@ -249,13 +249,20 @@ video {
 }
 
 .popup {
-    position: absolute;
-    width: 600px;
-    top: 50px;
-    left: calc(50% - 300px);
-    background-color: #ffffff;
-    
+    position: fixed;
+    max-width: 600px;
+    width: 90%;
+    margin-right: auto;
+    margin-left: auto;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    height: 178px;
+    margin-top: auto;
+    margin-bottom: auto;
     outline: 2px solid #afb1b1;
+    background-color: #ffffff;
 }
 
 .popup-title
