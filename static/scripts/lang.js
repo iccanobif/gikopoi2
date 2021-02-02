@@ -63,7 +63,9 @@ export const messages =
             connection_lost: "再接続中",
             room_unavailable: "まだ部屋の用意ができていません。ごめんね！",
             page_refresh_required: "このサイトは更新されましたからページをリフレッシュしてください。",
+            
             error_obtaining_media_device: "デバイスを取得できませんでした。",
+            no_webrtc: "あなたのブラウザーはWebRTCをサポートしていません。",
         },
         room:
         {
@@ -101,7 +103,8 @@ export const messages =
             school_pc: "学校 パソコンルーム",
             enkai: "宴会場",
             silo: "サイロ",
-            badend: "転落死しました！"
+            badend: "転落死しました！",
+            bar_giko: "ＢＡＲギコ",
         }
     },
     en:
@@ -168,7 +171,8 @@ export const messages =
             room_unavailable: "This room is not available yet. Sorry!",
             page_refresh_required: "An update is ready, so please refresh this page.",
             
-            error_obtaining_media_device: "Unable to obtain media device."
+            error_obtaining_media_device: "Unable to obtain media device.",
+            no_webrtc: "Sorry, your browser doesn't support WebRTC.",
         },
         room:
         {
@@ -206,7 +210,8 @@ export const messages =
             takadai: "Hilltop",
             yoshinoya: "Yoshinoya",
             silo: "Silo",
-            badend: "You fell to your death!"
+            badend: "You fell to your death!",
+            bar_giko: "Bar Giko",
         }
     }
 }

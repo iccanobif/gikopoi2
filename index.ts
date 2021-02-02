@@ -280,6 +280,11 @@ io.on("connection", function (socket: any)
             stream.withSound = withSound
             stream.userId = user.id
             stream.publisherId = null
+            
+            setTimeout(() =>
+            {
+                if (stream.publisherId == null) clearStream(user)
+            }, 10000);
 
             io.to(user.areaId + user.roomId).emit("server-update-current-room-streams", roomState.streams)
 
@@ -617,13 +622,6 @@ app.post("/ping/:userId", async (req, res) =>
         {
             try
             {
-                // Update last ping date for the user
-                const { userId } = req.params
-                const user = getUser(userId)
-
-                if (!user)
-                    return
-
                 // Return software version, so that the client can refresh the page
                 // if there has been a new deploy.
                 const str = data.toString()
