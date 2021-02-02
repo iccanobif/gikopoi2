@@ -748,7 +748,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             down: { x: 1, y: 0, direction: "up", target: { roomId: "bar_st", doorId: "up" } },
             up: { x: 1, y: 32, direction: "down", target: { roomId: "long_st", doorId: "down" } },
-            left: { x: 0, y: 30, direction: "up", target: "NOT_READY_YET" }
+            left: { x: 0, y: 30, direction: "right", target: { roomId: "jinja", doorId: "steps" } }
         },
         streamSlotCount: 0,
         secret: false
@@ -1021,7 +1021,94 @@ export const rooms: { [roomId: string]: Room } = {
         },
         streamSlotCount: 2,
         secret: false
-    }
+    },
+    jinja: {
+        id: "jinja",
+        scale: 1,
+        size: { x: 15, y: 11 },
+        originCoordinates: { x: 7, y: 311 },
+        spawnPoint: "steps",
+        backgroundImageUrl: "rooms/jinja/background.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [
+            { x: 15, y:  0, offset: { x: 499, y: 369 }, url: "bamboo_left.svg" },
+            { x: 14, y:  4, offset: { x: 735, y: 206 }, url: "bamboo_right.svg" },
+            { x:  9, y:  9, offset: { x: 741, y: 170 }, url: "tearai.svg" },
+            { x:  4, y:  8, offset: { x: 495, y: 146 }, url: "omikujiki.svg" },
+            { x:  3, y:  9, offset: { x: 490, y: 110 }, url: "saku.svg" },
+            { x:  3, y:  8, offset: { x: 449, y: 129 }, url: "saku.svg" },
+            { x:  5, y:  6, offset: { x: 455, y: 201 }, url: "komainu.svg" },
+            { x:  5, y:  2, offset: { x: 295, y: 281 }, url: "komainu.svg" },
+            { x:  3, y:  6, offset: { x: 115, y:  34 }, url: "keidai.svg" },
+            { x:  4, y:  0, offset: { x: 126, y: 112 }, url: "goshinboku.svg" },
+            { x:  7, y:  0, offset: { x: 315, y: 411 }, url: "stool.svg" },
+            { x:  8, y:  1, offset: { x: 395, y: 411 }, url: "stool.svg" },
+            { x:  9, y:  0, offset: { x: 395, y: 451 }, url: "stool.svg" },
+            { x:  8, y:  0, offset: { x: 338, y: 417 }, url: "chessu.svg" },
+        ],
+        sit: [
+            // stools
+            { x:  7, y:  0 },
+            { x:  8, y:  1 },
+            { x:  9, y:  0 },
+            // poster
+            { x: 13, y:  0 },
+            // bamboo
+            { x: 14, y:  0 },
+            { x: 14, y:  1 },
+            { x: 14, y:  2 },
+            { x: 14, y:  5 },
+            { x: 14, y:  6 },
+            { x: 14, y:  7 },
+            { x: 14, y:  8 },
+            { x: 14, y:  9 },
+            { x: 14, y: 10 },
+        ],
+        blocked: [
+            { x:  8, y:  0 },
+            
+            { x: 11, y: 10 },
+            { x: 11, y:  9 },
+            { x: 10, y:  9 },
+            { x:  9, y:  9 },
+            { x:  8, y: 10 },
+            { x:  7, y:  9 },
+            { x:  6, y:  9 },
+            { x:  5, y:  9 },
+            { x:  4, y:  9 },
+            { x:  3, y:  8 },
+            { x:  3, y:  9 },
+            { x:  2, y: 10 },
+            { x:  1, y:  9 },
+            { x:  1, y:  8 },
+            { x:  1, y:  7 },
+            { x:  2, y:  6 },
+            { x:  3, y:  6 },
+            { x:  3, y:  5 },
+            { x:  3, y:  4 },
+            { x:  3, y:  3 },
+            { x:  3, y:  2 },
+            { x:  2, y:  1 },
+            { x:  3, y:  0 },
+            { x:  4, y:  0 },
+            
+            { x:  5, y:  6 },
+            { x:  5, y:  2 },
+            
+        ],
+        forbiddenMovements: [
+            { xFrom: 4, yFrom: 6, xTo: 4, yTo: 5 },
+            { xFrom: 4, yFrom: 5, xTo: 4, yTo: 6 },
+            
+            { xFrom: 4, yFrom: 2, xTo: 4, yTo: 3 },
+            { xFrom: 4, yFrom: 3, xTo: 4, yTo: 2 },
+        ],
+        doors: {
+            steps: { x: 14, y: 8, direction: "left", target: { roomId: "long_st", doorId: "left" } },
+        },
+        streamSlotCount: 2,
+        secret: false
+    },
 };
 
-export const defaultRoom = rooms.admin_st
+export const defaultRoom = rooms.jinja
