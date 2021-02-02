@@ -101,7 +101,8 @@ export const messages =
             school_pc: "学校 パソコンルーム",
             enkai: "宴会場",
             silo: "サイロ",
-            badend: "転落死しました！"
+            badend: "転落死しました！",
+            bar_giko: "ＢＡＲギコ",
         }
     },
     en:
@@ -206,7 +207,8 @@ export const messages =
             takadai: "Hilltop",
             yoshinoya: "Yoshinoya",
             silo: "Silo",
-            badend: "You fell to your death!"
+            badend: "You fell to your death!",
+            bar_giko: "Bar Giko",
         }
     }
 }
