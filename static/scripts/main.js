@@ -42,7 +42,7 @@ const vueApp = new Vue({
         isRedrawRequired: false,
         isDraggingCanvas: false,
         canvasDragStartPoint: null,
-        canvasDragOffset: null,
+        canvasDragStartOffset: null,
         canvasManualOffset: { x: 0, y: 0 },
         canvasGlobalOffset: { x: 0, y: 0 },
         canvasDimensions: { w: 0, h: 0 },
@@ -506,7 +506,8 @@ const vueApp = new Vue({
         },
         setCanvasGlobalOffset: function ()
         {
-            if (this.currentRoom.needsFixedCamera)
+            if (this.currentRoom.needsFixedCamera ||
+                !this.currentRoom.backgroundImage)
             {
                 const fixedCameraOffset = this.currentRoom.backgroundOffset ||
                     { x: 0, y: 0 };
@@ -515,47 +516,62 @@ const vueApp = new Vue({
                 return;
             }
             
-            const canvasOffset = {
-                x: this.canvasManualOffset.x,
-                y: this.canvasManualOffset.y
-            };
-
-            if (this.isDraggingCanvas)
-            {
-                canvasOffset.x += this.canvasDragOffset.x;
-                canvasOffset.y += this.canvasDragOffset.y;
-            }
-
+            const userOffset = { x: 0, y: 0 };
             if (this.myUserID in this.users)
             {
                 const user = this.users[this.myUserID]
-
-                canvasOffset.x -= user.currentPhysicalPositionX - (this.canvasDimensions.w / 2 - BLOCK_WIDTH / 2);
-                canvasOffset.y -= user.currentPhysicalPositionY - (this.canvasDimensions.h / 2 + BLOCK_HEIGHT);
+                
+                userOffset.x = -(user.currentPhysicalPositionX - (this.canvasDimensions.w / 2 - BLOCK_WIDTH / 2)),
+                userOffset.y = -(user.currentPhysicalPositionY - (this.canvasDimensions.h / 2 + BLOCK_HEIGHT))
             }
             
-            // Prevent going outside of the background picture borders
-            // if (canvasOffset.x > 0) canvasOffset.x = 0;
-            // if (canvasOffset.y > 0) canvasOffset.y = 0;
-            // if (this.canvasDimensions.w < this.currentRoom.backgroundImage.width)
-            //     if (canvasOffset.x < this.canvasDimensions.w - this.currentRoom.backgroundImage.width)
-            //         canvasOffset.x = this.canvasDimensions.w - this.currentRoom.backgroundImage.width
-            // if (this.canvasDimensions.h < this.currentRoom.backgroundImage.height)
-            //     if (canvasOffset.y < this.canvasDimensions.h - this.currentRoom.backgroundImage.height)
-            //         canvasOffset.y = this.canvasDimensions.h - this.currentRoom.backgroundImage.height
+            const canvasOffset = {
+                x: this.canvasManualOffset.x + userOffset.x,
+                y: this.canvasManualOffset.y + userOffset.y
+            };
             
-            this.canvasGlobalOffset.x = canvasOffset.x
-            this.canvasGlobalOffset.y = canvasOffset.y
+            const backgroundImage = this.currentRoom.backgroundImage.getImage()
+            
+            const bcDiff =
+            {
+                w: backgroundImage.width - this.canvasDimensions.w,
+                h: backgroundImage.height - this.canvasDimensions.h
+            }
+            
+            const margin = (this.currentRoom.isBackgroundImageOffsetEdge ?
+                {w: 0, h: 0} : this.canvasDimensions);
+            
+            let isAtEdge = false;
+            
+            if (canvasOffset.x > margin.w)
+                {isAtEdge = true; this.canvasManualOffset.x = margin.w - userOffset.x}
+            else if(canvasOffset.x < -margin.w - bcDiff.w)
+                {isAtEdge = true; this.canvasManualOffset.x = -margin.w - (bcDiff.w + userOffset.x)}
+            
+            if (canvasOffset.y > margin.h)
+                {isAtEdge = true; this.canvasManualOffset.y = margin.h - userOffset.y}
+            else if(canvasOffset.y < -margin.h - bcDiff.h)
+                {isAtEdge = true; this.canvasManualOffset.y = -margin.h - (bcDiff.h + userOffset.y)}
+            
+            if (isAtEdge)
+            {
+                canvasOffset.x = this.canvasManualOffset.x + userOffset.x
+                canvasOffset.y = this.canvasManualOffset.y + userOffset.y
+                this.isCanvasMousedown = false;
+            }
+            
+            this.canvasGlobalOffset.x = canvasOffset.x;
+            this.canvasGlobalOffset.y = canvasOffset.y;
         },
 
         paintBackground: function ()
         {
-            if (!this.currentRoom.backgroundImage) return;
-            
             const context = this.canvasContext;
             
             context.fillStyle = this.currentRoom.backgroundColor;
             context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
+            
+            if (!this.currentRoom.backgroundImage) return;
             
             this.drawImage(
                 context,
@@ -722,8 +738,6 @@ const vueApp = new Vue({
 
                 this.detectCanvasResize();
 
-                this.setCanvasGlobalOffset();
-
                 const usersRequiringRedraw = [];
                 for (const [userId, user] of Object.entries(this.users))
                     if (user.checkIfRedrawRequired()) usersRequiringRedraw.push(userId);
@@ -733,6 +747,7 @@ const vueApp = new Vue({
                     || usersRequiringRedraw.length
                     || this.enableGridNumbers)
                 {
+                    this.setCanvasGlobalOffset();
                     this.paintBackground();
                     this.paintForeground();
                     this.isRedrawRequired = false;
@@ -833,13 +848,7 @@ const vueApp = new Vue({
             );
             window.addEventListener('mouseup', e =>
             {
-                if (this.isDraggingCanvas)
-                {
-                    this.canvasManualOffset.x += this.canvasDragOffset.x;
-                    this.canvasManualOffset.y += this.canvasDragOffset.y;
-
-                    this.isDraggingCanvas = false;
-                }
+                this.isDraggingCanvas = false;
                 this.isCanvasMousedown = false;
             });
         },
@@ -914,8 +923,8 @@ const vueApp = new Vue({
         handleCanvasMousedown: function (event)
         {
             this.isCanvasMousedown = true;
+            this.canvasDragStartOffset = { x: this.canvasManualOffset.x, y: this.canvasManualOffset.y };
             this.canvasDragStartPoint = { x: event.offsetX, y: event.offsetY };
-            this.canvasDragOffset = { x: 0, y: 0 };
         },
         handleCanvasMousemove: function (event)
         {
@@ -934,8 +943,8 @@ const vueApp = new Vue({
 
             if (this.isDraggingCanvas)
             {
-                this.canvasDragOffset.x = dragOffset.x
-                this.canvasDragOffset.y = dragOffset.y;
+                this.canvasManualOffset.x = this.canvasDragStartOffset.x + dragOffset.x
+                this.canvasManualOffset.y = this.canvasDragStartOffset.y + dragOffset.y;
             }
         },
         handleMessageInputKeydown: function (event)
@@ -1141,6 +1150,7 @@ const vueApp = new Vue({
         rula: function (roomId)
         {
             if (!roomId) return;
+            this.canvasManualOffset = { x: 0, y: 0 };
             this.changeRoom(roomId);
             this.isRulaPopupOpen = false;
             this.rulaRoomSelection = null;

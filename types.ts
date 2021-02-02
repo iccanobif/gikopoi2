@@ -41,6 +41,7 @@ export interface Room
     backgroundOffset?: Coordinates;
     spawnPoint: string;
     needsFixedCamera?: boolean;
+    isBackgroundImageOffsetEdge?: boolean;
     objects: {
         x: number;
         y: number;
