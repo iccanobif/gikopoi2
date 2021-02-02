@@ -755,7 +755,7 @@ export const rooms: { [roomId: string]: Room } = {
         id: "bar_giko",
         scale: 1,
         size: { x: 14, y: 20 },
-        originCoordinates: { x: 0, y: 380 },
+        originCoordinates: { x: 1, y: 382 },
         spawnPoint: "stairs",
         backgroundImageUrl: "rooms/bar_giko/background.svg",
         backgroundColor: "#222",
