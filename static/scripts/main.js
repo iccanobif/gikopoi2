@@ -1124,6 +1124,12 @@ const vueApp = new Vue({
         },
         wantToTakeStream: function (streamSlotId)
         {
+            if (!window.RTCPeerConnection)
+            {
+                this.showWarningToast(i18n.t("msg.no_webrtc"));
+                return;
+            }
+            
             Vue.set(this.takenStreams, streamSlotId, true);
             
             const rtcPeer = this.setupRTCConnection(streamSlotId);
@@ -1162,6 +1168,12 @@ const vueApp = new Vue({
         },
         openStreamPopup: function (streamSlotId)
         {
+            if (!window.RTCPeerConnection)
+            {
+                this.showWarningToast(i18n.t("msg.no_webrtc"));
+                return;
+            }
+            
             this.streamSlotIdInWhichIWantToStream = streamSlotId;
             this.wantToStream = true;
 
