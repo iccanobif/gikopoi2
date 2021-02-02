@@ -471,7 +471,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  5, y:  5 },
 
             { x:  7, y:  0 },
-            { x:  7, y:  1 },
+            { x:  8, y:  1 },
 
             { x:  8, y:  2 },
             { x:  8, y:  3 },
@@ -501,6 +501,9 @@ export const rooms: { [roomId: string]: Room } = {
             { xFrom: 7, yFrom: 10, xTo: 6, yTo: 10 },
             { xFrom: 7, yFrom: 11, xTo: 7, yTo: 10 },
             { xFrom: 7, yFrom: 10, xTo: 7, yTo: 11 },
+            
+            { xFrom: 7, yFrom: 1, xTo: 7, yTo: 2 },
+            { xFrom: 7, yFrom: 2, xTo: 7, yTo: 1 },
         ],
         doors: {
             down_left: { x: 1, y: 0, direction: "up", target: { roomId: "admin_st", doorId: "right" } },
