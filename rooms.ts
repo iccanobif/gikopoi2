@@ -782,7 +782,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  8, y: 16, offset: { x:  960, y:  150 }, url: "counter_right.svg" },
             { x:  8, y: 17, offset: { x: 1000, y:  130 }, url: "counter_right.svg" },
             { x:  8, y: 18, offset: { x: 1040, y:  110 }, url: "counter_top_right.svg" },
-            { x:  7, y: 18, offset: { x: 1000, y:  90 }, url: "counter_top.svg" },
+            { x:  7, y: 18, offset: { x: 1000, y:   90 }, url: "counter_top.svg" },
             
             { x:  1, y:  5, offset: { x:  269, y:  263 }, url: "chair.svg" },
             { x:  1, y:  4, offset: { x:  229, y:  283 }, url: "chair.svg" },
@@ -895,29 +895,29 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  9, y:  0 },
             
             // double table chairs
-            { x:  12, y:  1 },
-            { x:  13, y:  1 },
+            { x: 12, y:  1 },
+            { x: 13, y:  1 },
             
-            { x:  12, y:  3 },
-            { x:  13, y:  3 },
+            { x: 12, y:  3 },
+            { x: 13, y:  3 },
             
-            { x:  12, y:  5 },
-            { x:  13, y:  5 },
+            { x: 12, y:  5 },
+            { x: 13, y:  5 },
             
-            { x:  12, y:  7 },
-            { x:  13, y:  7 },
+            { x: 12, y:  7 },
+            { x: 13, y:  7 },
             
-            { x:  12, y: 12 },
-            { x:  13, y: 12 },
+            { x: 12, y: 12 },
+            { x: 13, y: 12 },
             
-            { x:  12, y: 14 },
-            { x:  13, y: 14 },
+            { x: 12, y: 14 },
+            { x: 13, y: 14 },
             
-            { x:  12, y: 16 },
-            { x:  13, y: 16 },
+            { x: 12, y: 16 },
+            { x: 13, y: 16 },
             
-            { x:  12, y: 18 },
-            { x:  13, y: 18 },
+            { x: 12, y: 18 },
+            { x: 13, y: 18 },
         ],
         blocked: [
             { x:  0, y:  8 },
@@ -1000,17 +1000,17 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  8, y:  0 },
             
             // double tables
-            { x:  12, y:  2 },
-            { x:  13, y:  2 },
+            { x: 12, y:  2 },
+            { x: 13, y:  2 },
             
-            { x:  12, y:  6 },
-            { x:  13, y:  6 },
+            { x: 12, y:  6 },
+            { x: 13, y:  6 },
             
-            { x:  12, y: 13 },
-            { x:  13, y: 13 },
+            { x: 12, y: 13 },
+            { x: 13, y: 13 },
             
-            { x:  12, y: 17 },
-            { x:  13, y: 17 },
+            { x: 12, y: 17 },
+            { x: 13, y: 17 },
             
         ],
         forbiddenMovements: [],
