@@ -70,9 +70,14 @@ video {
     width: 219px;
 }
 
+@media (min-width: 900px) {
+    #video-streams {
+        position: absolute;
+        left: 700px;
+    }
+  }
+
 #video-streams{
-    position: absolute;
-    left: 700px;
     width: 232px;
     padding: 5px
 }
@@ -215,11 +220,24 @@ video {
 #canvas-container
 {
     position: relative;
-    width: 700px;
+    max-width: 700px;
     height: 511px;
 }
 
 #toolbar
+{
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+#toolbar-text-input
+{
+    flex-grow: 1;
+    display: flex;
+    align-items: stretch;
+}
+#toolbar-buttons
 {
     display: flex;
     align-items: stretch;

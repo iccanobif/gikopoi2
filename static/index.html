@@ -6,6 +6,7 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
     <link rel='stylesheet' href='style/main.css' />
     <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ギコっぽいっぽい</title>
 </head>
 
@@ -23,16 +24,19 @@
                 <div id="area-selection">
                     <label for="gen-selection"><input type="radio" id="gen-selection" value="gen" v-model="areaId"
                             v-on:click="setLanguage('ja')">
-                        一般 (_gen) [{{ $t("ui.login_user_count") }}@USER_COUNT_GEN@ {{ $t("ui.login_streamer_count") }}@STREAMER_COUNT_GEN@]</label>
+                        一般 (_gen) [{{ $t("ui.login_user_count") }}@USER_COUNT_GEN@
+                        {{ $t("ui.login_streamer_count") }}@STREAMER_COUNT_GEN@]</label>
                     <label for="for-selection"><input type="radio" id="for-selection" value="for" v-model="areaId"
                             v-on:click="setLanguage('en')">
-                        International (_for) [{{ $t("ui.login_user_count") }}@USER_COUNT_FOR@ {{ $t("ui.login_streamer_count") }}@STREAMER_COUNT_FOR@]</label>
+                        International (_for) [{{ $t("ui.login_user_count") }}@USER_COUNT_FOR@
+                        {{ $t("ui.login_streamer_count") }}@STREAMER_COUNT_FOR@]</label>
                 </div>
                 <div>
                     <label>{{ $t("ui.label_username") }}</label> <input type="text" v-model="username" maxlength="20" />
                 </div>
                 <div id="character-selection">
-                    <label v-for="character in allCharacters" :for="character.characterName + '-selection'" v-show="!character.isHidden">
+                    <label v-for="character in allCharacters" :for="character.characterName + '-selection'"
+                        v-show="!character.isHidden">
                         <template v-if="character.isHidden">
                             This is a secret, please don't tell anyone. これは秘密です、誰にも言わないでください。
                         </template>
@@ -87,33 +91,24 @@
                 </div>
             </div>
             <div id="toolbar">
-                {{ $t("ui.label_input") }} <input id="input-textbox" type="text"
-                    v-on:keydown="handleMessageInputKeydown($event)" tabindex="2" maxlength="500"></input>
-                <button id="send-button" v-on:click="sendMessageToServer" tabindex="3">{{ $t("ui.button_send")
-                    }}</button>
-                <!-- <button v-on:click="currentRoom.originCoordinates.x++">+</button>
-                <button v-on:click="currentRoom.originCoordinates.x--">-</button>
-                {{ currentRoom.originCoordinates && currentRoom.originCoordinates.x }}
-                <button v-on:click="currentRoom.originCoordinates.y++">+</button>
-                <button v-on:click="currentRoom.originCoordinates.y--">-</button>
-                {{ currentRoom.originCoordinates && currentRoom.originCoordinates.y }}
-                <button v-on:click="currentRoom.backgroundOffset.x++">+</button>
-                <button v-on:click="currentRoom.backgroundOffset.x--">-</button>
-                {{ currentRoom.backgroundOffset && currentRoom.backgroundOffset.x }}
-                <button v-on:click="currentRoom.backgroundOffset.y++">+</button>
-                <button v-on:click="currentRoom.backgroundOffset.y--">-</button>
-                {{ currentRoom.backgroundOffset && currentRoom.backgroundOffset.y }}
-                <button v-on:click="currentRoom.scale *= 1.01">+</button>
-                <button v-on:click="currentRoom.scale *= 0.99">-</button>
-                {{ Math.round(currentRoom.scale * 100) / 100 }} -->
-                <label for="sound-effect-volume">{{ $t("ui.sound_effect") }}</label>
-                <input type="range" id="sound-effect-volume" v-on:change="changeSoundEffectVolume()"
-                    name="sound-effect-volume" min="0" max="1" step="0.01" :value="soundEffectVolume">
-                <button id="btn-move-left" v-on:click="sendNewPositionToServer('left')">←</button>
-                <button id="btn-move-up" v-on:click="sendNewPositionToServer('up')">↑</button>
-                <button id="btn-move-down" v-on:click="sendNewPositionToServer('down')">↓</button>
-                <button id="btn-move-right" v-on:click="sendNewPositionToServer('right')">→</button>
-                <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
+                <div id="toolbar-text-input">
+                    {{ $t("ui.label_input") }} <input id="input-textbox" type="text"
+                        v-on:keydown="handleMessageInputKeydown($event)" tabindex="2" maxlength="500"></input>
+                    <button id="send-button" v-on:click="sendMessageToServer" tabindex="3">{{ $t("ui.button_send")
+                        }}</button>
+                </div>
+                <div id="toolbar-buttons">
+                    <div>
+                        <label for="sound-effect-volume">{{ $t("ui.sound_effect") }}</label>
+                        <input type="range" id="sound-effect-volume" v-on:change="changeSoundEffectVolume()"
+                            name="sound-effect-volume" min="0" max="1" step="0.01" :value="soundEffectVolume">
+                    </div>
+                    <button id="btn-move-left" v-on:click="sendNewPositionToServer('left')">←</button>
+                    <button id="btn-move-up" v-on:click="sendNewPositionToServer('up')">↑</button>
+                    <button id="btn-move-down" v-on:click="sendNewPositionToServer('down')">↓</button>
+                    <button id="btn-move-right" v-on:click="sendNewPositionToServer('right')">→</button>
+                    <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
+                </div>
             </div>
             {{ $t("ui.label_log") }}
             <div id="chatLog">
@@ -133,7 +128,8 @@
                     <video :id="'received-video-' + index"
                         v-show="takenStreams[index] && streamSlot.withVideo && index != streamSlotIdInWhichIWantToStream"
                         autoplay></video>
-                    <div :id="'vu-meter-container-' + index" v-show="streamSlot.isActive && streamSlot.withSound && index == streamSlotIdInWhichIWantToStream">
+                    <div :id="'vu-meter-container-' + index"
+                        v-show="streamSlot.isActive && streamSlot.withSound && index == streamSlotIdInWhichIWantToStream">
                         <div :id="'vu-meter-bar-primary-' + index"></div>
                         <div :id="'vu-meter-bar-secondary-' + index"></div>
                     </div>
