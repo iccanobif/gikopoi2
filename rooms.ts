@@ -1209,9 +1209,9 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  3, y:  2 },
             { x:  3, y:  3 },
             { x:  3, y:  4 },
-            { x:  2, y:  4 },
-            { x:  1, y:  4 },
-            { x:  0, y:  4 },
+            { x:  2, y:  5 },
+            { x:  1, y:  6 },
+            { x:  0, y:  6 },
             
             // sign
             { x:  4, y:  1 },
@@ -1248,6 +1248,7 @@ export const rooms: { [roomId: string]: Room } = {
             up: { x: 8, y: 11, direction: "down", target: "NOT_READY_YET" },
             left: { x: 0, y: 8, direction: "right", target: "NOT_READY_YET" },
             cafe: { x: 4, y: 2, direction: "right", target: "NOT_READY_YET" },
+            manhole: { x: 3, y: 5, direction: "down", target: "NOT_READY_YET" },
         },
         streamSlotCount: 0,
         secret: false
