@@ -66,8 +66,19 @@ header h2 {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-video {
+.video-container
+{
     width: 219px;
+    overflow: hidden;
+}
+
+.video-container:hover
+{
+    resize: horizontal;
+}
+
+video {
+    width: 100%;
 }
 
 @media (min-width: 947px) {
