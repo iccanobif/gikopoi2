@@ -1104,7 +1104,7 @@ export const rooms: { [roomId: string]: Room } = {
             { xFrom: 4, yFrom: 3, xTo: 4, yTo: 2 },
         ],
         doors: {
-            steps: { x: 14, y: 8, direction: "left", target: { roomId: "long_st", doorId: "left" } },
+            steps: { x: 14, y: 4, direction: "left", target: { roomId: "long_st", doorId: "left" } },
         },
         streamSlotCount: 2,
         secret: false
