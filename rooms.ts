@@ -138,9 +138,9 @@ export const rooms: { [roomId: string]: Room } = {
             left: { x: 0, y: 2, direction: "right", target: { roomId: "bar_st", doorId: "right" } },
             admin: { x: 2, y: 4, direction: "down", target: { roomId: "admin", doorId: "down" } },
             barrier: { x: 7, y: 4, direction: "down", target: { roomId: "radio_backstage", doorId: "right_center" } }, // Temp
-            down: { x: 7, y: 0, direction: "up", target: { roomId: "yoshinoya", doorId: "door" } },
+            down: { x: 7, y: 0, direction: "up", target: { roomId: "cafe_st", doorId: "up" } },
             right: { x: 9, y: 2, direction: "left", target: { roomId: "takadai", doorId: "down_left" } },
-            up_left: { x: 0, y: 8, direction: "down", target: { roomId: "bar_giko", doorId: "stairs" } },
+            up_left: { x: 0, y: 8, direction: "down", target: "NOT_READY_YET" },
             manhole_left: { x: 2, y: 0, direction: "up", target: { roomId: "basement", doorId: "up_right_1" } },
             manhole_right: { x: 9, y: 7, direction: "up", target: { roomId: "basement", doorId: "up_right_2" } },
             warp: { x: 9, y: 0, direction: "up", target: { roomId: "admin_st", doorId: "trash" } },
@@ -168,12 +168,12 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             left: { x: 0, y: 2, direction: "right", target: { roomId: "bar", doorId: "hatch" } },
             up_left: { x: 1, y: 3, direction: "down", target: { roomId: "bar_st", doorId: "manhole" } },
-            secret_bar: { x: 3, y: 3, direction: "down", target: "NOT_READY_YET" },
+            secret_bar: { x: 3, y: 3, direction: "down", target: { roomId: "izakaya774", doorId: "down" } },
             bar777: { x: 6, y: 3, direction: "down", target: "NOT_READY_YET" },
             up_right_1: { x: 8, y: 3, direction: "down", target: { roomId: "admin_st", doorId: "manhole_left" } },
             up_right_2: { x: 9, y: 3, direction: "down", target: { roomId: "admin_st", doorId: "manhole_right" } },
-            down_left: { x: 1, y: 0, direction: "up", target: "NOT_READY_YET" },
-            down_right: { x: 8, y: 0, direction: "up", target: "NOT_READY_YET" },
+            down_left: { x: 1, y: 0, direction: "up", target: { roomId: "school_st", doorId: "manhole" } },
+            down_right: { x: 8, y: 0, direction: "up", target: { roomId: "cafe_st", doorId: "manhole" } },
         },
         streamSlotCount: 0,
         secret: false
@@ -313,14 +313,14 @@ export const rooms: { [roomId: string]: Room } = {
         forbiddenMovements: [],
         doors: {
             world_spawn: { x: 3, y: 4, direction: "down", target: null },
-            left: { x: 0, y: 2, direction: "right", target: "NOT_READY_YET" },
+            left: { x: 0, y: 2, direction: "right", target: { roomId: "busstop", doorId: "right" } },
             school: { x: 0, y: 5, direction: "right", target: "NOT_READY_YET" },
-            up: { x: 3, y: 7, direction: "down", target: "NOT_READY_YET" },
-            right: { x: 5, y: 2, direction: "left", target: "NOT_READY_YET" },
-            manhole: { x: 4, y: 1, direction: "down", target: "NOT_READY_YET" }
+            up: { x: 3, y: 7, direction: "down", target: { roomId: "bar_st", doorId: "down" } },
+            right: { x: 5, y: 2, direction: "left", target: { roomId: "cafe_st", doorId: "left" } },
+            manhole: { x: 4, y: 1, direction: "down", target: { roomId: "basement", doorId: "down_left" } }
         },
         streamSlotCount: 0,
-        secret: true
+        secret: false
     },
     bar_st: {
         id: "bar_st",
@@ -724,7 +724,7 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         doors: {
             spawn: { x: 6, y: 7, direction: "up", target: null },
-            door: { x: 11, y: 7, direction: "left", target: { roomId: "admin_st", doorId: "down" } }
+            door: { x: 11, y: 7, direction: "left", target: { roomId: "bar_giko_square", doorId: "yoshinoya" } }
         },
         streamSlotCount: 1,
         secret: false
@@ -759,7 +759,7 @@ export const rooms: { [roomId: string]: Room } = {
         size: { x: 14, y: 20 },
         originCoordinates: { x: 1, y: 382 },
         spawnPoint: "stairs",
-        backgroundImageUrl: "rooms/bar_giko/background.svg",
+        backgroundImageUrl: "rooms/bar_giko/background_with_stools.svg",
         backgroundColor: "#222",
         objects: [
             { x:  2, y:  5, offset: { x:  280, y:  250 }, url: "counter_left.svg" },
@@ -785,7 +785,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  8, y: 17, offset: { x: 1000, y:  130 }, url: "counter_right.svg" },
             { x:  8, y: 18, offset: { x: 1040, y:  110 }, url: "counter_top_right.svg" },
             { x:  7, y: 18, offset: { x: 1000, y:   90 }, url: "counter_top.svg" },
-            
+            /*
             { x:  1, y:  5, offset: { x:  269, y:  263 }, url: "chair.svg" },
             { x:  1, y:  4, offset: { x:  229, y:  283 }, url: "chair.svg" },
             
@@ -811,42 +811,42 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  9, y: 15, offset: { x:  989, y:  223 }, url: "chair.svg" },
             { x:  9, y: 16, offset: { x: 1029, y:  203 }, url: "chair.svg" },
             { x:  9, y: 17, offset: { x: 1070, y:  183 }, url: "chair.svg" },
-            
-            { x:  2, y:  0, offset: { x:  109, y:  383 }, url: "chair.svg" },
+            */
+            //{ x:  2, y:  0, offset: { x:  109, y:  383 }, url: "chair.svg" },
             { x:  3, y:  0, offset: { x:  120, y:  370 }, url: "table_hori.svg" },
-            { x:  4, y:  0, offset: { x:  189, y:  423 }, url: "chair.svg" },
+            //{ x:  4, y:  0, offset: { x:  189, y:  423 }, url: "chair.svg" },
             
-            { x:  7, y:  0, offset: { x:  309, y:  483 }, url: "chair.svg" },
+            //{ x:  7, y:  0, offset: { x:  309, y:  483 }, url: "chair.svg" },
             { x:  8, y:  0, offset: { x:  320, y:  470 }, url: "table_hori.svg" },
-            { x:  9, y:  0, offset: { x:  389, y:  523 }, url: "chair.svg" },
+            //{ x:  9, y:  0, offset: { x:  389, y:  523 }, url: "chair.svg" },
             
-            { x: 12, y:  1, offset: { x:  549, y:  563 }, url: "chair.svg" },
-            { x: 13, y:  1, offset: { x:  589, y:  583 }, url: "chair.svg" },
+            //{ x: 12, y:  1, offset: { x:  549, y:  563 }, url: "chair.svg" },
+            //{ x: 13, y:  1, offset: { x:  589, y:  583 }, url: "chair.svg" },
             { x: 12, y:  2, offset: { x:  560, y:  510 }, url: "table_vert.svg" },
             { x: 13, y:  2, offset: { x:  600, y:  530 }, url: "table_vert.svg" },
-            { x: 12, y:  3, offset: { x:  629, y:  523 }, url: "chair.svg" },
-            { x: 13, y:  3, offset: { x:  669, y:  543 }, url: "chair.svg" },
+            //{ x: 12, y:  3, offset: { x:  629, y:  523 }, url: "chair.svg" },
+            //{ x: 13, y:  3, offset: { x:  669, y:  543 }, url: "chair.svg" },
             
-            { x: 12, y:  5, offset: { x:  709, y:  483 }, url: "chair.svg" },
-            { x: 13, y:  5, offset: { x:  749, y:  503 }, url: "chair.svg" },
+            //{ x: 12, y:  5, offset: { x:  709, y:  483 }, url: "chair.svg" },
+            //{ x: 13, y:  5, offset: { x:  749, y:  503 }, url: "chair.svg" },
             { x: 12, y:  6, offset: { x:  720, y:  430 }, url: "table_vert.svg" },
             { x: 13, y:  6, offset: { x:  760, y:  450 }, url: "table_vert.svg" },
-            { x: 12, y:  7, offset: { x:  789, y:  443 }, url: "chair.svg" },
-            { x: 13, y:  7, offset: { x:  829, y:  463 }, url: "chair.svg" },
+            //{ x: 12, y:  7, offset: { x:  789, y:  443 }, url: "chair.svg" },
+            //{ x: 13, y:  7, offset: { x:  829, y:  463 }, url: "chair.svg" },
             
-            { x: 12, y: 12, offset: { x:  989, y:  343 }, url: "chair.svg" },
-            { x: 13, y: 12, offset: { x: 1029, y:  363 }, url: "chair.svg" },
+            //{ x: 12, y: 12, offset: { x:  989, y:  343 }, url: "chair.svg" },
+            //{ x: 13, y: 12, offset: { x: 1029, y:  363 }, url: "chair.svg" },
             { x: 12, y: 13, offset: { x: 1000, y:  290 }, url: "table_vert.svg" },
             { x: 13, y: 13, offset: { x: 1040, y:  310 }, url: "table_vert.svg" },
-            { x: 12, y: 14, offset: { x: 1069, y:  303 }, url: "chair.svg" },
-            { x: 13, y: 14, offset: { x: 1109, y:  323 }, url: "chair.svg" },
+            //{ x: 12, y: 14, offset: { x: 1069, y:  303 }, url: "chair.svg" },
+            //{ x: 13, y: 14, offset: { x: 1109, y:  323 }, url: "chair.svg" },
             
-            { x: 12, y: 16, offset: { x: 1149, y:  263 }, url: "chair.svg" },
-            { x: 13, y: 16, offset: { x: 1189, y:  283 }, url: "chair.svg" },
+            //{ x: 12, y: 16, offset: { x: 1149, y:  263 }, url: "chair.svg" },
+            //{ x: 13, y: 16, offset: { x: 1189, y:  283 }, url: "chair.svg" },
             { x: 12, y: 17, offset: { x: 1160, y:  210 }, url: "table_vert.svg" },
             { x: 13, y: 17, offset: { x: 1200, y:  230 }, url: "table_vert.svg" },
-            { x: 12, y: 18, offset: { x: 1229, y:  223 }, url: "chair.svg" },
-            { x: 13, y: 18, offset: { x: 1269, y:  243 }, url: "chair.svg" },
+            //{ x: 12, y: 18, offset: { x: 1229, y:  223 }, url: "chair.svg" },
+            //{ x: 13, y: 18, offset: { x: 1269, y:  243 }, url: "chair.svg" },
         ],
         sit: [
             { x:  0, y: 13 },
@@ -1017,7 +1017,7 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [],
         doors: {
-            stairs: { x: 7, y: 19, direction: "right", target: { roomId: "admin_st", doorId: "up_left" } },
+            stairs: { x: 7, y: 19, direction: "right", target: { roomId: "bar_giko_square", doorId: "bar_giko" } },
         },
         streamSlotCount: 2,
         secret: false
@@ -1107,6 +1107,347 @@ export const rooms: { [roomId: string]: Room } = {
             steps: { x: 14, y: 4, direction: "left", target: { roomId: "long_st", doorId: "left" } },
         },
         streamSlotCount: 2,
+        secret: false
+    },
+    cafe_st: {
+        id: "cafe_st",
+        scale: 1,
+        size: { x: 11, y: 12 },
+        originCoordinates: { x: 0, y: 267 },
+        spawnPoint: "water",
+        backgroundImageUrl: "rooms/cafe_st/background_with_chairs.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [
+            { x:  3, y:  4, offset: { x:  25, y: -19 }, url: "cafe.svg" },
+            { x:  4, y:  1, offset: { x: 198, y:  92 }, url: "sunroof.svg" },
+            
+            { x:  0, y:  0, offset: { x:  18, y:  217 }, url: "chair_down.svg" },
+            { x:  0, y:  1, offset: { x:  44, y:  192 }, url: "chair_down_back.svg" },
+            { x:  1, y:  0, offset: { x:  58, y:  237 }, url: "chair_down.svg" },
+            { x:  1, y:  1, offset: { x:  84, y:  212 }, url: "chair_down_back.svg" },
+            { x:  2, y:  0, offset: { x:  98, y:  257 }, url: "chair_down.svg" },
+            { x:  2, y:  1, offset: { x: 124, y:  232 }, url: "chair_down_back.svg" },
+            
+            { x:  5, y:  3, offset: { x: 326, y:  233 }, url: "table_without_shadow.svg" },
+            //{ x:  5, y:  2, offset: { x: 294, y:  274 }, url: "chair_up.svg" },
+            { x:  5, y:  1, offset: { x: 293, y:  258 }, url: "chair_up_back.svg" },
+            //{ x:  6, y:  3, offset: { x: 376, y:  276 }, url: "chair_left.svg" },
+            { x:  7, y:  3, offset: { x: 396, y:  260 }, url: "chair_left_back.svg" },
+            //{ x:  5, y:  4, offset: { x: 378, y:  237 }, url: "chair_down.svg" },
+            { x:  5, y:  5, offset: { x: 404, y:  212 }, url: "chair_down_back.svg" },
+            
+            { x:  8, y:  2, offset: { x: 407, y:  313 }, url: "table_without_shadow.svg" },
+            //{ x:  8, y:  1, offset: { x: 374, y:  354 }, url: "chair_up.svg" },
+            { x:  8, y:  0, offset: { x: 373, y:  338 }, url: "chair_up_back.svg" },
+            //{ x:  8, y:  3, offset: { x: 458, y:  317 }, url: "chair_down.svg" },
+            { x:  8, y:  4, offset: { x: 484, y:  292 }, url: "chair_down_back.svg" },
+            
+            { x:  6, y:  9, offset: { x: 607, y:  133 }, url: "table_without_shadow.svg" },
+            //{ x:  6, y:  8, offset: { x: 575, y:  174 }, url: "chair_up.svg" },
+            { x:  6, y:  7, offset: { x: 574, y:  158 }, url: "chair_up_back.svg" },
+            //{ x:  7, y:  9, offset: { x: 656, y:  176 }, url: "chair_left.svg" },
+            { x:  8, y:  9, offset: { x: 676, y:  160 }, url: "chair_left_back.svg" },
+            //{ x:  6, y: 10, offset: { x: 658, y:  137 }, url: "chair_down.svg" },
+            { x:  6, y: 11, offset: { x: 684, y:  112 }, url: "chair_down_back.svg" },
+            //{ x:  5, y:  9, offset: { x: 578, y:  137 }, url: "chair_right.svg" },
+            { x:  4, y:  9, offset: { x: 570, y:  112 }, url: "chair_right_back.svg" },
+            
+            //{ x:  1, y: 11, offset: { x: 498, y:   17 }, url: "chair_down.svg" },
+            { x:  1, y: 12, offset: { x: 524, y:   -8 }, url: "chair_down_back.svg" },
+            //{ x:  2, y: 11, offset: { x: 538, y:   37 }, url: "chair_down.svg" },
+            { x:  2, y: 12, offset: { x: 564, y:   12 }, url: "chair_down_back.svg" },
+            //{ x:  3, y: 11, offset: { x: 578, y:   57 }, url: "chair_down.svg" },
+            { x:  3, y: 12, offset: { x: 604, y:   32 }, url: "chair_down_back.svg" },
+            
+            //{ x: 10, y:  6, offset: { x: 517, y:  314 }, url: "bench.svg" },
+            { x: 11, y:  2, offset: { x: 558, y:  296 }, url: "bench_back.svg" },
+            
+            //{ x: 10, y: 10, offset: { x: 677, y:  234 }, url: "bench.svg" },
+            { x: 11, y:  7, offset: { x: 718, y:  216 }, url: "bench_back.svg" },
+            
+            { x:  2, y:  7, offset: { x: 366, y:   93 }, url: "polish.svg" },
+            { x:  2, y:  9, offset: { x: 446, y:   53 }, url: "polish.svg" },
+            
+            { x:  7, y:  6, offset: { x: 531, y:  219 }, url: "fountain.svg" },
+            //{ x:  6, y:  7, offset: { x: 514, y:  241 }, url: "fountain_water_surface.svg" },
+        ],
+        sit: [
+            { x:  0, y:  0 },
+            { x:  1, y:  0 },
+            { x:  2, y:  0 },
+            
+            { x:  5, y:  2 },
+            { x:  6, y:  3 },
+            { x:  5, y:  4 },
+            
+            { x:  8, y:  1 },
+            { x:  8, y:  3 },
+            
+            { x:  6, y:  8 },
+            { x:  7, y:  9 },
+            { x:  6, y: 10 },
+            { x:  5, y:  9 },
+            
+            { x:  1, y: 11 },
+            { x:  2, y: 11 },
+            { x:  3, y: 11 },
+            
+            { x: 10, y:  3 },
+            { x: 10, y:  4 },
+            { x: 10, y:  5 },
+            
+            { x: 10, y:  7 },
+            { x: 10, y:  8 },
+            { x: 10, y:  9 },
+        ],
+        blocked: [
+            // cafe
+            { x:  0, y:  1 },
+            { x:  1, y:  1 },
+            { x:  2, y:  1 },
+            { x:  3, y:  1 },
+            { x:  3, y:  2 },
+            { x:  3, y:  3 },
+            { x:  3, y:  4 },
+            { x:  2, y:  5 },
+            { x:  1, y:  6 },
+            { x:  0, y:  6 },
+            
+            // sign
+            { x:  4, y:  1 },
+            
+            // tables
+            { x:  5, y:  3 },
+            { x:  8, y:  2 },
+            { x:  6, y:  9 },
+            
+            // poles
+            { x:  2, y:  7 },
+            { x:  2, y:  9 },
+            
+            // fountain
+            { x:  7, y:  6 },
+        ],
+        forbiddenMovements: [
+            { xFrom:  5, yFrom:  1, xTo:  5, yTo:  2 }, { xFrom:  5, yFrom:  2, xTo:  5, yTo:  1 },
+            { xFrom:  6, yFrom:  3, xTo:  7, yTo:  3 }, { xFrom:  7, yFrom:  3, xTo:  6, yTo:  3 },
+            { xFrom:  5, yFrom:  4, xTo:  5, yTo:  5 }, { xFrom:  5, yFrom:  5, xTo:  5, yTo:  4 },
+            
+            { xFrom:  8, yFrom:  1, xTo:  8, yTo:  0 }, { xFrom:  8, yFrom:  0, xTo:  8, yTo:  1 },
+            { xFrom:  8, yFrom:  3, xTo:  8, yTo:  4 }, { xFrom:  8, yFrom:  4, xTo:  8, yTo:  3 },
+            
+            { xFrom:  6, yFrom:  7, xTo:  6, yTo:  8 }, { xFrom:  6, yFrom:  8, xTo:  6, yTo:  7 },
+            { xFrom:  7, yFrom:  9, xTo:  8, yTo:  9 }, { xFrom:  8, yFrom:  9, xTo:  7, yTo:  9 },
+            { xFrom:  6, yFrom: 10, xTo:  6, yTo: 11 }, { xFrom:  6, yFrom: 11, xTo:  6, yTo: 10 },
+            { xFrom:  4, yFrom:  9, xTo:  5, yTo:  9 }, { xFrom:  5, yFrom:  9, xTo:  4, yTo:  9 },
+        ],
+        doors: {
+            water: { x: 10, y: 6, direction: "left", target: "NOT_READY_YET" },
+            bottom_right: { x: 10, y: 1, direction: "left", target: "NOT_READY_YET" },
+            top_right: { x: 10, y: 10, direction: "left", target: { roomId: "takadai", doorId: "down_right" } },
+            up: { x: 8, y: 11, direction: "down", target: { roomId: "admin_st", doorId: "down" } },
+            left: { x: 0, y: 8, direction: "right", target: { roomId: "school_st", doorId: "right" } },
+            cafe: { x: 4, y: 2, direction: "right", target: "NOT_READY_YET" },
+            manhole: { x: 3, y: 5, direction: "down", target: { roomId: "basement", doorId: "down_right" } },
+        },
+        streamSlotCount: 0,
+        secret: false
+    },
+    busstop: {
+        id: "busstop",
+        scale: 1,
+        size: { x: 8, y: 5 },
+        originCoordinates: { x: 6, y: 215 },
+        spawnPoint: "right",
+        backgroundImageUrl: "rooms/busstop/background.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [
+            { x:  1, y:  1, offset: { x: 105, y:  85 }, url: "sign.svg" },
+            { x:  0, y:  1, offset: { x:  72, y: 129 }, url: "poland.svg" },
+            { x:  5, y:  1, offset: { x: 272, y: 229 }, url: "poland.svg" },
+            { x:  7, y:  1, offset: { x: 352, y: 269 }, url: "poland.svg" },
+            { x:  0, y:  3, offset: { x: 182, y:  64 }, url: "trash.svg" },
+            { x:  0, y:  4, offset: { x: 218, y: 103 }, url: "comfy_sofa.svg" },
+            { x:  2, y:  4, offset: { x: 298, y: 143 }, url: "comfy_sofa.svg" },
+            { x:  4, y:  3, offset: { x: 156, y:   0 }, url: "roof.svg" },
+        ],
+        sit: [
+            { x:  1, y:  4 },
+            { x:  2, y:  4 },
+            { x:  3, y:  4 },
+            { x:  4, y:  4 },
+        ],
+        blocked: [
+            { x:  0, y:  1 },
+            { x:  1, y:  1 },
+            { x:  5, y:  1 },
+            { x:  7, y:  1 },
+        ],
+        forbiddenMovements: [
+            { xFrom:  0, yFrom:  3, xTo:  0, yTo:  4 }, { xFrom:  0, yFrom:  4, xTo:  0, yTo:  3 },
+        ],
+        doors: {
+            right: { x: 7, y: 2, direction: "left", target: { roomId: "school_st", doorId: "left" } },
+            down: { x: 3, y: 0, direction: "up", target: { roomId: "bar_giko_square", doorId: "up" } },
+            left: { x: 0, y: 2, direction: "right", target: "NOT_READY_YET" },
+        },
+        streamSlotCount: 0,
+        secret: false
+    },
+    izakaya774: {
+        id: "izakaya774",
+        scale: 1,
+        size: { x: 6, y: 6 },
+        originCoordinates: { x: 2, y: 269 },
+        spawnPoint: "down",
+        backgroundImageUrl: "rooms/izakaya774/background.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [
+            { x:  2, y:  2, offset: { x: 165, y:  189 }, url: "tabular.svg" },
+        ],
+        sit: [
+            { x:  2, y:  1 },
+            { x:  3, y:  1 },
+            { x:  4, y:  2 },
+            { x:  4, y:  3 },
+            { x:  3, y:  4 },
+            { x:  2, y:  4 },
+            { x:  1, y:  3 },
+            { x:  1, y:  2 },
+            
+            { x:  5, y:  5 },
+        ],
+        blocked: [
+            { x:  2, y:  2 },
+            { x:  3, y:  2 },
+            { x:  2, y:  3 },
+            { x:  3, y:  3 },
+        ],
+        forbiddenMovements: [],
+        doors: {
+            down: { x: 5, y: 0, direction: "up", target: { roomId: "basement", doorId: "secret_bar" } },
+        },
+        streamSlotCount: 0,
+        secret: false
+    },
+    bar_giko_square: {
+        id: "bar_giko_square",
+        scale: 1,
+        size: { x: 24, y: 22 },
+        originCoordinates: { x: -160, y: 505 },
+        spawnPoint: "up",
+        backgroundImageUrl: "rooms/bar_giko_square/background.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [
+            { x:  3, y:  8, offset: { x:    0, y:  160 }, url: "koban.svg" },
+            { x: 15, y: 18, offset: { x: 1160, y:  220 }, url: "bar_giko.svg" },
+            { x: 16, y: 17, offset: { x: 1168, y:  394 }, url: "bar_giko_sign.svg" },
+            { x: 12, y: 10, offset: { x:  660, y:  383 }, url: "fountain.svg" },
+            { x:  5, y: 17, offset: { x:  766, y:  195 }, url: "bench.svg" },
+            { x: 19, y:  4, offset: { x:  790, y:  546 }, url: "street_light_left.svg" },
+            { x: 14, y: 17, offset: { x: 1110, y:  186 }, url: "street_light_left.svg" },
+            { x:  9, y:  4, offset: { x:  390, y:  346 }, url: "street_light_right.svg" },
+        ],
+        sit: [
+            { x:  6, y: 17 },
+            { x:  7, y: 17 },
+            { x:  8, y: 17 },
+        ],
+        blocked: [
+            // Koban quarter
+            { x:  8, y:  0 },
+            { x:  8, y:  1 },
+            { x:  8, y:  2 },
+            { x:  8, y:  3 },
+            { x:  7, y:  3 },
+            { x:  6, y:  3 },
+            { x:  5, y:  3 },
+            { x:  4, y:  3 },
+            { x:  3, y:  4 },
+            { x:  3, y:  5 },
+            { x:  3, y:  6 },
+            { x:  3, y:  7 },
+            { x:  3, y:  8 },
+            { x:  2, y:  8 },
+            { x:  1, y:  8 },
+            { x:  0, y:  8 },
+            
+            // Yoshinoya quarter
+            { x:  0, y:  13 },
+            { x:  1, y:  13 },
+            { x:  2, y:  13 },
+            { x:  3, y:  13 },
+            { x:  3, y:  14 },
+            { x:  3, y:  15 },
+            { x:  3, y:  16 },
+            { x:  3, y:  17 },
+            { x:  4, y:  18 },
+            { x:  5, y:  18 },
+            { x:  6, y:  18 },
+            { x:  7, y:  18 },
+            { x:  8, y:  18 },
+            { x:  8, y:  19 },
+            { x:  8, y:  20 },
+            { x:  8, y:  21 },
+            
+            // Bar Giko quarter
+            { x:  15, y:  21 },
+            { x:  15, y:  20 },
+            { x:  15, y:  19 },
+            { x:  15, y:  18 },
+            { x:  17, y:  18 },
+            { x:  18, y:  18 },
+            { x:  19, y:  18 },
+            { x:  20, y:  17 },
+            { x:  20, y:  16 },
+            { x:  20, y:  15 },
+            { x:  20, y:  14 },
+            { x:  20, y:  13 },
+            { x:  21, y:  13 },
+            { x:  22, y:  13 },
+            { x:  23, y:  13 },
+            
+            // Bar Giko sign
+            { x:  16, y:  17 },
+            
+            // Empty quarter
+            { x:  23, y:  8 },
+            { x:  22, y:  8 },
+            { x:  21, y:  8 },
+            { x:  20, y:  8 },
+            { x:  20, y:  7 },
+            { x:  20, y:  6 },
+            { x:  20, y:  5 },
+            { x:  18, y:  3 },
+            { x:  17, y:  3 },
+            { x:  16, y:  3 },
+            { x:  15, y:  3 },
+            { x:  15, y:  2 },
+            { x:  15, y:  1 },
+            { x:  15, y:  0 },
+            
+            // Street lights
+            { x:  9, y:  4 },
+            { x: 14, y: 17 },
+            { x: 19, y:  4 },
+            
+            // Fountain
+            { x: 11, y:  9 },
+            { x: 12, y:  9 },
+            { x: 13, y: 10 },
+            { x: 13, y: 11 },
+            { x: 12, y: 12 },
+            { x: 11, y: 12 },
+            { x: 10, y: 11 },
+            { x: 10, y: 10 },
+        ],
+        forbiddenMovements: [],
+        doors: {
+            up: { x: 11, y: 21, direction: "down", target: { roomId: "busstop", doorId: "down" } },
+            bar_giko: { x: 17, y: 17, direction: "down", target: { roomId: "bar_giko", doorId: "stairs" } },
+            yoshinoya: { x: 4, y: 15, direction: "right", target: { roomId: "yoshinoya", doorId: "door" } },
+        },
+        streamSlotCount: 0,
         secret: false
     },
 };
