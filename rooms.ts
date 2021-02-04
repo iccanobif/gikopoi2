@@ -138,9 +138,9 @@ export const rooms: { [roomId: string]: Room } = {
             left: { x: 0, y: 2, direction: "right", target: { roomId: "bar_st", doorId: "right" } },
             admin: { x: 2, y: 4, direction: "down", target: { roomId: "admin", doorId: "down" } },
             barrier: { x: 7, y: 4, direction: "down", target: { roomId: "radio_backstage", doorId: "right_center" } }, // Temp
-            down: { x: 7, y: 0, direction: "up", target: { roomId: "yoshinoya", doorId: "door" } },
+            down: { x: 7, y: 0, direction: "up", target: { roomId: "cafe_st", doorId: "up" } },
             right: { x: 9, y: 2, direction: "left", target: { roomId: "takadai", doorId: "down_left" } },
-            up_left: { x: 0, y: 8, direction: "down", target: { roomId: "bar_giko", doorId: "stairs" } },
+            up_left: { x: 0, y: 8, direction: "down", target: "NOT_READY_YET" },
             manhole_left: { x: 2, y: 0, direction: "up", target: { roomId: "basement", doorId: "up_right_1" } },
             manhole_right: { x: 9, y: 7, direction: "up", target: { roomId: "basement", doorId: "up_right_2" } },
             warp: { x: 9, y: 0, direction: "up", target: { roomId: "admin_st", doorId: "trash" } },
@@ -168,12 +168,12 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             left: { x: 0, y: 2, direction: "right", target: { roomId: "bar", doorId: "hatch" } },
             up_left: { x: 1, y: 3, direction: "down", target: { roomId: "bar_st", doorId: "manhole" } },
-            secret_bar: { x: 3, y: 3, direction: "down", target: "NOT_READY_YET" },
+            secret_bar: { x: 3, y: 3, direction: "down", target: { roomId: "izakaya774", doorId: "down" } },
             bar777: { x: 6, y: 3, direction: "down", target: "NOT_READY_YET" },
             up_right_1: { x: 8, y: 3, direction: "down", target: { roomId: "admin_st", doorId: "manhole_left" } },
             up_right_2: { x: 9, y: 3, direction: "down", target: { roomId: "admin_st", doorId: "manhole_right" } },
-            down_left: { x: 1, y: 0, direction: "up", target: "NOT_READY_YET" },
-            down_right: { x: 8, y: 0, direction: "up", target: "NOT_READY_YET" },
+            down_left: { x: 1, y: 0, direction: "up", target: { roomId: "school_st", doorId: "manhole" } },
+            down_right: { x: 8, y: 0, direction: "up", target: { roomId: "cafe_st", doorId: "manhole" } },
         },
         streamSlotCount: 0,
         secret: false
@@ -313,14 +313,14 @@ export const rooms: { [roomId: string]: Room } = {
         forbiddenMovements: [],
         doors: {
             world_spawn: { x: 3, y: 4, direction: "down", target: null },
-            left: { x: 0, y: 2, direction: "right", target: "NOT_READY_YET" },
+            left: { x: 0, y: 2, direction: "right", target: { roomId: "busstop", doorId: "right" } },
             school: { x: 0, y: 5, direction: "right", target: "NOT_READY_YET" },
-            up: { x: 3, y: 7, direction: "down", target: "NOT_READY_YET" },
-            right: { x: 5, y: 2, direction: "left", target: "NOT_READY_YET" },
-            manhole: { x: 4, y: 1, direction: "down", target: "NOT_READY_YET" }
+            up: { x: 3, y: 7, direction: "down", target: { roomId: "bar_st", doorId: "down" } },
+            right: { x: 5, y: 2, direction: "left", target: { roomId: "cafe_st", doorId: "left" } },
+            manhole: { x: 4, y: 1, direction: "down", target: { roomId: "basement", doorId: "down_left" } }
         },
         streamSlotCount: 0,
-        secret: true
+        secret: false
     },
     bar_st: {
         id: "bar_st",
@@ -724,7 +724,7 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         doors: {
             spawn: { x: 6, y: 7, direction: "up", target: null },
-            door: { x: 11, y: 7, direction: "left", target: { roomId: "admin_st", doorId: "down" } }
+            door: { x: 11, y: 7, direction: "left", target: { roomId: "bar_giko_square", doorId: "yoshinoya" } }
         },
         streamSlotCount: 1,
         secret: false
@@ -1017,7 +1017,7 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [],
         doors: {
-            stairs: { x: 7, y: 19, direction: "right", target: { roomId: "admin_st", doorId: "up_left" } },
+            stairs: { x: 7, y: 19, direction: "right", target: { roomId: "bar_giko_square", doorId: "bar_giko" } },
         },
         streamSlotCount: 2,
         secret: false
@@ -1244,11 +1244,11 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             water: { x: 10, y: 6, direction: "left", target: "NOT_READY_YET" },
             bottom_right: { x: 10, y: 1, direction: "left", target: "NOT_READY_YET" },
-            top_right: { x: 10, y: 10, direction: "left", target: "NOT_READY_YET" },
-            up: { x: 8, y: 11, direction: "down", target: "NOT_READY_YET" },
-            left: { x: 0, y: 8, direction: "right", target: "NOT_READY_YET" },
+            top_right: { x: 10, y: 10, direction: "left", target: { roomId: "takadai", doorId: "down_right" } },
+            up: { x: 8, y: 11, direction: "down", target: { roomId: "admin_st", doorId: "down" } },
+            left: { x: 0, y: 8, direction: "right", target: { roomId: "school_st", doorId: "right" } },
             cafe: { x: 4, y: 2, direction: "right", target: "NOT_READY_YET" },
-            manhole: { x: 3, y: 5, direction: "down", target: "NOT_READY_YET" },
+            manhole: { x: 3, y: 5, direction: "down", target: { roomId: "basement", doorId: "down_right" } },
         },
         streamSlotCount: 0,
         secret: false
@@ -1287,8 +1287,8 @@ export const rooms: { [roomId: string]: Room } = {
             { xFrom:  0, yFrom:  3, xTo:  0, yTo:  4 }, { xFrom:  0, yFrom:  4, xTo:  0, yTo:  3 },
         ],
         doors: {
-            right: { x: 7, y: 2, direction: "left", target: "NOT_READY_YET" },
-            down: { x: 3, y: 0, direction: "up", target: "NOT_READY_YET" },
+            right: { x: 7, y: 2, direction: "left", target: { roomId: "school_st", doorId: "left" } },
+            down: { x: 3, y: 0, direction: "up", target: { roomId: "bar_giko_square", doorId: "up" } },
             left: { x: 0, y: 2, direction: "right", target: "NOT_READY_YET" },
         },
         streamSlotCount: 0,
@@ -1325,7 +1325,7 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [],
         doors: {
-            down: { x: 5, y: 0, direction: "up", target: "NOT_READY_YET" },
+            down: { x: 5, y: 0, direction: "up", target: { roomId: "basement", doorId: "secret_bar" } },
         },
         streamSlotCount: 0,
         secret: false
@@ -1443,9 +1443,9 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [],
         doors: {
-            up: { x: 11, y: 21, direction: "down", target: "NOT_READY_YET" },
-            bar_giko: { x: 17, y: 17, direction: "down", target: "NOT_READY_YET" },
-            yoshinoya: { x: 4, y: 15, direction: "right", target: "NOT_READY_YET" },
+            up: { x: 11, y: 21, direction: "down", target: { roomId: "busstop", doorId: "down" } },
+            bar_giko: { x: 17, y: 17, direction: "down", target: { roomId: "bar_giko", doorId: "stairs" } },
+            yoshinoya: { x: 4, y: 15, direction: "right", target: { roomId: "yoshinoya", doorId: "door" } },
         },
         streamSlotCount: 0,
         secret: false
