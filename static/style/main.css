@@ -344,6 +344,11 @@ video {
     background-color: #cdffc1;
 }
 
+.popup-sortable-table th
+{
+    cursor: pointer
+}
+
 .popup-buttons
 {
     text-align: right;

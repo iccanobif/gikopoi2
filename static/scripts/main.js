@@ -50,6 +50,7 @@ const vueApp = new Vue({
         // rula stuff
         isRulaPopupOpen: false,
         roomList: [],
+        lastRoomListSortKey: null,
         rulaRoomSelection: null,
         
         // streaming
@@ -398,7 +399,13 @@ const vueApp = new Vue({
 
             this.socket.on("server-room-list", async (roomList) =>
             {
+                roomList.forEach(r => {
+                    r.name = i18n.t("room." + r.id);
+                    r.streamerCount = r.streamers.length;
+                })
                 this.roomList = roomList;
+                this.lastRoomListSortKey = null;
+                this.sortRoomList("name")
                 this.isRulaPopupOpen = true;
             });
 
@@ -1173,6 +1180,22 @@ const vueApp = new Vue({
         {
             this.isRulaPopupOpen = false;
             this.rulaRoomSelection = null;
+        },
+        sortRoomList: function (key)
+        {
+            this.roomList.sort((a, b) =>
+            {
+                let sort;
+                if (key == "name")
+                    sort = a[key].localeCompare(b[key]);
+                else if(key == "streamers")
+                    sort = b[key].length - a[key].length;
+                else
+                    sort = b[key] - a[key];
+                return this.lastRoomListSortKey != key ? sort : sort * -1;
+            })
+            this.lastRoomListSortKey =
+                (this.lastRoomListSortKey != key ? key : null);
         },
         openStreamPopup: function (streamSlotId)
         {

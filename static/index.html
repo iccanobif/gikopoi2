@@ -167,7 +167,7 @@
             <div id="rula-popup" class="popup" v-if="isRulaPopupOpen">
                 <div class="popup-title">{{ $t("ui.rula_menu_title") }}</div>
                 <div class="popup-content">
-                    <table class="popup-table popup-selectable-table">
+                    <table class="popup-table popup-selectable-table popup-sortable-table">
                         <colgroup>
                             <col id="rula-menu-column-room-name" />
                             <col id="rula-menu-column-user-count" />
@@ -175,9 +175,9 @@
                         </colgroup>
                         <thead>
                             <tr>
-                                <th>{{ $t("ui.rula_menu_column_room_name") }}</th>
-                                <th>{{ $t("ui.rula_menu_column_user_count") }}</th>
-                                <th>{{ $t("ui.rula_menu_column_streamers") }}</th>
+                                <th v-on:click="sortRoomList('name')">{{ $t("ui.rula_menu_column_room_name") }}</th>
+                                <th v-on:click="sortRoomList('userCount')">{{ $t("ui.rula_menu_column_user_count") }}</th>
+                                <th v-on:click="sortRoomList('streamerCount')">{{ $t("ui.rula_menu_column_streamers") }}</th>
                             </tr>
                         </thead>
                         <tbody>
