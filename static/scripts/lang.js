@@ -117,7 +117,7 @@ export const messages =
             subtitle: "Unofficial remake",
             
             login_user_count: "Users: ",
-            login_streamer_count: "Streamers：",
+            login_streamer_count: "Streamers: ",
             
             infobox_label_area: "Area:",
             infobox_value_area: "Sea City",
