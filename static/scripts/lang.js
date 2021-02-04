@@ -105,6 +105,7 @@ export const messages =
             silo: "サイロ",
             badend: "転落死しました！",
             bar_giko: "ＢＡＲギコ",
+            bar_giko_square: "噴水広場"
         }
     },
     en:
@@ -212,6 +213,7 @@ export const messages =
             silo: "Silo",
             badend: "You fell to your death!",
             bar_giko: "Bar Giko",
+            bar_giko_square: "Fountain Plaza"
         }
     }
 }
