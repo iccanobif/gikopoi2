@@ -109,7 +109,8 @@ export const messages =
             enkai: r("宴会場", "えんかいじょう"),
             silo: "サイロ",
             badend: r("転落死しました！", "てんらくししました！"),
-            bar_giko: r("ＢＡＲギコ", "バーギコ"),
+            bar_giko: r("ＢＡＲギコ 上階", "バーギコ じょうかい"),
+            bar_giko2: r("ＢＡＲギコ 下階", "バーギコ かかい"),
             bar_giko_square: r("噴水広場", "ふんすいひろば"),
         }
     },
@@ -217,7 +218,8 @@ export const messages =
             yoshinoya: "Yoshinoya",
             silo: "Silo",
             badend: "You fell to your death!",
-            bar_giko: "Bar Giko",
+            bar_giko: "Bar Giko Upper Floor",
+            bar_giko: "Bar Giko Lower Floor",
             bar_giko_square: "Fountain Plaza"
         }
     }
