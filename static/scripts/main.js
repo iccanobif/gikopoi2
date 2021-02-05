@@ -400,12 +400,12 @@ const vueApp = new Vue({
             this.socket.on("server-room-list", async (roomList) =>
             {
                 roomList.forEach(r => {
-                    r.name = i18n.t("room." + r.id);
+                    r.sortName = i18n.t("room." + r.id, {reading: true});
                     r.streamerCount = r.streamers.length;
                 })
                 this.roomList = roomList;
                 this.lastRoomListSortKey = null;
-                this.sortRoomList("name")
+                this.sortRoomList("sortName")
                 this.isRulaPopupOpen = true;
             });
 
@@ -1186,7 +1186,7 @@ const vueApp = new Vue({
             this.roomList.sort((a, b) =>
             {
                 let sort;
-                if (key == "name")
+                if (key == "sortName")
                     sort = a[key].localeCompare(b[key]);
                 else if(key == "streamers")
                     sort = b[key].length - a[key].length;
