@@ -219,7 +219,7 @@ export const messages =
             silo: "Silo",
             badend: "You fell to your death!",
             bar_giko: "Bar Giko Upper Floor",
-            bar_giko: "Bar Giko Lower Floor",
+            bar_giko2: "Bar Giko Lower Floor",
             bar_giko_square: "Fountain Plaza"
         }
     }
