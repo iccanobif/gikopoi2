@@ -1135,13 +1135,13 @@ export const rooms: { [roomId: string]: Room } = {
             //{ x:  6, y:  3, offset: { x: 376, y:  276 }, url: "chair_left.svg" },
             { x:  7, y:  3, offset: { x: 396, y:  260 }, url: "chair_left_back.svg" },
             //{ x:  5, y:  4, offset: { x: 378, y:  237 }, url: "chair_down.svg" },
-            { x:  5, y:  5, offset: { x: 404, y:  212 }, url: "chair_down_back.svg" },
+            { x:  5, y:  4, offset: { x: 404, y:  212 }, url: "chair_down_back.svg" },
             
             { x:  8, y:  2, offset: { x: 407, y:  313 }, url: "table_without_shadow.svg" },
             //{ x:  8, y:  1, offset: { x: 374, y:  354 }, url: "chair_up.svg" },
             { x:  8, y:  0, offset: { x: 373, y:  338 }, url: "chair_up_back.svg" },
             //{ x:  8, y:  3, offset: { x: 458, y:  317 }, url: "chair_down.svg" },
-            { x:  8, y:  4, offset: { x: 484, y:  292 }, url: "chair_down_back.svg" },
+            { x:  8, y:  3, offset: { x: 484, y:  292 }, url: "chair_down_back.svg" },
             
             { x:  6, y:  9, offset: { x: 607, y:  133 }, url: "table_without_shadow.svg" },
             //{ x:  6, y:  8, offset: { x: 575, y:  174 }, url: "chair_up.svg" },
@@ -1149,9 +1149,9 @@ export const rooms: { [roomId: string]: Room } = {
             //{ x:  7, y:  9, offset: { x: 656, y:  176 }, url: "chair_left.svg" },
             { x:  8, y:  9, offset: { x: 676, y:  160 }, url: "chair_left_back.svg" },
             //{ x:  6, y: 10, offset: { x: 658, y:  137 }, url: "chair_down.svg" },
-            { x:  6, y: 11, offset: { x: 684, y:  112 }, url: "chair_down_back.svg" },
+            { x:  6, y: 10, offset: { x: 684, y:  112 }, url: "chair_down_back.svg" },
             //{ x:  5, y:  9, offset: { x: 578, y:  137 }, url: "chair_right.svg" },
-            { x:  4, y:  9, offset: { x: 570, y:  112 }, url: "chair_right_back.svg" },
+            { x:  5, y:  9, offset: { x: 570, y:  112 }, url: "chair_right_back.svg" },
             
             //{ x:  1, y: 11, offset: { x: 498, y:   17 }, url: "chair_down.svg" },
             { x:  1, y: 12, offset: { x: 524, y:   -8 }, url: "chair_down_back.svg" },
