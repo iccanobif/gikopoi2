@@ -590,21 +590,18 @@ const vueApp = new Vue({
         {
             const context = this.canvasContext;
 
-            const allObjects = this.currentRoom.objects
-                .map(o => ({
-                    o,
-                    type: "room-object",
-                    priority: o.x + 1 + (this.currentRoom.size.y - o.y),
-                }))
-                .concat(
-                    Object.values(this.users).map(o => ({
+            const allObjects = [].concat(
+                this.currentRoom.objects
+                    .map(o => ({
                         o,
-                        type: "user",
-                        priority:
-                            o.logicalPositionX +
-                            1 +
-                            (this.currentRoom.size.y - o.logicalPositionY),
-                    }))
+                        type: "room-object",
+                        priority: o.x + 1 + (this.currentRoom.size.y - o.y),
+                    })),
+                Object.values(this.users).map(o => ({
+                    o,
+                    type: "user",
+                    priority: o.logicalPositionX + 1 + (this.currentRoom.size.y - o.logicalPositionY),
+                }))
                 )
                 .sort((a, b) =>
                 {
