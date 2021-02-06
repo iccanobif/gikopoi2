@@ -193,6 +193,8 @@ video {
 .infobox-line
 {
     margin: 3px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .infobox-title,
