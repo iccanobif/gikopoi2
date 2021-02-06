@@ -987,7 +987,7 @@ export const rooms: { [roomId: string]: Room } = {
             stairs: { x: 7, y: 19, direction: "right", target: { roomId: "bar_giko_square", doorId: "bar_giko" } },
             right: { x: 13, y: 19, direction: "left", target: { roomId: "bar_giko2", doorId: "stairs" } },
         },
-        streamSlotCount: 2,
+        streamSlotCount: 3,
         secret: false
     },
     jinja: {
@@ -1618,7 +1618,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             stairs: { x: 0, y: 15, direction: "right", target: { roomId: "bar_giko", doorId: "right" } },
         },
-        streamSlotCount: 0,
+        streamSlotCount: 1,
         secret: false
     },
     radio_room2: {
