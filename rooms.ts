@@ -1850,7 +1850,7 @@ export const rooms: { [roomId: string]: Room } = {
             down: { x: 10, y: 0, direction: "up", target: { roomId: "radio", doorId: "door3" } },
             stage_door: { x: 0, y: 1, direction: "right", target: { roomId: "radio_backstage", doorId: "top" } },
         },
-        streamSlotCount: 1,
+        streamSlotCount: 3,
         secret: false
     },
     radio: {
