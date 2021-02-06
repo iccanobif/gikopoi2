@@ -252,7 +252,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             bottom: { x: 2, y: 1, direction: "left", target: { roomId: "radio_gakuya", doorId: "door" } },
             center: { x: 2, y: 4, direction: "left", target: { roomId: "radio_room2", doorId: "stage_door" } },
-            top: { x: 2, y: 7, direction: "left", target: { roomId: "radio_room1", doorId: "stage_door" } },
+            top: { x: 2, y: 7, direction: "left", target: { roomId: "radio_room3", doorId: "stage_door" } },
             spawn: { x: 2, y: 2, direction: "left", target: null }
         },
         streamSlotCount: 0,
