@@ -137,7 +137,7 @@ export const rooms: { [roomId: string]: Room } = {
             world_spawn: { x: 5, y: 2, direction: "right", target: null },
             left: { x: 0, y: 2, direction: "right", target: { roomId: "bar_st", doorId: "right" } },
             admin: { x: 2, y: 4, direction: "down", target: { roomId: "admin", doorId: "down" } },
-            barrier: { x: 7, y: 4, direction: "down", target: { roomId: "radio_room2", doorId: "right" } },
+            barrier: { x: 7, y: 4, direction: "down", target: { roomId: "radio", doorId: "down" } },
             down: { x: 7, y: 0, direction: "up", target: { roomId: "cafe_st", doorId: "up" } },
             right: { x: 9, y: 2, direction: "left", target: { roomId: "takadai", doorId: "down_left" } },
             up_left: { x: 0, y: 8, direction: "down", target: "NOT_READY_YET" },
@@ -250,9 +250,9 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [],
         doors: {
-            bottom: { x: 2, y: 1, direction: "left", target: { roomId: "radio_room3", doorId: "stage_door" } },
+            bottom: { x: 2, y: 1, direction: "left", target: "NOT_READY_YET" },
             center: { x: 2, y: 4, direction: "left", target: { roomId: "radio_room2", doorId: "stage_door" } },
-            top: { x: 2, y: 7, direction: "left", target: "NOT_READY_YET" },
+            top: { x: 2, y: 7, direction: "left", target: { roomId: "radio_room1", doorId: "stage_door" } },
             spawn: { x: 2, y: 2, direction: "left", target: null }
         },
         streamSlotCount: 0,
@@ -1668,7 +1668,7 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [],
         doors: {
-            right: { x: 6, y: 6, direction: "left", target: "NOT_READY_YET" },
+            right: { x: 6, y: 6, direction: "left", target: { roomId: "radio", doorId: "door1" } },
         },
         streamSlotCount: 2,
         secret: false
@@ -1761,7 +1761,7 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         doors: {
             stage_door: { x: 0, y: 1, direction: "right", target: { roomId: "radio_backstage", doorId: "center" } },
-            right: { x: 10, y: 4, direction: "left", target: { roomId: "admin_st", doorId: "barrier" } },
+            right: { x: 10, y: 4, direction: "left", target: { roomId: "radio", doorId: "door2" } },
         },
         streamSlotCount: 1,
         secret: false
@@ -1847,10 +1847,54 @@ export const rooms: { [roomId: string]: Room } = {
             { xFrom:  4, yFrom:  6, xTo:  5, yTo:  6 }, { xFrom:  5, yFrom:  6, xTo:  4, yTo:  6 },
         ],
         doors: {
-            down: { x: 10, y: 0, direction: "up", target: { roomId: "admin_st", doorId: "barrier" } },
+            down: { x: 10, y: 0, direction: "up", target: { roomId: "radio", doorId: "door3" } },
             stage_door: { x: 0, y: 1, direction: "right", target: { roomId: "radio_backstage", doorId: "top" } },
         },
         streamSlotCount: 1,
+        secret: false
+    },
+    radio: {
+        id: "radio",
+        scale: 1,
+        size: { x: 7, y: 10 },
+        originCoordinates: { x: 0, y: 371 },
+        spawnPoint: "down",
+        backgroundImageUrl: "rooms/radio/background.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [
+            { x:  5, y:  1, offset: { x:  254, y:  389 }, url: "hopes_and_dreams.svg" },
+            { x:  5, y:  8, offset: { x:  534, y:  249 }, url: "hopes_and_dreams.svg" },
+        ],
+        sit: [
+            { x:  4, y:  0 },
+            { x:  4, y:  1 },
+            { x:  4, y:  2 },
+            
+            { x:  6, y:  0 },
+            { x:  6, y:  1 },
+            { x:  6, y:  2 },
+            
+            { x:  4, y:  7 },
+            { x:  4, y:  8 },
+            { x:  4, y:  9 },
+            
+            { x:  6, y:  7 },
+            { x:  6, y:  8 },
+            { x:  6, y:  9 },
+        ],
+        blocked: [
+            { x:  5, y:  1 },
+            { x:  5, y:  8 },
+        ],
+        forbiddenMovements: [],
+        doors: {
+            down: { x: 1, y: 0, direction: "up", target: { roomId: "admin_st", doorId: "barrier" } },
+            door1: { x: 0, y: 2, direction: "right", target: { roomId: "radio_room1", doorId: "right" } },
+            single_door: { x: 0, y: 6, direction: "right", target: "NOT_READY_YET" },
+            door2: { x: 0, y: 8, direction: "right", target: { roomId: "radio_room2", doorId: "right" } },
+            door3: { x: 2, y: 9, direction: "down", target: { roomId: "radio_room3", doorId: "down" } },
+        },
+        streamSlotCount: 0,
         secret: false
     },
 };
