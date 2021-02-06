@@ -137,7 +137,7 @@ export const rooms: { [roomId: string]: Room } = {
             world_spawn: { x: 5, y: 2, direction: "right", target: null },
             left: { x: 0, y: 2, direction: "right", target: { roomId: "bar_st", doorId: "right" } },
             admin: { x: 2, y: 4, direction: "down", target: { roomId: "admin", doorId: "down" } },
-            barrier: { x: 7, y: 4, direction: "down", target: { roomId: "radio_room2", doorId: "right" } },
+            barrier: { x: 7, y: 4, direction: "down", target: { roomId: "radio", doorId: "down" } },
             down: { x: 7, y: 0, direction: "up", target: { roomId: "cafe_st", doorId: "up" } },
             right: { x: 9, y: 2, direction: "left", target: { roomId: "takadai", doorId: "down_left" } },
             up_left: { x: 0, y: 8, direction: "down", target: "NOT_READY_YET" },
@@ -250,9 +250,9 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [],
         doors: {
-            right_up: { x: 2, y: 1, direction: "left", target: { roomId: "bar", doorId: "right" } }, // Temp
-            right_center: { x: 2, y: 4, direction: "left", target: { roomId: "radio_room2", doorId: "stage_door" } }, // Temp
-            right_down: { x: 2, y: 7, direction: "left", target: { roomId: "admin_st", doorId: "admin" } }, // Temp
+            bottom: { x: 2, y: 1, direction: "left", target: { roomId: "radio_gakuya", doorId: "door" } },
+            center: { x: 2, y: 4, direction: "left", target: { roomId: "radio_room2", doorId: "stage_door" } },
+            top: { x: 2, y: 7, direction: "left", target: { roomId: "radio_room1", doorId: "stage_door" } },
             spawn: { x: 2, y: 2, direction: "left", target: null }
         },
         streamSlotCount: 0,
@@ -1621,6 +1621,58 @@ export const rooms: { [roomId: string]: Room } = {
         streamSlotCount: 1,
         secret: false
     },
+    radio_room1: {
+        id: "radio_room1",
+        scale: 1,
+        size: { x: 7, y: 8 },
+        originCoordinates: { x: 2, y: 332 },
+        spawnPoint: "right",
+        backgroundImageUrl: "rooms/radio_room1/background.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [
+            { x:  6, y:  3, offset: { x:  381, y:  338 }, url: "table.svg" },
+        ],
+        sit: [
+            { x:  0, y:  0 },
+            { x:  0, y:  1 },
+            { x:  0, y:  2 },
+            { x:  0, y:  3 },
+            { x:  0, y:  4 },
+            { x:  0, y:  5 },
+            { x:  0, y:  6 },
+            { x:  0, y:  7 },
+            
+            { x:  2, y:  0 },
+            { x:  2, y:  1 },
+            { x:  2, y:  2 },
+            { x:  2, y:  3 },
+            { x:  2, y:  4 },
+            { x:  2, y:  5 },
+            { x:  2, y:  6 },
+            { x:  2, y:  7 },
+            
+            { x:  4, y:  0 },
+            { x:  4, y:  1 },
+            { x:  4, y:  2 },
+            { x:  4, y:  3 },
+            { x:  4, y:  4 },
+            { x:  4, y:  5 },
+            { x:  4, y:  6 },
+            { x:  4, y:  7 },
+            
+            { x:  6, y:  2 },
+            { x:  6, y:  4 },
+        ],
+        blocked: [
+            { x:  6, y:  3 },
+        ],
+        forbiddenMovements: [],
+        doors: {
+            right: { x: 6, y: 6, direction: "left", target: { roomId: "radio", doorId: "door1" } },
+        },
+        streamSlotCount: 2,
+        secret: false
+    },
     radio_room2: {
         id: "radio_room2",
         scale: 1,
@@ -1708,10 +1760,208 @@ export const rooms: { [roomId: string]: Room } = {
             { xFrom:  1, yFrom:  4, xTo:  2, yTo:  4 }, { xFrom:  2, yFrom:  4, xTo:  1, yTo:  4 },
         ],
         doors: {
-            stage_door: { x: 0, y: 1, direction: "right", target: { roomId: "radio_backstage", doorId: "right_center" } },
-            right: { x: 10, y: 4, direction: "left", target: { roomId: "admin_st", doorId: "barrier" } },
+            stage_door: { x: 0, y: 1, direction: "right", target: { roomId: "radio_backstage", doorId: "center" } },
+            right: { x: 10, y: 4, direction: "left", target: { roomId: "radio", doorId: "door2" } },
         },
         streamSlotCount: 1,
+        secret: false
+    },
+    radio_room3: {
+        id: "radio_room3",
+        scale: 1,
+        size: { x: 12, y: 9 },
+        originCoordinates: { x: -1, y: 439 },
+        spawnPoint: "down",
+        backgroundImageUrl: "rooms/radio_room3/background.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [
+            { x:  1, y:  4, offset: { x:  204, y:  289 }, url: "drumset.svg" },
+            { x:  2, y:  8, offset: { x:  344, y:  243 }, url: "piano.svg" },
+            
+            { x:  3, y:  2, offset: { x:  187, y:  371 }, url: "mic.svg" },
+            { x:  4, y:  4, offset: { x:  307, y:  352 }, url: "mic.svg" },
+            { x:  3, y:  6, offset: { x:  347, y:  292 }, url: "mic.svg" },
+            
+            { x:  4, y:  0, offset: { x:  172, y:  406 }, url: "speaker.svg" },
+            { x:  4, y:  7, offset: { x:  456, y:  264 }, url: "speaker.svg" },
+        
+            { x:  7, y:  0, offset: { x:  290, y:  518 }, url: "table.svg" },
+            { x: 11, y:  2, offset: { x:  530, y:  558 }, url: "table.svg" },
+            { x: 11, y:  6, offset: { x:  690, y:  478 }, url: "table.svg" },
+            
+            { x:  9, y:  8, offset: { x:  690, y:  369 }, url: "table_with_drinks.svg" },
+            { x:  8, y:  8, offset: { x:  650, y:  350 }, url: "table_with_drinks.svg" },
+            { x:  7, y:  8, offset: { x:  610, y:  358 }, url: "table_with_ika.svg" },
+        ],
+        sit: [
+            { x:  0, y:  4 },
+            { x:  1, y:  8 },
+            
+            { x:  7, y:  2 },
+            { x:  7, y:  3 },
+            { x:  7, y:  4 },
+            { x:  7, y:  5 },
+            { x:  7, y:  6 },
+            
+            { x:  9, y:  2 },
+            { x:  9, y:  3 },
+            { x:  9, y:  4 },
+            { x:  9, y:  5 },
+            { x:  9, y:  6 },
+            
+            { x:  6, y:  0 },
+            { x:  8, y:  0 },
+            
+            { x: 11, y:  1 },
+            { x: 11, y:  3 },
+            
+            { x: 11, y:  5 },
+            { x: 11, y:  7 },
+        ],
+        blocked: [
+            // stage
+            { x:  1, y:  4 },
+            { x:  2, y:  8 },
+            
+            { x:  3, y:  2 },
+            { x:  4, y:  4 },
+            { x:  3, y:  6 },
+            
+            { x:  4, y:  0 },
+            { x:  4, y:  7 },
+            
+            // tables
+            { x:  7, y:  0 },
+            { x: 11, y:  2 },
+            { x: 11, y:  6 },
+            
+            { x:  9, y:  8 },
+            { x:  8, y:  8 },
+            { x:  7, y:  8 },
+        ],
+        forbiddenMovements: [
+            { xFrom:  4, yFrom:  1, xTo:  5, yTo:  1 }, { xFrom:  5, yFrom:  1, xTo:  4, yTo:  1 },
+            { xFrom:  4, yFrom:  2, xTo:  5, yTo:  2 }, { xFrom:  5, yFrom:  2, xTo:  4, yTo:  2 },
+            { xFrom:  4, yFrom:  3, xTo:  5, yTo:  3 }, { xFrom:  5, yFrom:  3, xTo:  4, yTo:  3 },
+            { xFrom:  4, yFrom:  5, xTo:  5, yTo:  5 }, { xFrom:  5, yFrom:  5, xTo:  4, yTo:  5 },
+            { xFrom:  4, yFrom:  6, xTo:  5, yTo:  6 }, { xFrom:  5, yFrom:  6, xTo:  4, yTo:  6 },
+        ],
+        doors: {
+            down: { x: 10, y: 0, direction: "up", target: { roomId: "radio", doorId: "door3" } },
+            stage_door: { x: 0, y: 1, direction: "right", target: { roomId: "radio_backstage", doorId: "top" } },
+        },
+        streamSlotCount: 1,
+        secret: false
+    },
+    radio: {
+        id: "radio",
+        scale: 1,
+        size: { x: 7, y: 10 },
+        originCoordinates: { x: 0, y: 371 },
+        spawnPoint: "down",
+        backgroundImageUrl: "rooms/radio/background.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [
+            { x:  5, y:  1, offset: { x:  254, y:  389 }, url: "hopes_and_dreams.svg" },
+            { x:  5, y:  8, offset: { x:  534, y:  249 }, url: "hopes_and_dreams.svg" },
+        ],
+        sit: [
+            { x:  4, y:  0 },
+            { x:  4, y:  1 },
+            { x:  4, y:  2 },
+            
+            { x:  6, y:  0 },
+            { x:  6, y:  1 },
+            { x:  6, y:  2 },
+            
+            { x:  4, y:  7 },
+            { x:  4, y:  8 },
+            { x:  4, y:  9 },
+            
+            { x:  6, y:  7 },
+            { x:  6, y:  8 },
+            { x:  6, y:  9 },
+        ],
+        blocked: [
+            { x:  5, y:  1 },
+            { x:  5, y:  8 },
+        ],
+        forbiddenMovements: [],
+        doors: {
+            down: { x: 1, y: 0, direction: "up", target: { roomId: "admin_st", doorId: "barrier" } },
+            door1: { x: 0, y: 2, direction: "right", target: { roomId: "radio_room1", doorId: "right" } },
+            single_door: { x: 0, y: 6, direction: "right", target: { roomId: "radio_gakuya", doorId: "right" } },
+            door2: { x: 0, y: 8, direction: "right", target: { roomId: "radio_room2", doorId: "right" } },
+            door3: { x: 2, y: 9, direction: "down", target: { roomId: "radio_room3", doorId: "down" } },
+        },
+        streamSlotCount: 0,
+        secret: false
+    },
+    radio_gakuya: {
+        id: "radio_gakuya",
+        scale: 1,
+        size: { x: 9, y: 8 },
+        originCoordinates: { x: 0, y: 358 },
+        spawnPoint: "down",
+        backgroundImageUrl: "rooms/radio_gakuya/background.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [
+            { x:  2, y:  1, offset: { x:  139, y:  305 }, url: "tabletop.svg" },
+            
+            { x:  2, y:  7, offset: { x:  369, y:  146 }, url: "mirror.svg" },
+            { x:  3, y:  7, offset: { x:  409, y:  166 }, url: "mirror.svg" },
+            { x:  4, y:  7, offset: { x:  449, y:  186 }, url: "mirror.svg" },
+            { x:  5, y:  7, offset: { x:  489, y:  206 }, url: "mirror.svg" },
+            { x:  6, y:  7, offset: { x:  529, y:  226 }, url: "mirror.svg" },
+        ],
+        sit: [
+            // zubon
+            { x:  2, y:  0 },
+            { x:  3, y:  0 },
+            { x:  4, y:  0 },
+            { x:  5, y:  0 },
+            { x:  6, y:  0 },
+            
+            { x:  2, y:  3 },
+            { x:  3, y:  3 },
+            { x:  4, y:  3 },
+            { x:  5, y:  3 },
+            { x:  6, y:  3 },
+            
+            // stools
+            { x:  2, y:  6 },
+            { x:  3, y:  6 },
+            { x:  4, y:  6 },
+            { x:  5, y:  6 },
+            { x:  6, y:  6 },
+        ],
+        blocked: [
+            // table
+            { x:  2, y:  1 },
+            { x:  3, y:  1 },
+            { x:  4, y:  1 },
+            { x:  5, y:  1 },
+            { x:  6, y:  1 },
+            
+            { x:  2, y:  2 },
+            { x:  3, y:  2 },
+            { x:  4, y:  2 },
+            { x:  5, y:  2 },
+            { x:  6, y:  2 },
+            
+            // mirrors
+            { x:  2, y:  7 },
+            { x:  3, y:  7 },
+            { x:  4, y:  7 },
+            { x:  5, y:  7 },
+            { x:  6, y:  7 },
+        ],
+        forbiddenMovements: [],
+        doors: {
+            door: { x: 0, y: 5, direction: "right", target: { roomId: "radio_backstage", doorId: "bottom" } },
+            right: { x: 8, y: 5, direction: "left", target: { roomId: "radio", doorId: "single_door" } },
+        },
+        streamSlotCount: 0,
         secret: false
     },
 };
