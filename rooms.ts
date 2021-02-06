@@ -1733,7 +1733,7 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         blocked: [
             // stage edge
-            // { x:  4, y:  0 },
+            { x:  4, y:  0 },
             { x:  4, y:  1 },
             { x:  4, y:  2 },
             { x:  4, y:  3 },
@@ -1902,7 +1902,7 @@ export const rooms: { [roomId: string]: Room } = {
         scale: 1,
         size: { x: 9, y: 8 },
         originCoordinates: { x: 0, y: 358 },
-        spawnPoint: "down",
+        spawnPoint: "right",
         backgroundImageUrl: "rooms/radio_gakuya/background.svg",
         backgroundColor: "#c0c0c0",
         objects: [
