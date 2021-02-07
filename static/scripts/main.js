@@ -486,7 +486,7 @@ const vueApp = new Vue({
                 const context = canvas.getContext('2d');
                 context.font = font;
                 const metrics = context.measureText(name);
-                const width = Math.ceil(metrics.width);
+                const width = metrics.width == 0 ? 1 : Math.ceil(metrics.width);
                 
                 canvas.width = width;
                 canvas.height = height*2;
