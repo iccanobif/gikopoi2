@@ -986,6 +986,8 @@ const vueApp = new Vue({
             this.streams = streams;
 
             this.iAmStreaming = false;
+            if (this.vuMeterTimer)
+                clearInterval(this.vuMeterTimer)
             this.streamSlotIdInWhichIWantToStream = null;
 
             for (const slotId in streams)
@@ -1071,14 +1073,22 @@ const vueApp = new Vue({
                     microphone.connect(analyser);
 
                     this.vuMeterTimer = setInterval(() => {
-                        analyser.getByteFrequencyData(dataArrayAlt)
-                        
-                        const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
-                        const level = max / 255
-                        const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream)
-                        const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream)
-                        vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
-                        vuMeterBarPrimary.style.width = level * 100 + "%"
+                        try {
+                            analyser.getByteFrequencyData(dataArrayAlt)
+                            
+                            const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
+                            const level = max / 255
+                            const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream)
+                            const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream)
+                            
+                            vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
+                            vuMeterBarPrimary.style.width = level * 100 + "%"
+                        }
+                        catch (exc)
+                        {
+                            console.error(exc)
+                            clearInterval(this.vuMeterTimer)
+                        }
                     }, 100)
                 }
 
