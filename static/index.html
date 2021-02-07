@@ -102,6 +102,7 @@
                         <input type="range" id="sound-effect-volume" v-on:change="changeSoundEffectVolume()"
                             name="sound-effect-volume" min="0" max="1" step="0.01" :value="soundEffectVolume">
                     </div>
+                    <button v-on:click="toggleUsernameBackground()">ｺﾃ背景</button>
                     <button id="btn-move-left" v-on:click="sendNewPositionToServer('left')">↖</button>
                     <button id="btn-move-up" v-on:click="sendNewPositionToServer('up')">↗</button>
                     <button id="btn-move-down" v-on:click="sendNewPositionToServer('down')">↙</button>

@@ -93,6 +93,7 @@ const vueApp = new Vue({
         allCharacters: Object.values(characters),
 
         vuMeterTimer: null,
+        showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
     },
     mounted: function ()
     {
@@ -475,7 +476,7 @@ const vueApp = new Vue({
                 Math.round(y + this.canvasGlobalOffset.y)
             );
         },
-        getNameImage: function(name)
+        getNameImage: function(name, withBackground)
         {
             return new RenderCache(function(canvas, scale)
             {
@@ -487,15 +488,25 @@ const vueApp = new Vue({
                 const metrics = context.measureText(name);
                 const width = metrics.width == 0 ? 1 : Math.ceil(metrics.width);
                 
-                canvas.width = width;
+                canvas.width = width + 5;
                 canvas.height = height*2;
-                
+
+                // transparent background
+                if (withBackground)
+                {
+                    context.globalAlpha = 0.5
+                    context.fillStyle = 'white';
+                    context.fillRect(0, 5, canvas.width, canvas.height - 10)
+                    context.globalAlpha = 1
+                }
+
+                // text
                 context.font = font;
                 context.textBaseline = "middle";
                 context.textAlign = "center"
                 context.fillStyle = "blue";
                 
-                context.fillText(name, width/2, height);
+                context.fillText(name, canvas.width/2, height);
             });
         },
         detectCanvasResize: function ()
@@ -660,16 +671,21 @@ const vueApp = new Vue({
             {
                 if (!this.isLoadingRoom)
                 {
-                    if (o.o.nameImage == null)
-                        o.o.nameImage = this.getNameImage(o.o.name);
+                    if (o.o.nameImageWithBackground == null)
+                        o.o.nameImageWithBackground = this.getNameImage(o.o.name, true);
+                    if (o.o.nameImageWithoutBackground == null)
+                        o.o.nameImageWithoutBackground = this.getNameImage(o.o.name, false);
                     
-                    const image = o.o.nameImage.getImage()
+                    const image = this.showUsernameBackground ? o.o.nameImageWithBackground.getImage() : o.o.nameImageWithoutBackground.getImage()
                     
+                    const x = (o.o.currentPhysicalPositionX - image.width/2) + BLOCK_WIDTH/2
+                    const y = (o.o.currentPhysicalPositionY - 120)
+
                     this.drawImage(
                         context,
                         image,
-                        (o.o.currentPhysicalPositionX - image.width/2) + BLOCK_WIDTH/2,
-                        (o.o.currentPhysicalPositionY - 120)
+                        x,
+                        y
                     );
                 }
             }
@@ -871,6 +887,13 @@ const vueApp = new Vue({
                 "isInfoboxVisible",
                 (this.isInfoboxVisible = !this.isInfoboxVisible)
             );
+        },
+        toggleUsernameBackground: function () {
+            localStorage.setItem(
+                "showUsernameBackground",
+                (this.showUsernameBackground = !this.showUsernameBackground)
+            );
+            this.isRedrawRequired = true;
         },
         handleCanvasKeydown: function (event)
         {
