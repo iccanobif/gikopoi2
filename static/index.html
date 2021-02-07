@@ -142,12 +142,12 @@
                     </div>
 
                     <button class="start-streaming-button" :id="'start-video-streaming-button-' + index"
-                        v-if="!streamSlot.isActive && !iAmStreaming && !wantToStream"
+                        v-if="!streamSlot.isActive && !wantToStream && streamSlotIdInWhichIWantToStream == null"
                         v-on:click="openStreamPopup(index)">
                         {{ $t("ui.button_stream_start") }}
                     </button>
                     <button :id="'stop-streaming-button-' + index"
-                        v-if="iAmStreaming && streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
+                        v-if="streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
                         {{ $t("ui.button_stream_stop") }}
                     </button>
 

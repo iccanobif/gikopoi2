@@ -82,7 +82,6 @@ const vueApp = new Vue({
             userCount: 0,
         },
         wantToStream: false,
-        iAmStreaming: false,
         connectionLost: false,
         steppingOnPortalToNonAvailableRoom: false,
 
@@ -984,10 +983,7 @@ const vueApp = new Vue({
         updateCurrentRoomStreams: function (streams)
         {
             this.streams = streams;
-
-            this.iAmStreaming = false;
-            if (this.vuMeterTimer)
-                clearInterval(this.vuMeterTimer)
+                
             this.streamSlotIdInWhichIWantToStream = null;
 
             for (const slotId in streams)
@@ -998,7 +994,6 @@ const vueApp = new Vue({
                     Vue.set(stream, "title", this.users[stream.userId].name);
                     if (stream.userId == this.myUserID)
                     {
-                        this.iAmStreaming = true;
                         this.streamSlotIdInWhichIWantToStream = slotId;
                     }
                 }
@@ -1074,6 +1069,8 @@ const vueApp = new Vue({
 
                     this.vuMeterTimer = setInterval(() => {
                         try {
+                            if (this.streamSlotIdInWhichIWantToStream == null)
+                                clearInterval(this.vuMeterTimer)    
                             analyser.getByteFrequencyData(dataArrayAlt)
                             
                             const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
@@ -1111,7 +1108,6 @@ const vueApp = new Vue({
         },
         startStreaming: async function ()
         {
-            this.iAmStreaming = true;
             const slotId = this.streamSlotIdInWhichIWantToStream;
             const rtcPeer = this.setupRTCConnection(slotId);
             this.rtcPeerSlots[slotId] = rtcPeer
@@ -1126,7 +1122,6 @@ const vueApp = new Vue({
         },
         stopStreaming: function ()
         {
-            this.iAmStreaming = false;
             for (const track of this.mediaStream.getTracks()) track.stop();
             
             const streamSlotId = this.streamSlotIdInWhichIWantToStream;
@@ -1226,6 +1221,7 @@ const vueApp = new Vue({
         {
             this.isStreamPopupOpen = false;
             this.wantToStream = false;
+            this.streamSlotIdInWhichIWantToStream = null;
         },
         changeStreamVolume: function (streamSlotId)
         {
