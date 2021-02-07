@@ -569,6 +569,14 @@ const vueApp = new Vue({
             this.canvasGlobalOffset.x = canvasOffset.x;
             this.canvasGlobalOffset.y = canvasOffset.y;
         },
+        
+        calculateUserPhysicalPositions: function ()
+        {
+            for (const id in this.users)
+            {
+                this.users[id].calculatePhysicalPosition(this.currentRoom);
+            }
+        },
 
         paintBackground: function ()
         {
@@ -664,8 +672,6 @@ const vueApp = new Vue({
                         (o.o.currentPhysicalPositionY - 120)
                     );
                 }
-
-                o.o.spendTime(this.currentRoom);
             }
             
             if (this.enableGridNumbers)
@@ -746,6 +752,7 @@ const vueApp = new Vue({
                 || usersRequiringRedraw.length
                 || this.enableGridNumbers)
             {
+                this.calculateUserPhysicalPositions();
                 this.setCanvasGlobalOffset();
                 this.paintBackground();
                 this.paintForeground();
