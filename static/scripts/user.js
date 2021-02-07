@@ -15,7 +15,7 @@ export default class User
         this.currentPhysicalPositionX = 0;
         this.currentPhysicalPositionY = 0;
         this.isWalking = false;
-        this.isHalted = true;
+        this.isMoved = true;
         this.direction = "up";
         this.framesUntilNextStep = STEP_LENGTH;
         this.isInactive = false;
@@ -33,7 +33,7 @@ export default class User
         this.currentPhysicalPositionX = realTargetCoordinates.x;
         this.currentPhysicalPositionY = realTargetCoordinates.y;
         this.direction = direction;
-        this.isHalted = true;
+        this.isMoved = true;
     }
 
     moveToPosition(logicalPositionX, logicalPositionY, direction)
@@ -44,17 +44,16 @@ export default class User
         this.logicalPositionX = logicalPositionX;
         this.logicalPositionY = logicalPositionY;
         this.direction = direction;
-        this.isHalted = true;
+        this.isMoved = true;
     }
-
-    // TODO really, find a better name for this function
-    spendTime(room)
+    
+    calculatePosition(room)
     {
-        const walkingSpeedX = BLOCK_WIDTH / ( this.character.characterName == "shar_naito" ? 20 : 40)
-        const walkingSpeedY = BLOCK_HEIGHT / ( this.character.characterName == "shar_naito" ? 20 : 40)
-
         if (!this.isWalking)
             return
+            
+        const walkingSpeedX = BLOCK_WIDTH / ( this.character.characterName == "shar_naito" ? 20 : 40)
+        const walkingSpeedY = BLOCK_HEIGHT / ( this.character.characterName == "shar_naito" ? 20 : 40)
 
         const realTargetCoordinates = calculateRealCoordinates(room, this.logicalPositionX, this.logicalPositionY);
 
@@ -68,10 +67,7 @@ export default class User
         else if (this.currentPhysicalPositionY < realTargetCoordinates.y) this.currentPhysicalPositionY += yDelta
 
         if (xDelta === 0 && yDelta === 0)
-        {
-            this.isHalted = true;
             this.isWalking = false;
-        }
 
         this.framesUntilNextStep--
         if (this.framesUntilNextStep < 0)
@@ -116,9 +112,9 @@ export default class User
     checkIfRedrawRequired()
     {
         if (this.isWalking) return true;
-        if (this.isHalted)
+        if (this.isMoved)
         {
-            this.isHalted = false;
+            this.isMoved = false;
             return true;
         }
     }
