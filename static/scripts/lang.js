@@ -37,6 +37,7 @@ export const messages =
             button_rula: "#ﾙｰﾗ",
             volume: "音量：",
             sound_effect: "効果音：",
+            user_name_bg: "ｺﾃ背景",
             
             popup_button_ok: "OK",
             popup_button_cancel: "キャンセル",
@@ -146,6 +147,7 @@ export const messages =
             button_rula: "#rula",
             volume: "Volume: ",
             sound_effect: "Vol.",
+            user_name_bg: "Name BG",
             
             popup_button_ok: "OK",
             popup_button_cancel: "Cancel",

@@ -406,3 +406,7 @@ div[id^="vu-meter-bar-secondary-"]
     position:absolute;
     z-index: 1;
 }
+
+#btn-toggle-username-bg.checked {
+    text-decoration: underline;
+}
