@@ -47,7 +47,7 @@ export default class User
         this.isMoved = true;
     }
     
-    calculatePosition(room)
+    calculatePhysicalPosition(room)
     {
         if (!this.isWalking)
             return

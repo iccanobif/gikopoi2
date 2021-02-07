@@ -571,11 +571,11 @@ const vueApp = new Vue({
             this.canvasGlobalOffset.y = canvasOffset.y;
         },
         
-        calculateUserPositions: function ()
+        calculateUserPhysicalPositions: function ()
         {
             for (const id in this.users)
             {
-                this.users[id].calculatePosition(this.currentRoom);
+                this.users[id].calculatePhysicalPosition(this.currentRoom);
             }
         },
 
@@ -757,7 +757,7 @@ const vueApp = new Vue({
                     || usersRequiringRedraw.length
                     || this.enableGridNumbers)
                 {
-                    this.calculateUserPositions();
+                    this.calculateUserPhysicalPositions();
                     this.setCanvasGlobalOffset();
                     this.paintBackground();
                     this.paintForeground();
