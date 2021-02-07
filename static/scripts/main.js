@@ -82,7 +82,6 @@ const vueApp = new Vue({
             userCount: 0,
         },
         wantToStream: false,
-        iAmStreaming: false,
         connectionLost: false,
         steppingOnPortalToNonAvailableRoom: false,
 
@@ -144,7 +143,7 @@ const vueApp = new Vue({
 
                 this.canvasContext = document.getElementById("room-canvas")
                     .getContext("2d");
-                this.paint();
+                this.paintLoop();
 
                 this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
                 this.updateAudioElementsVolume()
@@ -486,7 +485,7 @@ const vueApp = new Vue({
                 const context = canvas.getContext('2d');
                 context.font = font;
                 const metrics = context.measureText(name);
-                const width = Math.ceil(metrics.width);
+                const width = metrics.width == 0 ? 1 : Math.ceil(metrics.width);
                 
                 canvas.width = width;
                 canvas.height = height*2;
@@ -734,44 +733,47 @@ const vueApp = new Vue({
                     }
             }
         },
-
-        paint: function (timestamp)
+        paint: function ()
         {
+            if (this.forceUserInstantMove)
+            {
+                this.forcePhysicalPositionRefresh();
+                this.forceUserInstantMove = false;
+            }
 
+            this.detectCanvasResize();
+
+            const usersRequiringRedraw = [];
+            for (const [userId, user] of Object.entries(this.users))
+                if (user.checkIfRedrawRequired()) usersRequiringRedraw.push(userId);
+
+            if (this.isRedrawRequired
+                || this.isDraggingCanvas
+                || usersRequiringRedraw.length
+                || this.enableGridNumbers)
+            {
+                this.calculateUserPhysicalPositions();
+                this.setCanvasGlobalOffset();
+                this.paintBackground();
+                this.paintForeground();
+                this.isRedrawRequired = false;
+            }
+
+            this.changeRoomIfSteppingOnDoor();
+        },
+
+        paintLoop: function (timestamp)
+        {
             try
             {
-                if (this.forceUserInstantMove)
-                {
-                    this.forcePhysicalPositionRefresh();
-                    this.forceUserInstantMove = false;
-                }
-
-                this.detectCanvasResize();
-
-                const usersRequiringRedraw = [];
-                for (const [userId, user] of Object.entries(this.users))
-                    if (user.checkIfRedrawRequired()) usersRequiringRedraw.push(userId);
-
-                if (this.isRedrawRequired
-                    || this.isDraggingCanvas
-                    || usersRequiringRedraw.length
-                    || this.enableGridNumbers)
-                {
-                    this.calculateUserPhysicalPositions();
-                    this.setCanvasGlobalOffset();
-                    this.paintBackground();
-                    this.paintForeground();
-                    this.isRedrawRequired = false;
-                }
-
-                this.changeRoomIfSteppingOnDoor();
+                this.paint()
             }
             catch (err)
             {
                 console.error(err, err.lineNumber);
             }
 
-            requestAnimationFrame(this.paint);
+            requestAnimationFrame(this.paintLoop);
         },
         changeRoomIfSteppingOnDoor: function ()
         {
@@ -991,8 +993,7 @@ const vueApp = new Vue({
         updateCurrentRoomStreams: function (streams)
         {
             this.streams = streams;
-
-            this.iAmStreaming = false;
+                
             this.streamSlotIdInWhichIWantToStream = null;
 
             for (const slotId in streams)
@@ -1003,7 +1004,6 @@ const vueApp = new Vue({
                     Vue.set(stream, "title", this.users[stream.userId].name);
                     if (stream.userId == this.myUserID)
                     {
-                        this.iAmStreaming = true;
                         this.streamSlotIdInWhichIWantToStream = slotId;
                     }
                 }
@@ -1078,14 +1078,24 @@ const vueApp = new Vue({
                     microphone.connect(analyser);
 
                     this.vuMeterTimer = setInterval(() => {
-                        analyser.getByteFrequencyData(dataArrayAlt)
-                        
-                        const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
-                        const level = max / 255
-                        const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream)
-                        const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream)
-                        vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
-                        vuMeterBarPrimary.style.width = level * 100 + "%"
+                        try {
+                            if (this.streamSlotIdInWhichIWantToStream == null)
+                                clearInterval(this.vuMeterTimer)    
+                            analyser.getByteFrequencyData(dataArrayAlt)
+                            
+                            const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
+                            const level = max / 255
+                            const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream)
+                            const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream)
+                            
+                            vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
+                            vuMeterBarPrimary.style.width = level * 100 + "%"
+                        }
+                        catch (exc)
+                        {
+                            console.error(exc)
+                            clearInterval(this.vuMeterTimer)
+                        }
                     }, 100)
                 }
 
@@ -1108,7 +1118,6 @@ const vueApp = new Vue({
         },
         startStreaming: async function ()
         {
-            this.iAmStreaming = true;
             const slotId = this.streamSlotIdInWhichIWantToStream;
             const rtcPeer = this.setupRTCConnection(slotId);
             this.rtcPeerSlots[slotId] = rtcPeer
@@ -1123,7 +1132,6 @@ const vueApp = new Vue({
         },
         stopStreaming: function ()
         {
-            this.iAmStreaming = false;
             for (const track of this.mediaStream.getTracks()) track.stop();
             
             const streamSlotId = this.streamSlotIdInWhichIWantToStream;
@@ -1223,6 +1231,7 @@ const vueApp = new Vue({
         {
             this.isStreamPopupOpen = false;
             this.wantToStream = false;
+            this.streamSlotIdInWhichIWantToStream = null;
         },
         changeStreamVolume: function (streamSlotId)
         {
