@@ -512,8 +512,7 @@ const vueApp = new Vue({
         },
         setCanvasGlobalOffset: function ()
         {
-            if (this.currentRoom.needsFixedCamera ||
-                !this.currentRoom.backgroundImage)
+            if (this.currentRoom.needsFixedCamera)
             {
                 const fixedCameraOffset = this.currentRoom.backgroundOffset ||
                     { x: 0, y: 0 };
@@ -585,8 +584,6 @@ const vueApp = new Vue({
             context.fillStyle = this.currentRoom.backgroundColor;
             context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
             
-            if (!this.currentRoom.backgroundImage) return;
-            
             this.drawImage(
                 context,
                 this.currentRoom.backgroundImage.getImage()
@@ -632,46 +629,37 @@ const vueApp = new Vue({
                 } // o.type == "user"
                 else
                 {
-                    if (!this.isLoadingRoom)
-                    {
-                        // draw users only when the room is fully loaded, so that the "physical position" calculations
-                        // are done with the correct room's data.
-                        
-                        context.save();
-                        
-                        if (o.o.isInactive)
-                            context.globalAlpha = 0.5
-                        
-                        const image = o.o.getCurrentImage(this.currentRoom).getImage()
-                        this.drawImage(
-                            context,
-                            image,
-                            o.o.currentPhysicalPositionX,
-                            (o.o.currentPhysicalPositionY - image.height)
-                        );
-                        
-                        context.restore()
-                    }
+                    context.save();
+                    
+                    if (o.o.isInactive)
+                        context.globalAlpha = 0.5
+                    
+                    const image = o.o.getCurrentImage(this.currentRoom).getImage()
+                    this.drawImage(
+                        context,
+                        image,
+                        o.o.currentPhysicalPositionX,
+                        (o.o.currentPhysicalPositionY - image.height)
+                    );
+                    
+                    context.restore()
                 }
             }
 
             // Draw usernames on top of everything else
             for (const o of allObjects.filter(o => o.type == "user"))
             {
-                if (!this.isLoadingRoom)
-                {
-                    if (o.o.nameImage == null)
-                        o.o.nameImage = this.getNameImage(o.o.name);
-                    
-                    const image = o.o.nameImage.getImage()
-                    
-                    this.drawImage(
-                        context,
-                        image,
-                        (o.o.currentPhysicalPositionX - image.width/2) + BLOCK_WIDTH/2,
-                        (o.o.currentPhysicalPositionY - 120)
-                    );
-                }
+                if (o.o.nameImage == null)
+                    o.o.nameImage = this.getNameImage(o.o.name);
+                
+                const image = o.o.nameImage.getImage()
+                
+                this.drawImage(
+                    context,
+                    image,
+                    (o.o.currentPhysicalPositionX - image.width/2) + BLOCK_WIDTH/2,
+                    (o.o.currentPhysicalPositionY - 120)
+                );
             }
             
             if (this.enableGridNumbers)
@@ -740,13 +728,16 @@ const vueApp = new Vue({
                 this.forcePhysicalPositionRefresh();
                 this.forceUserInstantMove = false;
             }
+            
+            if (this.isLoadingRoom || !this.currentRoom.backgroundImage)
+                return;
 
             this.detectCanvasResize();
 
             const usersRequiringRedraw = [];
             for (const [userId, user] of Object.entries(this.users))
                 if (user.checkIfRedrawRequired()) usersRequiringRedraw.push(userId);
-
+            
             if (this.isRedrawRequired
                 || this.isDraggingCanvas
                 || usersRequiringRedraw.length
