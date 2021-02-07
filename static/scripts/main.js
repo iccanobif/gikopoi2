@@ -728,43 +728,46 @@ const vueApp = new Vue({
                     }
             }
         },
-
-        paint: function (timestamp)
+        paint: function ()
         {
+            if (this.forceUserInstantMove)
+            {
+                this.forcePhysicalPositionRefresh();
+                this.forceUserInstantMove = false;
+            }
 
+            this.detectCanvasResize();
+
+            const usersRequiringRedraw = [];
+            for (const [userId, user] of Object.entries(this.users))
+                if (user.checkIfRedrawRequired()) usersRequiringRedraw.push(userId);
+
+            if (this.isRedrawRequired
+                || this.isDraggingCanvas
+                || usersRequiringRedraw.length
+                || this.enableGridNumbers)
+            {
+                this.setCanvasGlobalOffset();
+                this.paintBackground();
+                this.paintForeground();
+                this.isRedrawRequired = false;
+            }
+
+            this.changeRoomIfSteppingOnDoor();
+        },
+
+        paintLoop: function (timestamp)
+        {
             try
             {
-                if (this.forceUserInstantMove)
-                {
-                    this.forcePhysicalPositionRefresh();
-                    this.forceUserInstantMove = false;
-                }
-
-                this.detectCanvasResize();
-
-                const usersRequiringRedraw = [];
-                for (const [userId, user] of Object.entries(this.users))
-                    if (user.checkIfRedrawRequired()) usersRequiringRedraw.push(userId);
-
-                if (this.isRedrawRequired
-                    || this.isDraggingCanvas
-                    || usersRequiringRedraw.length
-                    || this.enableGridNumbers)
-                {
-                    this.setCanvasGlobalOffset();
-                    this.paintBackground();
-                    this.paintForeground();
-                    this.isRedrawRequired = false;
-                }
-
-                this.changeRoomIfSteppingOnDoor();
+                paint()
             }
             catch (err)
             {
                 console.error(err, err.lineNumber);
             }
 
-            requestAnimationFrame(this.paint);
+            requestAnimationFrame(this.paintLoop);
         },
         changeRoomIfSteppingOnDoor: function ()
         {
