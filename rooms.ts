@@ -715,7 +715,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             down: { x: 1, y: 0, direction: "up", target: { roomId: "bar_st", doorId: "up" } },
             up: { x: 1, y: 32, direction: "down", target: { roomId: "long_st", doorId: "down" } },
-            left: { x: 0, y: 30, direction: "right", target: { roomId: "jinja", doorId: "steps" } }
+            left: { x: 0, y: 30, direction: "right", target: { roomId: "jinja_st", doorId: "right" } }
         },
         streamSlotCount: 0,
         secret: false
@@ -1072,7 +1072,7 @@ export const rooms: { [roomId: string]: Room } = {
             { xFrom: 4, yFrom: 3, xTo: 4, yTo: 2 },
         ],
         doors: {
-            steps: { x: 14, y: 4, direction: "left", target: { roomId: "long_st", doorId: "left" } },
+            steps: { x: 14, y: 4, direction: "left", target: { roomId: "jinja_st", doorId: "torii" } },
         },
         streamSlotCount: 2,
         secret: false
@@ -1960,6 +1960,42 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             door: { x: 0, y: 5, direction: "right", target: { roomId: "radio_backstage", doorId: "bottom" } },
             right: { x: 8, y: 5, direction: "left", target: { roomId: "radio", doorId: "single_door" } },
+        },
+        streamSlotCount: 0,
+        secret: false
+    },
+    jinja_st: {
+        id: "jinja_st",
+        scale: 1,
+        size: { x: 9, y: 5 },
+        originCoordinates: { x: 41, y: 268 },
+        spawnPoint: "right",
+        backgroundImageUrl: "rooms/jinja_st/background.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [
+            { x:  1, y:  3, offset: { x:   90, y:   48 }, url: "torii.svg" },
+            { x:  4, y:  0, offset: { x:   73, y:  118 }, url: "take.svg" },
+        ],
+        sit: [
+            { x:  8, y:  4 },
+            { x:  8, y:  0 },
+            { x:  5, y:  4 },
+            { x:  5, y:  0 },
+        ],
+        blocked: [
+            { x:  4, y:  4 },
+            { x:  2, y:  4 },
+            { x:  0, y:  3 },
+            { x:  0, y:  1 },
+            { x:  3, y:  0 },
+            { x:  4, y:  0 },
+        ],
+        forbiddenMovements: [
+            { xFrom:  1, yFrom:  0, xTo:  1, yTo:  1 }, { xFrom:  1, yFrom:  1, xTo:  1, yTo:  0 },
+        ],
+        doors: {
+            torii: { x: 0, y: 2, direction: "right", target: { roomId: "jinja", doorId: "steps" } },
+            right: { x: 8, y: 2, direction: "left", target: { roomId: "long_st", doorId: "left" } },
         },
         streamSlotCount: 0,
         secret: false
