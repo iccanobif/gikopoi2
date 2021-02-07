@@ -144,7 +144,7 @@ const vueApp = new Vue({
 
                 this.canvasContext = document.getElementById("room-canvas")
                     .getContext("2d");
-                this.paint();
+                this.paintLoop();
 
                 this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
                 this.updateAudioElementsVolume()
@@ -760,7 +760,7 @@ const vueApp = new Vue({
         {
             try
             {
-                paint()
+                this.paint()
             }
             catch (err)
             {
