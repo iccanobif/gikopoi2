@@ -73,5 +73,6 @@ export const characters = {
     shobon: new Character("shobon", "svg", false),
     furoshiki_shobon: new Character("furoshiki_shobon", "png", false),
     nida: new Character("nida", "svg", false),
+    shii_uniform: new Character("shii_uniform", "svg", false),
     ika: new Character("ika", "svg", true),
 }
