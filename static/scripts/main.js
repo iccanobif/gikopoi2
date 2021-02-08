@@ -486,17 +486,19 @@ const vueApp = new Vue({
                 const context = canvas.getContext('2d');
                 context.font = font;
                 const metrics = context.measureText(name);
-                const width = metrics.width == 0 ? 1 : Math.ceil(metrics.width);
+                const width = Math.ceil(metrics.width);
                 
-                canvas.width = width + 5;
-                canvas.height = height*2;
+                canvas.width = width + 5 * scale;
+                canvas.height = height * 2;
 
                 // transparent background
                 if (withBackground)
                 {
+                    const backgroundHeight = height + 3 * scale;
                     context.globalAlpha = 0.5
                     context.fillStyle = 'white';
-                    context.fillRect(0, 5, canvas.width, canvas.height - 10)
+                    context.fillRect(0, height - backgroundHeight/2,
+                        canvas.width, backgroundHeight)
                     context.globalAlpha = 1
                 }
 
