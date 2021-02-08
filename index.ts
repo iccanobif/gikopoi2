@@ -386,7 +386,10 @@ io.on("connection", function (socket: any)
                 const videoRoomHandle = await session.videoRoom().createVideoRoomHandle();
                 try
                 {
-                    await videoRoomHandle.create({ room: roomState.janusRoomIntName })
+                    await videoRoomHandle.create({
+                        room: roomState.janusRoomIntName,
+                        publishers: 20
+                    })
                     log.info("user-rtc-message", user.id, "Janus room " + roomState.janusRoomIntName
                         + "(" + roomState.janusRoomName + ") created on server "
                         + roomState.janusRoomServer.id)
