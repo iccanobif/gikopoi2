@@ -485,6 +485,9 @@ export const rooms: { [roomId: string]: Room } = {
             
             { xFrom: 7, yFrom: 1, xTo: 7, yTo: 2 },
             { xFrom: 7, yFrom: 2, xTo: 7, yTo: 1 },
+            
+            { xFrom: 1, yFrom: 5, xTo: 1, yTo: 6 },
+            { xFrom: 1, yFrom: 6, xTo: 1, yTo: 5 },
         ],
         doors: {
             down_left: { x: 1, y: 0, direction: "up", target: { roomId: "admin_st", doorId: "right" } },
