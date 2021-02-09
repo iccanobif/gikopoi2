@@ -2486,7 +2486,7 @@ export const rooms: { [roomId: string]: Room } = {
         id: "admin_bar",
         scale: 1,
         size: { x: 12, y: 10 },
-        originCoordinates: { x: 0, y: 375 },
+        originCoordinates: { x: 0, y: 371 },
         spawnPoint: "spawn",
         backgroundImageUrl: "rooms/admin_bar/background.svg",
         backgroundColor: "#c0c0c0",
