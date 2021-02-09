@@ -247,13 +247,15 @@ export const rooms: { [roomId: string]: Room } = {
     },
     radio_backstage: {
         id: "radio_backstage",
-        scale: 0.4,
+        scale: 1,
         size: { x: 3, y: 9 },
         originCoordinates: { x: 0, y: 432 },
         spawnPoint: "spawn",
-        backgroundImageUrl: "rooms/radio_backstage/radio_backstage.png",
+        backgroundImageUrl: "rooms/radio_backstage/background.svg",
         backgroundColor: "#333333",
-        objects: [],
+        objects: [
+            { x:  0, y:  1, offset: { x:   56, y:  323 }, url: "manekin.svg" },
+        ],
         sit: [],
         blocked: [
             { x: 0, y: 0 },
