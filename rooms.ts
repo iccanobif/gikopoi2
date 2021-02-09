@@ -158,13 +158,19 @@ export const rooms: { [roomId: string]: Room } = {
     },
     basement: {
         id: "basement",
-        scale: 0.4,
+        scale: 1,
         size: { x: 10, y: 4 },
-        originCoordinates: { x: 1, y: 277 },
+        originCoordinates: { x: 0, y: 217 },
         spawnPoint: "secret_bar",
-        backgroundImageUrl: "rooms/basement/basement.png",
+        backgroundImageUrl: "rooms/basement/background.svg",
         backgroundColor: "#c0c0c0",
         objects: [
+            { x:  0, y: -1, offset: { x:    4, y:   68 }, url: "light_hori.svg" },
+            { x:  0, y:  2, offset: { x:  123, y:    8 }, url: "light_hori.svg" },
+            
+            { x:  3, y:  2, offset: { x:  253, y:   68 }, url: "light_vert.svg" },
+            { x:  6, y:  2, offset: { x:  373, y:  128 }, url: "light_vert.svg" },
+            { x:  9, y:  2, offset: { x:  493, y:  188 }, url: "light_vert.svg" },
         ],
         sit: [],
         blocked: [
