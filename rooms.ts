@@ -306,15 +306,14 @@ export const rooms: { [roomId: string]: Room } = {
     },
     bar_st: {
         id: "bar_st",
-        scale: 0.4,
+        scale: 1,
         size: { x: 10, y: 9 },
-        originCoordinates: { x: 2, y: 324 },
+        originCoordinates: { x: -1, y: 323 },
         spawnPoint: "spawn",
-        backgroundImageUrl: "rooms/bar_st/bar_st.png",
+        backgroundImageUrl: "rooms/bar_st/background.svg",
         backgroundColor: "#c0c0c0",
         objects: [
-            { x: 4, y: 5, url: "door.svg", offset: { x: 362, y: 187 } },
-            { x: 4, y: 5, url: "arrow.svg", offset: { x: 385, y: 265 } },
+            { x: 4, y: 5, url: "doorstep.svg", offset: { x: 362, y: 187 } },
             { x: 5, y: 5, url: "signboard.svg", offset: { x: 360, y: 132 } },
         ],
         sit: [
