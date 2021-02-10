@@ -2949,7 +2949,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             door: { x: 0, y: 1, direction: "right", target: { roomId: "school_rouka", doorId: "right_bottom" } },
         },
-        streamSlotCount: 3,
+        streamSlotCount: 1,
         secret: false
     },
     school_ground: {
@@ -3032,7 +3032,7 @@ export const rooms: { [roomId: string]: Room } = {
             warp: { x: 8, y: 0, direction: "up", target: { roomId: "school_ground", doorId: "jungle" } },
             jungle: { x: 1, y: 1, direction: "down", target: null },
         },
-        streamSlotCount: 3,
+        streamSlotCount: 0,
         secret: false
     },
 };
