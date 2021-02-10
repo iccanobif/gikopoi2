@@ -1313,7 +1313,8 @@ export const rooms: { [roomId: string]: Room } = {
             down: { x: 5, y: 0, direction: "up", target: { roomId: "basement", doorId: "secret_bar" } },
         },
         streamSlotCount: 3,
-        secret: false
+        secret: false,
+        forcedAnonymous: true,
     },
     bar_giko_square: {
         id: "bar_giko_square",

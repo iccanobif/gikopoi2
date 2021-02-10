@@ -7,6 +7,7 @@ import { sleep } from "./utils";
 import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
+import { cloneDeep } from "lodash";
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http, {
@@ -86,12 +87,39 @@ io.on("connection", function (socket: any)
 
     const sendCurrentRoomState = () => 
     {
+        const connectedUsers: Player[] = getConnectedUserList(user.roomId, user.areaId)
+            .map(p =>
+            {
+                if (rooms[user.roomId].forcedAnonymous)
+                {
+                    const anonymousUser = cloneDeep(p)
+                    anonymousUser.name = user.areaId == "gen" ? "名無しさん" : "Anonymous"
+                    return anonymousUser
+                }
+                else
+                    return p
+            })
+
         socket.emit("server-update-current-room-state",
             <RoomStateDto>{
                 currentRoom,
-                connectedUsers: getConnectedUserList(user.roomId, user.areaId),
+                connectedUsers,
                 streams: roomStates[user.areaId][user.roomId].streams
             })
+    }
+
+    const sendNewUserInfo = () =>
+    {
+        if (currentRoom.forcedAnonymous)
+        {
+            const anonymousUser = cloneDeep(user)
+            anonymousUser.name = user.areaId == "gen" ? "名無しさん" : "Anonymous"
+            socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", anonymousUser);
+        }
+        else
+        {
+            socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", user);
+        }
     }
 
     const setupJanusHandleSlots = () =>
@@ -135,7 +163,7 @@ io.on("connection", function (socket: any)
 
             socket.join(user.areaId)
             socket.join(user.areaId + currentRoom.id)
-            
+
             log.info("userId:", userId, "name:", user.name, "disconnectionTime:", user.disconnectionTime);
 
             user.isGhost = false
@@ -146,7 +174,7 @@ io.on("connection", function (socket: any)
             sendCurrentRoomState()
             setupJanusHandleSlots()
 
-            socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", user);
+            sendNewUserInfo()
 
             emitServerStats(user.areaId)
         }
@@ -169,7 +197,7 @@ io.on("connection", function (socket: any)
 
             user.lastAction = Date.now()
 
-            io.to(user.areaId + user.roomId).emit("server-msg", user.id, userName, msg);
+            io.to(user.areaId + user.roomId).emit("server-msg", user.id, msg);
         }
         catch (e)
         {
@@ -280,7 +308,7 @@ io.on("connection", function (socket: any)
             stream.withSound = withSound
             stream.userId = user.id
             stream.publisherId = null
-            
+
             setTimeout(() =>
             {
                 if (stream.publisherId == null) clearStream(user)
@@ -493,7 +521,7 @@ io.on("connection", function (socket: any)
             setupJanusHandleSlots()
 
             socket.join(user.areaId + targetRoomId)
-            socket.to(user.areaId + targetRoomId).emit("server-user-joined-room", user);
+            sendNewUserInfo()
         }
         catch (e)
         {

@@ -2,6 +2,7 @@ import { Player } from "./users";
 const JanusClient = require('janus-videoroom-client').Janus;
 
 export type Direction = 'up' | 'down' | 'left' | 'right'
+export type Area = 'for' | 'gen'
 
 export interface Coordinates
 {
@@ -60,6 +61,7 @@ export interface Room
     doors: { [doorId: string]: Door };
     streamSlotCount: number;
     secret: boolean;
+    forcedAnonymous?: boolean;
 }
 
 export interface JanusServer {

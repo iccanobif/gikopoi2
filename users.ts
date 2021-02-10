@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 import { defaultRoom } from "./rooms";
-import { Direction } from "./types";
+import { Area, Direction } from "./types";
 
 function generateId()
 {
@@ -22,11 +22,11 @@ export class Player
     public connectionTime = Date.now();
     public disconnectionTime: number | null = null;
     public characterId: string;
-    public areaId: string;
+    public areaId: Area;
     public isInactive = false;
     public isStreaming = false;
 
-    constructor(options: { name?: string, characterId: string, areaId: string })
+    constructor(options: { name?: string, characterId: string, areaId: Area })
     {
         if (options.name) this.name = options.name
         this.characterId = options.characterId
@@ -36,7 +36,7 @@ export class Player
 
 let users: { [id: string]: Player; } = {}
 
-export function addNewUser(name: string, characterId: string, areaId: string)
+export function addNewUser(name: string, characterId: string, areaId: Area)
 {
     const p = new Player({ name, characterId, areaId });
     users[p.id] = p;

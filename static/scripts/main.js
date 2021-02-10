@@ -281,8 +281,12 @@ const vueApp = new Vue({
                 (dto) => this.updateRoomState(dto)
             );
 
-            this.socket.on("server-msg", async (userId, userName, msg) =>
+            this.socket.on("server-msg", async (userId, msg) =>
             {
+                const user = this.users[userId]
+                if (!user)
+                    console.error("Received message", msg, "from user", userId)
+
                 const chatLog = document.getElementById("chatLog");
                 document.getElementById("message-sound").play();
 
@@ -295,7 +299,7 @@ const vueApp = new Vue({
 
                 const authorSpan = document.createElement("span");
                 authorSpan.className = "message-author";
-                authorSpan.textContent = userName;
+                authorSpan.textContent = user.name;
 
                 const bodySpan = document.createElement("span");
                 bodySpan.className = "message-body";
@@ -324,7 +328,7 @@ const vueApp = new Vue({
                 if (permission == "granted" && document.visibilityState != "visible" && userId != this.myUserID)
                 {
                     const character = this.users[userId].character
-                    new Notification(userName + ": " + msg,
+                    new Notification(user.name + ": " + msg,
                         {
                             icon: "characters/" + character.characterName + "/front-standing." + character.format
                         })
