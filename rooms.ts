@@ -363,7 +363,7 @@ export const rooms: { [roomId: string]: Room } = {
             spawn: { x: 4, y: 5, direction: "down", target: null },
             down: { x: 7, y: 0, direction: "up", target: { roomId: "school_st", doorId: "up" } },
             up: { x: 7, y: 8, direction: "down", target: { roomId: "long_st", doorId: "down" } },
-            up_right: { x: 9, y: 8, direction: "down", target: "NOT_READY_YET" },
+            up_right: { x: 9, y: 8, direction: "down", target: { roomId: "yatai", doorId: "down" } },
             right: { x: 9, y: 2, direction: "left", target: { roomId: "admin_st", doorId: "left" } },
             manhole: { x: 8, y: 4, direction: "up", target: { roomId: "basement", doorId: "up_left" } }
         },
@@ -2648,6 +2648,55 @@ export const rooms: { [roomId: string]: Room } = {
         forbiddenMovements: [],
         doors: {
             down: { x: 4, y: 0, direction: "up", target: { roomId: "basement", doorId: "bar777" } },
+        },
+        streamSlotCount: 2,
+        secret: false
+    },
+    yatai: {
+        id: "yatai",
+        scale: 1,
+        size: { x: 8, y: 8 },
+        originCoordinates: { x: -1, y: 417 },
+        spawnPoint: "down",
+        backgroundImageUrl: "rooms/yatai/background.svg",
+        backgroundColor: "#c0c0c0",
+        objects: [
+            { x:  7, y:  0, offset: { x:   64, y:  106 }, url: 'roof.svg' },
+            { x:  1, y:  5, offset: { x:  264, y:  120 }, url: 'pole.svg' },
+            { x:  1, y:  3, offset: { x:  151, y:  194 }, url: 'bucket_squid.svg' },
+            { x:  6, y:  5, offset: { x:  460, y:  218 }, url: 'pole.svg' },
+            { x:  6, y:  3, offset: { x:  348, y:  225 }, url: 'panel.svg' },
+            { x:  1, y:  2, offset: { x:  133, y:  310 }, url: 'counter.svg' },
+            { x:  2, y:  2, offset: { x:  174, y:  325 }, url: 'counter_bowl.svg' },
+            { x:  3, y:  2, offset: { x:  207, y:  342 }, url: 'counter_drinks.svg' },
+            { x:  4, y:  2, offset: { x:  247, y:  365 }, url: 'counter_squid.svg' },
+            { x:  5, y:  2, offset: { x:  289, y:  385 }, url: 'counter_drink.svg' },
+            { x:  1, y:  0, offset: { x:   49, y:  201 }, url: 'sign.svg' },
+        ],
+        sit: [
+            { x:  1, y:  1 },
+            { x:  2, y:  1 },
+            { x:  3, y:  1 },
+            { x:  4, y:  1 },
+            { x:  5, y:  1 },
+            
+            { x:  7, y:  3 },
+        ],
+        blocked: [
+            { x:  1, y:  3 },
+            { x:  1, y:  2 },
+            { x:  2, y:  2 },
+            { x:  3, y:  2 },
+            { x:  4, y:  2 },
+            { x:  5, y:  2 },
+            
+            { x:  7, y:  7 },
+        ],
+        forbiddenMovements: [
+            { xFrom:  5, yFrom:  3, xTo:  6, yTo:  3 }, { xFrom:  6, yFrom:  3, xTo:  5, yTo:  3 },
+        ],
+        doors: {
+            down: { x: 7, y: 0, direction: "up", target: { roomId: "bar_st", doorId: "up_right" } },
         },
         streamSlotCount: 2,
         secret: false
