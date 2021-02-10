@@ -2649,7 +2649,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             down: { x: 4, y: 0, direction: "up", target: { roomId: "basement", doorId: "bar777" } },
         },
-        streamSlotCount: 2,
+        streamSlotCount: 0,
         secret: false
     },
     yatai: {
@@ -2698,7 +2698,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             down: { x: 7, y: 0, direction: "up", target: { roomId: "bar_st", doorId: "up_right" } },
         },
-        streamSlotCount: 2,
+        streamSlotCount: 0,
         secret: false
     },
     school_rouka: {
@@ -2731,7 +2731,7 @@ export const rooms: { [roomId: string]: Room } = {
             right_top: { x: 4, y: 4, direction: "left", target: { roomId: "school_st", doorId: "school" } },
             right_bottom: { x: 4, y: 1, direction: "left", target: "NOT_READY_YET" },
         },
-        streamSlotCount: 2,
+        streamSlotCount: 0,
         secret: false
     },
     school: {
@@ -2783,7 +2783,6 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  6, y:  5 },
         ],
         blocked: [
-            // desk
             { x:  1, y:  1 },
             { x:  1, y:  3 },
             { x:  1, y:  5 },
@@ -2798,7 +2797,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             right: { x: 7, y: 2, direction: "left", target: { roomId: "school_rouka", doorId: "door_right" } },
         },
-        streamSlotCount: 2,
+        streamSlotCount: 0,
         secret: false
     },
 };
