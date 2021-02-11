@@ -312,7 +312,6 @@ const vueApp = new Vue({
                         const url = anchor.textContent;
                         anchor.href = (prefix == 'www.' ? 'http://' + url : url);
                         anchor.textContent = decodeURI(url);
-                        console.log(anchor.outerHTML)
                         return anchor.outerHTML;
                     });
 
