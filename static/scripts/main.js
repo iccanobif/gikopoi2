@@ -122,8 +122,6 @@ const vueApp = new Vue({
 
                 await Promise.all(Object.values(characters).map(c => c.loadImages()));
 
-                if (this.username === "") this.username = i18n.t("default_user_name");
-
                 if (this.characterId === "naito")
                 {
                     const die = Math.random()
@@ -299,7 +297,7 @@ const vueApp = new Vue({
 
                 const authorSpan = document.createElement("span");
                 authorSpan.className = "message-author";
-                authorSpan.textContent = user.name;
+                authorSpan.textContent = this.toDisplayName(user.name);
 
                 const bodySpan = document.createElement("span");
                 bodySpan.className = "message-body";
@@ -328,7 +326,7 @@ const vueApp = new Vue({
                 if (permission == "granted" && document.visibilityState != "visible" && userId != this.myUserID)
                 {
                     const character = this.users[userId].character
-                    new Notification(user.name + ": " + msg,
+                    new Notification(this.toDisplayName(user.name) + ": " + msg,
                         {
                             icon: "characters/" + character.characterName + "/front-standing." + character.format
                         })
@@ -406,6 +404,7 @@ const vueApp = new Vue({
                 roomList.forEach(r => {
                     r.sortName = i18n.t("room." + r.id, {reading: true});
                     r.streamerCount = r.streamers.length;
+                    r.streamerDisplayNames = r.streamers.map(s => this.toDisplayName(s))
                 })
                 this.roomList = roomList;
                 this.lastRoomListSortKey = null;
@@ -469,6 +468,12 @@ const vueApp = new Vue({
             newUser.isInactive = userDTO.isInactive;
             
             this.users[userDTO.id] = newUser;
+        },
+        toDisplayName: function (name)
+        {
+            if (name == "")
+                return i18n.t("default_user_name");
+            return name;
         },
         drawImage: function (context, image, x, y)
         {
@@ -667,9 +672,9 @@ const vueApp = new Vue({
             for (const o of allObjects.filter(o => o.type == "user"))
             {
                 if (o.o.nameImageWithBackground == null)
-                    o.o.nameImageWithBackground = this.getNameImage(o.o.name, true);
+                    o.o.nameImageWithBackground = this.getNameImage(this.toDisplayName(o.o.name), true);
                 if (o.o.nameImageWithoutBackground == null)
-                    o.o.nameImageWithoutBackground = this.getNameImage(o.o.name, false);
+                    o.o.nameImageWithoutBackground = this.getNameImage(this.toDisplayName(o.o.name), false);
                 
                 const image = this.showUsernameBackground ? o.o.nameImageWithBackground.getImage() : o.o.nameImageWithoutBackground.getImage()
                 
@@ -1018,7 +1023,7 @@ const vueApp = new Vue({
                 const stream = streams[slotId];
                 if (stream.isActive)
                 {
-                    Vue.set(stream, "title", this.users[stream.userId].name);
+                    Vue.set(stream, "title", this.toDisplayName(this.users[stream.userId].name));
                     if (stream.userId == this.myUserID)
                     {
                         this.streamSlotIdInWhichIWantToStream = slotId;

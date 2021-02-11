@@ -28,7 +28,7 @@ export class Player
 
     constructor(options: { name?: string, characterId: string, areaId: Area })
     {
-        if (options.name) this.name = options.name
+        if (typeof options.name === "string") this.name = options.name
         this.characterId = options.characterId
         this.areaId = options.areaId
     }

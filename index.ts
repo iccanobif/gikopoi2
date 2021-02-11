@@ -93,7 +93,7 @@ io.on("connection", function (socket: any)
                 if (rooms[user.roomId].forcedAnonymous)
                 {
                     const anonymousUser = cloneDeep(p)
-                    anonymousUser.name = user.areaId == "gen" ? "名無しさん" : "Anonymous"
+                    anonymousUser.name = ""
                     return anonymousUser
                 }
                 else
@@ -113,7 +113,7 @@ io.on("connection", function (socket: any)
         if (currentRoom.forcedAnonymous)
         {
             const anonymousUser = cloneDeep(user)
-            anonymousUser.name = user.areaId == "gen" ? "名無しさん" : "Anonymous"
+            anonymousUser.name = ""
             socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", anonymousUser);
         }
         else
@@ -164,7 +164,7 @@ io.on("connection", function (socket: any)
             socket.join(user.areaId)
             socket.join(user.areaId + currentRoom.id)
 
-            log.info("userId:", userId, "name:", user.name, "disconnectionTime:", user.disconnectionTime);
+            log.info("userId:", userId, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
 
             user.isGhost = false
             user.disconnectionTime = null
@@ -191,9 +191,7 @@ io.on("connection", function (socket: any)
 
             msg = msg.substr(0, 500)
 
-            const userName = user.name
-
-            log.info("MSG:", user.id, user.areaId, user.roomId, userName + ": " + msg);
+            log.info("MSG:", user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg);
 
             user.lastAction = Date.now()
 
@@ -674,7 +672,7 @@ app.post("/login", (req, res) =>
     try
     {
         let { userName, characterId, areaId } = req.body
-        if (!userName)
+        if (typeof userName !== "string")
         {
             res.statusCode = 500
             res.end("please specify a username")
@@ -691,7 +689,7 @@ app.post("/login", (req, res) =>
             processedUserName = processedUserName + "◆" + tripcode(userName.substr(n + 1));
 
         const user = addNewUser(processedUserName, characterId, areaId);
-        log.info("Logged in", user.id, user.name)
+        log.info("Logged in", user.id, "<" + user.name + ">")
         res.json(user.id)
     }
     catch (e)
@@ -796,7 +794,7 @@ function clearStream(user: Player)
 
 function disconnectUser(user: Player)
 {
-    log.info("Removing user ", user.id, user.name, user.areaId)
+    log.info("Removing user ", user.id, "<" + user.name + ">", user.areaId)
     clearStream(user)
     removeUser(user)
 
