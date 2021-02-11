@@ -587,9 +587,9 @@ app.get("/", (req, res) =>
             }
 
             const { statusCode, body } = await got(
-                'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/change_log.html')
+                'https://raw.githubusercontent.com/iccanobif/gikopoi2/login_footer/external/login_footer.html')
 
-            data = data.replace("@CHANGE_LOG@", statusCode === 200 ? body : "")
+            data = data.replace("@LOGIN_FOOTER@", statusCode === 200 ? body : "")
 
             for (const areaId in roomStates)
             {
