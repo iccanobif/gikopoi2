@@ -40,6 +40,7 @@ const vueApp = new Vue({
         // canvas
         canvasContext: null,
         isRedrawRequired: false,
+        isUsernameRedrawRequired: false,
         isDraggingCanvas: false,
         canvasDragStartPoint: null,
         canvasDragStartOffset: null,
@@ -677,12 +678,10 @@ const vueApp = new Vue({
             // Draw usernames on top of everything else
             for (const o of allObjects.filter(o => o.type == "user"))
             {
-                if (o.o.nameImageWithBackground == null)
-                    o.o.nameImageWithBackground = this.getNameImage(this.toDisplayName(o.o.name), true);
-                if (o.o.nameImageWithoutBackground == null)
-                    o.o.nameImageWithoutBackground = this.getNameImage(this.toDisplayName(o.o.name), false);
+                if (o.o.nameImage == null || this.isUsernameRedrawRequired)
+                    o.o.nameImage = this.getNameImage(this.toDisplayName(o.o.name), this.showUsernameBackground);
                 
-                const image = this.showUsernameBackground ? o.o.nameImageWithBackground.getImage() : o.o.nameImageWithoutBackground.getImage()
+                const image = o.o.nameImage.getImage()
                 
                 this.drawImage(
                     context,
@@ -691,6 +690,8 @@ const vueApp = new Vue({
                     (o.o.currentPhysicalPositionY - 120)
                 );
             }
+            if (this.isUsernameRedrawRequired)
+                this.isUsernameRedrawRequired = false;
             
             if (this.enableGridNumbers)
             {
@@ -898,6 +899,7 @@ const vueApp = new Vue({
                 "showUsernameBackground",
                 (this.showUsernameBackground = !this.showUsernameBackground)
             );
+            this.isUsernameRedrawRequired = true;
             this.isRedrawRequired = true;
         },
         handleCanvasKeydown: function (event)
