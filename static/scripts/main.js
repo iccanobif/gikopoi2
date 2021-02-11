@@ -63,7 +63,7 @@ const vueApp = new Vue({
         // stream settings
         isStreamPopupOpen: false,
         streamMode: "video_sound",
-        streamVoiceEnhancement: "on",
+        streamVoiceEnhancement: "off",
         streamEchoCancellation: true,
         streamNoiseSuppression: true,
         streamAutoGain: true,
@@ -1250,7 +1250,7 @@ const vueApp = new Vue({
 
             this.isStreamPopupOpen = true;
             this.streamMode = "video_sound";
-            this.streamVoiceEnhancement = "on";
+            this.streamVoiceEnhancement = "off";
             this.streamEchoCancellation = true;
             this.streamNoiseSuppression = true;
             this.streamAutoGain = true;
