@@ -303,10 +303,17 @@ const vueApp = new Vue({
                 bodySpan.className = "message-body";
                 bodySpan.textContent = msg;
                 bodySpan.innerHTML = bodySpan.innerHTML
-                    .replace(/(https?:\/\/|www\.)[^\s]+/gi, (url, prefix) =>
+                    .replace(/(https?:\/\/|www\.)[^\s]+/gi, (htmlUrl, prefix) =>
                     {
-                        const href = (prefix == "www." ? "http://" + url : url);
-                        return "<a href='" + href + "' target='_blank' tabindex='-1'>" + decodeURI(url) + "</a>";
+                        const anchor = document.createElement('a');
+                        anchor.target = '_blank';
+                        anchor.setAttribute('tabindex', '-1');
+                        anchor.innerHTML = htmlUrl;
+                        const url = anchor.textContent;
+                        anchor.href = (prefix == 'www.' ? 'http://' + url : url);
+                        anchor.textContent = decodeURI(url);
+                        console.log(anchor.outerHTML)
+                        return anchor.outerHTML;
                     });
 
                 messageDiv.append(authorSpan);
