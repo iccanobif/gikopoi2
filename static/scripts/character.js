@@ -9,21 +9,12 @@ export class Character
         this.format = format;
         this.isHidden = isHidden
         this.scale = scale || 0.5
-
-        this.frontSittingImage = null;
-        this.frontStandingImage = null;
-        this.frontWalking1Image = null;
-        this.frontWalking2Image = null;
-        this.backSittingImage = null;
-        this.backStandingImage = null;
-        this.backWalking1Image = null;
-        this.backWalking2Image = null;
     }
 
     async loadImages(svgMode)
     {
         const urlMode = (!svgMode || this.format != "svg" ? "" : svgMode + ".");
-        const results = await Promise.all([
+        const promises = [
             loadImage("characters/" + this.characterName + "/front-sitting." + urlMode + this.format),
             loadImage("characters/" + this.characterName + "/front-standing." + urlMode + this.format),
             loadImage("characters/" + this.characterName + "/front-walking-1." + urlMode + this.format),
@@ -32,9 +23,12 @@ export class Character
             loadImage("characters/" + this.characterName + "/back-standing." + urlMode + this.format),
             loadImage("characters/" + this.characterName + "/back-walking-1." + urlMode + this.format),
             loadImage("characters/" + this.characterName + "/back-walking-2." + urlMode + this.format)
-        ])
+        ]
         
-        this.frontSittingImage = RenderCache.Image(results[0], this.scale)
+        if (this.characterName == "giko")
+            promises.push(loadImage("characters/" + this.characterName + "/front-standing-alternate-mouth." + this.format))
+
+        const results = await Promise.all(promises)        this.frontSittingImage = RenderCache.Image(results[0], this.scale)
         this.frontStandingImage = RenderCache.Image(results[1], this.scale)
         this.frontWalking1Image = RenderCache.Image(results[2], this.scale)
         this.frontWalking2Image = RenderCache.Image(results[3], this.scale)
@@ -42,7 +36,9 @@ export class Character
         this.backStandingImage = RenderCache.Image(results[5], this.scale)
         this.backWalking1Image = RenderCache.Image(results[6], this.scale)
         this.backWalking2Image = RenderCache.Image(results[7], this.scale)
-        
+        if (results[8])
+            this.frontStandingAlternateMouthImage = RenderCache.Image(results[8], this.scale)
+
         this.frontSittingFlippedImage = RenderCache.Image(results[0], this.scale, true)
         this.frontStandingFlippedImage = RenderCache.Image(results[1], this.scale, true)
         this.frontWalking1FlippedImage = RenderCache.Image(results[2], this.scale, true)
@@ -51,6 +47,8 @@ export class Character
         this.backStandingFlippedImage = RenderCache.Image(results[5], this.scale, true)
         this.backWalking1FlippedImage = RenderCache.Image(results[6], this.scale, true)
         this.backWalking2FlippedImage = RenderCache.Image(results[7], this.scale, true)
+        if (results[8])
+            this.frontStandingAlternateMouthFlippedImage = RenderCache.Image(results[8], this.scale, true)
     }
 }
 
