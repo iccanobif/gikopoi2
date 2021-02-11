@@ -36,6 +36,11 @@ header h2 {
     margin: 12px;
 }
 
+#login-footer h3
+{
+    margin-bottom: 5px;
+}
+
 [v-cloak]
 {
     display: none;
