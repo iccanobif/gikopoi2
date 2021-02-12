@@ -341,9 +341,13 @@ io.on("connection", function (socket: any)
             if (streamSlotId === undefined) return;
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId];
-            if (stream.userId === null || stream.publisherId === null) return;
-
-            if (roomState.janusRoomServer === null) return;
+            if (stream.userId === null || stream.publisherId === null ||
+                roomState.janusRoomServer === null)
+            {
+                socket.emit("server-not-ok-to-take-stream", streamSlotId);
+                return;
+            };
+            
             const client = roomState.janusRoomServer.client;
 
             await janusClientConnect(client);
@@ -365,6 +369,7 @@ io.on("connection", function (socket: any)
         catch (e)
         {
             log.error(e.message + " " + e.stack);
+            socket.emit("server-not-ok-to-take-stream", streamSlotId);
         }
     })
 
