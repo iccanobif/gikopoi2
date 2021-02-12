@@ -35,7 +35,7 @@ const vueApp = new Vue({
         soundEffectVolume: 0,
         characterId: localStorage.getItem("characterId") || "giko",
         isLoggingIn: false,
-        areaId: "gen", // 'gen' or 'for'
+        areaId: localStorage.getItem("areaId") ||"gen", // 'gen' or 'for'
         
         // canvas
         canvasContext: null,
@@ -75,7 +75,7 @@ const vueApp = new Vue({
         loggedIn: false,
 
         enableGridNumbers: false,
-        username: localStorage.getItem("username"),
+        username: localStorage.getItem("username") || "",
 
         // Possibly redundant data:
         roomid: "admin_st",
@@ -108,6 +108,11 @@ const vueApp = new Vue({
                 this.isRedrawRequired = true
             }
         })
+
+        if (this.areaId == "gen")
+            this.setLanguage("ja")
+        else
+            this.setLanguage("en")
     },
     methods: {
         login: async function (ev)
@@ -118,6 +123,7 @@ const vueApp = new Vue({
 
                 localStorage.setItem("username", this.username)
                 localStorage.setItem("characterId", this.characterId)
+                localStorage.setItem("areaId", this.areaId)
 
                 window.addEventListener("resize", () =>
                 {
