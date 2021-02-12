@@ -430,6 +430,7 @@ const vueApp = new Vue({
                 }
                 else if(type == "answer")
                 {
+                    msg = msg.replace(/\r\n.*candidate.*udp.*\r\n/g, "\r\n");
                     rtcPeer.acceptAnswer(msg);
                 }
                 else if(type == "candidate")
