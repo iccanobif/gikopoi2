@@ -1049,48 +1049,32 @@ const vueApp = new Vue({
             {
                 this.isStreamPopupOpen = false;
 
-                const userMedia = {};
-
                 const withVideo = this.streamMode != "sound";
                 const withSound = this.streamMode != "video";
 
-                if (withVideo)
-                {
-                    userMedia.video = {
-                        width: 248,
-                        height: 180,
-                        frameRate: {
-                            ideal: 24,
-                            min: 10,
-                        },
-                    };
-                }
-
-                if (withSound)
-                {
-                    userMedia.audio = {
-                        echoCancellation: this.streamEchoCancellation,
-                        noiseSuppression: this.streamNoiseSuppression,
-                        autoGainControl: this.streamAutoGain,
-                        channelCount: 2
-                    };
-
-                    if (this.streamVoiceEnhancement == "on")
-                    {
-                        userMedia.audio.echoCancellation = true;
-                        userMedia.audio.noiseSuppression = true;
-                        userMedia.audio.autoGainControl = true;
-                    }
-                    else if (this.streamVoiceEnhancement == "off")
-                    {
-                        userMedia.audio.echoCancellation = false;
-                        userMedia.audio.noiseSuppression = false;
-                        userMedia.audio.autoGainControl = false;
-                    }
-                }
-
                 this.mediaStream = await navigator.mediaDevices.getUserMedia(
-                    userMedia
+                    {
+                        video: !withVideo ? undefined : {
+                            width: 248,
+                            height: 180,
+                            frameRate: {
+                                ideal: 24,
+                                min: 10,
+                            },
+                        },
+                        audio: !withSound ? undefined : {
+                            channelCount: 2,
+                            echoCancellation: this.streamVoiceEnhancement == "on" ? true
+                                              : this.streamVoiceEnhancement == "off" ? false
+                                              : this.streamEchoCancellation,
+                            noiseSuppression: this.streamVoiceEnhancement == "on" ? true
+                                              : this.streamVoiceEnhancement == "off" ? false
+                                              : this.streamNoiseSuppression,
+                            autoGainControl: this.streamVoiceEnhancement == "on" ? true
+                                              : this.streamVoiceEnhancement == "off" ? false
+                                              : this.streamAutoGain,
+                        }
+                    }
                 );
 
                 // VU Meter
