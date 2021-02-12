@@ -33,7 +33,7 @@ const vueApp = new Vue({
         forceUserInstantMove: false,
         isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
         soundEffectVolume: 0,
-        characterId: "giko",
+        characterId: localStorage.getItem("characterId") || "giko",
         isLoggingIn: false,
         areaId: "gen", // 'gen' or 'for'
         
@@ -75,9 +75,9 @@ const vueApp = new Vue({
         loggedIn: false,
 
         enableGridNumbers: false,
+        username: localStorage.getItem("username"),
 
         // Possibly redundant data:
-        username: "",
         roomid: "admin_st",
         serverStats: {
             userCount: 0,
@@ -115,6 +115,9 @@ const vueApp = new Vue({
             try {
                 ev.preventDefault();
                 this.isLoggingIn = true;
+
+                localStorage.setItem("username", this.username)
+                localStorage.setItem("characterId", this.characterId)
 
                 window.addEventListener("resize", () =>
                 {
