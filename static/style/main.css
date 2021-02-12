@@ -281,6 +281,19 @@ video {
 
     outline: 2px solid #afb1b1;
     background-color: #ffffff;
+    z-index: 2;
+}
+
+.popup-overlay
+{
+    content: "";
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:rgba(77,77,77,.4);
 }
 
 .popup-title

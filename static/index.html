@@ -165,6 +165,7 @@
                 </div>
             </div>
 
+            <div class="popup-overlay" v-if="isRulaPopupOpen" v-on:click="closeRulaPopup"></div>
             <div id="rula-popup" class="popup" v-if="isRulaPopupOpen">
                 <div class="popup-title">{{ $t("ui.rula_menu_title") }}</div>
                 <div class="popup-content">
@@ -198,6 +199,7 @@
                 </div>
             </div>
 
+            <div class="popup-overlay" v-if="isStreamPopupOpen" v-on:click="closeStreamPopup"></div>
             <div class="popup" v-if="isStreamPopupOpen">
                 <div class="popup-title">{{ $t("ui.stream_form_title") }}</div>
                 <div class="popup-content">
