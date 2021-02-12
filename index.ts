@@ -282,13 +282,13 @@ io.on("connection", function (socket: any)
             log.error(e.message + " " + e.stack);
         }
     });
-    socket.on("user-want-to-stream", function (data: { streamSlotId: number, withVideo: boolean, withSound: boolean })
+    socket.on("user-want-to-stream", function (data: { streamSlotId: number, withVideo: boolean, withSound: boolean, info: any })
     {
         try
         {
-            const { streamSlotId, withVideo, withSound } = data
+            const { streamSlotId, withVideo, withSound, info } = data
 
-            log.info("user-want-to-stream", user.id)
+            log.info("user-want-to-stream", user.id, JSON.stringify(info))
 
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId]
