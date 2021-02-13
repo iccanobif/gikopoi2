@@ -21,6 +21,11 @@ export default class User
         this.isInactive = false;
         
         this.nameImage = null;
+        
+        this.message = null;
+        this.lastMessage = null;
+        this.messageDirection = "left";
+        this.messageImage = null;
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)

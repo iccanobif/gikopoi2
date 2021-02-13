@@ -266,6 +266,24 @@ video {
     flex-grow: 1;
 }
 
+.tooltip-section
+{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    align-content: stretch;
+}
+
+.tooltip-section > button
+{
+    flex-grow: 1;
+}
+
+.move-button
+{
+    padding: 0;
+}
+
 #rula-popup {
     max-width: 600px;
     width: 90%;

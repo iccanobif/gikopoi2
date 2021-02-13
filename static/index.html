@@ -91,23 +91,50 @@
             </div>
             <div id="toolbar">
                 <div id="toolbar-text-input">
-                    {{ $t("ui.label_input") }} <input id="input-textbox" type="text"
-                        v-on:keypress="handleMessageInputKeydown($event)" tabindex="2" maxlength="500"></input>
-                    <button id="send-button" v-on:click="sendMessageToServer" tabindex="3">{{ $t("ui.button_send")
-                        }}</button>
+                    {{ $t("ui.label_input") }} <textarea id="input-textbox"
+                        v-on:keypress="handleMessageInputKeydown($event)" tabindex="2" maxlength="500"></textarea>
+                    <div class="tooltip-section">
+                        <button id="send-button" v-on:click="sendMessageToServer(true)" tabindex="3">{{ $t("ui.button_send") }}</button>
+                        <button id="bubble-send-button" v-on:click="sendMessageToServer(false)" tabindex="3">{{ $t("ui.button_send") }}</button>
+                    </div>
                 </div>
                 <div id="toolbar-buttons">
-                    <div>
+                    <div class="tooltip-section">
                         <label for="sound-effect-volume">{{ $t("ui.sound_effect") }}</label>
                         <input type="range" id="sound-effect-volume" v-on:change="changeSoundEffectVolume()"
                             name="sound-effect-volume" min="0" max="1" step="0.01" :value="soundEffectVolume">
                     </div>
-                    <button id="btn-toggle-username-bg" v-on:click="toggleUsernameBackground()" v-bind:class="{'checked': showUsernameBackground}">{{ $t("ui.user_name_bg") }}</button>
-                    <button id="btn-move-left" v-on:click="sendNewPositionToServer('left')">↖</button>
-                    <button id="btn-move-up" v-on:click="sendNewPositionToServer('up')">↗</button>
-                    <button id="btn-move-down" v-on:click="sendNewPositionToServer('down')">↙</button>
-                    <button id="btn-move-right" v-on:click="sendNewPositionToServer('right')">↘</button>
-                    <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
+                    <div class="tooltip-section">
+                        <button id="btn-toggle-username-bg" v-on:click="toggleUsernameBackground()" v-bind:class="{'checked': showUsernameBackground}">{{ $t("ui.user_name_bg") }}</button>
+                        <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
+                    </div>
+                    <div class="tooltip-section">
+                        <div>
+                            Move:
+                        </div>
+                        <div>
+                            <button id="btn-move-left" class="move-button" v-on:click="sendNewPositionToServer('left')">↖</button
+                            ><button id="btn-move-up" class="move-button" v-on:click="sendNewPositionToServer('up')">↗</button>
+                        </div>
+                        <div>
+                            <button id="btn-move-down" class="move-button" v-on:click="sendNewPositionToServer('down')">↙</button
+                            ><button id="btn-move-right" class="move-button" v-on:click="sendNewPositionToServer('right')">↘</button>
+                        </div>
+                    </div>
+                    <div class="tooltip-section">
+                        <div>
+                            Bubble:
+                        </div>
+                        <div>
+                            <button class="move-button" v-on:click="sendNewBubbleDirectionToServer('left')">↖</button
+                            ><button class="move-button" v-on:click="sendNewBubbleDirectionToServer('up')">↗</button>
+                        </div>
+                        <div>
+                            <button class="move-button" v-on:click="sendNewBubbleDirectionToServer('down')">↙</button
+                            ><button class="move-button" v-on:click="sendNewBubbleDirectionToServer('right')">↘</button>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
             {{ $t("ui.label_log") }}

@@ -294,11 +294,24 @@ const vueApp = new Vue({
                 const user = this.users[userId]
                 if (!user)
                     console.error("Received message", msg, "from user", userId)
-
+                
+                const plainMsg = decodeURI(msg);
+                
+                user.message = plainMsg;
+                if(user.lastMessage != user.message)
+                {
+                    user.messageImage = null;
+                    this.isRedrawRequired = true;
+                    user.lastMessage = user.message;
+                }
+                
+                
+                user.isInactive = false;
+                
+                if(!user.message) return;
+                
                 const chatLog = document.getElementById("chatLog");
                 document.getElementById("message-sound").play();
-
-                this.isRedrawRequired = true
 
                 const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
 
@@ -337,18 +350,14 @@ const vueApp = new Vue({
                         chatLog.clientHeight;
 
                 const permission = await Notification.requestPermission()
-
-
                 if (permission == "granted" && document.visibilityState != "visible" && userId != this.myUserID)
                 {
                     const character = this.users[userId].character
-                    new Notification(this.toDisplayName(user.name) + ": " + msg,
+                    new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
                         {
                             icon: "characters/" + character.characterName + "/front-standing." + character.format
                         })
                 }
-
-                this.users[userId].isInactive = false
             });
 
             this.socket.on("server-stats", (serverStats) =>
@@ -536,6 +545,98 @@ const vueApp = new Vue({
                 context.fillText(name, canvas.width/2, height);
             });
         },
+        getMessageImage: function(user)
+        {
+            let messageLines = user.message.split(/\r\n|\n\r|\n|\r/);
+            
+            const arrowCorner = [
+                    ["down", "left"].includes(user.messageDirection),
+                    ["up", "left"].includes(user.messageDirection)];
+            
+            return new RenderCache(function(canvas, scale)
+            {
+                const maxLineWidth = 188 * scale;
+                const boxArrowOffset = 5 * scale;
+                const boxMargin = 6 * scale;
+                const boxPadding = [5 * scale, 3 * scale];
+                const fontHeight = 13 * scale;
+                const lineHeight = 15 * scale;
+                
+                const font = fontHeight + "px Arial, Helvetica, sans-serif";
+                
+                const context = canvas.getContext('2d');
+                context.font = font;
+                
+                let preparedLines = [];
+                let textWidth = 0;
+                
+                while (messageLines.length && preparedLines.length < 4)
+                {
+                    const line = messageLines.shift()
+                    let lastPreparedLine = "";
+                    let lastLineWidth = 0;
+                    for (let i=0; i<line.length; i++)
+                    {
+                        const preparedLine = line.substring(0, i+1);
+                        const lineWidth = context.measureText(preparedLine).width
+                        console.log(lineWidth, preparedLine)
+                        if (lineWidth > maxLineWidth)
+                        {
+                            if (i == 0)
+                            {
+                                lastPreparedLine = preparedLine;
+                                lastLineWidth = maxLineWidth;
+                            }
+                            break;
+                        }
+                        lastPreparedLine = preparedLine;
+                        lastLineWidth = lineWidth;
+                    }
+                    preparedLines.push(lastPreparedLine)
+                    if (line.length > lastPreparedLine.length)
+                        messageLines.push(line.substring(lastPreparedLine.length))
+                    textWidth = Math.max(textWidth, lastLineWidth);
+                }
+                
+                const boxWidth = textWidth + 2 * boxPadding[0];
+                const boxHeight = preparedLines.length * lineHeight + 2 * boxPadding[1];
+                
+                canvas.width = boxWidth + boxMargin;
+                canvas.height = boxHeight + boxMargin;
+                
+                context.fillStyle = 'white';
+                context.fillRect(
+                    !arrowCorner[0] * boxMargin,
+                    !arrowCorner[1] * boxMargin,
+                    boxWidth,
+                    boxHeight)
+                    
+                context.beginPath();
+                context.moveTo(
+                    arrowCorner[0] * canvas.width,
+                    arrowCorner[1] * canvas.height);
+                context.lineTo(
+                    (arrowCorner[0] ? boxWidth - boxArrowOffset : boxMargin + boxArrowOffset),
+                    (arrowCorner[1] ? boxHeight: boxMargin));
+                context.lineTo(
+                    (arrowCorner[0] ? boxWidth : boxMargin),
+                    (arrowCorner[1] ? boxHeight - boxArrowOffset : boxMargin + boxArrowOffset));
+                context.closePath();
+                context.fill();
+                
+                context.font = font;
+                context.textBaseline = "middle";
+                context.textAlign = "left"
+                context.fillStyle = "black";
+                
+                for (let i=0; i<preparedLines.length; i++)
+                {
+                    context.fillText(preparedLines[i],
+                        !arrowCorner[0] * boxMargin + boxPadding[0],
+                        !arrowCorner[1] * boxMargin + boxPadding[1] + (i*lineHeight) + (lineHeight/2));
+                }
+            });
+        },
         detectCanvasResize: function ()
         {
             if (this.canvasDimensions.w != this.canvasContext.canvas.offsetWidth ||
@@ -683,7 +784,7 @@ const vueApp = new Vue({
                     context.restore()
                 }
             }
-
+            
             // Draw usernames on top of everything else
             for (const o of allObjects.filter(o => o.type == "user"))
             {
@@ -701,6 +802,32 @@ const vueApp = new Vue({
             }
             if (this.isUsernameRedrawRequired)
                 this.isUsernameRedrawRequired = false;
+            
+            for (const o of allObjects.filter(o => o.type == "user"))
+            {
+                const user = o.o;
+                
+                if (!user.message) continue;
+                
+                if (user.messageImage == null)
+                    user.messageImage = this.getMessageImage(user)
+                
+                const image = user.messageImage.getImage()
+                
+                //user.messageDirection
+                const directionCorner = [
+                    ["up", "right"].includes(user.messageDirection),
+                    ["down", "right"].includes(user.messageDirection)];
+                
+                this.drawImage(
+                    context,
+                    image,
+                    (user.currentPhysicalPositionX + BLOCK_WIDTH/2)
+                        + (directionCorner[0] ? 21 : - (image.width + 21)),
+                    user.currentPhysicalPositionY
+                        - (directionCorner[1] ? 62 : 70 + image.height)
+                );
+            }
             
             if (this.enableGridNumbers)
             {
@@ -871,8 +998,6 @@ const vueApp = new Vue({
         {
             const inputTextbox = document.getElementById("input-textbox");
 
-            if (inputTextbox.value == "") return;
-
             const message = inputTextbox.value.substr(0, 500);
             if (message == "#rula"
                 || message == "#ﾙｰﾗ"
@@ -1001,9 +1126,11 @@ const vueApp = new Vue({
         },
         handleMessageInputKeydown: function (event)
         {
-            if (event.key != "Enter") return;
+            if (event.key != "Enter" || event.shiftKey) return;
 
             this.sendMessageToServer();
+            event.preventDefault();
+            return false;
         },
 
         setupRTCConnection: function (slotId)
