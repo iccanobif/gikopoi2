@@ -228,7 +228,7 @@ const vueApp = new Vue({
             this.isLoadingRoom = false;
             this.requestedRoomChange = false;
             
-            this.rtcPeerSlots.forEach(p => p !== null && p.close());
+            this.rtcPeerSlots.forEach(s => s !== null && s.rtcPeer.close());
             this.rtcPeerSlots = streamsDto.map(() => null);
         },
         connectToServer: async function ()
@@ -405,6 +405,10 @@ const vueApp = new Vue({
                 this.stopStreaming();
                 this.showWarningToast(reason);
             });
+            this.socket.on("server-not-ok-to-take-stream", (streamSlotId) =>
+            {
+                this.wantToDropStream(streamSlotId);
+            });
             this.socket.on("server-ok-to-stream", () =>
             {
                 this.wantToStream = false;
@@ -431,7 +435,7 @@ const vueApp = new Vue({
             this.socket.on("server-rtc-message", async (streamSlotId, type, msg) =>
             {
                 console.log(streamSlotId, type, msg);
-                const rtcPeer = this.rtcPeerSlots[streamSlotId];
+                const rtcPeer = this.rtcPeerSlots[streamSlotId].rtcPeer;
                 if (rtcPeer === null) return;
                 if(type == "offer")
                 {
@@ -1019,13 +1023,60 @@ const vueApp = new Vue({
                     streamSlotId: slotId, type, msg})
             });
             
+            const reconnect = () =>
+            {
+                if (slotId == this.streamSlotIdInWhichIWantToStream)
+                {
+                    console.log("Attempting to restart stream")
+                    this.startStreaming()
+                }
+                else if (this.takenStreams[slotId])
+                {
+                    console.log("Attempting to retake stream")
+                    this.wantToTakeStream(slotId)
+                }
+                else
+                {
+                    console.log("Stream connection closed")
+                } 
+            };
+            
+            const terminate = () =>
+            {
+                if (slotId == this.streamSlotIdInWhichIWantToStream)
+                    this.stopStreaming()
+                else if (this.takenStreams[slotId])
+                    this.wantToDropStream(slotId)
+            };
+            
             rtcPeer.open();
             rtcPeer.conn.addEventListener("iceconnectionstatechange", (ev) =>
             {
                 const state = rtcPeer.conn.iceConnectionState;
-                if (["failed", "disconnected", "closed"].includes(state))
+                console.log("RTC Connection state", state)
+                
+                
+                if (state == "connected")
+                {
+                    if (this.rtcPeerSlots[slotId])
+                        this.rtcPeerSlots[slotId].attempts = 0;
+                }
+                else if (["failed", "disconnected", "closed"].includes(state))
                 {
                     rtcPeer.close();
+                    if (!this.rtcPeerSlots[slotId]) return;
+                    if (this.rtcPeerSlots[slotId].attempts > 4)
+                    {
+                        terminate()
+                    }
+                    else
+                    {
+                        setTimeout(reconnect,
+                            Math.max(this.takenStreams[slotId] ? 1000 : 0,
+                                this.rtcPeerSlots[slotId].attempts * 1000));
+                    }
+                    
+                    this.rtcPeerSlots[slotId].attempts++;
                 }
             });
             return rtcPeer;
@@ -1152,11 +1203,17 @@ const vueApp = new Vue({
                 this.mediaStream = false;
             }
         },
+        setupRtcPeerSlot: function(slotId, rtcPeer)
+        {
+            return this.rtcPeerSlots[slotId] = {
+                rtcPeer: this.setupRTCConnection(slotId),
+                attempts: 0
+            }
+        },
         startStreaming: async function ()
         {
             const slotId = this.streamSlotIdInWhichIWantToStream;
-            const rtcPeer = this.setupRTCConnection(slotId);
-            this.rtcPeerSlots[slotId] = rtcPeer
+            const rtcPeer = this.setupRtcPeerSlot(slotId).rtcPeer;
 
             this.mediaStream
                 .getTracks()
@@ -1175,10 +1232,12 @@ const vueApp = new Vue({
             document.getElementById("local-video-" + streamSlotId).srcObject = this.mediaStream = null;
             if (this.vuMeterTimer)
                 clearInterval(this.vuMeterTimer)
-            this.rtcPeerSlots[streamSlotId].close()
-            this.rtcPeerSlots[streamSlotId] = null;
             
             this.streamSlotIdInWhichIWantToStream = null;
+            
+            this.rtcPeerSlots[streamSlotId].rtcPeer.close()
+            this.rtcPeerSlots[streamSlotId] = null;
+            
             this.socket.emit("user-want-to-stop-stream");
 
             // On small screens, displaying the <video> element seems to cause a reflow in a way that
@@ -1195,8 +1254,7 @@ const vueApp = new Vue({
             
             Vue.set(this.takenStreams, streamSlotId, true);
             
-            const rtcPeer = this.setupRTCConnection(streamSlotId);
-            this.rtcPeerSlots[streamSlotId] = rtcPeer;
+            const rtcPeer = this.setupRtcPeerSlot(streamSlotId).rtcPeer;
 
             rtcPeer.conn.addEventListener(
                 "track",
@@ -1212,7 +1270,8 @@ const vueApp = new Vue({
         wantToDropStream: function (streamSlotId)
         {
             Vue.set(this.takenStreams, streamSlotId, false);
-            this.rtcPeerSlots[streamSlotId].close()
+            if(!this.rtcPeerSlots[streamSlotId]) return;
+            this.rtcPeerSlots[streamSlotId].rtcPeer.close()
             this.rtcPeerSlots[streamSlotId] = null;
             //this.socket.emit("user-want-to-drop-stream", streamSlotId);
         },
