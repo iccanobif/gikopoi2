@@ -913,7 +913,7 @@ const vueApp = new Vue({
             context.textAlign = "center";
         },
         
-        drawgridNumbers: function ()
+        drawGridNumbers: function ()
         {
             const context = this.canvasContext;
             
@@ -971,7 +971,7 @@ const vueApp = new Vue({
                 if (this.enableGridNumbers)
                 {
                     this.drawOriginLines();
-                    this.drawgridNumbers();
+                    this.drawGridNumbers();
                 }
                 this.isRedrawRequired = false;
             }
