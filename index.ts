@@ -188,7 +188,6 @@ io.on("connection", function (socket: any)
         try
         {
             user.isInactive = false
-            user.lastRoomMessage = msg;
 
             // Whitespace becomes an empty string (to clear bubbles)
             if (!msg.match(/[^\s]/g))
@@ -203,6 +202,8 @@ io.on("connection", function (socket: any)
             }
 
             msg = msg.substr(0, 500)
+            
+            user.lastRoomMessage = msg;
 
             log.info("MSG:", user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg);
 
