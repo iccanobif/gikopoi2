@@ -27,7 +27,7 @@ const vueApp = new Vue({
         users: {},
         roomLoadId: 0,
         currentRoom: {
-            id: null,
+            id: "admin_st",
             objects: [],
         },
         myUserID: null,
