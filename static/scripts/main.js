@@ -178,7 +178,7 @@ const vueApp = new Vue({
         {
             this.isWarningToastOpen = false;
         },
-        updateRoomState: async function (dto)
+        updateRoomState: async function (dto, isFirstUpdate)
         {
             const roomDto = dto.currentRoom
             const usersDto = dto.connectedUsers
@@ -194,7 +194,13 @@ const vueApp = new Vue({
             this.roomid = this.currentRoom.id;
             this.users = {};
 
-            for (const u of usersDto) this.addUser(u);
+            for (const u of usersDto)
+            {
+                this.addUser(u);
+                if(!isFirstUpdate && this.users[u.id].message)
+                    this.displayMessage(u.id, this.users[u.id].message);
+            }
+            
 
             loadImage(this.currentRoom.backgroundImageUrl).then((image) =>
             {
@@ -248,7 +254,7 @@ const vueApp = new Vue({
             // currentRoom, streams etc... are all defined
 
             const response = await fetch("/areas/" + this.areaId + "/rooms/admin_st")
-            this.updateRoomState(await response.json())
+            this.updateRoomState(await response.json(), true)
             
             const pingResponse = await postJson("/ping/" + this.myUserID, {
                 userId: this.myUserID,
@@ -287,78 +293,14 @@ const vueApp = new Vue({
                 this.connectionLost = true;
             });
 
-            this.socket.on("server-update-current-room-state",
-                (dto) => this.updateRoomState(dto)
-            );
-
-            this.socket.on("server-msg", async (userId, msg) =>
+            this.socket.on("server-update-current-room-state", (dto) =>
             {
-                const user = this.users[userId]
-                if (!user)
-                    console.error("Received message", msg, "from user", userId)
-                
-                const plainMsg = msg.replace(urlRegex, s => decodeURI(s));
-                
-                user.message = plainMsg;
-                if(user.lastMessage != user.message)
-                {
-                    user.bubbleImage = null;
-                    this.isRedrawRequired = true;
-                    user.lastMessage = user.message;
-                }
-                
-                user.isInactive = false;
-                
-                if(!user.message) return;
-                
-                const chatLog = document.getElementById("chatLog");
-                document.getElementById("message-sound").play();
+                this.updateRoomState(dto);
+            });
 
-                const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
-
-                const messageDiv = document.createElement("div");
-                messageDiv.className = "message";
-
-                const authorSpan = document.createElement("span");
-                authorSpan.className = "message-author";
-                authorSpan.textContent = this.toDisplayName(user.name);
-
-                const bodySpan = document.createElement("span");
-                bodySpan.className = "message-body";
-                bodySpan.textContent = msg;
-                bodySpan.innerHTML = bodySpan.innerHTML
-                    .replace(urlRegex, (htmlUrl, prefix) =>
-                    {
-                        const anchor = document.createElement('a');
-                        anchor.target = '_blank';
-                        anchor.setAttribute('tabindex', '-1');
-                        anchor.innerHTML = htmlUrl;
-                        const url = anchor.textContent;
-                        anchor.href = (prefix == 'www.' ? 'http://' + url : url);
-                        anchor.textContent = url;
-                        return anchor.outerHTML;
-                    });
-
-                messageDiv.append(authorSpan);
-                messageDiv.append(document.createTextNode(
-                    i18n.t("message_colon")));
-                messageDiv.append(bodySpan);
-
-                chatLog.appendChild(messageDiv);
-
-                if (isAtBottom)
-                    chatLog.scrollTop = chatLog.scrollHeight -
-                        chatLog.clientHeight;
-
-                const permission = await Notification.requestPermission()
-                if (permission == "granted" && document.visibilityState != "visible" && userId != this.myUserID)
-                {
-                    const character = this.users[userId].character
-                    new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
-                        {
-                            icon: "characters/" + character.characterName + "/front-standing." + character.format
-                        })
-                }
+            this.socket.on("server-msg", (userId, msg) =>
+            {
+                this.displayMessage(userId, msg);
             });
 
             this.socket.on("server-stats", (serverStats) =>
@@ -512,6 +454,76 @@ const vueApp = new Vue({
             newUser.bubblePosition = userDTO.bubblePosition;
             
             this.users[userDTO.id] = newUser;
+        },
+        displayMessage: async function (userId, msg)
+        {
+            const user = this.users[userId]
+            if (!user)
+                console.error("Received message", msg, "from user", userId)
+            
+            const plainMsg = msg.replace(urlRegex, s => decodeURI(s));
+            
+            user.message = plainMsg;
+            if(user.lastMessage != user.message)
+            {
+                user.bubbleImage = null;
+                this.isRedrawRequired = true;
+                user.lastMessage = user.message;
+            }
+            
+            
+            user.isInactive = false;
+            
+            if(!user.message) return;
+            
+            const chatLog = document.getElementById("chatLog");
+            document.getElementById("message-sound").play();
+
+            const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
+
+            const messageDiv = document.createElement("div");
+            messageDiv.className = "message";
+
+            const authorSpan = document.createElement("span");
+            authorSpan.className = "message-author";
+            authorSpan.textContent = this.toDisplayName(user.name);
+
+            const bodySpan = document.createElement("span");
+            bodySpan.className = "message-body";
+            bodySpan.textContent = msg;
+            bodySpan.innerHTML = bodySpan.innerHTML
+                .replace(/(https?:\/\/|www\.)[^\s]+/gi, (htmlUrl, prefix) =>
+                {
+                    const anchor = document.createElement('a');
+                    anchor.target = '_blank';
+                    anchor.setAttribute('tabindex', '-1');
+                    anchor.innerHTML = htmlUrl;
+                    const url = anchor.textContent;
+                    anchor.href = (prefix == 'www.' ? 'http://' + url : url);
+                    anchor.textContent = url;
+                    return anchor.outerHTML;
+                });
+
+            messageDiv.append(authorSpan);
+            messageDiv.append(document.createTextNode(
+                i18n.t("message_colon")));
+            messageDiv.append(bodySpan);
+
+            chatLog.appendChild(messageDiv);
+
+            if (isAtBottom)
+                chatLog.scrollTop = chatLog.scrollHeight -
+                    chatLog.clientHeight;
+
+            const permission = await Notification.requestPermission()
+            if (permission == "granted" && document.visibilityState != "visible" && userId != this.myUserID)
+            {
+                const character = this.users[userId].character
+                new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
+                    {
+                        icon: "characters/" + character.characterName + "/front-standing." + character.format
+                    })
+            }
         },
         toDisplayName: function (name)
         {
