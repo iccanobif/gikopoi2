@@ -8,6 +8,8 @@ import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
 import { cloneDeep } from "lodash";
+import compression from 'compression';
+
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http, {
@@ -17,6 +19,7 @@ const io = require("socket.io")(http, {
 const tripcode = require('tripcode');
 const enforce = require('express-sslify');
 const JanusClient = require('janus-videoroom-client').Janus;
+
 
 const delay = 0
 const persistInterval = 5 * 1000
@@ -197,12 +200,12 @@ io.on("connection", function (socket: any)
             else 
             {
                 // no TIGER TIGER pls
-                if ( "TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
+                if ("TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
             }
 
             msg = msg.substr(0, 500)
-            
+
             user.lastRoomMessage = msg;
 
             log.info("MSG:", user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg);
@@ -374,7 +377,7 @@ io.on("connection", function (socket: any)
                 socket.emit("server-not-ok-to-take-stream", streamSlotId);
                 return;
             };
-            
+
             const client = roomState.janusRoomServer.client;
 
             await janusClientConnect(client);
@@ -604,6 +607,20 @@ function emitServerStats(areaId: string)
 
 if (process.env.GIKO2_ENABLE_SSL == "true")
     app.use(enforce.HTTPS({ trustProtoHeader: true }))
+
+app.use(compression({
+    filter: (req, res) =>
+    {
+        if (req.headers['x-no-compression'])
+        {
+            // don't compress responses with this request header
+            return false
+        }
+
+        // fallback to standard filter function
+        return compression.filter(req, res)
+    }
+}))
 
 app.get("/", (req, res) =>
 {
