@@ -789,7 +789,20 @@ const vueApp = new Vue({
             );
         },
 
-        paintForeground: function ()
+        paintBackground: function ()
+        {
+            const context = this.canvasContext;
+            
+            context.fillStyle = this.currentRoom.backgroundColor;
+            context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
+            
+            this.drawImage(
+                context,
+                this.currentRoom.backgroundImage.getImage()
+            );
+        },
+        
+        drawObjects: function ()
         {
             const context = this.canvasContext;
             
@@ -824,8 +837,10 @@ const vueApp = new Vue({
                     context.restore()
                 }
             }
-            
-            // Draw usernames on top of everything else
+        },
+        
+        drawUsernames: function ()
+        {
             for (const o of this.canvasObjects.filter(o => o.type == "user"))
             {
                 if (o.o.nameImage == null || this.isUsernameRedrawRequired)
@@ -834,7 +849,7 @@ const vueApp = new Vue({
                 const image = o.o.nameImage.getImage()
                 
                 this.drawImage(
-                    context,
+                    this.canvasContext,
                     image,
                     (o.o.currentPhysicalPositionX - image.width/2) + BLOCK_WIDTH/2,
                     (o.o.currentPhysicalPositionY - 120)
@@ -842,7 +857,10 @@ const vueApp = new Vue({
             }
             if (this.isUsernameRedrawRequired)
                 this.isUsernameRedrawRequired = false;
-            
+        },
+        
+        drawBubbles: function()
+        {
             for (const o of this.canvasObjects.filter(o => o.type == "user"))
             {
                 const user = o.o;
@@ -859,7 +877,7 @@ const vueApp = new Vue({
                     ["down", "right"].includes(user.bubblePosition)];
                 
                 this.drawImage(
-                    context,
+                    this.canvasContext,
                     image,
                     (user.currentPhysicalPositionX + BLOCK_WIDTH/2)
                         + (directionCorner[0] ? 21 : - (image.width + 21)),
@@ -867,66 +885,74 @@ const vueApp = new Vue({
                         - (directionCorner[1] ? 62 : 70 + image.height)
                 );
             }
-            
-            if (this.enableGridNumbers)
-            {
-                context.strokeStyle = "#ff0000";
-                
-                const co = this.canvasGlobalOffset;
-                
-                context.beginPath();
-                context.moveTo(co.x+11, co.y-1);
-                context.lineTo(co.x-1, co.y-1);
-                context.lineTo(co.x-1, co.y+10);
-                context.stroke();
-                
-                const origin = calculateRealCoordinates(this.currentRoom, 0, 0)
-                
-                const cr_x = co.x+origin.x;
-                const cr_y = co.y+origin.y;
-                
-                context.beginPath();
-                context.rect(cr_x-1, cr_y+1, BLOCK_WIDTH+2, -BLOCK_HEIGHT-2);
-                context.stroke();
-                
-                const cc_x = co.x+this.currentRoom.originCoordinates.x;
-                const cc_y = co.y+this.currentRoom.originCoordinates.y;
-                
-                context.strokeStyle = "#0000ff";
-                
-                context.beginPath();
-                context.moveTo(co.x-1, co.y);
-                context.lineTo(cc_x, co.y);
-                context.lineTo(cc_x, cc_y);
-                context.stroke();
-                
-                context.font = "bold 13px Arial, Helvetica, sans-serif";
-                context.textBaseline = "bottom";
-                context.textAlign = "center";
-
-                for (let x = 0; x < this.currentRoom.size.x; x++)
-                    for (let y = 0; y < this.currentRoom.size.y; y++)
-                    {
-                        context.fillStyle = "#0000ff";
-                        if (Object.values(this.currentRoom.doors).find(d => d.x == x && d.y == y))
-                            context.fillStyle = "#00cc00";
-                        if (this.currentRoom.blocked.find(b => b.x == x && b.y == y))
-                            context.fillStyle = "#ff0000";
-                        if (this.currentRoom.sit.find(b => b.x == x && b.y == y))
-                            context.fillStyle = "yellow";
-                        const realCoord = calculateRealCoordinates(
-                            this.currentRoom,
-                            x,
-                            y
-                        );
-                        context.fillText(
-                            x + "," + y,
-                            (realCoord.x + BLOCK_WIDTH/2) + this.canvasGlobalOffset.x,
-                            (realCoord.y - BLOCK_HEIGHT/3) + this.canvasGlobalOffset.y
-                        );
-                    }
-            }
         },
+        
+        drawOriginLines: function ()
+        {
+            const context = this.canvasContext;
+            
+            context.strokeStyle = "#ff0000";
+                
+            const co = this.canvasGlobalOffset;
+            
+            context.beginPath();
+            context.moveTo(co.x+11, co.y-1);
+            context.lineTo(co.x-1, co.y-1);
+            context.lineTo(co.x-1, co.y+10);
+            context.stroke();
+            
+            const origin = calculateRealCoordinates(this.currentRoom, 0, 0)
+            
+            const cr_x = co.x+origin.x;
+            const cr_y = co.y+origin.y;
+            
+            context.beginPath();
+            context.rect(cr_x-1, cr_y+1, BLOCK_WIDTH+2, -BLOCK_HEIGHT-2);
+            context.stroke();
+            
+            const cc_x = co.x+this.currentRoom.originCoordinates.x;
+            const cc_y = co.y+this.currentRoom.originCoordinates.y;
+            
+            context.strokeStyle = "#0000ff";
+            
+            context.beginPath();
+            context.moveTo(co.x-1, co.y);
+            context.lineTo(cc_x, co.y);
+            context.lineTo(cc_x, cc_y);
+            context.stroke();
+            
+            context.font = "bold 13px Arial, Helvetica, sans-serif";
+            context.textBaseline = "bottom";
+            context.textAlign = "center";
+        },
+        
+        drawgridNumbers: function ()
+        {
+            const context = this.canvasContext;
+            
+            for (let x = 0; x < this.currentRoom.size.x; x++)
+                for (let y = 0; y < this.currentRoom.size.y; y++)
+                {
+                    context.fillStyle = "#0000ff";
+                    if (Object.values(this.currentRoom.doors).find(d => d.x == x && d.y == y))
+                        context.fillStyle = "#00cc00";
+                    if (this.currentRoom.blocked.find(b => b.x == x && b.y == y))
+                        context.fillStyle = "#ff0000";
+                    if (this.currentRoom.sit.find(b => b.x == x && b.y == y))
+                        context.fillStyle = "yellow";
+                    const realCoord = calculateRealCoordinates(
+                        this.currentRoom,
+                        x,
+                        y
+                    );
+                    context.fillText(
+                        x + "," + y,
+                        (realCoord.x + BLOCK_WIDTH/2) + this.canvasGlobalOffset.x,
+                        (realCoord.y - BLOCK_HEIGHT/3) + this.canvasGlobalOffset.y
+                    );
+                }
+        },
+        
         paint: function ()
         {
             if (this.forceUserInstantMove)
@@ -952,7 +978,14 @@ const vueApp = new Vue({
                 this.calculateUserPhysicalPositions();
                 this.setCanvasGlobalOffset();
                 this.paintBackground();
-                this.paintForeground();
+                this.drawObjects();
+                this.drawUsernames();
+                this.drawBubbles();
+                if (this.enableGridNumbers)
+                {
+                    this.drawOriginLines();
+                    this.drawgridNumbers();
+                }
                 this.isRedrawRequired = false;
             }
 
