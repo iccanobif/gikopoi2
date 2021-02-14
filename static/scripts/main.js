@@ -40,6 +40,8 @@ const vueApp = new Vue({
         characterId: localStorage.getItem("characterId") || "giko",
         isLoggingIn: false,
         areaId: localStorage.getItem("areaId") ||"gen", // 'gen' or 'for'
+        roomid: "admin_st",
+        lastRoomid: null,
         
         // canvas
         canvasContext: null,
@@ -82,7 +84,6 @@ const vueApp = new Vue({
         username: localStorage.getItem("username") || "",
 
         // Possibly redundant data:
-        roomid: "admin_st",
         serverStats: {
             userCount: 0,
         },
@@ -182,7 +183,7 @@ const vueApp = new Vue({
         {
             this.isWarningToastOpen = false;
         },
-        updateRoomState: async function (dto, isFirstUpdate)
+        updateRoomState: async function (dto)
         {
             const roomDto = dto.currentRoom
             const usersDto = dto.connectedUsers
@@ -201,7 +202,7 @@ const vueApp = new Vue({
             for (const u of usersDto)
             {
                 this.addUser(u);
-                if(!isFirstUpdate && this.users[u.id].message)
+                if(this.lastRoomid != this.roomid && this.users[u.id].message)
                     this.displayMessage(u.id, this.users[u.id].message);
             }
             
@@ -242,6 +243,8 @@ const vueApp = new Vue({
             
             this.rtcPeerSlots.forEach(s => s !== null && s.rtcPeer.close());
             this.rtcPeerSlots = streamsDto.map(() => null);
+            
+            this.lastRoomid = this.roomid;
         },
         connectToServer: async function ()
         {
@@ -258,7 +261,7 @@ const vueApp = new Vue({
             // currentRoom, streams etc... are all defined
 
             const response = await fetch("/areas/" + this.areaId + "/rooms/admin_st")
-            this.updateRoomState(await response.json(), true)
+            this.updateRoomState(await response.json())
             
             const pingResponse = await postJson("/ping/" + this.myUserID, {
                 userId: this.myUserID,
