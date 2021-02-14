@@ -21,6 +21,11 @@ export default class User
         this.isInactive = false;
         
         this.nameImage = null;
+        
+        this.message = null;
+        this.lastMessage = null;
+        this.bubblePosition = "up";
+        this.bubbleImage = null;
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)

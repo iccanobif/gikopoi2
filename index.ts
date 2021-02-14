@@ -189,7 +189,21 @@ io.on("connection", function (socket: any)
         {
             user.isInactive = false
 
+            // Whitespace becomes an empty string (to clear bubbles)
+            if (!msg.match(/[^\s]/g))
+            {
+                msg = ""
+            }
+            else 
+            {
+                // no TIGER TIGER pls
+                if ( "TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
+                    msg = "(´・ω・`)"
+            }
+
             msg = msg.substr(0, 500)
+            
+            user.lastRoomMessage = msg;
 
             log.info("MSG:", user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg);
 
@@ -282,13 +296,26 @@ io.on("connection", function (socket: any)
             log.error(e.message + " " + e.stack);
         }
     });
-    socket.on("user-want-to-stream", function (data: { streamSlotId: number, withVideo: boolean, withSound: boolean })
+    socket.on("user-bubble-position", function (position: Direction)
     {
         try
         {
-            const { streamSlotId, withVideo, withSound } = data
+            user.bubblePosition = position;
 
-            log.info("user-want-to-stream", user.id)
+            io.to(user.areaId + user.roomId).emit("server-bubble-position", user.id, position);
+        }
+        catch (e)
+        {
+            log.error(e.message + " " + e.stack);
+        }
+    });
+    socket.on("user-want-to-stream", function (data: { streamSlotId: number, withVideo: boolean, withSound: boolean, info: any })
+    {
+        try
+        {
+            const { streamSlotId, withVideo, withSound, info } = data
+
+            log.info("user-want-to-stream", user.id, JSON.stringify(info))
 
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId]
@@ -341,9 +368,13 @@ io.on("connection", function (socket: any)
             if (streamSlotId === undefined) return;
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId];
-            if (stream.userId === null || stream.publisherId === null) return;
-
-            if (roomState.janusRoomServer === null) return;
+            if (stream.userId === null || stream.publisherId === null ||
+                roomState.janusRoomServer === null)
+            {
+                socket.emit("server-not-ok-to-take-stream", streamSlotId);
+                return;
+            };
+            
             const client = roomState.janusRoomServer.client;
 
             await janusClientConnect(client);
@@ -365,6 +396,7 @@ io.on("connection", function (socket: any)
         catch (e)
         {
             log.error(e.message + " " + e.stack);
+            socket.emit("server-not-ok-to-take-stream", streamSlotId);
         }
     })
 
@@ -514,6 +546,7 @@ io.on("connection", function (socket: any)
             if (door.direction !== null) user.direction = door.direction
             user.roomId = targetRoomId
             user.isInactive = false
+            user.lastRoomMessage = "";
 
             sendCurrentRoomState()
             setupJanusHandleSlots()
@@ -587,9 +620,9 @@ app.get("/", (req, res) =>
             }
 
             const { statusCode, body } = await got(
-                'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/change_log.html')
+                'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
 
-            data = data.replace("@CHANGE_LOG@", statusCode === 200 ? body : "")
+            data = data.replace("@LOGIN_FOOTER@", statusCode === 200 ? body : "")
 
             for (const areaId in roomStates)
             {

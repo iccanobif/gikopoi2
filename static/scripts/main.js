@@ -8,6 +8,10 @@ import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";
 
+const urlRegex = /(https?:\/\/|www\.)[^\s]+/gi
+
+let loadCharacterImagesPromise = null
+
 const i18n = new VueI18n({
     locale: "ja",
     fallbackLocale: "ja",
@@ -33,13 +37,14 @@ const vueApp = new Vue({
         forceUserInstantMove: false,
         isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
         soundEffectVolume: 0,
-        characterId: "giko",
+        characterId: localStorage.getItem("characterId") || "giko",
         isLoggingIn: false,
-        areaId: "gen", // 'gen' or 'for'
+        areaId: localStorage.getItem("areaId") ||"gen", // 'gen' or 'for'
         
         // canvas
         canvasContext: null,
         isRedrawRequired: false,
+        isUsernameRedrawRequired: false,
         isDraggingCanvas: false,
         canvasDragStartPoint: null,
         canvasDragStartOffset: null,
@@ -63,7 +68,7 @@ const vueApp = new Vue({
         // stream settings
         isStreamPopupOpen: false,
         streamMode: "video_sound",
-        streamVoiceEnhancement: "on",
+        streamVoiceEnhancement: "off",
         streamEchoCancellation: true,
         streamNoiseSuppression: true,
         streamAutoGain: true,
@@ -74,9 +79,9 @@ const vueApp = new Vue({
         loggedIn: false,
 
         enableGridNumbers: false,
+        username: localStorage.getItem("username") || "",
 
         // Possibly redundant data:
-        username: "",
         roomid: "admin_st",
         serverStats: {
             userCount: 0,
@@ -107,6 +112,13 @@ const vueApp = new Vue({
                 this.isRedrawRequired = true
             }
         })
+
+        if (this.areaId == "gen")
+            this.setLanguage("ja")
+        else
+            this.setLanguage("en")
+
+        loadCharacterImagesPromise = Promise.all(Object.values(characters).map(c => c.loadImages()));
     },
     methods: {
         login: async function (ev)
@@ -115,12 +127,16 @@ const vueApp = new Vue({
                 ev.preventDefault();
                 this.isLoggingIn = true;
 
+                localStorage.setItem("username", this.username)
+                localStorage.setItem("characterId", this.characterId)
+                localStorage.setItem("areaId", this.areaId)
+
                 window.addEventListener("resize", () =>
                 {
                     this.isRedrawRequired = true;
                 })
 
-                await Promise.all(Object.values(characters).map(c => c.loadImages()));
+                await loadCharacterImagesPromise;
 
                 if (this.characterId === "naito")
                 {
@@ -166,7 +182,7 @@ const vueApp = new Vue({
         {
             this.isWarningToastOpen = false;
         },
-        updateRoomState: async function (dto)
+        updateRoomState: async function (dto, isFirstUpdate)
         {
             const roomDto = dto.currentRoom
             const usersDto = dto.connectedUsers
@@ -182,7 +198,13 @@ const vueApp = new Vue({
             this.roomid = this.currentRoom.id;
             this.users = {};
 
-            for (const u of usersDto) this.addUser(u);
+            for (const u of usersDto)
+            {
+                this.addUser(u);
+                if(!isFirstUpdate && this.users[u.id].message)
+                    this.displayMessage(u.id, this.users[u.id].message);
+            }
+            
 
             loadImage(this.currentRoom.backgroundImageUrl).then((image) =>
             {
@@ -218,7 +240,7 @@ const vueApp = new Vue({
             this.isLoadingRoom = false;
             this.requestedRoomChange = false;
             
-            this.rtcPeerSlots.forEach(p => p !== null && p.close());
+            this.rtcPeerSlots.forEach(s => s !== null && s.rtcPeer.close());
             this.rtcPeerSlots = streamsDto.map(() => null);
         },
         connectToServer: async function ()
@@ -236,7 +258,7 @@ const vueApp = new Vue({
             // currentRoom, streams etc... are all defined
 
             const response = await fetch("/areas/" + this.areaId + "/rooms/admin_st")
-            this.updateRoomState(await response.json())
+            this.updateRoomState(await response.json(), true)
             
             const pingResponse = await postJson("/ping/" + this.myUserID, {
                 userId: this.myUserID,
@@ -275,70 +297,14 @@ const vueApp = new Vue({
                 this.connectionLost = true;
             });
 
-            this.socket.on("server-update-current-room-state",
-                (dto) => this.updateRoomState(dto)
-            );
-
-            this.socket.on("server-msg", async (userId, msg) =>
+            this.socket.on("server-update-current-room-state", (dto) =>
             {
-                const user = this.users[userId]
-                if (!user)
-                    console.error("Received message", msg, "from user", userId)
+                this.updateRoomState(dto);
+            });
 
-                const chatLog = document.getElementById("chatLog");
-                document.getElementById("message-sound").play();
-
-                this.isRedrawRequired = true
-
-                const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
-
-                const messageDiv = document.createElement("div");
-                messageDiv.className = "message";
-
-                const authorSpan = document.createElement("span");
-                authorSpan.className = "message-author";
-                authorSpan.textContent = this.toDisplayName(user.name);
-
-                const bodySpan = document.createElement("span");
-                bodySpan.className = "message-body";
-                bodySpan.textContent = msg;
-                bodySpan.innerHTML = bodySpan.innerHTML
-                    .replace(/(https?:\/\/|www\.)[^\s]+/gi, (htmlUrl, prefix) =>
-                    {
-                        const anchor = document.createElement('a');
-                        anchor.target = '_blank';
-                        anchor.setAttribute('tabindex', '-1');
-                        anchor.innerHTML = htmlUrl;
-                        const url = anchor.textContent;
-                        anchor.href = (prefix == 'www.' ? 'http://' + url : url);
-                        anchor.textContent = decodeURI(url);
-                        return anchor.outerHTML;
-                    });
-
-                messageDiv.append(authorSpan);
-                messageDiv.append(document.createTextNode(
-                    i18n.t("message_colon")));
-                messageDiv.append(bodySpan);
-
-                chatLog.appendChild(messageDiv);
-
-                if (isAtBottom)
-                    chatLog.scrollTop = chatLog.scrollHeight -
-                        chatLog.clientHeight;
-
-                const permission = await Notification.requestPermission()
-
-
-                if (permission == "granted" && document.visibilityState != "visible" && userId != this.myUserID)
-                {
-                    const character = this.users[userId].character
-                    new Notification(this.toDisplayName(user.name) + ": " + msg,
-                        {
-                            icon: "characters/" + character.characterName + "/front-standing." + character.format
-                        })
-                }
-
-                this.users[userId].isInactive = false
+            this.socket.on("server-msg", (userId, msg) =>
+            {
+                this.displayMessage(userId, msg);
             });
 
             this.socket.on("server-stats", (serverStats) =>
@@ -364,6 +330,16 @@ const vueApp = new Vue({
                     this.isWaitingForServerResponseOnMovement = false;
                     if (oldX != x || oldY != y) this.justSpawnedToThisRoom = false;
                 }
+            });
+            
+            this.socket.on("server-bubble-position", (userId, position) =>
+            {
+                const user = this.users[userId];
+
+                user.isInactive = false
+                user.bubblePosition = position;
+                user.bubbleImage = null;
+                this.isRedrawRequired = true;
             });
 
             this.socket.on("server-reject-movement",
@@ -395,6 +371,10 @@ const vueApp = new Vue({
                 this.stopStreaming();
                 this.showWarningToast(reason);
             });
+            this.socket.on("server-not-ok-to-take-stream", (streamSlotId) =>
+            {
+                this.wantToDropStream(streamSlotId);
+            });
             this.socket.on("server-ok-to-stream", () =>
             {
                 this.wantToStream = false;
@@ -421,7 +401,7 @@ const vueApp = new Vue({
             this.socket.on("server-rtc-message", async (streamSlotId, type, msg) =>
             {
                 console.log(streamSlotId, type, msg);
-                const rtcPeer = this.rtcPeerSlots[streamSlotId];
+                const rtcPeer = this.rtcPeerSlots[streamSlotId].rtcPeer;
                 if (rtcPeer === null) return;
                 if(type == "offer")
                 {
@@ -429,6 +409,8 @@ const vueApp = new Vue({
                 }
                 else if(type == "answer")
                 {
+                    msg = msg.replace(/\r\n.*candidate.*udp.*\r\n/g, "\r\n");
+                    console.log(msg)
                     rtcPeer.acceptAnswer(msg);
                 }
                 else if(type == "candidate")
@@ -472,8 +454,80 @@ const vueApp = new Vue({
                 userDTO.direction
             );
             newUser.isInactive = userDTO.isInactive;
+            newUser.message = userDTO.lastRoomMessage;
+            newUser.bubblePosition = userDTO.bubblePosition;
             
             this.users[userDTO.id] = newUser;
+        },
+        displayMessage: async function (userId, msg)
+        {
+            const user = this.users[userId]
+            if (!user)
+                console.error("Received message", msg, "from user", userId)
+            
+            const plainMsg = msg.replace(urlRegex, s => decodeURI(s));
+            
+            user.message = plainMsg;
+            if(user.lastMessage != user.message)
+            {
+                user.bubbleImage = null;
+                this.isRedrawRequired = true;
+                user.lastMessage = user.message;
+            }
+            
+            
+            user.isInactive = false;
+            
+            if(!user.message) return;
+            
+            const chatLog = document.getElementById("chatLog");
+            document.getElementById("message-sound").play();
+
+            const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
+
+            const messageDiv = document.createElement("div");
+            messageDiv.className = "message";
+
+            const authorSpan = document.createElement("span");
+            authorSpan.className = "message-author";
+            authorSpan.textContent = this.toDisplayName(user.name);
+
+            const bodySpan = document.createElement("span");
+            bodySpan.className = "message-body";
+            bodySpan.textContent = msg;
+            bodySpan.innerHTML = bodySpan.innerHTML
+                .replace(/(https?:\/\/|www\.)[^\s]+/gi, (htmlUrl, prefix) =>
+                {
+                    const anchor = document.createElement('a');
+                    anchor.target = '_blank';
+                    anchor.setAttribute('tabindex', '-1');
+                    anchor.innerHTML = htmlUrl;
+                    const url = anchor.textContent;
+                    anchor.href = (prefix == 'www.' ? 'http://' + url : url);
+                    anchor.textContent = decodeURI(url);
+                    return anchor.outerHTML;
+                });
+
+            messageDiv.append(authorSpan);
+            messageDiv.append(document.createTextNode(
+                i18n.t("message_colon")));
+            messageDiv.append(bodySpan);
+
+            chatLog.appendChild(messageDiv);
+
+            if (isAtBottom)
+                chatLog.scrollTop = chatLog.scrollHeight -
+                    chatLog.clientHeight;
+
+            const permission = await Notification.requestPermission()
+            if (permission == "granted" && document.visibilityState != "visible" && userId != this.myUserID)
+            {
+                const character = this.users[userId].character
+                new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
+                    {
+                        icon: "characters/" + character.characterName + "/front-standing." + character.format
+                    })
+            }
         },
         toDisplayName: function (name)
         {
@@ -524,6 +578,97 @@ const vueApp = new Vue({
                 context.fillStyle = "blue";
                 
                 context.fillText(name, canvas.width/2, height);
+            });
+        },
+        getBubbleImage: function(user)
+        {
+            let messageLines = user.message.split(/\r\n|\n\r|\n|\r/);
+            
+            const arrowCorner = [
+                ["down", "left"].includes(user.bubblePosition),
+                ["up", "left"].includes(user.bubblePosition)];
+            
+            return new RenderCache(function(canvas, scale)
+            {
+                const maxLineWidth = 250 * scale;
+                const boxArrowOffset = 5 * scale;
+                const boxMargin = 6 * scale;
+                const boxPadding = [5 * scale, 3 * scale];
+                const fontHeight = 13 * scale;
+                const lineHeight = 15 * scale;
+                
+                const font = fontHeight + "px IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif";
+               
+                const context = canvas.getContext('2d');
+                context.font = font;
+                
+                let preparedLines = [];
+                let textWidth = 0;
+                
+                while (messageLines.length && preparedLines.length < 5)
+                {
+                    const line = messageLines.shift()
+                    let lastPreparedLine = "";
+                    let lastLineWidth = 0;
+                    for (let i=0; i<line.length; i++)
+                    {
+                        const preparedLine = line.substring(0, i+1);
+                        const lineWidth = context.measureText(preparedLine).width
+                        if (lineWidth > maxLineWidth)
+                        {
+                            if (i == 0)
+                            {
+                                lastPreparedLine = preparedLine;
+                                lastLineWidth = maxLineWidth;
+                            }
+                            break;
+                        }
+                        lastPreparedLine = preparedLine;
+                        lastLineWidth = lineWidth;
+                    }
+                    preparedLines.push(lastPreparedLine)
+                    if (line.length > lastPreparedLine.length)
+                        messageLines.push(line.substring(lastPreparedLine.length))
+                    textWidth = Math.max(textWidth, lastLineWidth);
+                }
+                
+                const boxWidth = textWidth + 2 * boxPadding[0];
+                const boxHeight = preparedLines.length * lineHeight + 2 * boxPadding[1];
+                
+                canvas.width = boxWidth + boxMargin;
+                canvas.height = boxHeight + boxMargin;
+                
+                context.fillStyle = 'white';
+                context.fillRect(
+                    !arrowCorner[0] * boxMargin,
+                    !arrowCorner[1] * boxMargin,
+                    boxWidth,
+                    boxHeight)
+                    
+                context.beginPath();
+                context.moveTo(
+                    arrowCorner[0] * canvas.width,
+                    arrowCorner[1] * canvas.height);
+                context.lineTo(
+                    (arrowCorner[0] ? boxWidth - boxArrowOffset : boxMargin + boxArrowOffset),
+                    (arrowCorner[1] ? boxHeight: boxMargin));
+                context.lineTo(
+                    (arrowCorner[0] ? boxWidth : boxMargin),
+                    (arrowCorner[1] ? boxHeight - boxArrowOffset : boxMargin + boxArrowOffset));
+                context.closePath();
+                context.fill();
+                
+                context.font = font;
+                context.textBaseline = "middle";
+                context.textAlign = "left"
+                context.fillStyle = "black";
+                
+                for (let i=0; i<preparedLines.length; i++)
+                {
+                    context.fillText(preparedLines[i],
+                        !arrowCorner[0] * boxMargin + boxPadding[0],
+                        !arrowCorner[1] * boxMargin + boxPadding[1] + (i*lineHeight) + (lineHeight/2));
+                }
             });
         },
         detectCanvasResize: function ()
@@ -673,22 +818,47 @@ const vueApp = new Vue({
                     context.restore()
                 }
             }
-
+            
             // Draw usernames on top of everything else
             for (const o of allObjects.filter(o => o.type == "user"))
             {
-                if (o.o.nameImageWithBackground == null)
-                    o.o.nameImageWithBackground = this.getNameImage(this.toDisplayName(o.o.name), true);
-                if (o.o.nameImageWithoutBackground == null)
-                    o.o.nameImageWithoutBackground = this.getNameImage(this.toDisplayName(o.o.name), false);
+                if (o.o.nameImage == null || this.isUsernameRedrawRequired)
+                    o.o.nameImage = this.getNameImage(this.toDisplayName(o.o.name), this.showUsernameBackground);
                 
-                const image = this.showUsernameBackground ? o.o.nameImageWithBackground.getImage() : o.o.nameImageWithoutBackground.getImage()
+                const image = o.o.nameImage.getImage()
                 
                 this.drawImage(
                     context,
                     image,
                     (o.o.currentPhysicalPositionX - image.width/2) + BLOCK_WIDTH/2,
                     (o.o.currentPhysicalPositionY - 120)
+                );
+            }
+            if (this.isUsernameRedrawRequired)
+                this.isUsernameRedrawRequired = false;
+            
+            for (const o of allObjects.filter(o => o.type == "user"))
+            {
+                const user = o.o;
+                
+                if (!user.message) continue;
+                
+                if (user.bubbleImage == null)
+                    user.bubbleImage = this.getBubbleImage(user)
+                
+                const image = user.bubbleImage.getImage()
+                
+                const directionCorner = [
+                    ["up", "right"].includes(user.bubblePosition),
+                    ["down", "right"].includes(user.bubblePosition)];
+                
+                this.drawImage(
+                    context,
+                    image,
+                    (user.currentPhysicalPositionX + BLOCK_WIDTH/2)
+                        + (directionCorner[0] ? 21 : - (image.width + 21)),
+                    user.currentPhysicalPositionY
+                        - (directionCorner[1] ? 62 : 70 + image.height)
                 );
             }
             
@@ -857,11 +1027,13 @@ const vueApp = new Vue({
             this.isWaitingForServerResponseOnMovement = true;
             this.socket.emit("user-move", direction);
         },
+        sendNewBubblePositionToServer: function (position)
+        {
+            this.socket.emit("user-bubble-position", position);
+        },
         sendMessageToServer: function ()
         {
             const inputTextbox = document.getElementById("input-textbox");
-
-            if (inputTextbox.value == "") return;
 
             const message = inputTextbox.value.substr(0, 500);
             if (message == "#rula"
@@ -898,6 +1070,7 @@ const vueApp = new Vue({
                 "showUsernameBackground",
                 (this.showUsernameBackground = !this.showUsernameBackground)
             );
+            this.isUsernameRedrawRequired = true;
             this.isRedrawRequired = true;
         },
         handleCanvasKeydown: function (event)
@@ -990,9 +1163,11 @@ const vueApp = new Vue({
         },
         handleMessageInputKeydown: function (event)
         {
-            if (event.key != "Enter") return;
+            if (event.key != "Enter" || event.shiftKey) return;
 
             this.sendMessageToServer();
+            event.preventDefault();
+            return false;
         },
 
         setupRTCConnection: function (slotId)
@@ -1006,13 +1181,60 @@ const vueApp = new Vue({
                     streamSlotId: slotId, type, msg})
             });
             
+            const reconnect = () =>
+            {
+                if (slotId == this.streamSlotIdInWhichIWantToStream)
+                {
+                    console.log("Attempting to restart stream")
+                    this.startStreaming()
+                }
+                else if (this.takenStreams[slotId])
+                {
+                    console.log("Attempting to retake stream")
+                    this.wantToTakeStream(slotId)
+                }
+                else
+                {
+                    console.log("Stream connection closed")
+                } 
+            };
+            
+            const terminate = () =>
+            {
+                if (slotId == this.streamSlotIdInWhichIWantToStream)
+                    this.stopStreaming()
+                else if (this.takenStreams[slotId])
+                    this.wantToDropStream(slotId)
+            };
+            
             rtcPeer.open();
             rtcPeer.conn.addEventListener("iceconnectionstatechange", (ev) =>
             {
                 const state = rtcPeer.conn.iceConnectionState;
-                if (["failed", "disconnected", "closed"].includes(state))
+                console.log("RTC Connection state", state)
+                
+                
+                if (state == "connected")
+                {
+                    if (this.rtcPeerSlots[slotId])
+                        this.rtcPeerSlots[slotId].attempts = 0;
+                }
+                else if (["failed", "disconnected", "closed"].includes(state))
                 {
                     rtcPeer.close();
+                    if (!this.rtcPeerSlots[slotId]) return;
+                    if (this.rtcPeerSlots[slotId].attempts > 4)
+                    {
+                        terminate()
+                    }
+                    else
+                    {
+                        setTimeout(reconnect,
+                            Math.max(this.takenStreams[slotId] ? 1000 : 0,
+                                this.rtcPeerSlots[slotId].attempts * 1000));
+                    }
+                    
+                    this.rtcPeerSlots[slotId].attempts++;
                 }
             });
             return rtcPeer;
@@ -1047,48 +1269,32 @@ const vueApp = new Vue({
             {
                 this.isStreamPopupOpen = false;
 
-                const userMedia = {};
-
                 const withVideo = this.streamMode != "sound";
                 const withSound = this.streamMode != "video";
 
-                if (withVideo)
-                {
-                    userMedia.video = {
-                        width: 248,
-                        height: 180,
-                        frameRate: {
-                            ideal: 24,
-                            min: 10,
-                        },
-                    };
-                }
-
-                if (withSound)
-                {
-                    userMedia.audio = {
-                        echoCancellation: this.streamEchoCancellation,
-                        noiseSuppression: this.streamNoiseSuppression,
-                        autoGainControl: this.streamAutoGain,
-                        channelCount: 2
-                    };
-
-                    if (this.streamVoiceEnhancement == "on")
-                    {
-                        userMedia.audio.echoCancellation = true;
-                        userMedia.audio.noiseSuppression = true;
-                        userMedia.audio.autoGainControl = true;
-                    }
-                    else if (this.streamVoiceEnhancement == "off")
-                    {
-                        userMedia.audio.echoCancellation = false;
-                        userMedia.audio.noiseSuppression = false;
-                        userMedia.audio.autoGainControl = false;
-                    }
-                }
-
                 this.mediaStream = await navigator.mediaDevices.getUserMedia(
-                    userMedia
+                    {
+                        video: !withVideo ? undefined : {
+                            width: 248,
+                            height: 180,
+                            frameRate: {
+                                ideal: 24,
+                                min: 10,
+                            },
+                        },
+                        audio: !withSound ? undefined : {
+                            channelCount: 2,
+                            echoCancellation: this.streamVoiceEnhancement == "on" ? true
+                                              : this.streamVoiceEnhancement == "off" ? false
+                                              : this.streamEchoCancellation,
+                            noiseSuppression: this.streamVoiceEnhancement == "on" ? true
+                                              : this.streamVoiceEnhancement == "off" ? false
+                                              : this.streamNoiseSuppression,
+                            autoGainControl: this.streamVoiceEnhancement == "on" ? true
+                                              : this.streamVoiceEnhancement == "off" ? false
+                                              : this.streamAutoGain,
+                        }
+                    }
                 );
 
                 // VU Meter
@@ -1131,6 +1337,17 @@ const vueApp = new Vue({
                     streamSlotId: this.streamSlotIdInWhichIWantToStream,
                     withVideo: withVideo,
                     withSound: withSound,
+                    info: []
+                        .concat(this.mediaStream.getAudioTracks().map(t => ({
+                            constraints: t.getConstraints && t.getConstraints(),
+                            settings: t.getSettings && t.getSettings(),
+                            capabilities: t.getCapabilities && t.getCapabilities(),
+                        })))
+                        .concat(this.mediaStream.getVideoTracks().map(t => ({
+                            constraints: t.getConstraints && t.getConstraints(),
+                            settings: t.getSettings && t.getSettings(),
+                            capabilities: t.getCapabilities && t.getCapabilities(),
+                        })))
                 });
 
                 // On small screens, displaying the <video> element seems to cause a reflow in a way that
@@ -1144,11 +1361,17 @@ const vueApp = new Vue({
                 this.mediaStream = false;
             }
         },
+        setupRtcPeerSlot: function(slotId, rtcPeer)
+        {
+            return this.rtcPeerSlots[slotId] = {
+                rtcPeer: this.setupRTCConnection(slotId),
+                attempts: 0
+            }
+        },
         startStreaming: async function ()
         {
             const slotId = this.streamSlotIdInWhichIWantToStream;
-            const rtcPeer = this.setupRTCConnection(slotId);
-            this.rtcPeerSlots[slotId] = rtcPeer
+            const rtcPeer = this.setupRtcPeerSlot(slotId).rtcPeer;
 
             this.mediaStream
                 .getTracks()
@@ -1167,10 +1390,12 @@ const vueApp = new Vue({
             document.getElementById("local-video-" + streamSlotId).srcObject = this.mediaStream = null;
             if (this.vuMeterTimer)
                 clearInterval(this.vuMeterTimer)
-            this.rtcPeerSlots[streamSlotId].close()
-            this.rtcPeerSlots[streamSlotId] = null;
             
             this.streamSlotIdInWhichIWantToStream = null;
+            
+            this.rtcPeerSlots[streamSlotId].rtcPeer.close()
+            this.rtcPeerSlots[streamSlotId] = null;
+            
             this.socket.emit("user-want-to-stop-stream");
 
             // On small screens, displaying the <video> element seems to cause a reflow in a way that
@@ -1187,8 +1412,7 @@ const vueApp = new Vue({
             
             Vue.set(this.takenStreams, streamSlotId, true);
             
-            const rtcPeer = this.setupRTCConnection(streamSlotId);
-            this.rtcPeerSlots[streamSlotId] = rtcPeer;
+            const rtcPeer = this.setupRtcPeerSlot(streamSlotId).rtcPeer;
 
             rtcPeer.conn.addEventListener(
                 "track",
@@ -1204,7 +1428,8 @@ const vueApp = new Vue({
         wantToDropStream: function (streamSlotId)
         {
             Vue.set(this.takenStreams, streamSlotId, false);
-            this.rtcPeerSlots[streamSlotId].close()
+            if(!this.rtcPeerSlots[streamSlotId]) return;
+            this.rtcPeerSlots[streamSlotId].rtcPeer.close()
             this.rtcPeerSlots[streamSlotId] = null;
             //this.socket.emit("user-want-to-drop-stream", streamSlotId);
         },
@@ -1250,7 +1475,7 @@ const vueApp = new Vue({
 
             this.isStreamPopupOpen = true;
             this.streamMode = "video_sound";
-            this.streamVoiceEnhancement = "on";
+            this.streamVoiceEnhancement = "off";
             this.streamEchoCancellation = true;
             this.streamNoiseSuppression = true;
             this.streamAutoGain = true;

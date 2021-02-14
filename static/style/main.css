@@ -2,7 +2,7 @@ body
 {
     background-color: #c0c0c0;
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif;
     font-size: 16px;
     padding: 5px;    
 }
@@ -31,9 +31,14 @@ header h2 {
     padding: 3px 0 3px 0;
 }
 
-#change-log {
+#login-footer {
     font-family: 'Courier New', Courier, monospace;
     margin: 12px;
+}
+
+#login-footer h3
+{
+    margin-bottom: 5px;
 }
 
 [v-cloak]
@@ -244,6 +249,13 @@ video {
     flex-wrap: wrap;
 }
 
+#toolbar button
+{
+    border: 1px solid #959595;
+    padding: 3px 8px;
+    margin: 1px;
+}
+
 #toolbar-text-input
 {
     flex-grow: 1;
@@ -259,6 +271,26 @@ video {
 #input-textbox
 {
     flex-grow: 1;
+    resize: vertical;
+}
+
+.tooltip-section
+{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    align-content: stretch;
+}
+
+.tooltip-section > *
+{
+    flex-grow: 1;
+}
+
+.grid-button
+{
+    font-weight: bold;
+    font-size: 20px;
 }
 
 #rula-popup {
@@ -276,6 +308,19 @@ video {
 
     outline: 2px solid #afb1b1;
     background-color: #ffffff;
+    z-index: 2;
+}
+
+.popup-overlay
+{
+    content: "";
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:rgba(77,77,77,.4);
 }
 
 .popup-title
