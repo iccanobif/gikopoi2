@@ -249,6 +249,13 @@ video {
     flex-wrap: wrap;
 }
 
+#toolbar button
+{
+    border: 1px solid #959595;
+    padding: 3px 8px;
+    margin: 1px;
+}
+
 #toolbar-text-input
 {
     flex-grow: 1;
@@ -264,6 +271,7 @@ video {
 #input-textbox
 {
     flex-grow: 1;
+    resize: vertical;
 }
 
 .tooltip-section
@@ -274,14 +282,15 @@ video {
     align-content: stretch;
 }
 
-.tooltip-section > button
+.tooltip-section > *
 {
     flex-grow: 1;
 }
 
-.move-button
+.grid-button
 {
-    padding: 0;
+    font-weight: bold;
+    font-size: 20px;
 }
 
 #rula-popup {

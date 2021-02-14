@@ -24,8 +24,8 @@ export default class User
         
         this.message = null;
         this.lastMessage = null;
-        this.messageDirection = "left";
-        this.messageImage = null;
+        this.bubblePosition = "up";
+        this.bubbleImage = null;
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)

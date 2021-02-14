@@ -300,7 +300,7 @@ const vueApp = new Vue({
                 user.message = plainMsg;
                 if(user.lastMessage != user.message)
                 {
-                    user.messageImage = null;
+                    user.bubbleImage = null;
                     this.isRedrawRequired = true;
                     user.lastMessage = user.message;
                 }
@@ -383,6 +383,16 @@ const vueApp = new Vue({
                     this.isWaitingForServerResponseOnMovement = false;
                     if (oldX != x || oldY != y) this.justSpawnedToThisRoom = false;
                 }
+            });
+            
+            this.socket.on("server-bubble-position", (userId, position) =>
+            {
+                const user = this.users[userId];
+
+                user.isInactive = false
+                user.bubblePosition = position;
+                user.bubbleImage = null;
+                this.isRedrawRequired = true;
             });
 
             this.socket.on("server-reject-movement",
@@ -491,6 +501,8 @@ const vueApp = new Vue({
                 userDTO.direction
             );
             newUser.isInactive = userDTO.isInactive;
+            newUser.message = userDTO.lastRoomMessage;
+            newUser.bubblePosition = userDTO.bubblePosition;
             
             this.users[userDTO.id] = newUser;
         },
@@ -545,13 +557,13 @@ const vueApp = new Vue({
                 context.fillText(name, canvas.width/2, height);
             });
         },
-        getMessageImage: function(user)
+        getBubbleImage: function(user)
         {
             let messageLines = user.message.split(/\r\n|\n\r|\n|\r/);
             
             const arrowCorner = [
-                    ["down", "left"].includes(user.messageDirection),
-                    ["up", "left"].includes(user.messageDirection)];
+                ["down", "left"].includes(user.bubblePosition),
+                ["up", "left"].includes(user.bubblePosition)];
             
             return new RenderCache(function(canvas, scale)
             {
@@ -579,7 +591,6 @@ const vueApp = new Vue({
                     {
                         const preparedLine = line.substring(0, i+1);
                         const lineWidth = context.measureText(preparedLine).width
-                        console.log(lineWidth, preparedLine)
                         if (lineWidth > maxLineWidth)
                         {
                             if (i == 0)
@@ -809,15 +820,14 @@ const vueApp = new Vue({
                 
                 if (!user.message) continue;
                 
-                if (user.messageImage == null)
-                    user.messageImage = this.getMessageImage(user)
+                if (user.bubbleImage == null)
+                    user.bubbleImage = this.getBubbleImage(user)
                 
-                const image = user.messageImage.getImage()
+                const image = user.bubbleImage.getImage()
                 
-                //user.messageDirection
                 const directionCorner = [
-                    ["up", "right"].includes(user.messageDirection),
-                    ["down", "right"].includes(user.messageDirection)];
+                    ["up", "right"].includes(user.bubblePosition),
+                    ["down", "right"].includes(user.bubblePosition)];
                 
                 this.drawImage(
                     context,
@@ -993,6 +1003,10 @@ const vueApp = new Vue({
 
             this.isWaitingForServerResponseOnMovement = true;
             this.socket.emit("user-move", direction);
+        },
+        sendNewBubblePositionToServer: function (position)
+        {
+            this.socket.emit("user-bubble-position", position);
         },
         sendMessageToServer: function ()
         {

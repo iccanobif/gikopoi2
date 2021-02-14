@@ -93,10 +93,7 @@
                 <div id="toolbar-text-input">
                     {{ $t("ui.label_input") }} <textarea id="input-textbox"
                         v-on:keypress="handleMessageInputKeydown($event)" tabindex="2" maxlength="500"></textarea>
-                    <div class="tooltip-section">
-                        <button id="send-button" v-on:click="sendMessageToServer(true)" tabindex="3">{{ $t("ui.button_send") }}</button>
-                        <button id="bubble-send-button" v-on:click="sendMessageToServer(false)" tabindex="3">{{ $t("ui.button_send") }}</button>
-                    </div>
+                    <button id="send-button" v-on:click="sendMessageToServer" tabindex="3">{{ $t("ui.button_send") }}</button>
                 </div>
                 <div id="toolbar-buttons">
                     <div class="tooltip-section">
@@ -109,29 +106,29 @@
                         <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
                     </div>
                     <div class="tooltip-section">
-                        <div>
-                            Move:
+                        <div class='tooltip-section-title'>
+                            {{ $t("ui.label_move") }}
                         </div>
                         <div>
-                            <button id="btn-move-left" class="move-button" v-on:click="sendNewPositionToServer('left')">↖</button
-                            ><button id="btn-move-up" class="move-button" v-on:click="sendNewPositionToServer('up')">↗</button>
+                            <button id="btn-move-left" class="grid-button" v-on:click="sendNewPositionToServer('left')">↖</button
+                            ><button id="btn-move-up" class="grid-button" v-on:click="sendNewPositionToServer('up')">↗</button>
                         </div>
                         <div>
-                            <button id="btn-move-down" class="move-button" v-on:click="sendNewPositionToServer('down')">↙</button
-                            ><button id="btn-move-right" class="move-button" v-on:click="sendNewPositionToServer('right')">↘</button>
+                            <button id="btn-move-down" class="grid-button" v-on:click="sendNewPositionToServer('down')">↙</button
+                            ><button id="btn-move-right" class="grid-button" v-on:click="sendNewPositionToServer('right')">↘</button>
                         </div>
                     </div>
                     <div class="tooltip-section">
-                        <div>
-                            Bubble:
+                        <div class='tooltip-section-title'>
+                            {{ $t("ui.label_bubble") }}
                         </div>
                         <div>
-                            <button class="move-button" v-on:click="sendNewBubbleDirectionToServer('left')">↖</button
-                            ><button class="move-button" v-on:click="sendNewBubbleDirectionToServer('up')">↗</button>
+                            <button class="grid-button" v-on:click="sendNewBubblePositionToServer('left')">↖</button
+                            ><button class="grid-button" v-on:click="sendNewBubblePositionToServer('up')">↗</button>
                         </div>
                         <div>
-                            <button class="move-button" v-on:click="sendNewBubbleDirectionToServer('down')">↙</button
-                            ><button class="move-button" v-on:click="sendNewBubbleDirectionToServer('right')">↘</button>
+                            <button class="grid-button" v-on:click="sendNewBubblePositionToServer('down')">↙</button
+                            ><button class="grid-button" v-on:click="sendNewBubblePositionToServer('right')">↘</button>
                         </div>
                     </div>
                     

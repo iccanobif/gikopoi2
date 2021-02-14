@@ -188,6 +188,7 @@ io.on("connection", function (socket: any)
         try
         {
             user.isInactive = false
+            user.lastRoomMessage = msg;
 
             msg = msg.substr(0, 500)
 
@@ -276,6 +277,19 @@ io.on("connection", function (socket: any)
                 user.position.y,
                 user.direction,
                 false);
+        }
+        catch (e)
+        {
+            log.error(e.message + " " + e.stack);
+        }
+    });
+    socket.on("user-bubble-position", function (position: Direction)
+    {
+        try
+        {
+            user.bubblePosition = position;
+
+            io.to(user.areaId + user.roomId).emit("server-bubble-position", user.id, position);
         }
         catch (e)
         {
@@ -514,6 +528,7 @@ io.on("connection", function (socket: any)
             if (door.direction !== null) user.direction = door.direction
             user.roomId = targetRoomId
             user.isInactive = false
+            user.lastRoomMessage = "";
 
             sendCurrentRoomState()
             setupJanusHandleSlots()

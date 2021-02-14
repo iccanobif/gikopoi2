@@ -36,8 +36,10 @@ export const messages =
             button_stream_drop: "受信停止",
             button_rula: "#ﾙｰﾗ",
             volume: "音量：",
-            sound_effect: "効果音：",
+            sound_effect: "効果音",
             user_name_bg: "ｺﾃ背景",
+            label_move: "移動",
+            label_bubble: "吹き出し",
             
             popup_button_ok: "OK",
             popup_button_cancel: "キャンセル",
@@ -148,6 +150,8 @@ export const messages =
             volume: "Volume: ",
             sound_effect: "Vol.",
             user_name_bg: "Name BG",
+            label_move: "Move",
+            label_bubble: "Bubble",
             
             popup_button_ok: "OK",
             popup_button_cancel: "Cancel",

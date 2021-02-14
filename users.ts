@@ -25,6 +25,8 @@ export class Player
     public areaId: Area;
     public isInactive = false;
     public isStreaming = false;
+    public bubblePosition: Direction = "up";
+    public lastRoomMessage: string = "";
 
     constructor(options: { name?: string, characterId: string, areaId: Area })
     {
