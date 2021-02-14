@@ -10,6 +10,8 @@ import { RenderCache } from "./rendercache.js";
 
 const urlRegex = /(https?:\/\/|www\.)[^\s]+/gi
 
+let loadCharacterImagesPromise = null
+
 const i18n = new VueI18n({
     locale: "ja",
     fallbackLocale: "ja",
@@ -115,6 +117,8 @@ const vueApp = new Vue({
             this.setLanguage("ja")
         else
             this.setLanguage("en")
+
+        loadCharacterImagesPromise = Promise.all(Object.values(characters).map(c => c.loadImages()));
     },
     methods: {
         login: async function (ev)
@@ -132,7 +136,7 @@ const vueApp = new Vue({
                     this.isRedrawRequired = true;
                 })
 
-                await Promise.all(Object.values(characters).map(c => c.loadImages()));
+                await loadCharacterImagesPromise;
 
                 if (this.characterId === "naito")
                 {
