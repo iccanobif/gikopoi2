@@ -8,6 +8,8 @@ import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";
 
+const urlRegex = /(https?:\/\/|www\.)[^\s]+/gi
+
 const i18n = new VueI18n({
     locale: "ja",
     fallbackLocale: "ja",
@@ -295,7 +297,7 @@ const vueApp = new Vue({
                 if (!user)
                     console.error("Received message", msg, "from user", userId)
                 
-                const plainMsg = decodeURI(msg);
+                const plainMsg = msg.replace(urlRegex, s => decodeURI(s));
                 
                 user.message = plainMsg;
                 if(user.lastMessage != user.message)
@@ -304,7 +306,6 @@ const vueApp = new Vue({
                     this.isRedrawRequired = true;
                     user.lastMessage = user.message;
                 }
-                
                 
                 user.isInactive = false;
                 
@@ -326,7 +327,7 @@ const vueApp = new Vue({
                 bodySpan.className = "message-body";
                 bodySpan.textContent = msg;
                 bodySpan.innerHTML = bodySpan.innerHTML
-                    .replace(/(https?:\/\/|www\.)[^\s]+/gi, (htmlUrl, prefix) =>
+                    .replace(urlRegex, (htmlUrl, prefix) =>
                     {
                         const anchor = document.createElement('a');
                         anchor.target = '_blank';
@@ -334,7 +335,7 @@ const vueApp = new Vue({
                         anchor.innerHTML = htmlUrl;
                         const url = anchor.textContent;
                         anchor.href = (prefix == 'www.' ? 'http://' + url : url);
-                        anchor.textContent = decodeURI(url);
+                        anchor.textContent = url;
                         return anchor.outerHTML;
                     });
 
