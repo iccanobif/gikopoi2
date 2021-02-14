@@ -500,7 +500,7 @@ const vueApp = new Vue({
                     anchor.innerHTML = htmlUrl;
                     const url = anchor.textContent;
                     anchor.href = (prefix == 'www.' ? 'http://' + url : url);
-                    anchor.textContent = url;
+                    anchor.textContent = decodeURI(url);
                     return anchor.outerHTML;
                 });
 
