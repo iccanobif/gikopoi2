@@ -573,7 +573,7 @@ const vueApp = new Vue({
             
             return new RenderCache(function(canvas, scale)
             {
-                const maxLineWidth = 188 * scale;
+                const maxLineWidth = 250 * scale;
                 const boxArrowOffset = 5 * scale;
                 const boxMargin = 6 * scale;
                 const boxPadding = [5 * scale, 3 * scale];
@@ -588,7 +588,7 @@ const vueApp = new Vue({
                 let preparedLines = [];
                 let textWidth = 0;
                 
-                while (messageLines.length && preparedLines.length < 4)
+                while (messageLines.length && preparedLines.length < 5)
                 {
                     const line = messageLines.shift()
                     let lastPreparedLine = "";
