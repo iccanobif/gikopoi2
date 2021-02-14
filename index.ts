@@ -190,6 +190,18 @@ io.on("connection", function (socket: any)
             user.isInactive = false
             user.lastRoomMessage = msg;
 
+            // Whitespace becomes an empty string (to clear bubbles)
+            if (!msg.match(/[^\s]/g))
+            {
+                msg = ""
+            }
+            else 
+            {
+                // no TIGER TIGER pls
+                if ( "TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
+                    msg = "(´・ω・`)"
+            }
+
             msg = msg.substr(0, 500)
 
             log.info("MSG:", user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg);
