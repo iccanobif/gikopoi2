@@ -593,7 +593,7 @@ const vueApp = new Vue({
                 const fontHeight = 13 * scale;
                 const lineHeight = 15 * scale;
                 
-                const font = fontHeight + "px IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',sans-serif";
+                const font = fontHeight + "px IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif";
                
                 const context = canvas.getContext('2d');
                 context.font = font;
