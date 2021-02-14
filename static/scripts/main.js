@@ -788,19 +788,6 @@ const vueApp = new Vue({
                 this.currentRoom.backgroundImage.getImage()
             );
         },
-
-        paintBackground: function ()
-        {
-            const context = this.canvasContext;
-            
-            context.fillStyle = this.currentRoom.backgroundColor;
-            context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
-            
-            this.drawImage(
-                context,
-                this.currentRoom.backgroundImage.getImage()
-            );
-        },
         
         drawObjects: function ()
         {
