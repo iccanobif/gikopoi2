@@ -332,6 +332,7 @@ const vueApp = new Vue({
                     this.isWaitingForServerResponseOnMovement = false;
                     if (oldX != x || oldY != y) this.justSpawnedToThisRoom = false;
                 }
+                this.updateCanvasObjects();
             });
             
             this.socket.on("server-bubble-position", (userId, position) =>
@@ -751,25 +752,10 @@ const vueApp = new Vue({
                 this.users[id].calculatePhysicalPosition(this.currentRoom);
             }
         },
-
-        paintBackground: function ()
+        
+        updateCanvasObjects: function ()
         {
-            const context = this.canvasContext;
-            
-            context.fillStyle = this.currentRoom.backgroundColor;
-            context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
-            
-            this.drawImage(
-                context,
-                this.currentRoom.backgroundImage.getImage()
-            );
-        },
-
-        paintForeground: function ()
-        {
-            const context = this.canvasContext;
-
-            const allObjects = [].concat(
+            this.canvasObjects = [].concat(
                 this.currentRoom.objects
                     .map(o => ({
                         o,
@@ -788,8 +774,26 @@ const vueApp = new Vue({
                     if (a.priority > b.priority) return 1;
                     return 0;
                 });
+        },
 
-            for (const o of allObjects)
+        paintBackground: function ()
+        {
+            const context = this.canvasContext;
+            
+            context.fillStyle = this.currentRoom.backgroundColor;
+            context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
+            
+            this.drawImage(
+                context,
+                this.currentRoom.backgroundImage.getImage()
+            );
+        },
+
+        paintForeground: function ()
+        {
+            const context = this.canvasContext;
+            
+            for (const o of this.canvasObjects)
             {
                 if (o.type == "room-object")
                 {
@@ -822,7 +826,7 @@ const vueApp = new Vue({
             }
             
             // Draw usernames on top of everything else
-            for (const o of allObjects.filter(o => o.type == "user"))
+            for (const o of this.canvasObjects.filter(o => o.type == "user"))
             {
                 if (o.o.nameImage == null || this.isUsernameRedrawRequired)
                     o.o.nameImage = this.getNameImage(this.toDisplayName(o.o.name), this.showUsernameBackground);
@@ -839,7 +843,7 @@ const vueApp = new Vue({
             if (this.isUsernameRedrawRequired)
                 this.isUsernameRedrawRequired = false;
             
-            for (const o of allObjects.filter(o => o.type == "user"))
+            for (const o of this.canvasObjects.filter(o => o.type == "user"))
             {
                 const user = o.o;
                 
@@ -1015,6 +1019,7 @@ const vueApp = new Vue({
                     u.logicalPositionY,
                     u.direction
                 );
+            this.updateCanvasObjects();
             this.isRedrawRequired = true;
         },
         sendNewPositionToServer: function (direction)
