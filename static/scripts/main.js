@@ -27,6 +27,7 @@ const vueApp = new Vue({
         users: {},
         roomLoadId: 0,
         currentRoom: {
+            id: null,
             objects: [],
         },
         myUserID: null,
@@ -40,7 +41,6 @@ const vueApp = new Vue({
         characterId: localStorage.getItem("characterId") || "giko",
         isLoggingIn: false,
         areaId: localStorage.getItem("areaId") ||"gen", // 'gen' or 'for'
-        roomid: "admin_st",
         lastRoomid: null,
         
         // canvas
@@ -195,14 +195,13 @@ const vueApp = new Vue({
             if (this.currentRoom.needsFixedCamera)
                 this.canvasManualOffset = { x: 0, y: 0 }
             this.currentRoom = roomDto;
-
-            this.roomid = this.currentRoom.id;
+            
             this.users = {};
 
             for (const u of usersDto)
             {
                 this.addUser(u);
-                if(this.lastRoomid != this.roomid && this.users[u.id].message)
+                if(this.lastRoomid != this.currentRoom.id && this.users[u.id].message)
                     this.displayMessage(u.id, this.users[u.id].message);
             }
             
@@ -244,7 +243,7 @@ const vueApp = new Vue({
             this.rtcPeerSlots.forEach(s => s !== null && s.rtcPeer.close());
             this.rtcPeerSlots = streamsDto.map(() => null);
             
-            this.lastRoomid = this.roomid;
+            this.lastRoomid = this.currentRoom.id;
         },
         connectToServer: async function ()
         {
