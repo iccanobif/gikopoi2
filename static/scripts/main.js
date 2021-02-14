@@ -82,7 +82,6 @@ const vueApp = new Vue({
         username: localStorage.getItem("username") || "",
 
         // Possibly redundant data:
-        roomid: "admin_st",
         serverStats: {
             userCount: 0,
         },
@@ -182,7 +181,7 @@ const vueApp = new Vue({
         {
             this.isWarningToastOpen = false;
         },
-        updateRoomState: async function (dto, isFirstUpdate)
+        updateRoomState: async function (dto)
         {
             const roomDto = dto.currentRoom
             const usersDto = dto.connectedUsers
@@ -193,18 +192,19 @@ const vueApp = new Vue({
 
             if (this.currentRoom.needsFixedCamera)
                 this.canvasManualOffset = { x: 0, y: 0 }
-            this.currentRoom = roomDto;
 
-            this.roomid = this.currentRoom.id;
+            const previousRoomId = this.currentRoom && this.currentRoom.id
+            this.currentRoom = roomDto;
             this.users = {};
 
             for (const u of usersDto)
             {
                 this.addUser(u);
-                if(!isFirstUpdate && this.users[u.id].message)
+                if (previousRoomId != this.currentRoom.id && this.users[u.id].message)
                     this.displayMessage(u.id, this.users[u.id].message);
             }
             
+
 
             loadImage(this.currentRoom.backgroundImageUrl).then((image) =>
             {
@@ -258,7 +258,7 @@ const vueApp = new Vue({
             // currentRoom, streams etc... are all defined
 
             const response = await fetch("/areas/" + this.areaId + "/rooms/admin_st")
-            this.updateRoomState(await response.json(), true)
+            this.updateRoomState(await response.json())
             
             const pingResponse = await postJson("/ping/" + this.myUserID, {
                 userId: this.myUserID,
