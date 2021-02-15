@@ -5,6 +5,8 @@ export class RenderCache
 		this.drawFunction = drawFunction;
 		this.renderedImage = null;
 		this.renderedScale = null;
+		this.width = 0;
+		this.height = 0;
 	}
 	
 	static Image(image, imageScale, flipped)
@@ -17,8 +19,11 @@ export class RenderCache
 			if (!image.complete ||
 				image.naturalHeight === 0) return false;
 			
-			const scaledWidth = image.naturalWidth * imageScale * scale;
-			const scaledHeight = image.naturalHeight * imageScale * scale;
+			const width = image.naturalWidth * imageScale
+			const height = image.naturalHeight * imageScale;
+			
+			const scaledWidth = width * scale;
+			const scaledHeight = height * scale;
 			
 			renderedImage.width = Math.ceil(scaledWidth);
 			renderedImage.height = Math.ceil(scaledHeight);
@@ -34,7 +39,7 @@ export class RenderCache
 			
 			context.drawImage(image, x, 0, scaledWidth, scaledHeight);
             
-			return true;
+			return [width, height];
 		})
 		
 		return renderCache;
@@ -47,10 +52,14 @@ export class RenderCache
 			return this.renderedImage;
 		
 		const renderedImage = document.createElement('canvas');
-		if (this.drawFunction.call(this, renderedImage, scale) != false)
+		
+		const dimensions = this.drawFunction.call(this, renderedImage, scale)
+		if (dimensions)
 		{
 			this.renderedImage = renderedImage;
 			this.renderedScale = scale;
+			this.width = dimensions[0];
+			this.height = dimensions[1];
 		}
 		else
 		{
