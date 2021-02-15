@@ -715,9 +715,6 @@ const vueApp = new Vue({
                 
                 userOffset.x -= this.canvasScale * (user.currentPhysicalPositionX + BLOCK_WIDTH/2) - this.canvasDimensions.w / 2,
                 userOffset.y -= this.canvasScale * (user.currentPhysicalPositionY - 60) - this.canvasDimensions.h / 2
-                
-                //userOffset.x = -(user.currentPhysicalPositionX - (this.canvasDimensions.w / 2 - BLOCK_WIDTH / 2)),
-                //userOffset.y = -(user.currentPhysicalPositionY - (this.canvasDimensions.h / 2 + BLOCK_HEIGHT))
             }
             
             const canvasOffset = {
