@@ -73,6 +73,7 @@ const vueApp = new Vue({
         streamEchoCancellation: true,
         streamNoiseSuppression: true,
         streamAutoGain: true,
+        streamScreenCapture: true,
 
         // Warning Toast
         isWarningToastOpen: false,
@@ -1273,30 +1274,49 @@ const vueApp = new Vue({
                 const withVideo = this.streamMode != "sound";
                 const withSound = this.streamMode != "video";
 
-                this.mediaStream = await navigator.mediaDevices.getUserMedia(
-                    {
-                        video: !withVideo ? undefined : {
-                            width: 248,
-                            height: 180,
-                            frameRate: {
-                                ideal: 24,
-                                min: 10,
+                let userMedia = null
+                if (withSound || !this.streamScreenCapture)
+                    userMedia = await navigator.mediaDevices.getUserMedia(
+                        {
+                            video: !withVideo || this.streamScreenCapture ? undefined : {
+                                width: 248,
+                                height: 180,
+                                frameRate: {
+                                    ideal: 24,
+                                    min: 10,
+                                },
                             },
-                        },
-                        audio: !withSound ? undefined : {
-                            channelCount: 2,
-                            echoCancellation: this.streamVoiceEnhancement == "on" ? true
-                                              : this.streamVoiceEnhancement == "off" ? false
-                                              : this.streamEchoCancellation,
-                            noiseSuppression: this.streamVoiceEnhancement == "on" ? true
-                                              : this.streamVoiceEnhancement == "off" ? false
-                                              : this.streamNoiseSuppression,
-                            autoGainControl: this.streamVoiceEnhancement == "on" ? true
-                                              : this.streamVoiceEnhancement == "off" ? false
-                                              : this.streamAutoGain,
+                            audio: !withSound ? undefined : {
+                                channelCount: 2,
+                                echoCancellation: this.streamVoiceEnhancement == "on" ? true
+                                                : this.streamVoiceEnhancement == "off" ? false
+                                                : this.streamEchoCancellation,
+                                noiseSuppression: this.streamVoiceEnhancement == "on" ? true
+                                                : this.streamVoiceEnhancement == "off" ? false
+                                                : this.streamNoiseSuppression,
+                                autoGainControl: this.streamVoiceEnhancement == "on" ? true
+                                                : this.streamVoiceEnhancement == "off" ? false
+                                                : this.streamAutoGain,
+                            }
                         }
+                    );
+                
+                let screenMedia = null
+                if (this.streamScreenCapture)
+                    screenMedia = await navigator.mediaDevices.getDisplayMedia()
+
+                // Populate this.mediaStream
+                if (!this.streamScreenCapture)
+                    this.mediaStream = userMedia
+                else 
+                {
+                    this.mediaStream = screenMedia
+                    if (withSound)
+                    {
+                        const audioTrack = userMedia.getAudioTracks()[0]
+                        this.mediaStream.addTrack(audioTrack)
                     }
-                );
+                }
 
                 // VU Meter
                 if (withSound)
@@ -1360,6 +1380,7 @@ const vueApp = new Vue({
                 console.error(err);
                 this.wantToStream = false;
                 this.mediaStream = false;
+                this.streamSlotIdInWhichIWantToStream = null;
             }
         },
         setupRtcPeerSlot: function(slotId, rtcPeer)

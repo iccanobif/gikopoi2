@@ -228,6 +228,10 @@
                 <div class="popup-title">{{ $t("ui.stream_form_title") }}</div>
                 <div class="popup-content">
                     <div class='popup-section'>
+
+                        <input type="checkbox" id="stream-form-screen-capture"
+                            v-model="streamScreenCapture"><label for="stream-form-screen-capture">screen capture</label>
+
                         <span>{{ $t("ui.stream_form_mode") }}</span><input type="radio"
                             id="stream-form-video-sound-mode" value="video_sound" v-model="streamMode"><label
                             for="stream-form-video-sound-mode">{{ $t("ui.stream_form_video_sound_mode") }}</label>
