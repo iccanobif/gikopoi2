@@ -74,7 +74,7 @@ const vueApp = new Vue({
         streamEchoCancellation: true,
         streamNoiseSuppression: true,
         streamAutoGain: true,
-        streamScreenCapture: true,
+        streamScreenCapture: false,
 
         // Warning Toast
         isWarningToastOpen: false,
