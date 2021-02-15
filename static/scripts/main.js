@@ -1282,9 +1282,9 @@ const vueApp = new Vue({
 
                 // TODO use Promise.all() for both promises
 
-                let userMedia = null
+                let userMediaPromise = null
                 if (withSound || !withScreenCapture)
-                    userMedia = await navigator.mediaDevices.getUserMedia(
+                    userMediaPromise = navigator.mediaDevices.getUserMedia(
                         {
                             video: !withVideo || withScreenCapture ? undefined : {
                                 width: 248,
@@ -1309,9 +1309,19 @@ const vueApp = new Vue({
                         }
                     );
                 
-                let screenMedia = null
+                let screenMediaPromise = null
                 if (withScreenCapture)
-                    screenMedia = await navigator.mediaDevices.getDisplayMedia()
+                    screenMediaPromise = navigator.mediaDevices.getDisplayMedia()
+
+                // I need to use Promise.allSettled() because the browser needs to be convinced that both getDisplayMedia()
+                // and getUserMedia() were initiated by a user action.
+                const promiseResults = await Promise.allSettled([userMediaPromise, screenMediaPromise])
+
+                if (promiseResults.find(r => r.status == "rejected"))
+                    throw new Error(promiseResults.find(r => r.status == "rejected").reason)
+
+                const userMedia = promiseResults[0].value
+                const screenMedia = promiseResults[1].value
 
                 // Populate this.mediaStream
                 if (!withScreenCapture)
