@@ -277,7 +277,7 @@ const vueApp = new Vue({
             {
                 // it can happen that the user is pressing the arrow keys while the
                 // socket is down, in which case the server will never answer to the
-                // user-move event, and isWaitingForServerResponseOnMovement would never
+                // user-move event, and isWaitingForServerResponseOnMovement will never
                 // be reset. So, just in case, I reset it at every socket reconnection.
                 this.isWaitingForServerResponseOnMovement = false
 
@@ -290,8 +290,13 @@ const vueApp = new Vue({
             this.socket.on("connect", immanentizeConnection);
             this.socket.on("reconnect", immanentizeConnection);
 
-            this.socket.on("disconnect", () =>
+            this.socket.on('connect_error', (error) => {
+                console.error(error)
+              });
+
+            this.socket.on("disconnect", (reason) =>
             {
+                console.error("Socket disconnected:", reason)
                 this.connectionLost = true;
             });
             this.socket.on("server-cant-log-you-in", () =>
@@ -1273,12 +1278,15 @@ const vueApp = new Vue({
 
                 const withVideo = this.streamMode != "sound";
                 const withSound = this.streamMode != "video";
+                const withScreenCapture = this.streamScreenCapture && withVideo
+
+                // TODO use Promise.all() for both promises
 
                 let userMedia = null
-                if (withSound || !this.streamScreenCapture)
+                if (withSound || !withScreenCapture)
                     userMedia = await navigator.mediaDevices.getUserMedia(
                         {
-                            video: !withVideo || this.streamScreenCapture ? undefined : {
+                            video: !withVideo || withScreenCapture ? undefined : {
                                 width: 248,
                                 height: 180,
                                 frameRate: {
@@ -1302,11 +1310,11 @@ const vueApp = new Vue({
                     );
                 
                 let screenMedia = null
-                if (this.streamScreenCapture)
+                if (withScreenCapture)
                     screenMedia = await navigator.mediaDevices.getDisplayMedia()
 
                 // Populate this.mediaStream
-                if (!this.streamScreenCapture)
+                if (!withScreenCapture)
                     this.mediaStream = userMedia
                 else 
                 {

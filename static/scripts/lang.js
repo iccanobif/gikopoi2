@@ -65,6 +65,7 @@ export const messages =
             stream_form_noise_suppression: "ノイズリダクション",
             stream_form_auto_gain: "自動利得制御",
             stream_form_button_stream: "配信開始",
+            stream_form_screen_capture: "画面共有",
         },
         msg:
         {
@@ -177,6 +178,7 @@ export const messages =
             stream_form_noise_suppression: "Noise Reduction",
             stream_form_auto_gain: "Auto Gain Control",
             stream_form_button_stream: "Start Streaming",
+            stream_form_screen_capture: "Screen capture",
         },
         msg:
         {
