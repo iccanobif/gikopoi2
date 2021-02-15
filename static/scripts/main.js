@@ -732,9 +732,14 @@ const vueApp = new Vue({
                 userOffset.y -= this.canvasScale * (user.currentPhysicalPositionY - 60) - this.canvasDimensions.h / 2
             }
             
+            const manualOffset = {
+                x: this.canvasScale * this.canvasManualOffset.x,
+                y: this.canvasScale * this.canvasManualOffset.y
+            }
+            
             const canvasOffset = {
-                x: this.canvasManualOffset.x + userOffset.x,
-                y: this.canvasManualOffset.y + userOffset.y
+                x: manualOffset.x + userOffset.x,
+                y: manualOffset.y + userOffset.y
             };
             
             const backgroundImage = this.currentRoom.backgroundImage.getImage(this.canvasScale)
@@ -751,19 +756,19 @@ const vueApp = new Vue({
             let isAtEdge = false;
             
             if (canvasOffset.x > margin.w)
-                {isAtEdge = true; this.canvasManualOffset.x = margin.w - userOffset.x}
+                {isAtEdge = true; manualOffset.x = margin.w - userOffset.x}
             else if(canvasOffset.x < -margin.w - bcDiff.w)
-                {isAtEdge = true; this.canvasManualOffset.x = -margin.w - (bcDiff.w + userOffset.x)}
+                {isAtEdge = true; manualOffset.x = -margin.w - (bcDiff.w + userOffset.x)}
             
             if (canvasOffset.y > margin.h)
-                {isAtEdge = true; this.canvasManualOffset.y = margin.h - userOffset.y}
+                {isAtEdge = true; manualOffset.y = margin.h - userOffset.y}
             else if(canvasOffset.y < -margin.h - bcDiff.h)
-                {isAtEdge = true; this.canvasManualOffset.y = -margin.h - (bcDiff.h + userOffset.y)}
+                {isAtEdge = true; manualOffset.y = -margin.h - (bcDiff.h + userOffset.y)}
             
             if (isAtEdge)
             {
-                canvasOffset.x = this.canvasManualOffset.x + userOffset.x
-                canvasOffset.y = this.canvasManualOffset.y + userOffset.y
+                canvasOffset.x = manualOffset.x + userOffset.x
+                canvasOffset.y = manualOffset.y + userOffset.y
                 this.isCanvasMousedown = false;
             }
             
@@ -1136,25 +1141,25 @@ const vueApp = new Vue({
                     case "ArrowLeft":
                     case "KeyA":
                         event.preventDefault()
-                        this.canvasManualOffset.x += 10
+                        this.canvasManualOffset.x += 10 / this.canvasScale
                         this.isRedrawRequired = true
                         break;
                     case "ArrowRight":
                     case "KeyD":
                         event.preventDefault()
-                        this.canvasManualOffset.x -= 10
+                        this.canvasManualOffset.x -= 10 / this.canvasScale
                         this.isRedrawRequired = true
                         break;
                     case "ArrowUp":
                     case "KeyW":
                         event.preventDefault()
-                        this.canvasManualOffset.y += 10
+                        this.canvasManualOffset.y += 10 / this.canvasScale
                         this.isRedrawRequired = true
                         break;
                     case "ArrowDown":
                     case "KeyS":
                         event.preventDefault()
-                        this.canvasManualOffset.y -= 10
+                        this.canvasManualOffset.y -= 10 / this.canvasScale
                         this.isRedrawRequired = true
                         break;
                 }
@@ -1210,8 +1215,8 @@ const vueApp = new Vue({
 
             if (this.isDraggingCanvas)
             {
-                this.canvasManualOffset.x = this.canvasDragStartOffset.x + dragOffset.x
-                this.canvasManualOffset.y = this.canvasDragStartOffset.y + dragOffset.y;
+                this.canvasManualOffset.x = this.canvasDragStartOffset.x + dragOffset.x / this.canvasScale
+                this.canvasManualOffset.y = this.canvasDragStartOffset.y + dragOffset.y / this.canvasScale;
             }
         },
         handleMessageInputKeydown: function (event)
