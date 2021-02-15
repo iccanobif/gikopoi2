@@ -1235,6 +1235,8 @@ const vueApp = new Vue({
         handleCanvasWheel: function (event)
         {
             this.adjustScale(-event.deltaY * 0.02);
+            event.preventDefault();
+            return false;
         },
         
         adjustScale: function (scaleAdjustment)
