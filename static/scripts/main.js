@@ -1224,7 +1224,7 @@ const vueApp = new Vue({
         },
         handleCanvasWheel: function (event)
         {
-            this.canvasScale += event.deltaY * 0.01;
+            this.canvasScale -= event.deltaY * 0.01;
             this.isRedrawRequired = true;
         },
 
