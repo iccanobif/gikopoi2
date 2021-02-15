@@ -13,7 +13,7 @@ import compression from 'compression';
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http, {
-    pingInterval: 50 * 1000, // Heroku fails with "H15 Idle connection" if a socket is inactive for more than 55 seconds with
+    pingInterval: 25 * 1000, // Heroku fails with "H15 Idle connection" if a socket is inactive for more than 55 seconds with
     pingTimeout: 60 * 1000
 });
 const tripcode = require('tripcode');
