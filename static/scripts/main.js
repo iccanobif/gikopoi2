@@ -1239,11 +1239,10 @@ const vueApp = new Vue({
             canvasScale += scaleAdjustment
             canvasScale = Math.round(canvasScale*100)/100
             
-            if(canvasScale > 1.54)
-                canvasScale = 1.54;
+            if(canvasScale > 3.04)
+                canvasScale = 3.04;
             else if(canvasScale < 0.70)
                 canvasScale = 0.70;
-            
             this.canvasScale = canvasScale;
             this.isRedrawRequired = true;
         },
