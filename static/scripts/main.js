@@ -53,6 +53,7 @@ const vueApp = new Vue({
         canvasManualOffset: { x: 0, y: 0 },
         canvasGlobalOffset: { x: 0, y: 0 },
         canvasDimensions: { w: 0, h: 0 },
+        canvasScale: 1,
 
         // rula stuff
         isRulaPopupOpen: false,
@@ -585,7 +586,13 @@ const vueApp = new Vue({
         },
         getBubbleImage: function(user)
         {
+            const maxLineWidth = 250;
+            const fontHeight = 13;
+            const fontSuffix = "px IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif";
+            
             let messageLines = user.message.split(/\r\n|\n\r|\n|\r/);
+            let preparedLines = null;
+            let textWidth = null;
             
             const arrowCorner = [
                 ["down", "left"].includes(user.bubblePosition),
@@ -593,49 +600,53 @@ const vueApp = new Vue({
             
             return new RenderCache(function(canvas, scale)
             {
-                const maxLineWidth = 250 * scale;
+                const context = canvas.getContext('2d');
+                context.font = fontHeight + fontSuffix;
+                
+                if (preparedLines === null)
+                {
+                    preparedLines = [];
+                    textWidth = 0;
+                    
+                    while (messageLines.length && preparedLines.length < 5)
+                    {
+                        const line = messageLines.shift()
+                        let lastPreparedLine = "";
+                        let lastLineWidth = 0;
+                        for (let i=0; i<line.length; i++)
+                        {
+                            const preparedLine = line.substring(0, i+1);
+                            const lineWidth = context.measureText(preparedLine).width
+                            if (lineWidth > maxLineWidth)
+                            {
+                                if (i == 0)
+                                {
+                                    lastPreparedLine = preparedLine;
+                                    lastLineWidth = maxLineWidth;
+                                }
+                                break;
+                            }
+                            lastPreparedLine = preparedLine;
+                            lastLineWidth = lineWidth;
+                        }
+                        preparedLines.push(lastPreparedLine)
+                        if (line.length > lastPreparedLine.length)
+                            messageLines.push(line.substring(lastPreparedLine.length))
+                        textWidth = Math.max(textWidth, lastLineWidth);
+                    }
+                    messageLines = null;
+                }
+                
+                const lineHeight = 15 * scale;
+                const scaledTextWidth = textWidth * scale;
+                const scaledFontHeight = fontHeight * scale;
+                
                 const boxArrowOffset = 5 * scale;
                 const boxMargin = 6 * scale;
                 const boxPadding = [5 * scale, 3 * scale];
-                const fontHeight = 13 * scale;
-                const lineHeight = 15 * scale;
                 
-                const font = fontHeight + "px IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif";
-               
-                const context = canvas.getContext('2d');
-                context.font = font;
                 
-                let preparedLines = [];
-                let textWidth = 0;
-                
-                while (messageLines.length && preparedLines.length < 5)
-                {
-                    const line = messageLines.shift()
-                    let lastPreparedLine = "";
-                    let lastLineWidth = 0;
-                    for (let i=0; i<line.length; i++)
-                    {
-                        const preparedLine = line.substring(0, i+1);
-                        const lineWidth = context.measureText(preparedLine).width
-                        if (lineWidth > maxLineWidth)
-                        {
-                            if (i == 0)
-                            {
-                                lastPreparedLine = preparedLine;
-                                lastLineWidth = maxLineWidth;
-                            }
-                            break;
-                        }
-                        lastPreparedLine = preparedLine;
-                        lastLineWidth = lineWidth;
-                    }
-                    preparedLines.push(lastPreparedLine)
-                    if (line.length > lastPreparedLine.length)
-                        messageLines.push(line.substring(lastPreparedLine.length))
-                    textWidth = Math.max(textWidth, lastLineWidth);
-                }
-                
-                const boxWidth = textWidth + 2 * boxPadding[0];
+                const boxWidth = scaledTextWidth + 2 * boxPadding[0];
                 const boxHeight = preparedLines.length * lineHeight + 2 * boxPadding[1];
                 
                 canvas.width = boxWidth + boxMargin;
@@ -661,7 +672,7 @@ const vueApp = new Vue({
                 context.closePath();
                 context.fill();
                 
-                context.font = font;
+                context.font = scaledFontHeight + fontSuffix;
                 context.textBaseline = "middle";
                 context.textAlign = "left"
                 context.fillStyle = "black";
@@ -692,8 +703,8 @@ const vueApp = new Vue({
             {
                 const fixedCameraOffset = this.currentRoom.backgroundOffset ||
                     { x: 0, y: 0 };
-                this.canvasGlobalOffset.x = -fixedCameraOffset.x
-                this.canvasGlobalOffset.y = -fixedCameraOffset.y
+                this.canvasGlobalOffset.x = this.canvasScale * -fixedCameraOffset.x
+                this.canvasGlobalOffset.y = this.canvasScale * -fixedCameraOffset.y
                 return;
             }
             
@@ -702,8 +713,11 @@ const vueApp = new Vue({
             {
                 const user = this.users[this.myUserID]
                 
-                userOffset.x = -(user.currentPhysicalPositionX - (this.canvasDimensions.w / 2 - BLOCK_WIDTH / 2)),
-                userOffset.y = -(user.currentPhysicalPositionY - (this.canvasDimensions.h / 2 + BLOCK_HEIGHT))
+                userOffset.x -= this.canvasScale * (user.currentPhysicalPositionX + BLOCK_WIDTH/2) - this.canvasDimensions.w / 2,
+                userOffset.y -= this.canvasScale * (user.currentPhysicalPositionY - 60) - this.canvasDimensions.h / 2
+                
+                //userOffset.x = -(user.currentPhysicalPositionX - (this.canvasDimensions.w / 2 - BLOCK_WIDTH / 2)),
+                //userOffset.y = -(user.currentPhysicalPositionY - (this.canvasDimensions.h / 2 + BLOCK_HEIGHT))
             }
             
             const canvasOffset = {
@@ -711,7 +725,7 @@ const vueApp = new Vue({
                 y: this.canvasManualOffset.y + userOffset.y
             };
             
-            const backgroundImage = this.currentRoom.backgroundImage.getImage()
+            const backgroundImage = this.currentRoom.backgroundImage.getImage(this.canvasScale)
             
             const bcDiff =
             {
@@ -785,7 +799,7 @@ const vueApp = new Vue({
             
             this.drawImage(
                 context,
-                this.currentRoom.backgroundImage.getImage()
+                this.currentRoom.backgroundImage.getImage(this.canvasScale)
             );
         },
         
@@ -801,9 +815,9 @@ const vueApp = new Vue({
                     
                     this.drawImage(
                         context,
-                        o.o.image.getImage(),
-                        o.o.physicalPositionX,
-                        o.o.physicalPositionY
+                        o.o.image.getImage(this.canvasScale),
+                        this.canvasScale * o.o.physicalPositionX,
+                        this.canvasScale * o.o.physicalPositionY
                     );
                 } // o.type == "user"
                 else
@@ -813,12 +827,12 @@ const vueApp = new Vue({
                     if (o.o.isInactive)
                         context.globalAlpha = 0.5
                     
-                    const image = o.o.getCurrentImage(this.currentRoom).getImage()
+                    const image = o.o.getCurrentImage(this.currentRoom).getImage(this.canvasScale)
                     this.drawImage(
                         context,
                         image,
-                        o.o.currentPhysicalPositionX,
-                        (o.o.currentPhysicalPositionY - image.height)
+                        this.canvasScale * (o.o.currentPhysicalPositionX + BLOCK_WIDTH/2) - image.width/2,
+                        this.canvasScale * o.o.currentPhysicalPositionY - image.height
                     );
                     
                     context.restore()
@@ -833,13 +847,13 @@ const vueApp = new Vue({
                 if (o.o.nameImage == null || this.isUsernameRedrawRequired)
                     o.o.nameImage = this.getNameImage(this.toDisplayName(o.o.name), this.showUsernameBackground);
                 
-                const image = o.o.nameImage.getImage()
+                const image = o.o.nameImage.getImage(this.canvasScale)
                 
                 this.drawImage(
                     this.canvasContext,
                     image,
-                    (o.o.currentPhysicalPositionX - image.width/2) + BLOCK_WIDTH/2,
-                    (o.o.currentPhysicalPositionY - 120)
+                    this.canvasScale * (o.o.currentPhysicalPositionX + BLOCK_WIDTH/2) - image.width/2,
+                    this.canvasScale * (o.o.currentPhysicalPositionY - 120)
                 );
             }
             if (this.isUsernameRedrawRequired)
@@ -857,19 +871,24 @@ const vueApp = new Vue({
                 if (user.bubbleImage == null)
                     user.bubbleImage = this.getBubbleImage(user)
                 
-                const image = user.bubbleImage.getImage()
+                const image = user.bubbleImage.getImage(this.canvasScale)
                 
-                const directionCorner = [
+                const pos = [
                     ["up", "right"].includes(user.bubblePosition),
                     ["down", "right"].includes(user.bubblePosition)];
                 
                 this.drawImage(
                     this.canvasContext,
                     image,
-                    (user.currentPhysicalPositionX + BLOCK_WIDTH/2)
-                        + (directionCorner[0] ? 21 : - (image.width + 21)),
-                    user.currentPhysicalPositionY
-                        - (directionCorner[1] ? 62 : 70 + image.height)
+                    this.canvasScale *
+                            (user.currentPhysicalPositionX
+                            + BLOCK_WIDTH/2
+                            + (pos[0] ? 21 : - 21))
+                        + (pos[0] ? 0 : - image.width),
+                    this.canvasScale * 
+                            (user.currentPhysicalPositionY
+                            - (pos[1] ? 62 : 70))
+                        - (pos[1] ? 0 : image.height)
                 );
             }
         },
@@ -1195,6 +1214,11 @@ const vueApp = new Vue({
             this.sendMessageToServer();
             event.preventDefault();
             return false;
+        },
+        handleCanvasWheel: function (event)
+        {
+            this.canvasScale += event.deltaY * 0.01;
+            this.isRedrawRequired = true;
         },
 
         setupRTCConnection: function (slotId)
