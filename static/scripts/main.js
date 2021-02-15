@@ -545,50 +545,61 @@ const vueApp = new Vue({
             if (!y) y = 0;
             context.drawImage(
                 image,
-                Math.round(x + this.canvasGlobalOffset.x),
-                Math.round(y + this.canvasGlobalOffset.y)
+                Math.round(this.canvasScale * x + this.canvasGlobalOffset.x),
+                Math.round(this.canvasScale * y + this.canvasGlobalOffset.y)
             );
         },
         getNameImage: function(name, withBackground)
         {
+            const lineHeight = 13
+            const height = lineHeight + 3;
+            
+            const fontPrefix = "bold ";
+            const fontSuffix = "px Arial, Helvetica, sans-serif";
+            
             return new RenderCache(function(canvas, scale)
             {
-                const height = 13 * scale;
-                const font = "bold " + height + "px Arial, Helvetica, sans-serif";
+                const fontSize = lineHeight * scale;
                 
                 const context = canvas.getContext('2d');
-                context.font = font;
+                context.font = fontPrefix + lineHeight + fontSuffix;
                 const metrics = context.measureText(name);
-                const width = Math.ceil(metrics.width);
+                const width = Math.ceil(metrics.width) + 5;
                 
-                canvas.width = width + 5 * scale;
-                canvas.height = height * 2;
+                canvas.width = width * scale;
+                canvas.height = height * scale;
 
                 // transparent background
                 if (withBackground)
                 {
-                    const backgroundHeight = height + 3 * scale;
                     context.globalAlpha = 0.5
                     context.fillStyle = 'white';
-                    context.fillRect(0, height - backgroundHeight/2,
-                        canvas.width, backgroundHeight)
+                    context.fillRect(0, 0, canvas.width, canvas.height)
                     context.globalAlpha = 1
                 }
 
                 // text
-                context.font = font;
+                const scaledLineHeight = lineHeight * scale;
+                context.font = fontPrefix + scaledLineHeight + fontSuffix;
                 context.textBaseline = "middle";
                 context.textAlign = "center"
                 context.fillStyle = "blue";
                 
-                context.fillText(name, canvas.width/2, height);
+                context.fillText(name, canvas.width/2, canvas.height/2 + 1 * scale);
+                
+                return [width, height];
             });
         },
         getBubbleImage: function(user)
         {
             const maxLineWidth = 250;
+            const lineHeight = 15;
             const fontHeight = 13;
             const fontSuffix = "px IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif";
+            
+            const boxArrowOffset = 5;
+            const boxMargin = 6;
+            const boxPadding = [5, 3];
             
             let messageLines = user.message.split(/\r\n|\n\r|\n|\r/);
             let preparedLines = null;
@@ -637,42 +648,44 @@ const vueApp = new Vue({
                     messageLines = null;
                 }
                 
-                const lineHeight = 15 * scale;
-                const scaledTextWidth = textWidth * scale;
-                const scaledFontHeight = fontHeight * scale;
-                
-                const boxArrowOffset = 5 * scale;
-                const boxMargin = 6 * scale;
-                const boxPadding = [5 * scale, 3 * scale];
-                
-                
-                const boxWidth = scaledTextWidth + 2 * boxPadding[0];
+                const boxWidth = textWidth + 2 * boxPadding[0];
                 const boxHeight = preparedLines.length * lineHeight + 2 * boxPadding[1];
                 
-                canvas.width = boxWidth + boxMargin;
-                canvas.height = boxHeight + boxMargin;
+                
+                const sLineHeight = lineHeight * scale
+                const sFontHeight = fontHeight * scale;
+                
+                const sBoxArrowOffset = boxArrowOffset * scale;
+                const sBoxMargin = boxMargin * scale;
+                const sBoxPadding = [boxPadding[0] * scale, boxPadding[1] * scale];
+                
+                const sBoxWidth = boxWidth * scale
+                const sBoxHeight = boxHeight * scale
+                
+                canvas.width = sBoxWidth + sBoxMargin;
+                canvas.height = sBoxHeight + sBoxMargin;
                 
                 context.fillStyle = 'white';
                 context.fillRect(
-                    !arrowCorner[0] * boxMargin,
-                    !arrowCorner[1] * boxMargin,
-                    boxWidth,
-                    boxHeight)
+                    !arrowCorner[0] * sBoxMargin,
+                    !arrowCorner[1] * sBoxMargin,
+                    sBoxWidth,
+                    sBoxHeight)
                     
                 context.beginPath();
                 context.moveTo(
                     arrowCorner[0] * canvas.width,
                     arrowCorner[1] * canvas.height);
                 context.lineTo(
-                    (arrowCorner[0] ? boxWidth - boxArrowOffset : boxMargin + boxArrowOffset),
-                    (arrowCorner[1] ? boxHeight: boxMargin));
+                    (arrowCorner[0] ? sBoxWidth - sBoxArrowOffset : sBoxMargin + sBoxArrowOffset),
+                    (arrowCorner[1] ? sBoxHeight: sBoxMargin));
                 context.lineTo(
-                    (arrowCorner[0] ? boxWidth : boxMargin),
-                    (arrowCorner[1] ? boxHeight - boxArrowOffset : boxMargin + boxArrowOffset));
+                    (arrowCorner[0] ? sBoxWidth : sBoxMargin),
+                    (arrowCorner[1] ? sBoxHeight - sBoxArrowOffset : sBoxMargin + sBoxArrowOffset));
                 context.closePath();
                 context.fill();
                 
-                context.font = scaledFontHeight + fontSuffix;
+                context.font = sFontHeight + fontSuffix;
                 context.textBaseline = "middle";
                 context.textAlign = "left"
                 context.fillStyle = "black";
@@ -680,9 +693,11 @@ const vueApp = new Vue({
                 for (let i=0; i<preparedLines.length; i++)
                 {
                     context.fillText(preparedLines[i],
-                        !arrowCorner[0] * boxMargin + boxPadding[0],
-                        !arrowCorner[1] * boxMargin + boxPadding[1] + (i*lineHeight) + (lineHeight/2));
+                        !arrowCorner[0] * sBoxMargin + sBoxPadding[0],
+                        !arrowCorner[1] * sBoxMargin + sBoxPadding[1] + (i*sLineHeight) + (sLineHeight/2));
                 }
+                
+                return [boxWidth + boxMargin, boxHeight + boxMargin]
             });
         },
         detectCanvasResize: function ()
@@ -813,8 +828,8 @@ const vueApp = new Vue({
                     this.drawImage(
                         context,
                         o.o.image.getImage(this.canvasScale),
-                        this.canvasScale * o.o.physicalPositionX,
-                        this.canvasScale * o.o.physicalPositionY
+                        o.o.physicalPositionX,
+                        o.o.physicalPositionY
                     );
                 } // o.type == "user"
                 else
@@ -824,12 +839,12 @@ const vueApp = new Vue({
                     if (o.o.isInactive)
                         context.globalAlpha = 0.5
                     
-                    const image = o.o.getCurrentImage(this.currentRoom).getImage(this.canvasScale)
+                    const renderImage = o.o.getCurrentImage(this.currentRoom);
                     this.drawImage(
                         context,
-                        image,
-                        this.canvasScale * (o.o.currentPhysicalPositionX + BLOCK_WIDTH/2) - image.width/2,
-                        this.canvasScale * o.o.currentPhysicalPositionY - image.height
+                        renderImage.getImage(this.canvasScale),
+                        o.o.currentPhysicalPositionX + BLOCK_WIDTH/2 - renderImage.width/2,
+                        o.o.currentPhysicalPositionY - renderImage.height
                     );
                     
                     context.restore()
@@ -849,8 +864,8 @@ const vueApp = new Vue({
                 this.drawImage(
                     this.canvasContext,
                     image,
-                    this.canvasScale * (o.o.currentPhysicalPositionX + BLOCK_WIDTH/2) - image.width/2,
-                    this.canvasScale * (o.o.currentPhysicalPositionY - 120)
+                    o.o.currentPhysicalPositionX + BLOCK_WIDTH/2 - o.o.nameImage.width/2,
+                    o.o.currentPhysicalPositionY - 120
                 );
             }
             if (this.isUsernameRedrawRequired)
@@ -877,15 +892,10 @@ const vueApp = new Vue({
                 this.drawImage(
                     this.canvasContext,
                     image,
-                    this.canvasScale *
-                            (user.currentPhysicalPositionX
-                            + BLOCK_WIDTH/2
-                            + (pos[0] ? 21 : - 21))
-                        + (pos[0] ? 0 : - image.width),
-                    this.canvasScale * 
-                            (user.currentPhysicalPositionY
-                            - (pos[1] ? 62 : 70))
-                        - (pos[1] ? 0 : image.height)
+                    user.currentPhysicalPositionX + BLOCK_WIDTH/2
+                        + (pos[0] ? 21 : -21 - user.bubbleImage.width),
+                    user.currentPhysicalPositionY
+                        - (pos[1] ? 62 : 70 + user.bubbleImage.height)
                 );
             }
         },
