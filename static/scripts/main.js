@@ -52,6 +52,7 @@ const vueApp = new Vue({
         canvasManualOffset: { x: 0, y: 0 },
         canvasGlobalOffset: { x: 0, y: 0 },
         canvasDimensions: { w: 0, h: 0 },
+        canvasScale: 1,
 
         // rula stuff
         isRulaPopupOpen: false,
@@ -331,6 +332,7 @@ const vueApp = new Vue({
                     this.isWaitingForServerResponseOnMovement = false;
                     if (oldX != x || oldY != y) this.justSpawnedToThisRoom = false;
                 }
+                this.updateCanvasObjects();
             });
             
             this.socket.on("server-bubble-position", (userId, position) =>
@@ -542,48 +544,65 @@ const vueApp = new Vue({
             if (!y) y = 0;
             context.drawImage(
                 image,
-                Math.round(x + this.canvasGlobalOffset.x),
-                Math.round(y + this.canvasGlobalOffset.y)
+                Math.round(this.canvasScale * x + this.canvasGlobalOffset.x),
+                Math.round(this.canvasScale * y + this.canvasGlobalOffset.y)
             );
         },
         getNameImage: function(name, withBackground)
         {
+            const lineHeight = 13
+            const height = lineHeight + 3;
+            
+            const fontPrefix = "bold ";
+            const fontSuffix = "px Arial, Helvetica, sans-serif";
+            
             return new RenderCache(function(canvas, scale)
             {
-                const height = 13 * scale;
-                const font = "bold " + height + "px Arial, Helvetica, sans-serif";
+                const fontSize = lineHeight * scale;
                 
                 const context = canvas.getContext('2d');
-                context.font = font;
+                context.font = fontPrefix + lineHeight + fontSuffix;
                 const metrics = context.measureText(name);
-                const width = Math.ceil(metrics.width);
+                const width = Math.ceil(metrics.width) + 5;
                 
-                canvas.width = width + 5 * scale;
-                canvas.height = height * 2;
+                canvas.width = width * scale;
+                canvas.height = height * scale;
 
                 // transparent background
                 if (withBackground)
                 {
-                    const backgroundHeight = height + 3 * scale;
                     context.globalAlpha = 0.5
                     context.fillStyle = 'white';
-                    context.fillRect(0, height - backgroundHeight/2,
-                        canvas.width, backgroundHeight)
+                    context.fillRect(0, 0, canvas.width, canvas.height)
                     context.globalAlpha = 1
                 }
 
                 // text
-                context.font = font;
+                const scaledLineHeight = lineHeight * scale;
+                context.font = fontPrefix + scaledLineHeight + fontSuffix;
                 context.textBaseline = "middle";
                 context.textAlign = "center"
                 context.fillStyle = "blue";
                 
-                context.fillText(name, canvas.width/2, height);
+                context.fillText(name, canvas.width/2, canvas.height/2 + 1 * scale);
+                
+                return [width, height];
             });
         },
         getBubbleImage: function(user)
         {
+            const maxLineWidth = 250;
+            const lineHeight = 15;
+            const fontHeight = 13;
+            const fontSuffix = "px IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif";
+            
+            const boxArrowOffset = 5;
+            const boxMargin = 6;
+            const boxPadding = [5, 3];
+            
             let messageLines = user.message.split(/\r\n|\n\r|\n|\r/);
+            let preparedLines = null;
+            let textWidth = null;
             
             const arrowCorner = [
                 ["down", "left"].includes(user.bubblePosition),
@@ -591,75 +610,81 @@ const vueApp = new Vue({
             
             return new RenderCache(function(canvas, scale)
             {
-                const maxLineWidth = 250 * scale;
-                const boxArrowOffset = 5 * scale;
-                const boxMargin = 6 * scale;
-                const boxPadding = [5 * scale, 3 * scale];
-                const fontHeight = 13 * scale;
-                const lineHeight = 15 * scale;
-                
-                const font = fontHeight + "px IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif";
-               
                 const context = canvas.getContext('2d');
-                context.font = font;
+                context.font = fontHeight + fontSuffix;
                 
-                let preparedLines = [];
-                let textWidth = 0;
-                
-                while (messageLines.length && preparedLines.length < 5)
+                if (preparedLines === null)
                 {
-                    const line = messageLines.shift()
-                    let lastPreparedLine = "";
-                    let lastLineWidth = 0;
-                    for (let i=0; i<line.length; i++)
+                    preparedLines = [];
+                    textWidth = 0;
+                    
+                    while (messageLines.length && preparedLines.length < 5)
                     {
-                        const preparedLine = line.substring(0, i+1);
-                        const lineWidth = context.measureText(preparedLine).width
-                        if (lineWidth > maxLineWidth)
+                        const line = messageLines.shift()
+                        let lastPreparedLine = "";
+                        let lastLineWidth = 0;
+                        for (let i=0; i<line.length; i++)
                         {
-                            if (i == 0)
+                            const preparedLine = line.substring(0, i+1);
+                            const lineWidth = context.measureText(preparedLine).width
+                            if (lineWidth > maxLineWidth)
                             {
-                                lastPreparedLine = preparedLine;
-                                lastLineWidth = maxLineWidth;
+                                if (i == 0)
+                                {
+                                    lastPreparedLine = preparedLine;
+                                    lastLineWidth = maxLineWidth;
+                                }
+                                break;
                             }
-                            break;
+                            lastPreparedLine = preparedLine;
+                            lastLineWidth = lineWidth;
                         }
-                        lastPreparedLine = preparedLine;
-                        lastLineWidth = lineWidth;
+                        preparedLines.push(lastPreparedLine)
+                        if (line.length > lastPreparedLine.length)
+                            messageLines.push(line.substring(lastPreparedLine.length))
+                        textWidth = Math.max(textWidth, lastLineWidth);
                     }
-                    preparedLines.push(lastPreparedLine)
-                    if (line.length > lastPreparedLine.length)
-                        messageLines.push(line.substring(lastPreparedLine.length))
-                    textWidth = Math.max(textWidth, lastLineWidth);
+                    messageLines = null;
                 }
                 
                 const boxWidth = textWidth + 2 * boxPadding[0];
                 const boxHeight = preparedLines.length * lineHeight + 2 * boxPadding[1];
                 
-                canvas.width = boxWidth + boxMargin;
-                canvas.height = boxHeight + boxMargin;
+                
+                const sLineHeight = lineHeight * scale
+                const sFontHeight = fontHeight * scale;
+                
+                const sBoxArrowOffset = boxArrowOffset * scale;
+                const sBoxMargin = boxMargin * scale;
+                const sBoxPadding = [boxPadding[0] * scale, boxPadding[1] * scale];
+                
+                const sBoxWidth = boxWidth * scale
+                const sBoxHeight = boxHeight * scale
+                
+                canvas.width = sBoxWidth + sBoxMargin;
+                canvas.height = sBoxHeight + sBoxMargin;
                 
                 context.fillStyle = 'white';
                 context.fillRect(
-                    !arrowCorner[0] * boxMargin,
-                    !arrowCorner[1] * boxMargin,
-                    boxWidth,
-                    boxHeight)
+                    !arrowCorner[0] * sBoxMargin,
+                    !arrowCorner[1] * sBoxMargin,
+                    sBoxWidth,
+                    sBoxHeight)
                     
                 context.beginPath();
                 context.moveTo(
                     arrowCorner[0] * canvas.width,
                     arrowCorner[1] * canvas.height);
                 context.lineTo(
-                    (arrowCorner[0] ? boxWidth - boxArrowOffset : boxMargin + boxArrowOffset),
-                    (arrowCorner[1] ? boxHeight: boxMargin));
+                    (arrowCorner[0] ? sBoxWidth - sBoxArrowOffset : sBoxMargin + sBoxArrowOffset),
+                    (arrowCorner[1] ? sBoxHeight: sBoxMargin));
                 context.lineTo(
-                    (arrowCorner[0] ? boxWidth : boxMargin),
-                    (arrowCorner[1] ? boxHeight - boxArrowOffset : boxMargin + boxArrowOffset));
+                    (arrowCorner[0] ? sBoxWidth : sBoxMargin),
+                    (arrowCorner[1] ? sBoxHeight - sBoxArrowOffset : sBoxMargin + sBoxArrowOffset));
                 context.closePath();
                 context.fill();
                 
-                context.font = font;
+                context.font = sFontHeight + fontSuffix;
                 context.textBaseline = "middle";
                 context.textAlign = "left"
                 context.fillStyle = "black";
@@ -667,9 +692,11 @@ const vueApp = new Vue({
                 for (let i=0; i<preparedLines.length; i++)
                 {
                     context.fillText(preparedLines[i],
-                        !arrowCorner[0] * boxMargin + boxPadding[0],
-                        !arrowCorner[1] * boxMargin + boxPadding[1] + (i*lineHeight) + (lineHeight/2));
+                        !arrowCorner[0] * sBoxMargin + sBoxPadding[0],
+                        !arrowCorner[1] * sBoxMargin + sBoxPadding[1] + (i*sLineHeight) + (sLineHeight/2));
                 }
+                
+                return [boxWidth + boxMargin, boxHeight + boxMargin]
             });
         },
         detectCanvasResize: function ()
@@ -690,8 +717,8 @@ const vueApp = new Vue({
             {
                 const fixedCameraOffset = this.currentRoom.backgroundOffset ||
                     { x: 0, y: 0 };
-                this.canvasGlobalOffset.x = -fixedCameraOffset.x
-                this.canvasGlobalOffset.y = -fixedCameraOffset.y
+                this.canvasGlobalOffset.x = this.canvasScale * -fixedCameraOffset.x
+                this.canvasGlobalOffset.y = this.canvasScale * -fixedCameraOffset.y
                 return;
             }
             
@@ -700,16 +727,21 @@ const vueApp = new Vue({
             {
                 const user = this.users[this.myUserID]
                 
-                userOffset.x = -(user.currentPhysicalPositionX - (this.canvasDimensions.w / 2 - BLOCK_WIDTH / 2)),
-                userOffset.y = -(user.currentPhysicalPositionY - (this.canvasDimensions.h / 2 + BLOCK_HEIGHT))
+                userOffset.x -= this.canvasScale * (user.currentPhysicalPositionX + BLOCK_WIDTH/2) - this.canvasDimensions.w / 2,
+                userOffset.y -= this.canvasScale * (user.currentPhysicalPositionY - 60) - this.canvasDimensions.h / 2
+            }
+            
+            const manualOffset = {
+                x: this.canvasScale * this.canvasManualOffset.x,
+                y: this.canvasScale * this.canvasManualOffset.y
             }
             
             const canvasOffset = {
-                x: this.canvasManualOffset.x + userOffset.x,
-                y: this.canvasManualOffset.y + userOffset.y
+                x: manualOffset.x + userOffset.x,
+                y: manualOffset.y + userOffset.y
             };
             
-            const backgroundImage = this.currentRoom.backgroundImage.getImage()
+            const backgroundImage = this.currentRoom.backgroundImage.getImage(this.canvasScale)
             
             const bcDiff =
             {
@@ -723,19 +755,19 @@ const vueApp = new Vue({
             let isAtEdge = false;
             
             if (canvasOffset.x > margin.w)
-                {isAtEdge = true; this.canvasManualOffset.x = margin.w - userOffset.x}
+                {isAtEdge = true; manualOffset.x = margin.w - userOffset.x}
             else if(canvasOffset.x < -margin.w - bcDiff.w)
-                {isAtEdge = true; this.canvasManualOffset.x = -margin.w - (bcDiff.w + userOffset.x)}
+                {isAtEdge = true; manualOffset.x = -margin.w - (bcDiff.w + userOffset.x)}
             
             if (canvasOffset.y > margin.h)
-                {isAtEdge = true; this.canvasManualOffset.y = margin.h - userOffset.y}
+                {isAtEdge = true; manualOffset.y = margin.h - userOffset.y}
             else if(canvasOffset.y < -margin.h - bcDiff.h)
-                {isAtEdge = true; this.canvasManualOffset.y = -margin.h - (bcDiff.h + userOffset.y)}
+                {isAtEdge = true; manualOffset.y = -margin.h - (bcDiff.h + userOffset.y)}
             
             if (isAtEdge)
             {
-                canvasOffset.x = this.canvasManualOffset.x + userOffset.x
-                canvasOffset.y = this.canvasManualOffset.y + userOffset.y
+                canvasOffset.x = manualOffset.x + userOffset.x
+                canvasOffset.y = manualOffset.y + userOffset.y
                 this.isCanvasMousedown = false;
             }
             
@@ -750,25 +782,10 @@ const vueApp = new Vue({
                 this.users[id].calculatePhysicalPosition(this.currentRoom);
             }
         },
-
-        paintBackground: function ()
+        
+        updateCanvasObjects: function ()
         {
-            const context = this.canvasContext;
-            
-            context.fillStyle = this.currentRoom.backgroundColor;
-            context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
-            
-            this.drawImage(
-                context,
-                this.currentRoom.backgroundImage.getImage()
-            );
-        },
-
-        paintForeground: function ()
-        {
-            const context = this.canvasContext;
-
-            const allObjects = [].concat(
+            this.canvasObjects = [].concat(
                 this.currentRoom.objects
                     .map(o => ({
                         o,
@@ -787,8 +804,26 @@ const vueApp = new Vue({
                     if (a.priority > b.priority) return 1;
                     return 0;
                 });
+        },
 
-            for (const o of allObjects)
+        paintBackground: function ()
+        {
+            const context = this.canvasContext;
+            
+            context.fillStyle = this.currentRoom.backgroundColor;
+            context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
+            
+            this.drawImage(
+                context,
+                this.currentRoom.backgroundImage.getImage(this.canvasScale)
+            );
+        },
+        
+        drawObjects: function ()
+        {
+            const context = this.canvasContext;
+            
+            for (const o of this.canvasObjects)
             {
                 if (o.type == "room-object")
                 {
@@ -796,7 +831,7 @@ const vueApp = new Vue({
                     
                     this.drawImage(
                         context,
-                        o.o.image.getImage(),
+                        o.o.image.getImage(this.canvasScale),
                         o.o.physicalPositionX,
                         o.o.physicalPositionY
                     );
@@ -808,37 +843,42 @@ const vueApp = new Vue({
                     if (o.o.isInactive)
                         context.globalAlpha = 0.5
                     
-                    const image = o.o.getCurrentImage(this.currentRoom).getImage()
+                    const renderImage = o.o.getCurrentImage(this.currentRoom);
                     this.drawImage(
                         context,
-                        image,
-                        o.o.currentPhysicalPositionX,
-                        (o.o.currentPhysicalPositionY - image.height)
+                        renderImage.getImage(this.canvasScale),
+                        o.o.currentPhysicalPositionX + BLOCK_WIDTH/2 - renderImage.width/2,
+                        o.o.currentPhysicalPositionY - renderImage.height
                     );
                     
                     context.restore()
                 }
             }
-            
-            // Draw usernames on top of everything else
-            for (const o of allObjects.filter(o => o.type == "user"))
+        },
+        
+        drawUsernames: function ()
+        {
+            for (const o of this.canvasObjects.filter(o => o.type == "user"))
             {
                 if (o.o.nameImage == null || this.isUsernameRedrawRequired)
                     o.o.nameImage = this.getNameImage(this.toDisplayName(o.o.name), this.showUsernameBackground);
                 
-                const image = o.o.nameImage.getImage()
+                const image = o.o.nameImage.getImage(this.canvasScale)
                 
                 this.drawImage(
-                    context,
+                    this.canvasContext,
                     image,
-                    (o.o.currentPhysicalPositionX - image.width/2) + BLOCK_WIDTH/2,
-                    (o.o.currentPhysicalPositionY - 120)
+                    o.o.currentPhysicalPositionX + BLOCK_WIDTH/2 - o.o.nameImage.width/2,
+                    o.o.currentPhysicalPositionY - 120
                 );
             }
             if (this.isUsernameRedrawRequired)
                 this.isUsernameRedrawRequired = false;
-            
-            for (const o of allObjects.filter(o => o.type == "user"))
+        },
+        
+        drawBubbles: function()
+        {
+            for (const o of this.canvasObjects.filter(o => o.type == "user"))
             {
                 const user = o.o;
                 
@@ -847,81 +887,89 @@ const vueApp = new Vue({
                 if (user.bubbleImage == null)
                     user.bubbleImage = this.getBubbleImage(user)
                 
-                const image = user.bubbleImage.getImage()
+                const image = user.bubbleImage.getImage(this.canvasScale)
                 
-                const directionCorner = [
+                const pos = [
                     ["up", "right"].includes(user.bubblePosition),
                     ["down", "right"].includes(user.bubblePosition)];
                 
                 this.drawImage(
-                    context,
+                    this.canvasContext,
                     image,
-                    (user.currentPhysicalPositionX + BLOCK_WIDTH/2)
-                        + (directionCorner[0] ? 21 : - (image.width + 21)),
+                    user.currentPhysicalPositionX + BLOCK_WIDTH/2
+                        + (pos[0] ? 21 : -21 - user.bubbleImage.width),
                     user.currentPhysicalPositionY
-                        - (directionCorner[1] ? 62 : 70 + image.height)
+                        - (pos[1] ? 62 : 70 + user.bubbleImage.height)
                 );
             }
-            
-            if (this.enableGridNumbers)
-            {
-                context.strokeStyle = "#ff0000";
-                
-                const co = this.canvasGlobalOffset;
-                
-                context.beginPath();
-                context.moveTo(co.x+11, co.y-1);
-                context.lineTo(co.x-1, co.y-1);
-                context.lineTo(co.x-1, co.y+10);
-                context.stroke();
-                
-                const origin = calculateRealCoordinates(this.currentRoom, 0, 0)
-                
-                const cr_x = co.x+origin.x;
-                const cr_y = co.y+origin.y;
-                
-                context.beginPath();
-                context.rect(cr_x-1, cr_y+1, BLOCK_WIDTH+2, -BLOCK_HEIGHT-2);
-                context.stroke();
-                
-                const cc_x = co.x+this.currentRoom.originCoordinates.x;
-                const cc_y = co.y+this.currentRoom.originCoordinates.y;
-                
-                context.strokeStyle = "#0000ff";
-                
-                context.beginPath();
-                context.moveTo(co.x-1, co.y);
-                context.lineTo(cc_x, co.y);
-                context.lineTo(cc_x, cc_y);
-                context.stroke();
-                
-                context.font = "bold 13px Arial, Helvetica, sans-serif";
-                context.textBaseline = "bottom";
-                context.textAlign = "center";
-
-                for (let x = 0; x < this.currentRoom.size.x; x++)
-                    for (let y = 0; y < this.currentRoom.size.y; y++)
-                    {
-                        context.fillStyle = "#0000ff";
-                        if (Object.values(this.currentRoom.doors).find(d => d.x == x && d.y == y))
-                            context.fillStyle = "#00cc00";
-                        if (this.currentRoom.blocked.find(b => b.x == x && b.y == y))
-                            context.fillStyle = "#ff0000";
-                        if (this.currentRoom.sit.find(b => b.x == x && b.y == y))
-                            context.fillStyle = "yellow";
-                        const realCoord = calculateRealCoordinates(
-                            this.currentRoom,
-                            x,
-                            y
-                        );
-                        context.fillText(
-                            x + "," + y,
-                            (realCoord.x + BLOCK_WIDTH/2) + this.canvasGlobalOffset.x,
-                            (realCoord.y - BLOCK_HEIGHT/3) + this.canvasGlobalOffset.y
-                        );
-                    }
-            }
         },
+        
+        drawOriginLines: function ()
+        {
+            const context = this.canvasContext;
+            
+            context.strokeStyle = "#ff0000";
+                
+            const co = this.canvasGlobalOffset;
+            
+            context.beginPath();
+            context.moveTo(co.x+11, co.y-1);
+            context.lineTo(co.x-1, co.y-1);
+            context.lineTo(co.x-1, co.y+10);
+            context.stroke();
+            
+            const origin = calculateRealCoordinates(this.currentRoom, 0, 0)
+            
+            const cr_x = co.x+origin.x;
+            const cr_y = co.y+origin.y;
+            
+            context.beginPath();
+            context.rect(cr_x-1, cr_y+1, BLOCK_WIDTH+2, -BLOCK_HEIGHT-2);
+            context.stroke();
+            
+            const cc_x = co.x+this.currentRoom.originCoordinates.x;
+            const cc_y = co.y+this.currentRoom.originCoordinates.y;
+            
+            context.strokeStyle = "#0000ff";
+            
+            context.beginPath();
+            context.moveTo(co.x-1, co.y);
+            context.lineTo(cc_x, co.y);
+            context.lineTo(cc_x, cc_y);
+            context.stroke();
+            
+            context.font = "bold 13px Arial, Helvetica, sans-serif";
+            context.textBaseline = "bottom";
+            context.textAlign = "center";
+        },
+        
+        drawGridNumbers: function ()
+        {
+            const context = this.canvasContext;
+            
+            for (let x = 0; x < this.currentRoom.size.x; x++)
+                for (let y = 0; y < this.currentRoom.size.y; y++)
+                {
+                    context.fillStyle = "#0000ff";
+                    if (Object.values(this.currentRoom.doors).find(d => d.x == x && d.y == y))
+                        context.fillStyle = "#00cc00";
+                    if (this.currentRoom.blocked.find(b => b.x == x && b.y == y))
+                        context.fillStyle = "#ff0000";
+                    if (this.currentRoom.sit.find(b => b.x == x && b.y == y))
+                        context.fillStyle = "yellow";
+                    const realCoord = calculateRealCoordinates(
+                        this.currentRoom,
+                        x,
+                        y
+                    );
+                    context.fillText(
+                        x + "," + y,
+                        (realCoord.x + BLOCK_WIDTH/2) + this.canvasGlobalOffset.x,
+                        (realCoord.y - BLOCK_HEIGHT/3) + this.canvasGlobalOffset.y
+                    );
+                }
+        },
+        
         paint: function ()
         {
             if (this.forceUserInstantMove)
@@ -947,7 +995,14 @@ const vueApp = new Vue({
                 this.calculateUserPhysicalPositions();
                 this.setCanvasGlobalOffset();
                 this.paintBackground();
-                this.paintForeground();
+                this.drawObjects();
+                this.drawUsernames();
+                this.drawBubbles();
+                if (this.enableGridNumbers)
+                {
+                    this.drawOriginLines();
+                    this.drawGridNumbers();
+                }
                 this.isRedrawRequired = false;
             }
 
@@ -1014,6 +1069,7 @@ const vueApp = new Vue({
                     u.logicalPositionY,
                     u.direction
                 );
+            this.updateCanvasObjects();
             this.isRedrawRequired = true;
         },
         sendNewPositionToServer: function (direction)
@@ -1084,25 +1140,25 @@ const vueApp = new Vue({
                     case "ArrowLeft":
                     case "KeyA":
                         event.preventDefault()
-                        this.canvasManualOffset.x += 10
+                        this.canvasManualOffset.x += 10 / this.canvasScale
                         this.isRedrawRequired = true
                         break;
                     case "ArrowRight":
                     case "KeyD":
                         event.preventDefault()
-                        this.canvasManualOffset.x -= 10
+                        this.canvasManualOffset.x -= 10 / this.canvasScale
                         this.isRedrawRequired = true
                         break;
                     case "ArrowUp":
                     case "KeyW":
                         event.preventDefault()
-                        this.canvasManualOffset.y += 10
+                        this.canvasManualOffset.y += 10 / this.canvasScale
                         this.isRedrawRequired = true
                         break;
                     case "ArrowDown":
                     case "KeyS":
                         event.preventDefault()
-                        this.canvasManualOffset.y -= 10
+                        this.canvasManualOffset.y -= 10 / this.canvasScale
                         this.isRedrawRequired = true
                         break;
                 }
@@ -1158,8 +1214,8 @@ const vueApp = new Vue({
 
             if (this.isDraggingCanvas)
             {
-                this.canvasManualOffset.x = this.canvasDragStartOffset.x + dragOffset.x
-                this.canvasManualOffset.y = this.canvasDragStartOffset.y + dragOffset.y;
+                this.canvasManualOffset.x = this.canvasDragStartOffset.x + dragOffset.x / this.canvasScale
+                this.canvasManualOffset.y = this.canvasDragStartOffset.y + dragOffset.y / this.canvasScale;
             }
         },
         handleMessageInputKeydown: function (event)
@@ -1169,6 +1225,25 @@ const vueApp = new Vue({
             this.sendMessageToServer();
             event.preventDefault();
             return false;
+        },
+        handleCanvasWheel: function (event)
+        {
+            this.adjustScale(-event.deltaY * 0.02);
+        },
+        
+        adjustScale: function (scaleAdjustment)
+        {
+            let canvasScale = this.canvasScale;
+            
+            canvasScale += scaleAdjustment
+            canvasScale = Math.round(canvasScale*100)/100
+            
+            if(canvasScale > 3.04)
+                canvasScale = 3.04;
+            else if(canvasScale < 0.70)
+                canvasScale = 0.70;
+            this.canvasScale = canvasScale;
+            this.isRedrawRequired = true;
         },
 
         setupRTCConnection: function (slotId)
