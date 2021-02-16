@@ -244,20 +244,14 @@
                         <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label 
                             for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
                     </div>
-                    <div class='popup-section' v-if="streamMode != 'video'">
-                        <span>{{ $t("ui.stream_form_voice_enhancement") }}</span><input type="radio"
-                            id="stream-form-voice-enhancement-on" value="on" v-model="streamVoiceEnhancement"><label
-                            for="stream-form-voice-enhancement-on">{{ $t("ui.stream_form_voice_enhancement_on") 
-                            }}</label>
-
-                        <input type="radio" id="stream-form-voice-enhancement-off" value="off"
-                            v-model="streamVoiceEnhancement"><label for="stream-form-voice-enhancement-off">{{
-                            $t("ui.stream_form_voice_enhancement_off") }}</label>
-
-                        <input type="radio" id="stream-form-voice-enhancement-advanced" value="advanced"
-                            v-model="streamVoiceEnhancement"><label for="stream-form-voice-enhancement-advanced">{{
-                            $t("ui.stream_form_voice_enhancement_advanced") }}</label>
-                        <div class='popup-subsection' v-if="streamVoiceEnhancement == 'advanced'">
+                    <div v-if="streamMode != 'video'">
+                        <div class='popup-section'>
+                            <button v-if="!displayAdvancedStreamSettings"
+                                v-on:click="displayAdvancedStreamSettings = true">{{ $t("ui.stream_form_show_advanced") }}</button>
+                            <button v-if="displayAdvancedStreamSettings"
+                                v-on:click="displayAdvancedStreamSettings = false">{{ $t("ui.stream_form_hide_advanced") }}</button>
+                        </div>
+                        <div class='popup-section' v-if="displayAdvancedStreamSettings">
                             <div>
                                 <input type="checkbox" id="stream-form-echo-cancellation"
                                     v-model="streamEchoCancellation"><label for="stream-form-echo-cancellation">{{
