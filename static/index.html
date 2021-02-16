@@ -133,7 +133,10 @@
                             ><button class="grid-button" v-on:click="sendNewBubblePositionToServer('right')">↘</button>
                         </div>
                     </div>
-                    
+                    <div class="tooltip-section">
+                        <button v-on:click="switchSVGMode(null)">Normal</button>
+                        <button v-on:click="switchSVGMode('crisp')">Crisp</button>
+                    </div>
                 </div>
             </div>
             {{ $t("ui.label_log") }}
