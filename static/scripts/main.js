@@ -1234,7 +1234,7 @@ const vueApp = new Vue({
         },
         handleCanvasWheel: function (event)
         {
-            this.adjustScale(-event.deltaY * 0.02);
+            this.adjustScale(-Math.sign(event.deltaY) * 0.1);
             event.preventDefault();
             return false;
         },
@@ -1244,12 +1244,12 @@ const vueApp = new Vue({
             let canvasScale = this.canvasScale;
             
             canvasScale += scaleAdjustment
-            canvasScale = Math.round(canvasScale*100)/100
             
-            if(canvasScale > 3.04)
-                canvasScale = 3.04;
+            if(canvasScale > 3)
+                canvasScale = 3;
             else if(canvasScale < 0.70)
                 canvasScale = 0.70;
+            
             this.canvasScale = canvasScale;
             this.isRedrawRequired = true;
         },
