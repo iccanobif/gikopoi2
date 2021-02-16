@@ -98,11 +98,6 @@ video {
     padding: 5px
 }
 
-.start-streaming-button
-{
-    padding: 0;
-}
-
 .stream-title
 {
     font-weight: bold;
@@ -249,11 +244,16 @@ video {
     flex-wrap: wrap;
 }
 
-#toolbar button
+#login-page button,
+#toolbar button,
+#video-streams button,
+.popup button
 {
     border: 1px solid #959595;
-    padding: 3px 8px;
+    padding: 3px 10px;
     margin: 1px;
+    min-height: 32px;
+    border-radius: 3px;
 }
 
 #toolbar-text-input
@@ -287,10 +287,11 @@ video {
     flex-grow: 1;
 }
 
-.grid-button
+#toolbar button.grid-button
 {
     font-weight: bold;
     font-size: 20px;
+    padding: 3px 8px;
 }
 
 #rula-popup {

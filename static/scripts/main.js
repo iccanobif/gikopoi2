@@ -71,10 +71,10 @@ const vueApp = new Vue({
         // stream settings
         isStreamPopupOpen: false,
         streamMode: "video_sound",
-        streamVoiceEnhancement: "off",
-        streamEchoCancellation: true,
-        streamNoiseSuppression: true,
-        streamAutoGain: true,
+        displayAdvancedStreamSettings: false,
+        streamEchoCancellation: false,
+        streamNoiseSuppression: false,
+        streamAutoGain: false,
         streamScreenCapture: false,
 
         // Warning Toast
@@ -1261,7 +1261,7 @@ const vueApp = new Vue({
         },
         handleCanvasWheel: function (event)
         {
-            this.adjustScale(-event.deltaY * 0.02);
+            this.adjustScale(-Math.sign(event.deltaY) * 0.1);
             event.preventDefault();
             return false;
         },
@@ -1271,12 +1271,12 @@ const vueApp = new Vue({
             let canvasScale = this.canvasScale;
             
             canvasScale += scaleAdjustment
-            canvasScale = Math.round(canvasScale*100)/100
             
-            if(canvasScale > 3.04)
-                canvasScale = 3.04;
+            if(canvasScale > 3)
+                canvasScale = 3;
             else if(canvasScale < 0.70)
                 canvasScale = 0.70;
+            
             this.canvasScale = canvasScale;
             this.isRedrawRequired = true;
         },
@@ -1400,15 +1400,9 @@ const vueApp = new Vue({
                             },
                             audio: !withSound ? undefined : {
                                 channelCount: 2,
-                                echoCancellation: this.streamVoiceEnhancement == "on" ? true
-                                                : this.streamVoiceEnhancement == "off" ? false
-                                                : this.streamEchoCancellation,
-                                noiseSuppression: this.streamVoiceEnhancement == "on" ? true
-                                                : this.streamVoiceEnhancement == "off" ? false
-                                                : this.streamNoiseSuppression,
-                                autoGainControl: this.streamVoiceEnhancement == "on" ? true
-                                                : this.streamVoiceEnhancement == "off" ? false
-                                                : this.streamAutoGain,
+                                echoCancellation: this.streamEchoCancellation,
+                                noiseSuppression: this.streamNoiseSuppression,
+                                autoGainControl: this.streamAutoGain,
                             }
                         }
                     );
@@ -1619,10 +1613,10 @@ const vueApp = new Vue({
 
             this.isStreamPopupOpen = true;
             this.streamMode = "video_sound";
-            this.streamVoiceEnhancement = "off";
-            this.streamEchoCancellation = true;
-            this.streamNoiseSuppression = true;
-            this.streamAutoGain = true;
+            this.streamEchoCancellation = false;
+            this.streamNoiseSuppression = false;
+            this.streamAutoGain = false;
+            this.streamScreenCapture = false;
         },
         closeStreamPopup: function ()
         {
