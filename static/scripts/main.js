@@ -1,7 +1,7 @@
 //localStorage.debug = '*'; // socket.io debug
 localStorage.removeItem("debug");
 
-import { characters } from "./character.js";
+import { characters, loadCharacters } from "./character.js";
 import User from "./user.js";
 import { loadImage, calculateRealCoordinates, postJson, BLOCK_WIDTH, BLOCK_HEIGHT } from "./utils.js";
 import { messages } from "./lang.js";
@@ -53,6 +53,7 @@ const vueApp = new Vue({
         canvasGlobalOffset: { x: 0, y: 0 },
         canvasDimensions: { w: 0, h: 0 },
         canvasScale: 1,
+        svgMode: null,
 
         // rula stuff
         isRulaPopupOpen: false,
@@ -120,7 +121,7 @@ const vueApp = new Vue({
         else
             this.setLanguage("en")
 
-        loadCharacterImagesPromise = Promise.all(Object.values(characters).map(c => c.loadImages()));
+        loadCharacterImagesPromise = loadCharacters();
     },
     methods: {
         login: async function (ev)
@@ -171,6 +172,19 @@ const vueApp = new Vue({
                 alert("Connection failed :(")
             }
         },
+        toggleCrispMode: function ()
+        {
+            this.svgMode = this.svgMode != "crisp" ? "crisp" : null;
+            this.reloadImages()
+        },
+        reloadImages: async function ()
+        {
+            this.loadRoomBackground();
+            this.loadRoomObjects();
+            
+            await (loadCharacters(this.svgMode));
+            this.isRedrawRequired = true;
+        },
         setLanguage: function (code)
         {
             i18n.locale = code;
@@ -183,6 +197,38 @@ const vueApp = new Vue({
         closeWarningToast: function ()
         {
             this.isWarningToastOpen = false;
+        },
+        loadRoomBackground: async function ()
+        {
+            const urlMode = (!this.svgMode ? "" : "." + this.svgMode);
+            
+            const roomLoadId = this.roomLoadId;
+            
+            const image = await loadImage(this.currentRoom.backgroundImageUrl.replace(".svg", urlMode + ".svg"))
+            
+            if (this.roomLoadId != roomLoadId) return;
+            this.currentRoom.backgroundImage = RenderCache.Image(image, this.currentRoom.scale);
+            this.isRedrawRequired = true;
+        },
+        loadRoomObjects: async function (mode)
+        {
+            const urlMode = (!this.svgMode ? "" : "." + this.svgMode);
+            
+            const roomLoadId = this.roomLoadId;
+            
+            await Promise.all(Object.values(this.currentRoom.objects).map(o =>
+                loadImage("rooms/" + this.currentRoom.id + "/" + o.url.replace(".svg", urlMode + ".svg"))
+                    .then((image) =>
+                {
+                    const scale = o.scale ? o.scale : 1;
+                    if (this.roomLoadId != roomLoadId) return;
+                    o.image = RenderCache.Image(image, scale);
+                    
+                    o.physicalPositionX = o.offset ? o.offset.x * scale : 0
+                    o.physicalPositionY = o.offset ? o.offset.y * scale : 0
+                    this.isRedrawRequired = true;
+                })
+            ))
         },
         updateRoomState: async function (dto)
         {
@@ -208,28 +254,8 @@ const vueApp = new Vue({
                     this.displayMessage(u.id, this.users[u.id].message);
             }
             
-
-            loadImage(this.currentRoom.backgroundImageUrl).then((image) =>
-            {
-                if (this.roomLoadId != roomLoadId) return;
-                this.currentRoom.backgroundImage = RenderCache.Image(image, this.currentRoom.scale);
-                this.isRedrawRequired = true;
-            });
-            for (const o of this.currentRoom.objects)
-            {
-                loadImage("rooms/" + this.currentRoom.id + "/" + o.url).then(
-                    (image) =>
-                    {
-                        const scale = o.scale ? o.scale : 1;
-                        if (this.roomLoadId != roomLoadId) return;
-                        o.image = RenderCache.Image(image, scale);
-                        
-                        o.physicalPositionX = o.offset ? o.offset.x * scale : 0
-                        o.physicalPositionY = o.offset ? o.offset.y * scale : 0
-                        this.isRedrawRequired = true;
-                    }
-                );
-            }
+            this.loadRoomBackground();
+            this.loadRoomObjects();
 
             // stream stuff
             this.takenStreams = streamsDto.map(() => false);

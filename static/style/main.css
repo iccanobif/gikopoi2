@@ -282,9 +282,17 @@ video {
     align-content: stretch;
 }
 
-.tooltip-section > *
+.tooltip-section > button
 {
     flex-grow: 1;
+}
+
+.tooltip-section-title
+{
+    flex-grow: 1;
+    display: flex;
+    align-items: end;
+    justify-content: center;
 }
 
 #toolbar button.grid-button
@@ -453,6 +461,6 @@ div[id^="vu-meter-bar-secondary-"]
     z-index: 1;
 }
 
-#btn-toggle-username-bg.checked {
+button.checked {
     text-decoration: underline;
 }

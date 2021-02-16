@@ -632,7 +632,7 @@ app.get("/", (req, res) =>
             if (err)
             {
                 res.statusCode = 500
-                res.end("Could not retrieve index.html [${err}]")
+                res.end("Could not retrieve index.html [" + err + "]")
                 return
             }
 
@@ -658,6 +658,59 @@ app.get("/", (req, res) =>
                 'Cache-Control': 'no-cache'
             })
             res.end(data)
+        }
+        catch (e)
+        {
+            res.end(e.message + " " + e.stack)
+        }
+    })
+})
+
+//const svgCrispCache: { [path: string]: string }[] = {};
+const svgCrispCache: any = {};
+app.get(/(.+)\.crisp\.svg$/i, (req, res) =>
+{
+    const returnImage = function(data: string)
+    {
+        res.set({
+            'Content-Type': 'image/svg+xml',
+            'Cache-Control': 'no-cache'
+        });
+        res.end(data);
+    };
+    
+    const svgPath = req.params[0] + ".svg";
+    
+    try
+    {
+        if (svgPath in svgCrispCache)
+        {
+            returnImage(svgCrispCache[svgPath]);
+            return;
+        }
+    }
+    catch (e)
+    {
+        res.end(e.message + " " + e.stack)
+    }
+    
+    log.info("Fetching svg: " + svgPath)
+    readFile("static" + svgPath, 'utf8', async (err, data) =>
+    {
+        try
+        {
+            if (err)
+            {
+                res.statusCode = 500
+                res.end("Could not retrieve index.html [" + err + "]")
+                return
+            }
+            
+            data = data.replace('<svg', '<svg shape-rendering="crispEdges"');
+            
+            svgCrispCache[svgPath] = data;
+            
+            returnImage(data);
         }
         catch (e)
         {

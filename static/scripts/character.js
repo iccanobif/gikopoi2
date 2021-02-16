@@ -20,17 +20,18 @@ export class Character
         this.backWalking2Image = null;
     }
 
-    async loadImages()
+    async loadImages(svgMode)
     {
+        const urlMode = (!svgMode || this.format != "svg" ? "" : svgMode + ".");
         const results = await Promise.all([
-            loadImage("characters/" + this.characterName + "/front-sitting." + this.format),
-            loadImage("characters/" + this.characterName + "/front-standing." + this.format),
-            loadImage("characters/" + this.characterName + "/front-walking-1." + this.format),
-            loadImage("characters/" + this.characterName + "/front-walking-2." + this.format),
-            loadImage("characters/" + this.characterName + "/back-sitting." + this.format),
-            loadImage("characters/" + this.characterName + "/back-standing." + this.format),
-            loadImage("characters/" + this.characterName + "/back-walking-1." + this.format),
-            loadImage("characters/" + this.characterName + "/back-walking-2." + this.format)
+            loadImage("characters/" + this.characterName + "/front-sitting." + urlMode + this.format),
+            loadImage("characters/" + this.characterName + "/front-standing." + urlMode + this.format),
+            loadImage("characters/" + this.characterName + "/front-walking-1." + urlMode + this.format),
+            loadImage("characters/" + this.characterName + "/front-walking-2." + urlMode + this.format),
+            loadImage("characters/" + this.characterName + "/back-sitting." + urlMode + this.format),
+            loadImage("characters/" + this.characterName + "/back-standing." + urlMode + this.format),
+            loadImage("characters/" + this.characterName + "/back-walking-1." + urlMode + this.format),
+            loadImage("characters/" + this.characterName + "/back-walking-2." + urlMode + this.format)
         ])
         
         this.frontSittingImage = RenderCache.Image(results[0], this.scale)
@@ -75,3 +76,5 @@ export const characters = {
     nida: new Character("nida", "svg", false),
     ika: new Character("ika", "svg", true),
 }
+
+export const loadCharacters = (mode) => Promise.all(Object.values(characters).map(c => c.loadImages(mode)))
