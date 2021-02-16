@@ -452,6 +452,6 @@ div[id^="vu-meter-bar-secondary-"]
     z-index: 1;
 }
 
-#btn-toggle-username-bg.checked {
+button.checked {
     text-decoration: underline;
 }

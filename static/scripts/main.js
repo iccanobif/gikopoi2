@@ -172,13 +172,19 @@ const vueApp = new Vue({
                 alert("Connection failed :(")
             }
         },
-        switchSVGMode: async function(svgMode)
+        toggleCrispMode: function ()
+        {
+            this.switchSVGMode(this.svgMode == null ? "crisp" : null);
+        },
+        switchSVGMode: async function (svgMode)
         {
             this.svgMode = svgMode
             
+            this.loadRoomBackground();
+            this.loadRoomObjects();
+            
             await (loadCharacters(svgMode));
-            await this.loadRoomBackground();
-            await this.loadRoomObjects();
+            this.isRedrawRequired = true;
         },
         setLanguage: function (code)
         {
