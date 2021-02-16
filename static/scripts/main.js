@@ -174,16 +174,15 @@ const vueApp = new Vue({
         },
         toggleCrispMode: function ()
         {
-            this.switchSVGMode(this.svgMode == null ? "crisp" : null);
+            this.svgMode = this.svgMode != "crisp" ? "crisp" : null;
+            this.reloadImages()
         },
-        switchSVGMode: async function (svgMode)
+        reloadImages: async function ()
         {
-            this.svgMode = svgMode
-            
             this.loadRoomBackground();
             this.loadRoomObjects();
             
-            await (loadCharacters(svgMode));
+            await (loadCharacters(this.svgMode));
             this.isRedrawRequired = true;
         },
         setLanguage: function (code)

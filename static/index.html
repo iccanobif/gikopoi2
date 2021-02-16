@@ -106,11 +106,11 @@
                     <div class="tooltip-section">
                         <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
                         <button id="btn-toggle-username-bg" v-on:click="toggleUsernameBackground()" v-bind:class="{'checked': showUsernameBackground}">{{ $t("ui.user_name_bg") }}</button>
-                        <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">Crisp</button>
+                        <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{ $t("ui.button_crisp") }}</button>
                     </div>
                     <div class="tooltip-section">
                         <div class='tooltip-section-title'>
-                            {{ $t("ui.label_move") }}
+                            <div>{{ $t("ui.label_move") }}</div>
                         </div>
                         <div>
                             <button id="btn-move-left" class="grid-button" v-on:click="sendNewPositionToServer('left')">↖</button
@@ -123,7 +123,7 @@
                     </div>
                     <div class="tooltip-section">
                         <div class='tooltip-section-title'>
-                            {{ $t("ui.label_bubble") }}
+                            <div>{{ $t("ui.label_bubble") }}</div>
                         </div>
                         <div>
                             <button class="grid-button" v-on:click="sendNewBubblePositionToServer('left')">↖</button
