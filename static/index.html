@@ -64,7 +64,9 @@
             <div id="canvas-container">
                 <canvas id="room-canvas" tabindex="1" v-on:keydown="handleCanvasKeydown($event)"
                     v-on:mousedown="handleCanvasMousedown($event)"
-                    v-on:mousemove="handleCanvasMousemove($event)"></canvas>
+                    v-on:mousemove="handleCanvasMousemove($event)"
+                    v-on:wheel="handleCanvasWheel($event)"
+                    ></canvas>
                 <div id="infobox-container">
                     <div id="infobox" v-show="isInfoboxVisible">
                         <div id="infobox-area" class="infobox-line">
@@ -73,7 +75,7 @@
                         </div>
                         <div id="infobox-roomname" class="infobox-line">
                             <div class="infobox-title">{{ $t("ui.infobox_label_room") }}</div>
-                            <div class="infobox-value">{{ $t("room."+roomid) }}</div>
+                            <div class="infobox-value">{{ currentRoom.id && $t("room."+currentRoom.id) }}</div>
                         </div>
                         <div id="infobox-username" class="infobox-line">
                             <div class="infobox-title">{{ $t("ui.infobox_label_user_name") }}</div>
@@ -102,12 +104,13 @@
                             name="sound-effect-volume" min="0" max="1" step="0.01" :value="soundEffectVolume">
                     </div>
                     <div class="tooltip-section">
-                        <button id="btn-toggle-username-bg" v-on:click="toggleUsernameBackground()" v-bind:class="{'checked': showUsernameBackground}">{{ $t("ui.user_name_bg") }}</button>
                         <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
+                        <button id="btn-toggle-username-bg" v-on:click="toggleUsernameBackground()" v-bind:class="{'checked': showUsernameBackground}">{{ $t("ui.user_name_bg") }}</button>
+                        <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{ $t("ui.button_crisp") }}</button>
                     </div>
                     <div class="tooltip-section">
                         <div class='tooltip-section-title'>
-                            {{ $t("ui.label_move") }}
+                            <div>{{ $t("ui.label_move") }}</div>
                         </div>
                         <div>
                             <button id="btn-move-left" class="grid-button" v-on:click="sendNewPositionToServer('left')">↖</button
@@ -120,7 +123,7 @@
                     </div>
                     <div class="tooltip-section">
                         <div class='tooltip-section-title'>
-                            {{ $t("ui.label_bubble") }}
+                            <div>{{ $t("ui.label_bubble") }}</div>
                         </div>
                         <div>
                             <button class="grid-button" v-on:click="sendNewBubblePositionToServer('left')">↖</button
@@ -131,7 +134,6 @@
                             ><button class="grid-button" v-on:click="sendNewBubblePositionToServer('right')">↘</button>
                         </div>
                     </div>
-                    
                 </div>
             </div>
             {{ $t("ui.label_log") }}
@@ -238,20 +240,18 @@
                         <input type="radio" id="stream-form-video-only-mode" value="video" v-model="streamMode"><label
                             for="stream-form-video-only-mode">{{ $t("ui.stream_form_video_only_mode") }}</label>
                     </div>
-                    <div class='popup-section' v-if="streamMode != 'video'">
-                        <span>{{ $t("ui.stream_form_voice_enhancement") }}</span><input type="radio"
-                            id="stream-form-voice-enhancement-on" value="on" v-model="streamVoiceEnhancement"><label
-                            for="stream-form-voice-enhancement-on">{{ $t("ui.stream_form_voice_enhancement_on")
-                            }}</label>
-
-                        <input type="radio" id="stream-form-voice-enhancement-off" value="off"
-                            v-model="streamVoiceEnhancement"><label for="stream-form-voice-enhancement-off">{{
-                            $t("ui.stream_form_voice_enhancement_off") }}</label>
-
-                        <input type="radio" id="stream-form-voice-enhancement-advanced" value="advanced"
-                            v-model="streamVoiceEnhancement"><label for="stream-form-voice-enhancement-advanced">{{
-                            $t("ui.stream_form_voice_enhancement_advanced") }}</label>
-                        <div class='popup-subsection' v-if="streamVoiceEnhancement == 'advanced'">
+                    <div class='popup-section' v-if="streamMode != 'sound'">
+                        <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label 
+                            for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
+                    </div>
+                    <div v-if="streamMode != 'video'">
+                        <div class='popup-section'>
+                            <button v-if="!displayAdvancedStreamSettings"
+                                v-on:click="displayAdvancedStreamSettings = true">{{ $t("ui.stream_form_show_advanced") }}</button>
+                            <button v-if="displayAdvancedStreamSettings"
+                                v-on:click="displayAdvancedStreamSettings = false">{{ $t("ui.stream_form_hide_advanced") }}</button>
+                        </div>
+                        <div class='popup-section' v-if="displayAdvancedStreamSettings">
                             <div>
                                 <input type="checkbox" id="stream-form-echo-cancellation"
                                     v-model="streamEchoCancellation"><label for="stream-form-echo-cancellation">{{

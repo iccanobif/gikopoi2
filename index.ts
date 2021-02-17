@@ -8,15 +8,18 @@ import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
 import { cloneDeep } from "lodash";
+import compression from 'compression';
+
 const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http, {
-    pingInterval: 50 * 1000, // Heroku fails with "H15 Idle connection" if a socket is inactive for more than 55 seconds with
+    pingInterval: 25 * 1000, // Heroku fails with "H15 Idle connection" if a socket is inactive for more than 55 seconds with
     pingTimeout: 60 * 1000
 });
 const tripcode = require('tripcode');
 const enforce = require('express-sslify');
 const JanusClient = require('janus-videoroom-client').Janus;
+
 
 const delay = 0
 const persistInterval = 5 * 1000
@@ -197,12 +200,12 @@ io.on("connection", function (socket: any)
             else 
             {
                 // no TIGER TIGER pls
-                if ( "TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
+                if ("TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
             }
 
             msg = msg.substr(0, 500)
-            
+
             user.lastRoomMessage = msg;
 
             log.info("MSG:", user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg);
@@ -374,7 +377,7 @@ io.on("connection", function (socket: any)
                 socket.emit("server-not-ok-to-take-stream", streamSlotId);
                 return;
             };
-            
+
             const client = roomState.janusRoomServer.client;
 
             await janusClientConnect(client);
@@ -605,6 +608,20 @@ function emitServerStats(areaId: string)
 if (process.env.GIKO2_ENABLE_SSL == "true")
     app.use(enforce.HTTPS({ trustProtoHeader: true }))
 
+app.use(compression({
+    filter: (req, res) =>
+    {
+        if (req.headers['x-no-compression'])
+        {
+            // don't compress responses with this request header
+            return false
+        }
+
+        // fallback to standard filter function
+        return compression.filter(req, res)
+    }
+}))
+
 app.get("/", (req, res) =>
 {
     log.info("Fetching root...")
@@ -615,7 +632,7 @@ app.get("/", (req, res) =>
             if (err)
             {
                 res.statusCode = 500
-                res.end("Could not retrieve index.html [${err}]")
+                res.end("Could not retrieve index.html [" + err + "]")
                 return
             }
 
@@ -641,6 +658,59 @@ app.get("/", (req, res) =>
                 'Cache-Control': 'no-cache'
             })
             res.end(data)
+        }
+        catch (e)
+        {
+            res.end(e.message + " " + e.stack)
+        }
+    })
+})
+
+//const svgCrispCache: { [path: string]: string }[] = {};
+const svgCrispCache: any = {};
+app.get(/(.+)\.crisp\.svg$/i, (req, res) =>
+{
+    const returnImage = function(data: string)
+    {
+        res.set({
+            'Content-Type': 'image/svg+xml',
+            'Cache-Control': 'no-cache'
+        });
+        res.end(data);
+    };
+    
+    const svgPath = req.params[0] + ".svg";
+    
+    try
+    {
+        if (svgPath in svgCrispCache)
+        {
+            returnImage(svgCrispCache[svgPath]);
+            return;
+        }
+    }
+    catch (e)
+    {
+        res.end(e.message + " " + e.stack)
+    }
+    
+    log.info("Fetching svg: " + svgPath)
+    readFile("static" + svgPath, 'utf8', async (err, data) =>
+    {
+        try
+        {
+            if (err)
+            {
+                res.statusCode = 500
+                res.end("Could not retrieve index.html [" + err + "]")
+                return
+            }
+            
+            data = data.replace('<svg', '<svg shape-rendering="crispEdges"');
+            
+            svgCrispCache[svgPath] = data;
+            
+            returnImage(data);
         }
         catch (e)
         {
