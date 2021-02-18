@@ -57,8 +57,11 @@ export default class User
         if (!this.isWalking)
             return
             
-        const walkingSpeedX = BLOCK_WIDTH / ( this.character.characterName == "shar_naito" ? 20 : 40)
-        const walkingSpeedY = BLOCK_HEIGHT / ( this.character.characterName == "shar_naito" ? 20 : 40)
+        const blockWidth = room.blockWidth ? room.blockWidth : BLOCK_WIDTH;
+        const blockHeight = room.blockHeight ? room.blockHeight : BLOCK_HEIGHT;
+            
+        const walkingSpeedX = blockWidth / ( this.character.characterName == "shar_naito" ? 20 : 40)
+        const walkingSpeedY = blockHeight / ( this.character.characterName == "shar_naito" ? 20 : 40)
 
         const realTargetCoordinates = calculateRealCoordinates(room, this.logicalPositionX, this.logicalPositionY);
 

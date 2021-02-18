@@ -54,6 +54,8 @@ const vueApp = new Vue({
         canvasDimensions: { w: 0, h: 0 },
         canvasScale: 1,
         svgMode: null,
+        blockWidth: BLOCK_WIDTH,
+        blockHeight: BLOCK_HEIGHT,
 
         // rula stuff
         isRulaPopupOpen: false,
@@ -256,6 +258,9 @@ const vueApp = new Vue({
             
             this.loadRoomBackground();
             this.loadRoomObjects();
+            
+            this.blockWidth = this.currentRoom.blockWidth ? this.currentRoom.blockWidth : BLOCK_WIDTH;
+            this.blockHeight = this.currentRoom.blockHeight ? this.currentRoom.blockHeight : BLOCK_HEIGHT;
 
             // stream stuff
             this.takenStreams = streamsDto.map(() => false);
@@ -759,7 +764,7 @@ const vueApp = new Vue({
             {
                 const user = this.users[this.myUserID]
                 
-                userOffset.x -= this.canvasScale * (user.currentPhysicalPositionX + BLOCK_WIDTH/2) - this.canvasDimensions.w / 2,
+                userOffset.x -= this.canvasScale * (user.currentPhysicalPositionX + this.blockWidth/2) - this.canvasDimensions.w / 2,
                 userOffset.y -= this.canvasScale * (user.currentPhysicalPositionY - 60) - this.canvasDimensions.h / 2
             }
             
@@ -879,7 +884,7 @@ const vueApp = new Vue({
                     this.drawImage(
                         context,
                         renderImage.getImage(this.canvasScale),
-                        o.o.currentPhysicalPositionX + BLOCK_WIDTH/2 - renderImage.width/2,
+                        o.o.currentPhysicalPositionX + this.blockWidth/2 - renderImage.width/2,
                         o.o.currentPhysicalPositionY - renderImage.height
                     );
                     
@@ -900,7 +905,7 @@ const vueApp = new Vue({
                 this.drawImage(
                     this.canvasContext,
                     image,
-                    o.o.currentPhysicalPositionX + BLOCK_WIDTH/2 - o.o.nameImage.width/2,
+                    o.o.currentPhysicalPositionX + this.blockWidth/2 - o.o.nameImage.width/2,
                     o.o.currentPhysicalPositionY - 120
                 );
             }
@@ -928,7 +933,7 @@ const vueApp = new Vue({
                 this.drawImage(
                     this.canvasContext,
                     image,
-                    user.currentPhysicalPositionX + BLOCK_WIDTH/2
+                    user.currentPhysicalPositionX + this.blockWidth/2
                         + (pos[0] ? 21 : -21 - user.bubbleImage.width),
                     user.currentPhysicalPositionY
                         - (pos[1] ? 62 : 70 + user.bubbleImage.height)
@@ -956,7 +961,7 @@ const vueApp = new Vue({
             const cr_y = co.y+origin.y;
             
             context.beginPath();
-            context.rect(cr_x-1, cr_y+1, BLOCK_WIDTH+2, -BLOCK_HEIGHT-2);
+            context.rect(cr_x-1, cr_y+1, this.blockWidth+2, -this.blockHeight-2);
             context.stroke();
             
             const cc_x = co.x+this.currentRoom.originCoordinates.x;
@@ -996,8 +1001,8 @@ const vueApp = new Vue({
                     );
                     context.fillText(
                         x + "," + y,
-                        (realCoord.x + BLOCK_WIDTH/2) + this.canvasGlobalOffset.x,
-                        (realCoord.y - BLOCK_HEIGHT/3) + this.canvasGlobalOffset.y
+                        (realCoord.x + this.blockWidth/2) + this.canvasGlobalOffset.x,
+                        (realCoord.y - this.blockHeight/3) + this.canvasGlobalOffset.y
                     );
                 }
         },

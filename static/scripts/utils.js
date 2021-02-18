@@ -25,13 +25,16 @@ export function loadImage(url)
 // returns "left" and "bottom" positions
 export function calculateRealCoordinates(room, x, y)
 {
+    const blockWidth = room.blockWidth ? room.blockWidth : BLOCK_WIDTH;
+    const blockHeight = room.blockHeight ? room.blockHeight : BLOCK_HEIGHT;
+    
     let realX = room.originCoordinates.x
-        + x * BLOCK_WIDTH / 2
-        + y * BLOCK_WIDTH / 2
+        + x * blockWidth / 2
+        + y * blockWidth / 2
 
     let realY = room.originCoordinates.y
-        + x * BLOCK_HEIGHT / 2
-        - y * BLOCK_HEIGHT / 2
+        + x * blockHeight / 2
+        - y * blockHeight / 2
 
     return { x: realX, y: realY }
 }

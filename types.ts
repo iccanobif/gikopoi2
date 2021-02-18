@@ -62,6 +62,8 @@ export interface Room
     streamSlotCount: number;
     secret: boolean;
     forcedAnonymous?: boolean;
+    blockWidth?: number;
+    blockHeight?: number;
 }
 
 export interface JanusServer {
