@@ -253,7 +253,7 @@ const vueApp = new Vue({
             {
                 this.addUser(u);
                 if(previousRoomId != this.currentRoom.id && this.users[u.id].message)
-                    this.displayMessage(u.id, this.users[u.id].message);
+                    this.displayMessage(u, this.users[u.id].message);
             }
             
             this.loadRoomBackground();
@@ -343,7 +343,16 @@ const vueApp = new Vue({
 
             this.socket.on("server-msg", (userId, msg) =>
             {
-                this.displayMessage(userId, msg);
+                const user = this.users[userId]
+                if (user)
+                {
+                    user.isInactive = false;
+                    this.displayMessage(user, msg);
+                }
+                else
+                {
+                    console.error("Received message", msg, "from user", userId)
+                }
             });
 
             this.socket.on("server-stats", (serverStats) =>
@@ -499,12 +508,8 @@ const vueApp = new Vue({
             
             this.users[userDTO.id] = newUser;
         },
-        displayMessage: async function (userId, msg)
+        displayMessage: async function (user, msg)
         {
-            const user = this.users[userId]
-            if (!user)
-                console.error("Received message", msg, "from user", userId)
-            
             const plainMsg = msg.replace(urlRegex, s => decodeURI(s));
             
             user.message = plainMsg;
@@ -514,9 +519,6 @@ const vueApp = new Vue({
                 this.isRedrawRequired = true;
                 user.lastMessage = user.message;
             }
-            
-            
-            user.isInactive = false;
             
             if(!user.message) return;
             

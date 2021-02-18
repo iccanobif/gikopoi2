@@ -24,7 +24,8 @@ const JanusClient = require('janus-videoroom-client').Janus;
 const delay = 0
 const persistInterval = 5 * 1000
 const maxGhostRetention = 5 * 60 * 1000
-const inactivityTimeout = 30 * 60 * 1000
+// const inactivityTimeout = 30 * 60 * 1000
+const inactivityTimeout = 1000
 
 log.setLevel(log.levels.DEBUG)
 
