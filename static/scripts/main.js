@@ -969,15 +969,15 @@ const vueApp = new Vue({
             context.lineTo(cc_x, co.y);
             context.lineTo(cc_x, cc_y);
             context.stroke();
-            
-            context.font = "bold 13px Arial, Helvetica, sans-serif";
-            context.textBaseline = "bottom";
-            context.textAlign = "center";
         },
         
         drawGridNumbers: function ()
         {
             const context = this.canvasContext;
+            
+            context.font = "bold 13px Arial, Helvetica, sans-serif";
+            context.textBaseline = "bottom";
+            context.textAlign = "center";
             
             for (let x = 0; x < this.currentRoom.size.x; x++)
                 for (let y = 0; y < this.currentRoom.size.y; y++)
