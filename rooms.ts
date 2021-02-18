@@ -2795,7 +2795,11 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  5, y:  3 },
             { x:  5, y:  5 },
         ],
-        forbiddenMovements: [],
+        forbiddenMovements: [
+            { xFrom:  6, yFrom:  1, xTo:  7, yTo:  1 }, { xFrom:  7, yFrom:  1, xTo:  6, yTo:  1 },
+            { xFrom:  6, yFrom:  3, xTo:  7, yTo:  3 }, { xFrom:  7, yFrom:  3, xTo:  6, yTo:  3 },
+            { xFrom:  6, yFrom:  5, xTo:  7, yTo:  5 }, { xFrom:  7, yFrom:  5, xTo:  6, yTo:  5 },
+        ],
         doors: {
             right: { x: 7, y: 2, direction: "left", target: { roomId: "school_rouka", doorId: "door_right" } },
         },
@@ -2878,7 +2882,22 @@ export const rooms: { [roomId: string]: Room } = {
         
             { x:  0, y: 11 },
         ],
-        forbiddenMovements: [],
+        forbiddenMovements: [
+            { xFrom:  1, yFrom:  2, xTo:  1, yTo:  1 }, { xFrom:  1, yFrom:  1, xTo:  1, yTo:  2 },
+            { xFrom:  3, yFrom:  2, xTo:  3, yTo:  1 }, { xFrom:  3, yFrom:  1, xTo:  3, yTo:  2 },
+            { xFrom:  5, yFrom:  2, xTo:  5, yTo:  1 }, { xFrom:  5, yFrom:  1, xTo:  5, yTo:  2 },
+            { xFrom:  7, yFrom:  2, xTo:  7, yTo:  1 }, { xFrom:  7, yFrom:  1, xTo:  7, yTo:  2 },
+            
+            { xFrom:  1, yFrom:  5, xTo:  1, yTo:  4 }, { xFrom:  1, yFrom:  4, xTo:  1, yTo:  5 },
+            { xFrom:  3, yFrom:  5, xTo:  3, yTo:  4 }, { xFrom:  3, yFrom:  4, xTo:  3, yTo:  5 },
+            { xFrom:  5, yFrom:  5, xTo:  5, yTo:  4 }, { xFrom:  5, yFrom:  4, xTo:  5, yTo:  5 },
+            { xFrom:  7, yFrom:  5, xTo:  7, yTo:  4 }, { xFrom:  7, yFrom:  4, xTo:  7, yTo:  5 },
+            
+            { xFrom:  1, yFrom:  8, xTo:  1, yTo:  7 }, { xFrom:  1, yFrom:  7, xTo:  1, yTo:  8 },
+            { xFrom:  3, yFrom:  8, xTo:  3, yTo:  7 }, { xFrom:  3, yFrom:  7, xTo:  3, yTo:  8 },
+            { xFrom:  5, yFrom:  8, xTo:  5, yTo:  7 }, { xFrom:  5, yFrom:  7, xTo:  5, yTo:  8 },
+            { xFrom:  7, yFrom:  8, xTo:  7, yTo:  7 }, { xFrom:  7, yFrom:  7, xTo:  7, yTo:  8 },
+        ],
         doors: {
             right: { x: 8, y: 1, direction: "left", target: { roomId: "school_rouka", doorId: "door_left" } },
         },
