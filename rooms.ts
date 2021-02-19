@@ -3102,6 +3102,55 @@ export const rooms: { [roomId: string]: Room } = {
         streamSlotCount: 0,
         secret: false
     },
+    seashore: {
+        id: "seashore",
+        scale: 1,
+        size: { x: 9, y: 14 },
+        originCoordinates: { x: 507, y: 556 },
+        blockWidth: 80,
+        blockHeight: 15,
+        spawnPoint: "right",
+        backgroundImageUrl: "rooms/seashore/background.svg",
+        backgroundColor: "#c0c0c0",
+        isBackgroundImageOffsetEdge: true,
+        objects: [
+            { x:  2, y:  6, offset: { x:  851-1, y:  486-4 }, url: 'seat.svg' },
+            { x:  2, y:  7, offset: { x:  890-1, y:  479-4 }, url: 'seat.svg' },
+            { x:  2, y:  8, offset: { x:  931-1, y:  471-4 }, url: 'seat.svg' },
+            { x:  2, y:  9, offset: { x:  971-1, y:  464-4 }, url: 'seat.svg' },
+            { x:  2, y: 10, offset: { x: 1011-1, y:  456-4 }, url: 'seat.svg' },
+            { x:  2, y: 11, offset: { x: 1051-1, y:  449-4 }, url: 'seat.svg' },
+            
+            { x:  6, y:  6, offset: { x: 1011-1, y:  516-4 }, url: 'seat.svg' },
+            { x:  6, y:  7, offset: { x: 1051-1, y:  509-4 }, url: 'seat.svg' },
+            { x:  6, y:  8, offset: { x: 1091-1, y:  501-4 }, url: 'seat.svg' },
+            { x:  6, y:  9, offset: { x: 1131-1, y:  494-4 }, url: 'seat.svg' },
+            { x:  6, y: 10, offset: { x: 1171-1, y:  486-4 }, url: 'seat.svg' },
+            { x:  6, y: 11, offset: { x: 1211-1, y:  479-4 }, url: 'seat.svg' },
+        ],
+        sit: [
+            { x:  2, y:  6 },
+            { x:  2, y:  7 },
+            { x:  2, y:  8 },
+            { x:  2, y:  9 },
+            { x:  2, y: 10 },
+            { x:  2, y: 11 },
+            
+            { x:  6, y:  6 },
+            { x:  6, y:  7 },
+            { x:  6, y:  8 },
+            { x:  6, y:  9 },
+            { x:  6, y: 10 },
+            { x:  6, y: 11 },
+        ],
+        blocked: [],
+        forbiddenMovements: [],
+        doors: {
+            right: { x: 8, y: 9, direction: "left", target: null },
+        },
+        streamSlotCount: 0,
+        secret: false
+    },
 };
 
 export const defaultRoom = rooms.admin_st
