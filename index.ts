@@ -24,8 +24,7 @@ const JanusClient = require('janus-videoroom-client').Janus;
 const delay = 0
 const persistInterval = 5 * 1000
 const maxGhostRetention = 5 * 60 * 1000
-// const inactivityTimeout = 30 * 60 * 1000
-const inactivityTimeout = 1000
+const inactivityTimeout = 30 * 60 * 1000
 
 log.setLevel(log.levels.DEBUG)
 
@@ -203,6 +202,10 @@ io.on("connection", function (socket: any)
                 // no TIGER TIGER pls
                 if ("TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
+
+                // and for the love of god no moonwalking
+                if (msg.toLowerCase().includes("moonwalk") || msg.toLowerCase().includes("moon-walk"))
+                    msg = "(^Д^)"
             }
 
             msg = msg.substr(0, 500)
