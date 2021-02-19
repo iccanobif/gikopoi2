@@ -202,6 +202,10 @@ io.on("connection", function (socket: any)
                 // no TIGER TIGER pls
                 if ("TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
+
+                // and for the love of god no moonwalking
+                if (msg.toLowerCase().includes("moonwalk") || msg.toLowerCase().includes("moon-walk"))
+                    msg = "(^Д^)"
             }
 
             msg = msg.substr(0, 500)
