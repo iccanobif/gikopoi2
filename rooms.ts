@@ -1276,7 +1276,7 @@ export const rooms: { [roomId: string]: Room } = {
             up: { x: 6, y: 4, direction: "down", target: { roomId: "school_ground", doorId: "down" } },
             right: { x: 7, y: 2, direction: "left", target: { roomId: "school_st", doorId: "left" } },
             down: { x: 3, y: 0, direction: "up", target: { roomId: "bar_giko_square", doorId: "up" } },
-            left: { x: 0, y: 2, direction: "right", target: "NOT_READY_YET" },
+            left: { x: 0, y: 2, direction: "right", target: { roomId: "seashore", doorId: "right" } },
         },
         streamSlotCount: 0,
         secret: false
@@ -3146,7 +3146,7 @@ export const rooms: { [roomId: string]: Room } = {
         blocked: [],
         forbiddenMovements: [],
         doors: {
-            right: { x: 8, y: 9, direction: "left", target: null },
+            right: { x: 8, y: 9, direction: "left", target: { roomId: "busstop", doorId: "left" } },
         },
         streamSlotCount: 0,
         secret: false
