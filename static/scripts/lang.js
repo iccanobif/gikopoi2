@@ -77,7 +77,7 @@ export const messages =
             
             unknown_error: "不明なエラーが原因で接続に失敗しました。",
             invalid_username: "指定されたユーザー名は無効です。",
-            ip_restricted: "このIPアドレスですでに2回ログインしています。",
+            ip_restricted: "すでにこのIPアドレスで2回ログインしています。",
         },
         room:
         {
