@@ -55,9 +55,11 @@ export function getConnectedUserList(roomId: string | null, areaId: string | nul
     return output
 };
 
-export function getUsersByIp(ip: string): Player[]
+export function getUsersByIp(ip: string, areaId: string): Player[]
 {
-    return Object.values(users).filter(u => u.ip == ip)
+    return Object.values(users)
+        .filter(u => u.areaId == areaId)
+        .filter(u => u.ip == ip)
 }
 
 export function getAllUsers(): Player[]

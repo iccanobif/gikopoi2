@@ -789,7 +789,7 @@ app.post("/login", (req, res) =>
         
         if (settings.restrictLoginByIp)
         {
-            const users = getUsersByIp(req.ip);
+            const users = getUsersByIp(req.ip, areaId);
             let userCount = users.length;
             users.every(u =>
             {
