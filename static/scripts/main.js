@@ -182,7 +182,7 @@ const vueApp = new Vue({
             }
             catch (e)
             {
-                console.error(e)
+                console.error(new Date(), e)
                 if (e instanceof UserException)
                 {
                     alert(i18n.t("msg." + e.message))
@@ -348,12 +348,12 @@ const vueApp = new Vue({
             this.socket.on("reconnect", immanentizeConnection);
 
             this.socket.on('connect_error', (error) => {
-                console.error(error)
+                console.error(new Date(), error)
               });
 
             this.socket.on("disconnect", (reason) =>
             {
-                console.error("Socket disconnected:", reason)
+                console.error(new Date(), "Socket disconnected:", reason)
                 this.connectionLost = true;
             });
             this.socket.on("server-cant-log-you-in", () =>
@@ -376,7 +376,7 @@ const vueApp = new Vue({
                 }
                 else
                 {
-                    console.error("Received message", msg, "from user", userId)
+                    console.error(new Date(), "Received message", msg, "from user", userId)
                 }
             });
 
@@ -1498,7 +1498,7 @@ const vueApp = new Vue({
                         }
                         catch (exc)
                         {
-                            console.error(exc)
+                            console.error(new Date(), exc)
                             clearInterval(this.vuMeterTimer)
                         }
                     }, 100)
@@ -1527,7 +1527,7 @@ const vueApp = new Vue({
             } catch (err)
             {
                 this.showWarningToast(i18n.t("msg.error_obtaining_media_device"));
-                console.error(err);
+                console.error(new Date(), err);
                 this.wantToStream = false;
                 this.mediaStream = false;
                 this.streamSlotIdInWhichIWantToStream = null;
