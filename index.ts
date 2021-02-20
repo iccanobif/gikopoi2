@@ -776,6 +776,12 @@ app.post("/ping/:userId", async (req, res) =>
 })
 
 app.use(express.json());
+app.use(express.text());
+
+app.post("/error", (req, res) => {
+    log.error(req.body)
+    res.end()
+})
 
 app.post("/login", (req, res) =>
 {
