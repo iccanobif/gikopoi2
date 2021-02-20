@@ -8,6 +8,10 @@ import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";
 
+function UserException(message) {
+    this.message = message;
+}
+
 const urlRegex = /(https?:\/\/|www\.)[^\s]+/gi
 
 let loadCharacterImagesPromise = null
@@ -176,10 +180,18 @@ const vueApp = new Vue({
                 this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
                 this.updateAudioElementsVolume()
             }
-            catch (exc)
+            catch (e)
             {
-                console.log(exc)
-                alert("Connection failed :(")
+                console.error(e)
+                if (e instanceof UserException)
+                {
+                    alert(i18n.t("msg." + e.message))
+                }
+                else
+                {
+                    alert(i18n.t("msg.unknown_error"))
+                }
+                window.location.reload();
             }
         },
         toggleCrispMode: function ()
@@ -293,8 +305,13 @@ const vueApp = new Vue({
                 areaId: this.areaId,
             });
 
-            this.myUserID = await loginResponse.json();
-
+            const loginMessage = await loginResponse.json();
+            
+            if (loginMessage[0] == "error") throw new UserException(loginMessage[1]);
+            if (loginMessage[0] != "success") throw loginMessage;
+            
+            this.myUserID = loginMessage[1];
+            
             // load the room state before connecting the websocket, so that all
             // code handling websocket events (and paint() events) can assume that
             // currentRoom, streams etc... are all defined

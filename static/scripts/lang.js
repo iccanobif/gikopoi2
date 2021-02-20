@@ -74,6 +74,10 @@ export const messages =
             
             error_obtaining_media_device: "デバイスを取得できませんでした。",
             no_webrtc: "あなたのブラウザーはWebRTCをサポートしていません。",
+            
+            unknown_error: "不明なエラーが原因で接続に失敗しました。",
+            invalid_username: "指定されたユーザー名は無効です。",
+            ip_restricted: "すでにこのIPアドレスで2回ログインしています。",
         },
         room:
         {
@@ -186,6 +190,10 @@ export const messages =
             
             error_obtaining_media_device: "Unable to obtain media device.",
             no_webrtc: "Sorry, your browser doesn't support WebRTC.",
+            
+            unknown_error: "The connection failed due to an unknown error.",
+            invalid_username: "The provided username is invalid.",
+            ip_restricted: "You are already logged in twice with this IP address.",
         },
         room:
         {
