@@ -4,7 +4,7 @@ body
     margin: 0;
     font-family: IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif;
     font-size: 16px;
-    padding: 5px;    
+    padding: 5px;
 }
 
 header {
@@ -247,13 +247,34 @@ video {
 #login-page button,
 #toolbar button,
 #video-streams button,
+#btn-toggle-dark-mode,
 .popup button
+button
 {
     border: 1px solid #959595;
     padding: 3px 10px;
     margin: 1px;
     min-height: 32px;
     border-radius: 3px;
+}
+
+#style-selectors
+{
+    display: flex;
+    justify-content: center;
+}
+
+#style-selectors button
+{
+    /* position: absolute;
+    right: 0;
+    top: 0; */
+    outline: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-decoration: underline;
+    z-index: 1;
 }
 
 #toolbar-text-input

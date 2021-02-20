@@ -12,6 +12,7 @@ const urlRegex = /(https?:\/\/|www\.)[^\s]+/gi
 
 let loadCharacterImagesPromise = null
 
+
 const i18n = new VueI18n({
     locale: "ja",
     fallbackLocale: "ja",
@@ -104,6 +105,7 @@ const vueApp = new Vue({
 
         vuMeterTimer: null,
         showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
+        isDarkMode: localStorage.getItem("isDarkMode") == "true",
     },
     mounted: function ()
     {
@@ -124,6 +126,12 @@ const vueApp = new Vue({
             this.setLanguage("en")
 
         loadCharacterImagesPromise = loadCharacters();
+
+        // Enable dark mode stylesheet (gotta do it here in the "mounted" event because otherwise 
+        // the screen will flash dark for a bit while loading the page)
+        for (let i = 0; i < document.styleSheets.length; i++)
+                if (document.styleSheets[i].title == "dark-mode-sheet")
+                    document.styleSheets[i].disabled = false
     },
     methods: {
         login: async function (ev)
@@ -1668,6 +1676,13 @@ const vueApp = new Vue({
         showPasswordInput: function ()
         {
             this.passwordInputVisible = true;
-        }
+        },
+        toggleDarkMode: function ()
+        {
+            localStorage.setItem(
+                "isDarkMode",
+                (this.isDarkMode = !this.isDarkMode)
+            );
+        },
     },
 });
