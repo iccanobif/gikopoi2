@@ -790,13 +790,16 @@ app.post("/login", (req, res) =>
         if (settings.restrictLoginByIp)
         {
             const users = getUsersByIp(req.ip);
+            let userCount = users.length;
             users.every(u =>
             {
-                if (users.length < 2) return false;
-                if (u.isGhost) disconnectUser(u);
+                if (userCount < 2) return false;
+                if (!u.isGhost) return true;
+                disconnectUser(u);
+                userCount--;
                 return true;
             })
-            if (users.length > 1)
+            if (userCount > 1)
             {
                 res.statusCode = 500
                 res.json(['error', 'ip_restricted'])
