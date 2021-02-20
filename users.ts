@@ -27,6 +27,7 @@ export class Player
     public isStreaming = false;
     public bubblePosition: Direction = "up";
     public lastRoomMessage: string = "";
+    public ip: string | null = null;
 
     constructor(options: { name?: string, characterId: string, areaId: Area })
     {
@@ -53,6 +54,11 @@ export function getConnectedUserList(roomId: string | null, areaId: string | nul
     if (areaId) output = output.filter(u => u.areaId == areaId)
     return output
 };
+
+export function getUsersByIp(ip: string): Player[]
+{
+    return Object.values(users).filter(u => u.ip == ip)
+}
 
 export function getAllUsers(): Player[]
 {

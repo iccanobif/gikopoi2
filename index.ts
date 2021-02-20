@@ -2,7 +2,7 @@ import express from "express"
 import { readFile, writeFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
 import { Direction, RoomState, RoomStateDto, JanusServer } from "./types";
-import { addNewUser, deserializeUserState, getConnectedUserList, getAllUsers, getUser, Player, removeUser, serializeUserState } from "./users";
+import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, getAllUsers, getUser, Player, removeUser, serializeUserState } from "./users";
 import { sleep } from "./utils";
 import got from "got";
 import log from "loglevel";
@@ -28,7 +28,8 @@ const inactivityTimeout = 30 * 60 * 1000
 
 log.setLevel(log.levels.DEBUG)
 
-console.log(settings.janusServerUrl)
+if (settings.isUsingProxy)
+    app.set('trust proxy', true)
 
 const janusServers: JanusServer[] =
     [{
@@ -782,8 +783,25 @@ app.post("/login", (req, res) =>
         if (typeof userName !== "string")
         {
             res.statusCode = 500
-            res.end("please specify a username")
+            res.json(['error', 'invalid_username'])
             return;
+        }
+        
+        if (settings.restrictLoginByIp)
+        {
+            const users = getUsersByIp(req.ip);
+            users.every(u =>
+            {
+                if (users.length < 2) return false;
+                if (u.isGhost) disconnectUser(u);
+                return true;
+            })
+            if (users.length > 1)
+            {
+                res.statusCode = 500
+                res.json(['error', 'ip_restricted'])
+                return;
+            }
         }
 
         if (userName.length > 20)
@@ -796,8 +814,14 @@ app.post("/login", (req, res) =>
             processedUserName = processedUserName + "◆" + tripcode(userName.substr(n + 1));
 
         const user = addNewUser(processedUserName, characterId, areaId);
-        log.info("Logged in", user.id, "<" + user.name + ">")
-        res.json(user.id)
+        
+        if (req.ip !== "127.0.0.1")
+            user.ip = req.ip;
+            
+        const logInfoIP = user.ip != null ? " from " + user.ip : "";
+        
+        log.info("Logged in", user.id, "<" + user.name + ">" + logInfoIP)
+        res.json(['success', user.id])
     }
     catch (e)
     {
