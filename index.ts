@@ -28,7 +28,7 @@ const inactivityTimeout = 30 * 60 * 1000
 
 log.setLevel(log.levels.DEBUG)
 
-if (settings.isUsingProxy)
+if (settings.isBehindProxy)
     app.set('trust proxy', true)
 
 const janusServers: JanusServer[] =
