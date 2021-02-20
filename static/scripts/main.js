@@ -1408,8 +1408,8 @@ const vueApp = new Vue({
                     userMediaPromise = navigator.mediaDevices.getUserMedia(
                         {
                             video: !withVideo || withScreenCapture ? undefined : {
-                                width: 248,
-                                height: 180,
+                                width: 320,
+                                height: 240,
                                 frameRate: {
                                     ideal: 24,
                                     min: 10,
