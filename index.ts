@@ -20,13 +20,15 @@ const tripcode = require('tripcode');
 const enforce = require('express-sslify');
 const JanusClient = require('janus-videoroom-client').Janus;
 
-
 const delay = 0
 const persistInterval = 5 * 1000
 const maxGhostRetention = 5 * 60 * 1000
 const inactivityTimeout = 30 * 60 * 1000
+const maximumUsersPerIpPerArea = 2
 
 log.setLevel(log.levels.DEBUG)
+
+console.log("Using settings:", JSON.stringify(settings))
 
 if (settings.isBehindProxy)
     app.set('trust proxy', true)
@@ -675,7 +677,7 @@ app.get("/", (req, res) =>
 const svgCrispCache: any = {};
 app.get(/(.+)\.crisp\.svg$/i, (req, res) =>
 {
-    const returnImage = function(data: string)
+    const returnImage = function (data: string)
     {
         res.set({
             'Content-Type': 'image/svg+xml',
@@ -683,9 +685,9 @@ app.get(/(.+)\.crisp\.svg$/i, (req, res) =>
         });
         res.end(data);
     };
-    
+
     const svgPath = req.params[0] + ".svg";
-    
+
     try
     {
         if (svgPath in svgCrispCache)
@@ -698,7 +700,7 @@ app.get(/(.+)\.crisp\.svg$/i, (req, res) =>
     {
         res.end(e.message + " " + e.stack)
     }
-    
+
     log.info("Fetching svg: " + svgPath)
     readFile("static" + svgPath, 'utf8', async (err, data) =>
     {
@@ -710,11 +712,11 @@ app.get(/(.+)\.crisp\.svg$/i, (req, res) =>
                 res.end("Could not retrieve index.html [" + err + "]")
                 return
             }
-            
+
             data = data.replace('<svg', '<svg shape-rendering="crispEdges"');
-            
+
             svgCrispCache[svgPath] = data;
-            
+
             returnImage(data);
         }
         catch (e)
@@ -780,26 +782,33 @@ app.post("/login", (req, res) =>
     try
     {
         let { userName, characterId, areaId } = req.body
+
+        log.info("Attempting to login", req.ip, "<" + userName + ">", characterId, areaId)
+
         if (typeof userName !== "string")
         {
             res.statusCode = 500
             res.json(['error', 'invalid_username'])
             return;
         }
-        
+
         if (settings.restrictLoginByIp)
         {
             const users = getUsersByIp(req.ip, areaId);
-            let userCount = users.length;
-            users.every(u =>
+            let sameIpUserCount = 0;
+            for (const u of users)
             {
-                if (userCount < 2) return false;
-                if (!u.isGhost) return true;
-                disconnectUser(u);
-                userCount--;
-                return true;
-            })
-            if (userCount > 1)
+                // Don't count ghosts and also remove them, while we're at it
+                if (u.isGhost)
+                    disconnectUser(u);
+                else
+                    sameIpUserCount++
+
+                if (sameIpUserCount >= maximumUsersPerIpPerArea)
+                    // No need to keep counting, 
+                    break;
+            }
+            if (sameIpUserCount >= maximumUsersPerIpPerArea)
             {
                 res.statusCode = 500
                 res.json(['error', 'ip_restricted'])
@@ -816,14 +825,9 @@ app.post("/login", (req, res) =>
         if (n >= 0)
             processedUserName = processedUserName + "◆" + tripcode(userName.substr(n + 1));
 
-        const user = addNewUser(processedUserName, characterId, areaId);
-        
-        if (req.ip !== "127.0.0.1")
-            user.ip = req.ip;
-            
-        const logInfoIP = user.ip != null ? " from " + user.ip : "";
-        
-        log.info("Logged in", user.id, "<" + user.name + ">" + logInfoIP)
+        const user = addNewUser(processedUserName, characterId, areaId, req.ip);
+
+        log.info("Logged in", user.id, "<" + user.name + ">", "from", req.ip)
         res.json(['success', user.id])
     }
     catch (e)

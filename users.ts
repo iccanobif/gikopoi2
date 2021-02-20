@@ -27,21 +27,22 @@ export class Player
     public isStreaming = false;
     public bubblePosition: Direction = "up";
     public lastRoomMessage: string = "";
-    public ip: string | null = null;
+    public ip: string;
 
-    constructor(options: { name?: string, characterId: string, areaId: Area })
+    constructor(options: { name?: string, characterId: string, areaId: Area, ip: string })
     {
         if (typeof options.name === "string") this.name = options.name
         this.characterId = options.characterId
         this.areaId = options.areaId
+        this.ip = options.ip
     }
 }
 
 let users: { [id: string]: Player; } = {}
 
-export function addNewUser(name: string, characterId: string, areaId: Area)
+export function addNewUser(name: string, characterId: string, areaId: Area, ip: string)
 {
-    const p = new Player({ name, characterId, areaId });
+    const p = new Player({ name, characterId, areaId, ip });
     users[p.id] = p;
 
     return p;
