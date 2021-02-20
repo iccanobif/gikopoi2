@@ -247,9 +247,7 @@ video {
 #login-page button,
 #toolbar button,
 #video-streams button,
-#btn-toggle-dark-mode,
 .popup button
-button
 {
     border: 1px solid #959595;
     padding: 3px 10px;

@@ -857,7 +857,10 @@ const vueApp = new Vue({
         {
             const context = this.canvasContext;
             
-            context.fillStyle = this.currentRoom.backgroundColor;
+            if (this.currentRoom.backgroundColor)
+                context.fillStyle = this.currentRoom.backgroundColor;
+            else
+                context.fillStyle = this.isDarkMode ? "#354F52" : "#c0c0c0";
             context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
             
             this.drawImage(
@@ -1679,6 +1682,8 @@ const vueApp = new Vue({
         },
         toggleDarkMode: function ()
         {
+            this.isRedrawRequired = true
+
             localStorage.setItem(
                 "isDarkMode",
                 (this.isDarkMode = !this.isDarkMode)

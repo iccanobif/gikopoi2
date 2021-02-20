@@ -8,7 +8,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 0, y: 352 },
         spawnPoint: "right",
         backgroundImageUrl: "rooms/bar/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x: 2, y: 1, offset: { x: 130, y: 311 }, url: "table.svg" },
             { x: 2, y: 2, offset: { x: 170, y: 291 }, url: "table.svg" },
@@ -90,7 +89,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 0, y: 235 },
         spawnPoint: "admin",
         backgroundImageUrl: "rooms/admin_st/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x: 1, y: 5, url: "house1.svg", offset: { x: 241, y: -28 } },
             { x: 1, y: 5, url: "house2.svg", offset: { x: 241, y: 2 } },
@@ -163,7 +161,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 0, y: 217 },
         spawnPoint: "secret_bar",
         backgroundImageUrl: "rooms/basement/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  0, y: -1, offset: { x:    4, y:   68 }, url: "light_hori.svg" },
             { x:  0, y:  2, offset: { x:  123, y:    8 }, url: "light_hori.svg" },
@@ -198,7 +195,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 43, y: 268 },
         spawnPoint: "down",
         backgroundImageUrl: "rooms/admin/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x: 2, y: 1, url: "long_table_left.svg", offset: { x: 164, y: 194 } },
             { x: 2, y: 3, url: "long_table_right.svg", offset: { x: 237, y: 164 } },
@@ -280,7 +276,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: -1, y: 273 },
         spawnPoint: "school",
         backgroundImageUrl: "rooms/school_st/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x: 0, y: 4, url: "wall.svg", offset: { x: 120, y: 84 } },
         ],
@@ -311,7 +306,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: -1, y: 323 },
         spawnPoint: "spawn",
         backgroundImageUrl: "rooms/bar_st/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x: 4, y: 5, url: "doorstep.svg", offset: { x: 362, y: 187 } },
             { x: 5, y: 5, url: "signboard.svg", offset: { x: 360, y: 132 } },
@@ -377,7 +371,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 870-320, y: 1165-300 },
         spawnPoint: "left",
         backgroundImageUrl: "rooms/takadai/background.svg",
-        backgroundColor: "#c0c0c0",
         isBackgroundImageOffsetEdge: true,
         objects: [
             { x:  9, y:  0, offset: { x:  176-320, y:  849-300 }, url: "fences_and_thicket.svg" },
@@ -503,7 +496,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 740-345, y: 1310-393 },
         spawnPoint: "spawn",
         backgroundImageUrl: "rooms/silo/silo.svg",
-        backgroundColor: "#c0c0c0",
         isBackgroundImageOffsetEdge: true,
         objects: [
             { x: 4, y: 6, url: "piano.svg", scale: 1, offset: { x: 1092-345, y: 1192-393 } },
@@ -721,7 +713,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 14, y: 864 },
         spawnPoint: "down",
         backgroundImageUrl: "rooms/long_st/long_st.svg",
-        backgroundColor: "#c0c0c0",
         objects: [],
         sit: [
             { x: 0, y: 0 }
@@ -1015,7 +1006,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 7, y: 311 },
         spawnPoint: "steps",
         backgroundImageUrl: "rooms/jinja/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x: 15, y:  0, offset: { x: 499, y: 369 }, url: "bamboo_left.svg" },
             { x: 14, y:  4, offset: { x: 735, y: 206 }, url: "bamboo_right.svg" },
@@ -1102,7 +1092,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 0, y: 267 },
         spawnPoint: "water",
         backgroundImageUrl: "rooms/cafe_st/background_with_chairs.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  3, y:  4, offset: { x:  25, y: -19 }, url: "cafe.svg" },
             { x:  4, y:  1, offset: { x: 198, y:  92 }, url: "sunroof.svg" },
@@ -1246,7 +1235,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 6, y: 215 },
         spawnPoint: "right",
         backgroundImageUrl: "rooms/busstop/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  1, y:  1, offset: { x: 105, y:  85 }, url: "sign.svg" },
             { x:  0, y:  1, offset: { x:  72, y: 129 }, url: "poland.svg" },
@@ -1288,7 +1276,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 2, y: 269 },
         spawnPoint: "down",
         backgroundImageUrl: "rooms/izakaya774/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  2, y:  2, offset: { x: 165, y:  189 }, url: "tabular.svg" },
         ],
@@ -1325,7 +1312,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: -160, y: 505 },
         spawnPoint: "up",
         backgroundImageUrl: "rooms/bar_giko_square/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  3, y:  8, offset: { x:    0, y:  160 }, url: "koban.svg" },
             { x: 15, y: 18, offset: { x: 1160, y:  220 }, url: "bar_giko.svg" },
@@ -1648,7 +1634,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 2, y: 332 },
         spawnPoint: "right",
         backgroundImageUrl: "rooms/radio_room1/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  6, y:  3, offset: { x:  381, y:  338 }, url: "table.svg" },
         ],
@@ -1700,7 +1685,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 1, y: 452 },
         spawnPoint: "right",
         backgroundImageUrl: "rooms/radio_room2/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  1, y:  0, offset: { x:   82, y:  348 }, url: "light.svg" },
             { x:  2, y:  0, offset: { x:  118, y:  366 }, url: "light.svg" },
@@ -1793,7 +1777,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: -1, y: 439 },
         spawnPoint: "down",
         backgroundImageUrl: "rooms/radio_room3/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  1, y:  4, offset: { x:  204, y:  289 }, url: "drumset.svg" },
             { x:  2, y:  8, offset: { x:  344, y:  243 }, url: "piano.svg" },
@@ -1880,7 +1863,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 0, y: 371 },
         spawnPoint: "down",
         backgroundImageUrl: "rooms/radio/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  5, y:  1, offset: { x:  254, y:  389 }, url: "hopes_and_dreams.svg" },
             { x:  5, y:  8, offset: { x:  534, y:  249 }, url: "hopes_and_dreams.svg" },
@@ -1924,7 +1906,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 0, y: 358 },
         spawnPoint: "right",
         backgroundImageUrl: "rooms/radio_gakuya/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  2, y:  1, offset: { x:  139, y:  305 }, url: "tabletop.svg" },
             
@@ -1991,7 +1972,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 41, y: 268 },
         spawnPoint: "right",
         backgroundImageUrl: "rooms/jinja_st/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  1, y:  3, offset: { x:   90, y:   48 }, url: "torii.svg" },
             { x:  4, y:  0, offset: { x:   73, y:  118 }, url: "take.svg" },
@@ -2027,7 +2007,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 0, y: 575 },
         spawnPoint: "right",
         backgroundImageUrl: "rooms/enkai/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x: 20, y:  0, offset: { x:    1, y:   53 }, url: "terawarosuw.svg" },
             
@@ -2374,7 +2353,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 18, y: 264 },
         spawnPoint: "left",
         backgroundImageUrl: "rooms/idoA/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  8, y: -1, offset: { x:   39, y:  204 }, url: "plants.svg" },
             { x:  3, y:  4, offset: { x:  237, y:  159 }, url: "well.svg" },
@@ -2440,7 +2418,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 18, y: 264 },
         spawnPoint: "left",
         backgroundImageUrl: "rooms/idoB/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  8, y: -1, offset: { x:   39, y:  204 }, url: "plants.svg" },
             { x:  3, y:  4, offset: { x:  237, y:  159 }, url: "well.svg" },
@@ -2502,7 +2479,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 0, y: 371 },
         spawnPoint: "spawn",
         backgroundImageUrl: "rooms/admin_bar/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  0, y:  7, offset: { x:   1, y: 106 }, url: "shelves.svg" },
             
@@ -2597,7 +2573,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: -1, y: 298 },
         spawnPoint: "down",
         backgroundImageUrl: "rooms/bar774/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  5, y:  2, offset: { x: 289, y: 295 }, url: "table.svg" },
             { x:  5, y:  6, offset: { x: 449, y: 215 }, url: "table.svg" },
@@ -2662,7 +2637,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: -1, y: 417 },
         spawnPoint: "down",
         backgroundImageUrl: "rooms/yatai/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  7, y:  0, offset: { x:   64, y:  106 }, url: 'roof.svg' },
             { x:  1, y:  5, offset: { x:  264, y:  120 }, url: 'pole.svg' },
@@ -2711,7 +2685,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 0, y: 335 },
         spawnPoint: "right_top",
         backgroundImageUrl: "rooms/school_rouka/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  2, y:  6, offset: { x:  359, y:  149 }, url: 'wall_part.svg' },
             { x:  4, y:  6, offset: { x:  361, y:  40 }, url: 'wall.svg' },
@@ -2743,7 +2716,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 0, y: 312 },
         spawnPoint: "right",
         backgroundImageUrl: "rooms/school/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  1, y:  1, offset: { x:   89, y:  242 }, url: 'desk.svg' },
             { x:  2, y:  1, offset: { x:  137, y:  283 }, url: 'seat_base.svg' },
@@ -2813,7 +2785,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 0, y: 412 },
         spawnPoint: "right",
         backgroundImageUrl: "rooms/school_international/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  1, y:  1, offset: { x:  134, y:  321 }, url: 'chair_back.svg' },
             { x:  1, y:  2, offset: { x:  136, y:  343 }, url: 'chair_base.svg' },
@@ -2911,7 +2882,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 1, y: 412 },
         spawnPoint: "door",
         backgroundImageUrl: "rooms/school_pc/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  1, y:  2, offset: { x:  149, y:  352 }, url: 'stool.svg' },
             { x:  1, y:  3, offset: { x:  161, y:  286 }, url: 'desk.svg' },
@@ -2980,7 +2950,6 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 111, y: 391 },
         spawnPoint: "down",
         backgroundImageUrl: "rooms/school_ground/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [
             { x:  7, y:  6, offset: { x:  505, y:  373 }, url: 'soiled.svg' },
             { x:  7, y:  8, offset: { x:  653, y:  251 }, url: 'coup.svg' },
@@ -3065,7 +3034,6 @@ export const rooms: { [roomId: string]: Room } = {
         blockHeight: 60,
         spawnPoint: "spawn",
         backgroundImageUrl: "rooms/kaidan/background.svg",
-        backgroundColor: "#c0c0c0",
         objects: [],
         sit: [],
         blocked: [
@@ -3111,7 +3079,6 @@ export const rooms: { [roomId: string]: Room } = {
         blockHeight: 15,
         spawnPoint: "right",
         backgroundImageUrl: "rooms/seashore/background.svg",
-        backgroundColor: "#c0c0c0",
         isBackgroundImageOffsetEdge: true,
         objects: [
             { x:  2, y:  6, offset: { x:  851, y:  486 }, url: 'seat.svg' },

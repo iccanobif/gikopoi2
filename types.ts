@@ -38,7 +38,7 @@ export interface Room
     size: Coordinates;
     originCoordinates: Coordinates;
     backgroundImageUrl: string;
-    backgroundColor: string;
+    backgroundColor?: string;
     backgroundOffset?: Coordinates;
     spawnPoint: string;
     needsFixedCamera?: boolean;
