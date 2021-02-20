@@ -3,7 +3,7 @@ localStorage.removeItem("debug");
 
 import { characters, loadCharacters } from "./character.js";
 import User from "./user.js";
-import { loadImage, calculateRealCoordinates, postJson, BLOCK_WIDTH, BLOCK_HEIGHT } from "./utils.js";
+import { loadImage, calculateRealCoordinates, postJson, BLOCK_WIDTH, BLOCK_HEIGHT, logToServer } from "./utils.js";
 import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";
@@ -328,6 +328,8 @@ const vueApp = new Vue({
                 this.expectedServerVersion = newVersion
             }
 
+            logToServer(this.myUserID + " User agent: " + navigator.userAgent)
+
             this.socket = io();
 
             const immanentizeConnection = () =>
@@ -349,7 +351,8 @@ const vueApp = new Vue({
 
             this.socket.on('connect_error', (error) => {
                 console.error(new Date(), error)
-              });
+                logToServer(new Date() + " " + this.myUserID + " connect_error: " + error)
+            });
 
             this.socket.on("disconnect", (reason) =>
             {

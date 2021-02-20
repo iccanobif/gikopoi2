@@ -49,3 +49,12 @@ export function postJson(url, data)
         body: JSON.stringify(data)
     })
 }
+
+export function logToServer(msg)
+{
+    return fetch("/error", {
+        method: "POST",
+        headers: { 'Content-Type': "text/plain"},
+        body: msg
+    })
+}
