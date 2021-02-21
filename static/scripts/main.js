@@ -433,12 +433,14 @@ const vueApp = new Vue({
             {
                 document.getElementById("login-sound").play();
                 this.addUser(user);
+                this.updateCanvasObjects();
                 this.isRedrawRequired = true;
             });
 
             this.socket.on("server-user-left-room", (userId) =>
             {
                 if (userId != this.myUserID) delete this.users[userId];
+                this.updateCanvasObjects();
                 this.isRedrawRequired = true;
             });
 
