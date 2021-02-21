@@ -33,8 +33,15 @@
     color: #CAD2C5;
 }
 
-.dark-mode button {
+.dark-mode #login-page button,
+.dark-mode #toolbar button,
+.dark-mode #video-streams button,
+.dark-mode .popup button {
     background-color: #2F3E46;
+    color: #CAD2C5;
+}
+
+.dark-mode #style-selectors button {
     color: #CAD2C5;
 }
 
