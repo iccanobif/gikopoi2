@@ -1180,7 +1180,7 @@ const vueApp = new Vue({
             if (message == "#rula" || message == "#ﾙｰﾗ")
                 this.requestRoomList();
             else if (message == '#ﾘｽﾄ' || message == '#list')
-                this.isUserListPopupOpen = true;
+                this.openUserListPopup();
             else
                 this.socket.emit("user-msg", message);
             inputTextbox.value = "";
@@ -1632,6 +1632,15 @@ const vueApp = new Vue({
         {
             this.isRulaPopupOpen = false;
             this.rulaRoomSelection = null;
+        },
+        openUserListPopup: function ()
+        {
+            if (Object.values(this.users).filter(u => u.id != this.myUserID).length == 0)
+            {
+                this.showWarningToast(i18n.t("msg.no_other_users_in_this_room"));
+            }
+            else
+                this.isUserListPopupOpen = true;
         },
         closeUserListPopup: function ()
         {
