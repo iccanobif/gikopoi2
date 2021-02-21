@@ -1740,6 +1740,16 @@ const vueApp = new Vue({
         toggleDarkMode: function ()
         {
             this.isRedrawRequired = true
+            
+            if(chatLog.lastChild)
+            {
+                const observer = new ResizeObserver((mutationsList, observer) =>
+                {
+                    chatLog.lastChild.scrollIntoView({ block: "end" })
+                    observer.unobserve(chatLog.lastChild);
+                });
+                observer.observe(chatLog.lastChild);
+            }
 
             localStorage.setItem(
                 "isDarkMode",
