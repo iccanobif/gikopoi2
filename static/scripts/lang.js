@@ -58,7 +58,7 @@ export const messages =
             user_list_popup_ignore: "あぼーん",
             user_list_popup_unignore: "あぼーん解除",
             user_list_popup_close: "閉じる",
-            user_list_popup_blurb: "注意：あぼーんしても向こうはあなたのアバターとログをまだ見れる",
+            user_list_popup_blurb: "注意：あぼーんしても向こうはあなたのアバターとログを見れる",
             
             stream_form_title: "配信設定",
             stream_form_mode: "モード：",
