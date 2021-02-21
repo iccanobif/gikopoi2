@@ -1,10 +1,15 @@
-body
+#vue-app
 {
     background-color: #c0c0c0;
-    margin: 0;
     font-family: IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif;
     font-size: 16px;
-    padding: 5px;
+    
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
 }
 
 header {
@@ -21,6 +26,10 @@ header h2 {
     font-size: medium;
 }
 
+#login-page
+{
+    padding: 5px;
+}
 
 #login-form {
     display: block;
@@ -219,8 +228,7 @@ video {
 {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 100%;
+    padding: 5px;
 }
 
 #room-canvas
