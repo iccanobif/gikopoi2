@@ -108,6 +108,9 @@
                     </div>
                     <div class="tooltip-section">
                         <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
+                        <button id="btn-list" v-on:click="openUserListPopup()">{{ $t("ui.button_list") }}</button>
+                    </div>
+                    <div class="tooltip-section">
                         <button id="btn-toggle-username-bg" v-on:click="toggleUsernameBackground()" v-bind:class="{'checked': showUsernameBackground}">{{ $t("ui.user_name_bg") }}</button>
                         <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{ $t("ui.button_crisp") }}</button>
                     </div>
