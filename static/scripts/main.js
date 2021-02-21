@@ -590,9 +590,9 @@ const vueApp = new Vue({
                     chatLog.clientHeight;
 
             const permission = await Notification.requestPermission()
-            if (permission == "granted" && document.visibilityState != "visible" && userId != this.myUserID)
+            if (permission == "granted" && document.visibilityState != "visible" && user.id != this.myUserID)
             {
-                const character = this.users[userId].character
+                const character = user.character
                 new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
                     {
                         icon: "characters/" + character.characterName + "/front-standing." + character.format
