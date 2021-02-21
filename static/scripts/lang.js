@@ -184,7 +184,7 @@ export const messages =
             user_list_popup_ignore: "Ignore",
             user_list_popup_unignore: "Unignore",
             user_list_popup_close: "Close",
-            user_list_popup_blurb: "Warning: When you ignore an user you will not see them, but they will still see you.",
+            user_list_popup_blurb: "Warning: When you ignore a user, you will not see them, but they will still see you.",
             
             stream_form_title: "Stream Settings",
             stream_form_mode: "Mode:",
