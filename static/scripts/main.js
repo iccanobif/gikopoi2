@@ -318,6 +318,9 @@ const vueApp = new Vue({
             
             this.myUserID = loginMessage[1];
             
+            // prevent accidental page closing
+            window.onbeforeunload = function(){return "Are you sure?";}
+            
             // load the room state before connecting the websocket, so that all
             // code handling websocket events (and paint() events) can assume that
             // currentRoom, streams etc... are all defined
