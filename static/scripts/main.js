@@ -432,9 +432,10 @@ const vueApp = new Vue({
                 () => (this.isWaitingForServerResponseOnMovement = false)
             );
 
-            this.socket.on("server-user-joined-room", async (user) =>
+            this.socket.on("server-user-joined-room", async (user, isReconnected) =>
             {
-                document.getElementById("login-sound").play();
+                if (!isReconnected)
+                    document.getElementById("login-sound").play();
                 this.addUser(user);
                 this.updateCanvasObjects();
                 this.isRedrawRequired = true;

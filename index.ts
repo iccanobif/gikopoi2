@@ -114,17 +114,18 @@ io.on("connection", function (socket: any)
             })
     }
 
-    const sendNewUserInfo = () =>
+    const sendNewUserInfo = (isReconnected: boolean) =>
     {
+        
         if (currentRoom.forcedAnonymous)
         {
             const anonymousUser = cloneDeep(user)
             anonymousUser.name = ""
-            socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", anonymousUser);
+            socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", anonymousUser, isReconnected);
         }
         else
         {
-            socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", user);
+            socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", user, isReconnected);
         }
     }
 
@@ -171,7 +172,9 @@ io.on("connection", function (socket: any)
             socket.join(user.areaId + currentRoom.id)
 
             log.info("userId:", userId, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
-
+            
+            const isReconnected = user.disconnectionTime != null;
+            
             user.isGhost = false
             user.disconnectionTime = null
 
@@ -180,7 +183,7 @@ io.on("connection", function (socket: any)
             sendCurrentRoomState()
             setupJanusHandleSlots()
 
-            sendNewUserInfo()
+            sendNewUserInfo(isReconnected)
 
             emitServerStats(user.areaId)
         }
@@ -562,7 +565,7 @@ io.on("connection", function (socket: any)
             setupJanusHandleSlots()
 
             socket.join(user.areaId + targetRoomId)
-            sendNewUserInfo()
+            sendNewUserInfo(false)
         }
         catch (e)
         {
