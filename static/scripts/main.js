@@ -1652,13 +1652,13 @@ const vueApp = new Vue({
         {
             this.ignoredUserIds.add(user.id)
             this.isRedrawRequired = true
-            this.isUserListPopupOpen = false;
+            this.$forceUpdate() // HACK: the v-if for the ignore and unignore buttons doesn't get automatically re-evaluated
         },
         unignoreUser: function(user)
         {
             this.ignoredUserIds.delete(user.id)
             this.isRedrawRequired = true
-            this.isUserListPopupOpen = false;
+            this.$forceUpdate() // HACK: the v-if for the ignore and unignore buttons doesn't get automatically re-evaluated
         },
         sortRoomList: function (key)
         {
