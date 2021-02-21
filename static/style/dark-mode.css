@@ -1,63 +1,63 @@
-body {
+#vue-app.dark-mode {
     background-color: #354F52;
     color: #CAD2C5;
 }
 
-#chatLog {
+.dark-mode #chatLog {
     background-color: #354F52;
 }
-.message {
+.dark-mode .message {
     background-color: #354F52;
     border-top: 1px solid gray;
     padding-top: 3px;
     padding-bottom: 3px;
 }
 
-.message a {
+.dark-mode .message a {
     color: #84A98C;
 }
 
-.message-author {
+.dark-mode .message-author {
     padding-right: 2px;
     color: #84A98C;
 }
 
-.message:nth-child(even) {
+.dark-mode .message:nth-child(even) {
     background-color: #2F3E46;
 }
 
-input[type="text"],
-textarea {
+.dark-mode input[type="text"],
+.dark-mode textarea {
 
-    background-color: #2F3E46;
-    color: #CAD2C5;
-}
-
-button {
     background-color: #2F3E46;
     color: #CAD2C5;
 }
 
-.popup {
+.dark-mode button {
     background-color: #2F3E46;
     color: #CAD2C5;
 }
 
-.popup .popup-title {
+.dark-mode .popup {
     background-color: #2F3E46;
     color: #CAD2C5;
 }
 
-.popup th {
+.dark-mode .popup .popup-title {
     background-color: #2F3E46;
     color: #CAD2C5;
 }
 
-.popup-selectable-table tr:hover td {
+.dark-mode .popup th {
+    background-color: #2F3E46;
+    color: #CAD2C5;
+}
+
+.dark-mode .popup-selectable-table tr:hover td {
     background-color: #354F52;
 }
 
-.popup-selectable-table tr.popup-row-is-selected td {
+.dark-mode .popup-selectable-table tr.popup-row-is-selected td {
     color: #CAD2C5;
     background-color: #354F52;
 }

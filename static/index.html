@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
     <link rel='stylesheet' href='style/main.css' />
+    <link rel='stylesheet' href='style/dark-mode.css' />
     
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ギコっぽいっぽい</title>
@@ -12,7 +13,7 @@
 </head>
 
 <body>
-    <div id="vue-app" v-cloak>
+    <div id="vue-app" v-cloak v-bind:class="{'dark-mode': isDarkMode}">
         <div id="login-page" v-if="!loggedIn">
             <header>
                 <div>
@@ -293,19 +294,12 @@
             <audio id="login-sound" src="login.mp3"></audio>
 
         </div>
-
-        <link v-if="isDarkMode" title="dark-mode-sheet" rel='stylesheet' href='style/dark-mode.css' />
+        
         <div id="style-selectors">
             <button id="btn-toggle-dark-mode" v-on:click="toggleDarkMode">Toggle Shaddox mode</button>
         </div>
     </div>
 
-    <script>
-        if (localStorage.getItem("isDarkMode") != "true")
-            for (let i = 0; i < document.styleSheets.length; i++)
-                if (document.styleSheets[i].title == "dark-mode-sheet")
-                    document.styleSheets[i].disabled = true
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-i18n/dist/vue-i18n.js"></script>
     <script src='third/jquery.js'></script>
