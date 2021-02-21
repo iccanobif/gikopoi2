@@ -67,6 +67,10 @@ const vueApp = new Vue({
         roomList: [],
         lastRoomListSortKey: null,
         rulaRoomSelection: null,
+
+        // user list stuff
+        isUserListPopupOpen: false,
+        ignoredUserIds: new Set(),
         
         // streaming
         streams: [],
@@ -136,6 +140,8 @@ const vueApp = new Vue({
         for (let i = 0; i < document.styleSheets.length; i++)
                 if (document.styleSheets[i].title == "dark-mode-sheet")
                     document.styleSheets[i].disabled = false
+
+        document.getElementById("username-textbox").focus()
     },
     methods: {
         login: async function (ev)
@@ -533,11 +539,16 @@ const vueApp = new Vue({
             newUser.isInactive = userDTO.isInactive;
             newUser.message = userDTO.lastRoomMessage;
             newUser.bubblePosition = userDTO.bubblePosition;
+            newUser.id = userDTO.id;
             
             this.users[userDTO.id] = newUser;
         },
         displayMessage: async function (user, msg)
         {
+            // Don't do anything for ignored users
+            if (this.ignoredUserIds.has(user.id))
+                return;
+
             const plainMsg = msg.replace(urlRegex, s => decodeURI(s));
             
             user.message = plainMsg;
@@ -908,6 +919,9 @@ const vueApp = new Vue({
                 } // o.type == "user"
                 else
                 {
+                    // Don't draw ignored users
+                    if (this.ignoredUserIds.has(o.o.id)) continue
+
                     context.save();
                     
                     if (o.o.isInactive)
@@ -928,7 +942,7 @@ const vueApp = new Vue({
         
         drawUsernames: function ()
         {
-            for (const o of this.canvasObjects.filter(o => o.type == "user"))
+            for (const o of this.canvasObjects.filter(o => o.type == "user" && !this.ignoredUserIds.has(o.o.id)))
             {
                 if (o.o.nameImage == null || this.isUsernameRedrawRequired)
                     o.o.nameImage = this.getNameImage(this.toDisplayName(o.o.name), this.showUsernameBackground);
@@ -948,7 +962,7 @@ const vueApp = new Vue({
         
         drawBubbles: function()
         {
-            for (const o of this.canvasObjects.filter(o => o.type == "user"))
+            for (const o of this.canvasObjects.filter(o => o.type == "user" && !this.ignoredUserIds.has(o.o.id)))
             {
                 const user = o.o;
                 
@@ -1163,12 +1177,10 @@ const vueApp = new Vue({
             const inputTextbox = document.getElementById("input-textbox");
 
             const message = inputTextbox.value.substr(0, 500);
-            if (message == "#rula"
-                || message == "#ﾙｰﾗ"
-                || message == '#ﾘｽﾄ'
-                || message == '#list'
-            )
+            if (message == "#rula" || message == "#ﾙｰﾗ")
                 this.requestRoomList();
+            else if (message == '#ﾘｽﾄ' || message == '#list')
+                this.isUserListPopupOpen = true;
             else
                 this.socket.emit("user-msg", message);
             inputTextbox.value = "";
@@ -1620,6 +1632,22 @@ const vueApp = new Vue({
         {
             this.isRulaPopupOpen = false;
             this.rulaRoomSelection = null;
+        },
+        closeUserListPopup: function ()
+        {
+            this.isUserListPopupOpen = false;
+        },
+        ignoreUser: function(user)
+        {
+            this.ignoredUserIds.add(user.id)
+            this.isRedrawRequired = true
+            this.isUserListPopupOpen = false;
+        },
+        unignoreUser: function(user)
+        {
+            this.ignoredUserIds.delete(user.id)
+            this.isRedrawRequired = true
+            this.isUserListPopupOpen = false;
         },
         sortRoomList: function (key)
         {

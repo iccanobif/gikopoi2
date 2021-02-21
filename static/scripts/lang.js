@@ -52,6 +52,13 @@ export const messages =
             rula_menu_column_user_count: "人数",
             rula_menu_column_streamers: "配信者",
             rula_menu_button_rula: "ルーラ",
+
+            user_list_popup_title: "ユーザーリスト",
+            user_list_popup_column_user_name: "ユーザー名",
+            user_list_popup_ignore: "あぼーん",
+            user_list_popup_unignore: "あぼーん解除",
+            user_list_popup_close: "閉じる",
+            user_list_popup_blurb: "注意：あぼーんしても向こうはあなたのアバターとログをまだ見れる",
             
             stream_form_title: "配信設定",
             stream_form_mode: "モード：",
@@ -168,6 +175,13 @@ export const messages =
             rula_menu_column_user_count: "Users",
             rula_menu_column_streamers: "Streamers",
             rula_menu_button_rula: "Rula",
+
+            user_list_popup_title: "User List",
+            user_list_popup_column_user_name: "User name",
+            user_list_popup_ignore: "Ignore",
+            user_list_popup_unignore: "Unignore",
+            user_list_popup_close: "Close",
+            user_list_popup_blurb: "Warning: Even when you ignore someone they will still be able to see you and your messages.",
             
             stream_form_title: "Stream Settings",
             stream_form_mode: "Mode:",

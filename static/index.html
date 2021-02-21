@@ -33,7 +33,8 @@
                         {{ $t("ui.login_streamer_count") }}@STREAMER_COUNT_FOR@]</label>
                 </div>
                 <div>
-                    <label>{{ $t("ui.label_username") }}</label> <input type="text" v-model="username" maxlength="20" />
+                    <label>{{ $t("ui.label_username") }}</label>
+                    <input id="username-textbox" type="text" v-model="username" maxlength="20" />
                 </div>
                 <div id="character-selection">
                     <label v-for="character in allCharacters" :for="character.characterName + '-selection'"
@@ -47,7 +48,7 @@
                             v-bind:class="{'character-selected': character.characterName == characterId}" />
                     </label>
                 </div>
-                <button v-on:click="login" :disabled="isLoggingIn">Login</button>
+                <button id="login-button" v-on:click="login" :disabled="isLoggingIn">Login</button>
             </form>
             <div id="login-footer" translate="no" class="notranslate">
                 @LOGIN_FOOTER@
@@ -226,6 +227,42 @@
                         v-on:click="closeRulaPopup">{{ $t("ui.popup_button_cancel") }}</button>
                 </div>
             </div>
+
+            <div class="popup-overlay" v-if="isUserListPopupOpen" v-on:click="closeUserListPopup"></div>
+            <div id="user-list-popup" class="popup" v-if="isUserListPopupOpen">
+                <div class="popup-title">{{ $t("ui.user_list_popup_title") }}</div>
+                <div class="popup-section">
+                    {{ $t("ui.user_list_popup_blurb")}}
+                </div>
+                <div class="popup-content">
+                    <table class="popup-table popup-selectable-table popup-sortable-table">
+                        <colgroup>
+                            <col id="rula-menu-column-room-name" />
+                            <col id="rula-menu-column-user-count" />
+                            <col id="rula-menu-column-streamers" />
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>{{ $t("ui.user_list_popup_column_user_name") }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="user in Object.values(users).filter(u => u.id != myUserID)">
+                                <td>{{ user.name || $t("default_user_name") }}</td>
+                                <td>
+                                    <button v-if="ignoredUserIds.has(user.id)" v-on:click="unignoreUser(user)">{{ $t("ui.user_list_popup_unignore") }}</button>
+                                    <button v-if="!ignoredUserIds.has(user.id)" v-on:click="ignoreUser(user)">{{ $t("ui.user_list_popup_ignore") }}</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="popup-buttons">
+                    <button v-on:click="closeUserListPopup">{{ $t("ui.user_list_popup_close") }}</button>
+                </div>
+            </div>
+
 
             <div class="popup-overlay" v-if="isStreamPopupOpen" v-on:click="closeStreamPopup"></div>
             <div class="popup" v-if="isStreamPopupOpen">

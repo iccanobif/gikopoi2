@@ -7,6 +7,7 @@ export default class User
 {
     constructor(character, name)
     {
+        this.id = null;
         this.name = name;
         this.character = character;
 
