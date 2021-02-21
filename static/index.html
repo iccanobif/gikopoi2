@@ -105,20 +105,16 @@
                         tabindex="-1"></button>
                 </div>
             </div>
-            <div id="toolbar">
-                <div id="toolbar-text-input">
-                    {{ $t("ui.label_input") }} <textarea id="input-textbox"
-                        v-on:keypress="handleMessageInputKeypress($event)" 
-                        v-on:keydown="handleMessageInputKeydown($event)" 
-                        tabindex="2" 
-                        maxlength="500"></textarea>
-                    <button id="send-button" v-on:click="sendMessageToServer" tabindex="3">{{ $t("ui.button_send") }}</button>
+            <div id="toolbar-text-input">
+                {{ $t("ui.label_input") }} <textarea id="input-textbox"
+                    v-on:keypress="handleMessageInputKeypress($event)" v-on:keydown="handleMessageInputKeydown($event)" tabindex="2" maxlength="500"></textarea>
+                <button id="send-button" v-on:click="sendMessageToServer" tabindex="3">{{ $t("ui.button_send") }}</button>
+            </div>
+            <div id="toolbar-buttons">
+                <div class="tooltip-section">
+                    <label for="sound-effect-volume">{{ $t("ui.sound_effect") }}</label>
+                    <div id="sound-effect-volume"></div>
                 </div>
-                <div id="toolbar-buttons">
-                    <div class="tooltip-section tooltip-volume-section">
-                        <label>{{ $t("ui.sound_effect") }}</label>
-                        <div id="sound-effect-volume"></div>
-                    </div>
                     <div class="tooltip-section tooltip-volume-section" v-show="enableTextToSpeech">
                         <label>{{ $t("ui.tts_volume") }}</label>
                         <div id="voice-volume"></div>
