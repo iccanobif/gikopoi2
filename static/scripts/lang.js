@@ -76,6 +76,7 @@ export const messages =
             
             preferences_title: "設定",
             preferences_name_bg: "ｺﾃ背景を表示",
+            preferences_shift_enter: "Shift+Enterの改行",
         },
         msg:
         {
@@ -196,7 +197,7 @@ export const messages =
             stream_form_video_only_mode: "Video only",
             stream_form_show_advanced: "Show Advanced Settings",
             stream_form_hide_advanced: "Hide Advanced Settings",
-            stream_form_echo_cancellation: "Echo cancellation",
+            stream_form_echo_cancellation: "Echo Cancellation",
             stream_form_noise_suppression: "Noise Reduction",
             stream_form_auto_gain: "Auto Gain Control",
             stream_form_button_stream: "Start Streaming",
@@ -204,6 +205,7 @@ export const messages =
             
             preferences_title: "Preferences",
             preferences_name_bg: "Show Username Background",
+            preferences_shift_enter: "Newline On Shift+Enter",
         },
         msg:
         {

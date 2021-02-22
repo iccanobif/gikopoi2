@@ -322,9 +322,14 @@
                 <div class="popup-title">{{ $t("ui.preferences_title") }}</div>
                 <div class="popup-content">
                     <div class='popup-section'>
-                        <label for="preferences-name-bg">{{ $t("ui.preferences_name_bg") }}</label
-                        ><input type="checkbox" id="preferences-name-bg"
-                            v-model="showUsernameBackground" v-on:click="toggleUsernameBackground">
+                        <input type="checkbox" id="preferences-name-bg"
+                            v-model="showUsernameBackground" v-on:click="toggleUsernameBackground"><label
+                            for="preferences-name-bg">{{ $t("ui.preferences_name_bg") }}</label>
+                    </div>
+                    <div class='popup-section'>
+                        <input type="checkbox" id="preferences-shift-enter"
+                            v-model="isNewlineOnShiftEnter" v-on:click="toggleShiftEnterBehaviour"><label
+                            for="preferences-shift-enter">{{ $t("ui.preferences_shift_enter") }}</label>
                     </div>
                 </div>
                 <div class="popup-buttons">

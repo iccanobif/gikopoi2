@@ -74,6 +74,8 @@ const vueApp = new Vue({
         
         // preferences stuff
         isPreferencesPopupOpen: false,
+        showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
+        isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") == "true",
         
         // streaming
         streams: [],
@@ -115,7 +117,6 @@ const vueApp = new Vue({
         allCharacters: Object.values(characters),
 
         vuMeterTimer: null,
-        showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
         isDarkMode: localStorage.getItem("isDarkMode") == "true",
     },
     mounted: function ()
@@ -1310,7 +1311,10 @@ const vueApp = new Vue({
         },
         handleMessageInputKeydown: function (event)
         {
-            if (event.key != "Enter" || event.shiftKey) return;
+            if (event.key != "Enter"
+                || (this.isNewlineOnShiftEnter && event.shiftKey)
+                || (!this.isNewlineOnShiftEnter && !event.shiftKey))
+                return;
 
             this.sendMessageToServer();
             event.preventDefault();
@@ -1771,6 +1775,14 @@ const vueApp = new Vue({
                 "isDarkMode",
                 (this.isDarkMode = !this.isDarkMode)
             );
+        },
+        toggleShiftEnterBehaviour: function ()
+        {
+            localStorage.setItem(
+                "isNewlineOnShiftEnter",
+                (this.isNewlineOnShiftEnter = !this.isNewlineOnShiftEnter)
+            );
+            
         },
     },
 });
