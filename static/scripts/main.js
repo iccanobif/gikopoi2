@@ -72,6 +72,9 @@ const vueApp = new Vue({
         isUserListPopupOpen: false,
         ignoredUserIds: new Set(),
         
+        // preferences stuff
+        isPreferencesPopupOpen: false,
+        
         // streaming
         streams: [],
         mediaStream: null,
@@ -1650,6 +1653,14 @@ const vueApp = new Vue({
         closeUserListPopup: function ()
         {
             this.isUserListPopupOpen = false;
+        },
+        openPreferencesPopup: function ()
+        {
+            this.isPreferencesPopupOpen = true;
+        },
+        closePreferencesPopup: function ()
+        {
+            this.isPreferencesPopupOpen = false;
         },
         ignoreUser: function(user)
         {
