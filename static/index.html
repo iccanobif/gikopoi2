@@ -328,8 +328,14 @@
                     </div>
                     <div class='popup-section'>
                         <input type="checkbox" id="preferences-shift-enter"
-                            v-model="isNewlineOnShiftEnter" v-on:click="toggleShiftEnterBehaviour"><label
+                            v-model="isNewlineOnShiftEnter" v-on:change="storeSet('isNewlineOnShiftEnter')"><label
                             for="preferences-shift-enter">{{ $t("ui.preferences_shift_enter") }}</label>
+                    </div>
+                    <div class='popup-section'>
+                        <label for="preferences-bubble-opacity">{{ $t("ui.preferences_bubble_opacity") }}</label>
+                        <input type="range" id="preferences-bubble-opacity"
+                            min="50" max="100" v-model="bubbleOpacity" v-on:change="handleBubbleOpacity"><div
+                            class='preferences-percentage'>{{ bubbleOpacity }}%</div>
                     </div>
                 </div>
                 <div class="popup-buttons">

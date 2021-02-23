@@ -76,6 +76,7 @@ const vueApp = new Vue({
         isPreferencesPopupOpen: false,
         showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
         isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") != "false",
+        bubbleOpacity: localStorage.getItem("bubbleOpacity") || 100,
         
         // streaming
         streams: [],
@@ -695,7 +696,7 @@ const vueApp = new Vue({
                 ["down", "left"].includes(user.bubblePosition),
                 ["up", "left"].includes(user.bubblePosition)];
             
-            return new RenderCache(function(canvas, scale)
+            return new RenderCache((canvas, scale) =>
             {
                 const context = canvas.getContext('2d');
                 context.font = fontHeight + fontSuffix;
@@ -751,23 +752,32 @@ const vueApp = new Vue({
                 canvas.width = sBoxWidth + sBoxMargin;
                 canvas.height = sBoxHeight + sBoxMargin;
                 
-                context.fillStyle = 'white';
-                context.fillRect(
-                    !arrowCorner[0] * sBoxMargin,
-                    !arrowCorner[1] * sBoxMargin,
-                    sBoxWidth,
-                    sBoxHeight)
-                    
+                context.fillStyle = 'rgba(255, 255, 255, ' + (this.bubbleOpacity/100) +　')';
+                
                 context.beginPath();
+                
+                // arrow
                 context.moveTo(
+                    (arrowCorner[0] ? sBoxWidth : sBoxMargin),
+                    (arrowCorner[1] ? sBoxHeight - sBoxArrowOffset : sBoxMargin + sBoxArrowOffset));
+                context.lineTo(
                     arrowCorner[0] * canvas.width,
                     arrowCorner[1] * canvas.height);
                 context.lineTo(
                     (arrowCorner[0] ? sBoxWidth - sBoxArrowOffset : sBoxMargin + sBoxArrowOffset),
-                    (arrowCorner[1] ? sBoxHeight: sBoxMargin));
+                    (arrowCorner[1] ? sBoxHeight : sBoxMargin));
+                
+                // bubble corners
+                context.lineTo(
+                    (arrowCorner[0] ? 0 : sBoxWidth + sBoxMargin),
+                    (arrowCorner[1] ? sBoxHeight : sBoxMargin));
+                context.lineTo(
+                    (arrowCorner[0] ? 0 : sBoxWidth + sBoxMargin),
+                    (arrowCorner[1] ? 0 : sBoxHeight + sBoxMargin));
                 context.lineTo(
                     (arrowCorner[0] ? sBoxWidth : sBoxMargin),
-                    (arrowCorner[1] ? sBoxHeight - sBoxArrowOffset : sBoxMargin + sBoxArrowOffset));
+                    (arrowCorner[1] ? 0 : sBoxHeight + sBoxMargin));
+                
                 context.closePath();
                 context.fill();
                 
@@ -969,6 +979,14 @@ const vueApp = new Vue({
                 this.isUsernameRedrawRequired = false;
         },
         
+        resetBubbleImages: function ()
+        {
+            for (const u in this.users)
+            {
+                this.users[u].bubbleImage = null;
+            }
+            this.isRedrawRequired = true;
+        },
         drawBubbles: function()
         {
             for (const o of this.canvasObjects.filter(o => o.type == "user" && !this.ignoredUserIds.has(o.o.id)))
@@ -1776,13 +1794,14 @@ const vueApp = new Vue({
                 (this.isDarkMode = !this.isDarkMode)
             );
         },
-        toggleShiftEnterBehaviour: function ()
+        storeSet: function (itemName)
         {
-            localStorage.setItem(
-                "isNewlineOnShiftEnter",
-                (this.isNewlineOnShiftEnter = !this.isNewlineOnShiftEnter)
-            );
-            
+            localStorage.setItem(itemName, this[itemName]);
+        },
+        handleBubbleOpacity: function ()
+        {
+            this.storeSet("bubbleOpacity");
+            this.resetBubbleImages();
         },
     },
 });

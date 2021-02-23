@@ -26,6 +26,15 @@ header h2 {
     font-size: medium;
 }
 
+input[type='range']
+{
+    appearance: none;
+    background-color: #afb1b1;
+    width: 120px;
+    height: 4px;
+    font-size: 18px;
+}
+
 #login-page
 {
     padding: 5px;
@@ -264,6 +273,13 @@ video {
     border-radius: 3px;
 }
 
+.preferences-percentage
+{
+    display: inline-block;
+    width: 36px;
+    text-align: right;
+}
+
 #style-selectors
 {
     display: flex;
@@ -460,8 +476,9 @@ video {
 
 #sound-effect-volume {
     width: 50px;
+    background-color: #ffffff;
+    margin: 10px 0;
 }
-
 
 div[id^="vu-meter-container"]
 {
