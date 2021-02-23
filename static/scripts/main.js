@@ -75,7 +75,7 @@ const vueApp = new Vue({
         // preferences stuff
         isPreferencesPopupOpen: false,
         showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
-        isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") == "true",
+        isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") != "false",
         
         // streaming
         streams: [],
