@@ -112,7 +112,7 @@
                         <button id="btn-list" v-on:click="openUserListPopup()">{{ $t("ui.button_list") }}</button>
                     </div>
                     <div class="tooltip-section">
-                        <button id="btn-toggle-username-bg" v-on:click="toggleUsernameBackground()" v-bind:class="{'checked': showUsernameBackground}">{{ $t("ui.user_name_bg") }}</button>
+                        <button v-on:click="openPreferencesPopup">{{ $t("ui.button_preferences") }}</button>
                         <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{ $t("ui.button_crisp") }}</button>
                     </div>
                     <div class="tooltip-section">
@@ -314,6 +314,26 @@
                 <div class="popup-buttons">
                     <button v-on:click="wantToStartStreaming">{{ $t("ui.stream_form_button_stream") }}</button><button
                         v-on:click="closeStreamPopup">{{ $t("ui.popup_button_cancel") }}</button>
+                </div>
+            </div>
+            
+            <div class="popup-overlay" v-if="isPreferencesPopupOpen" v-on:click="closePreferencesPopup"></div>
+            <div class="popup" v-if="isPreferencesPopupOpen">
+                <div class="popup-title">{{ $t("ui.preferences_title") }}</div>
+                <div class="popup-content">
+                    <div class='popup-section'>
+                        <input type="checkbox" id="preferences-name-bg"
+                            v-model="showUsernameBackground" v-on:click="toggleUsernameBackground"><label
+                            for="preferences-name-bg">{{ $t("ui.preferences_name_bg") }}</label>
+                    </div>
+                    <div class='popup-section'>
+                        <input type="checkbox" id="preferences-shift-enter"
+                            v-model="isNewlineOnShiftEnter" v-on:click="toggleShiftEnterBehaviour"><label
+                            for="preferences-shift-enter">{{ $t("ui.preferences_shift_enter") }}</label>
+                    </div>
+                </div>
+                <div class="popup-buttons">
+                    <button v-on:click="closePreferencesPopup">{{ $t("ui.popup_button_ok") }}</button>
                 </div>
             </div>
 

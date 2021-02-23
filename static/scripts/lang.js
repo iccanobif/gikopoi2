@@ -37,9 +37,9 @@ export const messages =
             button_rula: "#ﾙｰﾗ",
             button_list: "#ﾘｽﾄ",
             button_crisp: "低画質っぽい",
+            button_preferences: "設定",
             volume: "音量：",
             sound_effect: "効果音",
-            user_name_bg: "ｺﾃ背景",
             label_move: "移動",
             label_bubble: "吹き出し",
             
@@ -73,6 +73,10 @@ export const messages =
             stream_form_auto_gain: "自動利得制御",
             stream_form_button_stream: "配信開始",
             stream_form_screen_capture: "画面共有",
+            
+            preferences_title: "設定",
+            preferences_name_bg: "ｺﾃ背景を表示",
+            preferences_shift_enter: "Shift+Enterの改行",
         },
         msg:
         {
@@ -162,9 +166,9 @@ export const messages =
             button_rula: "#rula",
             button_list: "#list",
             button_crisp: "\"Low Quality\"",
+            button_preferences: "Preferences",
             volume: "Volume: ",
             sound_effect: "Vol.",
-            user_name_bg: "Name BG",
             label_move: "Move",
             label_bubble: "Bubble",
             
@@ -193,11 +197,15 @@ export const messages =
             stream_form_video_only_mode: "Video only",
             stream_form_show_advanced: "Show Advanced Settings",
             stream_form_hide_advanced: "Hide Advanced Settings",
-            stream_form_echo_cancellation: "Echo cancellation",
+            stream_form_echo_cancellation: "Echo Cancellation",
             stream_form_noise_suppression: "Noise Reduction",
             stream_form_auto_gain: "Auto Gain Control",
             stream_form_button_stream: "Start Streaming",
             stream_form_screen_capture: "Screen capture",
+            
+            preferences_title: "Preferences",
+            preferences_name_bg: "Show Username Background",
+            preferences_shift_enter: "Newline On Shift+Enter",
         },
         msg:
         {

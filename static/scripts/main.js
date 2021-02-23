@@ -72,6 +72,11 @@ const vueApp = new Vue({
         isUserListPopupOpen: false,
         ignoredUserIds: new Set(),
         
+        // preferences stuff
+        isPreferencesPopupOpen: false,
+        showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
+        isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") != "false",
+        
         // streaming
         streams: [],
         mediaStream: null,
@@ -112,7 +117,6 @@ const vueApp = new Vue({
         allCharacters: Object.values(characters),
 
         vuMeterTimer: null,
-        showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
         isDarkMode: localStorage.getItem("isDarkMode") == "true",
     },
     mounted: function ()
@@ -1307,7 +1311,10 @@ const vueApp = new Vue({
         },
         handleMessageInputKeydown: function (event)
         {
-            if (event.key != "Enter" || event.shiftKey) return;
+            if (event.key != "Enter"
+                || (this.isNewlineOnShiftEnter && event.shiftKey)
+                || (!this.isNewlineOnShiftEnter && !event.shiftKey))
+                return;
 
             this.sendMessageToServer();
             event.preventDefault();
@@ -1651,6 +1658,14 @@ const vueApp = new Vue({
         {
             this.isUserListPopupOpen = false;
         },
+        openPreferencesPopup: function ()
+        {
+            this.isPreferencesPopupOpen = true;
+        },
+        closePreferencesPopup: function ()
+        {
+            this.isPreferencesPopupOpen = false;
+        },
         ignoreUser: function(user)
         {
             this.ignoredUserIds.add(user.id)
@@ -1760,6 +1775,14 @@ const vueApp = new Vue({
                 "isDarkMode",
                 (this.isDarkMode = !this.isDarkMode)
             );
+        },
+        toggleShiftEnterBehaviour: function ()
+        {
+            localStorage.setItem(
+                "isNewlineOnShiftEnter",
+                (this.isNewlineOnShiftEnter = !this.isNewlineOnShiftEnter)
+            );
+            
         },
     },
 });
