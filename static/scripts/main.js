@@ -979,6 +979,14 @@ const vueApp = new Vue({
                 this.isUsernameRedrawRequired = false;
         },
         
+        resetBubbleImages: function ()
+        {
+            for (const u in this.users)
+            {
+                this.users[u].bubbleImage = null;
+            }
+            this.isRedrawRequired = true;
+        },
         drawBubbles: function()
         {
             for (const o of this.canvasObjects.filter(o => o.type == "user" && !this.ignoredUserIds.has(o.o.id)))
@@ -1789,6 +1797,11 @@ const vueApp = new Vue({
         storeSet: function (itemName)
         {
             localStorage.setItem(itemName, this[itemName]);
+        },
+        handleBubbleOpacity: function ()
+        {
+            this.storeSet("bubbleOpacity");
+            this.resetBubbleImages();
         },
     },
 });

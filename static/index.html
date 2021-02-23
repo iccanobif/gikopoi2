@@ -334,7 +334,7 @@
                     <div class='popup-section'>
                         <label for="preferences-bubble-opacity">{{ $t("ui.preferences_bubble_opacity") }}</label>
                         <input type="range" id="preferences-bubble-opacity"
-                            min="50" max="100" v-model="bubbleOpacity" v-on:change="storeSet('bubbleOpacity')"><div
+                            min="50" max="100" v-model="bubbleOpacity" v-on:change="handleBubbleOpacity"><div
                             class='preferences-percentage'>{{ bubbleOpacity }}%</div>
                     </div>
                 </div>
