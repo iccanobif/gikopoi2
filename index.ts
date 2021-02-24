@@ -1,7 +1,7 @@
 import express from "express"
-import { readFile, writeFile } from "fs";
+import { readFile, readFileSync, writeFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
-import { Direction, RoomState, RoomStateDto, JanusServer } from "./types";
+import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto } from "./types";
 import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, getAllUsers, getUser, Player, removeUser, serializeUserState } from "./users";
 import { sleep } from "./utils";
 import got from "got";
@@ -26,8 +26,11 @@ const maxGhostRetention = 5 * 60 * 1000
 const inactivityTimeout = 30 * 60 * 1000
 const maximumUsersPerIpPerArea = 2
 
+const appVersion = Number.parseInt(readFileSync("version").toString())
+
 log.setLevel(log.levels.DEBUG)
 
+console.log("Gikopoipoi (version " + appVersion + ")")
 console.log("Using settings:", JSON.stringify(settings))
 
 if (settings.isBehindProxy)
@@ -753,30 +756,6 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
     }
 })
 
-app.post("/ping/:userId", async (req, res) =>
-{
-    readFile("version", (err, data) =>
-    {
-        if (err)
-            res.json(err)
-        else
-        {
-            try
-            {
-                // Return software version, so that the client can refresh the page
-                // if there has been a new deploy.
-                const str = data.toString()
-                const version = Number.parseInt(str)
-                res.json({ version })
-            }
-            catch (e)
-            {
-                res.end(e.message + " " + e.stack)
-            }
-        }
-    })
-})
-
 app.use(express.json());
 app.use(express.text());
 
@@ -789,6 +768,10 @@ app.post("/login", (req, res) =>
 {
     try
     {
+        const sendResponse = (response: LoginResponseDto) => {
+            res.json(response)
+        }
+
         let { userName, characterId, areaId } = req.body
 
         log.info("Attempting to login", req.ip, "<" + userName + ">", characterId, areaId)
@@ -796,7 +779,11 @@ app.post("/login", (req, res) =>
         if (typeof userName !== "string")
         {
             res.statusCode = 500
-            res.json(['error', 'invalid_username'])
+            sendResponse({
+                appVersion,
+                isLoginSuccessful: false,
+                error: "invalid_username",
+            })
             return;
         }
 
@@ -819,7 +806,11 @@ app.post("/login", (req, res) =>
             if (sameIpUserCount >= maximumUsersPerIpPerArea)
             {
                 res.statusCode = 500
-                res.json(['error', 'ip_restricted'])
+                sendResponse({
+                    appVersion,
+                    isLoginSuccessful: false,
+                    error: "ip_restricted",
+                })
                 return;
             }
         }
@@ -836,7 +827,12 @@ app.post("/login", (req, res) =>
         const user = addNewUser(processedUserName, characterId, areaId, req.ip);
 
         log.info("Logged in", user.id, "<" + user.name + ">", "from", req.ip)
-        res.json(['success', user.id])
+        sendResponse({
+            appVersion,
+            isLoginSuccessful: true,
+            userId: user.id,
+        })
+
     }
     catch (e)
     {

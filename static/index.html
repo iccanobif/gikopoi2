@@ -25,17 +25,17 @@
                 <input v-if="passwordInputVisible" type="text" v-model="password"></input>
                 <div id="area-selection">
                     <label for="gen-selection"><input type="radio" id="gen-selection" value="gen" v-model="areaId"
-                            v-on:click="setLanguage('ja')">
+                            v-on:click="setLanguage('ja')" :disabled="isLoggingIn">
                         一般 (_gen) [{{ $t("ui.login_user_count") }}@USER_COUNT_GEN@
                         {{ $t("ui.login_streamer_count") }}@STREAMER_COUNT_GEN@]</label>
                     <label for="for-selection"><input type="radio" id="for-selection" value="for" v-model="areaId"
-                            v-on:click="setLanguage('en')">
+                            v-on:click="setLanguage('en')" :disabled="isLoggingIn">
                         International (_for) [{{ $t("ui.login_user_count") }}@USER_COUNT_FOR@
                         {{ $t("ui.login_streamer_count") }}@STREAMER_COUNT_FOR@]</label>
                 </div>
                 <div>
                     <label>{{ $t("ui.label_username") }}</label>
-                    <input id="username-textbox" type="text" v-model="username" maxlength="20" />
+                    <input id="username-textbox" type="text" v-model="username" maxlength="20" :disabled="isLoggingIn" />
                 </div>
                 <div id="character-selection">
                     <label v-for="character in allCharacters" :for="character.characterName + '-selection'"
@@ -43,7 +43,7 @@
                         <template v-if="character.isHidden">
                             This is a secret, please don't tell anyone. これは秘密です、誰にも言わないでください。
                         </template>
-                        <input type="radio" :id="character.characterName + '-selection'"
+                        <input type="radio" :id="character.characterName + '-selection'" :disabled="isLoggingIn"
                             :value="character.characterName" v-model="characterId">
                         <img :src="'characters/' + character.characterName + '/front-standing.' + character.format"
                             v-bind:class="{'character-selected': character.characterName == characterId}" />

@@ -156,6 +156,11 @@ const vueApp = new Vue({
                 ev.preventDefault();
                 this.isLoggingIn = true;
 
+                // This is to make sure that the browser doesn't attempt to show the
+                // "autocomplete" drop down list when pressing the arrow keys on the keyboard,
+                // even when the textbox isn't visibile anymore (dunno why this happens, a firefox bug maybe).
+                document.getElementById("username-textbox").blur()
+
                 localStorage.setItem("username", this.username)
                 localStorage.setItem("characterId", this.characterId)
                 localStorage.setItem("areaId", this.areaId)
@@ -319,10 +324,10 @@ const vueApp = new Vue({
 
             const loginMessage = await loginResponse.json();
             
-            if (loginMessage[0] == "error") throw new UserException(loginMessage[1]);
-            if (loginMessage[0] != "success") throw loginMessage;
+            if (!loginMessage.isLoginSuccessful) throw new UserException(loginMessage.error);
             
-            this.myUserID = loginMessage[1];
+            this.myUserID = loginMessage.userId;
+            this.expectedServerVersion = loginMessage.appVersion;
             
             // prevent accidental page closing
             window.onbeforeunload = function(){return "Are you sure?";}
@@ -334,15 +339,6 @@ const vueApp = new Vue({
             const response = await fetch("/areas/" + this.areaId + "/rooms/admin_st")
             this.updateRoomState(await response.json())
             
-            const pingResponse = await postJson("/ping/" + this.myUserID, {
-                userId: this.myUserID,
-            });
-            if (pingResponse.ok)
-            {
-                const { version: newVersion } = await pingResponse.json();
-                this.expectedServerVersion = newVersion
-            }
-
             logToServer(this.myUserID + " User agent: " + navigator.userAgent)
 
             this.socket = io();

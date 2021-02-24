@@ -84,3 +84,11 @@ export interface RoomStateDto
     connectedUsers: Player[],
     streams: StreamSlot[],
 }
+
+export interface LoginResponseDto
+{
+    appVersion: number,
+    isLoginSuccessful: boolean,
+    error?: "invalid_username" | "ip_restricted",
+    userId?: string,
+}
