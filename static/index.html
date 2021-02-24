@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-    
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
@@ -9,7 +9,7 @@
     <link href="font-awesome/css/all.css" rel="stylesheet">
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-   
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ギコっぽいぽい</title>
     <script>
@@ -40,7 +40,8 @@
                 </div>
                 <div>
                     <label>{{ $t("ui.label_username") }}</label>
-                    <input id="username-textbox" type="text" v-model="username" maxlength="20" :disabled="isLoggingIn" />
+                    <input id="username-textbox" type="text" v-model="username" maxlength="20"
+                        :disabled="isLoggingIn" />
                 </div>
                 <div id="character-selection">
                     <label v-for="character in allCharacters" :for="character.characterName + '-selection'"
@@ -51,7 +52,7 @@
                         <input type="radio" :id="character.characterName + '-selection'" :disabled="isLoggingIn"
                             :value="character.characterName" v-model="characterId">
                         <img :src="'characters/' + character.characterName + '/front-standing.' + character.format"
-                            v-bind:class="{'character-selected': character.characterName == characterId}"/>
+                            v-bind:class="{'character-selected': character.characterName == characterId}" />
                     </label>
                 </div>
                 <button id="login-button" v-on:click="login" :disabled="isLoggingIn">Login</button>
@@ -93,7 +94,8 @@
                         </div>
                         <div id="infobox-username" class="infobox-line">
                             <div class="infobox-title">{{ $t("ui.infobox_label_user_name") }}</div>
-                            <div class="infobox-value">{{ myUserID && users && users[myUserID] ? toDisplayName(users[myUserID].name) :
+                            <div class="infobox-value">{{ myUserID && users && users[myUserID] ?
+                                toDisplayName(users[myUserID].name) :
                                 '-' }}</div>
                         </div>
                         <div id="infobox-usercount" class="infobox-line">
@@ -108,70 +110,75 @@
             <div id="toolbar-text-input">
                 {{ $t("ui.label_input") }} <textarea id="input-textbox"
                     v-on:keypress="handleMessageInputKeypress($event)" v-on:keydown="handleMessageInputKeydown($event)" tabindex="2" maxlength="500"></textarea>
-                <button id="send-button" v-on:click="sendMessageToServer" tabindex="3">{{ $t("ui.button_send") }}</button>
+                <button id="send-button" v-on:click="sendMessageToServer" tabindex="3">{{ $t("ui.button_send")
+                    }}</button>
             </div>
             <div id="toolbar-buttons">
                 <div class="tooltip-section">
                     <label for="sound-effect-volume">{{ $t("ui.sound_effect") }}</label>
                     <div id="sound-effect-volume"></div>
                 </div>
-                    <div class="tooltip-section tooltip-volume-section" v-show="enableTextToSpeech">
-                        <label>{{ $t("ui.tts_volume") }}</label>
-                        <div id="voice-volume"></div>
+                <div class="tooltip-section tooltip-volume-section" v-show="enableTextToSpeech">
+                    <label for="voice-volume">{{ $t("ui.tts_volume") }}</label>
+                    <div id="voice-volume"></div>
+                </div>
+                <div class="tooltip-section" v-if="isCommandSectionVisible">
+                    <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
+                    <button id="btn-list" v-on:click="openUserListPopup()">{{ $t("ui.button_list") }}</button>
+                </div>
+                <div class="tooltip-section">
+                    <button v-on:click="openPreferencesPopup">{{ $t("ui.button_preferences") }}</button>
+                    <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{
+                        $t("ui.button_crisp") }}</button>
+                </div>
+                <div class="tooltip-section" v-if="isMoveSectionVisible">
+                    <label>{{ $t("ui.label_move") }}</label>
+                    <div>
+                        <button id="btn-move-left" class="grid-button"
+                            v-on:click="sendNewPositionToServer('left')">↖</button><button id="btn-move-up"
+                            class="grid-button" v-on:click="sendNewPositionToServer('up')">↗</button>
                     </div>
-                    <div class="tooltip-section" v-if="isCommandSectionVisible">
-                        <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
-                        <button id="btn-list" v-on:click="openUserListPopup()">{{ $t("ui.button_list") }}</button>
+                    <div>
+                        <button id="btn-move-down" class="grid-button"
+                            v-on:click="sendNewPositionToServer('down')">↙</button><button id="btn-move-right"
+                            class="grid-button" v-on:click="sendNewPositionToServer('right')">↘</button>
                     </div>
-                    <div class="tooltip-section">
-                        <button v-on:click="openPreferencesPopup">{{ $t("ui.button_preferences") }}</button>
-                        <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{ $t("ui.button_crisp") }}</button>
+                </div>
+                <div class="tooltip-section" v-if="isMoveSectionVisible">
+                    <div class='tooltip-section-title'>
+                        <div>{{ $t("ui.label_move") }}</div>
                     </div>
-                    <div class="tooltip-section" v-if="isMoveSectionVisible">
-                        <div class='tooltip-section-title'>
-                            <div>{{ $t("ui.label_move") }}</div>
-                        </div>
-                        <div class="non-wrappable-buttons">
-                            <button id="btn-move-left" class="grid-button" 
-                                    v-on:mousedown="setMovementDirection('left')"
-                                    v-on:mouseup="setMovementDirection(null)"
-                                    v-on:touchstart="setMovementDirection('left')"
-                                    v-on:touchend="setMovementDirection(null)">↖</button
-                            ><button id="btn-move-up" class="grid-button" 
-                                    v-on:mousedown="setMovementDirection('up')"
-                                    v-on:mouseup="setMovementDirection(null)"
-                                    v-on:touchstart="setMovementDirection('up')"
-                                    v-on:touchend="setMovementDirection(null)">↗</button>
-                        </div>
-                        <div class="non-wrappable-buttons">
-                            <button id="btn-move-down" class="grid-button" 
-                                    v-on:mousedown="setMovementDirection('down')"
-                                    v-on:mouseup="setMovementDirection(null)"
-                                    v-on:touchstart="setMovementDirection('down')"
-                                    v-on:touchend="setMovementDirection(null)">↙</button
-                            ><button id="btn-move-right" class="grid-button" 
-                                    v-on:mousedown="setMovementDirection('right')"
-                                    v-on:mouseup="setMovementDirection(null)"
-                                    v-on:touchstart="setMovementDirection('right')"
-                                    v-on:touchend="setMovementDirection(null)">↘</button>
-                        </div>
+                    <div class="non-wrappable-buttons">
+                        <button id="btn-move-left" class="grid-button" v-on:mousedown="setMovementDirection('left')"
+                            v-on:mouseup="setMovementDirection(null)" v-on:touchstart="setMovementDirection('left')"
+                            v-on:touchend="setMovementDirection(null)">↖</button><button id="btn-move-up"
+                            class="grid-button" v-on:mousedown="setMovementDirection('up')"
+                            v-on:mouseup="setMovementDirection(null)" v-on:touchstart="setMovementDirection('up')"
+                            v-on:touchend="setMovementDirection(null)">↗</button>
                     </div>
-                    <div class="tooltip-section" v-if="isBubbleSectionVisible">
-                        <div class='tooltip-section-title'>
-                            <div>{{ $t("ui.label_bubble") }}</div>
-                        </div>
-                        <div class="non-wrappable-buttons">
-                            <button class="grid-button" v-on:click="sendNewBubblePositionToServer('left')">↖</button
-                            ><button class="grid-button" v-on:click="sendNewBubblePositionToServer('up')">↗</button>
-                        </div>
-                        <div class="non-wrappable-buttons">
-                            <button class="grid-button" v-on:click="sendNewBubblePositionToServer('down')">↙</button
-                            ><button class="grid-button" v-on:click="sendNewBubblePositionToServer('right')">↘</button>
-                        </div>
+                    <div class="non-wrappable-buttons">
+                        <button id="btn-move-down" class="grid-button" v-on:mousedown="setMovementDirection('down')"
+                            v-on:mouseup="setMovementDirection(null)" v-on:touchstart="setMovementDirection('down')"
+                            v-on:touchend="setMovementDirection(null)">↙</button><button id="btn-move-right"
+                            class="grid-button" v-on:mousedown="setMovementDirection('right')"
+                            v-on:mouseup="setMovementDirection(null)" v-on:touchstart="setMovementDirection('right')"
+                            v-on:touchend="setMovementDirection(null)">↘</button>
                     </div>
-                    <div class="tooltip-section">
-                        <button id="logout-button" v-if="isLogoutButtonVisible" v-on:click="logout" class="fas fa-sign-out-alt" v-bind:title="$t('ui.button_logout')"></button>
+                </div>
+                <div class="tooltip-section" v-if="isBubbleSectionVisible">
+                    <label>{{ $t("ui.label_bubble") }}</label>
+                    <div class="non-wrappable-buttons">
+                        <button class="grid-button" v-on:click="sendNewBubblePositionToServer('left')">↖</button><button
+                            class="grid-button" v-on:click="sendNewBubblePositionToServer('up')">↗</button>
                     </div>
+                    <div class="non-wrappable-buttons">
+                        <button class="grid-button" v-on:click="sendNewBubblePositionToServer('down')">↙</button><button
+                            class="grid-button" v-on:click="sendNewBubblePositionToServer('right')">↘</button>
+                    </div>
+                </div>
+                <div class="tooltip-section">
+                    <button id="logout-button" v-if="isLogoutButtonVisible" v-on:click="logout"
+                        class="fas fa-sign-out-alt" v-bind:title="$t('ui.button_logout')"></button>
                 </div>
             </div>
             {{ $t("ui.label_log") }}
@@ -190,11 +197,10 @@
                             v-show="takenStreams[index] || (streamSlot.isActive && index == streamSlotIdInWhichIWantToStream)"
                             v-on:click="toggleVideoSlotPinStatus(index)"></button>
                         <video :id="'local-video-' + index"
-                            v-show="streamSlot.isActive && index == streamSlotIdInWhichIWantToStream"
-                            autoplay muted></video>
+                            v-show="streamSlot.isActive && index == streamSlotIdInWhichIWantToStream" autoplay
+                            muted></video>
                         <video :id="'received-video-' + index"
-                            v-show="takenStreams[index] && index != streamSlotIdInWhichIWantToStream"
-                            autoplay></video>
+                            v-show="takenStreams[index] && index != streamSlotIdInWhichIWantToStream" autoplay></video>
                     </div>
                     <div :id="'vu-meter-container-' + index"
                         v-show="streamSlot.isActive && streamSlot.withSound && index == streamSlotIdInWhichIWantToStream">
@@ -269,8 +275,8 @@
                     </table>
                 </div>
                 <div class="popup-buttons">
-                    <button v-on:click="rula(rulaRoomSelection)">{{ $t("ui.rula_menu_button_rula") }}</button><button
-                        v-on:click="closeRulaPopup">{{ $t("ui.popup_button_cancel") }}</button>
+                    <button v-on:click="rula(rulaRoomSelection)">{{ $t("ui.rula_menu_button_rula")
+                        }}</button><button v-on:click="closeRulaPopup">{{ $t("ui.popup_button_cancel") }}</button>
                 </div>
             </div>
 
@@ -290,14 +296,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="user in Object.values(users).filter(u => u.id != myUserID)" 
+                            <tr v-for="user in Object.values(users).filter(u => u.id != myUserID)"
                                 v-bind:class="{'popup-row-is-selected': user.id == highlightedUserId}">
                                 <td>
                                     <div v-on:click="highlightUser(user)">
                                         {{ user.name || $t("default_user_name") }}
                                     </div>
-                                    <button v-if="ignoredUserIds.has(user.id)" v-on:click="unignoreUser(user)">{{ $t("ui.user_list_popup_unignore") }}</button>
-                                    <button v-if="!ignoredUserIds.has(user.id)" v-on:click="ignoreUser(user)">{{ $t("ui.user_list_popup_ignore") }}</button>
+                                    <button v-if="ignoredUserIds.has(user.id)" v-on:click="unignoreUser(user)">{{
+                                        $t("ui.user_list_popup_unignore") }}</button>
+                                    <button v-if="!ignoredUserIds.has(user.id)" v-on:click="ignoreUser(user)">{{
+                                        $t("ui.user_list_popup_ignore") }}</button>
                                     <button v-on:click="blockUser(user)">{{ $t("ui.user_list_popup_block") }}</button>
                                 </td>
                             </tr>
@@ -317,32 +325,42 @@
                     <div class='popup-section'>
                         <span>{{ $t("ui.stream_form_mode") }}</span><input type="radio"
                             id="stream-form-video-sound-mode" value="video_sound" v-model="streamMode"><label
-                            for="stream-form-video-sound-mode">{{ $t("ui.stream_form_video_sound_mode") }}</label>
+                            for="stream-form-video-sound-mode">{{
+                            $t("ui.stream_form_video_sound_mode") }}</label>
 
                         <input type="radio" id="stream-form-sound-only-mode" value="sound" v-model="streamMode"><label
-                            for="stream-form-sound-only-mode">{{ $t("ui.stream_form_sound_only_mode") }}</label>
+                            for="stream-form-sound-only-mode">{{
+                            $t("ui.stream_form_sound_only_mode") }}</label>
 
                         <input type="radio" id="stream-form-video-only-mode" value="video" v-model="streamMode"><label
-                            for="stream-form-video-only-mode">{{ $t("ui.stream_form_video_only_mode") }}</label>
+                            for="stream-form-video-only-mode">{{
+                            $t("ui.stream_form_video_only_mode") }}</label>
                     </div>
                     <div class='popup-section' v-if="streamMode != 'sound'">
-                        <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label 
+                        <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label
                             for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
                     </div>
                     <div v-if="streamMode != 'video'">
                         <div class='popup-section'>
                             <button v-if="!displayAdvancedStreamSettings"
-                                v-on:click="displayAdvancedStreamSettings = true">{{ $t("ui.stream_form_show_advanced") }}</button>
+                                v-on:click="displayAdvancedStreamSettings = true">{{
+                                $t("ui.stream_form_show_advanced")
+                                }}</button>
                             <button v-if="displayAdvancedStreamSettings"
-                                v-on:click="displayAdvancedStreamSettings = false">{{ $t("ui.stream_form_hide_advanced") }}</button>
+                                v-on:click="displayAdvancedStreamSettings = false">{{
+                                $t("ui.stream_form_hide_advanced")
+                                }}</button>
                         </div>
                         <div v-if="displayAdvancedStreamSettings">
                             <div class='popup-section' v-if="streamMode != 'sound' && streamScreenCapture">
                                 <div>
-                                    <input type="checkbox" id="stream-form-screen-capture-audio" v-model="streamScreenCaptureAudio"><label 
-                                        for="stream-form-screen-capture-audio">{{ $t("ui.stream_form_screen_capture_audio") }}</label>
+                                    <input type="checkbox" id="stream-form-screen-capture-audio"
+                                        v-model="streamScreenCaptureAudio"><label
+                                        for="stream-form-screen-capture-audio">{{
+                                        $t("ui.stream_form_screen_capture_audio") }}</label>
                                 </div>
-                                <div class='popup-notice'>{{ $t("ui.stream_form_screen_capture_audio_notice") }}</div>
+                                <div class='popup-notice'>{{ $t("ui.stream_form_screen_capture_audio_notice") }}
+                                </div>
                             </div>
                             <div class='popup-section' v-if="!streamScreenCapture || !streamScreenCaptureAudio">
                                 <div>
@@ -357,81 +375,90 @@
                                 </div>
                                 <div v-if="!streamScreenCapture || !streamScreenCaptureAudio">
                                     <input type="checkbox" id="stream-form-auto-gain" v-model="streamAutoGain"><label
-                                        for="stream-form-auto-gain">{{ $t("ui.stream_form_auto_gain") }}</label>
+                                        for="stream-form-auto-gain">{{
+                                        $t("ui.stream_form_auto_gain") }}</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="popup-buttons">
-                    <button v-on:click="wantToStartStreaming">{{ $t("ui.stream_form_button_stream") }}</button><button
-                        v-on:click="closeStreamPopup">{{ $t("ui.popup_button_cancel") }}</button>
+                    <button v-on:click="wantToStartStreaming">{{ $t("ui.stream_form_button_stream")
+                        }}</button><button v-on:click="closeStreamPopup">{{ $t("ui.popup_button_cancel") }}</button>
                 </div>
             </div>
-            
+
             <div class="popup-overlay" v-if="isPreferencesPopupOpen" v-on:click="closePreferencesPopup"></div>
             <div class="popup" v-if="isPreferencesPopupOpen">
                 <div class="popup-title">{{ $t("ui.preferences_title") }}</div>
                 <div class="popup-content">
                     <div class='popup-section'>
-                        <input type="checkbox" id="preferences-name-bg"
-                            v-model="showUsernameBackground" v-on:click="toggleUsernameBackground"><label
-                            for="preferences-name-bg">{{ $t("ui.preferences_name_bg") }}</label>
+                        <input type="checkbox" id="preferences-name-bg" v-model="showUsernameBackground"
+                            v-on:click="toggleUsernameBackground"><label for="preferences-name-bg">{{
+                            $t("ui.preferences_name_bg") }}</label>
                     </div>
                     <div class='popup-section'>
-                        <input type="checkbox" id="preferences-shift-enter"
-                            v-model="isNewlineOnShiftEnter" v-on:change="storeSet('isNewlineOnShiftEnter')"><label
-                            for="preferences-shift-enter">{{ $t("ui.preferences_shift_enter") }}</label>
+                        <input type="checkbox" id="preferences-shift-enter" v-model="isNewlineOnShiftEnter"
+                            v-on:change="storeSet('isNewlineOnShiftEnter')"><label for="preferences-shift-enter">{{
+                            $t("ui.preferences_shift_enter") }}</label>
                     </div>
                     <div class='popup-section'>
                         <label for="preferences-bubble-opacity">{{ $t("ui.preferences_bubble_opacity") }}</label>
-                        <input type="range" id="preferences-bubble-opacity"
-                            min="50" max="100" v-model="bubbleOpacity" v-on:change="handleBubbleOpacity"><div
-                            class='preferences-percentage'>{{ bubbleOpacity }}%</div>
+                        <input type="range" id="preferences-bubble-opacity" min="50" max="100" v-model="bubbleOpacity"
+                            v-on:change="handleBubbleOpacity">
+                        <div class='preferences-percentage'>{{ bubbleOpacity }}%</div>
                     </div>
                     <div class='popup-section'>
-                        <input type="checkbox" id="preferences-dark-mode"
-                            v-model="isDarkMode" v-on:change="handleDarkMode"><label
-                            for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
+                        <input type="checkbox" id="preferences-dark-mode" v-model="isDarkMode"
+                            v-on:change="handleDarkMode"><label for="preferences-dark-mode">{{
+                            $t("ui.preferences_dark_mode") }}</label>
                     </div>
                     <div class='popup-section'>
                         <div>
-                            <input type="checkbox" id="preferences-show-notifications"
-                                v-model="showNotifications" v-on:change="handleShowNotifications"><label
-                                for="preferences-show-notifications">{{ $t("ui.preferences_show_notifications") }}</label>
+                            <input type="checkbox" id="preferences-show-notifications" v-model="showNotifications"
+                                v-on:change="handleShowNotifications"><label for="preferences-show-notifications">{{
+                                $t("ui.preferences_show_notifications") }}</label>
                         </div>
-                        <div v-if="showNotificationsNotice" class="popup-notice">{{ $t("ui.notifications_are_denied") }}</div>
+                        <div v-if="showNotificationsNotice" class="popup-notice">{{
+                            $t("ui.notifications_are_denied") }}
+                        </div>
                     </div>
                     <div class='popup-section'>
                         <input type="checkbox" id="preferences-command-section-visible"
                             v-model="isCommandSectionVisible" v-on:change="storeSet('isCommandSectionVisible')"><label
-                            for="preferences-command-section-visible">{{ $t("ui.preferences_command_section_visible") }}</label>
+                            for="preferences-command-section-visible">{{
+                            $t("ui.preferences_command_section_visible")
+                            }}</label>
                     </div>
                     <div class='popup-section'>
-                        <input type="checkbox" id="preferences-move-section-visible"
-                            v-model="isMoveSectionVisible" v-on:change="storeSet('isMoveSectionVisible')"><label
-                            for="preferences-move-section-visible">{{ $t("ui.preferences_move_section_visible") }}</label>
+                        <input type="checkbox" id="preferences-move-section-visible" v-model="isMoveSectionVisible"
+                            v-on:change="storeSet('isMoveSectionVisible')"><label
+                            for="preferences-move-section-visible">{{
+                            $t("ui.preferences_move_section_visible") }}</label>
                     </div>
                     <div class='popup-section'>
-                        <input type="checkbox" id="preferences-bubble-section-visible"
-                            v-model="isBubbleSectionVisible" v-on:change="storeSet('isBubbleSectionVisible')"><label
-                            for="preferences-bubble-section-visible">{{ $t("ui.preferences_bubble_section_visible") }}</label>
+                        <input type="checkbox" id="preferences-bubble-section-visible" v-model="isBubbleSectionVisible"
+                            v-on:change="storeSet('isBubbleSectionVisible')"><label
+                            for="preferences-bubble-section-visible">{{ $t("ui.preferences_bubble_section_visible")
+                            }}</label>
                     </div>
                     <div class='popup-section'>
-                        <input type="checkbox" id="preferences-logout-button-visible"
-                            v-model="isLogoutButtonVisible" v-on:change="storeSet('isLogoutButtonVisible')"><label
-                            for="preferences-logout-button-visible">{{ $t("ui.preferences_logout_button_visible") }}</label>
+                        <input type="checkbox" id="preferences-logout-button-visible" v-model="isLogoutButtonVisible"
+                            v-on:change="storeSet('isLogoutButtonVisible')"><label
+                            for="preferences-logout-button-visible">{{ $t("ui.preferences_logout_button_visible")
+                            }}</label>
                     </div>
                     <div class='popup-section'>
-                        <input type="checkbox" id="preferences-text-to-speech"
-                            v-model="enableTextToSpeech" v-on:change="handleEnableTextToSpeech"><label
-                            for="preferences-text-to-speech">{{ $t("ui.preferences_enable_text_to_speech") }}</label>
+                        <input type="checkbox" id="preferences-text-to-speech" v-model="enableTextToSpeech"
+                            v-on:change="handleEnableTextToSpeech"><label for="preferences-text-to-speech">{{
+                            $t("ui.preferences_enable_text_to_speech") }}</label>
                     </div>
                     <div class='popup-section'>
                         <label for="preferences-tts-voice">{{ $t("ui.preferences_tts_voice") }}</label>
                         <select id="preferences-tts-voice" v-model="ttsVoiceURI" v-on:change="changeVoice">
                             <option value="automatic">Automatic</option>
-                            <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}</option>
+                            <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}
+                            </option>
                             <!-- <option value="silly-voice">Silly voice</option> -->
                         </select>
                     </div>
@@ -458,7 +485,7 @@
         </div>
         <div id="logged-out-page" v-if="loggedOut">
             {{ $t("msg.goodbye") }}
-            <img src="characters/giko/front-standing.svg"/>
+            <img src="characters/giko/front-standing.svg" />
             <a href="/">{{ $t("ui.back_to_homepage") }}</a>
         </div>
         <div id="poop-page" v-if="isPoop">
