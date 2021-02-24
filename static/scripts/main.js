@@ -108,6 +108,7 @@ const vueApp = new Vue({
         },
         wantToStream: false,
         connectionLost: false,
+        connectionRefused: false,
         steppingOnPortalToNonAvailableRoom: false,
 
         pageRefreshRequired: false,
@@ -375,7 +376,7 @@ const vueApp = new Vue({
             });
             this.socket.on("server-cant-log-you-in", () =>
             {
-                this.connectionLost = true;
+                this.connectionRefused = true;
             });
 
             this.socket.on("server-update-current-room-state", (dto) =>

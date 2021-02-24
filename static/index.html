@@ -56,8 +56,11 @@
             </div>
         </div>
         <div id="stage" v-if="loggedIn">
-            <h2 class="big-red-alert" v-if="connectionLost">
+            <h2 class="big-red-alert" v-if="connectionLost && !connectionRefused">
                 {{ $t("msg.connection_lost") }}
+            </h2>
+            <h2 class="big-red-alert" v-if="connectionRefused">
+                {{ $t("msg.connection_refused") }}
             </h2>
             <h2 class="big-red-alert" v-if="steppingOnPortalToNonAvailableRoom">
                 {{ $t("msg.room_unavailable") }}

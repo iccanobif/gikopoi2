@@ -161,7 +161,9 @@ io.on("connection", function (socket: any)
             user = getUser(userId);
             if (!user)
             {
+                log.info("server-cant-log-you-in", userId)
                 socket.emit("server-cant-log-you-in")
+                socket.disconnect(true)
                 return;
             }
 
