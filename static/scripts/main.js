@@ -343,7 +343,7 @@ const vueApp = new Vue({
 
             this.socket = io();
 
-            const immanentizeConnection = () =>
+            const immanentizeConnection = async () =>
             {
                 // it can happen that the user is pressing the arrow keys while the
                 // socket is down, in which case the server will never answer to the
@@ -354,7 +354,15 @@ const vueApp = new Vue({
                 this.connectionLost = false;
                 this.socket.emit("user-connect", this.myUserID);
 
-                this.ping()
+                // Check if there's a new version
+                const response = await fetch("/version");
+                if (!response.ok)
+                    throw new Error(response)
+                const newVersion = await response.json();
+                if (newVersion > this.expectedServerVersion)
+                {
+                    this.pageRefreshRequired = true
+                }
             }
 
             this.socket.on("connect", immanentizeConnection);
@@ -512,27 +520,6 @@ const vueApp = new Vue({
             this.socket.on("server-character-changed", (userId, characterId) => {
                 this.users[userId].character = characters[characterId]
             })
-        },
-        ping: async function ()
-        {
-            try {
-                if (this.connectionLost) return;
-                
-                const response = await postJson("/ping/" + this.myUserID, {
-                    userId: this.myUserID,
-                });
-                if (!response.ok)
-                    throw new Error(response)
-                const { version: newVersion } = await response.json();
-                if (newVersion > this.expectedServerVersion)
-                {
-                    this.pageRefreshRequired = true
-                }
-            }
-            catch (exc)
-            {
-                console.log(exc)
-            }
         },
         addUser: function (userDTO)
         {

@@ -759,6 +759,10 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
 app.use(express.json());
 app.use(express.text());
 
+app.get("/version", (req, res) => {
+    res.json(appVersion)
+})
+
 app.post("/error", (req, res) => {
     log.error(req.body)
     res.end()
