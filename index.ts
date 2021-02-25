@@ -335,6 +335,8 @@ io.on("connection", function (socket: any)
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId]
 
+            if (stream.userId == user.id) clearStream(user);
+
             if (stream.isActive)
             {
                 log.info("server-not-ok-to-stream", user.id)
