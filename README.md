@@ -7,7 +7,7 @@ to start server, run:
 
 to enable automatic version bump run:
 
-``$ chmod +x .githooks/pre-commit && git config core.hooksPath .githooks``
+``$ git config core.hooksPath .githooks``
 
 Help on any task (non programming stuff too) is welcome, feel free to contact me!
 どんなお手伝いでも大歓迎です！気軽に連絡ください（日本語でもおｋ）
