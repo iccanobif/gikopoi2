@@ -1421,7 +1421,7 @@ export const rooms: { [roomId: string]: Room } = {
             bar_giko: { x: 17, y: 17, direction: "down", target: { roomId: "bar_giko", doorId: "stairs" } },
             yoshinoya: { x: 4, y: 15, direction: "right", target: { roomId: "yoshinoya", doorId: "door" } },
         },
-        streamSlotCount: 0,
+        streamSlotCount: 3,
         secret: false
     },
     bar_giko2: {
