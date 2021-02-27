@@ -271,7 +271,7 @@
 
 
             <div class="popup-overlay" v-if="isStreamPopupOpen" v-on:click="closeStreamPopup"></div>
-            <div class="popup" v-if="isStreamPopupOpen">
+            <div id="stream-popup" class="popup" v-if="isStreamPopupOpen">
                 <div class="popup-title">{{ $t("ui.stream_form_title") }}</div>
                 <div class="popup-content">
                     <div class='popup-section'>
@@ -298,8 +298,11 @@
                         </div>
                         <div v-if="displayAdvancedStreamSettings">
                             <div class='popup-section' v-if="streamMode != 'sound' && streamScreenCapture">
-                                <input type="checkbox" id="stream-form-screen-capture-audio" v-model="streamScreenCaptureAudio"><label 
-                                    for="stream-form-screen-capture-audio">{{ $t("ui.stream_form_screen_capture_audio") }}</label>
+                                <div>
+                                    <input type="checkbox" id="stream-form-screen-capture-audio" v-model="streamScreenCaptureAudio"><label 
+                                        for="stream-form-screen-capture-audio">{{ $t("ui.stream_form_screen_capture_audio") }}</label>
+                                </div>
+                                <div class='popup-notice'>{{ $t("ui.stream_form_screen_capture_audio_notice") }}</div>
                             </div>
                             <div class='popup-section' v-if="!streamScreenCapture || !streamScreenCaptureAudio">
                                 <div>
