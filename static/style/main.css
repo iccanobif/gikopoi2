@@ -468,6 +468,7 @@ video {
     overflow-x: auto;
     padding-top: 2px;
     padding-bottom: 2px;
+    user-select: none;
 }
 
 #character-selection img {
@@ -476,7 +477,6 @@ video {
     padding-top: 10px;
     min-width: 10px;
     margin: 2px;
-    user-select: none;
     object-fit: contain;
 }
 
