@@ -73,7 +73,7 @@ export const messages =
             stream_form_auto_gain: "自動利得制御",
             stream_form_button_stream: "配信開始",
             stream_form_screen_capture: "画面共有",
-            stream_form_screen_capture_audio: "画面共有の音",
+            stream_form_screen_capture_audio: "画面の音声を共有",
             stream_form_screen_capture_audio_notice: "この機能は実験的です。ChromeとEdgeのみ。\nWindowsなら、画面の音声とタブの音声しか取得出来ない。",
             
             
@@ -92,7 +92,7 @@ export const messages =
             
             error_obtaining_media: "メディアを取得できませんでした。",
             error_obtaining_video: "動画を取得できませんでした。",
-            error_obtaining_audio: "音を取得できませんでした。",
+            error_obtaining_audio: "音声を取得できませんでした。",
             no_webrtc: "あなたのブラウザーはWebRTCをサポートしていません。",
             
             unknown_error: "不明なエラーが原因で接続に失敗しました。",
