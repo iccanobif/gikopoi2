@@ -364,6 +364,12 @@ video {
     z-index: 2;
 }
 
+@media (max-width: 600px) {
+    .popup {
+        width: 90%;
+    }
+}
+
 .popup-overlay
 {
     content: "";
@@ -401,6 +407,12 @@ video {
 .popup-subsection
 {
     margin-left: 20px;
+}
+
+.popup-notice
+{
+    white-space: pre;
+    font-size: 12px
 }
 
 .popup-table
