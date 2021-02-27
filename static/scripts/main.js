@@ -147,6 +147,11 @@ const vueApp = new Vue({
                 if (document.styleSheets[i].title == "dark-mode-sheet")
                     document.styleSheets[i].disabled = false
 
+        const charSelect = document.getElementById("character-selection")
+        const charactersSelected = charSelect.getElementsByClassName("character-selected")
+        if (charactersSelected.length)
+            charactersSelected[0].scrollIntoView({block: "nearest"})
+
         document.getElementById("username-textbox").focus()
     },
     methods: {
@@ -215,14 +220,6 @@ const vueApp = new Vue({
         {
             this.svgMode = this.svgMode != "crisp" ? "crisp" : null;
             this.reloadImages()
-        },
-        handlePortraitLoaded: function ()
-        {
-            const charSelect = document.getElementById("character-selection")
-            const charactersSelected = charSelect.getElementsByClassName("character-selected")
-            if (!charactersSelected.length)
-                return;
-            charactersSelected[0].scrollIntoView({block: "nearest"})
         },
         reloadImages: async function ()
         {
