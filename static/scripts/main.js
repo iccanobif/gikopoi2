@@ -93,6 +93,7 @@ const vueApp = new Vue({
         streamNoiseSuppression: false,
         streamAutoGain: false,
         streamScreenCapture: false,
+        streamScreenCaptureAudio: false,
 
         // Warning Toast
         isWarningToastOpen: false,
@@ -1446,11 +1447,12 @@ const vueApp = new Vue({
                 const withVideo = this.streamMode != "sound";
                 const withSound = this.streamMode != "video";
                 const withScreenCapture = this.streamScreenCapture && withVideo
-
+                const withScreenCaptureAudio = this.streamScreenCaptureAudio && withScreenCapture && withSound
+                
                 // TODO use Promise.all() for both promises
 
                 let userMediaPromise = null
-                if (withSound || !withScreenCapture)
+                if ((withSound && !withScreenCaptureAudio) || !withScreenCapture)
                     userMediaPromise = navigator.mediaDevices.getUserMedia(
                         {
                             video: !withVideo || withScreenCapture ? undefined : {
@@ -1472,7 +1474,11 @@ const vueApp = new Vue({
                 
                 let screenMediaPromise = null
                 if (withScreenCapture)
-                    screenMediaPromise = navigator.mediaDevices.getDisplayMedia()
+                    screenMediaPromise = navigator.mediaDevices.getDisplayMedia(
+                    {
+                        video: true,
+                        audio: withScreenCaptureAudio
+                    });
 
                 // I need to use Promise.allSettled() because the browser needs to be convinced that both getDisplayMedia()
                 // and getUserMedia() were initiated by a user action.
@@ -1490,16 +1496,25 @@ const vueApp = new Vue({
                 else 
                 {
                     this.mediaStream = screenMedia
-                    if (withSound)
+                    if (withSound && !withScreenCaptureAudio)
                     {
                         const audioTrack = userMedia.getAudioTracks()[0]
                         this.mediaStream.addTrack(audioTrack)
                     }
                 }
-
-                // VU Meter
+                
+                if (withVideo)
+                {
+                    if (!this.mediaStream.getVideoTracks().length)
+                        throw new UserException("error_obtaining_video");
+                }
+                
                 if (withSound)
                 {
+                    if (!this.mediaStream.getAudioTracks().length)
+                        throw new UserException("error_obtaining_audio");
+                    
+                    // VU Meter
                     const context = new AudioContext();
                     const microphone = context.createMediaStreamSource(this.mediaStream);
                     const analyser = context.createAnalyser()
@@ -1553,10 +1568,17 @@ const vueApp = new Vue({
                 // On small screens, displaying the <video> element seems to cause a reflow in a way that
                 // makes the canvas completely gray, so i force a redraw
                 this.isRedrawRequired = true; 
-            } catch (err)
+            } catch (e)
             {
-                this.showWarningToast(i18n.t("msg.error_obtaining_media_device"));
-                console.error(new Date(), err);
+                console.error(new Date(), e)
+                if (e instanceof UserException)
+                {
+                    this.showWarningToast(i18n.t("msg." + e.message));
+                }
+                else
+                {
+                    this.showWarningToast(i18n.t("msg.error_obtaining_media"));
+                }
                 this.wantToStream = false;
                 this.mediaStream = false;
                 this.streamSlotIdInWhichIWantToStream = null;
@@ -1713,6 +1735,7 @@ const vueApp = new Vue({
             this.streamNoiseSuppression = false;
             this.streamAutoGain = false;
             this.streamScreenCapture = false;
+            this.streamScreenCaptureAudio = false;
         },
         closeStreamPopup: function ()
         {

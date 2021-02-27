@@ -73,6 +73,7 @@ export const messages =
             stream_form_auto_gain: "自動利得制御",
             stream_form_button_stream: "配信開始",
             stream_form_screen_capture: "画面共有",
+            stream_form_screen_capture_audio: "画面共有の音",
             
             preferences_title: "設定",
             preferences_name_bg: "ｺﾃ背景を表示",
@@ -87,7 +88,9 @@ export const messages =
             room_unavailable: "まだ部屋の用意ができていません。ごめんね！",
             page_refresh_required: "このサイトは更新されましたからページをリフレッシュしてください。",
             
-            error_obtaining_media_device: "デバイスを取得できませんでした。",
+            error_obtaining_media: "メディアを取得できませんでした。",
+            error_obtaining_video: "動画を取得できませんでした。",
+            error_obtaining_audio: "音を取得できませんでした。",
             no_webrtc: "あなたのブラウザーはWebRTCをサポートしていません。",
             
             unknown_error: "不明なエラーが原因で接続に失敗しました。",
@@ -203,7 +206,8 @@ export const messages =
             stream_form_noise_suppression: "Noise Reduction",
             stream_form_auto_gain: "Auto Gain Control",
             stream_form_button_stream: "Start Streaming",
-            stream_form_screen_capture: "Screen capture",
+            stream_form_screen_capture: "Screen Capture",
+            stream_form_screen_capture_audio: "Screen Capture Audio",
             
             preferences_title: "Preferences",
             preferences_name_bg: "Show Username Background",
@@ -218,7 +222,9 @@ export const messages =
             room_unavailable: "This room is not available yet. Sorry!",
             page_refresh_required: "An update is ready, so please refresh this page.",
             
-            error_obtaining_media_device: "Unable to obtain media device.",
+            error_obtaining_media: "Unable to obtain media.",
+            error_obtaining_video: "Unable to obtain video.",
+            error_obtaining_audio: "Unable to obtain audio.",
             no_webrtc: "Sorry, your browser doesn't support WebRTC.",
             
             unknown_error: "The connection failed due to an unknown error.",
