@@ -147,6 +147,11 @@ const vueApp = new Vue({
                 if (document.styleSheets[i].title == "dark-mode-sheet")
                     document.styleSheets[i].disabled = false
 
+        const charSelect = document.getElementById("character-selection")
+        const charactersSelected = charSelect.getElementsByClassName("character-selected")
+        if (charactersSelected.length)
+            charactersSelected[0].scrollIntoView({block: "nearest"})
+
         document.getElementById("username-textbox").focus()
     },
     methods: {
