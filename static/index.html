@@ -297,7 +297,7 @@
                                 v-on:click="displayAdvancedStreamSettings = false">{{ $t("ui.stream_form_hide_advanced") }}</button>
                         </div>
                         <div v-if="displayAdvancedStreamSettings">
-                            <div class='popup-section' v-if="streamScreenCapture">
+                            <div class='popup-section' v-if="streamMode != 'sound' && streamScreenCapture">
                                 <input type="checkbox" id="stream-form-screen-capture-audio" v-model="streamScreenCaptureAudio"><label 
                                     for="stream-form-screen-capture-audio">{{ $t("ui.stream_form_screen_capture_audio") }}</label>
                             </div>
