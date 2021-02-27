@@ -216,6 +216,14 @@ const vueApp = new Vue({
             this.svgMode = this.svgMode != "crisp" ? "crisp" : null;
             this.reloadImages()
         },
+        handlePortraitLoaded: function ()
+        {
+            const charSelect = document.getElementById("character-selection")
+            const charactersSelected = charSelect.getElementsByClassName("character-selected")
+            if (!charactersSelected.length)
+                return;
+            charactersSelected[0].scrollIntoView({block: "nearest"})
+        },
         reloadImages: async function ()
         {
             this.loadRoomBackground();

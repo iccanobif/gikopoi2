@@ -46,7 +46,8 @@ input[type='range']
 }
 
 #login-form > div {
-    padding: 3px 0 3px 0;
+    margin-left: 3px;
+    margin-right: 3px;
 }
 
 #login-footer {
@@ -460,14 +461,28 @@ video {
     margin-left: 5px;
 }
 
+#character-selection
+{
+    display:flex;
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
 #character-selection img {
-    width: 50px;
+    height: 70px;
+    padding-top: 10px;
+    min-width: 10px;
     margin: 2px;
+    user-select: none;
 }
 
 #character-selection .character-selected {
     border: solid 2px blue;
-    margin: 0px;
+    margin: 0;
 }
 
 #character-selection input {

@@ -46,7 +46,8 @@
                         <input type="radio" :id="character.characterName + '-selection'" :disabled="isLoggingIn"
                             :value="character.characterName" v-model="characterId">
                         <img :src="'characters/' + character.characterName + '/front-standing.' + character.format"
-                            v-bind:class="{'character-selected': character.characterName == characterId}" />
+                            v-bind:class="{'character-selected': character.characterName == characterId}"
+                            v-on:load="handlePortraitLoaded" />
                     </label>
                 </div>
                 <button id="login-button" v-on:click="login" :disabled="isLoggingIn">Login</button>
