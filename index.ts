@@ -173,7 +173,7 @@ io.on("connection", function (socket: any)
             socket.join(user.areaId)
             socket.join(user.areaId + currentRoom.id)
 
-            log.info("id:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
+            log.info("userId:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
 
             user.isGhost = false
             user.disconnectionTime = null
