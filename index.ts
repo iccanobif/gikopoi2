@@ -21,6 +21,7 @@ const enforce = require('express-sslify');
 const JanusClient = require('janus-videoroom-client').Janus;
 
 const delay = 0
+const directionChangeDelay = 700;
 const persistInterval = 5 * 1000
 const maxGhostRetention = 5 * 60 * 1000
 const inactivityTimeout = 30 * 60 * 1000
@@ -240,7 +241,9 @@ io.on("connection", function (socket: any)
             log.info("user-move", user.id, direction)
             user.isInactive = false
             user.lastAction = Date.now()
-            if (user.direction != direction)
+            const previousMoveAt = user.lastMovedAt;
+            user.lastMovedAt = Date.now();
+            if (user.direction != direction && user.lastMovedAt - previousMoveAt > directionChangeDelay)
             {
                 // ONLY CHANGE DIRECTION
                 user.direction = direction;
