@@ -81,6 +81,7 @@ export const messages =
             preferences_name_bg: "ｺﾃ背景を表示",
             preferences_shift_enter: "Shift+Enterの改行",
             preferences_bubble_opacity: "吹き出しの不透明度",
+            preferences_dark_mode: "Shaddoxモード",
         },
         msg:
         {
@@ -216,6 +217,7 @@ export const messages =
             preferences_name_bg: "Show Username Background",
             preferences_shift_enter: "Newline On Shift+Enter",
             preferences_bubble_opacity: "Speech Bubble Opacity",
+            preferences_dark_mode: "Shaddox Mode",
         },
         msg:
         {

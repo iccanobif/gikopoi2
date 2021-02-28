@@ -1787,7 +1787,7 @@ const vueApp = new Vue({
         {
             this.passwordInputVisible = true;
         },
-        toggleDarkMode: function ()
+        handleDarkMode: function ()
         {
             this.isRedrawRequired = true
             
@@ -1801,10 +1801,7 @@ const vueApp = new Vue({
                 observer.observe(chatLog.lastChild);
             }
 
-            localStorage.setItem(
-                "isDarkMode",
-                (this.isDarkMode = !this.isDarkMode)
-            );
+            localStorage.setItem("isDarkMode");
         },
         storeSet: function (itemName)
         {

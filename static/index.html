@@ -349,6 +349,11 @@
                             min="50" max="100" v-model="bubbleOpacity" v-on:change="handleBubbleOpacity"><div
                             class='preferences-percentage'>{{ bubbleOpacity }}%</div>
                     </div>
+                    <div class='popup-section'>
+                        <input type="checkbox" id="preferences-dark-mode"
+                            v-model="isDarkMode" v-on:change="handleDarkMode"><label
+                            for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
+                    </div>
                 </div>
                 <div class="popup-buttons">
                     <button v-on:click="closePreferencesPopup">{{ $t("ui.popup_button_ok") }}</button>
@@ -370,10 +375,6 @@
             <audio id="message-sound" src="message.mp3"></audio>
             <audio id="login-sound" src="login.mp3"></audio>
 
-        </div>
-        
-        <div id="style-selectors">
-            <button id="btn-toggle-dark-mode" v-on:click="toggleDarkMode">Toggle Shaddox mode</button>
         </div>
     </div>
 
