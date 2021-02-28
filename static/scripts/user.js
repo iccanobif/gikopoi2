@@ -90,13 +90,13 @@ export default class User
             const walkCycle = this.framesUntilNextStep > STEP_LENGTH / 2
             switch (this.direction)
             {
-                case "up":
-                    return walkCycle ? this.character.backWalking1Image : this.character.backWalking2Image;
-                case "left":
-                    return walkCycle ? this.character.backWalking1FlippedImage : this.character.backWalking2FlippedImage;
                 case "down":
-                    return walkCycle ? this.character.frontWalking1FlippedImage : this.character.frontWalking2FlippedImage;
+                    return walkCycle ? this.character.backWalking1Image : this.character.backWalking2Image;
                 case "right":
+                    return walkCycle ? this.character.backWalking1FlippedImage : this.character.backWalking2FlippedImage;
+                case "up":
+                    return walkCycle ? this.character.frontWalking1FlippedImage : this.character.frontWalking2FlippedImage;
+                case "left":
                     return walkCycle ? this.character.frontWalking1Image : this.character.frontWalking2Image;
             }
         }
@@ -106,13 +106,13 @@ export default class User
 
             switch (this.direction)
             {
-                case "up":
-                    return isSitting ? this.character.backSittingImage : this.character.backStandingImage;
-                case "left":
-                    return isSitting ? this.character.backSittingFlippedImage : this.character.backStandingFlippedImage;
                 case "down":
-                    return isSitting ? this.character.frontSittingFlippedImage : this.character.frontStandingFlippedImage;
+                    return isSitting ? this.character.backSittingImage : this.character.backStandingImage;
                 case "right":
+                    return isSitting ? this.character.backSittingFlippedImage : this.character.backStandingFlippedImage;
+                case "up":
+                    return isSitting ? this.character.frontSittingFlippedImage : this.character.frontStandingFlippedImage;
+                case "left":
                     return isSitting ? this.character.frontSittingImage : this.character.frontStandingImage;
             }
         }
