@@ -13,6 +13,7 @@ const defaultSpawn = defaultRoom.doors[doorId];
 export class Player
 {
     public id: string = generateId();
+    public privateId: string | undefined = generateId();
     public name: string = "Anonymous";
     public position: { x: number, y: number } = { x: defaultSpawn.x, y: defaultSpawn.y };
     public direction: Direction = (defaultSpawn.direction !== null ? defaultSpawn.direction : "down");
@@ -67,6 +68,12 @@ export function getAllUsers(): Player[]
 {
     return Object.values(users)
 }
+
+export function getLoginUser(privateId: string)
+{
+    return Object.values(users)
+        .find(u => u.privateId == privateId)
+};
 
 export function getUser(userId: string)
 {

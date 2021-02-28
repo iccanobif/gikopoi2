@@ -2,7 +2,7 @@ import express from "express"
 import { readFile, readFileSync, writeFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
 import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto } from "./types";
-import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, getAllUsers, getUser, Player, removeUser, serializeUserState } from "./users";
+import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, serializeUserState } from "./users";
 import { sleep } from "./utils";
 import got from "got";
 import log from "loglevel";
@@ -119,16 +119,13 @@ io.on("connection", function (socket: any)
 
     const sendNewUserInfo = () =>
     {
+        const userInfo = cloneDeep(user)
+        delete userInfo.privateId;
+        
         if (currentRoom.forcedAnonymous)
-        {
-            const anonymousUser = cloneDeep(user)
-            anonymousUser.name = ""
-            socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", anonymousUser);
-        }
-        else
-        {
-            socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", user);
-        }
+            userInfo.name = ""
+        
+        socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", userInfo);
     }
 
     const setupJanusHandleSlots = () =>
@@ -156,26 +153,27 @@ io.on("connection", function (socket: any)
         }
     })
 
-    socket.on("user-connect", function (userId: string)
+    socket.on("user-connect", function (privateUserId: string)
     {
         try
         {
-            log.info("user-connect", userId)
-            user = getUser(userId);
-            if (!user)
+            log.info("user-connect", privateUserId)
+            const loginUser = getLoginUser(privateUserId);
+            if (!loginUser)
             {
-                log.info("server-cant-log-you-in", userId)
+                log.info("server-cant-log-you-in", privateUserId)
                 socket.emit("server-cant-log-you-in")
                 socket.disconnect(true)
                 return;
             }
+            user = loginUser;
 
             currentRoom = rooms[user.roomId]
 
             socket.join(user.areaId)
             socket.join(user.areaId + currentRoom.id)
 
-            log.info("userId:", userId, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
+            log.info("id:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
 
             user.isGhost = false
             user.disconnectionTime = null
@@ -837,6 +835,7 @@ app.post("/login", (req, res) =>
             appVersion,
             isLoginSuccessful: true,
             userId: user.id,
+            privateUserId: user.privateId,
         })
 
     }
