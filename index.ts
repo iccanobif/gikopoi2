@@ -240,10 +240,15 @@ io.on("connection", function (socket: any)
             log.info("user-move", user.id, direction)
             user.isInactive = false
             user.lastAction = Date.now()
-            if (user.direction != direction)
+            if (user.direction != direction
+                && !(user.directionChangedAt !== null
+                    && user.lastDirection == direction
+                    && (Date.now() - user.directionChangedAt) < 300))
             {
                 // ONLY CHANGE DIRECTION
+                user.lastDirection = user.direction;
                 user.direction = direction;
+                user.directionChangedAt = Date.now();
             }
             else
             {
@@ -297,6 +302,8 @@ io.on("connection", function (socket: any)
 
                 user.position.x = newX
                 user.position.y = newY
+                
+                user.directionChangedAt = null;
             }
 
             io.to(user.areaId + user.roomId).emit("server-move",

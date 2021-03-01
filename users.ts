@@ -16,6 +16,8 @@ export class Player
     public name: string = "Anonymous";
     public position: { x: number, y: number } = { x: defaultSpawn.x, y: defaultSpawn.y };
     public direction: Direction = (defaultSpawn.direction !== null ? defaultSpawn.direction : "down");
+    public lastDirection: Direction | null = null;
+    public directionChangedAt: number | null = null;
     public isGhost: boolean = true;
     public roomId: string = defaultRoom.id;
     public lastAction = Date.now();
