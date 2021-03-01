@@ -255,6 +255,8 @@ io.on("connection", function (socket: any)
                 // MOVE
                 let newX = user.position.x
                 let newY = user.position.y
+                
+                user.directionChangedAt = null;
 
                 switch (direction)
                 {
@@ -302,8 +304,6 @@ io.on("connection", function (socket: any)
 
                 user.position.x = newX
                 user.position.y = newY
-                
-                user.directionChangedAt = null;
             }
 
             io.to(user.areaId + user.roomId).emit("server-move",
