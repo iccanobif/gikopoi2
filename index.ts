@@ -121,10 +121,10 @@ io.on("connection", function (socket: any)
     {
         const userInfo = cloneDeep(user)
         delete userInfo.privateId;
-        
+
         if (currentRoom.forcedAnonymous)
             userInfo.name = ""
-        
+
         socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", userInfo);
     }
 
@@ -238,16 +238,25 @@ io.on("connection", function (socket: any)
             log.info("user-move", user.id, direction)
             user.isInactive = false
             user.lastAction = Date.now()
-            if (user.direction != direction)
+
+            const shouldSpinwalk = user.directionChangedAt !== null
+                && user.lastDirection == direction
+                && (Date.now() - user.directionChangedAt) < 300
+
+            if (user.direction != direction && !shouldSpinwalk)
             {
                 // ONLY CHANGE DIRECTION
+                user.lastDirection = user.direction;
                 user.direction = direction;
+                user.directionChangedAt = Date.now();
             }
             else
             {
                 // MOVE
                 let newX = user.position.x
                 let newY = user.position.y
+
+                user.directionChangedAt = null;
 
                 switch (direction)
                 {
@@ -298,11 +307,14 @@ io.on("connection", function (socket: any)
             }
 
             io.to(user.areaId + user.roomId).emit("server-move",
-                user.id,
-                user.position.x,
-                user.position.y,
-                user.direction,
-                false);
+                {
+                    userId: user.id,
+                    x: user.position.x,
+                    y: user.position.y,
+                    direction: user.direction,
+                    isInstant: false,
+                    shouldSpinwalk,
+                });
         }
         catch (e)
         {
@@ -759,11 +771,13 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
 app.use(express.json());
 app.use(express.text());
 
-app.get("/version", (req, res) => {
+app.get("/version", (req, res) =>
+{
     res.json(appVersion)
 })
 
-app.post("/error", (req, res) => {
+app.post("/error", (req, res) =>
+{
     log.error(req.body)
     res.end()
 })
@@ -772,7 +786,8 @@ app.post("/login", (req, res) =>
 {
     try
     {
-        const sendResponse = (response: LoginResponseDto) => {
+        const sendResponse = (response: LoginResponseDto) =>
+        {
             res.json(response)
         }
 

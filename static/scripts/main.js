@@ -415,8 +415,10 @@ const vueApp = new Vue({
                 this.serverStats = serverStats;
             });
 
-            this.socket.on("server-move", (userId, x, y, direction, isInstant) =>
+            this.socket.on("server-move", (dto) =>
             {
+                const { userId, x, y, direction, isInstant, shouldSpinwalk } = dto
+
                 const user = this.users[userId];
 
                 user.isInactive = false
@@ -433,6 +435,8 @@ const vueApp = new Vue({
                     this.isWaitingForServerResponseOnMovement = false;
                     if (oldX != x || oldY != y) this.justSpawnedToThisRoom = false;
                 }
+                if (shouldSpinwalk)
+                    user.makeSpin()
                 this.updateCanvasObjects();
             });
             
