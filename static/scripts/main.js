@@ -36,6 +36,7 @@ const vueApp = new Vue({
             objects: [],
         },
         myUserID: null,
+        myPrivateUserID: null,
         isWaitingForServerResponseOnMovement: false,
         justSpawnedToThisRoom: true,
         isLoadingRoom: false,
@@ -333,6 +334,7 @@ const vueApp = new Vue({
             if (!loginMessage.isLoginSuccessful) throw new UserException(loginMessage.error);
             
             this.myUserID = loginMessage.userId;
+            this.myPrivateUserID = loginMessage.privateUserId;
             this.expectedServerVersion = loginMessage.appVersion;
             
             // prevent accidental page closing
@@ -358,7 +360,7 @@ const vueApp = new Vue({
                 this.isWaitingForServerResponseOnMovement = false
 
                 this.connectionLost = false;
-                this.socket.emit("user-connect", this.myUserID);
+                this.socket.emit("user-connect", this.myPrivateUserID);
 
                 // Check if there's a new version
                 const response = await fetch("/version");

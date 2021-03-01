@@ -176,7 +176,7 @@ export const messages =
             button_crisp: "\"Low Quality\"",
             button_preferences: "Preferences",
             volume: "Volume: ",
-            sound_effect: "Vol.",
+            sound_effect: "Volume",
             label_move: "Move",
             label_bubble: "Bubble",
             
