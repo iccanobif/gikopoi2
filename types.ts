@@ -91,4 +91,5 @@ export interface LoginResponseDto
     isLoginSuccessful: boolean,
     error?: "invalid_username" | "ip_restricted",
     userId?: string,
+    privateUserId?: string,
 }
