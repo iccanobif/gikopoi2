@@ -502,9 +502,10 @@ video {
 }
 
 #sound-effect-volume {
-    width: 50px;
+    width: 60px;
     background-color: #ffffff;
-    margin: 10px 0;
+    margin: 30px -5px 0 -5px;
+    transform: rotate(-90deg);
 }
 
 div[id^="vu-meter-container"]
