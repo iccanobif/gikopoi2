@@ -16,9 +16,11 @@ export default class User
         this.currentPhysicalPositionX = 0;
         this.currentPhysicalPositionY = 0;
         this.isWalking = false;
+        this.isSpinning = false;
         this.isMoved = true;
         this.direction = "up";
         this.framesUntilNextStep = STEP_LENGTH;
+        this.frameCount = 0
         this.isInactive = false;
         
         this.nameImage = null;
@@ -76,16 +78,42 @@ export default class User
         else if (this.currentPhysicalPositionY < realTargetCoordinates.y) this.currentPhysicalPositionY += yDelta
 
         if (xDelta === 0 && yDelta === 0)
+        {
             this.isWalking = false;
+            this.isSpinning = false;
+        }
 
         this.framesUntilNextStep--
         if (this.framesUntilNextStep < 0)
             this.framesUntilNextStep = STEP_LENGTH
+
+        this.frameCount++
+        if (this.frameCount == Number.MAX_SAFE_INTEGER)
+            this.frameCount = 0
     }
 
     getCurrentImage(room)
     {
-        if (this.isWalking)
+        if (this.isSpinning)
+        {
+            const spinCycle = Math.round(this.frameCount / 3) % 4
+            switch (spinCycle)
+            {
+                case 0:
+                    this.direction = "up"
+                    return this.character.backWalking1Image;
+                case 1:
+                    this.direction = "left"
+                    return this.character.backWalking1FlippedImage;
+                case 2:
+                    this.direction = "down"
+                    return this.character.frontWalking1FlippedImage;
+                case 3:
+                    this.direction = "right"
+                    return this.character.frontWalking1Image;
+            }
+        }
+        else if (this.isWalking)
         {
             const walkCycle = this.framesUntilNextStep > STEP_LENGTH / 2
             switch (this.direction)
@@ -126,5 +154,10 @@ export default class User
             this.isMoved = false;
             return true;
         }
+    }
+
+    makeSpin()
+    {
+        this.isSpinning = true;
     }
 }
