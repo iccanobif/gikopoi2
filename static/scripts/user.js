@@ -96,20 +96,20 @@ export default class User
     {
         if (this.isSpinning)
         {
-            const spinCycle = Math.round(this.frameCount / 3) % 4
+            const spinCycle = Math.round(this.frameCount / 2) % 4
             switch (spinCycle)
             {
                 case 0:
-                    this.direction = "up"
+                    // this.direction = "up"
                     return this.character.backWalking1Image;
                 case 1:
-                    this.direction = "left"
+                    // this.direction = "left"
                     return this.character.backWalking1FlippedImage;
                 case 2:
-                    this.direction = "down"
+                    // this.direction = "down"
                     return this.character.frontWalking1FlippedImage;
                 case 3:
-                    this.direction = "right"
+                    // this.direction = "right"
                     return this.character.frontWalking1Image;
             }
         }
