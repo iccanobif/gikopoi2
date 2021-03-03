@@ -23,7 +23,8 @@
     "dev-remote-persistor": "cross-env PERSISTOR_URL=http://localhost:8086 PERSISTOR_SECRET=hello ts-node-dev --respawn index.ts",
     "dev-debug": "cross-env DEBUG=* ts-node-dev --respawn index.ts",
     "build": "npx tsc",
-    "start-persistor": "cross-env PERSISTOR_SECRET=hello node state-persistor.js"
+    "start-persistor": "cross-env PERSISTOR_SECRET=hello node state-persistor.js",
+    "deploy-prod": "git push origin master:CI-PROD"
   },
   "devDependencies": {
     "@types/compression": "^1.7.0",
