@@ -241,7 +241,7 @@ io.on("connection", function (socket: any)
 
             const shouldSpinwalk = user.directionChangedAt !== null
                 && user.lastDirection == direction
-                && (Date.now() - user.directionChangedAt) < 300
+                && (Date.now() - user.directionChangedAt) < 600
 
             if (user.direction != direction && !shouldSpinwalk)
             {
