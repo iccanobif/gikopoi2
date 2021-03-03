@@ -76,6 +76,7 @@ export const characters = {
     nida: new Character("nida", "svg", false),
     shii_uniform: new Character("shii_uniform", "svg", false),
     ika: new Character("ika", "svg", true),
+    salmon: new Character("salmon", "svg", false),
 }
 
 export const loadCharacters = (mode) => Promise.all(Object.values(characters).map(c => c.loadImages(mode)))
