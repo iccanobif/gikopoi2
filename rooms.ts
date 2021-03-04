@@ -3118,6 +3118,27 @@ export const rooms: { [roomId: string]: Room } = {
         streamSlotCount: 0,
         secret: false
     },
+    bud: {
+        id: "bud",
+        scale: 2,
+        size: { x: 9, y: 9 },
+        originCoordinates: { x: 0, y: 92*2 },
+        spawnPoint: "spawn",
+        backgroundImageUrl: "rooms/bud/background.png",
+        backgroundColor: "#333333",
+        blockWidth: 72,
+        blockHeight: 36,
+        alwaysCrisp: true,
+        objects: [],
+        sit: [],
+        blocked: [],
+        forbiddenMovements: [],
+        doors: {
+            spawn: { x: 0, y: 0, direction: "up", target: null }
+        },
+        streamSlotCount: 0,
+        secret: false
+    },
 };
 
 export const defaultRoom = rooms.admin_st
