@@ -3130,7 +3130,9 @@ export const rooms: { [roomId: string]: Room } = {
         blockHeight: 18,
         alwaysCrisp: true,
         objects: [],
-        sit: [],
+        sit: [
+            { x:  0, y:  3 },
+        ],
         blocked: [],
         forbiddenMovements: [],
         doors: {
