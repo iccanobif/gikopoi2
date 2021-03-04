@@ -3123,7 +3123,7 @@ export const rooms: { [roomId: string]: Room } = {
         scale: 2,
         size: { x: 9, y: 9 },
         originCoordinates: { x: 0, y: 92*2 },
-        spawnPoint: "spawn",
+        spawnPoint: "left",
         backgroundImageUrl: "rooms/bud/background.png",
         backgroundColor: "#333333",
         blockWidth: 72,
@@ -3134,7 +3134,8 @@ export const rooms: { [roomId: string]: Room } = {
         blocked: [],
         forbiddenMovements: [],
         doors: {
-            spawn: { x: 0, y: 0, direction: "up", target: null }
+            left: { x: 0, y: 4, direction: "right", target: null },
+            right: { x: 8, y: 4, direction: "left", target: null },
         },
         streamSlotCount: 0,
         secret: false
