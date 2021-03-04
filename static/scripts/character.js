@@ -83,6 +83,7 @@ export const characters = {
     nida: new Character("nida", "svg", false),
     shii_uniform: new Character("shii_uniform", "svg", false),
     ika: new Character("ika", "svg", true),
+    salmon: new Character("salmon", "svg", false),
     naito_bud: new Character("naito_bud", "png", false, 1, true),
 }
 
