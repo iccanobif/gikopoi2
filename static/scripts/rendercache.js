@@ -9,12 +9,13 @@ export class RenderCache
 		this.height = 0;
 	}
 	
-	static Image(image, imageScale, flipped)
+	static Image(image, imageScale, flipped, alwaysCrisp)
 	{
 		if (typeof imageScale == "undefined") imageScale = 1;
 		if (typeof flipped == "undefined") flipped = false;
+		if (typeof alwaysCrisp == "undefined") alwaysCrisp = false;
 		
-		const renderCache = new RenderCache(function(renderedImage, scale)
+		const renderCache = new RenderCache(function(renderedImage, scale, crisp)
 		{
 			if (!image.complete ||
 				image.naturalHeight === 0) return false;
@@ -29,6 +30,8 @@ export class RenderCache
 			renderedImage.height = Math.ceil(scaledHeight);
 			
 			const context = renderedImage.getContext('2d');
+			if (crisp || alwaysCrisp)
+				context.imageSmoothingEnabled = false;
 			
 			let x = 0;
 			if (flipped)

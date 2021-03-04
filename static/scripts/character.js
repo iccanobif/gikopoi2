@@ -3,12 +3,13 @@ import { RenderCache } from "./rendercache.js";
 
 export class Character
 {
-    constructor(name, format, isHidden, scale)
+    constructor(name, format, isHidden, scale, alwaysCrisp)
     {
         this.characterName = name;
         this.format = format;
         this.isHidden = isHidden
         this.scale = scale || 0.5
+        this.alwaysCrisp = alwaysCrisp || false
 
         this.frontSittingImage = null;
         this.frontStandingImage = null;
@@ -20,9 +21,12 @@ export class Character
         this.backWalking2Image = null;
     }
 
-    async loadImages(svgMode)
+    async loadImages(crisp)
     {
-        const urlMode = (!svgMode || this.format != "svg" ? "" : svgMode + ".");
+        if (this.alwaysCrisp) crisp = true;
+        
+        const urlMode = crisp && this.format == "svg" ? "crisp." : "";
+        
         const results = await Promise.all([
             loadImage("characters/" + this.characterName + "/front-sitting." + urlMode + this.format),
             loadImage("characters/" + this.characterName + "/front-standing." + urlMode + this.format),
@@ -34,23 +38,26 @@ export class Character
             loadImage("characters/" + this.characterName + "/back-walking-2." + urlMode + this.format)
         ])
         
-        this.frontSittingImage = RenderCache.Image(results[0], this.scale)
-        this.frontStandingImage = RenderCache.Image(results[1], this.scale)
-        this.frontWalking1Image = RenderCache.Image(results[2], this.scale)
-        this.frontWalking2Image = RenderCache.Image(results[3], this.scale)
-        this.backSittingImage = RenderCache.Image(results[4], this.scale)
-        this.backStandingImage = RenderCache.Image(results[5], this.scale)
-        this.backWalking1Image = RenderCache.Image(results[6], this.scale)
-        this.backWalking2Image = RenderCache.Image(results[7], this.scale)
+        const cacheImage = (image) => RenderCache.Image(image, this.scale, false, crisp);
+        const cacheFlippedImage = (image) => RenderCache.Image(image, this.scale, true, crisp);
         
-        this.frontSittingFlippedImage = RenderCache.Image(results[0], this.scale, true)
-        this.frontStandingFlippedImage = RenderCache.Image(results[1], this.scale, true)
-        this.frontWalking1FlippedImage = RenderCache.Image(results[2], this.scale, true)
-        this.frontWalking2FlippedImage = RenderCache.Image(results[3], this.scale, true)
-        this.backSittingFlippedImage = RenderCache.Image(results[4], this.scale, true)
-        this.backStandingFlippedImage = RenderCache.Image(results[5], this.scale, true)
-        this.backWalking1FlippedImage = RenderCache.Image(results[6], this.scale, true)
-        this.backWalking2FlippedImage = RenderCache.Image(results[7], this.scale, true)
+        this.frontSittingImage = cacheImage(results[0])
+        this.frontStandingImage = cacheImage(results[1])
+        this.frontWalking1Image = cacheImage(results[2])
+        this.frontWalking2Image = cacheImage(results[3])
+        this.backSittingImage = cacheImage(results[4])
+        this.backStandingImage = cacheImage(results[5])
+        this.backWalking1Image = cacheImage(results[6])
+        this.backWalking2Image = cacheImage(results[7])
+        
+        this.frontSittingFlippedImage = cacheFlippedImage(results[0])
+        this.frontStandingFlippedImage = cacheFlippedImage(results[1])
+        this.frontWalking1FlippedImage = cacheFlippedImage(results[2])
+        this.frontWalking2FlippedImage = cacheFlippedImage(results[3])
+        this.backSittingFlippedImage = cacheFlippedImage(results[4])
+        this.backStandingFlippedImage = cacheFlippedImage(results[5])
+        this.backWalking1FlippedImage = cacheFlippedImage(results[6])
+        this.backWalking2FlippedImage = cacheFlippedImage(results[7])
     }
 }
 

@@ -64,6 +64,7 @@ export interface Room
     forcedAnonymous?: boolean;
     blockWidth?: number;
     blockHeight?: number;
+    alwaysCrisp?: boolean;
 }
 
 export interface JanusServer {

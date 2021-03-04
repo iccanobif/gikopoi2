@@ -59,7 +59,7 @@ const vueApp = new Vue({
         canvasGlobalOffset: { x: 0, y: 0 },
         canvasDimensions: { w: 0, h: 0 },
         canvasScale: 1,
-        svgMode: null,
+        crispMode: false,
         blockWidth: BLOCK_WIDTH,
         blockHeight: BLOCK_HEIGHT,
 
@@ -141,7 +141,7 @@ const vueApp = new Vue({
         else
             this.setLanguage("en")
 
-        loadCharacterImagesPromise = loadCharacters();
+        loadCharacterImagesPromise = loadCharacters(this.crispMode);
 
         // Enable dark mode stylesheet (gotta do it here in the "mounted" event because otherwise 
         // the screen will flash dark for a bit while loading the page)
@@ -220,7 +220,7 @@ const vueApp = new Vue({
         },
         toggleCrispMode: function ()
         {
-            this.svgMode = this.svgMode != "crisp" ? "crisp" : null;
+            this.crispMode = !this.crispMode;
             this.reloadImages()
         },
         reloadImages: async function ()
@@ -228,7 +228,7 @@ const vueApp = new Vue({
             this.loadRoomBackground();
             this.loadRoomObjects();
             
-            await (loadCharacters(this.svgMode));
+            await (loadCharacters(this.crispMode));
             this.isRedrawRequired = true;
         },
         setLanguage: function (code)
@@ -244,31 +244,34 @@ const vueApp = new Vue({
         {
             this.isWarningToastOpen = false;
         },
+        modifyImageURL: function(url)
+        {
+            if (this.crispMode) url = url.replace(".svg", ".crisp.svg")
+            return url
+        },
         loadRoomBackground: async function ()
         {
-            const urlMode = (!this.svgMode ? "" : "." + this.svgMode);
-            
             const roomLoadId = this.roomLoadId;
             
-            const image = await loadImage(this.currentRoom.backgroundImageUrl.replace(".svg", urlMode + ".svg"))
+            const image = await loadImage(this.modifyImageURL(this.currentRoom.backgroundImageUrl))
             
             if (this.roomLoadId != roomLoadId) return;
-            this.currentRoom.backgroundImage = RenderCache.Image(image, this.currentRoom.scale);
+            this.currentRoom.backgroundImage = RenderCache.Image(image,
+                this.currentRoom.scale, false, this.crispMode || this.currentRoom.alwaysCrisp);
             this.isRedrawRequired = true;
         },
         loadRoomObjects: async function (mode)
         {
-            const urlMode = (!this.svgMode ? "" : "." + this.svgMode);
-            
             const roomLoadId = this.roomLoadId;
             
             await Promise.all(Object.values(this.currentRoom.objects).map(o =>
-                loadImage("rooms/" + this.currentRoom.id + "/" + o.url.replace(".svg", urlMode + ".svg"))
+                loadImage("rooms/" + this.currentRoom.id + "/" + this.modifyImageURL(o.url))
                     .then((image) =>
                 {
                     const scale = o.scale ? o.scale : 1;
                     if (this.roomLoadId != roomLoadId) return;
-                    o.image = RenderCache.Image(image, scale);
+                    o.image = RenderCache.Image(image,
+                        scale, false, this.crispMode || this.currentRoom.alwaysCrisp);
                     
                     o.physicalPositionX = o.offset ? o.offset.x * scale : 0
                     o.physicalPositionY = o.offset ? o.offset.y * scale : 0
