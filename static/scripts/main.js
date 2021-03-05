@@ -1807,7 +1807,7 @@ const vueApp = new Vue({
                 observer.observe(chatLog.lastChild);
             }
 
-            localStorage.setItem("isDarkMode");
+            this.storeSet("isDarkMode");
         },
         storeSet: function (itemName)
         {
