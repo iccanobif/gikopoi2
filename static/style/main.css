@@ -553,3 +553,16 @@ button.checked {
     font-size: 25px;
     flex-direction: column;
 }
+
+#user-list-popup td
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    word-wrap: anywhere;
+}
+
+#user-list-popup td button
+{
+    flex-shrink: 0;
+}
