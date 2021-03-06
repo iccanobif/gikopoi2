@@ -55,7 +55,7 @@ export const messages =
             rula_menu_button_rula: "ルーラ",
 
             user_list_popup_title: "ユーザーリスト",
-            user_list_popup_column_user_name: "ユーザー",
+            user_list_popup_column_user_name: "ユーザー名",
             user_list_popup_ignore: "あぼーん",
             user_list_popup_unignore: "あぼーん解除",
             user_list_popup_close: "閉じる",
@@ -76,12 +76,13 @@ export const messages =
             stream_form_screen_capture_audio: "画面の音声を共有",
             stream_form_screen_capture_audio_notice: "この機能は実験的です。ChromeとEdgeのみ。\nWindowsなら、画面の音声とタブの音声しか取得出来ない。",
             
-            
             preferences_title: "設定",
             preferences_name_bg: "ｺﾃ背景を表示",
             preferences_shift_enter: "Shift+Enterの改行",
             preferences_bubble_opacity: "吹き出しの不透明度",
             preferences_dark_mode: "Shaddoxモード",
+            preferences_show_notifications: "通知を表示",
+            notifications_are_denied: "現在このサイトは通知を表示することが許可されていません。\nブラウザの権限を確認してください。"
         },
         msg:
         {
@@ -192,7 +193,7 @@ export const messages =
             rula_menu_button_rula: "Rula",
 
             user_list_popup_title: "User List",
-            user_list_popup_column_user_name: "User",
+            user_list_popup_column_user_name: "User name",
             user_list_popup_ignore: "Ignore",
             user_list_popup_unignore: "Unignore",
             user_list_popup_close: "Close",
@@ -218,6 +219,8 @@ export const messages =
             preferences_shift_enter: "Newline On Shift+Enter",
             preferences_bubble_opacity: "Speech Bubble Opacity",
             preferences_dark_mode: "Shaddox Mode",
+            preferences_show_notifications: "Show Notifications",
+            notifications_are_denied: "This site is currently not permitted to show notifications.\nPlease check your browser's permissions.",
         },
         msg:
         {

@@ -353,6 +353,14 @@
                             v-model="isDarkMode" v-on:change="handleDarkMode"><label
                             for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
                     </div>
+                    <div class='popup-section'>
+                        <div>
+                            <input type="checkbox" id="preferences-show-notifications"
+                                v-model="showNotifications" v-on:change="handleShowNotifications"><label
+                                for="preferences-show-notifications">{{ $t("ui.preferences_show_notifications") }}</label>
+                        </div>
+                        <div v-if="showNotificationsNotice" class="popup-notice">{{ $t("ui.notifications_are_denied") }}</div>
+                    </div>
                 </div>
                 <div class="popup-buttons">
                     <button v-on:click="closePreferencesPopup">{{ $t("ui.popup_button_ok") }}</button>

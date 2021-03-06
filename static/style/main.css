@@ -411,7 +411,7 @@ video {
 
 .popup-notice
 {
-    white-space: pre;
+    white-space: pre-wrap;
     font-size: 12px
 }
 
