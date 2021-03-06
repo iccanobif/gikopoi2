@@ -101,7 +101,7 @@ export const messages =
             invalid_username: "指定されたユーザー名は無効です。",
             ip_restricted: "すでにこのIPアドレスで2回ログインしています。",
             are_you_sure_you_want_to_logout: "本当にログアウトしますか？",
-            goodbye: "またね！",
+            goodbye: "　またね！",
         },
         room:
         {
