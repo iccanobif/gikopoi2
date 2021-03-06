@@ -55,7 +55,7 @@ export const messages =
             rula_menu_button_rula: "ルーラ",
 
             user_list_popup_title: "ユーザーリスト",
-            user_list_popup_column_user_name: "ユーザー名",
+            user_list_popup_column_user_name: "ユーザー",
             user_list_popup_ignore: "あぼーん",
             user_list_popup_unignore: "あぼーん解除",
             user_list_popup_close: "閉じる",
@@ -192,7 +192,7 @@ export const messages =
             rula_menu_button_rula: "Rula",
 
             user_list_popup_title: "User List",
-            user_list_popup_column_user_name: "User name",
+            user_list_popup_column_user_name: "User",
             user_list_popup_ignore: "Ignore",
             user_list_popup_unignore: "Unignore",
             user_list_popup_close: "Close",

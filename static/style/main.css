@@ -536,3 +536,17 @@ div[id^="vu-meter-bar-secondary-"]
 button.checked {
     text-decoration: underline;
 }
+
+
+#user-list-popup td
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    word-wrap: anywhere;
+}
+
+#user-list-popup td button
+{
+    flex-shrink: 0;
+}
