@@ -1469,6 +1469,13 @@ const vueApp = new Vue({
                 const withScreenCapture = this.streamScreenCapture && withVideo
                 const withScreenCaptureAudio = this.streamScreenCaptureAudio && withScreenCapture && withSound
                 
+                const audioConstraints = {
+                    channelCount: 2,
+                    echoCancellation: this.streamEchoCancellation,
+                    noiseSuppression: this.streamNoiseSuppression,
+                    autoGainControl: this.streamAutoGain,
+                }
+
                 // TODO use Promise.all() for both promises
 
                 let userMediaPromise = null
@@ -1483,12 +1490,7 @@ const vueApp = new Vue({
                                     min: 10,
                                 },
                             },
-                            audio: !withSound ? undefined : {
-                                channelCount: 2,
-                                echoCancellation: this.streamEchoCancellation,
-                                noiseSuppression: this.streamNoiseSuppression,
-                                autoGainControl: this.streamAutoGain,
-                            }
+                            audio: !withSound ? undefined : audioConstraints
                         }
                     );
                 
@@ -1497,7 +1499,7 @@ const vueApp = new Vue({
                     screenMediaPromise = navigator.mediaDevices.getDisplayMedia(
                     {
                         video: true,
-                        audio: withScreenCaptureAudio
+                        audio: !withScreenCaptureAudio ? undefined : audioConstraints
                     });
 
                 // I need to use Promise.allSettled() because the browser needs to be convinced that both getDisplayMedia()
