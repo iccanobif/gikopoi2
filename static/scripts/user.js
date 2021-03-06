@@ -1,5 +1,6 @@
 import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils.js";
 import { RenderCache } from "./rendercache.js";
+import { characters } from "./character.js";
 
 const STEP_LENGTH = 8;
 
@@ -9,7 +10,8 @@ export default class User
     {
         this.id = null;
         this.name = name;
-        this.character = character;
+        // default to giko if the user has somehow set a non-existing character id
+        this.character = character || characters.giko; 
 
         this.logicalPositionX = 0;
         this.logicalPositionY = 0;
