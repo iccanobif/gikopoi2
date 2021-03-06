@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
-
+    
 <head>
     <meta charset="utf-8">
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
     <link rel='stylesheet' href='style/main.css' />
     <link rel='stylesheet' href='style/dark-mode.css' />
+    <link href="font-awesome/css/all.css" rel="stylesheet">
     
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ギコっぽいっぽい</title>
@@ -14,7 +15,7 @@
 
 <body>
     <div id="vue-app" v-cloak v-bind:class="{'dark-mode': isDarkMode}">
-        <div id="login-page" v-if="!loggedIn">
+        <div id="login-page" v-if="!loggedIn && !loggedOut">
             <header>
                 <div>
                     <h1>{{ $t("ui.title") }}</h1>
@@ -69,6 +70,8 @@
                 {{ $t("msg.page_refresh_required") }}
             </h2>
             <div id="canvas-container">
+                <button id="logout-button" v-on:click="logout" class="fas fa-sign-out-alt" v-bind:title="$t('ui.button_logout')"></button>
+
                 <canvas id="room-canvas" tabindex="1" v-on:keydown="handleCanvasKeydown($event)"
                     v-on:mousedown="handleCanvasMousedown($event)"
                     v-on:mousemove="handleCanvasMousemove($event)"
@@ -376,6 +379,7 @@
             <audio id="login-sound" src="login.mp3"></audio>
 
         </div>
+        <div id="logged-out-page" v-if="loggedOut">BYE BYE!</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>

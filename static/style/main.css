@@ -90,6 +90,12 @@ input[type='range']
     font-family: Arial, Helvetica, sans-serif;
 }
 
+#logout-button
+{
+    position: absolute;
+    z-index: 500;
+}
+
 .video-container
 {
     width: 219px;

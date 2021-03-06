@@ -100,6 +100,7 @@ const vueApp = new Vue({
         isWarningToastOpen: false,
         warningToastMessage: "",
         loggedIn: false,
+        loggedOut: false,
 
         enableGridNumbers: false,
         username: localStorage.getItem("username") || "",
@@ -1118,14 +1119,14 @@ const vueApp = new Vue({
 
         paintLoop: function (timestamp)
         {
-            try
-            {
+            // try
+            // {
                 this.paint()
-            }
-            catch (err)
-            {
-                console.error(err, err.lineNumber);
-            }
+            // }
+            // catch (err)
+            // {
+            //     console.error(err, err.lineNumber);
+            // }
 
             requestAnimationFrame(this.paintLoop);
         },
@@ -1818,5 +1819,14 @@ const vueApp = new Vue({
             this.storeSet("bubbleOpacity");
             this.resetBubbleImages();
         },
+        logout: function () 
+        {
+            if (confirm("sure you want to log out?"))
+            {
+                this.socket.close()
+                this.loggedIn = false
+                this.loggedOut = true
+            }
+        }
     },
 });
