@@ -778,7 +778,7 @@ app.get("/version", (req, res) =>
 
 app.post("/error", (req, res) =>
 {
-    log.error(req.body)
+    log.error("Client log: ", req.body)
     res.end()
 })
 

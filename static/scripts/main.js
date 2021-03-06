@@ -8,6 +8,15 @@ import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";
 
+const originalConsoleError = console.error
+console.error = function() {
+    let allArgs = ""
+    for (let i = 0; i < arguments.length; i++)
+        allArgs += " " + arguments[i]
+    originalConsoleError(...arguments)
+    logToServer(allArgs)
+}
+
 function UserException(message) {
     this.message = message;
 }
