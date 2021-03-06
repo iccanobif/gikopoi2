@@ -78,6 +78,9 @@ const vueApp = new Vue({
         isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") != "false",
         bubbleOpacity: localStorage.getItem("bubbleOpacity") || 100,
         isLogoutButtonVisible: localStorage.getItem("isLogoutButtonVisible") != "false",
+        isDarkMode: localStorage.getItem("isDarkMode") == "true",
+        showNotifications: localStorage.getItem("showNotifications") != "false",
+        showNotificationsNotice: false,
         
         // streaming
         streams: [],
@@ -122,7 +125,6 @@ const vueApp = new Vue({
         allCharacters: Object.values(characters),
 
         vuMeterTimer: null,
-        isDarkMode: localStorage.getItem("isDarkMode") == "true",
     },
     mounted: function ()
     {
@@ -204,6 +206,9 @@ const vueApp = new Vue({
 
                 this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
                 this.updateAudioElementsVolume()
+                
+                if (this.showNotifications)
+                    Notification.requestPermission()
             }
             catch (e)
             {
@@ -606,16 +611,19 @@ const vueApp = new Vue({
             if (isAtBottom)
                 chatLog.scrollTop = chatLog.scrollHeight -
                     chatLog.clientHeight;
-
+            
+            if (!this.showNotifications
+                || document.visibilityState == "visible"
+                || user.id == this.myUserID) return;
+            
             const permission = await Notification.requestPermission()
-            if (permission == "granted" && document.visibilityState != "visible" && user.id != this.myUserID)
-            {
-                const character = user.character
-                new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
-                    {
-                        icon: "characters/" + character.characterName + "/front-standing." + character.format
-                    })
-            }
+            if (permission != "granted") return;
+            
+            const character = user.character
+            new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
+                {
+                    icon: "characters/" + character.characterName + "/front-standing." + character.format
+                })
         },
         toDisplayName: function (name)
         {
@@ -1696,6 +1704,7 @@ const vueApp = new Vue({
         },
         openPreferencesPopup: function ()
         {
+            this.showNotificationsNotice = Notification.permission == "denied"
             this.isPreferencesPopupOpen = true;
         },
         closePreferencesPopup: function ()
@@ -1828,6 +1837,15 @@ const vueApp = new Vue({
                 this.loggedOut = true
                 window.onbeforeunload = null
             }
-        }
+        },
+        handleShowNotifications: async function ()
+        {
+            if (this.showNotifications)
+            {
+                const permission = await Notification.requestPermission()
+                this.showNotificationsNotice = permission != "granted"
+            }
+            this.storeSet("showNotifications")
+        },
     },
 });

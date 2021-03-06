@@ -121,9 +121,6 @@
                     </div>
                     
                     <div class="tooltip-section">
-                        <button id="logout-button" v-if="isLogoutButtonVisible" v-on:click="logout" class="fas fa-sign-out-alt" v-bind:title="$t('ui.button_logout')"></button>
-                    </div>
-                    <div class="tooltip-section">
                         <div class='tooltip-section-title'>
                             <div>{{ $t("ui.label_move") }}</div>
                         </div>
@@ -148,6 +145,9 @@
                             <button class="grid-button" v-on:click="sendNewBubblePositionToServer('down')">↙</button
                             ><button class="grid-button" v-on:click="sendNewBubblePositionToServer('right')">↘</button>
                         </div>
+                    </div>
+                    <div class="tooltip-section">
+                        <button id="logout-button" v-if="isLogoutButtonVisible" v-on:click="logout" class="fas fa-sign-out-alt" v-bind:title="$t('ui.button_logout')"></button>
                     </div>
                 </div>
             </div>
@@ -362,6 +362,14 @@
                         <input type="checkbox" id="preferences-logout-button-visible"
                             v-model="isLogoutButtonVisible" v-on:change="storeSet('isLogoutButtonVisible')"><label
                             for="preferences-logout-button-visible">{{ $t("ui.preferences_logout_button_visible") }}</label>
+                    </div>
+                    <div class='popup-section'>
+                        <div>
+                            <input type="checkbox" id="preferences-show-notifications"
+                                v-model="showNotifications" v-on:change="handleShowNotifications"><label
+                                for="preferences-show-notifications">{{ $t("ui.preferences_show_notifications") }}</label>
+                        </div>
+                        <div v-if="showNotificationsNotice" class="popup-notice">{{ $t("ui.notifications_are_denied") }}</div>
                     </div>
                 </div>
                 <div class="popup-buttons">
