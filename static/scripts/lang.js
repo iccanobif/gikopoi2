@@ -38,6 +38,7 @@ export const messages =
             button_list: "#ﾘｽﾄ",
             button_crisp: "低画質っぽい",
             button_preferences: "設定",
+            button_logout: "ログアウト",
             volume: "音量：",
             sound_effect: "効果音",
             label_move: "移動",
@@ -81,6 +82,7 @@ export const messages =
             preferences_shift_enter: "Shift+Enterの改行",
             preferences_bubble_opacity: "吹き出しの不透明度",
             preferences_dark_mode: "Shaddoxモード",
+            preferences_logout_button_visible: "ログアウトボタンを表示",
             preferences_show_notifications: "通知を表示",
             notifications_are_denied: "現在このサイトは通知を表示することが許可されていません。\nブラウザの権限を確認してください。"
         },
@@ -100,6 +102,8 @@ export const messages =
             unknown_error: "不明なエラーが原因で接続に失敗しました。",
             invalid_username: "指定されたユーザー名は無効です。",
             ip_restricted: "すでにこのIPアドレスで2回ログインしています。",
+            are_you_sure_you_want_to_logout: "本当にログアウトしますか？",
+            goodbye: "　またね！",
         },
         room:
         {
@@ -176,6 +180,7 @@ export const messages =
             button_list: "#list",
             button_crisp: "\"Low Quality\"",
             button_preferences: "Preferences",
+            button_logout: "Logout",
             volume: "Volume: ",
             sound_effect: "Volume",
             label_move: "Move",
@@ -219,6 +224,7 @@ export const messages =
             preferences_shift_enter: "Newline On Shift+Enter",
             preferences_bubble_opacity: "Speech Bubble Opacity",
             preferences_dark_mode: "Shaddox Mode",
+            preferences_logout_button_visible: "Display logout button",
             preferences_show_notifications: "Show Notifications",
             notifications_are_denied: "This site is currently not permitted to show notifications.\nPlease check your browser's permissions.",
         },
@@ -238,6 +244,8 @@ export const messages =
             unknown_error: "The connection failed due to an unknown error.",
             invalid_username: "The provided username is invalid.",
             ip_restricted: "You are already logged in twice with this IP address.",
+            are_you_sure_you_want_to_logout: "Are you sure you want to logout?",
+            goodbye: "See you soon!",
         },
         room:
         {

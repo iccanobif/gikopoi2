@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
-
+    
 <head>
     <meta charset="utf-8">
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
     <link rel='stylesheet' href='style/main.css' />
     <link rel='stylesheet' href='style/dark-mode.css' />
+    <link href="font-awesome/css/all.css" rel="stylesheet">
     
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ギコっぽいっぽい</title>
@@ -14,7 +15,7 @@
 
 <body>
     <div id="vue-app" v-cloak v-bind:class="{'dark-mode': isDarkMode}">
-        <div id="login-page" v-if="!loggedIn">
+        <div id="login-page" v-if="!loggedIn && !loggedOut">
             <header>
                 <div>
                     <h1>{{ $t("ui.title") }}</h1>
@@ -117,6 +118,10 @@
                     <div class="tooltip-section">
                         <button v-on:click="openPreferencesPopup">{{ $t("ui.button_preferences") }}</button>
                         <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{ $t("ui.button_crisp") }}</button>
+                    </div>
+                    
+                    <div class="tooltip-section">
+                        <button id="logout-button" v-if="isLogoutButtonVisible" v-on:click="logout" class="fas fa-sign-out-alt" v-bind:title="$t('ui.button_logout')"></button>
                     </div>
                     <div class="tooltip-section">
                         <div class='tooltip-section-title'>
@@ -354,6 +359,11 @@
                             for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
                     </div>
                     <div class='popup-section'>
+                        <input type="checkbox" id="preferences-logout-button-visible"
+                            v-model="isLogoutButtonVisible" v-on:change="storeSet('isLogoutButtonVisible')"><label
+                            for="preferences-logout-button-visible">{{ $t("ui.preferences_logout_button_visible") }}</label>
+                    </div>
+                    <div class='popup-section'>
                         <div>
                             <input type="checkbox" id="preferences-show-notifications"
                                 v-model="showNotifications" v-on:change="handleShowNotifications"><label
@@ -382,6 +392,10 @@
             <audio id="message-sound" src="message.mp3"></audio>
             <audio id="login-sound" src="login.mp3"></audio>
 
+        </div>
+        <div id="logged-out-page" v-if="loggedOut">
+            {{ $t("msg.goodbye") }}
+            <img src="characters/giko/front-standing.svg"/>
         </div>
     </div>
 

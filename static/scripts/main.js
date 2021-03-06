@@ -16,7 +16,6 @@ const urlRegex = /(https?:\/\/|www\.)[^\s]+/gi
 
 let loadCharacterImagesPromise = null
 
-
 const i18n = new VueI18n({
     locale: "ja",
     fallbackLocale: "ja",
@@ -78,6 +77,7 @@ const vueApp = new Vue({
         showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
         isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") != "false",
         bubbleOpacity: localStorage.getItem("bubbleOpacity") || 100,
+        isLogoutButtonVisible: localStorage.getItem("isLogoutButtonVisible") != "false",
         isDarkMode: localStorage.getItem("isDarkMode") == "true",
         showNotifications: localStorage.getItem("showNotifications") != "false",
         showNotificationsNotice: false,
@@ -103,6 +103,7 @@ const vueApp = new Vue({
         isWarningToastOpen: false,
         warningToastMessage: "",
         loggedIn: false,
+        loggedOut: false,
 
         enableGridNumbers: false,
         username: localStorage.getItem("username") || "",
@@ -1126,14 +1127,14 @@ const vueApp = new Vue({
 
         paintLoop: function (timestamp)
         {
-            try
-            {
+            // try
+            // {
                 this.paint()
-            }
-            catch (err)
-            {
-                console.error(err, err.lineNumber);
-            }
+            // }
+            // catch (err)
+            // {
+            //     console.error(err, err.lineNumber);
+            // }
 
             requestAnimationFrame(this.paintLoop);
         },
@@ -1826,6 +1827,16 @@ const vueApp = new Vue({
         {
             this.storeSet("bubbleOpacity");
             this.resetBubbleImages();
+        },
+        logout: function () 
+        {
+            if (confirm(i18n.t("msg.are_you_sure_you_want_to_logout")))
+            {
+                this.socket.close()
+                this.loggedIn = false
+                this.loggedOut = true
+                window.onbeforeunload = null
+            }
         },
         handleShowNotifications: async function ()
         {
