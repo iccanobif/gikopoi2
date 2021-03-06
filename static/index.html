@@ -379,7 +379,10 @@
             <audio id="login-sound" src="login.mp3"></audio>
 
         </div>
-        <div id="logged-out-page" v-if="loggedOut">BYE BYE!</div>
+        <div id="logged-out-page" v-if="loggedOut">
+            {{ $t("msg.goodbye") }}
+            <img src="characters/giko/front-standing.svg"/>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>

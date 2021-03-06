@@ -542,3 +542,14 @@ div[id^="vu-meter-bar-secondary-"]
 button.checked {
     text-decoration: underline;
 }
+
+#logged-out-page
+{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    flex-direction: column;
+}

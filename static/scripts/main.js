@@ -1821,7 +1821,7 @@ const vueApp = new Vue({
         },
         logout: function () 
         {
-            if (confirm("sure you want to log out?"))
+            if (confirm(i18n.t("msg.are_you_sure_you_want_to_logout")))
             {
                 this.socket.close()
                 this.loggedIn = false

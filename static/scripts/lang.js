@@ -77,7 +77,6 @@ export const messages =
             stream_form_screen_capture_audio: "画面の音声を共有",
             stream_form_screen_capture_audio_notice: "この機能は実験的です。ChromeとEdgeのみ。\nWindowsなら、画面の音声とタブの音声しか取得出来ない。",
             
-            
             preferences_title: "設定",
             preferences_name_bg: "ｺﾃ背景を表示",
             preferences_shift_enter: "Shift+Enterの改行",
@@ -100,6 +99,8 @@ export const messages =
             unknown_error: "不明なエラーが原因で接続に失敗しました。",
             invalid_username: "指定されたユーザー名は無効です。",
             ip_restricted: "すでにこのIPアドレスで2回ログインしています。",
+            are_you_sure_you_want_to_logout: "本当にログアウトしますか？",
+            goodbye: "またね！",
         },
         room:
         {
@@ -237,6 +238,8 @@ export const messages =
             unknown_error: "The connection failed due to an unknown error.",
             invalid_username: "The provided username is invalid.",
             ip_restricted: "You are already logged in twice with this IP address.",
+            are_you_sure_you_want_to_logout: "Are you sure you want to logout?",
+            goodbye: "See you soon!",
         },
         room:
         {
