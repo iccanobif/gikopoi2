@@ -70,8 +70,6 @@
                 {{ $t("msg.page_refresh_required") }}
             </h2>
             <div id="canvas-container">
-                <button id="logout-button" v-on:click="logout" class="fas fa-sign-out-alt" v-bind:title="$t('ui.button_logout')"></button>
-
                 <canvas id="room-canvas" tabindex="1" v-on:keydown="handleCanvasKeydown($event)"
                     v-on:mousedown="handleCanvasMousedown($event)"
                     v-on:mousemove="handleCanvasMousemove($event)"
@@ -120,6 +118,10 @@
                     <div class="tooltip-section">
                         <button v-on:click="openPreferencesPopup">{{ $t("ui.button_preferences") }}</button>
                         <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{ $t("ui.button_crisp") }}</button>
+                    </div>
+                    
+                    <div class="tooltip-section">
+                        <button id="logout-button" v-on:click="logout" class="fas fa-sign-out-alt" v-bind:title="$t('ui.button_logout')"></button>
                     </div>
                     <div class="tooltip-section">
                         <div class='tooltip-section-title'>
