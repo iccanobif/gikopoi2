@@ -16,7 +16,6 @@ const urlRegex = /(https?:\/\/|www\.)[^\s]+/gi
 
 let loadCharacterImagesPromise = null
 
-
 const i18n = new VueI18n({
     locale: "ja",
     fallbackLocale: "ja",
@@ -78,6 +77,7 @@ const vueApp = new Vue({
         showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
         isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") != "false",
         bubbleOpacity: localStorage.getItem("bubbleOpacity") || 100,
+        isLogoutButtonVisible: localStorage.getItem("isLogoutButtonVisible") != "false",
         
         // streaming
         streams: [],
@@ -1826,6 +1826,7 @@ const vueApp = new Vue({
                 this.socket.close()
                 this.loggedIn = false
                 this.loggedOut = true
+                window.onbeforeunload = null
             }
         }
     },

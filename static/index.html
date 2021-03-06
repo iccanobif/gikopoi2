@@ -121,7 +121,7 @@
                     </div>
                     
                     <div class="tooltip-section">
-                        <button id="logout-button" v-on:click="logout" class="fas fa-sign-out-alt" v-bind:title="$t('ui.button_logout')"></button>
+                        <button id="logout-button" v-if="isLogoutButtonVisible" v-on:click="logout" class="fas fa-sign-out-alt" v-bind:title="$t('ui.button_logout')"></button>
                     </div>
                     <div class="tooltip-section">
                         <div class='tooltip-section-title'>
@@ -357,6 +357,11 @@
                         <input type="checkbox" id="preferences-dark-mode"
                             v-model="isDarkMode" v-on:change="handleDarkMode"><label
                             for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
+                    </div>
+                    <div class='popup-section'>
+                        <input type="checkbox" id="preferences-logout-button-visible"
+                            v-model="isLogoutButtonVisible" v-on:change="storeSet('isLogoutButtonVisible')"><label
+                            for="preferences-logout-button-visible">{{ $t("ui.preferences_logout_button_visible") }}</label>
                     </div>
                 </div>
                 <div class="popup-buttons">
