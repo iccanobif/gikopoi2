@@ -642,7 +642,7 @@ const vueApp = new Vue({
                 chatLog.scrollTop = chatLog.scrollHeight -
                     chatLog.clientHeight;
 
-            if (this.enableTextToSpeech)
+            if (this.enableTextToSpeech && speechSynthesis)
             {
                 const japVoice = speechSynthesis.getVoices().find(v => v.lang.match(/jp/i))
 
@@ -650,8 +650,6 @@ const vueApp = new Vue({
                     .replace(urlRegex, "URL")
                     .replace(/ww+/gi, "わらわら")
                     .replace(/88+/gi, "ぱちぱち")
-
-                console.log(cleanMsgForSpeech)
 
                 const utterance = new SpeechSynthesisUtterance(cleanMsgForSpeech)
                 if (japVoice)
