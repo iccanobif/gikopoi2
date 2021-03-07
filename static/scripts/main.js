@@ -608,6 +608,7 @@ const vueApp = new Vue({
 
             const authorSpan = document.createElement("span");
             authorSpan.className = "message-author";
+            authorSpan.title = new Date()
             authorSpan.textContent = this.toDisplayName(user.name);
 
             const bodySpan = document.createElement("span");
