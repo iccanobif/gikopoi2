@@ -339,6 +339,11 @@ video {
     justify-content: center;
 }
 
+.tooltip-volume-section
+{
+    min-height: 80px;
+}
+
 #toolbar button.grid-button
 {
     font-weight: bold;
