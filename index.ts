@@ -648,6 +648,13 @@ app.use(compression({
 
 app.get("/", (req, res) =>
 {
+    if (req.headers.host == "gikopoi2.herokuapp.com")
+    {
+        log.info("Redirecting to gikopoipoi.net")
+        res.redirect(301, 'http://gikopoipoi.net')
+        return
+    }
+
     log.info("Fetching root...")
     readFile("static/index.html", 'utf8', async (err, data) =>
     {
