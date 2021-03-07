@@ -146,6 +146,14 @@ const vueApp = new Vue({
                 this.enableGridNumbers = !this.enableGridNumbers
                 this.isRedrawRequired = true
             }
+            if (ev.code == "Escape")
+            {
+                this.closeRulaPopup()
+                this.closeUserListPopup()
+                this.closeStreamPopup()
+                this.closePreferencesPopup()
+                this.closeWarningToast()
+            }
         })
 
         if (this.areaId == "gen")
