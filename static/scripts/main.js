@@ -1475,7 +1475,9 @@ const vueApp = new Vue({
                 const stream = streams[slotId];
                 if (stream.isActive)
                 {
-                    Vue.set(stream, "title", this.toDisplayName(this.users[stream.userId].name));
+                    const title = stream.userId in this.users ?
+                        this.toDisplayName(this.users[stream.userId].name) : "";
+                    Vue.set(stream, "title", title);
                     if (stream.userId == this.myUserID)
                     {
                         this.streamSlotIdInWhichIWantToStream = slotId;
