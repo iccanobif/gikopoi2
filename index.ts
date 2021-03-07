@@ -651,7 +651,7 @@ app.get("/", (req, res) =>
     if (req.headers.host == "gikopoi2.herokuapp.com")
     {
         log.info("Redirecting to gikopoipoi.net")
-        res.redirect(301, 'http://gikopoipoi.net')
+        res.redirect(301, 'https://gikopoipoi.net')
         return
     }
 
