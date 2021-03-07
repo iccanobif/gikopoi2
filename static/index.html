@@ -15,7 +15,7 @@
 
 <body>
     <div id="vue-app" v-cloak v-bind:class="{'dark-mode': isDarkMode}">
-        <div id="login-page" v-if="!loggedIn && !loggedOut">
+        <div id="login-page" v-if="!loggedIn && !loggedOut && !isPoop">
             <header>
                 <div>
                     <h1>{{ $t("ui.title") }}</h1>
@@ -396,6 +396,9 @@
         <div id="logged-out-page" v-if="loggedOut">
             {{ $t("msg.goodbye") }}
             <img src="characters/giko/front-standing.svg"/>
+        </div>
+        <div id="poop-page" v-if="isPoop">
+            💩
         </div>
     </div>
 
