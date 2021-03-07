@@ -640,6 +640,8 @@ const vueApp = new Vue({
             if (isAtBottom)
                 chatLog.scrollTop = chatLog.scrollHeight -
                     chatLog.clientHeight;
+
+            speechSynthesis.speak(new SpeechSynthesisUtterance(plainMsg))
             
             if (!this.showNotifications
                 || document.visibilityState == "visible"
@@ -653,6 +655,8 @@ const vueApp = new Vue({
                 {
                     icon: "characters/" + character.characterName + "/front-standing." + character.format
                 })
+
+            
         },
         toDisplayName: function (name)
         {
