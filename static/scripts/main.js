@@ -92,6 +92,7 @@ const vueApp = new Vue({
         isLogoutButtonVisible: localStorage.getItem("isLogoutButtonVisible") != "false",
         isDarkMode: localStorage.getItem("isDarkMode") == "true",
         showNotifications: localStorage.getItem("showNotifications") != "false",
+        enableTextToSpeech: localStorage.getItem("enableTextToSpeech") == "true",
         showNotificationsNotice: false,
         
         // streaming
@@ -618,7 +619,7 @@ const vueApp = new Vue({
             bodySpan.className = "message-body";
             bodySpan.textContent = msg;
             bodySpan.innerHTML = bodySpan.innerHTML
-                .replace(/(https?:\/\/|www\.)[^\s]+/gi, (htmlUrl, prefix) =>
+                .replace(urlRegex, (htmlUrl, prefix) =>
                 {
                     const anchor = document.createElement('a');
                     anchor.target = '_blank';
@@ -641,13 +642,23 @@ const vueApp = new Vue({
                 chatLog.scrollTop = chatLog.scrollHeight -
                     chatLog.clientHeight;
 
-            const japVoice = speechSynthesis.getVoices().find(v => v.lang.match(/jp/i))
+            if (this.enableTextToSpeech)
+            {
+                const japVoice = speechSynthesis.getVoices().find(v => v.lang.match(/jp/i))
 
-            const utterance = new SpeechSynthesisUtterance(plainMsg)
-            if (japVoice)
-                utterance.voice = japVoice
+                const cleanMsgForSpeech = plainMsg
+                    .replace(urlRegex, "URL")
+                    .replace(/ww+/gi, "わらわら")
+                    .replace(/88+/gi, "ぱちぱち")
 
-            speechSynthesis.speak(utterance)
+                console.log(cleanMsgForSpeech)
+
+                const utterance = new SpeechSynthesisUtterance(cleanMsgForSpeech)
+                if (japVoice)
+                    utterance.voice = japVoice
+                
+                speechSynthesis.speak(utterance)
+            }
             
             if (!this.showNotifications
                 || document.visibilityState == "visible"

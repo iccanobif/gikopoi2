@@ -386,6 +386,11 @@
                             v-model="isLogoutButtonVisible" v-on:change="storeSet('isLogoutButtonVisible')"><label
                             for="preferences-logout-button-visible">{{ $t("ui.preferences_logout_button_visible") }}</label>
                     </div>
+                    <div class='popup-section'>
+                        <input type="checkbox" id="preferences-text-to-speech"
+                            v-model="enableTextToSpeech" v-on:change="storeSet('enableTextToSpeech')"><label
+                            for="preferences-text-to-speech">{{ $t("ui.preferences_enable_text_to_speech") }}</label>
+                    </div>
                 </div>
                 <div class="popup-buttons">
                     <button v-on:click="closePreferencesPopup">{{ $t("ui.popup_button_ok") }}</button>
