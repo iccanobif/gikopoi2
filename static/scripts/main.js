@@ -641,7 +641,13 @@ const vueApp = new Vue({
                 chatLog.scrollTop = chatLog.scrollHeight -
                     chatLog.clientHeight;
 
-            speechSynthesis.speak(new SpeechSynthesisUtterance(plainMsg))
+            const japVoice = speechSynthesis.getVoices().find(v => v.lang.match(/jp/i))
+
+            const utterance = new SpeechSynthesisUtterance(plainMsg)
+            if (japVoice)
+                utterance.voice = japVoice
+
+            speechSynthesis.speak(utterance)
             
             if (!this.showNotifications
                 || document.visibilityState == "visible"
