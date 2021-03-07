@@ -548,6 +548,17 @@ button.checked {
     flex-direction: column;
 }
 
+#poop-page
+{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 100px;
+    flex-direction: column;
+}
+
 #user-list-popup td
 {
     display: flex;

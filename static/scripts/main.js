@@ -113,6 +113,7 @@ const vueApp = new Vue({
         warningToastMessage: "",
         loggedIn: false,
         loggedOut: false,
+        isPoop: false,
 
         enableGridNumbers: false,
         username: localStorage.getItem("username") || "",
@@ -137,6 +138,13 @@ const vueApp = new Vue({
     },
     mounted: function ()
     {
+        console.log(document.referrer)
+        if (document.referrer.match(/www\.gikopoi\.com/i))
+        {
+            this.isPoop = true
+            return
+        }
+        
         window.addEventListener("keydown", (ev) =>
         {
             if (ev.shiftKey && ev.ctrlKey && ev.code == "Digit9")
