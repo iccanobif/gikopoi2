@@ -93,7 +93,7 @@ const vueApp = new Vue({
         isDarkMode: localStorage.getItem("isDarkMode") == "true",
         showNotifications: localStorage.getItem("showNotifications") != "false",
         enableTextToSpeech: localStorage.getItem("enableTextToSpeech") == "true",
-        ttsVoiceURI: "automatic",
+        ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
         availableTTSVoices: speechSynthesis.getVoices(),
         showNotificationsNotice: false,
         
@@ -661,8 +661,6 @@ const vueApp = new Vue({
                 {
                     icon: "characters/" + character.characterName + "/front-standing." + character.format
                 })
-
-            
         },
         toDisplayName: function (name)
         {
@@ -1907,14 +1905,36 @@ function speak(message, voiceURI)
 
     if (voiceURI == "automatic")
     {
-        const japVoice = allVoices.find(v => v.lang.match(/jp/i))
-        if (japVoice)
-            utterance.voice = japVoice
+        if (isJapanese(message))
+        {
+            const japVoice = allVoices.find(v => v.lang.match(/ja-/i))
+            if (japVoice)
+                utterance.voice = japVoice
+        }
+        else
+        {
+            const engVoice = allVoices.find(v => v.lang.match(/en-/i))
+            if (engVoice)
+                utterance.voice = engVoice
+        }
     }
     else
     {
-        utterance.voice = allVoices.find(v => v.voiceURI == voiceURI)
+        const voice = allVoices.find(v => v.voiceURI == voiceURI)
+        if (voice) utterance.voice = voice
     }
     
     speechSynthesis.speak(utterance)
+}
+
+function isJapanese(text)
+{
+    // very simple heuristic, we just assume that if a sentence has a character
+    // in the CJK Unified Ideographs unicode plane, then it must be japanese
+    for (let i = 0; i < text.length; i++)
+    {
+        const charCode = text.charCodeAt(i)
+        if (charCode >= 0x4E00 && charCode <= 0x9FFF) 
+            return true
+    }
 }

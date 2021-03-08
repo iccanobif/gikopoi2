@@ -88,6 +88,7 @@ export const messages =
             preferences_logout_button_visible: "ログアウトボタンを表示",
             preferences_show_notifications: "通知を表示",
             preferences_enable_text_to_speech: "ログの読み上げ",
+            preferences_tts_voice: "読み上げボイス",
             notifications_are_denied: "現在このサイトは通知を表示することが許可されていません。\nブラウザの権限を確認してください。"
         },
         msg:
@@ -234,6 +235,7 @@ export const messages =
             preferences_logout_button_visible: "Display Logout Button",
             preferences_show_notifications: "Show Notifications",
             preferences_enable_text_to_speech: "Text to speech",
+            preferences_tts_voice: "Voice",
             notifications_are_denied: "This site is currently not permitted to show notifications.\nPlease check your browser's permissions.",
         },
         msg:
