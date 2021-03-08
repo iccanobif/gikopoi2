@@ -31,6 +31,7 @@ export default class User
         this.lastMessage = null;
         this.bubblePosition = "up";
         this.bubbleImage = null;
+        this.voicePitch = null;
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)

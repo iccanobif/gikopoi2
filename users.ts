@@ -10,6 +10,9 @@ function generateId()
 const doorId = ("world_spawn" in defaultRoom.doors ? "world_spawn" : defaultRoom.spawnPoint);
 const defaultSpawn = defaultRoom.doors[doorId];
 
+const possibleVoicePitches = [0, 0.5, 1, 1.5, 2]
+let lastUsedVoicePitchIndex = 0
+
 export class Player
 {
     public id: string = generateId();
@@ -31,6 +34,7 @@ export class Player
     public bubblePosition: Direction = "up";
     public lastRoomMessage: string = "";
     public ip: string;
+    public voicePitch: number
 
     constructor(options: { name?: string, characterId: string, areaId: Area, ip: string })
     {
@@ -38,6 +42,8 @@ export class Player
         this.characterId = options.characterId
         this.areaId = options.areaId
         this.ip = options.ip
+        lastUsedVoicePitchIndex = (lastUsedVoicePitchIndex + 1) % possibleVoicePitches.length
+        this.voicePitch = possibleVoicePitches[lastUsedVoicePitchIndex]
     }
 }
 

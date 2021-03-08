@@ -600,6 +600,7 @@ const vueApp = new Vue({
             newUser.message = userDTO.lastRoomMessage;
             newUser.bubblePosition = userDTO.bubblePosition;
             newUser.id = userDTO.id;
+            newUser.voicePitch = userDTO.voicePitch
             
             this.users[userDTO.id] = newUser;
         },
@@ -663,7 +664,7 @@ const vueApp = new Vue({
 
             if (this.enableTextToSpeech && speechSynthesis)
             {
-                speak(plainMsg, this.ttsVoiceURI, this.voiceVolume)
+                speak(plainMsg, this.ttsVoiceURI, this.voiceVolume, user.voicePitch)
             }
             
             if (!this.showNotifications
@@ -1928,8 +1929,9 @@ const vueApp = new Vue({
 });
 
 
-function speak(message, voiceURI, volume)
+function speak(message, voiceURI, volume, pitch)
 {
+    console.log("pitch", pitch)
     const cleanMsgForSpeech = message
         .replace(urlRegex, "URL")
         .replace(/ww+/gi, "わらわら")
@@ -1940,6 +1942,9 @@ function speak(message, voiceURI, volume)
     const allVoices = speechSynthesis.getVoices()
 
     utterance.volume = volume / 100
+
+    if (pitch !== undefined || pitch !== null)
+        utterance.pitch = pitch // range between 0 (lowest) and 2 (highest), with 1 being the default pitch 
 
     if (voiceURI == "automatic")
     {
