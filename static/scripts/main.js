@@ -380,7 +380,13 @@ const vueApp = new Vue({
             this.expectedServerVersion = loginMessage.appVersion;
             
             // prevent accidental page closing
-            window.onbeforeunload = function(){return "Are you sure?";}
+            window.onbeforeunload = () => {
+                // Before onbeforeunload the socket has already died, so
+                // i have to start it again here, in case the user
+                // decides that he doesn't want to close the window.
+                this.initializeSocket();
+                return "Are you sure?";
+            }
             
             // load the room state before connecting the websocket, so that all
             // code handling websocket events (and paint() events) can assume that
@@ -391,6 +397,11 @@ const vueApp = new Vue({
             
             logToServer(this.myUserID + " User agent: " + navigator.userAgent)
 
+            this.initializeSocket()
+        },
+        initializeSocket: function()
+        {
+            console.log("initializeSocket")
             this.socket = io();
 
             const immanentizeConnection = async () =>
