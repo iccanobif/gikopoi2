@@ -93,6 +93,8 @@ const vueApp = new Vue({
         isDarkMode: localStorage.getItem("isDarkMode") == "true",
         showNotifications: localStorage.getItem("showNotifications") != "false",
         enableTextToSpeech: localStorage.getItem("enableTextToSpeech") == "true",
+        ttsVoiceURI: "automatic",
+        availableTTSVoices: speechSynthesis.getVoices(),
         showNotificationsNotice: false,
         
         // streaming
@@ -644,18 +646,7 @@ const vueApp = new Vue({
 
             if (this.enableTextToSpeech && speechSynthesis)
             {
-                const japVoice = speechSynthesis.getVoices().find(v => v.lang.match(/jp/i))
-
-                const cleanMsgForSpeech = plainMsg
-                    .replace(urlRegex, "URL")
-                    .replace(/ww+/gi, "わらわら")
-                    .replace(/88+/gi, "ぱちぱち")
-
-                const utterance = new SpeechSynthesisUtterance(cleanMsgForSpeech)
-                if (japVoice)
-                    utterance.voice = japVoice
-                
-                speechSynthesis.speak(utterance)
+                speak(plainMsg, this.ttsVoiceURI)
             }
             
             if (!this.showNotifications
@@ -1901,3 +1892,29 @@ const vueApp = new Vue({
         },
     },
 });
+
+
+function speak(message, voiceURI)
+{
+    const cleanMsgForSpeech = message
+        .replace(urlRegex, "URL")
+        .replace(/ww+/gi, "わらわら")
+        .replace(/88+/gi, "ぱちぱち")
+
+    const utterance = new SpeechSynthesisUtterance(cleanMsgForSpeech)
+
+    const allVoices = speechSynthesis.getVoices()
+
+    if (voiceURI == "automatic")
+    {
+        const japVoice = allVoices.find(v => v.lang.match(/jp/i))
+        if (japVoice)
+            utterance.voice = japVoice
+    }
+    else
+    {
+        utterance.voice = allVoices.find(v => v.voiceURI == voiceURI)
+    }
+    
+    speechSynthesis.speak(utterance)
+}

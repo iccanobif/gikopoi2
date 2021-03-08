@@ -391,6 +391,13 @@
                             v-model="enableTextToSpeech" v-on:change="storeSet('enableTextToSpeech')"><label
                             for="preferences-text-to-speech">{{ $t("ui.preferences_enable_text_to_speech") }}</label>
                     </div>
+                    <div class='popup-section'>
+                        <label for="preferences-tts-voice">{{ $t("ui.preferences_tts_voice") }}</label>
+                        <select id="preferences-tts-voice" v-model="ttsVoiceURI">
+                            <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}</option>
+                            <option value="automatic">Automatic</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="popup-buttons">
                     <button v-on:click="closePreferencesPopup">{{ $t("ui.popup_button_ok") }}</button>
