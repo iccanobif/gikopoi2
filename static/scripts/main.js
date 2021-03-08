@@ -1929,11 +1929,11 @@ const vueApp = new Vue({
 });
 
 const sillyVowels = {
-    a: new Audio("silly-tts/a.aac"),
-    e: new Audio("silly-tts/e.aac"),
-    i: new Audio("silly-tts/i.aac"),
-    o: new Audio("silly-tts/o.aac"),
-    u: new Audio("silly-tts/u.aac"),
+    a: new Audio("silly-tts/a.wav"),
+    e: new Audio("silly-tts/e.wav"),
+    i: new Audio("silly-tts/i.wav"),
+    o: new Audio("silly-tts/o.wav"),
+    u: new Audio("silly-tts/u.wav"),
 }
 
 function playSillyVowel(vowel)
