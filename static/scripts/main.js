@@ -1910,6 +1910,10 @@ const vueApp = new Vue({
             }
             this.storeSet("showNotifications")
         },
+        changeVoice: function () {
+            speak("test", this.ttsVoiceURI)
+            this.storeSet('ttsVoiceURI')
+        },
         getVoices: function() {
             const voices = speechSynthesis.getVoices()
             console.log(voices)
