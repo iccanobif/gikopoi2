@@ -89,6 +89,7 @@ export const messages =
             preferences_show_notifications: "通知を表示",
             preferences_enable_text_to_speech: "ログの読み上げ",
             preferences_tts_voice: "読み上げボイス",
+            preferences_voice_volume: "読み上げボイス音量",
             notifications_are_denied: "現在このサイトは通知を表示することが許可されていません。\nブラウザの権限を確認してください。"
         },
         msg:
@@ -236,6 +237,7 @@ export const messages =
             preferences_show_notifications: "Show Notifications",
             preferences_enable_text_to_speech: "Text to speech",
             preferences_tts_voice: "Voice",
+            preferences_voice_volume: "Voice volume",
             notifications_are_denied: "This site is currently not permitted to show notifications.\nPlease check your browser's permissions.",
         },
         msg:

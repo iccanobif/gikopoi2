@@ -398,6 +398,12 @@
                             <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}</option>
                         </select>
                     </div>
+                    <div class='popup-section'>
+                        <label for="preferences-voice-volume">{{ $t("ui.preferences_voice_volume") }}</label>
+                        <input type="range" id="preferences-voice-volume"
+                            min="0" max="100" v-model="voiceVolume" v-on:change="onVoiceVolumeChanged"><div
+                            class='preferences-percentage'>{{ voiceVolume }}%</div>
+                    </div>
                 </div>
                 <div class="popup-buttons">
                     <button v-on:click="closePreferencesPopup">{{ $t("ui.popup_button_ok") }}</button>

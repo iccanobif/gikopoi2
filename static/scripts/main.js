@@ -94,6 +94,7 @@ const vueApp = new Vue({
         showNotifications: localStorage.getItem("showNotifications") != "false",
         enableTextToSpeech: localStorage.getItem("enableTextToSpeech") == "true",
         ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
+        voiceVolume: localStorage.getItem("voiceVolume") || 100,
         availableTTSVoices: [],
         showNotificationsNotice: false,
         
@@ -662,7 +663,7 @@ const vueApp = new Vue({
 
             if (this.enableTextToSpeech && speechSynthesis)
             {
-                speak(plainMsg, this.ttsVoiceURI)
+                speak(plainMsg, this.ttsVoiceURI, this.voiceVolume)
             }
             
             if (!this.showNotifications
@@ -1911,19 +1912,23 @@ const vueApp = new Vue({
             this.storeSet("showNotifications")
         },
         changeVoice: function () {
-            speak("test", this.ttsVoiceURI)
+            speak("test", this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('ttsVoiceURI')
         },
-        getVoices: function() {
+        getVoices: function () {
             const voices = speechSynthesis.getVoices()
             console.log(voices)
             return voices
+        },
+        onVoiceVolumeChanged: function() {
+            speak("test", this.ttsVoiceURI, this.voiceVolume)
+            this.storeSet('voiceVolume')
         }
     },
 });
 
 
-function speak(message, voiceURI)
+function speak(message, voiceURI, volume)
 {
     const cleanMsgForSpeech = message
         .replace(urlRegex, "URL")
@@ -1933,6 +1938,8 @@ function speak(message, voiceURI)
     const utterance = new SpeechSynthesisUtterance(cleanMsgForSpeech)
 
     const allVoices = speechSynthesis.getVoices()
+
+    utterance.volume = volume / 100
 
     if (voiceURI == "automatic")
     {
