@@ -1928,7 +1928,7 @@ const vueApp = new Vue({
     },
 });
 
-const vowels = {
+const sillyVowels = {
     a: new Audio("silly-tts/a.wav"),
     e: new Audio("silly-tts/e.wav"),
     i: new Audio("silly-tts/i.wav"),
@@ -1939,19 +1939,18 @@ const vowels = {
 function playSillyVowel(vowel)
 {
     return new Promise((resolve) => {
-        const listener = vowels[vowel].addEventListener("ended", () => 
+        const listener = sillyVowels[vowel].addEventListener("ended", () => 
         {
-            vowels[vowel].removeEventListener("ended", listener);
+            sillyVowels[vowel].removeEventListener("ended", listener);
             resolve()
         })
-        vowels[vowel].play()
+        sillyVowels[vowel].play()
     })
 }
 
-
 async function speak(message, voiceURI, volume, pitch)
 {
-    console.log("pitch", pitch)
+    console.log("pitch", pitch, "volume", volume)
     const cleanMsgForSpeech = message
         .replace(urlRegex, "URL")
         .replace(/ww+/gi, "わらわら")
@@ -1962,6 +1961,11 @@ async function speak(message, voiceURI, volume, pitch)
     if (voiceURI == "silly-voice" || allVoices.length == 0)
     {
         const vowels = cleanMsgForSpeech.match(/[aeiou]/gi) || []
+        sillyVowels.a.volume = volume / 100
+        sillyVowels.e.volume = volume / 100
+        sillyVowels.i.volume = volume / 100
+        sillyVowels.o.volume = volume / 100
+        sillyVowels.u.volume = volume / 100
         for (const vowel of vowels)
             await playSillyVowel(vowel)
     }
