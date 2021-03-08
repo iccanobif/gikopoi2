@@ -396,6 +396,7 @@
                         <select id="preferences-tts-voice" v-model="ttsVoiceURI" v-on:change="changeVoice">
                             <option value="automatic">Automatic</option>
                             <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}</option>
+                            <option value="silly-voice">Silly voice</option>
                         </select>
                     </div>
                     <div class='popup-section'>
@@ -424,7 +425,6 @@
 
             <audio id="message-sound" src="message.mp3"></audio>
             <audio id="login-sound" src="login.mp3"></audio>
-
         </div>
         <div id="logged-out-page" v-if="loggedOut">
             {{ $t("msg.goodbye") }}

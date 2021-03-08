@@ -1928,35 +1928,65 @@ const vueApp = new Vue({
     },
 });
 
+const vowels = {
+    a: new Audio("silly-tts/a.wav"),
+    e: new Audio("silly-tts/e.wav"),
+    i: new Audio("silly-tts/i.wav"),
+    o: new Audio("silly-tts/o.wav"),
+    u: new Audio("silly-tts/u.wav"),
+}
 
-function speak(message, voiceURI, volume, pitch)
+function playSillyVowel(vowel)
+{
+    return new Promise((resolve) => {
+        const listener = vowels[vowel].addEventListener("ended", () => 
+        {
+            vowels[vowel].removeEventListener("ended", listener);
+            resolve()
+        })
+        vowels[vowel].play()
+    })
+}
+
+
+async function speak(message, voiceURI, volume, pitch)
 {
     console.log("pitch", pitch)
     const cleanMsgForSpeech = message
         .replace(urlRegex, "URL")
         .replace(/ww+/gi, "わらわら")
         .replace(/88+/gi, "ぱちぱち")
-
-    const utterance = new SpeechSynthesisUtterance(cleanMsgForSpeech)
-
+        
     const allVoices = speechSynthesis.getVoices()
 
-    utterance.volume = volume / 100
-
-    if (pitch !== undefined || pitch !== null)
-        utterance.pitch = pitch // range between 0 (lowest) and 2 (highest), with 1 being the default pitch 
-
-    if (voiceURI == "automatic")
+    if (voiceURI == "silly-voice" || allVoices.length == 0)
     {
-        utterance.lang = isJapanese(message) ? "ja" : "en"
+        const vowels = cleanMsgForSpeech.match(/[aeiou]/gi) || []
+        for (const vowel of vowels)
+            await playSillyVowel(vowel)
     }
-    else
+    else 
     {
-        const voice = allVoices.find(v => v.voiceURI == voiceURI)
-        if (voice) utterance.voice = voice
+        const utterance = new SpeechSynthesisUtterance(cleanMsgForSpeech)
+
+
+        utterance.volume = volume / 100
+
+        if (pitch !== undefined && pitch !== null)
+            utterance.pitch = pitch // range between 0 (lowest) and 2 (highest), with 1 being the default pitch 
+
+        if (voiceURI == "automatic")
+        {
+            utterance.lang = isJapanese(message) ? "ja" : "en"
+        }
+        else
+        {
+            const voice = allVoices.find(v => v.voiceURI == voiceURI)
+            if (voice) utterance.voice = voice
+        }
+        
+        speechSynthesis.speak(utterance)
     }
-    
-    speechSynthesis.speak(utterance)
 }
 
 function isJapanese(text)
