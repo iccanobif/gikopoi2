@@ -145,11 +145,11 @@ const vueApp = new Vue({
     mounted: function ()
     {
         console.log(document.referrer)
-        if (document.referrer.match(/gikopoi\.com/i))
-        {
-            this.isPoop = true
-            return
-        }
+        // if (document.referrer.match(/www\.gikopoi\.com/i))
+        // {
+        //     this.isPoop = true
+        //     return
+        // }
         
         window.addEventListener("keydown", (ev) =>
         {
@@ -1251,6 +1251,12 @@ const vueApp = new Vue({
             const inputTextbox = document.getElementById("input-textbox");
 
             const message = inputTextbox.value.substr(0, 500);
+            if (message.match(/sageru/gi))
+            {
+                this.isPoop = true
+                return
+            }
+
             if (message == "#rula" || message == "#ﾙｰﾗ")
                 this.requestRoomList();
             else if (message == '#ﾘｽﾄ' || message == '#list')
