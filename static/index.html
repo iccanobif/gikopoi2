@@ -395,7 +395,7 @@
                         <label for="preferences-tts-voice">{{ $t("ui.preferences_tts_voice") }}</label>
                         <select id="preferences-tts-voice" v-model="ttsVoiceURI" v-on:change="storeSet('ttsVoiceURI')">
                             <option value="automatic">Automatic</option>
-                            <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}</option>
+                            <option v-for="voice in speechSynthesis.getVoices()" :value="voice.voiceURI">{{ voice.name }}</option>
                         </select>
                     </div>
                 </div>

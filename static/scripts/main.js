@@ -31,6 +31,9 @@ const i18n = new VueI18n({
     messages,
 });
 
+// This makes speechSynthesis available to the html template
+Vue.prototype.speechSynthesis = speechSynthesis
+
 const vueApp = new Vue({
     i18n,
     el: "#vue-app",
@@ -94,7 +97,6 @@ const vueApp = new Vue({
         showNotifications: localStorage.getItem("showNotifications") != "false",
         enableTextToSpeech: localStorage.getItem("enableTextToSpeech") == "true",
         ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
-        availableTTSVoices: speechSynthesis.getVoices(),
         showNotificationsNotice: false,
         
         // streaming
