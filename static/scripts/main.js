@@ -1915,7 +1915,7 @@ function speak(message, voiceURI)
 
     if (voiceURI == "automatic")
     {
-        utterance.lang = "ja" ? isJapanese(message) : "en"
+        utterance.lang = isJapanese(message) ? "ja" : "en"
     }
     else
     {
@@ -1928,12 +1928,15 @@ function speak(message, voiceURI)
 
 function isJapanese(text)
 {
-    // very simple heuristic, we just assume that if a sentence has a character
-    // in the CJK Unified Ideographs unicode plane, then it must be japanese
+    // very simple heuristic, we just assume that if a sentence has at least one japanese character, then it must be japanese
     for (let i = 0; i < text.length; i++)
     {
         const charCode = text.charCodeAt(i)
+        // CJK Unified Ideographs 
         if (charCode >= 0x4E00 && charCode <= 0x9FFF) 
+            return true
+        // hiragana + katakana
+        if (charCode >= 0x3040 && charCode <= 0x30FF) 
             return true
     }
 }
