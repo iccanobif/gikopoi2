@@ -31,9 +31,6 @@ const i18n = new VueI18n({
     messages,
 });
 
-// This makes speechSynthesis available to the html template
-Vue.prototype.speechSynthesis = speechSynthesis
-
 const vueApp = new Vue({
     i18n,
     el: "#vue-app",
@@ -97,6 +94,7 @@ const vueApp = new Vue({
         showNotifications: localStorage.getItem("showNotifications") != "false",
         enableTextToSpeech: localStorage.getItem("enableTextToSpeech") == "true",
         ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
+        availableTTSVoices: [],
         showNotificationsNotice: false,
         
         // streaming
@@ -191,6 +189,11 @@ const vueApp = new Vue({
             charactersSelected[0].scrollIntoView({block: "nearest"})
 
         document.getElementById("username-textbox").focus()
+
+        this.availableTTSVoices = speechSynthesis.getVoices()
+        speechSynthesis.addEventListener("voiceschanged", () => {
+            this.availableTTSVoices = speechSynthesis.getVoices()
+        })
     },
     methods: {
         login: async function (ev)
@@ -1890,6 +1893,11 @@ const vueApp = new Vue({
             }
             this.storeSet("showNotifications")
         },
+        getVoices: function() {
+            const voices = speechSynthesis.getVoices()
+            console.log(voices)
+            return voices
+        }
     },
 });
 
@@ -1907,18 +1915,7 @@ function speak(message, voiceURI)
 
     if (voiceURI == "automatic")
     {
-        if (isJapanese(message))
-        {
-            const japVoice = allVoices.find(v => v.lang.match(/ja-/i))
-            if (japVoice)
-                utterance.voice = japVoice
-        }
-        else
-        {
-            const engVoice = allVoices.find(v => v.lang.match(/en-/i))
-            if (engVoice)
-                utterance.voice = engVoice
-        }
+        utterance.lang = "ja" ? isJapanese(message) : "en"
     }
     else
     {
