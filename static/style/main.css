@@ -314,6 +314,12 @@ video {
 
 #input-textbox
 {
+    /* 
+        HACK(?): text areas can't seem to get shrinked more than a certain amount, and it broke the 
+        layout on mobile. because it's in a flex container, "width: 0px" doesn't really make it 0 pixels wide,
+        but at least it allows the text area to shrink as much as needed.
+    */
+    width: 0px; 
     flex-grow: 1;
     resize: vertical;
 }
