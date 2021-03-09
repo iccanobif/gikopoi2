@@ -35,7 +35,6 @@ input[type='range']
 {
     appearance: none;
     background-color: #afb1b1;
-    width: 120px;
     height: 4px;
     font-size: 18px;
 }
@@ -70,9 +69,9 @@ input[type='range']
     display: none;
 }
 
-#room
+#room-canvas
 {
-    position: relative;
+    width: 100%
 }
 
 #chatLog
@@ -100,15 +99,14 @@ video {
     width: 100%;
 }
 
-@media (min-width: 947px) {
+/* @media (min-width: 947px) {
     #video-streams {
         position: absolute;
         left: 700px;
     }
-  }
+  } */
 
 #video-streams{
-    width: 232px;
     padding: 5px
 }
 
