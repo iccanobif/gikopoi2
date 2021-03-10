@@ -114,24 +114,23 @@
                     }}</button>
             </div>
             <div id="toolbar-buttons">
-                <div class="tooltip-section">
-                    <label for="sound-effect-volume">{{ $t("ui.sound_effect") }}</label>
+                <div id="sound-effect-volume-section" class="toolbar-section">
                     <div id="sound-effect-volume"></div>
                 </div>
-                <div class="tooltip-section tooltip-volume-section" v-show="enableTextToSpeech">
+                <div class="toolbar-section toolbar-volume-section" v-show="enableTextToSpeech">
                     <label for="voice-volume">{{ $t("ui.tts_volume") }}</label>
                     <div id="voice-volume"></div>
                 </div>
-                <div class="tooltip-section" v-if="isCommandSectionVisible">
+                <div class="toolbar-section" v-if="isCommandSectionVisible">
                     <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
                     <button id="btn-list" v-on:click="openUserListPopup()">{{ $t("ui.button_list") }}</button>
                 </div>
-                <div class="tooltip-section">
+                <div class="toolbar-section">
                     <button v-on:click="openPreferencesPopup">{{ $t("ui.button_preferences") }}</button>
                     <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{
                         $t("ui.button_crisp") }}</button>
                 </div>
-                <div class="tooltip-section" v-if="isMoveSectionVisible">
+                <div class="toolbar-section" v-if="isMoveSectionVisible">
                     <label>{{ $t("ui.label_move") }}</label>
                     <div>
                         <button id="btn-move-left" class="grid-button"
@@ -144,8 +143,8 @@
                             class="grid-button" v-on:click="sendNewPositionToServer('right')">↘</button>
                     </div>
                 </div>
-                <div class="tooltip-section" v-if="isMoveSectionVisible">
-                    <div class='tooltip-section-title'>
+                <div class="toolbar-section" v-if="isMoveSectionVisible">
+                    <div class='toolbar-section-title'>
                         <div>{{ $t("ui.label_move") }}</div>
                     </div>
                     <div class="non-wrappable-buttons">
@@ -176,7 +175,7 @@
                             class="grid-button" v-on:click="sendNewBubblePositionToServer('right')">↘</button>
                     </div>
                 </div>
-                <div class="tooltip-section">
+                <div class="toolbar-section">
                     <button id="logout-button" v-if="isLogoutButtonVisible" v-on:click="logout"
                         class="fas fa-sign-out-alt" v-bind:title="$t('ui.button_logout')"></button>
                 </div>
