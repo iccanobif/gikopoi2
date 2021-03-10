@@ -192,9 +192,12 @@ const vueApp = new Vue({
         document.getElementById("username-textbox").focus()
 
         this.availableTTSVoices = speechSynthesis.getVoices()
-        speechSynthesis.addEventListener("voiceschanged", () => {
-            this.availableTTSVoices = speechSynthesis.getVoices()
-        })
+        if (speechSynthesis.addEventListener) 
+        {
+            speechSynthesis.addEventListener("voiceschanged", () => {
+                this.availableTTSVoices = speechSynthesis.getVoices()
+            })
+        }
     },
     methods: {
         login: async function (ev)
@@ -244,7 +247,7 @@ const vueApp = new Vue({
                 this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
                 this.updateAudioElementsVolume()
                 
-                if (this.showNotifications)
+                if (this.showNotifications && Notification)
                     Notification.requestPermission()
             }
             catch (e)
@@ -670,15 +673,18 @@ const vueApp = new Vue({
             if (!this.showNotifications
                 || document.visibilityState == "visible"
                 || user.id == this.myUserID) return;
-            
-            const permission = await Notification.requestPermission()
-            if (permission != "granted") return;
-            
-            const character = user.character
-            new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
+
+            if (Notification)
+            {
+                const permission = await Notification.requestPermission()
+                if (permission != "granted") return;
+                
+                const character = user.character
+                new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
                 {
                     icon: "characters/" + character.characterName + "/front-standing." + character.format
                 })
+            }
         },
         toDisplayName: function (name)
         {
