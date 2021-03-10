@@ -192,12 +192,9 @@ const vueApp = new Vue({
         document.getElementById("username-textbox").focus()
 
         this.availableTTSVoices = speechSynthesis.getVoices()
-        if (speechSynthesis.addEventListener) 
-        {
-            speechSynthesis.addEventListener("voiceschanged", () => {
-                this.availableTTSVoices = speechSynthesis.getVoices()
-            })
-        }
+        speechSynthesis.addEventListener("voiceschanged", () => {
+            this.availableTTSVoices = speechSynthesis.getVoices()
+        })
     },
     methods: {
         login: async function (ev)
@@ -665,7 +662,7 @@ const vueApp = new Vue({
                 chatLog.scrollTop = chatLog.scrollHeight -
                     chatLog.clientHeight;
 
-            if (this.enableTextToSpeech && speechSynthesis)
+            if (this.enableTextToSpeech)
             {
                 speak(plainMsg, this.ttsVoiceURI, this.voiceVolume, user.voicePitch)
             }
@@ -1953,7 +1950,6 @@ function playSillyVowel(vowel)
 
 async function speak(message, voiceURI, volume, pitch)
 {
-    console.log("pitch", pitch, "volume", volume)
     const cleanMsgForSpeech = message
         .replace(urlRegex, "URL")
         .replace(/ww+/gi, "わらわら")

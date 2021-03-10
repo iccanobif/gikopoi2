@@ -12,6 +12,13 @@ Promise.allSettled = Promise.allSettled ||
 
 Notification = Notification ||
 {
-    requestPermission: () => {},
+    requestPermission: () => { },
     permission: "default",
 }
+
+if (!speechSynthesis)
+    speechSynthesis = {
+        getVoices: () => []
+    }
+
+speechSynthesis.addEventListener = speechSynthesis.addEventListener || (() => { })
