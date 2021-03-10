@@ -247,7 +247,7 @@ const vueApp = new Vue({
                 this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
                 this.updateAudioElementsVolume()
                 
-                if (this.showNotifications && Notification)
+                if (this.showNotifications)
                     Notification.requestPermission()
             }
             catch (e)
@@ -674,17 +674,14 @@ const vueApp = new Vue({
                 || document.visibilityState == "visible"
                 || user.id == this.myUserID) return;
 
-            if (Notification)
+            const permission = await Notification.requestPermission()
+            if (permission != "granted") return;
+            
+            const character = user.character
+            new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
             {
-                const permission = await Notification.requestPermission()
-                if (permission != "granted") return;
-                
-                const character = user.character
-                new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
-                {
-                    icon: "characters/" + character.characterName + "/front-standing." + character.format
-                })
-            }
+                icon: "characters/" + character.characterName + "/front-standing." + character.format
+            })
         },
         toDisplayName: function (name)
         {

@@ -9,3 +9,9 @@ Promise.allSettled = Promise.allSettled ||
             reason: e,
         }))
     )));
+
+Notification = Notification ||
+{
+    requestPermission: () => {},
+    permission: "default",
+}
