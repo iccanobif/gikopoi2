@@ -249,7 +249,7 @@ const vueApp = new Vue({
             }
             catch (e)
             {
-                console.error(new Date(), e)
+                console.error(new Date(), e, e.stack)
                 if (e instanceof UserException)
                 {
                     alert(i18n.t("msg." + e.message))
@@ -431,13 +431,13 @@ const vueApp = new Vue({
             this.socket.on("reconnect", immanentizeConnection);
 
             this.socket.on('connect_error', (error) => {
-                console.error(new Date(), error)
+                console.error(new Date(), this.myUserID, error)
                 logToServer(new Date() + " " + this.myUserID + " connect_error: " + error)
             });
 
             this.socket.on("disconnect", (reason) =>
             {
-                console.error(new Date(), "Socket disconnected:", reason)
+                console.error(new Date(), this.myUserID, "Socket disconnected:", reason)
                 this.connectionLost = true;
             });
             this.socket.on("server-cant-log-you-in", () =>
@@ -460,7 +460,7 @@ const vueApp = new Vue({
                 }
                 else
                 {
-                    console.error(new Date(), "Received message", msg, "from user", userId)
+                    console.error(new Date(), this.myUserID, "Received message", msg, "from user", userId)
                 }
             });
 
@@ -1627,7 +1627,7 @@ const vueApp = new Vue({
                         }
                         catch (exc)
                         {
-                            console.error(new Date(), exc)
+                            console.error(new Date(), this.myUserID, exc)
                             clearInterval(this.vuMeterTimer)
                         }
                     }, 100)
@@ -1655,7 +1655,7 @@ const vueApp = new Vue({
                 this.isRedrawRequired = true; 
             } catch (e)
             {
-                console.error(new Date(), e)
+                console.error(new Date(), this.myUserID, e, e.stack)
                 if (e instanceof UserException)
                 {
                     this.showWarningToast(i18n.t("msg." + e.message));
