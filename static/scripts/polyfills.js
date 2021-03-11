@@ -18,7 +18,8 @@ Notification = Notification ||
 
 if (!speechSynthesis)
     speechSynthesis = {
-        getVoices: () => []
+        getVoices: () => [],
+        cancel: () => {}
     }
 
 speechSynthesis.addEventListener = speechSynthesis.addEventListener || (() => { })

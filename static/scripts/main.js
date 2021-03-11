@@ -1228,6 +1228,7 @@ const vueApp = new Vue({
         {
             if (this.mediaStream) this.stopStreaming();
 
+            speechSynthesis.cancel();
             this.requestedRoomChange = true;
             this.socket.emit("user-change-room", { targetRoomId, targetDoorId });
         },
@@ -1912,6 +1913,11 @@ const vueApp = new Vue({
             }
             this.storeSet("showNotifications")
         },
+        handleEnableTextToSpeech: function () 
+        {
+            speechSynthesis.cancel()
+            this.storeSet('enableTextToSpeech')
+        },
         changeVoice: function () {
             speak("test", this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('ttsVoiceURI')
@@ -1924,7 +1930,7 @@ const vueApp = new Vue({
         onVoiceVolumeChanged: function() {
             speak("test", this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('voiceVolume')
-        }
+        },
     },
 });
 
