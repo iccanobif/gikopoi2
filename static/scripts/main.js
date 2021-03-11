@@ -396,7 +396,7 @@ const vueApp = new Vue({
             const response = await fetch("/areas/" + this.areaId + "/rooms/admin_st")
             this.updateRoomState(await response.json())
             
-            logToServer(this.myUserID + " User agent: " + navigator.userAgent)
+            logToServer(new Date() + " " + this.myUserID + " User agent: " + navigator.userAgent)
 
             this.initializeSocket()
         },
