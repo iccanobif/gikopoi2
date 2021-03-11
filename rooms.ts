@@ -2628,7 +2628,8 @@ export const rooms: { [roomId: string]: Room } = {
             down: { x: 4, y: 0, direction: "up", target: { roomId: "basement", doorId: "bar777" } },
         },
         streamSlotCount: 0,
-        secret: false
+        secret: false,
+        forcedAnonymous: true,
     },
     yatai: {
         id: "yatai",
