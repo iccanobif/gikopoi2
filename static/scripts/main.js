@@ -10,7 +10,7 @@ import { RenderCache } from "./rendercache.js";
 
 const originalConsoleError = console.error
 console.error = function() {
-    let allArgs = ""
+    let allArgs = "ERROR"
     for (let i = 0; i < arguments.length; i++)
         allArgs += " " + arguments[i]
     originalConsoleError(...arguments)
