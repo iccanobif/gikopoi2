@@ -10,16 +10,16 @@ Promise.allSettled = Promise.allSettled ||
         }))
     )));
 
-Notification = Notification ||
+window.Notification = window.Notification ||
 {
     requestPermission: () => { },
     permission: "default",
 }
 
-if (!speechSynthesis)
-    speechSynthesis = {
+if (!window.speechSynthesis)
+    window.speechSynthesis = {
         getVoices: () => [],
         cancel: () => {}
     }
 
-speechSynthesis.addEventListener = speechSynthesis.addEventListener || (() => { })
+window.speechSynthesis.addEventListener = window.speechSynthesis.addEventListener || (() => { })
