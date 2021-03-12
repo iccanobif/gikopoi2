@@ -576,3 +576,13 @@ button.checked {
 {
     flex-shrink: 0;
 }
+
+.position-relative
+{
+    position: relative !important;
+}
+
+.position-absolute
+{
+    position: absolute !important;
+}

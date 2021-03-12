@@ -1733,8 +1733,6 @@ const vueApp = new Vue({
                 {
                     const videoElement = document.getElementById("received-video-" + streamSlotId)
                     videoElement.srcObject = event.streams[0];
-
-                    $( "#video-container-" + streamSlotId ).draggable()
                     $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
                 },
                 { once: true }
@@ -1937,6 +1935,24 @@ const vueApp = new Vue({
         onVoiceVolumeChanged: function() {
             speak("test", this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('voiceVolume')
+        },
+        toggleVideoSlotPinStatus: function(slotId) {
+            const videoContainer = document.getElementById('video-container-' + slotId)
+            videoContainer.classList.toggle("position-relative")
+            videoContainer.classList.toggle("position-absolute")
+
+            if (videoContainer.classList.contains("position-absolute"))
+            {
+                $(videoContainer).draggable()
+                $(videoContainer).css("left", 0)
+                $(videoContainer).css("top", 0)
+            }
+            else
+            {
+                $(videoContainer).draggable("destroy")
+                // Reset 'top' and 'left' styles to snap the container back to its original position
+                videoContainer.style = ""
+            }
         },
     },
 });
