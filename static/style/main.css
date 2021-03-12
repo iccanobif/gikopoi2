@@ -93,12 +93,6 @@ input[type='range']
 .video-container
 {
     width: 219px;
-    overflow: hidden;
-}
-
-.video-container:hover
-{
-    resize: horizontal;
 }
 
 video {

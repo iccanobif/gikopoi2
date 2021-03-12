@@ -1731,8 +1731,11 @@ const vueApp = new Vue({
                 "track",
                 (event) =>
                 {
-                    document.getElementById("received-video-" + streamSlotId).srcObject =
-                        event.streams[0];
+                    const videoElement = document.getElementById("received-video-" + streamSlotId)
+                    videoElement.srcObject = event.streams[0];
+
+                    $( "#video-container-" + streamSlotId ).draggable()
+                    $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
                 },
                 { once: true }
             );
