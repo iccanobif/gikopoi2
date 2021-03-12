@@ -8,12 +8,16 @@ import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";
 
+// I define myUserID here outside of the vue.js component to make it 
+// visible to console.error
+let myUserID = null; 
+
 const originalConsoleError = console.error
 console.error = function() {
-    let allArgs = "ERROR"
+    let allArgs = myUserID + " ERROR " + new Date()
     for (let i = 0; i < arguments.length; i++)
         allArgs += " " + arguments[i]
-    originalConsoleError(...arguments)
+    originalConsoleError(new Date(), ...arguments)
     logToServer(allArgs)
 }
 
@@ -249,7 +253,7 @@ const vueApp = new Vue({
             }
             catch (e)
             {
-                console.error(new Date(), e, e.stack)
+                console.error(e, e.stack)
                 if (e instanceof UserException)
                 {
                     alert(i18n.t("msg." + e.message))
@@ -376,7 +380,7 @@ const vueApp = new Vue({
             
             if (!loginMessage.isLoginSuccessful) throw new UserException(loginMessage.error);
             
-            this.myUserID = loginMessage.userId;
+            myUserID = this.myUserID = loginMessage.userId;
             this.myPrivateUserID = loginMessage.privateUserId;
             this.expectedServerVersion = loginMessage.appVersion;
             
@@ -431,13 +435,13 @@ const vueApp = new Vue({
             this.socket.on("reconnect", immanentizeConnection);
 
             this.socket.on('connect_error', (error) => {
-                console.error(new Date(), this.myUserID, error)
+                console.error(error)
                 logToServer(new Date() + " " + this.myUserID + " connect_error: " + error)
             });
 
             this.socket.on("disconnect", (reason) =>
             {
-                console.error(new Date(), this.myUserID, "Socket disconnected:", reason)
+                console.error("Socket disconnected:", reason)
                 this.connectionLost = true;
             });
             this.socket.on("server-cant-log-you-in", () =>
@@ -460,7 +464,7 @@ const vueApp = new Vue({
                 }
                 else
                 {
-                    console.error(new Date(), this.myUserID, "Received message", msg, "from user", userId)
+                    console.error("Received message", msg, "from user", userId)
                 }
             });
 
@@ -1628,7 +1632,7 @@ const vueApp = new Vue({
                         }
                         catch (exc)
                         {
-                            console.error(new Date(), this.myUserID, exc)
+                            console.error(exc)
                             clearInterval(this.vuMeterTimer)
                         }
                     }, 100)
@@ -1656,7 +1660,7 @@ const vueApp = new Vue({
                 this.isRedrawRequired = true; 
             } catch (e)
             {
-                console.error(new Date(), this.myUserID, e, e.stack)
+                console.error(e, e.stack)
                 if (e instanceof UserException)
                 {
                     this.showWarningToast(i18n.t("msg." + e.message));
