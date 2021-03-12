@@ -587,7 +587,7 @@ button.checked {
     position: absolute !important;
 }
 
-.pinned-video .pin-video-button
+.unpinned-video .pin-video-button
 {
     transform: rotate(90deg);
 }

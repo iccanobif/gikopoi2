@@ -155,8 +155,6 @@
             {{ $t("ui.label_log") }}
             <div id="chatLog">
             </div>
-
-
             <div id="video-streams" v-if="streams.length > 0">
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
                     <hr v-if="index != 0" />
@@ -164,10 +162,10 @@
                         {{ $t("ui.label_stream", {index: index+1}) }}<span class="stream-title">{{ streamSlot.title
                             }}</span>
                     </div>
-                    <div :id="'video-container-' + index" class='video-container pinned-video' v-show="streamSlot.withVideo">
+                    <div :id="'video-container-' + index" class='video-container pinned-video' v-show="takenStreams[index] || index == streamSlotIdInWhichIWantToStream ">
                         <button 
                             class="fas fa-thumbtack pin-video-button"
-                            v-show="takenStreams[index]"
+                            v-show="takenStreams[index] || (streamSlot.isActive && index == streamSlotIdInWhichIWantToStream)"
                             v-on:click="toggleVideoSlotPinStatus(index)"></button>
                         <video :id="'local-video-' + index"
                             v-show="streamSlot.isActive && index == streamSlotIdInWhichIWantToStream"

@@ -1523,6 +1523,8 @@ const vueApp = new Vue({
                 else Vue.set(stream, "title", "OFF");
                 if (!stream.isActive || !stream.isReady)
                     Vue.set(this.takenStreams, slotId, false);
+
+                $( "#video-container-" + slotId ).resizable({aspectRatio: true})
             }
         },
 
