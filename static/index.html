@@ -165,7 +165,10 @@
                             }}</span>
                     </div>
                     <div :id="'video-container-' + index" class='video-container pinned-video' v-show="streamSlot.withVideo">
-                        <button class="fas fa-thumbtack pin-video-button" v-on:click="toggleVideoSlotPinStatus(index)"></button>
+                        <button 
+                            class="fas fa-thumbtack pin-video-button"
+                            v-show="takenStreams[index]"
+                            v-on:click="toggleVideoSlotPinStatus(index)"></button>
                         <video :id="'local-video-' + index"
                             v-show="streamSlot.isActive && index == streamSlotIdInWhichIWantToStream"
                             autoplay muted></video>
@@ -184,27 +187,28 @@
                         <input type="range" :id="'volume-' + index" v-on:change="changeStreamVolume(index)"
                             name="stream-volume" min="0" max="1" step="0.01" value="1">
                     </div>
+                    <div class="stream-buttons">
+                        <button class="start-streaming-button" :id="'start-video-streaming-button-' + index"
+                            v-if="!streamSlot.isActive && !wantToStream && streamSlotIdInWhichIWantToStream == null"
+                            v-on:click="openStreamPopup(index)">
+                            {{ $t("ui.button_stream_start") }}
+                        </button>
+                        <button :id="'stop-streaming-button-' + index"
+                            v-if="streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
+                            {{ $t("ui.button_stream_stop") }}
+                        </button>
 
-                    <button class="start-streaming-button" :id="'start-video-streaming-button-' + index"
-                        v-if="!streamSlot.isActive && !wantToStream && streamSlotIdInWhichIWantToStream == null"
-                        v-on:click="openStreamPopup(index)">
-                        {{ $t("ui.button_stream_start") }}
-                    </button>
-                    <button :id="'stop-streaming-button-' + index"
-                        v-if="streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
-                        {{ $t("ui.button_stream_stop") }}
-                    </button>
-
-                    <button :id="'take-stream-button-' + index"
-                        v-if="streamSlot.isReady && !takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
-                        v-on:click="wantToTakeStream(index)">
-                        {{ $t("ui.button_stream_take") }}
-                    </button>
-                    <button :id="'drop-stream-button-' + index"
-                        v-if="streamSlot.isReady && takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
-                        v-on:click="wantToDropStream(index)">
-                        {{ $t("ui.button_stream_drop") }}
-                    </button>
+                        <button :id="'take-stream-button-' + index"
+                            v-if="streamSlot.isReady && !takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
+                            v-on:click="wantToTakeStream(index)">
+                            {{ $t("ui.button_stream_take") }}
+                        </button>
+                        <button :id="'drop-stream-button-' + index"
+                            v-if="streamSlot.isReady && takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
+                            v-on:click="wantToDropStream(index)">
+                            {{ $t("ui.button_stream_drop") }}
+                        </button>
+                    </div>
                 </div>
             </div>
 

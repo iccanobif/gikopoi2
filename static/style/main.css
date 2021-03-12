@@ -258,7 +258,7 @@ video {
 
 #login-page button,
 #toolbar button,
-#video-streams button,
+.stream-buttons button,
 .popup button
 {
     border: 1px solid #959595;
@@ -586,3 +586,17 @@ button.checked {
 {
     position: absolute !important;
 }
+
+.pinned-video .pin-video-button
+{
+    transform: rotate(90deg);
+}
+
+.pin-video-button
+{
+    position: absolute;
+    background: none;
+    border: 0;
+    margin-top: 7px;
+}
+
