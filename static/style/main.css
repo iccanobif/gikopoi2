@@ -577,12 +577,12 @@ button.checked {
     flex-shrink: 0;
 }
 
-.position-relative
+.pinned-video
 {
     position: relative !important;
 }
 
-.position-absolute
+.unpinned-video
 {
     position: absolute !important;
 }

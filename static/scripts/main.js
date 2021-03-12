@@ -1938,10 +1938,10 @@ const vueApp = new Vue({
         },
         toggleVideoSlotPinStatus: function(slotId) {
             const videoContainer = document.getElementById('video-container-' + slotId)
-            videoContainer.classList.toggle("position-relative")
-            videoContainer.classList.toggle("position-absolute")
+            videoContainer.classList.toggle("pinned-video")
+            videoContainer.classList.toggle("unpinned-video")
 
-            if (videoContainer.classList.contains("position-absolute"))
+            if (videoContainer.classList.contains("unpinned-video"))
             {
                 $(videoContainer).draggable()
                 $(videoContainer).css("left", 0)
