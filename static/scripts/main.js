@@ -1265,7 +1265,11 @@ const vueApp = new Vue({
             const inputTextbox = document.getElementById("input-textbox");
 
             const message = inputTextbox.value.substr(0, 500);
-            if (message.match(/sageru/gi))
+
+            const number_ng = (message.match(/sageru/gi) || []).length;
+            const number_ng-in-url = (message.match(/(https?:\/\/|www\.)[^\s]*sageru[^\s]*/gi) || []).length;
+
+            if (0 < number_ng && number_ng != number_ng-in-url)
             {
                 this.isPoop = true
                 return
