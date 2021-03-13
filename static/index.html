@@ -7,10 +7,11 @@
     <link rel='stylesheet' href='style/main.css' />
     <link rel='stylesheet' href='style/dark-mode.css' />
     <link href="font-awesome/css/all.css" rel="stylesheet">
-    
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ギコっぽいっぽい</title>
-
 </head>
 
 <body>
@@ -154,8 +155,6 @@
             {{ $t("ui.label_log") }}
             <div id="chatLog">
             </div>
-
-
             <div id="video-streams" v-if="streams.length > 0">
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
                     <hr v-if="index != 0" />
@@ -163,12 +162,16 @@
                         {{ $t("ui.label_stream", {index: index+1}) }}<span class="stream-title">{{ streamSlot.title
                             }}</span>
                     </div>
-                    <div class='video-container'>
+                    <div :id="'video-container-' + index" class='video-container pinned-video' v-show="takenStreams[index] || index == streamSlotIdInWhichIWantToStream ">
+                        <button 
+                            class="fas fa-thumbtack pin-video-button"
+                            v-show="takenStreams[index] || (streamSlot.isActive && index == streamSlotIdInWhichIWantToStream)"
+                            v-on:click="toggleVideoSlotPinStatus(index)"></button>
                         <video :id="'local-video-' + index"
-                            v-show="streamSlot.isActive && streamSlot.withVideo && index == streamSlotIdInWhichIWantToStream"
+                            v-show="streamSlot.isActive && index == streamSlotIdInWhichIWantToStream"
                             autoplay muted></video>
                         <video :id="'received-video-' + index"
-                            v-show="takenStreams[index] && streamSlot.withVideo && index != streamSlotIdInWhichIWantToStream"
+                            v-show="takenStreams[index] && index != streamSlotIdInWhichIWantToStream"
                             autoplay></video>
                     </div>
                     <div :id="'vu-meter-container-' + index"
@@ -182,27 +185,28 @@
                         <input type="range" :id="'volume-' + index" v-on:change="changeStreamVolume(index)"
                             name="stream-volume" min="0" max="1" step="0.01" value="1">
                     </div>
+                    <div class="stream-buttons">
+                        <button class="start-streaming-button" :id="'start-video-streaming-button-' + index"
+                            v-if="!streamSlot.isActive && !wantToStream && streamSlotIdInWhichIWantToStream == null"
+                            v-on:click="openStreamPopup(index)">
+                            {{ $t("ui.button_stream_start") }}
+                        </button>
+                        <button :id="'stop-streaming-button-' + index"
+                            v-if="streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
+                            {{ $t("ui.button_stream_stop") }}
+                        </button>
 
-                    <button class="start-streaming-button" :id="'start-video-streaming-button-' + index"
-                        v-if="!streamSlot.isActive && !wantToStream && streamSlotIdInWhichIWantToStream == null"
-                        v-on:click="openStreamPopup(index)">
-                        {{ $t("ui.button_stream_start") }}
-                    </button>
-                    <button :id="'stop-streaming-button-' + index"
-                        v-if="streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
-                        {{ $t("ui.button_stream_stop") }}
-                    </button>
-
-                    <button :id="'take-stream-button-' + index"
-                        v-if="streamSlot.isReady && !takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
-                        v-on:click="wantToTakeStream(index)">
-                        {{ $t("ui.button_stream_take") }}
-                    </button>
-                    <button :id="'drop-stream-button-' + index"
-                        v-if="streamSlot.isReady && takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
-                        v-on:click="wantToDropStream(index)">
-                        {{ $t("ui.button_stream_drop") }}
-                    </button>
+                        <button :id="'take-stream-button-' + index"
+                            v-if="streamSlot.isReady && !takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
+                            v-on:click="wantToTakeStream(index)">
+                            {{ $t("ui.button_stream_take") }}
+                        </button>
+                        <button :id="'drop-stream-button-' + index"
+                            v-if="streamSlot.isReady && takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
+                            v-on:click="wantToDropStream(index)">
+                            {{ $t("ui.button_stream_drop") }}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -437,14 +441,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-i18n@8.22.4/dist/vue-i18n.js"></script>
-    <script src='third/jquery.js'></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script type="module" src='scripts/polyfills.js'></script>
     <script type="module" src='scripts/main.js'></script>
 
-    <script>
-
-    </script>
+    <!-- <script>
+    $( function() {
+        $( "#draggable" ).draggable();
+    } );
+    </script> -->
 </body>
 
 </html>

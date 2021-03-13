@@ -1523,6 +1523,8 @@ const vueApp = new Vue({
                 else Vue.set(stream, "title", "OFF");
                 if (!stream.isActive || !stream.isReady)
                     Vue.set(this.takenStreams, slotId, false);
+
+                $( "#video-container-" + slotId ).resizable({aspectRatio: true})
             }
         },
 
@@ -1731,8 +1733,9 @@ const vueApp = new Vue({
                 "track",
                 (event) =>
                 {
-                    document.getElementById("received-video-" + streamSlotId).srcObject =
-                        event.streams[0];
+                    const videoElement = document.getElementById("received-video-" + streamSlotId)
+                    videoElement.srcObject = event.streams[0];
+                    $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
                 },
                 { once: true }
             );
@@ -1934,6 +1937,24 @@ const vueApp = new Vue({
         onVoiceVolumeChanged: function() {
             speak("test", this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('voiceVolume')
+        },
+        toggleVideoSlotPinStatus: function(slotId) {
+            const videoContainer = document.getElementById('video-container-' + slotId)
+            videoContainer.classList.toggle("pinned-video")
+            videoContainer.classList.toggle("unpinned-video")
+
+            if (videoContainer.classList.contains("unpinned-video"))
+            {
+                $(videoContainer).draggable()
+                $(videoContainer).css("left", 0)
+                $(videoContainer).css("top", 0)
+            }
+            else
+            {
+                $(videoContainer).draggable("destroy")
+                // Reset 'top' and 'left' styles to snap the container back to its original position
+                videoContainer.style = ""
+            }
         },
     },
 });

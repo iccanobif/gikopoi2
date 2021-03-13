@@ -93,12 +93,6 @@ input[type='range']
 .video-container
 {
     width: 219px;
-    overflow: hidden;
-}
-
-.video-container:hover
-{
-    resize: horizontal;
 }
 
 video {
@@ -264,7 +258,7 @@ video {
 
 #login-page button,
 #toolbar button,
-#video-streams button,
+.stream-buttons button,
 .popup button
 {
     border: 1px solid #959595;
@@ -582,3 +576,37 @@ button.checked {
 {
     flex-shrink: 0;
 }
+
+.pinned-video
+{
+    position: relative !important;
+}
+
+.unpinned-video
+{
+    position: absolute !important;
+}
+
+.unpinned-video .pin-video-button
+{
+    transform: rotate(90deg);
+}
+
+.video-container > .pin-video-button
+{
+    position: absolute;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.7);
+    border: 0;
+    margin: 7px;
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+    display: none;
+}
+
+.video-container:hover > .pin-video-button
+{
+    display: block;
+}
+
