@@ -186,22 +186,25 @@
                             name="stream-volume" min="0" max="1" step="0.01" value="1">
                     </div>
                     <div class="stream-buttons">
-                        <button class="start-streaming-button" :id="'start-video-streaming-button-' + index"
+                        <button class="streamer-sender-button" :id="'start-video-streaming-button-' + index"
                             v-if="!streamSlot.isActive && !wantToStream && streamSlotIdInWhichIWantToStream == null"
                             v-on:click="openStreamPopup(index)">
                             {{ $t("ui.button_stream_start") }}
                         </button>
                         <button :id="'stop-streaming-button-' + index"
+                            class="streamer-sender-button"
                             v-if="streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
                             {{ $t("ui.button_stream_stop") }}
                         </button>
 
                         <button :id="'take-stream-button-' + index"
+                            class="stream-receiver-button"
                             v-if="streamSlot.isReady && !takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
                             v-on:click="wantToTakeStream(index)">
                             {{ $t("ui.button_stream_take") }}
                         </button>
                         <button :id="'drop-stream-button-' + index"
+                            class="stream-receiver-button"
                             v-if="streamSlot.isReady && takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
                             v-on:click="wantToDropStream(index)">
                             {{ $t("ui.button_stream_drop") }}
