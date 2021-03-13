@@ -592,11 +592,21 @@ button.checked {
     transform: rotate(90deg);
 }
 
-.pin-video-button
+.video-container > .pin-video-button
 {
     position: absolute;
-    background: none;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.7);
     border: 0;
-    margin-top: 7px;
+    margin: 7px;
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+    display: none;
+}
+
+.video-container:hover > .pin-video-button
+{
+    display: block;
 }
 
