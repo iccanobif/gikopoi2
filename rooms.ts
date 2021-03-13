@@ -1326,6 +1326,11 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  6, y: 17 },
             { x:  7, y: 17 },
             { x:  8, y: 17 },
+            // fountain
+            { x: 13, y: 10 },
+            { x: 13, y: 11 },
+            { x: 11, y:  9 },
+            { x: 12, y:  9 },
         ],
         blocked: [
             // Koban quarter
@@ -1406,14 +1411,16 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 19, y:  4 },
             
             // Fountain
-            { x: 11, y:  9 },
-            { x: 12, y:  9 },
-            { x: 13, y: 10 },
-            { x: 13, y: 11 },
+
+
+            
             { x: 12, y: 12 },
+            { x: 12, y: 11 },
+            { x: 12, y: 10 },
             { x: 11, y: 12 },
             { x: 10, y: 11 },
             { x: 10, y: 10 },
+            { x: 11, y: 10 },
         ],
         forbiddenMovements: [],
         doors: {
