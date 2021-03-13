@@ -56,7 +56,7 @@
                 @LOGIN_FOOTER@
             </div>
         </div>
-        <div id="stage" v-if="loggedIn">
+        <div id="stage" v-if="loggedIn && !isPoop">
             <h2 class="big-red-alert" v-if="connectionLost && !connectionRefused">
                 {{ $t("msg.connection_lost") }}
             </h2>
