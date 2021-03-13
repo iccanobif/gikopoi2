@@ -602,21 +602,24 @@ button.checked {
     width: 28px;
     height: 28px;
     font-size: 13px;
-    display: none;
+    /* visibility: hidden; */
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
 .video-container:hover > .pin-video-button
 {
-    display: block;
+    /* visibility: visible; */
+    opacity: 1;
 }
 
-.streamer-sender-button
+.streamer-button-red
 {
     background-color: #9f6161;
     color: white;
 }
 
-.stream-receiver-button
+.stream-button-blue
 {
     background-color: #4d4d9f;
     color: white;
