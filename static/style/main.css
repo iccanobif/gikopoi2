@@ -254,6 +254,8 @@ video {
     display: flex;
     align-items: stretch;
     flex-wrap: wrap;
+    resize: horizontal;
+    overflow: auto;
 }
 
 #login-page button,
