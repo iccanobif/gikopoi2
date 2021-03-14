@@ -344,7 +344,7 @@ const vueApp = new Vue({
             {
                 this.addUser(u);
                 if(previousRoomId != this.currentRoom.id && this.users[u.id].message)
-                    this.displayMessage(u, this.users[u.id].message);
+                    this.displayUserMessage(u, this.users[u.id].message);
             }
             
             this.loadRoomBackground();
@@ -460,7 +460,7 @@ const vueApp = new Vue({
                 if (user)
                 {
                     user.isInactive = false;
-                    this.displayMessage(user, msg);
+                    this.displayUserMessage(user, msg);
                 }
                 else
                 {
@@ -608,24 +608,8 @@ const vueApp = new Vue({
             
             this.users[userDTO.id] = newUser;
         },
-        displayMessage: async function (user, msg)
+        writeMessageToLog: function(userName, msg)
         {
-            // Don't do anything for ignored users
-            if (this.ignoredUserIds.has(user.id))
-                return;
-
-            const plainMsg = msg.replace(urlRegex, s => decodeURI(s));
-            
-            user.message = plainMsg;
-            if(user.lastMessage != user.message)
-            {
-                user.bubbleImage = null;
-                this.isRedrawRequired = true;
-                user.lastMessage = user.message;
-            }
-            
-            if(!user.message) return;
-            
             const chatLog = document.getElementById("chatLog");
             document.getElementById("message-sound").play();
 
@@ -637,7 +621,7 @@ const vueApp = new Vue({
             const authorSpan = document.createElement("span");
             authorSpan.className = "message-author";
             authorSpan.title = new Date()
-            authorSpan.textContent = this.toDisplayName(user.name);
+            authorSpan.textContent = this.toDisplayName(userName);
 
             const bodySpan = document.createElement("span");
             bodySpan.className = "message-body";
@@ -665,6 +649,26 @@ const vueApp = new Vue({
             if (isAtBottom)
                 chatLog.scrollTop = chatLog.scrollHeight -
                     chatLog.clientHeight;
+        },
+        displayUserMessage: async function (user, msg)
+        {
+            // Don't do anything for ignored users
+            if (this.ignoredUserIds.has(user.id))
+                return;
+
+            const plainMsg = msg.replace(urlRegex, s => decodeURI(s));
+            
+            user.message = plainMsg;
+            if(user.lastMessage != user.message)
+            {
+                user.bubbleImage = null;
+                this.isRedrawRequired = true;
+                user.lastMessage = user.message;
+            }
+            
+            if(!user.message) return;
+            
+            this.writeMessageToLog(user.name, msg)
 
             if (this.enableTextToSpeech)
             {
@@ -1503,6 +1507,8 @@ const vueApp = new Vue({
         
         updateCurrentRoomStreams: function (streams)
         {
+
+            
             this.streams = streams;
                 
             this.streamSlotIdInWhichIWantToStream = null;
