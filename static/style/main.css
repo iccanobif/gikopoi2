@@ -85,11 +85,6 @@ input[type='range']
     line-height: 20px;
 }
 
-#canvas-container
-{
-    font-family: Arial, Helvetica, sans-serif;
-}
-
 .video-container
 {
     width: 219px;
@@ -247,6 +242,7 @@ video {
     position: relative;
     max-width: 700px;
     height: 511px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #toolbar
