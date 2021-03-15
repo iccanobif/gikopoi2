@@ -587,31 +587,21 @@ io.on("connection", function (socket: any)
         }
     })
 
-    socket.on("user-room-list", function () //TODO
+    socket.on("user-room-list", function ()
     {
         try
         {
-            const roomList: any[] = [];
-            for (const roomId in rooms)
-            {
-                if (rooms[roomId].secret) continue;
-                const listRoom: { id: string, userCount: number, streamers: string[] } =
-                {
-                    id: roomId,
-                    userCount: getConnectedUserList(roomId, user.areaId).length,
-                    streamers: []
-                }
-                roomStates[user.areaId][roomId].streams.forEach(stream =>
-                {
-                    if (!stream.isActive || stream.userId == null) return;
-                    try
-                    {
-                        listRoom.streamers.push(getUser(stream.userId).name);
-                    }
-                    catch (e) { }
-                })
-                roomList.push(listRoom)
-            }
+            const roomList: { id: string, userCount: number, streamers: string[] }[] = 
+                Object.values(rooms)
+                .filter(room => !room.secret)
+                .map(room => ({
+                    id: room.id,
+                    userCount: getConnectedUserList(room.id, user.areaId).length,
+                    streamers: roomStates[user.areaId][room.id]
+                        .streams
+                        .filter(stream => stream.isActive && stream.userId != null)
+                        .map(stream => getUser(stream.userId!).name),
+                }))
 
             socket.emit("server-room-list", roomList)
         }
