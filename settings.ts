@@ -20,3 +20,19 @@ export const settings = {
     isBehindProxy: fileJsonContents?.isBehindProxy == undefined ? true : fileJsonContents.isBehindProxy,
     restrictLoginByIp: fileJsonContents?.restrictLoginByIp == undefined ? true : fileJsonContents.restrictLoginByIp,
 }
+
+let fileScriptContents: any = null
+
+try
+{
+    const fileJsContents = readFileSync("static/scripts/lang.js", { encoding: "utf8" })
+
+    const tempArray = fileJsContents.split(/\r?\n/)
+    const messagesIndex = tempArray.findIndex((v: string) => v.match(/ja:/)) + 1
+    fileScriptContents = tempArray.slice(messagesIndex)
+}
+catch {
+    log.warn("No lang.js file found")
+}
+
+    export const messages = fileScriptContents 

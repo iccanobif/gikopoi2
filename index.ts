@@ -6,7 +6,7 @@ import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, g
 import { sleep } from "./utils";
 import got from "got";
 import log from "loglevel";
-import { settings } from "./settings";
+import { settings, messages } from "./settings";
 import { cloneDeep } from "lodash";
 import compression from 'compression';
 
@@ -772,6 +772,57 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
     catch (e)
     {
         res.end(e.message + " " + e.stack)
+    }
+})
+
+app.get("/areas/:areaId/streamers", (req, res) =>
+{
+    try
+    {
+        const areaId = req.params.areaId;
+
+        const messagesIndex = messages.findIndex((v: string) => v.match(/en:/)) + 1;
+        const enMessages = messages.slice(messagesIndex);
+        const languages = areaId === "gen" ? messages : enMessages;
+
+        const streamerList: any[] = [];
+
+        for (const roomId in rooms)
+        {
+            if (rooms[roomId].secret ||
+                rooms[roomId].streamSlotCount === 0) continue;
+
+            const reg = new RegExp(roomId + ":")
+            const regIndex = languages.findIndex((v: string) => v.match(reg))
+            const roomName = languages.splice(regIndex, 1)[0].split('\"')[1]
+
+            const listRoom: { name: string, streamers: string[] } =
+            {
+                name: roomName,
+                streamers: []
+            }
+
+            roomStates[areaId][roomId].streams.forEach(stream =>
+            {
+                if (!stream.isActive || stream.userId == null) return;
+                try
+                {
+                    listRoom.streamers.push(getUser(stream.userId).name);
+                }
+                catch (e) { }
+            })
+
+            if (listRoom.streamers.length > 0)
+            {
+                streamerList.push(listRoom)
+            }
+        }
+
+        res.json(streamerList)
+    }
+    catch (e)
+    {
+        log.error(e.message + " " + e.stack);
     }
 })
 
