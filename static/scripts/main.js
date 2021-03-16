@@ -344,7 +344,7 @@ const vueApp = new Vue({
             {
                 this.addUser(u);
                 if(previousRoomId != this.currentRoom.id && this.users[u.id].message)
-                    this.displayMessage(u, this.users[u.id].message);
+                    this.displayUserMessage(u, this.users[u.id].message);
             }
             
             this.loadRoomBackground();
@@ -460,7 +460,7 @@ const vueApp = new Vue({
                 if (user)
                 {
                     user.isInactive = false;
-                    this.displayMessage(user, msg);
+                    this.displayUserMessage(user, msg);
                 }
                 else
                 {
@@ -608,24 +608,8 @@ const vueApp = new Vue({
             
             this.users[userDTO.id] = newUser;
         },
-        displayMessage: async function (user, msg)
+        writeMessageToLog: function(userName, msg)
         {
-            // Don't do anything for ignored users
-            if (this.ignoredUserIds.has(user.id))
-                return;
-
-            const plainMsg = msg.replace(urlRegex, s => decodeURI(s));
-            
-            user.message = plainMsg;
-            if(user.lastMessage != user.message)
-            {
-                user.bubbleImage = null;
-                this.isRedrawRequired = true;
-                user.lastMessage = user.message;
-            }
-            
-            if(!user.message) return;
-            
             const chatLog = document.getElementById("chatLog");
             document.getElementById("message-sound").play();
 
@@ -637,7 +621,7 @@ const vueApp = new Vue({
             const authorSpan = document.createElement("span");
             authorSpan.className = "message-author";
             authorSpan.title = new Date()
-            authorSpan.textContent = this.toDisplayName(user.name);
+            authorSpan.textContent = this.toDisplayName(userName);
 
             const bodySpan = document.createElement("span");
             bodySpan.className = "message-body";
@@ -665,6 +649,26 @@ const vueApp = new Vue({
             if (isAtBottom)
                 chatLog.scrollTop = chatLog.scrollHeight -
                     chatLog.clientHeight;
+        },
+        displayUserMessage: async function (user, msg)
+        {
+            // Don't do anything for ignored users
+            if (this.ignoredUserIds.has(user.id))
+                return;
+
+            const plainMsg = msg.replace(urlRegex, s => decodeURI(s));
+            
+            user.message = plainMsg;
+            if(user.lastMessage != user.message)
+            {
+                user.bubbleImage = null;
+                this.isRedrawRequired = true;
+                user.lastMessage = user.message;
+            }
+            
+            if(!user.message) return;
+            
+            this.writeMessageToLog(user.name, msg)
 
             if (this.enableTextToSpeech)
             {
@@ -1503,6 +1507,8 @@ const vueApp = new Vue({
         
         updateCurrentRoomStreams: function (streams)
         {
+
+            
             this.streams = streams;
                 
             this.streamSlotIdInWhichIWantToStream = null;
@@ -1523,6 +1529,8 @@ const vueApp = new Vue({
                 else Vue.set(stream, "title", "OFF");
                 if (!stream.isActive || !stream.isReady)
                     Vue.set(this.takenStreams, slotId, false);
+
+                $( "#video-container-" + slotId ).resizable({aspectRatio: true})
             }
         },
 
@@ -1731,8 +1739,9 @@ const vueApp = new Vue({
                 "track",
                 (event) =>
                 {
-                    document.getElementById("received-video-" + streamSlotId).srcObject =
-                        event.streams[0];
+                    const videoElement = document.getElementById("received-video-" + streamSlotId)
+                    videoElement.srcObject = event.streams[0];
+                    $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
                 },
                 { once: true }
             );
@@ -1934,6 +1943,24 @@ const vueApp = new Vue({
         onVoiceVolumeChanged: function() {
             speak("test", this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('voiceVolume')
+        },
+        toggleVideoSlotPinStatus: function(slotId) {
+            const videoContainer = document.getElementById('video-container-' + slotId)
+            videoContainer.classList.toggle("pinned-video")
+            videoContainer.classList.toggle("unpinned-video")
+
+            if (videoContainer.classList.contains("unpinned-video"))
+            {
+                $(videoContainer).draggable()
+                $(videoContainer).css("left", 0)
+                $(videoContainer).css("top", 0)
+            }
+            else
+            {
+                $(videoContainer).draggable("destroy")
+                // Reset 'top' and 'left' styles to snap the container back to its original position
+                videoContainer.style = ""
+            }
         },
     },
 });

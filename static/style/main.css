@@ -85,20 +85,9 @@ input[type='range']
     line-height: 20px;
 }
 
-#canvas-container
-{
-    font-family: Arial, Helvetica, sans-serif;
-}
-
 .video-container
 {
     width: 219px;
-    overflow: hidden;
-}
-
-.video-container:hover
-{
-    resize: horizontal;
 }
 
 video {
@@ -253,6 +242,7 @@ video {
     position: relative;
     max-width: 700px;
     height: 511px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #toolbar
@@ -260,11 +250,13 @@ video {
     display: flex;
     align-items: stretch;
     flex-wrap: wrap;
+    resize: horizontal;
+    overflow: auto;
 }
 
 #login-page button,
 #toolbar button,
-#video-streams button,
+.stream-buttons button,
 .popup button
 {
     border: 1px solid #959595;
@@ -581,4 +573,52 @@ button.checked {
 #user-list-popup td button
 {
     flex-shrink: 0;
+}
+
+.pinned-video
+{
+    position: relative !important;
+}
+
+.unpinned-video
+{
+    position: absolute !important;
+}
+
+.unpinned-video .pin-video-button
+{
+    transform: rotate(90deg);
+}
+
+.video-container > .pin-video-button
+{
+    position: absolute;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.7);
+    border: 0;
+    margin: 7px;
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+    /* visibility: hidden; */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.video-container:hover > .pin-video-button
+{
+    /* visibility: visible; */
+    opacity: 1;
+}
+
+.streamer-button-red
+{
+    background-color: #9f6161;
+    color: white;
+}
+
+.stream-button-blue
+{
+    background-color: #4d4d9f;
+    color: white;
 }
