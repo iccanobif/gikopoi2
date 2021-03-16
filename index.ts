@@ -775,6 +775,48 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
     }
 })
 
+app.get("/areas/:areaId/streamers", (req, res) =>
+{
+    try
+    {
+        const areaId = req.params.areaId;
+        const streamerList: any[] = [];
+
+        for (const roomId in rooms)
+        {
+            if (rooms[roomId].secret ||
+                rooms[roomId].streamSlotCount === 0) continue;
+
+            const listRoom: { id: string, streamers: string[] } =
+            {
+                id: roomId,
+                streamers: []
+            }
+
+            roomStates[areaId][roomId].streams.forEach(stream =>
+            {
+                if (!stream.isActive || stream.userId == null) return;
+                try
+                {
+                    listRoom.streamers.push(getUser(stream.userId).name);
+                }
+                catch (e) { }
+            })
+
+            if (listRoom.streamers.length > 0)
+            {
+                streamerList.push(listRoom)
+            }
+        }
+
+        res.json(streamerList)
+    }
+    catch (e)
+    {
+        log.error(e.message + " " + e.stack);
+    }
+})
+
 app.use(express.json());
 app.use(express.text());
 
