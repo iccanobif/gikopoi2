@@ -130,11 +130,11 @@
                         <div class='tooltip-section-title'>
                             <div>{{ $t("ui.label_move") }}</div>
                         </div>
-                        <div style="display: flex;">
+                        <div class="non-wrappable-buttons">
                             <button id="btn-move-left" class="grid-button" v-on:click="sendNewPositionToServer('left')">↖</button
                             ><button id="btn-move-up" class="grid-button" v-on:click="sendNewPositionToServer('up')">↗</button>
                         </div>
-                        <div style="display: flex;">
+                        <div class="non-wrappable-buttons">
                             <button id="btn-move-down" class="grid-button" v-on:click="sendNewPositionToServer('down')">↙</button
                             ><button id="btn-move-right" class="grid-button" v-on:click="sendNewPositionToServer('right')">↘</button>
                         </div>
@@ -143,11 +143,11 @@
                         <div class='tooltip-section-title'>
                             <div>{{ $t("ui.label_bubble") }}</div>
                         </div>
-                        <div style="display: flex;">
+                        <div class="non-wrappable-buttons">
                             <button class="grid-button" v-on:click="sendNewBubblePositionToServer('left')">↖</button
                             ><button class="grid-button" v-on:click="sendNewBubblePositionToServer('up')">↗</button>
                         </div>
-                        <div style="display: flex;">
+                        <div class="non-wrappable-buttons">
                             <button class="grid-button" v-on:click="sendNewBubblePositionToServer('down')">↙</button
                             ><button class="grid-button" v-on:click="sendNewBubblePositionToServer('right')">↘</button>
                         </div>

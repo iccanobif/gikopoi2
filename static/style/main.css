@@ -336,6 +336,11 @@ video {
     white-space: nowrap;
 }
 
+.non-wrappable-buttons
+{
+    display: flex;
+}
+
 .tooltip-section-title
 {
     flex-grow: 1;
