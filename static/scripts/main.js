@@ -3,7 +3,7 @@ localStorage.removeItem("debug");
 
 import { characters, loadCharacters } from "./character.js";
 import User from "./user.js";
-import { loadImage, calculateRealCoordinates, postJson, BLOCK_WIDTH, BLOCK_HEIGHT, logToServer } from "./utils.js";
+import { loadImage, calculateRealCoordinates, postJson, BLOCK_WIDTH, BLOCK_HEIGHT, logToServer, safeDecodeURI } from "./utils.js";
 import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";
@@ -635,7 +635,7 @@ const vueApp = new Vue({
                     anchor.innerHTML = htmlUrl;
                     const url = anchor.textContent;
                     anchor.href = (prefix == 'www.' ? 'http://' + url : url);
-                    anchor.textContent = decodeURI(url);
+                    anchor.textContent = safeDecodeURI(url);
                     return anchor.outerHTML;
                 });
 
@@ -656,7 +656,7 @@ const vueApp = new Vue({
             if (this.ignoredUserIds.has(user.id))
                 return;
 
-            const plainMsg = msg.replace(urlRegex, s => decodeURI(s));
+            const plainMsg = msg.replace(urlRegex, s => safeDecodeURI(s));
             
             user.message = plainMsg;
             if(user.lastMessage != user.message)
