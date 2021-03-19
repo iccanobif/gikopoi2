@@ -1941,6 +1941,7 @@ const vueApp = new Vue({
             return voices
         },
         onVoiceVolumeChanged: function() {
+            speechSynthesis.cancel()
             speak("test", this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('voiceVolume')
         },

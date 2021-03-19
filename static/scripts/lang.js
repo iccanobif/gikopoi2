@@ -41,6 +41,7 @@ export const messages =
             button_logout: "ログアウト",
             volume: "音量：",
             sound_effect: "効果音",
+            tts_volume: "TTS音量",
             label_move: "移動",
             label_bubble: "吹き出し",
             
@@ -189,6 +190,7 @@ export const messages =
             button_logout: "Logout",
             volume: "Volume: ",
             sound_effect: "Volume",
+            tts_volume: "TTS Vol.",
             label_move: "Move",
             label_bubble: "Bubble",
             

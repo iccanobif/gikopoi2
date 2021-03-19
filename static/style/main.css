@@ -264,6 +264,7 @@ video {
     margin: 1px;
     min-height: 32px;
     border-radius: 3px;
+    white-space: nowrap;
 }
 
 .preferences-percentage
@@ -297,6 +298,7 @@ video {
     flex-grow: 1;
     display: flex;
     align-items: stretch;
+    flex-basis: 200px;
 }
 #toolbar-buttons
 {
@@ -327,6 +329,11 @@ video {
 .tooltip-section > button
 {
     flex-grow: 1;
+}
+
+.tooltip-section > label
+{
+    white-space: nowrap;
 }
 
 .tooltip-section-title
@@ -504,7 +511,7 @@ video {
     display: none;
 }
 
-#sound-effect-volume {
+#sound-effect-volume, #voice-volume {
     width: 60px;
     background-color: #ffffff;
     margin: 30px -5px 0 -5px;

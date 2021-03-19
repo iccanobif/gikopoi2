@@ -112,6 +112,11 @@
                         <input type="range" id="sound-effect-volume" v-on:change="changeSoundEffectVolume()"
                             name="sound-effect-volume" min="0" max="1" step="0.01" :value="soundEffectVolume">
                     </div>
+                    <div class="tooltip-section tooltip-volume-section">
+                        <label for="voice-volume">{{ $t("ui.tts_volume") }}</label>
+                        <input type="range" id="voice-volume" v-on:change="onVoiceVolumeChanged"
+                            min="0" max="100" v-model="voiceVolume">
+                    </div>
                     <div class="tooltip-section" v-if="isCommandSectionVisible">
                         <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
                         <button id="btn-list" v-on:click="openUserListPopup()">{{ $t("ui.button_list") }}</button>
@@ -125,11 +130,11 @@
                         <div class='tooltip-section-title'>
                             <div>{{ $t("ui.label_move") }}</div>
                         </div>
-                        <div>
+                        <div style="display: flex;">
                             <button id="btn-move-left" class="grid-button" v-on:click="sendNewPositionToServer('left')">↖</button
                             ><button id="btn-move-up" class="grid-button" v-on:click="sendNewPositionToServer('up')">↗</button>
                         </div>
-                        <div>
+                        <div style="display: flex;">
                             <button id="btn-move-down" class="grid-button" v-on:click="sendNewPositionToServer('down')">↙</button
                             ><button id="btn-move-right" class="grid-button" v-on:click="sendNewPositionToServer('right')">↘</button>
                         </div>
@@ -138,11 +143,11 @@
                         <div class='tooltip-section-title'>
                             <div>{{ $t("ui.label_bubble") }}</div>
                         </div>
-                        <div>
+                        <div style="display: flex;">
                             <button class="grid-button" v-on:click="sendNewBubblePositionToServer('left')">↖</button
                             ><button class="grid-button" v-on:click="sendNewBubblePositionToServer('up')">↗</button>
                         </div>
-                        <div>
+                        <div style="display: flex;">
                             <button class="grid-button" v-on:click="sendNewBubblePositionToServer('down')">↙</button
                             ><button class="grid-button" v-on:click="sendNewBubblePositionToServer('right')">↘</button>
                         </div>
@@ -405,12 +410,6 @@
                             <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}</option>
                             <!-- <option value="silly-voice">Silly voice</option> -->
                         </select>
-                    </div>
-                    <div class='popup-section'>
-                        <label for="preferences-voice-volume">{{ $t("ui.preferences_voice_volume") }}</label>
-                        <input type="range" id="preferences-voice-volume"
-                            min="0" max="100" v-model="voiceVolume" v-on:change="onVoiceVolumeChanged"><div
-                            class='preferences-percentage'>{{ voiceVolume }}%</div>
                     </div>
                 </div>
                 <div class="popup-buttons">
