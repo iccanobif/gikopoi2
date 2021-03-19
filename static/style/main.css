@@ -26,6 +26,11 @@ header h2 {
     font-size: medium;
 }
 
+header h1 a {
+    color: black;
+    text-decoration: none;
+}
+
 input[type='range']
 {
     appearance: none;
