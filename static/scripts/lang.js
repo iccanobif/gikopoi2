@@ -11,7 +11,7 @@ export const messages =
         message_colon: "：",
         ui:
         {
-            title: "ギコっぽいっぽい",
+            title: "ギコっぽいぽい",
             subtitle: "非公式リメイク",
             
             login_user_count: "人数：",
