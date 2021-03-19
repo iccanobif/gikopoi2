@@ -1932,7 +1932,7 @@ const vueApp = new Vue({
             this.storeSet('enableTextToSpeech')
         },
         changeVoice: function () {
-            speak("test", this.ttsVoiceURI, this.voiceVolume)
+            speak(i18n.t("test"), this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('ttsVoiceURI')
         },
         getVoices: function () {
@@ -1942,7 +1942,7 @@ const vueApp = new Vue({
         },
         onVoiceVolumeChanged: function() {
             speechSynthesis.cancel()
-            speak("test", this.ttsVoiceURI, this.voiceVolume)
+            speak(i18n.t("test"), this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('voiceVolume')
         },
         toggleVideoSlotPinStatus: function(slotId) {
@@ -1988,6 +1988,9 @@ function playSillyVowel(vowel)
 
 async function speak(message, voiceURI, volume, pitch)
 {
+    if (volume == 0)
+        return
+
     const cleanMsgForSpeech = message
         .replace(urlRegex, "URL")
         .replace(/ww+/gi, "わらわら")

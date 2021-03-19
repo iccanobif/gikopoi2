@@ -9,6 +9,7 @@ export const messages =
     {
         default_user_name: "名無しさん",
         message_colon: "：",
+        test: "テスト",
         ui:
         {
             title: "ギコっぽいぽい",
@@ -88,9 +89,9 @@ export const messages =
             preferences_bubble_section_visible: "吹き出しボタンを表示",
             preferences_logout_button_visible: "ログアウトボタンを表示",
             preferences_show_notifications: "ブラウザ通知を表示",
-            preferences_enable_text_to_speech: "ログの読み上げ",
-            preferences_tts_voice: "読み上げ音声",
-            preferences_voice_volume: "読み上げ音量",
+            preferences_enable_text_to_speech: "ログの読み上げ（TTS)",
+            preferences_tts_voice: "読み上げ（TTS)音声",
+            preferences_voice_volume: "読み上げ（TTS)音量",
             notifications_are_denied: "現在このサイトは通知を表示することが許可されていません。\nブラウザの権限を確認してください。"
         },
         msg:
@@ -158,6 +159,7 @@ export const messages =
     {
         default_user_name: "Anonymous",
         message_colon: ": ",
+        test: "test",
         ui:
         {
             title: "Gikopoipoi",
