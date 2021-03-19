@@ -157,7 +157,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            log.info("user-connect", privateUserId)
+            log.info("user-connect private id:", privateUserId)
             const loginUser = getLoginUser(privateUserId);
             if (!loginUser)
             {
@@ -168,12 +168,12 @@ io.on("connection", function (socket: any)
             }
             user = loginUser;
 
+            log.info("user-connect userId:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
+
             currentRoom = rooms[user.roomId]
 
             socket.join(user.areaId)
             socket.join(user.areaId + currentRoom.id)
-
-            log.info("userId:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
 
             user.isGhost = false
             user.disconnectionTime = null
@@ -884,7 +884,7 @@ app.post("/login", (req, res) =>
 
         const user = addNewUser(processedUserName, characterId, areaId, req.ip);
 
-        log.info("Logged in", user.id, "<" + user.name + ">", "from", req.ip)
+        log.info("Logged in", user.id, user.privateId, "<" + user.name + ">", "from", req.ip)
         sendResponse({
             appVersion,
             isLoginSuccessful: true,
