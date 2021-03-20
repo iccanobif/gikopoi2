@@ -1860,6 +1860,7 @@ const vueApp = new Vue({
             this.soundEffectVolume = volumeSlider.value
 
             this.updateAudioElementsVolume()
+            document.getElementById("message-sound").play()
             localStorage.setItem(this.areaId + "soundEffectVolume", this.soundEffectVolume);
         },
         updateAudioElementsVolume: function ()
