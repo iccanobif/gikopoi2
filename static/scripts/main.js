@@ -146,6 +146,7 @@ const vueApp = new Vue({
         allCharacters: Object.values(characters),
 
         vuMeterTimer: null,
+        highlightedUserId: null,
     },
     mounted: function ()
     {
@@ -608,7 +609,7 @@ const vueApp = new Vue({
             
             this.users[userDTO.id] = newUser;
         },
-        writeMessageToLog: function(userName, msg)
+        writeMessageToLog: function(userName, msg, userId)
         {
             const chatLog = document.getElementById("chatLog");
             document.getElementById("message-sound").play();
@@ -616,7 +617,11 @@ const vueApp = new Vue({
             const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
 
             const messageDiv = document.createElement("div");
-            messageDiv.className = "message";
+            messageDiv.classList.add("message");
+
+            messageDiv.dataset.userId = userId
+            if (userId == this.highlightedUserId)
+                messageDiv.classList.add("highlighted-message")
 
             const authorSpan = document.createElement("span");
             authorSpan.className = "message-author";
@@ -668,7 +673,7 @@ const vueApp = new Vue({
             
             if(!user.message) return;
             
-            this.writeMessageToLog(user.name, msg)
+            this.writeMessageToLog(user.name, msg, user.id)
 
             if (this.enableTextToSpeech)
             {
@@ -1962,6 +1967,21 @@ const vueApp = new Vue({
                 $(videoContainer).draggable("destroy")
                 // Reset 'top' and 'left' styles to snap the container back to its original position
                 videoContainer.style = ""
+            }
+        },
+        highlightUser: function(user)
+        {
+            if (this.highlightedUserId == user.id)
+                this.highlightedUserId = null
+            else
+                this.highlightedUserId = user.id
+
+            for (const messageElement of document.getElementsByClassName("message"))
+            {
+                if (messageElement.dataset.userId == this.highlightedUserId)
+                    messageElement.classList.add("highlighted-message")
+                else
+                    messageElement.classList.remove("highlighted-message")
             }
         },
     },

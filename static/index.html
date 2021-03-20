@@ -270,11 +270,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="user in Object.values(users).filter(u => u.id != myUserID)">
+                            <tr v-for="user in Object.values(users).filter(u => u.id != myUserID)" 
+                                v-bind:class="{'popup-row-is-selected': user.id == highlightedUserId}">
                                 <td>
-                                    <span>
+                                    <div v-on:click="highlightUser(user)">
                                         {{ user.name || $t("default_user_name") }}
-                                    </span>
+                                    </div>
                                     <button v-if="ignoredUserIds.has(user.id)" v-on:click="unignoreUser(user)">{{ $t("ui.user_list_popup_unignore") }}</button>
                                     <button v-if="!ignoredUserIds.has(user.id)" v-on:click="ignoreUser(user)">{{ $t("ui.user_list_popup_ignore") }}</button>
                                 </td>

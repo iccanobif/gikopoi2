@@ -471,7 +471,7 @@ video {
     cursor: pointer;
 }
 
-.popup-selectable-table tr.popup-row-is-selected td
+.popup-row-is-selected td
 {
     background-color: #cdffc1;
 }
@@ -582,7 +582,7 @@ button.checked {
 #user-list-popup td
 {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
     word-wrap: anywhere;
 }
@@ -590,6 +590,14 @@ button.checked {
 #user-list-popup td button
 {
     flex-shrink: 0;
+}
+
+#user-list-popup tr div
+{
+    cursor: pointer;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
 }
 
 .pinned-video
@@ -638,4 +646,9 @@ button.checked {
 {
     background-color: #4d4d9f;
     color: white;
+}
+
+.highlighted-message
+{
+    color: red;
 }
