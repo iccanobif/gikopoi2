@@ -131,12 +131,24 @@
                             <div>{{ $t("ui.label_move") }}</div>
                         </div>
                         <div class="non-wrappable-buttons">
-                            <button id="btn-move-left" class="grid-button" v-on:click="sendNewPositionToServer('left')">↖</button
-                            ><button id="btn-move-up" class="grid-button" v-on:click="sendNewPositionToServer('up')">↗</button>
+                            <button id="btn-move-left" class="grid-button" 
+                                    v-on:mousedown="setMovementDirection('left')"
+                                    v-on:mouseup="setMovementDirection(null)"
+                                    v-on:mouseleave="setMovementDirection(null)">↖</button
+                            ><button id="btn-move-up" class="grid-button" 
+                                    v-on:mousedown="setMovementDirection('up')"
+                                    v-on:mouseup="setMovementDirection(null)"
+                                    v-on:mouseleave="setMovementDirection(null)">↗</button>
                         </div>
                         <div class="non-wrappable-buttons">
-                            <button id="btn-move-down" class="grid-button" v-on:click="sendNewPositionToServer('down')">↙</button
-                            ><button id="btn-move-right" class="grid-button" v-on:click="sendNewPositionToServer('right')">↘</button>
+                            <button id="btn-move-down" class="grid-button" 
+                                    v-on:mousedown="setMovementDirection('down')"
+                                    v-on:mouseup="setMovementDirection(null)"
+                                    v-on:mouseleave="setMovementDirection(null)">↙</button
+                            ><button id="btn-move-right" class="grid-button" 
+                                    v-on:mousedown="setMovementDirection('right')"
+                                    v-on:mouseup="setMovementDirection(null)"
+                                    v-on:mouseleave="setMovementDirection(null)">↘</button>
                         </div>
                     </div>
                     <div class="tooltip-section" v-if="isBubbleSectionVisible">

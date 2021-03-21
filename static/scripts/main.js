@@ -147,6 +147,7 @@ const vueApp = new Vue({
 
         vuMeterTimer: null,
         highlightedUserId: null,
+        movementDirection: null,
     },
     mounted: function ()
     {
@@ -160,7 +161,7 @@ const vueApp = new Vue({
         window.addEventListener("keydown", (ev) =>
         {
             if (ev.shiftKey && ev.ctrlKey && ev.code == "Digit9")
-            this.passwordInputVisible = true
+                this.passwordInputVisible = true
             if (ev.shiftKey && ev.ctrlKey && ev.code == "Digit8")
             {
                 this.enableGridNumbers = !this.enableGridNumbers
@@ -1303,6 +1304,13 @@ const vueApp = new Vue({
                 this.isDraggingCanvas = false;
                 this.isCanvasMousedown = false;
             });
+
+            setInterval(() => {
+                if (this.movementDirection)
+                {
+                    this.sendNewPositionToServer(this.movementDirection)
+                }
+            }, 100)
         },
         toggleInfobox: function ()
         {
@@ -1379,6 +1387,10 @@ const vueApp = new Vue({
                         break;
                 }
             }
+        },
+        setMovementDirection: function(direction)
+        {
+            this.movementDirection = direction
         },
         handleCanvasMousedown: function (event)
         {
