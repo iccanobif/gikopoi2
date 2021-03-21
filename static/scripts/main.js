@@ -1279,12 +1279,7 @@ const vueApp = new Vue({
             const inputTextbox = document.getElementById("input-textbox");
 
             const message = inputTextbox.value.substr(0, 500);
-            if (message.match(/sageru/gi)
-             || message.match(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)/gi)
-             || message.match(/(ぼくでん)|(卜伝)|(◆ukwvRsIn5U)/g)
-             || this.username.match(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)/gi)
-             || this.username.match(/(ぼくでん)|(卜伝)|(◆ukwvRsIn5U)/g)
-            )
+            if (message.match(/sageru/gi))
             {
                 this.isPoop = true
                 return

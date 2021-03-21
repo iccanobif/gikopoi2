@@ -203,11 +203,14 @@ io.on("connection", function (socket: any)
             {
                 msg = ""
             }
-            else 
+            else
             {
                 // no TIGER TIGER pls
                 if ("TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
+
+                if (msg.match(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)|(ボクデン)|(ぼくでん)|(卜伝)/gi))
+                    msg = "o(≧▽≦)o"
 
                 // and for the love of god no moonwalking
                 if (msg.toLowerCase().includes("moonwalk") || msg.toLowerCase().includes("moon-walk"))
