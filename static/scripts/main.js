@@ -177,6 +177,11 @@ const vueApp = new Vue({
             }
         })
 
+        // Listening to this event from document because the user could stop pressing the movement button after
+        // having moved the mouse outside of it, so "mouseup" would be fired on god knows what element other than
+        // the button.
+        document.addEventListener("mouseup", () => this.setMovementDirection(null))
+
         if (this.areaId == "gen")
             this.setLanguage("ja")
         else

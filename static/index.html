@@ -125,7 +125,6 @@
                         <button v-on:click="openPreferencesPopup">{{ $t("ui.button_preferences") }}</button>
                         <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{ $t("ui.button_crisp") }}</button>
                     </div>
-                    
                     <div class="tooltip-section" v-if="isMoveSectionVisible">
                         <div class='tooltip-section-title'>
                             <div>{{ $t("ui.label_move") }}</div>
@@ -134,21 +133,25 @@
                             <button id="btn-move-left" class="grid-button" 
                                     v-on:mousedown="setMovementDirection('left')"
                                     v-on:mouseup="setMovementDirection(null)"
-                                    v-on:mouseleave="setMovementDirection(null)">↖</button
+                                    v-on:touchstart="setMovementDirection('left')"
+                                    v-on:touchend="setMovementDirection(null)">↖</button
                             ><button id="btn-move-up" class="grid-button" 
                                     v-on:mousedown="setMovementDirection('up')"
                                     v-on:mouseup="setMovementDirection(null)"
-                                    v-on:mouseleave="setMovementDirection(null)">↗</button>
+                                    v-on:touchstart="setMovementDirection('up')"
+                                    v-on:touchend="setMovementDirection(null)">↗</button>
                         </div>
                         <div class="non-wrappable-buttons">
                             <button id="btn-move-down" class="grid-button" 
                                     v-on:mousedown="setMovementDirection('down')"
                                     v-on:mouseup="setMovementDirection(null)"
-                                    v-on:mouseleave="setMovementDirection(null)">↙</button
+                                    v-on:touchstart="setMovementDirection('down')"
+                                    v-on:touchend="setMovementDirection(null)">↙</button
                             ><button id="btn-move-right" class="grid-button" 
                                     v-on:mousedown="setMovementDirection('right')"
                                     v-on:mouseup="setMovementDirection(null)"
-                                    v-on:mouseleave="setMovementDirection(null)">↘</button>
+                                    v-on:touchstart="setMovementDirection('right')"
+                                    v-on:touchend="setMovementDirection(null)">↘</button>
                         </div>
                     </div>
                     <div class="tooltip-section" v-if="isBubbleSectionVisible">
