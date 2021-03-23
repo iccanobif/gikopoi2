@@ -652,3 +652,9 @@ button.checked {
 {
     color: red;
 }
+
+#area-selection
+{
+    display: flex;
+    flex-wrap: wrap;
+}
