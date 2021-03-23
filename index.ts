@@ -215,6 +215,9 @@ io.on("connection", function (socket: any)
                 // and for the love of god no moonwalking
                 if (msg.toLowerCase().includes("moonwalk") || msg.toLowerCase().includes("moon-walk"))
                     msg = "(^Д^)"
+                // shocking sites
+                if (msg.match(/www\.mctv\.ne\.jp\/~bigapple/gi))
+                    msg = "ლ(◉◞౪◟◉ )ლ"
             }
 
             msg = msg.substr(0, 500)
