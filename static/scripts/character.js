@@ -79,6 +79,7 @@ export const characters = {
     salmon: new Character("salmon", "svg", false),
     takenoko: new Character("takenoko", "svg", true),
     kaminarisama_naito: new Character("kaminarisama_naito", "svg", true),
+    golden_furoshiki: new Character("golden_furoshiki", "svg", true),
     panda_naito: new Character("panda_naito", "svg", false),
     wild_panda_naito: new Character("wild_panda_naito", "svg", true),
 }
