@@ -28,7 +28,9 @@ export class Character
         if (this.characterName == "giko")
             promises.push(loadImage("characters/" + this.characterName + "/front-standing-alternate-mouth." + this.format))
 
-        const results = await Promise.all(promises)        this.frontSittingImage = RenderCache.Image(results[0], this.scale)
+        const results = await Promise.all(promises)
+        
+        this.frontSittingImage = RenderCache.Image(results[0], this.scale)
         this.frontStandingImage = RenderCache.Image(results[1], this.scale)
         this.frontWalking1Image = RenderCache.Image(results[2], this.scale)
         this.frontWalking2Image = RenderCache.Image(results[3], this.scale)
