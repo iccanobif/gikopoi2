@@ -1755,6 +1755,13 @@ const vueApp = new Vue({
             
             Vue.set(this.takenStreams, streamSlotId, true);
             
+            if (streamSlotId this.streams[streamSlotId].isReady)
+            
+            this.takeStream(streamSlotId);
+        },
+        takeStream: function (streamSlotId)
+        {
+            if(this.rtcPeerSlots[streamSlotId]) return;
             const rtcPeer = this.setupRtcPeerSlot(streamSlotId).rtcPeer;
 
             rtcPeer.conn.addEventListener(
@@ -1769,12 +1776,16 @@ const vueApp = new Vue({
             );
             this.socket.emit("user-want-to-take-stream", streamSlotId);
         },
-        wantToDropStream: function (streamSlotId)
+        dropStream: function (streamSlotId)
         {
-            Vue.set(this.takenStreams, streamSlotId, false);
             if(!this.rtcPeerSlots[streamSlotId]) return;
             this.rtcPeerSlots[streamSlotId].rtcPeer.close()
             this.rtcPeerSlots[streamSlotId] = null;
+        },
+        wantToDropStream: function (streamSlotId)
+        {
+            Vue.set(this.takenStreams, streamSlotId, false);
+            this.dropStream(streamSlotId);
             //this.socket.emit("user-want-to-drop-stream", streamSlotId);
         },
         rula: function (roomId)
