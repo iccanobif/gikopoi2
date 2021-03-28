@@ -279,7 +279,7 @@ video {
     flex-grow: 1;
     display: flex;
     align-items: stretch;
-    flex-basis: 200px;
+    flex-basis: 100px;
 }
 #toolbar-buttons
 {
@@ -300,31 +300,10 @@ video {
     resize: vertical;
 }
 
-#sound-effect-volume-section
-{
-    /* flex-direction: row; */
-    justify-content: stretch;
-    align-items: center;
-}
-
-.merda
-{
-    width: 50px;
-    height: 50px;
-    transform: rotate(-90deg);
-}
-
 #sound-effect-volume-section > label
 {
     flex-grow: 0;
     flex-direction: column;
-}
-
-#sound-effect-volume {
-    background-color: #ffffff;
-    width: 100%;
-    /* margin: 30px -5px 0 -5px;
-    transform: rotate(-90deg); */
 }
 
 .toolbar-section
@@ -356,6 +335,7 @@ video {
 .toolbar-section > div
 {
     text-align: center;
+    justify-content: center;
 }
 
 .toolbar-section > label
