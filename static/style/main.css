@@ -602,6 +602,7 @@ button.checked {
 .unpinned-video
 {
     position: absolute !important;
+    z-index: 50;
 }
 
 .unpinned-video .pin-video-button
