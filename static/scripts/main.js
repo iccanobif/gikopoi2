@@ -78,7 +78,8 @@ const vueApp = new Vue({
         // rula stuff
         isRulaPopupOpen: false,
         roomList: [],
-        lastRoomListSortKey: null,
+        lastRoomListSortKey: localStorage.getItem("lastRoomListSortKey") || "sortName",
+        lastRoomListSortDirection: localStorage.getItem("lastRoomListSortDirection") || 1,
         rulaRoomSelection: null,
 
         // user list stuff
@@ -591,8 +592,7 @@ const vueApp = new Vue({
                     r.streamerDisplayNames = r.streamers.map(s => this.toDisplayName(s))
                 })
                 this.roomList = roomList;
-                this.lastRoomListSortKey = null;
-                this.sortRoomList("sortName")
+                this.sortRoomList(this.lastRoomListSortKey, this.lastRoomListSortDirection)
                 this.isRulaPopupOpen = true;
             });
 
@@ -1658,37 +1658,40 @@ const vueApp = new Vue({
                         throw new UserException("error_obtaining_audio");
                     
                     // VU Meter
-                    const context = new AudioContext();
-                    const microphone = context.createMediaStreamSource(this.mediaStream);
-                    const analyser = context.createAnalyser()
-                    analyser.minDecibels = -60;
-                    analyser.maxDecibels = 0;
-                    analyser.smoothingTimeConstant = 0.01;
-                    analyser.fftSize = 32
-                    const bufferLengthAlt = analyser.frequencyBinCount;
-                    const dataArrayAlt = new Uint8Array(bufferLengthAlt);
-                    microphone.connect(analyser);
+                    if (AudioContext)
+                    {
+                        const context = new AudioContext();
+                        const microphone = context.createMediaStreamSource(this.mediaStream);
+                        const analyser = context.createAnalyser()
+                        analyser.minDecibels = -60;
+                        analyser.maxDecibels = 0;
+                        analyser.smoothingTimeConstant = 0.01;
+                        analyser.fftSize = 32
+                        const bufferLengthAlt = analyser.frequencyBinCount;
+                        const dataArrayAlt = new Uint8Array(bufferLengthAlt);
+                        microphone.connect(analyser);
 
-                    this.vuMeterTimer = setInterval(() => {
-                        try {
-                            if (this.streamSlotIdInWhichIWantToStream == null)
-                                clearInterval(this.vuMeterTimer)    
-                            analyser.getByteFrequencyData(dataArrayAlt)
-                            
-                            const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
-                            const level = max / 255
-                            const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream)
-                            const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream)
-                            
-                            vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
-                            vuMeterBarPrimary.style.width = level * 100 + "%"
-                        }
-                        catch (exc)
-                        {
-                            console.error(exc)
-                            clearInterval(this.vuMeterTimer)
-                        }
-                    }, 100)
+                        this.vuMeterTimer = setInterval(() => {
+                            try {
+                                if (this.streamSlotIdInWhichIWantToStream == null)
+                                    clearInterval(this.vuMeterTimer)    
+                                analyser.getByteFrequencyData(dataArrayAlt)
+                                
+                                const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
+                                const level = max / 255
+                                const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream)
+                                const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream)
+                                
+                                vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
+                                vuMeterBarPrimary.style.width = level * 100 + "%"
+                            }
+                            catch (exc)
+                            {
+                                console.error(exc)
+                                clearInterval(this.vuMeterTimer)
+                            }
+                        }, 100)
+                    }
                 }
 
                 this.socket.emit("user-want-to-stream", {
@@ -1847,8 +1850,12 @@ const vueApp = new Vue({
             this.isRedrawRequired = true
             this.$forceUpdate() // HACK: the v-if for the ignore and unignore buttons doesn't get automatically re-evaluated
         },
-        sortRoomList: function (key)
+        sortRoomList: function (key, direction)
         {
+            if (!direction)
+                direction = this.lastRoomListSortDirection == 1 ? -1 : 1
+            console.log(this.lastRoomListSortKey, direction)
+            
             this.roomList.sort((a, b) =>
             {
                 let sort;
@@ -1858,10 +1865,11 @@ const vueApp = new Vue({
                     sort = b[key].length - a[key].length;
                 else
                     sort = b[key] - a[key];
-                return this.lastRoomListSortKey != key ? sort : sort * -1;
+                return sort * direction;
             })
-            this.lastRoomListSortKey =
-                (this.lastRoomListSortKey != key ? key : null);
+
+            localStorage.setItem("lastRoomListSortKey", this.lastRoomListSortKey = key)
+            localStorage.setItem("lastRoomListSortDirection", this.lastRoomListSortDirection = direction)
         },
         openStreamPopup: function (streamSlotId)
         {

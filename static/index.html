@@ -243,9 +243,15 @@
                         </colgroup>
                         <thead>
                             <tr>
-                                <th v-on:click="sortRoomList('sortName')">{{ $t("ui.rula_menu_column_room_name") }}</th>
-                                <th v-on:click="sortRoomList('userCount')">{{ $t("ui.rula_menu_column_user_count") }}</th>
-                                <th v-on:click="sortRoomList('streamerCount')">{{ $t("ui.rula_menu_column_streamers") }}</th>
+                                <th v-on:click="sortRoomList('sortName')">
+                                    {{ $t("ui.rula_menu_column_room_name") }}
+                                </th>
+                                <th v-on:click="sortRoomList('userCount')">
+                                    {{ $t("ui.rula_menu_column_user_count") }}
+                                </th>
+                                <th v-on:click="sortRoomList('streamerCount')">
+                                    {{ $t("ui.rula_menu_column_streamers") }}
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
