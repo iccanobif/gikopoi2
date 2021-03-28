@@ -636,15 +636,15 @@ button.checked {
     opacity: 1;
 }
 
-.streamer-button-red
+.stream-buttons button
 {
-    background-color: #9f6161;
+    background-color: #4d4d9f;
     color: white;
 }
 
-.stream-button-blue
+.stream-buttons button.streamer-button-red
 {
-    background-color: #4d4d9f;
+    background-color: #9f6161;
     color: white;
 }
 

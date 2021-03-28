@@ -1549,8 +1549,13 @@ const vueApp = new Vue({
                     }
                 }
                 else Vue.set(stream, "title", "OFF");
-                if (!stream.isActive || !stream.isReady)
-                    Vue.set(this.takenStreams, slotId, false);
+                if (slotId in this.takenStreams)
+                {
+                    if (!stream.isActive || !stream.isReady)
+                        this.dropStream(slotId);
+                    else
+                        this.takeStream(slotId);
+                }
 
                 $( "#video-container-" + slotId ).resizable({aspectRatio: true})
             }
@@ -1715,7 +1720,8 @@ const vueApp = new Vue({
         {
             const slotId = this.streamSlotIdInWhichIWantToStream;
             const rtcPeer = this.setupRtcPeerSlot(slotId).rtcPeer;
-
+            
+            Vue.set(this.takenStreams, slotId, false);
             this.mediaStream
                 .getTracks()
                 .forEach((track) =>
@@ -1755,9 +1761,8 @@ const vueApp = new Vue({
             
             Vue.set(this.takenStreams, streamSlotId, true);
             
-            if (streamSlotId this.streams[streamSlotId].isReady)
-            
-            this.takeStream(streamSlotId);
+            if (streamSlotId in this.streams && this.streams[streamSlotId].isReady)
+                this.takeStream(streamSlotId);
         },
         takeStream: function (streamSlotId)
         {
