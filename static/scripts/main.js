@@ -3,7 +3,7 @@ localStorage.removeItem("debug");
 
 import { characters, loadCharacters } from "./character.js";
 import User from "./user.js";
-import { loadImage, calculateRealCoordinates, postJson, BLOCK_WIDTH, BLOCK_HEIGHT, logToServer, safeDecodeURI } from "./utils.js";
+import { loadImage, calculateRealCoordinates, postJson, BLOCK_WIDTH, BLOCK_HEIGHT, logToServer, safeDecodeURI, debounce } from "./utils.js";
 import { messages } from "./lang.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";
@@ -257,6 +257,29 @@ const vueApp = new Vue({
                 
                 if (this.showNotifications)
                     Notification.requestPermission()
+                
+                $( "#sound-effect-volume" ).slider({
+                    orientation: "vertical",
+                    range: "min",
+                    min: 0,
+                    max: 1,
+                    step: 0.01,
+                    value: this.soundEffectVolume,
+                    slide: ( event, ui ) => {
+                        this.changeSoundEffectVolume(ui.value);
+                    }
+                });
+                $( "#voice-volume" ).slider({
+                    orientation: "vertical",
+                    range: "min",
+                    min: 0,
+                    max: 100,
+                    step: 1,
+                    value: this.voiceVolume,
+                    slide: ( event, ui ) => {
+                        this.changeVoiceVolume(ui.value);
+                    }
+                });
             }
             catch (e)
             {
@@ -1891,11 +1914,9 @@ const vueApp = new Vue({
 
             videoElement.volume = volumeSlider.value;
         },
-        changeSoundEffectVolume: function ()
+        changeSoundEffectVolume: function (newVolume)
         {
-            const volumeSlider = document.getElementById("sound-effect-volume");
-
-            this.soundEffectVolume = volumeSlider.value
+            this.soundEffectVolume = newVolume
 
             this.updateAudioElementsVolume()
             document.getElementById("message-sound").play()
@@ -1979,10 +2000,10 @@ const vueApp = new Vue({
             console.log(voices)
             return voices
         },
-        onVoiceVolumeChanged: function() {
-            speechSynthesis.cancel()
-            speak(i18n.t("test"), this.ttsVoiceURI, this.voiceVolume)
+        changeVoiceVolume: function(newValue) {
+            this.voiceVolume = newValue
             this.storeSet('voiceVolume')
+            debouncedSpeakTest(this.ttsVoiceURI, this.voiceVolume)
         },
         toggleVideoSlotPinStatus: function(slotId) {
             const videoContainer = document.getElementById('video-container-' + slotId)
@@ -2101,3 +2122,8 @@ function isJapanese(text)
             return true
     }
 }
+
+const debouncedSpeakTest = debounce((ttsVoiceURI, voiceVolume) => {
+    speechSynthesis.cancel()
+    speak(i18n.t("test"), ttsVoiceURI, voiceVolume)
+}, 150)

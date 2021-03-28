@@ -357,6 +357,7 @@ video {
 .tooltip-volume-section
 {
     min-height: 80px;
+    align-items: center;
 }
 
 #toolbar button.grid-button
@@ -521,13 +522,6 @@ video {
     display: none;
 }
 
-#sound-effect-volume, #voice-volume {
-    width: 60px;
-    background-color: #ffffff;
-    margin: 30px -5px 0 -5px;
-    transform: rotate(-90deg);
-}
-
 div[id^="vu-meter-container"]
 {
     background-color: black;
@@ -657,4 +651,22 @@ button.checked {
 {
     display: flex;
     flex-wrap: wrap;
+}
+
+/* make all jquery slider handles round */
+#vue-app .ui-corner-all
+{
+    border-radius: 10px;
+}
+
+.tooltip-section .ui-slider
+{
+    margin: 10px 0;
+    height: 100%;
+    width: 4px;
+}
+
+.tooltip-section .ui-slider-vertical .ui-slider-handle
+{
+    left: -9px;
 }
