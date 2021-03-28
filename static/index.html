@@ -108,14 +108,12 @@
                 </div>
                 <div id="toolbar-buttons">
                     <div class="tooltip-section tooltip-volume-section">
-                        <label for="sound-effect-volume">{{ $t("ui.sound_effect") }}</label>
-                        <input type="range" id="sound-effect-volume" v-on:change="changeSoundEffectVolume()"
-                            name="sound-effect-volume" min="0" max="1" step="0.01" :value="soundEffectVolume">
+                        <label>{{ $t("ui.sound_effect") }}</label>
+                        <div id="sound-effect-volume"></div>
                     </div>
                     <div class="tooltip-section tooltip-volume-section" v-if="enableTextToSpeech">
-                        <label for="voice-volume">{{ $t("ui.tts_volume") }}</label>
-                        <input type="range" id="voice-volume" v-on:change="onVoiceVolumeChanged"
-                            min="0" max="100" v-model="voiceVolume">
+                        <label>{{ $t("ui.tts_volume") }}</label>
+                        <div id="voice-volume"></div>
                     </div>
                     <div class="tooltip-section" v-if="isCommandSectionVisible">
                         <button id="btn-rula" v-on:click="requestRoomList()">{{ $t("ui.button_rula") }}</button>
