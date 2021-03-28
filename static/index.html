@@ -182,7 +182,7 @@
                         {{ $t("ui.label_stream", {index: index+1}) }}<span class="stream-title">{{ streamSlot.title
                             }}</span>
                     </div>
-                    <div :id="'video-container-' + index" class='video-container pinned-video' v-show="streamSlot.withVideo && (takenStreams[index] || index == streamSlotIdInWhichIWantToStream)">
+                    <div :id="'video-container-' + index" class='video-container pinned-video' v-show="streamSlot.withVideo && ((takenStreams[index] && streamSlot.isReady) || index == streamSlotIdInWhichIWantToStream)">
                         <button 
                             class="fas fa-thumbtack pin-video-button"
                             v-show="takenStreams[index] || (streamSlot.isActive && index == streamSlotIdInWhichIWantToStream)"
@@ -191,7 +191,7 @@
                             v-show="streamSlot.isActive && index == streamSlotIdInWhichIWantToStream"
                             autoplay muted></video>
                         <video :id="'received-video-' + index"
-                            v-show="takenStreams[index] && streamSlot.isReady && index != streamSlotIdInWhichIWantToStream"
+                            v-show="takenStreams[index] && index != streamSlotIdInWhichIWantToStream"
                             autoplay></video>
                     </div>
                     <div :id="'vu-meter-container-' + index"
