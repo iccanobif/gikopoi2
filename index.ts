@@ -835,10 +835,14 @@ app.post("/login", (req, res) =>
 
         let { userName, characterId, areaId } = req.body
 
-        log.info("Attempting to login", req.ip, "<" + userName + ">", characterId, areaId)
-
         if (typeof userName !== "string")
         {
+            try
+            {
+                log.info("Invalid username", req.ip, "<" + JSON.stringify(userName) + ">", characterId, areaId)
+            }
+            catch {}
+            
             res.statusCode = 500
             sendResponse({
                 appVersion,
@@ -847,6 +851,8 @@ app.post("/login", (req, res) =>
             })
             return;
         }
+
+        log.info("Attempting to login", req.ip, "<" + userName.replace(/#.*/, "#??????") + ">", characterId, areaId)
 
         if (settings.restrictLoginByIp)
         {
