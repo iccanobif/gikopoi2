@@ -209,7 +209,7 @@ io.on("connection", function (socket: any)
                 if ("TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
 
-                if (msg.match(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)|(ボクデン)|(ぼくでん)|(卜伝)/gi))
+                if (msg.match(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)|(ボクデン)|(ぼくでん)|(卜伝)|(ﾎﾞｸﾃﾞﾝ)/gi))
                     msg = "o(≧▽≦)o"
 
                 // and for the love of god no moonwalking
