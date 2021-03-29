@@ -1572,7 +1572,7 @@ const vueApp = new Vue({
                     }
                 }
                 else Vue.set(stream, "title", "OFF");
-                if (slotId in this.takenStreams)
+                if (this.takenStreams[slotId])
                 {
                     if (!stream.isActive || !stream.isReady)
                         this.dropStream(slotId);
