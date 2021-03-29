@@ -72,7 +72,7 @@ export const characters = {
     shar_naito: new Character("shar_naito", "svg", true),
     dark_naito_walking: new Character("dark_naito_walking", "svg", true),
     shobon: new Character("shobon", "svg", false),
-    furoshiki_shobon: new Character("furoshiki_shobon", "png", false),
+    furoshiki_shobon: new Character("furoshiki_shobon", "svg", false),
     nida: new Character("nida", "svg", false),
     shii_uniform: new Character("shii_uniform", "svg", false),
     ika: new Character("ika", "svg", true),
@@ -82,6 +82,7 @@ export const characters = {
     golden_furoshiki: new Character("golden_furoshiki", "svg", true),
     panda_naito: new Character("panda_naito", "svg", false),
     wild_panda_naito: new Character("wild_panda_naito", "svg", true),
+    furoshiki_shii: new Character("furoshiki_shii", "svg", false),
 }
 
 export const loadCharacters = (mode) => Promise.all(Object.values(characters).map(c => c.loadImages(mode)))
