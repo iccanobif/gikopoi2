@@ -72,7 +72,7 @@ export const characters = {
     shar_naito: new Character("shar_naito", "svg", true),
     dark_naito_walking: new Character("dark_naito_walking", "svg", true),
     shobon: new Character("shobon", "svg", false),
-    furoshiki_shobon: new Character("furoshiki_shobon", "png", false),
+    furoshiki_shobon: new Character("furoshiki_shobon", "svg", false),
     nida: new Character("nida", "svg", false),
     shii_uniform: new Character("shii_uniform", "svg", false),
     ika: new Character("ika", "svg", true),
