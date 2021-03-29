@@ -1732,7 +1732,7 @@ const vueApp = new Vue({
                 this.streamSlotIdInWhichIWantToStream = null;
             }
         },
-        setupRtcPeerSlot: function(slotId, rtcPeer)
+        setupRtcPeerSlot: function(slotId)
         {
             return this.rtcPeerSlots[slotId] = {
                 rtcPeer: this.setupRTCConnection(slotId),
