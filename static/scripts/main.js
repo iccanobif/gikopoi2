@@ -1870,7 +1870,6 @@ const vueApp = new Vue({
         {
             if (!direction)
                 direction = this.lastRoomListSortDirection == 1 ? -1 : 1
-            console.log(this.lastRoomListSortKey, direction)
             
             this.roomList.sort((a, b) =>
             {
