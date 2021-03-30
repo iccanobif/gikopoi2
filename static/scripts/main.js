@@ -1737,10 +1737,11 @@ const vueApp = new Vue({
         },
         setupRtcPeerSlot: function(slotId)
         {
-            return this.rtcPeerSlots[slotId] = {
-                rtcPeer: this.setupRTCConnection(slotId),
+            if (!this.rtcPeerSlots[slotId]) this.rtcPeerSlots[slotId] = {
                 attempts: 0
             }
+            this.rtcPeerSlots[slotId].rtcPeer = this.setupRTCConnection(slotId)
+            return this.rtcPeerSlots[slotId]
         },
         startStreaming: async function ()
         {
@@ -1792,7 +1793,6 @@ const vueApp = new Vue({
         },
         takeStream: function (streamSlotId)
         {
-            if(this.rtcPeerSlots[streamSlotId]) return;
             const rtcPeer = this.setupRtcPeerSlot(streamSlotId).rtcPeer;
 
             rtcPeer.conn.addEventListener(
