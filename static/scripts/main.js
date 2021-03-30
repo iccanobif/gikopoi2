@@ -1501,7 +1501,7 @@ const vueApp = new Vue({
                 else if (this.takenStreams[slotId])
                 {
                     console.log("Attempting to retake stream")
-                    this.wantToTakeStream(slotId)
+                    this.takeStream(slotId)
                 }
                 else
                 {
