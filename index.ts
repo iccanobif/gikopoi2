@@ -88,7 +88,7 @@ initializeRoomStates()
 
 io.on("connection", function (socket: any)
 {
-    log.info("Connection attempt");
+    log.info("Connection attempt", socket.handshake.address);
 
     let user: Player;
     let currentRoom = defaultRoom;
