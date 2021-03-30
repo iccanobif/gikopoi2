@@ -1,16 +1,24 @@
 class AnnualEvent
 {
-	constructor(occurrenceFunction)
+	constructor(monthFrom, dayFrom, monthTo, dayTo)
 	{
-		this.occurrenceFunction = occurrenceFunction
+		this.monthFrom = monthFrom;
+		this.dayFrom = dayFrom
+		this.monthTo = monthTo
+		this.dayTo = dayTo
+	}
+	
+	getOccurrence(y)
+	{
+		return [
+			new Date(y, this.monthFrom-1, this.dayFrom),
+			new Date(y, this.monthTo-1, this.dayTo)]
 	}
 	
 	isBetween(date)
 	{
 		if (!date) date = new Date();
-		console.log(date)
-		const [start, end] = this.occurrenceFunction(date.getFullYear());
-		console.log(start, end)
+		const [start, end] = this.getOccurrence(date.getFullYear());
 		if (start > end)
 			return start <= date || date <= end;
 		else
@@ -23,18 +31,13 @@ class AnnualEvent
 	}
 }
 
-function ae(monthFrom, dayFrom, monthTo, dayTo)
-{
-	return new AnnualEvent((y) => [new Date(y,  monthFrom-1, dayFrom), new Date(y,  monthTo-1, dayTo)]);
-}
-
 export const annualEvents =
 {
-	spring: ae( 3, 20,   6, 20),
-	summer: ae( 6, 21,   9, 21),
-	autumn: ae( 9, 22,  12, 20),
-	winter: ae(12, 21,   3, 19),
+	spring: new AnnualEvent( 3, 20,   6, 20),
+	summer: new AnnualEvent( 6, 21,   9, 21),
+	autumn: new AnnualEvent( 9, 22,  12, 20),
+	winter: new AnnualEvent(12, 21,   3, 19),
 	
-	halloweenPeriod: ae(10,  1,  10, 31),
-	christmasPeriod: ae(12,  1,  12, 31),
+	halloweenPeriod: new AnnualEvent(10,  1,  10, 31),
+	christmasPeriod: new AnnualEvent(12,  1,  12, 31),
 }
