@@ -1,5 +1,6 @@
 import { loadImage } from "./utils.js"
 import { RenderCache } from "./rendercache.js";
+import { annualEvents } from "./annualevents.js";
 
 export class Character
 {
@@ -61,7 +62,7 @@ export const characters = {
     furoshiki: new Character("furoshiki", "svg", false),
     furoshiki_shii: new Character("furoshiki_shii", "svg", false),
     golden_furoshiki: new Character("golden_furoshiki", "svg", true),
-    sakura_furoshiki_shii: new Character("sakura_furoshiki_shii", "svg", true),
+    sakura_furoshiki_shii: new Character("sakura_furoshiki_shii", "svg", !annualEvents.spring.isNow()),
     naitoapple: new Character("naitoapple", "svg", false),
     hikki: new Character("hikki", "svg", false),
     tinpopo: new Character("tinpopo", "svg", false),
