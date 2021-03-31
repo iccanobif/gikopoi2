@@ -85,7 +85,7 @@ export const characters = {
     panda_naito: new Character("panda_naito", "svg", false),
     wild_panda_naito: new Character("wild_panda_naito", "svg", true),
     funkynaito: new Character("funkynaito", "png", true),
-    molgiko: new Character("molgiko", "png", false),
+    molgiko: new Character("molgiko", "png", true),
 }
 
 export const loadCharacters = (mode) => Promise.all(Object.values(characters).map(c => c.loadImages(mode)))
