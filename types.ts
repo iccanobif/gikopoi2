@@ -81,7 +81,7 @@ export interface RoomState {
 export interface RoomStateDto
 {
     currentRoom: Room,
-    connectedUsers: Player[],
+    connectedUsers: PlayerDto[],
     streams: StreamSlot[],
 }
 
@@ -92,4 +92,25 @@ export interface LoginResponseDto
     error?: "invalid_username" | "ip_restricted",
     userId?: string,
     privateUserId?: string,
+}
+
+export interface PlayerDto
+{
+    id: string,
+    name: string,
+    position: { x: number, y: number },
+    direction: Direction,
+    lastDirection: Direction | null,
+    directionChangedAt: number | null,
+    isGhost: boolean,
+    roomId: string,
+    lastAction: number,
+    connectionTime: number,
+    disconnectionTime: number | null,
+    characterId: string,
+    areaId: Area,
+    isInactive: boolean,
+    isStreaming: boolean,
+    bubblePosition: Direction,
+    voicePitch: number,
 }

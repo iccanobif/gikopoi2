@@ -1,13 +1,12 @@
 import express from "express"
 import { readFile, readFileSync, writeFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
-import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto } from "./types";
-import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, serializeUserState } from "./users";
+import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto } from "./types";
+import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, serializeUserState, createPlayerDto } from "./users";
 import { sleep } from "./utils";
 import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
-import { cloneDeep } from "lodash";
 import compression from 'compression';
 
 const app: express.Application = express()
@@ -96,19 +95,9 @@ io.on("connection", function (socket: any)
 
     const sendCurrentRoomState = () => 
     {
-        const connectedUsers: Player[] = getConnectedUserList(user.roomId, user.areaId)
-            .map(p =>
-            {
-                if (rooms[user.roomId].forcedAnonymous)
-                {
-                    const anonymousUser = cloneDeep(p)
-                    anonymousUser.name = ""
-                    return anonymousUser
-                }
-                else
-                    return p
-            })
-
+        const connectedUsers: PlayerDto[] = getConnectedUserList(user.roomId, user.areaId)
+            .map(p => toPlayerDto(p, user.roomId, user.areaId))
+        
         socket.emit("server-update-current-room-state",
             <RoomStateDto>{
                 currentRoom,
@@ -119,13 +108,7 @@ io.on("connection", function (socket: any)
 
     const sendNewUserInfo = () =>
     {
-        const userInfo = cloneDeep(user)
-        delete userInfo.privateId;
-
-        if (currentRoom.forcedAnonymous)
-            userInfo.name = ""
-
-        socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", userInfo);
+        socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", toPlayerDto(user, user.roomId, user.areaId));
     }
 
     const setupJanusHandleSlots = () =>
@@ -622,6 +605,16 @@ function emitServerStats(areaId: string)
     })
 }
 
+function toPlayerDto(player: Player, roomId: string, areaId: string): PlayerDto
+{
+    const playerDto = createPlayerDto(player);
+    if (rooms[player.roomId].forcedAnonymous)
+    {
+        playerDto.name = "";
+    }
+    return playerDto;
+}
+
 if (process.env.GIKO2_ENABLE_SSL == "true")
     app.use(enforce.HTTPS({ trustProtoHeader: true }))
 
@@ -753,10 +746,13 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
     {
         const roomId = req.params.roomId
         const areaId = req.params.areaId
-
+        
+        const connectedUsers: PlayerDto[] = getConnectedUserList(roomId, areaId)
+            .map(p => toPlayerDto(p, roomId, areaId))
+        
         const dto: RoomStateDto = {
             currentRoom: rooms[roomId],
-            connectedUsers: getConnectedUserList(roomId, areaId),
+            connectedUsers,
             streams: roomStates[areaId][roomId].streams
         }
 

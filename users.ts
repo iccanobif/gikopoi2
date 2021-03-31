@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 import { defaultRoom } from "./rooms";
-import { Area, Direction } from "./types";
+import { Area, Direction, PlayerDto } from "./types";
 
 function generateId()
 {
@@ -112,4 +112,27 @@ export function deserializeUserState(serializedState: string)
         user.isGhost = true;
     }
     console.info("Restored user state (" + Object.values(users).length + " users)")
+}
+
+export function createPlayerDto(player: Player): PlayerDto
+{
+    return {
+        id: player.id,
+        name: player.name,
+        position: player.position,
+        direction: player.direction,
+        lastDirection: player.lastDirection,
+        directionChangedAt: player.directionChangedAt,
+        isGhost: player.isGhost,
+        roomId: player.roomId,
+        lastAction: player.lastAction,
+        connectionTime: player.connectionTime,
+        disconnectionTime: player.disconnectionTime,
+        characterId: player.characterId,
+        areaId: player.areaId,
+        isInactive: player.isInactive,
+        isStreaming: player.isStreaming,
+        bubblePosition: player.bubblePosition,
+        voicePitch: player.voicePitch,
+    }
 }
