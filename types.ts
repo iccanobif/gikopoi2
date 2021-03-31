@@ -1,4 +1,3 @@
-import { Player } from "./users";
 const JanusClient = require('janus-videoroom-client').Janus;
 
 export type Direction = 'up' | 'down' | 'left' | 'right'
