@@ -81,7 +81,7 @@ export interface RoomStateDto
 {
     currentRoom: Room,
     connectedUsers: PlayerDto[],
-    streams: StreamDto[],
+    streams: StreamSlotDto[],
 }
 
 export interface LoginResponseDto
