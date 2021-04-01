@@ -59,11 +59,11 @@ export const messages =
 
             user_list_popup_title: "ユーザーリスト",
             user_list_popup_column_user_name: "ユーザー名",
-            user_list_popup_ignore: "あぼーん",
-            user_list_popup_unignore: "あぼーん解除",
-            user_list_popup_block: "IPあぼーん",
+            user_list_popup_ignore: "一方あぼーん",
+            user_list_popup_unignore: "一方あぼーん解除",
+            user_list_popup_block: "相互あぼーん",
             user_list_popup_close: "閉じる",
-            user_list_popup_blurb: "注意：あぼーんしても相手からは見えます。",
+            user_list_popup_blurb: "注意：一方あぼーんしても相手からは見えます。<br>相互あぼーんをすると、相手が再接続してもあぼーんが解除されません。",
             
             stream_form_title: "配信設定",
             stream_form_mode: "モード：",
@@ -218,7 +218,7 @@ export const messages =
             user_list_popup_unignore: "Unignore",
             user_list_popup_block: "Block",
             user_list_popup_close: "Close",
-            user_list_popup_blurb: "Warning: When you ignore a user, you will not see them, but they will still see you.",
+            user_list_popup_blurb: "Warning: When you ignore a user, you will not see them, but they will still see you.<br>When you block an user, he'll stay blocked even if he reconnects.",
             
             stream_form_title: "Stream Settings",
             stream_form_mode: "Mode:",

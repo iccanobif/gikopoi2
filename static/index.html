@@ -272,9 +272,7 @@
             <div class="popup-overlay" v-if="isUserListPopupOpen" v-on:click="closeUserListPopup"></div>
             <div id="user-list-popup" class="popup" v-if="isUserListPopupOpen">
                 <div class="popup-title">{{ $t("ui.user_list_popup_title") }}</div>
-                <div class="popup-section">
-                    {{ $t("ui.user_list_popup_blurb")}}
-                </div>
+                <div class="popup-section" v-html="$t('ui.user_list_popup_blurb')"></div>
                 <div class="popup-content">
                     <table class="popup-table">
                         <colgroup>

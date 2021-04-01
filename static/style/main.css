@@ -382,7 +382,7 @@ video {
 
     outline: 2px solid #afb1b1;
     background-color: #ffffff;
-    z-index: 2;
+    z-index: 201;
 }
 
 @media (max-width: 600px) {
@@ -395,7 +395,7 @@ video {
 {
     content: "";
     position: fixed;
-    z-index: 1;
+    z-index: 200;
     top: 0;
     left: 0;
     width: 100%;
