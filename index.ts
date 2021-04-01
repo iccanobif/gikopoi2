@@ -623,6 +623,12 @@ io.on("connection", function (socket: any)
                 .forEach((u) => io.to(u.socketId!).emit(
                     "server-user-left-room", user.id))
             socket.emit("server-user-left-room", blockedUser.id);
+            
+            const streams = roomStates[user.areaId][user.roomId].streams;
+            io.to(blockedUser.socketId).emit("server-update-current-room-streams", toStreamSlotDtoArray(blockedUser, streams))
+            socket.emit("server-update-current-room-streams", toStreamSlotDtoArray(user, streams))
+            
+            
             emitServerStats(user.areaId);
         }
         catch (e)
