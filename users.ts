@@ -138,3 +138,11 @@ export function createPlayerDto(player: Player): PlayerDto
         voicePitch: player.voicePitch,
     }
 }
+
+export function getFilteredConnectedUserList(user: Player, roomId: string | null, areaId: string)
+{
+    return getConnectedUserList(roomId, areaId)
+        .filter((u) => u.id == user.id
+            || (!user.blockedIps.includes(u.ip)
+                && !u.blockedIps.includes(user.ip)))
+}

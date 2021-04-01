@@ -2,7 +2,7 @@ import express from "express"
 import { readFile, readFileSync, writeFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
 import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot } from "./types";
-import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, serializeUserState, createPlayerDto } from "./users";
+import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, serializeUserState, createPlayerDto, getFilteredConnectedUserList } from "./users";
 import { sleep } from "./utils";
 import got from "got";
 import log from "loglevel";
@@ -637,7 +637,6 @@ io.on("connection", function (socket: any)
             socket.emit("server-user-left-room", blockedUser.id);
             socket.emit("server-update-current-room-streams", toStreamSlotDtoArray(user, streams))
             
-            
             emitServerStats(user.areaId);
         }
         catch (e)
@@ -655,14 +654,6 @@ function emitServerStats(areaId: string)
             userCount: getFilteredConnectedUserList(u, null, areaId).length
         })
     });
-}
-
-function getFilteredConnectedUserList(user: Player, roomId: string | null, areaId: string)
-{
-    return getConnectedUserList(roomId, areaId)
-        .filter((u) => u.id == user.id
-            || (!user.blockedIps.includes(u.ip)
-                && !u.blockedIps.includes(user.ip)))
 }
 
 function userRoomEmit(user: Player, areaId: string, roomId: string | null, ...msg: any[])
