@@ -631,7 +631,7 @@ io.on("connection", function (socket: any)
                 .forEach((u) =>
             {
                 io.to(u.socketId!).emit("server-user-left-room", user.id)
-                io.to(u.socketId!).emit("server-update-current-room-streams", toStreamSlotDtoArray(blockedUser, streams))
+                io.to(u.socketId!).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, streams))
             })
                 
             socket.emit("server-user-left-room", blockedUser.id);
