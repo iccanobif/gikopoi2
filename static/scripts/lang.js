@@ -218,7 +218,7 @@ export const messages =
             user_list_popup_unignore: "Unignore",
             user_list_popup_block: "Block",
             user_list_popup_close: "Close",
-            user_list_popup_blurb: "Warning: When you ignore a user, you will not see them, but they will still see you.<br>When you block an user, he'll stay blocked even if he reconnects.",
+            user_list_popup_blurb: "Warning: When you ignore a user, you will not see them, but they will still see you.<br>When you block a user, he'll stay blocked even if he reconnects.",
             
             stream_form_title: "Stream Settings",
             stream_form_mode: "Mode:",
