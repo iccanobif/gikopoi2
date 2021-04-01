@@ -632,9 +632,10 @@ io.on("connection", function (socket: any)
             {
                 io.to(u.socketId!).emit("server-user-left-room", user.id)
                 io.to(u.socketId!).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, streams))
+                
+                socket.emit("server-user-left-room", u.id);
             })
                 
-            socket.emit("server-user-left-room", blockedUser.id);
             socket.emit("server-update-current-room-streams", toStreamSlotDtoArray(user, streams))
             
             
