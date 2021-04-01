@@ -624,14 +624,17 @@ io.on("connection", function (socket: any)
             if (!blockedUser) return;
             user.blockedIps.push(blockedUser.ip);
             
+            const streams = roomStates[user.areaId][user.roomId].streams;
+            
             getConnectedUserList(user.roomId, user.areaId)
                 .filter((u) => u.socketId && user.blockedIps.includes(u.ip))
-                .forEach((u) => io.to(u.socketId!).emit(
-                    "server-user-left-room", user.id))
+                .forEach((u) =>
+            {
+                io.to(u.socketId!).emit("server-user-left-room", user.id)
+                io.to(u.socketId!).emit("server-update-current-room-streams", toStreamSlotDtoArray(blockedUser, streams))
+            })
+                
             socket.emit("server-user-left-room", blockedUser.id);
-            
-            const streams = roomStates[user.areaId][user.roomId].streams;
-            io.to(blockedUser.socketId).emit("server-update-current-room-streams", toStreamSlotDtoArray(blockedUser, streams))
             socket.emit("server-update-current-room-streams", toStreamSlotDtoArray(user, streams))
             
             
