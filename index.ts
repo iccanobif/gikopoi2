@@ -338,13 +338,19 @@ io.on("connection", function (socket: any)
 
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId]
-
+            const streamer = getUser(stream.userId!);
+            
             if (stream.userId == user.id) clearStream(user);
 
-            if (stream.isActive)
+            if (stream.isActive && streamer)
             {
                 log.info("server-not-ok-to-stream", user.id)
-                socket.emit("server-not-ok-to-stream", "start_stream_stream_slot_already_taken")
+                if (streamer.blockedIps.includes(user.ip))
+                    socket.emit("server-not-ok-to-stream", "start_stream_stream_slot_already_taken_by_blocking_streamer")
+                else if (user.blockedIps.includes(streamer.ip))
+                    socket.emit("server-not-ok-to-stream", "start_stream_stream_slot_already_taken_by_blocked_streamer")
+                else
+                    socket.emit("server-not-ok-to-stream", "start_stream_stream_slot_already_taken")
                 return;
             }
 
