@@ -1746,7 +1746,6 @@ const vueApp = new Vue({
         startStreaming: async function ()
         {
             const slotId = this.streamSlotIdInWhichIWantToStream;
-            console.log("slot id:", slotId);
             const rtcPeer = this.setupRtcPeerSlot(slotId).rtcPeer;
             
             Vue.set(this.takenStreams, slotId, false);
