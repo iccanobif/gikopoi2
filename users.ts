@@ -112,6 +112,8 @@ export function deserializeUserState(serializedState: string)
     for (const user of Object.values(users))
     {
         user.isGhost = true;
+        if (user.blockedIps === undefined)
+            user.blockedIps = []
     }
     console.info("Restored user state (" + Object.values(users).length + " users)")
 }
