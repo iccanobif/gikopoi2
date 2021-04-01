@@ -568,7 +568,7 @@ const vueApp = new Vue({
             {
                 this.wantToStream = false;
                 this.stopStreaming();
-                this.showWarningToast(reason);
+                this.showWarningToast(i18n.t("msg." + reason));
             });
             this.socket.on("server-not-ok-to-take-stream", (streamSlotId) =>
             {
@@ -1746,6 +1746,7 @@ const vueApp = new Vue({
         startStreaming: async function ()
         {
             const slotId = this.streamSlotIdInWhichIWantToStream;
+            console.log("slot id:", slotId);
             const rtcPeer = this.setupRtcPeerSlot(slotId).rtcPeer;
             
             Vue.set(this.takenStreams, slotId, false);
@@ -1768,9 +1769,12 @@ const vueApp = new Vue({
                 clearInterval(this.vuMeterTimer)
             
             this.streamSlotIdInWhichIWantToStream = null;
-            
-            this.rtcPeerSlots[streamSlotId].rtcPeer.close()
-            this.rtcPeerSlots[streamSlotId] = null;
+
+            if (this.rtcPeerSlots[streamSlotId])
+            {
+                this.rtcPeerSlots[streamSlotId].rtcPeer.close()
+                this.rtcPeerSlots[streamSlotId] = null;
+            }
             
             this.socket.emit("user-want-to-stop-stream");
 
@@ -1865,6 +1869,10 @@ const vueApp = new Vue({
             this.ignoredUserIds.delete(user.id)
             this.isRedrawRequired = true
             this.$forceUpdate() // HACK: the v-if for the ignore and unignore buttons doesn't get automatically re-evaluated
+        },
+        blockUser: function(user)
+        {
+            this.socket.emit("user-block", user.id);
         },
         sortRoomList: function (key, direction)
         {

@@ -1,7 +1,7 @@
 import express from "express"
 import { readFile, readFileSync, writeFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
-import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto } from "./types";
+import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot } from "./types";
 import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, serializeUserState, createPlayerDto } from "./users";
 import { sleep } from "./utils";
 import got from "got";
@@ -95,20 +95,21 @@ io.on("connection", function (socket: any)
 
     const sendCurrentRoomState = () => 
     {
-        const connectedUsers: PlayerDto[] = getConnectedUserList(user.roomId, user.areaId)
+        const connectedUsers: PlayerDto[] = getFilteredConnectedUserList(user, user.roomId, user.areaId)
             .map(p => toPlayerDto(p, user.roomId, user.areaId))
         
         socket.emit("server-update-current-room-state",
             <RoomStateDto>{
                 currentRoom,
                 connectedUsers,
-                streams: roomStates[user.areaId][user.roomId].streams
+                streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams)
             })
     }
 
     const sendNewUserInfo = () =>
     {
-        socket.to(user.areaId + currentRoom.id).emit("server-user-joined-room", toPlayerDto(user, user.roomId, user.areaId));
+        userRoomEmit(user, user.areaId, user.roomId,
+            "server-user-joined-room", toPlayerDto(user, user.roomId, user.areaId));
     }
 
     const setupJanusHandleSlots = () =>
@@ -126,7 +127,8 @@ io.on("connection", function (socket: any)
 
             user.isGhost = true
             user.disconnectionTime = Date.now()
-            io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
+            userRoomEmit(user, user.areaId, user.roomId,
+                "server-user-left-room", user.id);
             clearStream(user)
             emitServerStats(user.areaId)
         }
@@ -150,6 +152,7 @@ io.on("connection", function (socket: any)
                 return;
             }
             user = loginUser;
+            user.socketId = socket.id;
 
             log.info("user-connect userId:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
 
@@ -208,7 +211,8 @@ io.on("connection", function (socket: any)
 
             user.lastAction = Date.now()
 
-            io.to(user.areaId + user.roomId).emit("server-msg", user.id, msg);
+            userRoomEmit(user, user.areaId, user.roomId,
+                "server-msg", user.id, msg);
         }
         catch (e)
         {
@@ -285,14 +289,17 @@ io.on("connection", function (socket: any)
                 {
                     user.characterId = "hungry_giko"
                     // sendCurrentRoomState()
-                    io.to(user.areaId + user.roomId).emit("server-character-changed", user.id, user.characterId)
+                    userRoomEmit(user, user.areaId, user.roomId,
+                        "server-character-changed", user.id, user.characterId)
+                    
                 }
 
                 user.position.x = newX
                 user.position.y = newY
             }
-
-            io.to(user.areaId + user.roomId).emit("server-move",
+            
+            userRoomEmit(user, user.areaId, user.roomId,
+                "server-move",
                 {
                     userId: user.id,
                     x: user.position.x,
@@ -312,8 +319,9 @@ io.on("connection", function (socket: any)
         try
         {
             user.bubblePosition = position;
-
-            io.to(user.areaId + user.roomId).emit("server-bubble-position", user.id, position);
+            
+            userRoomEmit(user, user.areaId, user.roomId,
+                "server-bubble-position", user.id, position);
         }
         catch (e)
         {
@@ -336,7 +344,7 @@ io.on("connection", function (socket: any)
             if (stream.isActive)
             {
                 log.info("server-not-ok-to-stream", user.id)
-                socket.emit("server-not-ok-to-stream", "Sorry, someone else is already streaming in this slot")
+                socket.emit("server-not-ok-to-stream", "start_stream_stream_slot_already_taken")
                 return;
             }
 
@@ -352,14 +360,15 @@ io.on("connection", function (socket: any)
                 if (stream.publisherId == null) clearStream(user)
             }, 10000);
 
-            io.to(user.areaId + user.roomId).emit("server-update-current-room-streams", roomState.streams)
+            userRoomEmit(user, user.areaId, user.roomId,
+                "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
 
             socket.emit("server-ok-to-stream")
         }
         catch (e)
         {
             log.error(e.message + " " + e.stack);
-            socket.emit("server-not-ok-to-stream", "Sorry, could not start stream")
+            socket.emit("server-not-ok-to-stream", "start_stream_unknown_error")
         }
     })
     socket.on("user-want-to-stop-stream", function () //TODO
@@ -381,8 +390,11 @@ io.on("connection", function (socket: any)
             if (streamSlotId === undefined) return;
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId];
-            if (stream.userId === null || stream.publisherId === null ||
-                roomState.janusRoomServer === null)
+            const streamer = getUser(stream.userId!);
+            if (!streamer
+                || streamer.blockedIps.includes(user.ip)
+                || stream.publisherId === null
+                || roomState.janusRoomServer === null)
             {
                 socket.emit("server-not-ok-to-take-stream", streamSlotId);
                 return;
@@ -487,8 +499,9 @@ io.on("connection", function (socket: any)
                 stream.isReady = true
                 stream.publisherId = janusHandle.getPublisherId();
                 user.isStreaming = true;
-
-                io.to(user.areaId + user.roomId).emit("server-update-current-room-streams", roomState.streams)
+                
+                userRoomEmit(user, user.areaId, user.roomId,
+                    "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
 
                 socket.emit("server-rtc-message", streamSlotId, "answer", answer);
             }
@@ -521,7 +534,7 @@ io.on("connection", function (socket: any)
                 if (data.type === "offer")
                 {
                     clearStream(user)
-                    socket.emit("server-not-ok-to-stream", "Sorry, could not start stream")
+                    socket.emit("server-not-ok-to-stream", "start_stream_unknown_error")
                 }
             }
             catch (e) { }
@@ -541,7 +554,8 @@ io.on("connection", function (socket: any)
             currentRoom = rooms[targetRoomId]
 
             clearStream(user)
-            io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
+            userRoomEmit(user, user.areaId, user.roomId,
+                "server-user-left-room", user.id)
             socket.leave(user.areaId + user.roomId)
 
             if (targetDoorId == undefined)
@@ -582,9 +596,8 @@ io.on("connection", function (socket: any)
                 .filter(room => !room.secret)
                 .map(room => ({
                     id: room.id,
-                    userCount: getConnectedUserList(room.id, user.areaId).length,
-                    streamers: roomStates[user.areaId][room.id]
-                        .streams
+                    userCount: getFilteredConnectedUserList(user, room.id, user.areaId).length,
+                    streamers: toStreamSlotDtoArray(user, roomStates[user.areaId][room.id].streams)
                         .filter(stream => stream.isActive && stream.userId != null)
                         .map(stream => getUser(stream.userId!).name),
                 }))
@@ -596,12 +609,69 @@ io.on("connection", function (socket: any)
             log.error(e.message + " " + e.stack);
         }
     })
+    
+    socket.on("user-block", function ( userId: string )
+    {
+        try
+        {
+            const blockedUser = getUser(userId);
+            if (!blockedUser) return;
+            user.blockedIps.push(blockedUser.ip);
+            
+            getConnectedUserList(user.roomId, user.areaId)
+                .filter((u) => u.socketId && user.blockedIps.includes(u.ip))
+                .forEach((u) => io.to(u.socketId!).emit(
+                    "server-user-left-room", user.id))
+            socket.emit("server-user-left-room", blockedUser.id);
+            emitServerStats(user.areaId);
+        }
+        catch (e)
+        {
+            log.error(e.message + " " + e.stack);
+        }
+    })
 });
 
 function emitServerStats(areaId: string)
 {
-    io.to(areaId).emit("server-stats", {
-        userCount: getConnectedUserList(null, areaId).length
+    getConnectedUserList(null, areaId).forEach((u) =>
+    {
+        userRoomEmit(u, areaId, null, "server-stats", {
+            userCount: getFilteredConnectedUserList(u, null, areaId).length
+        })
+    });
+}
+
+function getFilteredConnectedUserList(user: Player, roomId: string | null, areaId: string)
+{
+    return getConnectedUserList(roomId, areaId)
+        .filter((u) => u.id == user.id
+            || (!user.blockedIps.includes(u.ip)
+                && !u.blockedIps.includes(user.ip)))
+}
+
+function userRoomEmit(user: Player, areaId: string, roomId: string | null, ...msg: any[])
+{
+    getFilteredConnectedUserList(user, roomId, areaId)
+        .forEach((u) => u.socketId && io.to(u.socketId).emit(...msg));
+}
+
+function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSlotDto[]
+{
+    return streamSlots.map((s) =>
+    {
+        const u = getUser(s.userId!);
+        const isInactive = !u
+            || (u.id != user.id
+                && (user.blockedIps.includes(u.ip)
+                || u.blockedIps.includes(user.ip)));
+        return {
+            isActive: isInactive ? false : s.isActive,
+            isReady: isInactive ? false : s.isReady,
+            withSound: isInactive ? null : s.withSound,
+            withVideo: isInactive ? null : s.withVideo,
+            userId: isInactive ? null : s.userId,
+        }
     })
 }
 
@@ -657,15 +727,22 @@ app.get("/", (req, res) =>
                 'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
 
             data = data.replace("@LOGIN_FOOTER@", statusCode === 200 ? body : "")
-
+            
+            
+            req.ip
+            
+            
             for (const areaId in roomStates)
             {
+                const connectedUsers = getConnectedUserList(null, areaId)
+                    .filter((u) => !u.blockedIps.includes(req.ip));
+                
                 data = data
                     .replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
-                        getConnectedUserList(null, areaId)
+                        connectedUsers
                             .length.toString())
                     .replace("@STREAMER_COUNT_" + areaId.toUpperCase() + "@",
-                        getConnectedUserList(null, areaId)
+                        connectedUsers
                             .filter(u => u.isStreaming)
                             .length.toString())
             }
@@ -987,7 +1064,8 @@ function clearStream(user: Player)
             stream.isReady = false
             stream.userId = null
             stream.publisherId = null
-            io.to(user.areaId + user.roomId).emit("server-update-current-room-streams", roomState.streams)
+            userRoomEmit(user, user.areaId, user.roomId,
+                "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
             annihilateJanusRoom(roomState);
         }
     }
@@ -1004,7 +1082,8 @@ function disconnectUser(user: Player)
     clearStream(user)
     removeUser(user)
 
-    io.to(user.areaId + user.roomId).emit("server-user-left-room", user.id);
+    userRoomEmit(user, user.areaId, user.roomId,
+        "server-user-left-room", user.id);
     emitServerStats(user.areaId)
 }
 
@@ -1033,7 +1112,8 @@ setInterval(() =>
                 // Make user transparent after 30 minutes without moving or talking
                 if (!user.isInactive && Date.now() - user.lastAction > inactivityTimeout)
                 {
-                    io.to(user.areaId + user.roomId).emit("server-user-inactive", user.id);
+                    userRoomEmit(user, user.areaId, user.roomId,
+                        "server-user-inactive", user.id);
                     user.isInactive = true
                     log.info(user.id, "is inactive", Date.now(), user.lastAction);
                 }

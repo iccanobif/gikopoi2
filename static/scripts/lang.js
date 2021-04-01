@@ -61,6 +61,7 @@ export const messages =
             user_list_popup_column_user_name: "ユーザー名",
             user_list_popup_ignore: "あぼーん",
             user_list_popup_unignore: "あぼーん解除",
+            user_list_popup_block: "IPあぼーん",
             user_list_popup_close: "閉じる",
             user_list_popup_blurb: "注意：あぼーんしても相手からは見えます。",
             
@@ -110,6 +111,8 @@ export const messages =
             unknown_error: "不明なエラーで接続に失敗しました。",
             invalid_username: "指定されたユーザー名は無効です。",
             ip_restricted: "これ以上同時にログインできません。",
+            start_stream_stream_slot_already_taken: "他の誰かがすでにこのスロットで配信しています。",
+            start_stream_unknown_error: "配信を開始できませんでした。",
             are_you_sure_you_want_to_logout: "本当にログアウトしますか？",
             goodbye: "　またね！",
         },
@@ -211,6 +214,7 @@ export const messages =
             user_list_popup_column_user_name: "User name",
             user_list_popup_ignore: "Ignore",
             user_list_popup_unignore: "Unignore",
+            user_list_popup_block: "Block",
             user_list_popup_close: "Close",
             user_list_popup_blurb: "Warning: When you ignore a user, you will not see them, but they will still see you.",
             
@@ -260,6 +264,8 @@ export const messages =
             unknown_error: "The connection failed due to an unknown error.",
             invalid_username: "The provided username is invalid.",
             ip_restricted: "You are already logged in twice with this IP address.",
+            start_stream_stream_slot_already_taken: "Someone else is already streaming in this slot.",
+            start_stream_unknown_error: "Unable to start streaming.",
             are_you_sure_you_want_to_logout: "Are you sure you want to logout?",
             goodbye: "See you soon!",
         },

@@ -81,7 +81,7 @@ export interface RoomStateDto
 {
     currentRoom: Room,
     connectedUsers: PlayerDto[],
-    streams: StreamSlot[],
+    streams: StreamDto[],
 }
 
 export interface LoginResponseDto
@@ -112,4 +112,13 @@ export interface PlayerDto
     isStreaming: boolean,
     bubblePosition: Direction,
     voicePitch: number,
+}
+
+export interface StreamSlotDto
+{
+    isActive: boolean,
+    isReady: boolean,
+    withSound: boolean | null,
+    withVideo: boolean | null,
+    userId: string | null,
 }

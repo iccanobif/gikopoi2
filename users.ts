@@ -34,7 +34,9 @@ export class Player
     public bubblePosition: Direction = "up";
     public lastRoomMessage: string = "";
     public ip: string;
-    public voicePitch: number
+    public voicePitch: number;
+    public socketId: string | null = null;
+    public blockedIps: string[] = [];
 
     constructor(options: { name?: string, characterId: string, areaId: Area, ip: string })
     {
