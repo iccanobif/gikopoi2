@@ -112,6 +112,7 @@ export function deserializeUserState(serializedState: string)
     for (const user of Object.values(users))
     {
         user.isGhost = true;
+        user.isStreaming = false;
         if (user.blockedIps === undefined)
             user.blockedIps = []
     }
