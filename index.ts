@@ -504,7 +504,6 @@ io.on("connection", function (socket: any)
 
                 stream.isReady = true
                 stream.publisherId = janusHandle.getPublisherId();
-                user.isStreaming = true;
                 
                 userRoomEmit(user, user.areaId, user.roomId,
                     "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
@@ -741,16 +740,18 @@ app.get("/", (req, res) =>
             
             for (const areaId in roomStates)
             {
-                const connectedUsers = getConnectedUserList(null, areaId)
-                    .filter((u) => !u.blockedIps.includes(req.ip));
+                const connectedUserIds: Set<string> = getConnectedUserList(null, areaId)
+                    .filter((u) => !u.blockedIps.includes(req.ip))
+                    .reduce((acc, val) => acc.add(val.id), new Set<string>())
                 
                 data = data
                     .replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
-                        connectedUsers
-                            .length.toString())
+                        connectedUserIds.size.toString())
                     .replace("@STREAMER_COUNT_" + areaId.toUpperCase() + "@",
-                        connectedUsers
-                            .filter(u => u.isStreaming)
+                        Object.values(roomStates[areaId])
+                            .map(s => s.streams)
+                            .flat()
+                            .filter(s => s.userId && connectedUserIds.has(s.userId))
                             .length.toString())
             }
 
@@ -1062,7 +1063,6 @@ function clearStream(user: Player)
 
         log.info(user.id, "trying clearStream:", user.areaId, user.roomId)
 
-        user.isStreaming = false;
         const roomState = roomStates[user.areaId][user.roomId]
         const stream = roomState.streams.find(s => s.userId == user.id)
         if (stream)

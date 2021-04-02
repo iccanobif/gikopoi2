@@ -30,7 +30,6 @@ export class Player
     public characterId: string;
     public areaId: Area;
     public isInactive = false;
-    public isStreaming = false;
     public bubblePosition: Direction = "up";
     public lastRoomMessage: string = "";
     public ip: string;
@@ -112,7 +111,6 @@ export function deserializeUserState(serializedState: string)
     for (const user of Object.values(users))
     {
         user.isGhost = true;
-        user.isStreaming = false;
         if (user.blockedIps === undefined)
             user.blockedIps = []
     }
@@ -136,7 +134,6 @@ export function createPlayerDto(player: Player): PlayerDto
         characterId: player.characterId,
         areaId: player.areaId,
         isInactive: player.isInactive,
-        isStreaming: player.isStreaming,
         bubblePosition: player.bubblePosition,
         voicePitch: player.voicePitch,
     }

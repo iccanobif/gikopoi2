@@ -109,7 +109,6 @@ export interface PlayerDto
     characterId: string,
     areaId: Area,
     isInactive: boolean,
-    isStreaming: boolean,
     bubblePosition: Direction,
     voicePitch: number,
 }
