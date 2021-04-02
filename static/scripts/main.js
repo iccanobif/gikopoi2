@@ -1364,24 +1364,28 @@ const vueApp = new Vue({
                 {
                     case "ArrowLeft":
                     case "KeyA":
+                    case "KeyH":
                         event.preventDefault()
                         this.canvasManualOffset.x += 10 / this.canvasScale
                         this.isRedrawRequired = true
                         break;
                     case "ArrowRight":
                     case "KeyD":
+                    case "KeyL":
                         event.preventDefault()
                         this.canvasManualOffset.x -= 10 / this.canvasScale
                         this.isRedrawRequired = true
                         break;
                     case "ArrowUp":
                     case "KeyW":
+                    case "KeyK":
                         event.preventDefault()
                         this.canvasManualOffset.y += 10 / this.canvasScale
                         this.isRedrawRequired = true
                         break;
                     case "ArrowDown":
                     case "KeyS":
+                    case "KeyJ":
                         event.preventDefault()
                         this.canvasManualOffset.y -= 10 / this.canvasScale
                         this.isRedrawRequired = true
