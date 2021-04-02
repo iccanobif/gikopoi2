@@ -619,6 +619,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
+            log.info("user-block", user.id, userId)
             const blockedUser = getUser(userId);
             if (!blockedUser) return;
             user.blockedIps.push(blockedUser.ip);
