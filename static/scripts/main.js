@@ -1395,21 +1395,25 @@ const vueApp = new Vue({
                 {
                     case "ArrowLeft":
                     case "a":
+                    case "A":
                         event.preventDefault()
                         this.sendNewPositionToServer("left");
                         break;
                     case "ArrowRight":
                     case "d":
+                    case "D":
                         event.preventDefault()
                         this.sendNewPositionToServer("right");
                         break;
                     case "ArrowUp":
                     case "w":
+                    case "W":
                         event.preventDefault()
                         this.sendNewPositionToServer("up");
                         break;
                     case "ArrowDown":
                     case "s":
+                    case "S":
                         event.preventDefault()
                         this.sendNewPositionToServer("down");
                         break;
