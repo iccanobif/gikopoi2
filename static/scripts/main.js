@@ -1286,7 +1286,7 @@ const vueApp = new Vue({
             if (
                 this.isLoadingRoom ||
                 this.isWaitingForServerResponseOnMovement ||
-                this.users[this.myUserID].isWalking
+                (this.users[this.myUserID] && this.users[this.myUserID].isWalking)
             )
                 return;
 
