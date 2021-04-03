@@ -60,6 +60,10 @@ const vueApp = new Vue({
         isLoggingIn: false,
         areaId: localStorage.getItem("areaId") ||"gen", // 'gen' or 'for'
         
+        // message log
+        
+        logMessages: [],
+        
         // canvas
         canvasContext: null,
         isRedrawRequired: false,
@@ -636,47 +640,36 @@ const vueApp = new Vue({
             
             this.users[userDTO.id] = newUser;
         },
-        writeMessageToLog: function(userName, msg, userId)
+        writeMessageToLog: async function(userName, msg, userId)
         {
+            
             const chatLog = document.getElementById("chatLog");
-            document.getElementById("message-sound").play();
 
             const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
-
-            const messageDiv = document.createElement("div");
-            messageDiv.classList.add("message");
-
-            messageDiv.dataset.userId = userId
-            if (userId == this.highlightedUserId)
-                messageDiv.classList.add("highlighted-message")
-
-            const authorSpan = document.createElement("span");
-            authorSpan.className = "message-author";
-            authorSpan.title = new Date()
-            authorSpan.textContent = this.toDisplayName(userName);
-
-            const bodySpan = document.createElement("span");
-            bodySpan.className = "message-body";
-            bodySpan.textContent = msg;
-            bodySpan.innerHTML = bodySpan.innerHTML
-                .replace(urlRegex, (htmlUrl, prefix) =>
-                {
-                    const anchor = document.createElement('a');
-                    anchor.target = '_blank';
-                    anchor.setAttribute('tabindex', '-1');
-                    anchor.innerHTML = htmlUrl;
-                    const url = anchor.textContent;
-                    anchor.href = (prefix == 'www.' ? 'http://' + url : url);
-                    anchor.textContent = safeDecodeURI(url);
-                    return anchor.outerHTML;
-                });
-
-            messageDiv.append(authorSpan);
-            messageDiv.append(document.createTextNode(
-                i18n.t("message_colon")));
-            messageDiv.append(bodySpan);
-
-            chatLog.appendChild(messageDiv);
+            
+            
+            const tempSpan = document.createElement("span");
+            tempSpan.textContent = msg;
+            const messageBody = tempSpan.innerHTML.replace(urlRegex, (htmlUrl, prefix) =>
+            {
+                const anchor = document.createElement('a');
+                anchor.target = '_blank';
+                anchor.setAttribute('tabindex', '-1');
+                anchor.innerHTML = htmlUrl;
+                const url = anchor.textContent;
+                anchor.href = (prefix == 'www.' ? 'http://' + url : url);
+                anchor.textContent = safeDecodeURI(url);
+                return anchor.outerHTML;
+            });
+            
+            this.logMessages.push(Object.freeze({
+                userId,
+                author: this.toDisplayName(userName),
+                timestamp: (new Date()).toString(),
+                body: messageBody
+            }));
+            
+            await this.$nextTick()
 
             if (isAtBottom)
                 chatLog.scrollTop = chatLog.scrollHeight -
@@ -700,6 +693,7 @@ const vueApp = new Vue({
             
             if(!user.message) return;
             
+            document.getElementById("message-sound").play();
             this.writeMessageToLog(user.name, msg, user.id)
 
             if (this.enableTextToSpeech)
