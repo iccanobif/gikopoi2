@@ -668,7 +668,7 @@ const vueApp = new Vue({
             this.logMessages.push(Object.freeze({
                 userId,
                 author: this.toDisplayName(userName),
-                timestamp: new Date(),
+                timestamp: (new Date()).toString(),
                 body: messageBody
             }));
             
