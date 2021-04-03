@@ -1357,6 +1357,13 @@ const vueApp = new Vue({
         },
         handleCanvasKeydown: function (event)
         {
+            if (event.code == "KeyG" && event.ctrlKey)
+            {
+                event.preventDefault()
+                document.getElementById("input-textbox").focus()
+                return
+            }
+
             if (event.shiftKey && !event.altKey && !event.ctrlKey)
             {
                 // Move camera
@@ -1456,6 +1463,17 @@ const vueApp = new Vue({
             }
         },
         handleMessageInputKeydown: function (event)
+        {
+            console.log(event)
+            if (event.code == "KeyG" && event.ctrlKey)
+            {
+                console.log("ciao")
+                event.preventDefault();
+                document.getElementById("room-canvas").focus()
+                return
+            }
+        },
+        handleMessageInputKeypress: function (event)
         {
             if (event.key != "Enter"
                 || (this.isNewlineOnShiftEnter && event.shiftKey)
