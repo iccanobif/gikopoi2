@@ -175,6 +175,10 @@
             </div>
             {{ $t("ui.label_log") }}
             <div id="chatLog">
+                <div v-for="(message, index) in logMessages" class="message" v-bind:class="{'highlighted-message': message.userId == highlightedUserId}">
+                    <span class="message-author" v-bind:title="message.timestamp">{{ message.author }}</span
+                    >{{ $t("message_colon") }}<span class="message-body" v-html="message.body"></span>
+                </div>
             </div>
             <div id="video-streams" v-if="streams.length > 0">
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
