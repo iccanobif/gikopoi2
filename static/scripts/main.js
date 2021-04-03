@@ -665,12 +665,12 @@ const vueApp = new Vue({
                 return anchor.outerHTML;
             });
             
-            this.logMessages.push({
+            this.logMessages.push(Object.freeze({
                 userId,
                 author: this.toDisplayName(userName),
                 timestamp: new Date(),
                 body: messageBody
-            });
+            }));
             
             await this.$nextTick()
 
