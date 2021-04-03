@@ -141,7 +141,6 @@ const vueApp = new Vue({
         steppingOnPortalToNonAvailableRoom: false,
 
         pageRefreshRequired: false,
-        expectedServerVersion: null,
         passwordInputVisible: false,
         password: "",
 
@@ -153,12 +152,7 @@ const vueApp = new Vue({
     },
     mounted: function ()
     {
-        console.log(document.referrer)
-        // if (document.referrer.match(/www\.gikopoi\.com/i))
-        // {
-        //     this.isPoop = true
-        //     return
-        // }
+        console.log("referrer:", document.referrer)
         
         window.addEventListener("keydown", (ev) =>
         {
@@ -414,7 +408,9 @@ const vueApp = new Vue({
             
             myUserID = this.myUserID = loginMessage.userId;
             this.myPrivateUserID = loginMessage.privateUserId;
-            this.expectedServerVersion = loginMessage.appVersion;
+
+            if (EXPECTED_SERVER_VERSION != loginMessage.appVersion)
+                this.pageRefreshRequired = true
             
             // prevent accidental page closing
             window.onbeforeunload = () => {
@@ -457,10 +453,8 @@ const vueApp = new Vue({
                 if (!response.ok)
                     throw new Error(response)
                 const newVersion = await response.json();
-                if (newVersion > this.expectedServerVersion)
-                {
+                if (newVersion > EXPECTED_SERVER_VERSION)
                     this.pageRefreshRequired = true
-                }
             }
 
             this.socket.on("connect", immanentizeConnection);
