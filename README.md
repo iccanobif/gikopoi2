@@ -1,9 +1,13 @@
-https://gikopoi2.herokuapp.com
+https://gikopoipoi.net
 
 to start server, run:
 
 ``$ yarn``
+``$ yarn build``
 ``$ yarn start``
+
+for local debugging:
+``$ yarn dev``
 
 to enable automatic version bump run:
 
