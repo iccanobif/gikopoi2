@@ -236,7 +236,7 @@
             </div>
 
             <div class="popup-overlay" v-if="isRulaPopupOpen" v-on:click="closeRulaPopup"></div>
-            <div id="rula-popup" class="popup" v-if="isRulaPopupOpen">
+            <div id="rula-popup" class="popup" v-if="isRulaPopupOpen" v-on:keydown="handleRulaPopupKeydown($event)" tabindex="-1">
                 <div class="popup-title">{{ $t("ui.rula_menu_title") }}</div>
                 <div class="popup-content">
                     <table class="popup-table popup-selectable-table popup-sortable-table">
@@ -260,6 +260,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="room in roomList"
+                                :id="'room-tr-' + room.id"
                                 v-bind:class="{'popup-row-is-selected': rulaRoomSelection == room.id}"
                                 v-on:click="selectRoomForRula(room.id)">
                                 <td>{{ $t("room." + room.id) }}</td>

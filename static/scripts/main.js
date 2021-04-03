@@ -589,6 +589,9 @@ const vueApp = new Vue({
                 this.roomList = roomList;
                 this.sortRoomList(this.lastRoomListSortKey, this.lastRoomListSortDirection)
                 this.isRulaPopupOpen = true;
+
+                await Vue.nextTick()
+                document.getElementById("rula-popup").focus()
             });
 
             this.socket.on("server-rtc-message", async (streamSlotId, type, msg) =>
@@ -2081,6 +2084,29 @@ const vueApp = new Vue({
                 else
                     messageElement.classList.remove("highlighted-message")
             }
+        },
+        handleRulaPopupKeydown: function(event)
+        {
+            const previousIndex = this.roomList.findIndex(r => r.id == this.rulaRoomSelection)
+
+            switch (event.code)
+            {
+                case "ArrowDown":
+                    this.rulaRoomSelection = this.roomList[(previousIndex + 1) % this.roomList.length].id
+                    document.getElementById("room-tr-" + this.rulaRoomSelection).scrollIntoView({ block: "nearest"})
+                    break;
+                case "ArrowUp":
+                    if (previousIndex <= 0)
+                        this.rulaRoomSelection = this.roomList[this.roomList.length - 1].id
+                    else
+                        this.rulaRoomSelection = this.roomList[previousIndex - 1].id
+                    document.getElementById("room-tr-" + this.rulaRoomSelection).scrollIntoView({ block: "nearest"})
+                    break;
+                case "Enter":
+                    this.rula(this.rulaRoomSelection)
+                    break;
+            }
+
         },
     },
 });
