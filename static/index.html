@@ -457,6 +457,7 @@
         <div id="logged-out-page" v-if="loggedOut">
             {{ $t("msg.goodbye") }}
             <img src="characters/giko/front-standing.svg"/>
+            <a href="/">{{ $t("ui.back_to_homepage") }}</a>
         </div>
         <div id="poop-page" v-if="isPoop">
             💩
