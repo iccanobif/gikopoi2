@@ -754,6 +754,7 @@ app.get("/", (req, res) =>
                             .flat()
                             .filter(s => s.userId && connectedUserIds.has(s.userId))
                             .length.toString())
+                    .replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
             }
 
             res.set({
@@ -777,7 +778,7 @@ app.get(/(.+)\.crisp\.svg$/i, (req, res) =>
     {
         res.set({
             'Content-Type': 'image/svg+xml',
-            'Cache-Control': 'no-cache'
+            'Cache-Control': 'public, max-age=604800, immutable'
         });
         res.end(data);
     };
@@ -823,7 +824,16 @@ app.get(/(.+)\.crisp\.svg$/i, (req, res) =>
 })
 
 app.use(express.static('static',
-    { setHeaders: (res) => res.set("Cache-Control", "no-cache") }
+    { 
+        setHeaders: (res, path) => {
+            // Cache images for one week. I made the frontend append ?v=version to image URLs,
+            // so that it won't try to use the cached images when it's opening a new version of the website.
+            if (path.match(/\.(svg|png)$/i))
+                res.set("Cache-Control", "public, max-age=604800, immutable")
+            else
+                res.set("Cache-Control", "no-cache")
+        }
+    }
 ));
 
 app.get("/areas/:areaId/rooms/:roomId", (req, res) =>

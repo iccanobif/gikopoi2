@@ -153,7 +153,7 @@ const vueApp = new Vue({
     },
     mounted: function ()
     {
-        console.log(document.referrer)
+        console.log("referrer:", document.referrer)
         // if (document.referrer.match(/www\.gikopoi\.com/i))
         // {
         //     this.isPoop = true
