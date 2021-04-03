@@ -118,6 +118,7 @@ export const messages =
             start_stream_stream_slot_already_taken_by_blocking_streamer: "あなたをあぼーんしている誰かがすでにこのぱねで配信しています。",
             start_stream_unknown_error: "配信を開始できませんでした。",
             are_you_sure_you_want_to_logout: "本当にログアウトしますか？",
+            are_you_sure_you_want_to_block: "子のユーザーを相互あぼーんしますか？",
             goodbye: "　またね！",
         },
         room:
@@ -274,6 +275,8 @@ export const messages =
             start_stream_stream_slot_already_taken_by_blocked_streamer: "Someone who you are blocking is already streaming in this slot.",
             start_stream_stream_slot_already_taken_by_blocking_streamer: "Someone who has blocked you is already streaming in this slot.",
             start_stream_unknown_error: "Unable to start streaming.",
+            are_you_sure_you_want_to_logout: "Are you sure you want to logout?",
+            are_you_sure_you_want_to_block: "Are you sure you want to clobk this user?",
             goodbye: "See you soon!",
         },
         room:

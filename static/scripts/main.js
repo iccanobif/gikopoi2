@@ -1906,7 +1906,10 @@ const vueApp = new Vue({
         },
         blockUser: function(user)
         {
-            this.socket.emit("user-block", user.id);
+            if (confirm(i18n.t("msg.are_you_sure_you_want_to_block")))
+            {
+                this.socket.emit("user-block", user.id);
+            }
         },
         sortRoomList: function (key, direction)
         {
