@@ -172,6 +172,13 @@ io.on("connection", function (socket: any)
             sendNewUserInfo()
 
             emitServerStats(user.areaId)
+
+            // Test spam
+            // let i = 0;
+            // setInterval(() => {
+            //     console.log(i)
+            //     userRoomEmit(user, user.areaId, user.roomId, "server-msg", user.id, "spam " + i++);
+            // }, 50)
         }
         catch (e)
         {
