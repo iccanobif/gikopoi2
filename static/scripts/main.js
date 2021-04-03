@@ -109,6 +109,7 @@ const vueApp = new Vue({
         streamSlotIdInWhichIWantToStream: null,
         rtcPeerSlots: [],
         takenStreams: [], // streams taken by me
+        slotVolume: JSON.parse(localStorage.getItem("slotVolume")) || {}, // key: slot Id / value: volume
 
         // stream settings
         isStreamPopupOpen: false,
@@ -1578,8 +1579,6 @@ const vueApp = new Vue({
         
         updateCurrentRoomStreams: function (streams)
         {
-
-            
             this.streams = streams;
                 
             this.streamSlotIdInWhichIWantToStream = null;
@@ -1607,6 +1606,16 @@ const vueApp = new Vue({
                 }
 
                 $( "#video-container-" + slotId ).resizable({aspectRatio: true})
+
+                if (this.slotVolume[slotId] === undefined)
+                    this.slotVolume[slotId] = 1
+                
+                // Sadly it looks like there's no other way but this setTimeout() to set a default volume for the video,
+                // since apparently <video> elements have no "volume" attribute and it must be set via javascript.
+                // So, i use Vue.nextTick() to execute this piece of code only after the element has been added to the DOM.
+                Vue.nextTick(() => {
+                    document.getElementById("received-video-" + slotId).volume = this.slotVolume[slotId]
+                })
             }
         },
 
@@ -1953,6 +1962,8 @@ const vueApp = new Vue({
             );
 
             videoElement.volume = volumeSlider.value;
+            this.slotVolume[streamSlotId] = volumeSlider.value;
+            localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
         },
         changeSoundEffectVolume: function (newVolume)
         {
