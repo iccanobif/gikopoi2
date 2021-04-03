@@ -207,7 +207,7 @@ io.on("connection", function (socket: any)
 
             user.lastRoomMessage = msg;
 
-            log.info("MSG:", user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg);
+            log.info("MSG:", user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg.replace(/[\n\r]+/g, "<br>"));
 
             user.lastAction = Date.now()
 
