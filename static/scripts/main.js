@@ -1459,10 +1459,8 @@ const vueApp = new Vue({
         },
         handleMessageInputKeydown: function (event)
         {
-            console.log(event)
             if (event.code == "KeyG" && event.ctrlKey)
             {
-                console.log("ciao")
                 event.preventDefault();
                 document.getElementById("room-canvas").focus()
                 return
@@ -2044,9 +2042,7 @@ const vueApp = new Vue({
             this.storeSet('ttsVoiceURI')
         },
         getVoices: function () {
-            const voices = speechSynthesis.getVoices()
-            console.log(voices)
-            return voices
+            return speechSynthesis.getVoices()
         },
         changeVoiceVolume: function(newValue) {
             this.voiceVolume = newValue
