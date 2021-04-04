@@ -1,6 +1,8 @@
 export const BLOCK_WIDTH = 80
 export const BLOCK_HEIGHT = 40
 
+export const urlRegex = /(https?:\/\/|www\.)[^\s]+/gi
+
 export function loadImage(url)
 {
     return new Promise((resolve, reject) =>
