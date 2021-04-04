@@ -554,7 +554,7 @@ io.on("connection", function (socket: any)
 
             let { targetRoomId, targetDoorId } = data
 
-            log.info("user-change-room", user.id, targetDoorId)
+            log.info("user-change-room", user.id, targetRoomId, targetDoorId)
 
             currentRoom = rooms[targetRoomId]
 
