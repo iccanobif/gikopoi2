@@ -2092,10 +2092,12 @@ const vueApp = new Vue({
             switch (event.code)
             {
                 case "ArrowDown":
+                case "KeyJ":
                     this.rulaRoomSelection = this.roomList[(previousIndex + 1) % this.roomList.length].id
                     document.getElementById("room-tr-" + this.rulaRoomSelection).scrollIntoView({ block: "nearest"})
                     break;
                 case "ArrowUp":
+                case "KeyK":
                     if (previousIndex <= 0)
                         this.rulaRoomSelection = this.roomList[this.roomList.length - 1].id
                     else
