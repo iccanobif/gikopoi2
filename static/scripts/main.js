@@ -171,6 +171,12 @@ const vueApp = new Vue({
                 this.closePreferencesPopup()
                 this.closeWarningToast()
             }
+            if (ev.code == "KeyG" && ev.ctrlKey)
+            {
+                ev.preventDefault()
+                document.getElementById("input-textbox").focus()
+                return
+            }
         })
 
         // Listening to this event from document because the user could stop pressing the movement button after
@@ -1357,6 +1363,9 @@ const vueApp = new Vue({
         {
             if (event.code == "KeyG" && event.ctrlKey)
             {
+                // Stop propagation to avoid triggering the handler on the window object
+                // (which would always focus the input-textbox)
+                event.stopPropagation()
                 event.preventDefault()
                 document.getElementById("input-textbox").focus()
                 return
@@ -1464,6 +1473,9 @@ const vueApp = new Vue({
         {
             if (event.code == "KeyG" && event.ctrlKey)
             {
+                // Stop propagation to avoid triggering the handler on the window object
+                // (which would always focus the input-textbox)
+                event.stopPropagation();
                 event.preventDefault();
                 document.getElementById("room-canvas").focus()
                 return
