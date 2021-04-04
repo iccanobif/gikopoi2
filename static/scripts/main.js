@@ -177,6 +177,12 @@ const vueApp = new Vue({
                 document.getElementById("input-textbox").focus()
                 return
             }
+            if (ev.code == "KeyL" && ev.ctrlKey)
+            {
+                ev.preventDefault()
+                document.getElementById("chatLog").focus()
+                return
+            }
         })
 
         // Listening to this event from document because the user could stop pressing the movement button after

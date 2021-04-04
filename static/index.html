@@ -177,7 +177,7 @@
                 </div>
             </div>
             {{ $t("ui.label_log") }}
-            <div id="chatLog">
+            <div id="chatLog" tabindex="-1">
             </div>
             <div id="video-streams" v-if="streams.length > 0">
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
