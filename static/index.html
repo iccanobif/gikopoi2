@@ -117,7 +117,7 @@
                         <label>{{ $t("ui.sound_effect") }}</label>
                         <div id="sound-effect-volume"></div>
                     </div>
-                    <div class="tooltip-section tooltip-volume-section" v-if="enableTextToSpeech">
+                    <div class="tooltip-section tooltip-volume-section" v-show="enableTextToSpeech">
                         <label>{{ $t("ui.tts_volume") }}</label>
                         <div id="voice-volume"></div>
                     </div>
