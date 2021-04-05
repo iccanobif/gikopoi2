@@ -1464,6 +1464,15 @@ const vueApp = new Vue({
         setMovementDirection: function(direction)
         {
             this.movementDirection = direction
+
+            // Debounce needed because sometimes this function is called by by the event mousedown, sometimes
+            // by touchstart but sometimes both, and in the latter case I don't want to call this.sendNewPositionToServer() twice.
+            if (this.lastSetMovementDirectionTime || Date.now() - this.lastSetMovementDirectionTime > 200)
+            {
+                this.lastSetMovementDirectionTime = Date.now()
+                if (this.movementDirection)
+                   this.sendNewPositionToServer(this.movementDirection)
+            }
         },
         getPointerState: function (event)
         {
