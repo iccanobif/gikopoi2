@@ -76,12 +76,13 @@ const vueApp = new Vue({
         isRedrawRequired: false,
         isUsernameRedrawRequired: false,
         isDraggingCanvas: false,
-        canvasDragStartPoint: null,
+        canvasPointerStartState: null,
         canvasDragStartOffset: null,
         canvasManualOffset: { x: 0, y: 0 },
         canvasGlobalOffset: { x: 0, y: 0 },
         canvasDimensions: { w: 0, h: 0 },
         canvasScale: 1,
+        canvasScaleStart: null,
         svgMode: null,
         blockWidth: BLOCK_WIDTH,
         blockHeight: BLOCK_HEIGHT,
@@ -988,7 +989,7 @@ const vueApp = new Vue({
             {
                 canvasOffset.x = manualOffset.x + userOffset.x
                 canvasOffset.y = manualOffset.y + userOffset.y
-                this.isCanvasMousedown = false;
+                this.isCanvasPointerDown = false;
             }
             
             this.canvasGlobalOffset.x = canvasOffset.x;
@@ -1348,11 +1349,16 @@ const vueApp = new Vue({
                 "focus",
                 () => (this.forceUserInstantMove = true)
             );
-            window.addEventListener('mouseup', e =>
+            
+            const pointerEnd = (e) =>
             {
                 this.isDraggingCanvas = false;
-                this.isCanvasMousedown = false;
-            });
+                this.isCanvasPointerDown = false;
+            }
+            
+            window.addEventListener('mouseup', pointerEnd);
+            window.addEventListener('touchend', pointerEnd);
+            window.addEventListener('touchcancel', pointerEnd);
 
             setInterval(() => {
                 if (this.movementDirection)
@@ -1459,20 +1465,68 @@ const vueApp = new Vue({
         {
             this.movementDirection = direction
         },
-        handleCanvasMousedown: function (event)
+        getPointerState: function (event)
         {
-            this.isCanvasMousedown = true;
-            this.canvasDragStartOffset = { x: this.canvasManualOffset.x, y: this.canvasManualOffset.y };
-            this.canvasDragStartPoint = { x: event.offsetX, y: event.offsetY };
+            if ("targetTouches" in event)
+            {
+                if (event.targetTouches.length != 2)
+                    return null;
+                const ts = event.targetTouches;
+                return {
+                    dist: Math.sqrt(
+                        Math.pow(ts[0].screenX - ts[1].screenX, 2) +
+                        Math.pow(ts[0].screenY - ts[1].screenY, 2)),
+                    pos: {
+                        x: Math.round((ts[0].screenX + ts[1].screenX)/2),
+                        y: Math.round((ts[0].screenY + ts[1].screenY)/2)
+                    }
+                }
+            }
+            else
+            {
+                return {
+                    dist: null,
+                    pos: {
+                        x: event.screenX,
+                        y: event.screenY
+                    }
+                }
+            }
         },
-        handleCanvasMousemove: function (event)
+        handleCanvasPointerDown: function (event)
         {
-            if (!this.isCanvasMousedown) return;
+            const state = this.getPointerState(event);
+            if (!state) return;
+            
+            this.isCanvasPointerDown = true;
+            this.canvasDragStartOffset = { x: this.canvasManualOffset.x, y: this.canvasManualOffset.y };
+            this.canvasPointerStartState = state;
+            this.canvasScaleStart = null;
+            
+            event.preventDefault();
+        },
+        handleCanvasPointerMove: function (event)
+        {
+            if (!this.isCanvasPointerDown) return;
+            
+            const state = this.getPointerState(event);
+            if (!state) return;
 
             const dragOffset = {
-                x: -(this.canvasDragStartPoint.x - event.offsetX),
-                y: -(this.canvasDragStartPoint.y - event.offsetY)
+                x: -(this.canvasPointerStartState.pos.x - state.pos.x),
+                y: -(this.canvasPointerStartState.pos.y - state.pos.y)
             };
+            
+            if (state.dist)
+            {
+                const distDiff = this.canvasPointerStartState.dist - state.dist;
+                
+                if (!this.canvasScaleStart && Math.abs(distDiff) > 40)
+                    this.canvasScaleStart = this.canvasScale;
+                
+                if (this.canvasScaleStart)
+                    this.setCanvasScale(this.canvasScaleStart - Math.round(distDiff/20)/10);
+            }
 
             if (!this.isDraggingCanvas &&
                 (Math.sqrt(Math.pow(dragOffset.x, 2) + Math.pow(dragOffset.y, 2)) > 4))
@@ -1485,6 +1539,8 @@ const vueApp = new Vue({
                 this.canvasManualOffset.x = this.canvasDragStartOffset.x + dragOffset.x / this.canvasScale
                 this.canvasManualOffset.y = this.canvasDragStartOffset.y + dragOffset.y / this.canvasScale;
             }
+            
+            event.preventDefault();
         },
         handleMessageInputKeydown: function (event)
         {
@@ -1511,17 +1567,13 @@ const vueApp = new Vue({
         },
         handleCanvasWheel: function (event)
         {
-            this.adjustScale(-Math.sign(event.deltaY) * 0.1);
+            this.setCanvasScale(this.canvasScale + (-Math.sign(event.deltaY) * 0.1));
             event.preventDefault();
             return false;
         },
         
-        adjustScale: function (scaleAdjustment)
+        setCanvasScale: function (canvasScale)
         {
-            let canvasScale = this.canvasScale;
-            
-            canvasScale += scaleAdjustment
-            
             if(canvasScale > 3)
                 canvasScale = 3;
             else if(canvasScale < 0.70)
