@@ -92,6 +92,7 @@ input[type='range']
 
 .video-container
 {
+    z-index: 50;
     width: 219px;
 }
 
@@ -602,7 +603,6 @@ button.checked {
 .unpinned-video
 {
     position: absolute !important;
-    z-index: 50;
 }
 
 .unpinned-video .pin-video-button
