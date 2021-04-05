@@ -1513,6 +1513,7 @@ const vueApp = new Vue({
             this.canvasScaleStart = null;
             
             event.preventDefault();
+            document.getElementById("room-canvas").focus()
         },
         handleCanvasPointerMove: function (event)
         {
