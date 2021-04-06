@@ -223,9 +223,12 @@ const vueApp = new Vue({
         document.getElementById("username-textbox").focus()
 
         this.availableTTSVoices = speechSynthesis.getVoices()
-        speechSynthesis.addEventListener("voiceschanged", () => {
-            this.availableTTSVoices = speechSynthesis.getVoices()
-        })
+        if (speechSynthesis.addEventListener)
+        {
+            speechSynthesis.addEventListener("voiceschanged", () => {
+                this.availableTTSVoices = speechSynthesis.getVoices()
+            })
+        }
     },
     methods: {
         login: async function (ev)

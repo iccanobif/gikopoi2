@@ -104,6 +104,11 @@ export const rooms: { [roomId: string]: Room } = {
         sit: [
             { x: 5, y: 6 },
             { x: 5, y: 8 },
+            { x: 2, y: 6 },
+            { x: 3, y: 6 },
+            { x: 3, y: 7 },
+            { x: 3, y: 8 },
+
         ],
         blocked: [
             // { x: 0, y: 5 },
