@@ -644,6 +644,7 @@ const vueApp = new Vue({
 
             this.socket.on("server-character-changed", (userId, characterId) => {
                 this.users[userId].character = characters[characterId]
+                this.isRedrawRequired = true
             })
         },
         addUser: function (userDTO)

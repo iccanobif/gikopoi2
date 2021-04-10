@@ -203,6 +203,14 @@ io.on("connection", function (socket: any)
                     msg = "(^Д^)"
             }
 
+            if (msg == "#ika")
+            {
+                user.characterId = "ika"
+                userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId)
+                user.lastAction = Date.now()
+                return;
+            }
+
             msg = msg.substr(0, 500)
 
             user.lastRoomMessage = msg;
@@ -289,9 +297,7 @@ io.on("connection", function (socket: any)
                 {
                     user.characterId = "hungry_giko"
                     // sendCurrentRoomState()
-                    userRoomEmit(user, user.areaId, user.roomId,
-                        "server-character-changed", user.id, user.characterId)
-                    
+                    userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId)
                 }
 
                 user.position.x = newX
