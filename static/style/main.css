@@ -535,7 +535,7 @@ div[id^="vu-meter-bar-primary-"]
     background-color: red;
     height: 10px;
     width: 100%;
-    position: absolute;
+    position: relative;
     z-index: 2;
 }
 
@@ -544,8 +544,9 @@ div[id^="vu-meter-bar-secondary-"]
     background-color: darkred;
     height: 10px;
     width: 100%;
-    position:absolute;
+    position: relative;
     z-index: 1;
+    top: -10px;
 }
 
 button.checked {
