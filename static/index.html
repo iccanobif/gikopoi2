@@ -115,6 +115,7 @@
             </div>
             <div id="toolbar-buttons">
                 <div id="sound-effect-volume-section" class="toolbar-section">
+                    <label for="voice-volume">{{ $t("ui.sound_effect") }}</label>
                     <div id="sound-effect-volume"></div>
                 </div>
                 <div class="toolbar-section toolbar-volume-section" v-show="enableTextToSpeech">
@@ -132,21 +133,6 @@
                 </div>
                 <div class="toolbar-section" v-if="isMoveSectionVisible">
                     <label>{{ $t("ui.label_move") }}</label>
-                    <div>
-                        <button id="btn-move-left" class="grid-button"
-                            v-on:click="sendNewPositionToServer('left')">↖</button><button id="btn-move-up"
-                            class="grid-button" v-on:click="sendNewPositionToServer('up')">↗</button>
-                    </div>
-                    <div>
-                        <button id="btn-move-down" class="grid-button"
-                            v-on:click="sendNewPositionToServer('down')">↙</button><button id="btn-move-right"
-                            class="grid-button" v-on:click="sendNewPositionToServer('right')">↘</button>
-                    </div>
-                </div>
-                <div class="toolbar-section" v-if="isMoveSectionVisible">
-                    <div class='toolbar-section-title'>
-                        <div>{{ $t("ui.label_move") }}</div>
-                    </div>
                     <div class="non-wrappable-buttons">
                         <button id="btn-move-left" class="grid-button" v-on:mousedown="setMovementDirection('left')"
                             v-on:mouseup="setMovementDirection(null)" v-on:touchstart="setMovementDirection('left')"
@@ -164,7 +150,7 @@
                             v-on:touchend="setMovementDirection(null)">↘</button>
                     </div>
                 </div>
-                <div class="tooltip-section" v-if="isBubbleSectionVisible">
+                <div class="toolbar-section" v-if="isBubbleSectionVisible">
                     <label>{{ $t("ui.label_bubble") }}</label>
                     <div class="non-wrappable-buttons">
                         <button class="grid-button" v-on:click="sendNewBubblePositionToServer('left')">↖</button><button
