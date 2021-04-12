@@ -161,10 +161,8 @@
                             class="grid-button" v-on:click="sendNewBubblePositionToServer('right')">↘</button>
                     </div>
                 </div>
-                <div class="toolbar-section">
-                    <button id="logout-button" v-if="isLogoutButtonVisible" v-on:click="logout"
-                        class="fas fa-sign-out-alt" v-bind:title="$t('ui.button_logout')"></button>
-                </div>
+                <button id="logout-button" v-if="isLogoutButtonVisible" v-on:click="logout"
+                    class="fas fa-sign-out-alt" v-bind:title="$t('ui.button_logout')"></button>
             </div>
             {{ $t("ui.label_log") }}
             <div id="chatLog" tabindex="-1">

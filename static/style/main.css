@@ -315,6 +315,7 @@ video {
     align-content: stretch;
     flex: 1;
     justify-content: center;
+    margin: 0px 1px;
 }
 
 .toolbar-section > button
@@ -330,6 +331,7 @@ video {
 .toolbar-section.toolbar-volume-section
 {
     align-items: center;
+    flex-grow: 0;
 }
 
 .toolbar-section.toolbar-volume-section .ui-slider
@@ -341,6 +343,11 @@ video {
 .non-wrappable-buttons
 {
     display: flex;
+}
+
+.non-wrappable-buttons button
+{
+    flex-grow: 1;
 }
 
 
