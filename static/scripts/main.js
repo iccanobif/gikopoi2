@@ -11,7 +11,8 @@ import {
     BLOCK_HEIGHT,
     logToServer,
     safeDecodeURI,
-    debounce,
+    debounceWithDelayedExecution,
+    debounceWithImmediateExecution,
     urlRegex,
 } from "./utils.js";
 import { messages } from "./lang.js";
@@ -583,6 +584,12 @@ const vueApp = new Vue({
             this.socket.on("server-user-inactive", (userId) =>
             {
                 this.users[userId].isInactive = true;
+                this.isRedrawRequired = true;
+            });
+
+            this.socket.on("server-user-active", (userId) =>
+            {
+                this.users[userId].isInactive = false;
                 this.isRedrawRequired = true;
             });
 
@@ -1349,10 +1356,24 @@ const vueApp = new Vue({
         },
         registerKeybindings: function ()
         {
-            window.addEventListener(
-                "focus",
-                () => (this.forceUserInstantMove = true)
-            );
+            // Ping so that if my avatar was transparent, it turns back to normal.
+            // Use debounce so that we never send more than one ping every 10 minutes
+            const debouncedPing = debounceWithImmediateExecution(() => {
+                this.socket.emit("user-ping"); 
+            }, 10 * 60 * 1000)
+
+            window.addEventListener("focus", () => {
+                this.forceUserInstantMove = true;
+                debouncedPing()
+            });
+
+            window.addEventListener("mousemove", () => {
+                debouncedPing()
+            });
+
+            window.addEventListener("keydown", () => {
+                debouncedPing()
+            });
             
             const pointerEnd = (e) =>
             {
@@ -2212,7 +2233,7 @@ const vueApp = new Vue({
     },
 });
 
-const debouncedSpeakTest = debounce((ttsVoiceURI, voiceVolume) => {
+const debouncedSpeakTest = debounceWithDelayedExecution((ttsVoiceURI, voiceVolume) => {
     speechSynthesis.cancel()
     speak(i18n.t("test"), ttsVoiceURI, voiceVolume)
 }, 150)

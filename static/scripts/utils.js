@@ -74,7 +74,7 @@ export function safeDecodeURI(str)
     }
 }
 
-export const debounce = (func, wait) => {
+export const debounceWithDelayedExecution = (func, wait) => {
     let timeout;
   
     return function executedFunction(...args) {
@@ -85,5 +85,17 @@ export const debounce = (func, wait) => {
   
       clearTimeout(timeout);
       timeout = setTimeout(later, wait);
+    };
+  };
+
+export const debounceWithImmediateExecution = (func, wait) => {
+    let lastExecution = null;
+  
+    return function executedFunction(...args) {
+      if (Date.now() - lastExecution > wait)
+      {
+        lastExecution = Date.now()
+        func(...args);
+      }
     };
   };
