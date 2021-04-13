@@ -421,7 +421,18 @@ video {
     border: 2px solid #afb1b1;
 }
 
-.popup-section
+.popup-section:not(:first-child)
+{
+    border-top: 2px solid #afb1b1;
+}
+
+.popup-header
+{
+    margin: 10px 10px 10px 20px;
+    font-size: 18px;
+}
+
+.popup-item
 {
     margin: 10px;
 }

@@ -281,7 +281,7 @@
             <div class="popup-overlay" v-if="isUserListPopupOpen" v-on:click="closeUserListPopup"></div>
             <div id="user-list-popup" class="popup" v-if="isUserListPopupOpen">
                 <div class="popup-title">{{ $t("ui.user_list_popup_title") }}</div>
-                <div class="popup-section" v-html="$t('ui.user_list_popup_blurb')"></div>
+                <div class="popup-item" v-html="$t('ui.user_list_popup_blurb')"></div>
                 <div class="popup-content">
                     <table class="popup-table">
                         <colgroup>
@@ -318,7 +318,7 @@
             <div id="stream-popup" class="popup" v-if="isStreamPopupOpen">
                 <div class="popup-title">{{ $t("ui.stream_form_title") }}</div>
                 <div class="popup-content">
-                    <div class='popup-section'>
+                    <div class='popup-item'>
                         <span>{{ $t("ui.stream_form_mode") }}</span><input type="radio"
                             id="stream-form-video-sound-mode" value="video_sound" v-model="streamMode"><label
                             for="stream-form-video-sound-mode">{{ $t("ui.stream_form_video_sound_mode") }}</label>
@@ -329,26 +329,26 @@
                         <input type="radio" id="stream-form-video-only-mode" value="video" v-model="streamMode"><label
                             for="stream-form-video-only-mode">{{ $t("ui.stream_form_video_only_mode") }}</label>
                     </div>
-                    <div class='popup-section' v-if="streamMode != 'sound'">
+                    <div class='popup-item' v-if="streamMode != 'sound'">
                         <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label 
                             for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
                     </div>
                     <div v-if="streamMode != 'video'">
-                        <div class='popup-section'>
+                        <div class='popup-item'>
                             <button v-if="!displayAdvancedStreamSettings"
                                 v-on:click="displayAdvancedStreamSettings = true">{{ $t("ui.stream_form_show_advanced") }}</button>
                             <button v-if="displayAdvancedStreamSettings"
                                 v-on:click="displayAdvancedStreamSettings = false">{{ $t("ui.stream_form_hide_advanced") }}</button>
                         </div>
                         <div v-if="displayAdvancedStreamSettings">
-                            <div class='popup-section' v-if="streamMode != 'sound' && streamScreenCapture">
+                            <div class='popup-item' v-if="streamMode != 'sound' && streamScreenCapture">
                                 <div>
                                     <input type="checkbox" id="stream-form-screen-capture-audio" v-model="streamScreenCaptureAudio"><label 
                                         for="stream-form-screen-capture-audio">{{ $t("ui.stream_form_screen_capture_audio") }}</label>
                                 </div>
                                 <div class='popup-notice'>{{ $t("ui.stream_form_screen_capture_audio_notice") }}</div>
                             </div>
-                            <div class='popup-section' v-if="!streamScreenCapture || !streamScreenCaptureAudio">
+                            <div class='popup-item' v-if="!streamScreenCapture || !streamScreenCaptureAudio">
                                 <div>
                                     <input type="checkbox" id="stream-form-echo-cancellation"
                                         v-model="streamEchoCancellation"><label for="stream-form-echo-cancellation">{{
@@ -378,66 +378,78 @@
                 <div class="popup-title">{{ $t("ui.preferences_title") }}</div>
                 <div class="popup-content">
                     <div class='popup-section'>
-                        <input type="checkbox" id="preferences-name-bg"
-                            v-model="showUsernameBackground" v-on:click="toggleUsernameBackground"><label
-                            for="preferences-name-bg">{{ $t("ui.preferences_name_bg") }}</label>
-                    </div>
-                    <div class='popup-section'>
-                        <input type="checkbox" id="preferences-shift-enter"
-                            v-model="isNewlineOnShiftEnter" v-on:change="storeSet('isNewlineOnShiftEnter')"><label
-                            for="preferences-shift-enter">{{ $t("ui.preferences_shift_enter") }}</label>
-                    </div>
-                    <div class='popup-section'>
-                        <label for="preferences-bubble-opacity">{{ $t("ui.preferences_bubble_opacity") }}</label>
-                        <input type="range" id="preferences-bubble-opacity"
-                            min="50" max="100" v-model="bubbleOpacity" v-on:change="handleBubbleOpacity"><div
-                            class='preferences-percentage'>{{ bubbleOpacity }}%</div>
-                    </div>
-                    <div class='popup-section'>
-                        <input type="checkbox" id="preferences-dark-mode"
-                            v-model="isDarkMode" v-on:change="handleDarkMode"><label
-                            for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
-                    </div>
-                    <div class='popup-section'>
-                        <div>
-                            <input type="checkbox" id="preferences-show-notifications"
-                                v-model="showNotifications" v-on:change="handleShowNotifications"><label
-                                for="preferences-show-notifications">{{ $t("ui.preferences_show_notifications") }}</label>
+                        <div class='popup-header'>{{ $t("ui.preferences_title_general") }}</div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-shift-enter"
+                                v-model="isNewlineOnShiftEnter" v-on:change="storeSet('isNewlineOnShiftEnter')"><label
+                                for="preferences-shift-enter">{{ $t("ui.preferences_shift_enter") }}</label>
                         </div>
-                        <div v-if="showNotificationsNotice" class="popup-notice">{{ $t("ui.notifications_are_denied") }}</div>
+                        <div class='popup-item'>
+                            <div>
+                                <input type="checkbox" id="preferences-show-notifications"
+                                    v-model="showNotifications" v-on:change="handleShowNotifications"><label
+                                    for="preferences-show-notifications">{{ $t("ui.preferences_show_notifications") }}</label>
+                            </div>
+                            <div v-if="showNotificationsNotice" class="popup-notice">{{ $t("ui.notifications_are_denied") }}</div>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-dark-mode"
+                                v-model="isDarkMode" v-on:change="handleDarkMode"><label
+                                for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
+                        </div>
                     </div>
                     <div class='popup-section'>
-                        <input type="checkbox" id="preferences-command-section-visible"
-                            v-model="isCommandSectionVisible" v-on:change="storeSet('isCommandSectionVisible')"><label
-                            for="preferences-command-section-visible">{{ $t("ui.preferences_command_section_visible") }}</label>
+                        <div class='popup-header'>{{ $t("ui.preferences_title_game") }}</div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-name-bg"
+                                v-model="showUsernameBackground" v-on:click="toggleUsernameBackground"><label
+                                for="preferences-name-bg">{{ $t("ui.preferences_name_bg") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <label for="preferences-bubble-opacity">{{ $t("ui.preferences_bubble_opacity") }}</label>
+                            <input type="range" id="preferences-bubble-opacity"
+                                min="50" max="100" v-model="bubbleOpacity" v-on:change="handleBubbleOpacity"><div
+                                class='preferences-percentage'>{{ bubbleOpacity }}%</div>
+                        </div>
                     </div>
                     <div class='popup-section'>
-                        <input type="checkbox" id="preferences-move-section-visible"
-                            v-model="isMoveSectionVisible" v-on:change="storeSet('isMoveSectionVisible')"><label
-                            for="preferences-move-section-visible">{{ $t("ui.preferences_move_section_visible") }}</label>
+                        <div class='popup-header'>{{ $t("ui.preferences_title_toolbar") }}</div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-command-section-visible"
+                                v-model="isCommandSectionVisible" v-on:change="storeSet('isCommandSectionVisible')"><label
+                                for="preferences-command-section-visible">{{ $t("ui.preferences_command_section_visible") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-move-section-visible"
+                                v-model="isMoveSectionVisible" v-on:change="storeSet('isMoveSectionVisible')"><label
+                                for="preferences-move-section-visible">{{ $t("ui.preferences_move_section_visible") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-bubble-section-visible"
+                                v-model="isBubbleSectionVisible" v-on:change="storeSet('isBubbleSectionVisible')"><label
+                                for="preferences-bubble-section-visible">{{ $t("ui.preferences_bubble_section_visible") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-logout-button-visible"
+                                v-model="isLogoutButtonVisible" v-on:change="storeSet('isLogoutButtonVisible')"><label
+                                for="preferences-logout-button-visible">{{ $t("ui.preferences_logout_button_visible") }}</label>
+                        </div>
                     </div>
                     <div class='popup-section'>
-                        <input type="checkbox" id="preferences-bubble-section-visible"
-                            v-model="isBubbleSectionVisible" v-on:change="storeSet('isBubbleSectionVisible')"><label
-                            for="preferences-bubble-section-visible">{{ $t("ui.preferences_bubble_section_visible") }}</label>
-                    </div>
-                    <div class='popup-section'>
-                        <input type="checkbox" id="preferences-logout-button-visible"
-                            v-model="isLogoutButtonVisible" v-on:change="storeSet('isLogoutButtonVisible')"><label
-                            for="preferences-logout-button-visible">{{ $t("ui.preferences_logout_button_visible") }}</label>
-                    </div>
-                    <div class='popup-section'>
-                        <input type="checkbox" id="preferences-text-to-speech"
-                            v-model="enableTextToSpeech" v-on:change="handleEnableTextToSpeech"><label
-                            for="preferences-text-to-speech">{{ $t("ui.preferences_enable_text_to_speech") }}</label>
-                    </div>
-                    <div class='popup-section'>
-                        <label for="preferences-tts-voice">{{ $t("ui.preferences_tts_voice") }}</label>
-                        <select id="preferences-tts-voice" v-model="ttsVoiceURI" v-on:change="changeVoice">
-                            <option value="automatic">Automatic</option>
-                            <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}</option>
-                            <!-- <option value="silly-voice">Silly voice</option> -->
-                        </select>
+                        <div class='popup-header'>{{ $t("ui.preferences_title_tts") }}</div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-text-to-speech"
+                                v-model="enableTextToSpeech" v-on:change="handleEnableTextToSpeech"><label
+                                for="preferences-text-to-speech">{{ $t("ui.preferences_enable_text_to_speech") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <label for="preferences-tts-voice">{{ $t("ui.preferences_tts_voice") }}</label>
+                            <select id="preferences-tts-voice" v-model="ttsVoiceURI" v-on:change="changeVoice">
+                                <option value="automatic">Automatic</option>
+                                <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}</option>
+                                <!-- <option value="silly-voice">Silly voice</option> -->
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="popup-buttons">
@@ -448,7 +460,7 @@
             <div class="popup" v-if="isWarningToastOpen">
                 <div class="popup-title">{{ $t("ui.warning_toast_title") }}</div>
                 <div class="popup-content">
-                    <div class="popup-section">
+                    <div class="popup-item">
                         {{ warningToastMessage }}
                     </div>
                 </div>
