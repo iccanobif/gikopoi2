@@ -1339,9 +1339,9 @@ const vueApp = new Vue({
                 return
             }
 
-            if (message == "#rula" || message == "#ﾙｰﾗ")
+            if (message.trim() == "#rula" || message.trim() == "#ﾙｰﾗ")
                 this.requestRoomList();
-            else if (message == '#ﾘｽﾄ' || message == '#list')
+            else if (message.trim() == '#ﾘｽﾄ' || message.trim() == '#list')
                 this.openUserListPopup();
             else
                 this.socket.emit("user-msg", message);
@@ -1635,11 +1635,15 @@ const vueApp = new Vue({
             };
             
             rtcPeer.open();
+            rtcPeer.conn.addEventListener("icecandidateerror", (ev) => 
+            {
+                console.error("icecandidateerror", ev)
+            })
             rtcPeer.conn.addEventListener("iceconnectionstatechange", (ev) =>
             {
                 const state = rtcPeer.conn.iceConnectionState;
                 console.log("RTC Connection state", state)
-                
+                logToServer(new Date() + " " + this.myUserID + " RTC Connection state " + state)
                 
                 if (state == "connected")
                 {
