@@ -1659,7 +1659,7 @@ const vueApp = new Vue({
             rtcPeer.open();
             rtcPeer.conn.addEventListener("icecandidateerror", (ev) => 
             {
-                console.error("icecandidateerror", ev)
+                console.error("icecandidateerror", ev, ev.errorCode, ev.errorText)
             })
             rtcPeer.conn.addEventListener("iceconnectionstatechange", (ev) =>
             {
