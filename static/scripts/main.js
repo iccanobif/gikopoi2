@@ -586,6 +586,12 @@ const vueApp = new Vue({
                 this.isRedrawRequired = true;
             });
 
+            this.socket.on("server-user-active", (userId) =>
+            {
+                this.users[userId].isInactive = false;
+                this.isRedrawRequired = true;
+            });
+
             this.socket.on("server-not-ok-to-stream", (reason) =>
             {
                 this.wantToStream = false;
@@ -1349,10 +1355,11 @@ const vueApp = new Vue({
         },
         registerKeybindings: function ()
         {
-            window.addEventListener(
-                "focus",
-                () => (this.forceUserInstantMove = true)
-            );
+            window.addEventListener("focus", () => {
+                this.forceUserInstantMove = true;
+                // ping so that if my avatar was transparent, it turns back to normal.
+                this.socket.emit("user-ping"); 
+            });
             
             const pointerEnd = (e) =>
             {

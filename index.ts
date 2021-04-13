@@ -182,7 +182,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            user.isInactive = false
+            user.setAsActive()
 
             // Whitespace becomes an empty string (to clear bubbles)
             if (!msg.match(/[^\s]/g))
@@ -234,8 +234,7 @@ io.on("connection", function (socket: any)
         try
         {
             log.info("user-move", user.id, direction)
-            user.isInactive = false
-            user.lastAction = Date.now()
+            user.setAsActive()
 
             const shouldSpinwalk = user.directionChangedAt !== null
                 && user.lastDirection == direction
@@ -583,7 +582,7 @@ io.on("connection", function (socket: any)
             user.position = { x: door.x, y: door.y }
             if (door.direction !== null) user.direction = door.direction
             user.roomId = targetRoomId
-            user.isInactive = false
+            user.setAsActive()
             user.lastRoomMessage = "";
 
             sendCurrentRoomState()
@@ -650,6 +649,12 @@ io.on("connection", function (socket: any)
         {
             log.error(e.message + " " + e.stack);
         }
+    })
+
+    socket.on("user-ping", function() {
+        log.info("user-ping", user.id)
+        user.setAsActive()
+        userRoomEmit(user, user.areaId, user.roomId, "server-user-active", user.id);
     })
 });
 

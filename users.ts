@@ -46,6 +46,12 @@ export class Player
         lastUsedVoicePitchIndex = (lastUsedVoicePitchIndex + 1) % possibleVoicePitches.length
         this.voicePitch = possibleVoicePitches[lastUsedVoicePitchIndex]
     }
+
+    setAsActive()
+    {
+        this.isInactive = false
+        this.lastAction = Date.now()
+    }
 }
 
 let users: { [id: string]: Player; } = {}
@@ -124,15 +130,8 @@ export function createPlayerDto(player: Player): PlayerDto
         name: player.name,
         position: player.position,
         direction: player.direction,
-        lastDirection: player.lastDirection,
-        directionChangedAt: player.directionChangedAt,
-        isGhost: player.isGhost,
         roomId: player.roomId,
-        lastAction: player.lastAction,
-        connectionTime: player.connectionTime,
-        disconnectionTime: player.disconnectionTime,
         characterId: player.characterId,
-        areaId: player.areaId,
         isInactive: player.isInactive,
         bubblePosition: player.bubblePosition,
         voicePitch: player.voicePitch,
