@@ -46,12 +46,6 @@ export class Player
         lastUsedVoicePitchIndex = (lastUsedVoicePitchIndex + 1) % possibleVoicePitches.length
         this.voicePitch = possibleVoicePitches[lastUsedVoicePitchIndex]
     }
-
-    setAsActive()
-    {
-        this.isInactive = false
-        this.lastAction = Date.now()
-    }
 }
 
 let users: { [id: string]: Player; } = {}
@@ -144,4 +138,10 @@ export function getFilteredConnectedUserList(user: Player, roomId: string | null
         .filter((u) => u.id == user.id
             || (!user.blockedIps.includes(u.ip)
                 && !u.blockedIps.includes(user.ip)))
+}
+
+export function setUserAsActive(user: Player)
+{
+    user.isInactive = false
+    user.lastAction = Date.now()
 }

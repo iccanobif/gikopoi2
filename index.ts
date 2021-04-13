@@ -2,7 +2,7 @@ import express from "express"
 import { readFile, readFileSync, writeFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
 import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot } from "./types";
-import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, serializeUserState, createPlayerDto, getFilteredConnectedUserList } from "./users";
+import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, serializeUserState, createPlayerDto, getFilteredConnectedUserList, setUserAsActive } from "./users";
 import { sleep } from "./utils";
 import got from "got";
 import log from "loglevel";
@@ -182,7 +182,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            user.setAsActive()
+            setUserAsActive(user)
 
             // Whitespace becomes an empty string (to clear bubbles)
             if (!msg.match(/[^\s]/g))
@@ -234,7 +234,7 @@ io.on("connection", function (socket: any)
         try
         {
             log.info("user-move", user.id, direction)
-            user.setAsActive()
+            setUserAsActive(user)
 
             const shouldSpinwalk = user.directionChangedAt !== null
                 && user.lastDirection == direction
@@ -582,7 +582,7 @@ io.on("connection", function (socket: any)
             user.position = { x: door.x, y: door.y }
             if (door.direction !== null) user.direction = door.direction
             user.roomId = targetRoomId
-            user.setAsActive()
+            setUserAsActive(user)
             user.lastRoomMessage = "";
 
             sendCurrentRoomState()
@@ -653,7 +653,7 @@ io.on("connection", function (socket: any)
 
     socket.on("user-ping", function() {
         log.info("user-ping", user.id)
-        user.setAsActive()
+        setUserAsActive(user)
         userRoomEmit(user, user.areaId, user.roomId, "server-user-active", user.id);
     })
 });

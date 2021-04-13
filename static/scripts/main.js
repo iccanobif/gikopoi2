@@ -266,9 +266,10 @@ const vueApp = new Vue({
 
                 this.loggedIn = true;
                 this.selectedCharacter = characters[this.characterId];
-                this.registerKeybindings();
 
                 await this.connectToServer(this.username);
+
+                this.registerKeybindings();
 
                 this.isLoggingIn = false;
 
