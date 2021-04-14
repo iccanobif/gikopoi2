@@ -115,6 +115,10 @@ const vueApp = new Vue({
         voiceVolume: localStorage.getItem("voiceVolume") || 100,
         availableTTSVoices: [],
         showNotificationsNotice: false,
+        isMessageSoundEnabled: localStorage.getItem("isMessageSoundEnabled") != "false",
+        isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
+        customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
+        mentionSoundFunction: null,
         
         // streaming
         streams: [],
@@ -230,6 +234,8 @@ const vueApp = new Vue({
                 this.availableTTSVoices = speechSynthesis.getVoices()
             })
         }
+        
+        this.setMentionSoundFunction()
     },
     methods: {
         login: async function (ev)
@@ -675,8 +681,6 @@ const vueApp = new Vue({
         writeMessageToLog: function(userName, msg, userId)
         {
             const chatLog = document.getElementById("chatLog");
-            document.getElementById("message-sound").play();
-
             const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
 
             const messageDiv = document.createElement("div");
@@ -735,6 +739,12 @@ const vueApp = new Vue({
             }
             
             if(!user.message) return;
+            
+            if (this.mentionSoundFunction &&
+                this.mentionSoundFunction(plainMsg))
+                document.getElementById("mention-sound").play();
+            else if (this.isMessageSoundEnabled)
+                document.getElementById("message-sound").play();
             
             this.writeMessageToLog(user.name, msg, user.id)
 
@@ -2094,7 +2104,7 @@ const vueApp = new Vue({
         },
         updateAudioElementsVolume: function ()
         {
-            for (const elementId of ["message-sound", "login-sound"])
+            for (const elementId of ["message-sound", "login-sound", "mention-sound"])
             {
                 const el = document.getElementById(elementId)
                 el.volume = this.soundEffectVolume
@@ -2155,6 +2165,46 @@ const vueApp = new Vue({
                 this.showNotificationsNotice = permission != "granted"
             }
             this.storeSet("showNotifications")
+        },
+        setMentionSoundFunction: function ()
+        {
+            this.customMentionSoundPattern =
+                this.customMentionSoundPattern.trim();
+            const match = this.customMentionSoundPattern
+                .match(/^\/(.*)\/([a-z]*)$/);
+            
+            let re_objects = null
+            
+            if (match)
+                re_objects = [new RegExp(match[1], match[2])];
+            else
+                re_objects = this.customMentionSoundPattern
+                    .split(/\s*,\s*/)
+                    .map(word => new RegExp("\\b" + word + "\\b", "i"));
+            
+            if (this.isNameMentionSoundEnabled)
+                re_objects.push(new RegExp("\\b"
+                + this.toDisplayName(this.users[myUserID].name)
+                + "\\b", "i"))
+            
+            console.log(re_objects);
+            
+            this.mentionSoundFunction = (msg) => re_objects.some(obj =>
+            {
+                const res = obj.test(msg);
+                obj.lastIndex = 0;
+                return res;
+            }); 
+        },
+        handleNameMentionSoundEnabled: function ()
+        {
+            this.storeSet('isNameMentionSoundEnabled');
+            this.setMentionSoundFunction();
+        },
+        handleCustomMentionSoundPattern: function ()
+        {
+            this.storeSet('customMentionSoundPattern');
+            this.setMentionSoundFunction();
         },
         handleEnableTextToSpeech: function () 
         {

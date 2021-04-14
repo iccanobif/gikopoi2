@@ -385,6 +385,14 @@
                                 for="preferences-shift-enter">{{ $t("ui.preferences_shift_enter") }}</label>
                         </div>
                         <div class='popup-item'>
+                            <input type="checkbox" id="preferences-dark-mode"
+                                v-model="isDarkMode" v-on:change="handleDarkMode"><label
+                                for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
+                        </div>
+                    </div>
+                    <div class='popup-section'>
+                        <div class='popup-header'>{{ $t("ui.preferences_title_notifications") }}</div>
+                        <div class='popup-item'>
                             <div>
                                 <input type="checkbox" id="preferences-show-notifications"
                                     v-model="showNotifications" v-on:change="handleShowNotifications"><label
@@ -393,9 +401,22 @@
                             <div v-if="showNotificationsNotice" class="popup-notice">{{ $t("ui.notifications_are_denied") }}</div>
                         </div>
                         <div class='popup-item'>
-                            <input type="checkbox" id="preferences-dark-mode"
-                                v-model="isDarkMode" v-on:change="handleDarkMode"><label
-                                for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
+                            <input type="checkbox" id="preferences-message-sound-enabled"
+                                v-model="isMessageSoundEnabled" v-on:change="storeSet('isMessageSoundEnabled')"><label
+                                for="preferences-message-sound-enabled">{{ $t("ui.preferences_message_sound_enabled") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-name-mention-sound-enabled"
+                                v-model="isNameMentionSoundEnabled" v-on:change="handleNameMentionSoundEnabled"><label
+                                for="preferences-name-mention-sound-enabled">{{ $t("ui.preferences_name_mention_sound_enabled") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <div>
+                                <label for="preferences-custom-mention-sound-pattern">{{ $t("ui.preferences_custom_mention_sound_pattern") }}</label>
+                                <input type="text" id="preferences-custom-mention-sound-pattern"
+                                    v-model="customMentionSoundPattern" v-on:change="handleCustomMentionSoundPattern">
+                            </div>
+                            <div class='popup-notice'>{{ $t("ui.preferences_custom_mention_sound_notice") }}</div>
                         </div>
                     </div>
                     <div class='popup-section'>
@@ -470,6 +491,7 @@
             </div>
 
             <audio id="message-sound" src="message.mp3"></audio>
+            <audio id="mention-sound" src="mention.mp3"></audio>
             <audio id="login-sound" src="login.mp3"></audio>
         </div>
         <div id="logged-out-page" v-if="loggedOut">
