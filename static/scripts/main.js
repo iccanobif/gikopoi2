@@ -2187,8 +2187,6 @@ const vueApp = new Vue({
                 + this.toDisplayName(this.users[myUserID].name)
                 + "\\b", "i"))
             
-            console.log(re_objects);
-            
             this.mentionSoundFunction = (msg) => re_objects.some(obj =>
             {
                 const res = obj.test(msg);
