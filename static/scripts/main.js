@@ -2173,26 +2173,31 @@ const vueApp = new Vue({
             const match = this.customMentionSoundPattern
                 .match(/^\/(.*)\/([a-z]*)$/);
             
-            let re_objects = null
+            const re_object = match
+                ? new RegExp(match[1], match[2])
+                : null;
+            let words = match
+                ? []
+                : this.customMentionSoundPattern.split(',');
             
-            if (match)
-                re_objects = [new RegExp(match[1], match[2])];
-            else
-                re_objects = this.customMentionSoundPattern
-                    .split(/\s*,\s*/)
-                    .map(word => new RegExp("\\b" + word + "\\b", "i"));
+            if (this.isNameMentionSoundEnabled) words.push(
+                this.toDisplayName(this.users[myUserID].name).toLowerCase())
             
-            if (this.isNameMentionSoundEnabled)
-                re_objects.push(new RegExp("\\b"
-                + this.toDisplayName(this.users[myUserID].name)
-                + "\\b", "i"))
+            words = words
+                .map(word => word.trim().toLowerCase())
+                .filter(word => word);
             
-            this.mentionSoundFunction = (msg) => re_objects.some(obj =>
+            this.mentionSoundFunction = (msg) =>
             {
-                const res = obj.test(msg);
-                obj.lastIndex = 0;
-                return res;
-            }); 
+                if (re_object)
+                {
+                    const res = re_object.test(msg)
+                    re_object.lastIndex = 0;
+                    if (res) return true;
+                }
+                const lmsg = msg.toLowerCase()
+                return words.some(word => lmsg.includes(word));
+            }; 
         },
         handleNameMentionSoundEnabled: function ()
         {
