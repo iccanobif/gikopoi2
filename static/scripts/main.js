@@ -2078,6 +2078,9 @@ const vueApp = new Vue({
         },
         closeStreamPopup: function ()
         {
+            if (!this.isStreamPopupOpen)
+                return 
+
             this.isStreamPopupOpen = false;
             this.wantToStream = false;
             this.streamSlotIdInWhichIWantToStream = null;
