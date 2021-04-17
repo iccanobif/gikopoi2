@@ -374,6 +374,8 @@ io.on("connection", function (socket: any)
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
 
+            emitServerStats(user.areaId)
+
             socket.emit("server-ok-to-stream")
         }
         catch (e)
@@ -663,7 +665,9 @@ function emitServerStats(areaId: string)
     getConnectedUserList(null, areaId).forEach((u) =>
     {
         userRoomEmit(u, areaId, null, "server-stats", {
-            userCount: getFilteredConnectedUserList(u, null, areaId).length
+            userCount: getFilteredConnectedUserList(u, null, areaId).length,
+             // TODO exclude blocked users from the streamCount
+            streamCount: Object.values(roomStates[areaId]).reduce((acc, roomState) => acc + roomState.streams.filter(s => s.isActive).length, 0)
         })
     });
 }
@@ -1095,6 +1099,7 @@ function clearStream(user: Player)
             stream.publisherId = null
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
+            emitServerStats(user.areaId)
             annihilateJanusRoom(roomState);
         }
     }

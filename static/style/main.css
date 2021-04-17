@@ -222,6 +222,19 @@ video {
     width: 44px;
 }
 
+#infobox-usercount
+{
+    float: left;
+    margin-top: 0px;
+}
+
+#infobox-streamcount
+{
+    float: right;
+    margin-top: 0px;
+    margin-right: 8px;
+}
+
 .big-red-alert
 {
     position: absolute;

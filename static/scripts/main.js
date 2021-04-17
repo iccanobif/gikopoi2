@@ -147,6 +147,7 @@ const vueApp = new Vue({
         // Possibly redundant data:
         serverStats: {
             userCount: 0,
+            streamCount: 0,
         },
         wantToStream: false,
         connectionLost: false,
