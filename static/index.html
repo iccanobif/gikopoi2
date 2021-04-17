@@ -100,6 +100,10 @@
                             <div class="infobox-title">{{ $t("ui.infobox_label_user_count") }}</div>
                             <div class="infobox-value">{{ serverStats.userCount }}</div>
                         </div>
+                        <div id="infobox-streamcount" class="infobox-line">
+                            <div class="infobox-title">{{ $t("ui.infobox_label_stream_count") }}</div>
+                            <div class="infobox-value">{{ serverStats.streamCount }}</div>
+                        </div>
                     </div>
                     <button id="infobox-button" class="canvas-button-top-right" v-on:click="toggleInfobox"
                         tabindex="-1"></button>

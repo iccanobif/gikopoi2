@@ -374,6 +374,8 @@ io.on("connection", function (socket: any)
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
 
+            emitServerStats(user.areaId)
+
             socket.emit("server-ok-to-stream")
         }
         catch (e)
@@ -609,7 +611,7 @@ io.on("connection", function (socket: any)
                     userCount: getFilteredConnectedUserList(user, room.id, user.areaId).length,
                     streamers: toStreamSlotDtoArray(user, roomStates[user.areaId][room.id].streams)
                         .filter(stream => stream.isActive && stream.userId != null)
-                        .map(stream => getUser(stream.userId!).name),
+                        .map(stream => room.forcedAnonymous ? "" : getUser(stream.userId!).name),
                 }))
 
             socket.emit("server-room-list", roomList)
@@ -662,8 +664,16 @@ function emitServerStats(areaId: string)
 {
     getConnectedUserList(null, areaId).forEach((u) =>
     {
+        const connectedUserIds: Set<string> = getFilteredConnectedUserList(u, null, areaId)
+            .reduce((acc, val) => acc.add(val.id), new Set<string>())
+
         userRoomEmit(u, areaId, null, "server-stats", {
-            userCount: getFilteredConnectedUserList(u, null, areaId).length
+            userCount: connectedUserIds.size,
+            streamCount: Object.values(roomStates[areaId])
+                .map(s => s.streams)
+                .flat()
+                .filter(s => s.userId && connectedUserIds.has(s.userId))
+                .length.toString()
         })
     });
 }
@@ -1095,6 +1105,7 @@ function clearStream(user: Player)
             stream.publisherId = null
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
+            emitServerStats(user.areaId)
             annihilateJanusRoom(roomState);
         }
     }

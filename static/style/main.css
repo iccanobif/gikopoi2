@@ -202,6 +202,7 @@ video {
     padding: 3px;
     
     font-size: 12px;
+    text-shadow: #000 0 0 1px;
 }
 
 .infobox-line
@@ -220,6 +221,19 @@ video {
 .infobox-title
 {
     width: 44px;
+}
+
+#infobox-usercount
+{
+    float: left;
+    margin-top: 0px;
+}
+
+#infobox-streamcount
+{
+    float: right;
+    margin-top: 0px;
+    margin-right: 8px;
 }
 
 .big-red-alert

@@ -23,6 +23,7 @@ export const messages =
             infobox_label_room: "ｽﾃｰｼﾞ：",
             infobox_label_user_name: "名前：",
             infobox_label_user_count: "人数：",
+            infobox_label_stream_count: "配信者：",
             
             label_username: "ユーザー名：",
             label_stream: "ﾁｬﾝﾈﾙ{index}：",
@@ -189,6 +190,7 @@ export const messages =
             infobox_label_room: "Stage:",
             infobox_label_user_name: "Name:",
             infobox_label_user_count: "Users:",
+            infobox_label_stream_count: "Streams:",
             
             label_username: "User name:",
             label_stream: "Channel {index}: ",
