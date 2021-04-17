@@ -2185,7 +2185,7 @@ const vueApp = new Vue({
                 : this.customMentionSoundPattern.split(',');
             
             if (this.isNameMentionSoundEnabled)
-                words.push(this.toDisplayName(this.users[myUserID].name))
+                words.push(this.toDisplayName(this.username))
             
             words = words
                 .map(word => word.trim().toLowerCase())
