@@ -202,6 +202,7 @@ video {
     padding: 3px;
     
     font-size: 12px;
+    text-shadow: #000 0 0 1px;
 }
 
 .infobox-line

@@ -664,10 +664,16 @@ function emitServerStats(areaId: string)
 {
     getConnectedUserList(null, areaId).forEach((u) =>
     {
+        const connectedUserIds: Set<string> = getFilteredConnectedUserList(u, null, areaId)
+            .reduce((acc, val) => acc.add(val.id), new Set<string>())
+
         userRoomEmit(u, areaId, null, "server-stats", {
-            userCount: getFilteredConnectedUserList(u, null, areaId).length,
-             // TODO exclude blocked users from the streamCount
-            streamCount: Object.values(roomStates[areaId]).reduce((acc, roomState) => acc + roomState.streams.filter(s => s.isActive).length, 0)
+            userCount: connectedUserIds.size,
+            streamCount: Object.values(roomStates[areaId])
+                .map(s => s.streams)
+                .flat()
+                .filter(s => s.userId && connectedUserIds.has(s.userId))
+                .length.toString()
         })
     });
 }
