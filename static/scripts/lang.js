@@ -100,9 +100,9 @@ export const messages =
             preferences_title_tts: "読み上げ（TTS）",
             preferences_title_notifications: "通知",
             preferences_message_sound_enabled: "メッセージ音声",
-            preferences_name_mention_sound_enabled: "名前言及音声",
-            preferences_custom_mention_sound_pattern: "カスタム言及音声パターン",
-            preferences_custom_mention_sound_notice: "カンマ区切りした単語または正規表現。\n単語を含む、または正規表現に一致するメッセージは、言及音声にします。",
+            preferences_name_mention_sound_enabled: "名前言及音声通知",
+            preferences_custom_mention_sound_pattern: "カスタム言及音声通知パターン",
+            preferences_custom_mention_sound_notice: "カンマ区切りの単語または正規表現。\n単語を含む、または正規表現に一致するメッセージは、言及音声通知が出ます。",
 
             back_to_homepage: "トップへ戻る",
         },
