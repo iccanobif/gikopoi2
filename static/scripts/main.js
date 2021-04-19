@@ -37,8 +37,6 @@ function UserException(message) {
     this.message = message;
 }
 
-
-
 let loadCharacterImagesPromise = null
 
 const i18n = new VueI18n({
@@ -530,6 +528,11 @@ const vueApp = new Vue({
                 }
             });
 
+            this.socket.on("server-flood-detected", () =>
+            {
+                this.writeMessageToLog("SYSTEM", i18n.t("msg.flood_warning"), null)
+            });
+
             this.socket.on("server-stats", (serverStats) =>
             {
                 this.serverStats = serverStats;
@@ -688,7 +691,7 @@ const vueApp = new Vue({
             messageDiv.classList.add("message");
 
             messageDiv.dataset.userId = userId
-            if (userId == this.highlightedUserId)
+            if (userId && userId == this.highlightedUserId)
                 messageDiv.classList.add("highlighted-message")
 
             const authorSpan = document.createElement("span");

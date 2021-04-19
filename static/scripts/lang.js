@@ -129,6 +129,7 @@ export const messages =
             are_you_sure_you_want_to_logout: "本当にログアウトしますか？",
             are_you_sure_you_want_to_block: "子のユーザーを相互あぼーんしますか？",
             goodbye: "　またね！",
+            flood_warning: "おい、早口すぎるじゃないか！",
         },
         room:
         {
@@ -297,6 +298,7 @@ export const messages =
             are_you_sure_you_want_to_logout: "Are you sure you want to logout?",
             are_you_sure_you_want_to_block: "Are you sure you want to clobk this user?",
             goodbye: "See you soon!",
+            flood_warning: "Hey, aren't you talking a bit too fast?",
         },
         room:
         {

@@ -36,6 +36,7 @@ export class Player
     public voicePitch: number;
     public socketId: string | null = null;
     public blockedIps: string[] = [];
+    public lastMessageDates: number[] = [];
 
     constructor(options: { name?: string, characterId: string, areaId: Area, ip: string })
     {
@@ -113,6 +114,8 @@ export function deserializeUserState(serializedState: string)
         user.isGhost = true;
         if (user.blockedIps === undefined)
             user.blockedIps = []
+        if (user.lastMessageDates === undefined)
+            user.lastMessageDates = []
     }
     console.info("Restored user state (" + Object.values(users).length + " users)")
 }

@@ -182,6 +182,18 @@ io.on("connection", function (socket: any)
     {
         try
         {
+            // No more than 5 messages in the last 5 seconds
+            user.lastMessageDates.push(Date.now())
+            if (user.lastMessageDates.length > 5)
+            {
+                const firstMessageTime = user.lastMessageDates.shift()!
+                if (Date.now() - firstMessageTime < 5000)
+                {
+                    socket.emit("server-flood-detected")
+                    return
+                }
+            }
+
             setUserAsActive(user)
 
             // Whitespace becomes an empty string (to clear bubbles)
