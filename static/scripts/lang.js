@@ -170,6 +170,7 @@ export const messages =
             bar_giko: r("ＢＡＲギコ", "バーギコ"),
             bar_giko2: r("ＢＡＲギコ 下階", "バーギコ かかい"),
             bar_giko_square: r("噴水広場", "ふんすいひろば"),
+            densha: r("電車", "でんしゃ"),
         }
     },
     en:
@@ -336,7 +337,8 @@ export const messages =
             badend: "You fell to your death!",
             bar_giko: "Bar Giko",
             bar_giko2: "Bar Giko Lower Floor",
-            bar_giko_square: "Fountain Plaza"
+            bar_giko_square: "Fountain Plaza",
+            densha: "Train",
         }
     }
 }
