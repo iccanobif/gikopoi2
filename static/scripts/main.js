@@ -695,6 +695,9 @@ const vueApp = new Vue({
             authorSpan.className = "message-author";
             authorSpan.title = new Date()
             authorSpan.textContent = this.toDisplayName(userName);
+            authorSpan.addEventListener("click", (ev) => {
+                this.highlightUser(userId)
+            })
 
             const bodySpan = document.createElement("span");
             bodySpan.className = "message-body";
@@ -2248,12 +2251,12 @@ const vueApp = new Vue({
                 videoContainer.style = ""
             }
         },
-        highlightUser: function(user)
+        highlightUser: function(userId)
         {
-            if (this.highlightedUserId == user.id)
+            if (this.highlightedUserId == userId)
                 this.highlightedUserId = null
             else
-                this.highlightedUserId = user.id
+                this.highlightedUserId = userId
 
             for (const messageElement of document.getElementsByClassName("message"))
             {
@@ -2286,7 +2289,6 @@ const vueApp = new Vue({
                     this.rula(this.rulaRoomSelection)
                     break;
             }
-
         },
     },
 });

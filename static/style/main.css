@@ -674,6 +674,11 @@ button.checked {
     color: red;
 }
 
+.message-author
+{
+    cursor: pointer;
+}
+
 #area-selection
 {
     display: flex;
