@@ -295,7 +295,7 @@ export const messages =
             start_stream_stream_slot_already_taken_by_blocking_streamer: "Someone who has blocked you is already streaming in this slot.",
             start_stream_unknown_error: "Unable to start streaming.",
             are_you_sure_you_want_to_logout: "Are you sure you want to logout?",
-            are_you_sure_you_want_to_block: "Are you sure you want to clobk this user?",
+            are_you_sure_you_want_to_block: "Are you sure you want to block this user?",
             goodbye: "See you soon!",
         },
         room:
