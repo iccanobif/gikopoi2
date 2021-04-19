@@ -2188,14 +2188,8 @@ const vueApp = new Vue({
                 : null;
             let words = match
                 ? []
-                : this.customMentionSoundPattern.split(',');
-            
-            if (this.isNameMentionSoundEnabled)
-                words.push(this.toDisplayName(this.username))
-            
-            words = words
-                .map(word => word.trim().toLowerCase())
-                .filter(word => word);
+                : this.customMentionSoundPattern.split(',')
+                    .map(word => word.trim().toLowerCase()).filter(word => word);
             
             this.mentionSoundFunction = (msg) =>
             {
@@ -2206,6 +2200,12 @@ const vueApp = new Vue({
                     if (res) return true;
                 }
                 const lmsg = msg.toLowerCase()
+                if (this.isNameMentionSoundEnabled && this.users[this.myUserID])
+                {
+                    const name = this.toDisplayName(this.users[this.myUserID].name).trim().toLowerCase();
+                    if (name.split("◆").some(word => lmsg.includes(word))) return true;
+                }
+                
                 return words.some(word => lmsg.includes(word));
             }; 
         },
