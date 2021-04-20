@@ -766,11 +766,9 @@ app.get("/", (req, res) =>
             const { statusCode, body } = await got(
                 'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
 
-            data = data.replace("@LOGIN_FOOTER@", statusCode === 200 ? body : "")
-            
-            
-            req.ip
-            
+            data = data
+                .replace("@LOGIN_FOOTER@", statusCode === 200 ? body : "")
+                .replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
             
             for (const areaId in roomStates)
             {
@@ -787,7 +785,6 @@ app.get("/", (req, res) =>
                             .flat()
                             .filter(s => s.userId && connectedUserIds.has(s.userId))
                             .length.toString())
-                    .replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
             }
 
             res.set({
