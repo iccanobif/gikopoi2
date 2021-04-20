@@ -104,6 +104,7 @@ export interface PlayerDto
     isInactive: boolean,
     bubblePosition: Direction,
     voicePitch: number,
+    lastRoomMessage: string,
 }
 
 export interface StreamSlotDto

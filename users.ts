@@ -132,6 +132,7 @@ export function createPlayerDto(player: Player): PlayerDto
         isInactive: player.isInactive,
         bubblePosition: player.bubblePosition,
         voicePitch: player.voicePitch,
+        lastRoomMessage: player.lastRoomMessage,
     }
 }
 
