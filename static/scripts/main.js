@@ -1409,6 +1409,12 @@ const vueApp = new Vue({
                     this.sendNewPositionToServer(this.movementDirection)
                 }
             }, 100)
+
+            const observer = new ResizeObserver((mutationsList, observer) =>
+            {
+                this.isRedrawRequired = true
+            });
+            observer.observe(document.getElementById("canvas-container"));
         },
         toggleInfobox: function ()
         {

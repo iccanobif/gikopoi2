@@ -263,6 +263,8 @@ video {
     max-width: 700px;
     height: 511px;
     font-family: Arial, Helvetica, sans-serif;
+    resize: both;
+    overflow: auto;
 }
 
 #toolbar
