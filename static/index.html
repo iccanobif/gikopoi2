@@ -443,12 +443,12 @@
                         </div>
                         <div class='popup-item'>
                             <input type="checkbox" id="preferences-low-quality"
-                                v-model="isLowQualityEnabled" v-on:change="storeSet('isLowQualityEnabled')"><label
+                                v-model="isLowQualityEnabled" v-on:change="handleLowQualityEnabled"><label
                                 for="preferences-low-quality">{{ $t("ui.preferences_low_quality") }}</label>
                         </div>
                         <div class='popup-item'>
                             <input type="checkbox" id="preferences-crisp-mode"
-                                v-model="isCrispModeEnabled" v-on:change="storeSet('isCrispModeEnabled')"><label
+                                v-model="isCrispModeEnabled" v-on:change="handleCrispModeEnabled"><label
                                 for="preferences-crisp-mode">{{ $t("ui.preferences_crisp_mode") }}</label>
                         </div>
                     </div>
