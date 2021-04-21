@@ -132,8 +132,8 @@
                         <button id="btn-list" v-on:click="openUserListPopup()">{{ $t("ui.button_list") }}</button>
                     </div>
                     <div class="tooltip-section">
-                        <button v-on:click="openPreferencesPopup">{{ $t("ui.button_preferences") }}</button>
-                        <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{ $t("ui.button_crisp") }}</button>
+                        <button v-on:click="openPreferencesPopup" class="fas fa-cogs"></button>
+                        <!-- <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{ $t("ui.button_crisp") }}</button> -->
                     </div>
                     <div class="tooltip-section" v-if="isMoveSectionVisible">
                         <div class='tooltip-section-title'>
