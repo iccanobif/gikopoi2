@@ -15,7 +15,7 @@ export function loadImage(url)
                 resolve(img)
             })
             img.addEventListener("error", reject)
-            img.src = url + "?v=" + EXPECTED_SERVER_VERSION;
+            img.src = url + "?v=" + window.EXPECTED_SERVER_VERSION;
         }
         catch (err)
         {

@@ -443,7 +443,7 @@ const vueApp = new Vue({
             myUserID = this.myUserID = loginMessage.userId;
             this.myPrivateUserID = loginMessage.privateUserId;
 
-            if (EXPECTED_SERVER_VERSION != loginMessage.appVersion)
+            if (window.EXPECTED_SERVER_VERSION != loginMessage.appVersion)
                 this.pageRefreshRequired = true
             
             // prevent accidental page closing
@@ -487,7 +487,7 @@ const vueApp = new Vue({
                 if (!response.ok)
                     throw new Error(response)
                 const newVersion = await response.json();
-                if (newVersion > EXPECTED_SERVER_VERSION)
+                if (newVersion > window.EXPECTED_SERVER_VERSION)
                     this.pageRefreshRequired = true
             }
 
