@@ -80,11 +80,12 @@ const vueApp = new Vue({
         canvasManualOffset: { x: 0, y: 0 },
         canvasGlobalOffset: { x: 0, y: 0 },
         canvasDimensions: { w: 0, h: 0 },
-        canvasScale: 1,
-        canvasScaleStart: null,
+        userCanvasScale: 1,
+        userCanvasScaleStart: null,
         svgMode: null,
         blockWidth: BLOCK_WIDTH,
         blockHeight: BLOCK_HEIGHT,
+        devicePixelRatio: Math.round(window.devicePixelRatio*100)/100,
 
         // rula stuff
         isRulaPopupOpen: false,
@@ -785,8 +786,8 @@ const vueApp = new Vue({
             if (!y) y = 0;
             context.drawImage(
                 image,
-                Math.round(this.canvasScale * x + this.canvasGlobalOffset.x),
-                Math.round(this.canvasScale * y + this.canvasGlobalOffset.y)
+                Math.round(this.getCanvasScale() * x + this.canvasGlobalOffset.x),
+                Math.round(this.getCanvasScale() * y + this.canvasGlobalOffset.y)
             );
         },
         getNameImage: function(name, withBackground)
@@ -951,14 +952,22 @@ const vueApp = new Vue({
         },
         detectCanvasResize: function ()
         {
-            if (this.canvasDimensions.w != this.canvasContext.canvas.offsetWidth ||
-                this.canvasDimensions.h != this.canvasContext.canvas.offsetHeight)
+            const devicePixelRatio = Math.round(window.devicePixelRatio*100)/100;
+            
+            const offsetWidth = this.canvasContext.canvas.offsetWidth * devicePixelRatio;
+            const offsetHeight = this.canvasContext.canvas.offsetHeight * devicePixelRatio
+            
+            if (this.canvasDimensions.w != offsetWidth ||
+                this.canvasDimensions.h != offsetHeight ||
+                this.devicePixelRatio != devicePixelRatio)
             {
-                this.canvasDimensions.w = this.canvasContext.canvas.offsetWidth;
-                this.canvasDimensions.h = this.canvasContext.canvas.offsetHeight;
+                this.canvasDimensions.w = offsetWidth;
+                this.canvasDimensions.h = offsetHeight;
 
                 this.canvasContext.canvas.width = this.canvasDimensions.w;
                 this.canvasContext.canvas.height = this.canvasDimensions.h;
+                
+                this.devicePixelRatio = devicePixelRatio
             }
         },
         setCanvasGlobalOffset: function ()
@@ -967,8 +976,8 @@ const vueApp = new Vue({
             {
                 const fixedCameraOffset = this.currentRoom.backgroundOffset ||
                     { x: 0, y: 0 };
-                this.canvasGlobalOffset.x = this.canvasScale * -fixedCameraOffset.x
-                this.canvasGlobalOffset.y = this.canvasScale * -fixedCameraOffset.y
+                this.canvasGlobalOffset.x = this.getCanvasScale() * -fixedCameraOffset.x
+                this.canvasGlobalOffset.y = this.getCanvasScale() * -fixedCameraOffset.y
                 return;
             }
             
@@ -977,13 +986,13 @@ const vueApp = new Vue({
             {
                 const user = this.users[this.myUserID]
                 
-                userOffset.x -= this.canvasScale * (user.currentPhysicalPositionX + this.blockWidth/2) - this.canvasDimensions.w / 2,
-                userOffset.y -= this.canvasScale * (user.currentPhysicalPositionY - 60) - this.canvasDimensions.h / 2
+                userOffset.x -= this.getCanvasScale() * (user.currentPhysicalPositionX + this.blockWidth/2) - this.canvasDimensions.w / 2,
+                userOffset.y -= this.getCanvasScale() * (user.currentPhysicalPositionY - 60) - this.canvasDimensions.h / 2
             }
             
             const manualOffset = {
-                x: this.canvasScale * this.canvasManualOffset.x,
-                y: this.canvasScale * this.canvasManualOffset.y
+                x: this.userCanvasScale * this.canvasManualOffset.x,
+                y: this.userCanvasScale * this.canvasManualOffset.y
             }
             
             const canvasOffset = {
@@ -991,7 +1000,7 @@ const vueApp = new Vue({
                 y: manualOffset.y + userOffset.y
             };
             
-            const backgroundImage = this.currentRoom.backgroundImage.getImage(this.canvasScale)
+            const backgroundImage = this.currentRoom.backgroundImage.getImage(this.getCanvasScale())
             
             const bcDiff =
             {
@@ -1068,7 +1077,7 @@ const vueApp = new Vue({
             
             this.drawImage(
                 context,
-                this.currentRoom.backgroundImage.getImage(this.canvasScale)
+                this.currentRoom.backgroundImage.getImage(this.getCanvasScale())
             );
         },
         
@@ -1084,7 +1093,7 @@ const vueApp = new Vue({
                     
                     this.drawImage(
                         context,
-                        o.o.image.getImage(this.canvasScale),
+                        o.o.image.getImage(this.getCanvasScale()),
                         o.o.physicalPositionX,
                         o.o.physicalPositionY
                     );
@@ -1102,7 +1111,7 @@ const vueApp = new Vue({
                     const renderImage = o.o.getCurrentImage(this.currentRoom);
                     this.drawImage(
                         context,
-                        renderImage.getImage(this.canvasScale),
+                        renderImage.getImage(this.getCanvasScale()),
                         o.o.currentPhysicalPositionX + this.blockWidth/2 - renderImage.width/2,
                         o.o.currentPhysicalPositionY - renderImage.height
                     );
@@ -1119,7 +1128,7 @@ const vueApp = new Vue({
                 if (o.o.nameImage == null || this.isUsernameRedrawRequired)
                     o.o.nameImage = this.getNameImage(this.toDisplayName(o.o.name), this.showUsernameBackground);
                 
-                const image = o.o.nameImage.getImage(this.canvasScale)
+                const image = o.o.nameImage.getImage(this.getCanvasScale())
                 
                 this.drawImage(
                     this.canvasContext,
@@ -1151,7 +1160,7 @@ const vueApp = new Vue({
                 if (user.bubbleImage == null)
                     user.bubbleImage = this.getBubbleImage(user)
                 
-                const image = user.bubbleImage.getImage(this.canvasScale)
+                const image = user.bubbleImage.getImage(this.getCanvasScale())
                 
                 const pos = [
                     ["up", "right"].includes(user.bubblePosition),
@@ -1452,28 +1461,28 @@ const vueApp = new Vue({
                     case "KeyA":
                     case "KeyH":
                         event.preventDefault()
-                        this.canvasManualOffset.x += 10 / this.canvasScale
+                        this.canvasManualOffset.x += 10 / this.getCanvasScale()
                         this.isRedrawRequired = true
                         break;
                     case "ArrowRight":
                     case "KeyD":
                     case "KeyL":
                         event.preventDefault()
-                        this.canvasManualOffset.x -= 10 / this.canvasScale
+                        this.canvasManualOffset.x -= 10 / this.getCanvasScale()
                         this.isRedrawRequired = true
                         break;
                     case "ArrowUp":
                     case "KeyW":
                     case "KeyK":
                         event.preventDefault()
-                        this.canvasManualOffset.y += 10 / this.canvasScale
+                        this.canvasManualOffset.y += 10 / this.getCanvasScale()
                         this.isRedrawRequired = true
                         break;
                     case "ArrowDown":
                     case "KeyS":
                     case "KeyJ":
                         event.preventDefault()
-                        this.canvasManualOffset.y -= 10 / this.canvasScale
+                        this.canvasManualOffset.y -= 10 / this.getCanvasScale()
                         this.isRedrawRequired = true
                         break;
                 }
@@ -1559,7 +1568,7 @@ const vueApp = new Vue({
             this.isCanvasPointerDown = true;
             this.canvasDragStartOffset = { x: this.canvasManualOffset.x, y: this.canvasManualOffset.y };
             this.canvasPointerStartState = state;
-            this.canvasScaleStart = null;
+            this.userCanvasScaleStart = null;
             
             event.preventDefault();
             event.target.focus()
@@ -1580,11 +1589,11 @@ const vueApp = new Vue({
             {
                 const distDiff = this.canvasPointerStartState.dist - state.dist;
                 
-                if (!this.canvasScaleStart && Math.abs(distDiff) > 40)
-                    this.canvasScaleStart = this.canvasScale;
+                if (!this.userCanvasScaleStart && Math.abs(distDiff) > 40)
+                    this.userCanvasScaleStart = this.userCanvasScale;
                 
-                if (this.canvasScaleStart)
-                    this.setCanvasScale(this.canvasScaleStart - Math.round(distDiff/20)/10);
+                if (this.userCanvasScaleStart)
+                    this.setCanvasScale(this.userCanvasScaleStart - Math.round(distDiff/20)/10);
             }
 
             if (!this.isDraggingCanvas &&
@@ -1595,8 +1604,8 @@ const vueApp = new Vue({
 
             if (this.isDraggingCanvas)
             {
-                this.canvasManualOffset.x = this.canvasDragStartOffset.x + dragOffset.x / this.canvasScale
-                this.canvasManualOffset.y = this.canvasDragStartOffset.y + dragOffset.y / this.canvasScale;
+                this.canvasManualOffset.x = this.canvasDragStartOffset.x + dragOffset.x / this.userCanvasScale
+                this.canvasManualOffset.y = this.canvasDragStartOffset.y + dragOffset.y / this.userCanvasScale;
             }
             
             event.preventDefault();
@@ -1626,7 +1635,7 @@ const vueApp = new Vue({
         },
         handleCanvasWheel: function (event)
         {
-            this.setCanvasScale(this.canvasScale + (-Math.sign(event.deltaY) * 0.1));
+            this.setCanvasScale(this.userCanvasScale + (-Math.sign(event.deltaY) * 0.1));
             event.preventDefault();
             return false;
         },
@@ -1638,8 +1647,13 @@ const vueApp = new Vue({
             else if(canvasScale < 0.70)
                 canvasScale = 0.70;
             
-            this.canvasScale = canvasScale;
+            this.userCanvasScale = canvasScale;
             this.isRedrawRequired = true;
+        },
+        
+        getCanvasScale: function ()
+        {
+            return this.userCanvasScale * this.devicePixelRatio;
         },
 
         setupRTCConnection: function (slotId)
