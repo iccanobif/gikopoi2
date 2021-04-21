@@ -441,6 +441,16 @@
                                 min="50" max="100" v-model="bubbleOpacity" v-on:change="handleBubbleOpacity"><div
                                 class='preferences-percentage'>{{ bubbleOpacity }}%</div>
                         </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-low-quality"
+                                v-model="isLowQualityEnabled" v-on:change="storeSet('isLowQualityEnabled')"><label
+                                for="preferences-low-quality">{{ $t("ui.preferences_low_quality") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-crisp-mode"
+                                v-model="isCrispModeEnabled" v-on:change="storeSet('isCrispModeEnabled')"><label
+                                for="preferences-crisp-mode">{{ $t("ui.preferences_crisp_mode") }}</label>
+                        </div>
                     </div>
                     <div class='popup-section'>
                         <div class='popup-header'>{{ $t("ui.preferences_title_toolbar") }}</div>
