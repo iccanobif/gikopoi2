@@ -84,6 +84,11 @@ input[type='range']
     padding-left: 5px;
 }
 
+.underlined-usernames .message-author
+{
+    text-decoration: underline;
+}
+
 .message
 {
     overflow: hidden;

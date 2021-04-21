@@ -166,6 +166,7 @@ const vueApp = new Vue({
         vuMeterTimer: null,
         highlightedUserId: null,
         movementDirection: null,
+        underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
     },
     mounted: function ()
     {

@@ -103,6 +103,7 @@ export const messages =
             preferences_name_mention_sound_enabled: "名前音声通知",
             preferences_custom_mention_sound_pattern: "カスタム音声通知パターン",
             preferences_custom_mention_sound_notice: "カンマ区切りの単語または正規表現。\n単語を含む、または正規表現に一致するメッセージは、音声通知が出ます。",
+            preferences_underlined_usernames: "ログの名前にアンダーラインを付ける",
 
             back_to_homepage: "トップへ戻る",
         },
@@ -272,6 +273,7 @@ export const messages =
             preferences_name_mention_sound_enabled: "Username Mention Sound",
             preferences_custom_mention_sound_pattern: "Custom Mention Sound Pattern",
             preferences_custom_mention_sound_notice: "Comma separated words or Regex.\nMessages that include the words or match the Regex trigger the mention sound.",
+            preferences_underlined_usernames: "Underline Usernames",
 
             back_to_homepage: "Go back to home page",
         },
