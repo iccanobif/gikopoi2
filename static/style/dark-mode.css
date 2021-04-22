@@ -22,6 +22,11 @@
     color: #84A98C;
 }
 
+.dark-mode .underlined-usernames .message-author
+{
+    text-decoration-color: #84A98C;
+}
+
 .dark-mode .message:nth-child(even) {
     background-color: #2F3E46;
 }

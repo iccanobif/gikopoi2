@@ -87,6 +87,7 @@ input[type='range']
 .underlined-usernames .message-author
 {
     text-decoration: underline;
+    text-decoration-color: #929292;
 }
 
 .message

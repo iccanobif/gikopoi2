@@ -721,8 +721,7 @@ const vueApp = new Vue({
                 });
 
             messageDiv.append(authorSpan);
-            messageDiv.append(document.createTextNode(
-                i18n.t("message_colon")));
+            messageDiv.append(document.createTextNode(i18n.t("message_colon")));
             messageDiv.append(bodySpan);
 
             chatLog.appendChild(messageDiv);
