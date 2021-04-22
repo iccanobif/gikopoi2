@@ -666,9 +666,16 @@ io.on("connection", function (socket: any)
     })
 
     socket.on("user-ping", function() {
-        log.info("user-ping", user.id)
-        setUserAsActive(user)
-        userRoomEmit(user, user.areaId, user.roomId, "server-user-active", user.id);
+        try
+        {
+            log.info("user-ping", user.id)
+            setUserAsActive(user)
+            userRoomEmit(user, user.areaId, user.roomId, "server-user-active", user.id);
+        }
+        catch (e)
+        {
+            log.error(e.message + " " + e.stack);
+        }
     })
 });
 
