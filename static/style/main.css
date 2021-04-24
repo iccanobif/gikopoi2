@@ -94,7 +94,11 @@ input[type='range']
 {
     overflow: hidden;
     line-height: 20px;
-    display: flex; /* This prevents RTL text from making the username display on the right of the message  */
+}
+
+.message span
+{
+    display: inline-block;
 }
 
 .video-container
