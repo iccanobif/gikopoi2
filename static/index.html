@@ -298,15 +298,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="user in Object.values(users).filter(u => u.id != myUserID)" 
-                                v-bind:class="{'popup-row-is-selected': user.id == highlightedUserId}">
+                            <tr v-for="u in getUserListForListPopup()" 
+                                v-bind:class="{'popup-row-is-selected': u.id == highlightedUserId}">
                                 <td>
-                                    <div v-on:click="highlightUser(user.id)">
-                                        {{ user.name || $t("default_user_name") }}
+                                    <div v-on:click="highlightUser(u.id, u.name)">
+                                        {{ u.name || $t("default_user_name") }}
                                     </div>
-                                    <button v-if="ignoredUserIds.has(user.id)" v-on:click="unignoreUser(user)">{{ $t("ui.user_list_popup_unignore") }}</button>
-                                    <button v-if="!ignoredUserIds.has(user.id)" v-on:click="ignoreUser(user)">{{ $t("ui.user_list_popup_ignore") }}</button>
-                                    <button v-on:click="blockUser(user)">{{ $t("ui.user_list_popup_block") }}</button>
+                                    <button v-if="ignoredUserIds.has(u.id)" v-on:click="unignoreUser(u.id)">{{ $t("ui.user_list_popup_unignore") }}</button>
+                                    <button v-if="!ignoredUserIds.has(u.id)" v-on:click="ignoreUser(u.id)">{{ $t("ui.user_list_popup_ignore") }}</button>
+                                    <button v-on:click="blockUser(u.id)">{{ $t("ui.user_list_popup_block") }}</button>
                                 </td>
                             </tr>
                         </tbody>
