@@ -806,20 +806,23 @@ const vueApp = new Vue({
         },
         getNameImage: function(name, withBackground)
         {
+            const [displayName, tripcode] = name.split("◆")
+
             const lineHeight = 13
-            const height = lineHeight + 3;
+            const height = lineHeight * (tripcode ? 2 : 1) + 3;
             
             const fontPrefix = "bold ";
             const fontSuffix = "px Arial, Helvetica, sans-serif";
             
             return new RenderCache(function(canvas, scale)
             {
-                const fontSize = lineHeight * scale;
-                
                 const context = canvas.getContext('2d');
                 context.font = fontPrefix + lineHeight + fontSuffix;
-                const metrics = context.measureText(name);
-                const width = Math.ceil(metrics.width) + 5;
+
+                const width = Math.max(
+                    Math.ceil(context.measureText(displayName).width),
+                    tripcode ? Math.ceil(context.measureText("◆" + tripcode).width) : 0,
+                ) + 5;
                 
                 canvas.width = width * scale;
                 canvas.height = height * scale;
@@ -840,7 +843,16 @@ const vueApp = new Vue({
                 context.textAlign = "center"
                 context.fillStyle = "blue";
                 
-                context.fillText(name, canvas.width/2, canvas.height/2 + 1 * scale);
+                if (tripcode)
+                {
+                    // I don't quite understand why 0.25 works but 0.333 doesn't
+                    context.fillText(displayName, canvas.width/2, canvas.height * 0.25 + 1 * scale);
+                    context.fillText("◆" + tripcode, canvas.width/2, canvas.height*2/3 + 1 * scale);
+                }
+                else 
+                {
+                    context.fillText(displayName, canvas.width/2, canvas.height/2 + 1 * scale);
+                }
                 
                 return [width, height];
             });
