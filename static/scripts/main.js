@@ -1422,6 +1422,7 @@ const vueApp = new Vue({
             const observer = new ResizeObserver((mutationsList, observer) =>
             {
                 this.isRedrawRequired = true
+                this.paint()
             });
             observer.observe(document.getElementById("canvas-container"));
         },
