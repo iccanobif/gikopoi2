@@ -1018,7 +1018,7 @@ app.post("/login", (req, res) =>
         let processedUserName = (n >= 0 ? userName.substr(0, n) : userName)
             .replace(/◆/g, "◇");
         if (n >= 0)
-            processedUserName = processedUserName + "◆" + tripcode(userName.substr(n + 1));
+            processedUserName = processedUserName + "◆" + (tripcode(userName.substr(n + 1)) || "fnkquv7jY2");
 
         const user = addNewUser(processedUserName, characterId, areaId, req.ip);
 
