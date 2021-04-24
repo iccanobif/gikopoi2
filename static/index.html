@@ -60,12 +60,9 @@
                 @LOGIN_FOOTER@
             </div>
         </div>
-        <div id="stage" v-if="loggedIn && !isPoop">
+        <div id="stage" v-if="loggedIn && !isPoop && !connectionRefused">
             <h2 class="big-red-alert" v-if="connectionLost && !connectionRefused">
                 {{ $t("msg.connection_lost") }}
-            </h2>
-            <h2 class="big-red-alert" v-if="connectionRefused">
-                {{ $t("msg.connection_refused") }}
             </h2>
             <h2 class="big-red-alert" v-if="steppingOnPortalToNonAvailableRoom">
                 {{ $t("msg.room_unavailable") }}
@@ -183,7 +180,7 @@
                 </div>
             </div>
             {{ $t("ui.label_log") }}
-            <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames}">
+            <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames}" v-on:keydown="handlechatLogKeydown($event)">
             </div>
             <div id="video-streams" v-if="streams.length > 0">
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
@@ -502,13 +499,16 @@
             <audio id="mention-sound" src="mention.mp3"></audio>
             <audio id="login-sound" src="login.mp3"></audio>
         </div>
-        <div id="logged-out-page" v-if="loggedOut">
+        <div id="logged-out-page" v-if="loggedOut" class="full-screen-page">
             {{ $t("msg.goodbye") }}
             <img src="characters/giko/front-standing.svg"/>
             <a href="/">{{ $t("ui.back_to_homepage") }}</a>
         </div>
-        <div id="poop-page" v-if="isPoop">
+        <div id="poop-page" v-if="isPoop" class="full-screen-page">
             💩
+        </div>
+        <div id="connection-refused-page" v-if="connectionRefused" class="full-screen-page">
+            {{ $t("msg.connection_refused") }}
         </div>
     </div>
 

@@ -697,13 +697,26 @@ const vueApp = new Vue({
             if (userId && userId == this.highlightedUserId)
                 messageDiv.classList.add("highlighted-message")
 
+            const [displayName, tripcode] = this.toDisplayName(userName).split("◆")
+
             const authorSpan = document.createElement("span");
             authorSpan.className = "message-author";
             authorSpan.title = new Date()
-            authorSpan.textContent = this.toDisplayName(userName);
+            authorSpan.textContent = displayName;
             authorSpan.addEventListener("click", (ev) => {
                 this.highlightUser(userId, this.toDisplayName(userName))
             })
+            
+            const tripcodeSpan = document.createElement("span");
+            if (tripcode)
+            {
+                tripcodeSpan.className = "message-author";
+                tripcodeSpan.title = new Date()
+                tripcodeSpan.textContent = "◆" + tripcode;
+                tripcodeSpan.addEventListener("click", (ev) => {
+                    this.highlightUser(userId)
+                })
+            }
 
             const bodySpan = document.createElement("span");
             bodySpan.className = "message-body";
@@ -722,6 +735,7 @@ const vueApp = new Vue({
                 });
 
             messageDiv.append(authorSpan);
+            messageDiv.append(tripcodeSpan);
             messageDiv.append(document.createTextNode(i18n.t("message_colon")));
             messageDiv.append(bodySpan);
 
@@ -793,20 +807,23 @@ const vueApp = new Vue({
         },
         getNameImage: function(name, withBackground)
         {
+            const [displayName, tripcode] = name.split("◆")
+
             const lineHeight = 13
-            const height = lineHeight + 3;
+            const height = lineHeight * (tripcode ? 2 : 1) + 3;
             
             const fontPrefix = "bold ";
             const fontSuffix = "px Arial, Helvetica, sans-serif";
             
             return new RenderCache(function(canvas, scale)
             {
-                const fontSize = lineHeight * scale;
-                
                 const context = canvas.getContext('2d');
                 context.font = fontPrefix + lineHeight + fontSuffix;
-                const metrics = context.measureText(name);
-                const width = Math.ceil(metrics.width) + 5;
+
+                const width = Math.max(
+                    Math.ceil(context.measureText(displayName).width),
+                    tripcode ? Math.ceil(context.measureText("◆" + tripcode).width) : 0,
+                ) + 5;
                 
                 canvas.width = width * scale;
                 canvas.height = height * scale;
@@ -827,7 +844,16 @@ const vueApp = new Vue({
                 context.textAlign = "center"
                 context.fillStyle = "blue";
                 
-                context.fillText(name, canvas.width/2, canvas.height/2 + 1 * scale);
+                if (tripcode)
+                {
+                    // I don't quite understand why 0.25 works but 0.333 doesn't
+                    context.fillText(displayName, canvas.width/2, canvas.height * 0.25 + 1 * scale);
+                    context.fillText("◆" + tripcode, canvas.width/2, canvas.height*2/3 + 1 * scale);
+                }
+                else 
+                {
+                    context.fillText(displayName, canvas.width/2, canvas.height/2 + 1 * scale);
+                }
                 
                 return [width, height];
             });
@@ -2330,6 +2356,15 @@ const vueApp = new Vue({
                 case "Enter":
                     this.rula(this.rulaRoomSelection)
                     break;
+            }
+        },
+        handlechatLogKeydown: function(ev) {
+            // hitting ctrl+a when the log is focused selects only the text in the log
+            if (ev.code == "KeyA" && ev.ctrlKey)
+            {
+                ev.preventDefault()
+                const chatLog = document.getElementById("chatLog")
+                document.getSelection().setBaseAndExtent(chatLog, 0, chatLog.nextSibling, 0);
             }
         },
     },

@@ -94,6 +94,7 @@ input[type='range']
 {
     overflow: hidden;
     line-height: 20px;
+    display: flex; /* This prevents RTL text from making the username display on the right of the message  */
 }
 
 .video-container
@@ -586,25 +587,19 @@ button.checked {
     text-decoration: underline;
 }
 
-#logged-out-page
-{
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 25px;
-    flex-direction: column;
-}
-
 #poop-page
 {
+    font-size: 100px;
+}
+
+.full-screen-page
+{
+    font-size: 25px;
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 100px;
     flex-direction: column;
 }
 

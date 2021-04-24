@@ -111,7 +111,7 @@ export const messages =
         {
             no_other_users_in_this_room: "この部屋には他のユーザーがいません！",
             connection_lost: "再接続中",
-            connection_refused: "ページを再読み込みしてください。",
+            connection_refused: "接続が失われました。ページを再読み込みしてください。",
             room_unavailable: "まだ部屋の用意ができていません。ごめんね！",
             page_refresh_required: "サーバーが更新されたので、ページを再読み込みしてください。",
             
@@ -281,7 +281,7 @@ export const messages =
         {
             no_other_users_in_this_room: "There are no other users in this room!",
             connection_lost: "Reconnecting...",
-            connection_refused: "Please refresh the page.",
+            connection_refused: "Connection Lost, please refresh the page.",
             room_unavailable: "This room is not available yet. Sorry!",
             page_refresh_required: "An update is ready, so please refresh this page.",
             
