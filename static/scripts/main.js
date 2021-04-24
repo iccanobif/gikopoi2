@@ -696,13 +696,26 @@ const vueApp = new Vue({
             if (userId && userId == this.highlightedUserId)
                 messageDiv.classList.add("highlighted-message")
 
+            const [displayName, tripcode] = this.toDisplayName(userName).split("◆")
+
             const authorSpan = document.createElement("span");
             authorSpan.className = "message-author";
             authorSpan.title = new Date()
-            authorSpan.textContent = this.toDisplayName(userName);
+            authorSpan.textContent = displayName;
             authorSpan.addEventListener("click", (ev) => {
                 this.highlightUser(userId)
             })
+            
+            const tripcodeSpan = document.createElement("span");
+            if (tripcode)
+            {
+                tripcodeSpan.className = "message-author";
+                tripcodeSpan.title = new Date()
+                tripcodeSpan.textContent = "◆" + tripcode;
+                tripcodeSpan.addEventListener("click", (ev) => {
+                    this.highlightUser(userId)
+                })
+            }
 
             const bodySpan = document.createElement("span");
             bodySpan.className = "message-body";
@@ -721,6 +734,7 @@ const vueApp = new Vue({
                 });
 
             messageDiv.append(authorSpan);
+            messageDiv.append(tripcodeSpan);
             messageDiv.append(document.createTextNode(i18n.t("message_colon")));
             messageDiv.append(bodySpan);
 
