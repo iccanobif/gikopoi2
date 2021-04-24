@@ -38,7 +38,6 @@ export const messages =
             button_stream_drop: "受信停止",
             button_rula: "#ﾙｰﾗ",
             button_list: "#ﾘｽﾄ",
-            button_crisp: "低画質っぽい",
             button_preferences: "設定",
             button_logout: "ログアウト",
             volume: "音量：",
@@ -104,6 +103,8 @@ export const messages =
             preferences_custom_mention_sound_pattern: "カスタム音声通知パターン",
             preferences_custom_mention_sound_notice: "カンマ区切りの単語または正規表現。\n単語を含む、または正規表現に一致するメッセージは、音声通知が出ます。",
             preferences_underlined_usernames: "ログの名前にアンダーラインを付ける",
+            preferences_low_quality: "低画質",
+            preferences_crisp_mode: "シャープ",
 
             back_to_homepage: "トップへ戻る",
         },
@@ -208,7 +209,6 @@ export const messages =
             button_stream_drop: "Drop stream",
             button_rula: "#rula",
             button_list: "#list",
-            button_crisp: "\"Low Quality\"",
             button_preferences: "Preferences",
             button_logout: "Logout",
             volume: "Volume: ",
@@ -274,6 +274,9 @@ export const messages =
             preferences_custom_mention_sound_pattern: "Custom Mention Sound Pattern",
             preferences_custom_mention_sound_notice: "Comma separated words or Regex.\nMessages that include the words or match the Regex trigger the mention sound.",
             preferences_underlined_usernames: "Underline Usernames",
+            preferences_low_quality: "Low Quality",
+            preferences_crisp_mode: "Crisp",
+            
 
             back_to_homepage: "Go back to home page",
         },

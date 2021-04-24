@@ -82,10 +82,11 @@ const vueApp = new Vue({
         canvasDimensions: { w: 0, h: 0 },
         userCanvasScale: 1,
         userCanvasScaleStart: null,
-        svgMode: null,
+        isLowQualityEnabled: localStorage.getItem("isLowQualityEnabled") == "true",
+        isCrispModeEnabled: localStorage.getItem("isCrispModeEnabled") == "true",
         blockWidth: BLOCK_WIDTH,
         blockHeight: BLOCK_HEIGHT,
-        devicePixelRatio: Math.round(window.devicePixelRatio*100)/100,
+        devicePixelRatio: null,
 
         // rula stuff
         isRulaPopupOpen: false,
@@ -237,6 +238,8 @@ const vueApp = new Vue({
         }
         
         this.setMentionSoundFunction()
+        
+        this.devicePixelRatio = this.getDevicePixelRatio();
     },
     methods: {
         login: async function (ev)
@@ -327,17 +330,16 @@ const vueApp = new Vue({
                 window.location.reload();
             }
         },
-        toggleCrispMode: function ()
+        getSVGMode: function ()
         {
-            this.svgMode = this.svgMode != "crisp" ? "crisp" : null;
-            this.reloadImages()
+            return this.isCrispModeEnabled ? "crisp" : null;
         },
         reloadImages: async function ()
         {
             this.loadRoomBackground();
             this.loadRoomObjects();
             
-            await (loadCharacters(this.svgMode));
+            await (loadCharacters(this.getSVGMode()));
             this.isRedrawRequired = true;
         },
         setLanguage: function (code)
@@ -355,7 +357,7 @@ const vueApp = new Vue({
         },
         loadRoomBackground: async function ()
         {
-            const urlMode = (!this.svgMode ? "" : "." + this.svgMode);
+            const urlMode = (!this.getSVGMode() ? "" : "." + this.getSVGMode());
             
             const roomLoadId = this.roomLoadId;
             
@@ -367,7 +369,7 @@ const vueApp = new Vue({
         },
         loadRoomObjects: async function (mode)
         {
-            const urlMode = (!this.svgMode ? "" : "." + this.svgMode);
+            const urlMode = (!this.getSVGMode() ? "" : "." + this.getSVGMode());
             
             const roomLoadId = this.roomLoadId;
             
@@ -978,7 +980,7 @@ const vueApp = new Vue({
         },
         detectCanvasResize: function ()
         {
-            const devicePixelRatio = Math.round(window.devicePixelRatio*100)/100;
+            const devicePixelRatio = this.getDevicePixelRatio();
             
             const offsetWidth = this.canvasContext.canvas.offsetWidth * devicePixelRatio;
             const offsetHeight = this.canvasContext.canvas.offsetHeight * devicePixelRatio
@@ -1682,6 +1684,12 @@ const vueApp = new Vue({
         {
             return this.userCanvasScale * this.devicePixelRatio;
         },
+        
+        getDevicePixelRatio: function ()
+        {
+            if (this.isLowQualityEnabled) return 1;
+            return Math.round(window.devicePixelRatio*100)/100;
+        },
 
         setupRTCConnection: function (slotId)
         {
@@ -2255,6 +2263,16 @@ const vueApp = new Vue({
                 
                 return words.some(word => lmsg.includes(word));
             }; 
+        },
+        handleLowQualityEnabled: function ()
+        {
+            this.storeSet('isLowQualityEnabled');
+            this.isRedrawRequired = true
+        },
+        handleCrispModeEnabled: function ()
+        {
+            this.storeSet('isCrispModeEnabled');
+            this.reloadImages()
         },
         handleNameMentionSoundEnabled: function ()
         {
