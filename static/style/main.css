@@ -587,25 +587,19 @@ button.checked {
     text-decoration: underline;
 }
 
-#logged-out-page
-{
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 25px;
-    flex-direction: column;
-}
-
 #poop-page
 {
+    font-size: 100px;
+}
+
+.full-screen-page
+{
+    font-size: 25px;
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 100px;
     flex-direction: column;
 }
 
