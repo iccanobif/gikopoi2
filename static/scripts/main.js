@@ -2314,6 +2314,15 @@ const vueApp = new Vue({
                     break;
             }
         },
+        handlechatLogKeydown: function(ev) {
+            // hitting ctrl+a when the log is focused selects only the text in the log
+            if (ev.code == "KeyA" && ev.ctrlKey)
+            {
+                ev.preventDefault()
+                const chatLog = document.getElementById("chatLog")
+                document.getSelection().setBaseAndExtent(chatLog, 0, chatLog.nextSibling, 0);
+            }
+        },
     },
 });
 
