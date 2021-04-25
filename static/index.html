@@ -295,7 +295,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="user in Object.values(users).concat(highlightedUser && !(highlightedUser.id in users) ? [highlightedUser] : []).filter(u => u.id != myUserID)" 
+                            <tr v-for="user in Object.values(users).filter(u => u.id != myUserID).concat(highlightedUser && !(highlightedUser.id in users) ? [highlightedUser] : [])" 
                                 v-bind:class="{'popup-row-is-selected': highlightedUser && user.id == highlightedUser.id}">
                                 <td>
                                     <div v-on:click="highlightUser(user)">
