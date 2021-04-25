@@ -166,7 +166,7 @@ const vueApp = new Vue({
         allCharacters: Object.values(characters),
 
         vuMeterTimer: null,
-        highlightedUserId: null,
+        highlightedUser: null,
         movementDirection: null,
         underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
     },
@@ -689,7 +689,7 @@ const vueApp = new Vue({
             
             this.users[userDTO.id] = newUser;
         },
-        writeMessageToLog: function(userName, msg, userId)
+        writeMessageToLog: function(user, msg)
         {
             const chatLog = document.getElementById("chatLog");
             const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
@@ -697,18 +697,18 @@ const vueApp = new Vue({
             const messageDiv = document.createElement("div");
             messageDiv.classList.add("message");
 
-            messageDiv.dataset.userId = userId
-            if (userId && userId == this.highlightedUserId)
+            messageDiv.dataset.userId = user.id
+            if (this.highlightedUser && user.id == this.highlightedUser.id)
                 messageDiv.classList.add("highlighted-message")
 
-            const [displayName, tripcode] = this.toDisplayName(userName).split("◆")
+            const [displayName, tripcode] = this.toDisplayName(user.name).split("◆")
 
             const authorSpan = document.createElement("span");
             authorSpan.className = "message-author";
             authorSpan.title = new Date()
             authorSpan.textContent = displayName;
             authorSpan.addEventListener("click", (ev) => {
-                this.highlightUser(userId)
+                this.highlightUser(user)
             })
             
             const tripcodeSpan = document.createElement("span");
@@ -718,7 +718,7 @@ const vueApp = new Vue({
                 tripcodeSpan.title = new Date()
                 tripcodeSpan.textContent = "◆" + tripcode;
                 tripcodeSpan.addEventListener("click", (ev) => {
-                    this.highlightUser(userId)
+                    this.highlightUser(user)
                 })
             }
 
@@ -773,7 +773,7 @@ const vueApp = new Vue({
             else if (this.isMessageSoundEnabled)
                 document.getElementById("message-sound").play();
             
-            this.writeMessageToLog(user.name, msg, user.id)
+            this.writeMessageToLog(user, msg)
 
             if (this.enableTextToSpeech)
             {
@@ -2063,12 +2063,13 @@ const vueApp = new Vue({
         },
         openUserListPopup: function ()
         {
-            if (Object.values(this.users).filter(u => u.id != this.myUserID).length == 0)
+            if (Object.values(this.users).filter(u => u.id != this.myUserID).length > 0 ||
+                (this.highlightedUser && this.highlightedUser.id != this.myUserID))
             {
-                this.showWarningToast(i18n.t("msg.no_other_users_in_this_room"));
+                this.isUserListPopupOpen = true;
             }
             else
-                this.isUserListPopupOpen = true;
+                this.showWarningToast(i18n.t("msg.no_other_users_in_this_room"));
         },
         closeUserListPopup: function ()
         {
@@ -2100,6 +2101,8 @@ const vueApp = new Vue({
             if (confirm(i18n.t("msg.are_you_sure_you_want_to_block")))
             {
                 this.socket.emit("user-block", user.id);
+                if (this.highlightedUser && this.highlightedUser.id == user.id)
+                    this.highlightUser(this.highlightedUser);
             }
         },
         sortRoomList: function (key, direction)
@@ -2322,16 +2325,16 @@ const vueApp = new Vue({
                 videoContainer.style = ""
             }
         },
-        highlightUser: function(userId)
+        highlightUser: function(user)
         {
-            if (this.highlightedUserId == userId)
-                this.highlightedUserId = null
+            if (this.highlightedUser && this.highlightedUser.id == user.id)
+                this.highlightedUser = null
             else
-                this.highlightedUserId = userId
+                this.highlightedUser = user
 
             for (const messageElement of document.getElementsByClassName("message"))
             {
-                if (messageElement.dataset.userId == this.highlightedUserId)
+                if (this.highlightedUser && messageElement.dataset.userId == this.highlightedUser.id)
                     messageElement.classList.add("highlighted-message")
                 else
                     messageElement.classList.remove("highlighted-message")
