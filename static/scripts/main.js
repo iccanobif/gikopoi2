@@ -114,7 +114,6 @@ const vueApp = new Vue({
         ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
         voiceVolume: localStorage.getItem("voiceVolume") || 100,
         availableTTSVoices: [],
-        showNotificationsNotice: false,
         isMessageSoundEnabled: localStorage.getItem("isMessageSoundEnabled") != "false",
         isLoginSoundEnabled: localStorage.getItem("isLoginSoundEnabled") != "false",
         isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
@@ -169,6 +168,7 @@ const vueApp = new Vue({
         highlightedUserId: null,
         movementDirection: null,
         underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
+        notificationPermissionsGranted: false,
     },
     mounted: function ()
     {
@@ -294,6 +294,7 @@ const vueApp = new Vue({
                 
                 if (this.showNotifications)
                     Notification.requestPermission()
+                                .then((permission) => this.notificationPermissionsGranted = permission == "granted")
                 
                 $( "#sound-effect-volume" ).slider({
                     orientation: "vertical",
@@ -2076,7 +2077,6 @@ const vueApp = new Vue({
         },
         openPreferencesPopup: function ()
         {
-            this.showNotificationsNotice = Notification.permission == "denied"
             this.isPreferencesPopupOpen = true;
         },
         closePreferencesPopup: function ()
@@ -2230,7 +2230,7 @@ const vueApp = new Vue({
             if (this.showNotifications)
             {
                 const permission = await Notification.requestPermission()
-                this.showNotificationsNotice = permission != "granted"
+                this.notificationPermissionsGranted = permission == "granted"
             }
             this.storeSet("showNotifications")
         },
@@ -2369,6 +2369,10 @@ const vueApp = new Vue({
                 const chatLog = document.getElementById("chatLog")
                 document.getSelection().setBaseAndExtent(chatLog, 0, chatLog.nextSibling, 0);
             }
+        },
+        toggleDesktopNotifications: function() {
+            this.showNotifications = !this.showNotifications
+            this.handleShowNotifications()
         },
     },
 });

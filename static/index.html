@@ -130,6 +130,8 @@
                     </div>
                     <div class="tooltip-section">
                         <button v-on:click="openPreferencesPopup" class="fas fa-cogs"></button>
+                        <button v-if="notificationPermissionsGranted" v-on:click="toggleDesktopNotifications" class="fas"
+                        v-bind:class="{'fa-bell': showNotifications, 'fa-bell-slash': !showNotifications}"></button>
                         <!-- <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{ $t("ui.button_crisp") }}</button> -->
                     </div>
                     <div class="tooltip-section" v-if="isMoveSectionVisible">
@@ -404,7 +406,7 @@
                                     v-model="showNotifications" v-on:change="handleShowNotifications"><label
                                     for="preferences-show-notifications">{{ $t("ui.preferences_show_notifications") }}</label>
                             </div>
-                            <div v-if="showNotificationsNotice" class="popup-notice">{{ $t("ui.notifications_are_denied") }}</div>
+                            <div v-if="!notificationPermissionsGranted" class="popup-notice">{{ $t("ui.notifications_are_denied") }}</div>
                         </div>
                         <div class='popup-item'>
                             <input type="checkbox" id="preferences-login-sound-enabled"
