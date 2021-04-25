@@ -474,7 +474,7 @@ io.on("connection", function (socket: any)
         try
         {
             const { streamSlotId, type, msg } = data
-            log.debug("user-rtc-message start", user.id, streamSlotId, type, msg);
+            log.info("user-rtc-message start", user.id, streamSlotId, type);
 
             if (type == "offer")
             {
