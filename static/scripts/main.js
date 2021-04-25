@@ -116,6 +116,7 @@ const vueApp = new Vue({
         availableTTSVoices: [],
         showNotificationsNotice: false,
         isMessageSoundEnabled: localStorage.getItem("isMessageSoundEnabled") != "false",
+        isLoginSoundEnabled: localStorage.getItem("isLoginSoundEnabled") != "false",
         isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
         customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
         mentionSoundFunction: null,
@@ -584,7 +585,8 @@ const vueApp = new Vue({
 
             this.socket.on("server-user-joined-room", async (user) =>
             {
-                document.getElementById("login-sound").play();
+                if (this.isLoginSoundEnabled)
+                    document.getElementById("login-sound").play();
                 this.addUser(user);
                 this.updateCanvasObjects();
                 this.isRedrawRequired = true;

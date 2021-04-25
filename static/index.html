@@ -407,6 +407,11 @@
                             <div v-if="showNotificationsNotice" class="popup-notice">{{ $t("ui.notifications_are_denied") }}</div>
                         </div>
                         <div class='popup-item'>
+                            <input type="checkbox" id="preferences-login-sound-enabled"
+                                v-model="isLoginSoundEnabled" v-on:change="storeSet('isLoginSoundEnabled')"><label
+                                for="preferences-login-sound-enabled">{{ $t("ui.preferences_login_sound_enabled") }}</label>
+                        </div>
+                        <div class='popup-item'>
                             <input type="checkbox" id="preferences-message-sound-enabled"
                                 v-model="isMessageSoundEnabled" v-on:change="storeSet('isMessageSoundEnabled')"><label
                                 for="preferences-message-sound-enabled">{{ $t("ui.preferences_message_sound_enabled") }}</label>
