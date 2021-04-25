@@ -98,7 +98,7 @@ input[type='range']
 
 .message span
 {
-    display: inline-block;
+    unicode-bidi: isolate;
 }
 
 .video-container
