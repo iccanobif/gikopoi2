@@ -292,7 +292,9 @@ const vueApp = new Vue({
                 this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
                 this.updateAudioElementsVolume()
                 
-                if (this.showNotifications)
+                if (Notification.permission == "granted")
+                    this.notificationPermissionsGranted = true
+                else if (this.showNotifications)
                     Notification.requestPermission()
                                 .then((permission) => this.notificationPermissionsGranted = permission == "granted")
                 
