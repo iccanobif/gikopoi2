@@ -129,10 +129,14 @@
                         <button id="btn-list" v-on:click="openUserListPopup()">{{ $t("ui.button_list") }}</button>
                     </div>
                     <div class="tooltip-section">
-                        <button v-on:click="openPreferencesPopup" class="fas fa-cogs"></button>
-                        <button v-if="notificationPermissionsGranted" v-on:click="toggleDesktopNotifications" class="fas"
-                        v-bind:class="{'fa-bell': showNotifications, 'fa-bell-slash': !showNotifications}"></button>
-                        <!-- <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{ $t("ui.button_crisp") }}</button> -->
+                        <button v-on:click="openPreferencesPopup" 
+                                v-bind:title="$t('ui.button_preferences')" 
+                                class="fas fa-cogs"></button>
+                        <button v-if="notificationPermissionsGranted" 
+                                v-on:click="toggleDesktopNotifications" 
+                                v-bind:title="$t('ui.preferences_show_notifications')"
+                                class="fas"
+                                v-bind:class="{'fa-bell': showNotifications, 'fa-bell-slash': !showNotifications}"></button>
                     </div>
                     <div class="tooltip-section" v-if="isMoveSectionVisible">
                         <div class='tooltip-section-title'>
