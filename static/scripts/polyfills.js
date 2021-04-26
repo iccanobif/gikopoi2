@@ -12,7 +12,7 @@ Promise.allSettled = Promise.allSettled ||
 
 window.Notification = window.Notification ||
 {
-    requestPermission: () => { },
+    requestPermission: () => { return Promise.resolve("denied") },
     permission: "default",
 }
 
