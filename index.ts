@@ -304,7 +304,8 @@ io.on("connection", function (socket: any)
                 }
 
                 // Become fat if you're at position 2,4 in yoshinoya room
-                if (currentRoom.id == "yoshinoya" && user.position.x == 2 && user.position.y == 4)
+                // But if you're a squid, you'll stay a squid all your life!
+                if (currentRoom.id == "yoshinoya" && user.position.x == 2 && user.position.y == 4 && user.characterId != "ika")
                 {
                     user.characterId = "hungry_giko"
                     // sendCurrentRoomState()
