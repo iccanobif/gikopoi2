@@ -1551,6 +1551,22 @@ const vueApp = new Vue({
                         event.preventDefault()
                         this.sendNewPositionToServer("down");
                         break;
+                    case "u": case "U":
+                        event.preventDefault()
+                        this.sendNewBubblePositionToServer('left')
+                        break;
+                    case "i": case "I":
+                        event.preventDefault()
+                        this.sendNewBubblePositionToServer('down')
+                        break;
+                    case "o": case "O":
+                        event.preventDefault()
+                        this.sendNewBubblePositionToServer('up')
+                        break;
+                    case "p": case "P":
+                        event.preventDefault()
+                        this.sendNewBubblePositionToServer('right')
+                        break;
                 }
             }
         },
