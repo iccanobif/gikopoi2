@@ -290,6 +290,7 @@ const vueApp = new Vue({
                 this.paintLoop();
 
                 this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
+
                 this.updateAudioElementsVolume()
                 
                 if (Notification.permission == "granted")
