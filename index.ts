@@ -687,7 +687,7 @@ function emitServerStats(areaId: string)
         const connectedUserIds: Set<string> = getFilteredConnectedUserList(u, null, areaId)
             .reduce((acc, val) => acc.add(val.id), new Set<string>())
 
-        userRoomEmit(u, areaId, null, "server-stats", {
+        io.to(u.socketId).emit("server-stats", {
             userCount: connectedUserIds.size,
             streamCount: Object.values(roomStates[areaId])
                 .map(s => s.streams)
