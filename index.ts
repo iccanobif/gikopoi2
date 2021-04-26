@@ -304,7 +304,8 @@ io.on("connection", function (socket: any)
                 }
 
                 // Become fat if you're at position 2,4 in yoshinoya room
-                if (currentRoom.id == "yoshinoya" && user.position.x == 2 && user.position.y == 4)
+                // But if you're a squid, you'll stay a squid all your life!
+                if (currentRoom.id == "yoshinoya" && user.position.x == 2 && user.position.y == 4 && user.characterId != "ika")
                 {
                     user.characterId = "hungry_giko"
                     // sendCurrentRoomState()
@@ -686,7 +687,7 @@ function emitServerStats(areaId: string)
         const connectedUserIds: Set<string> = getFilteredConnectedUserList(u, null, areaId)
             .reduce((acc, val) => acc.add(val.id), new Set<string>())
 
-        userRoomEmit(u, areaId, null, "server-stats", {
+        io.to(u.socketId).emit("server-stats", {
             userCount: connectedUserIds.size,
             streamCount: Object.values(roomStates[areaId])
                 .map(s => s.streams)
