@@ -453,6 +453,10 @@ const vueApp = new Vue({
             myUserID = this.myUserID = loginMessage.userId;
             this.myPrivateUserID = loginMessage.privateUserId;
 
+            logToServer(new Date() + " " + this.myUserID 
+                        + " window.EXPECTED_SERVER_VERSION: "+ window.EXPECTED_SERVER_VERSION
+                        + " loginMessage.appVersion: " + loginMessage.appVersion 
+                        + " DIFFERENT: " + (window.EXPECTED_SERVER_VERSION != loginMessage.appVersion))
             if (window.EXPECTED_SERVER_VERSION != loginMessage.appVersion)
                 this.pageRefreshRequired = true
             
