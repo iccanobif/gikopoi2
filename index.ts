@@ -217,8 +217,7 @@ io.on("connection", function (socket: any)
 
             if (msg == "#ika")
             {
-                user.characterId = "ika"
-                userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId)
+                changeCharacter(user, "ika")
                 user.lastAction = Date.now()
                 return;
             }
@@ -305,11 +304,9 @@ io.on("connection", function (socket: any)
 
                 // Become fat if you're at position 2,4 in yoshinoya room
                 // But if you're a squid, you'll stay a squid all your life!
-                if (currentRoom.id == "yoshinoya" && user.position.x == 2 && user.position.y == 4 && user.characterId != "ika")
+                if (currentRoom.id == "yoshinoya" && user.position.x == 2 && user.position.y == 4)
                 {
-                    user.characterId = "hungry_giko"
-                    // sendCurrentRoomState()
-                    userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId)
+                    changeCharacter(user, "hungry_giko")
                 }
 
                 user.position.x = newX
@@ -696,6 +693,15 @@ function emitServerStats(areaId: string)
                 .length.toString()
         })
     });
+}
+
+function changeCharacter(user: Player, characterId: string)
+{
+    if (user.characterId == "ika")
+        return // The curse of being a squid can never be lifted.
+
+    user.characterId = characterId
+    userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId)
 }
 
 function userRoomEmit(user: Player, areaId: string, roomId: string | null, ...msg: any[])
