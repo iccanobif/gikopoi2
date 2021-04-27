@@ -27,7 +27,7 @@ const maximumUsersPerIpPerArea = 2
 
 const appVersion = Number.parseInt(readFileSync("version").toString())
 
-log.setLevel(log.levels.DEBUG)
+log.setLevel(log.levels.INFO)
 
 console.log("Gikopoipoi (version " + appVersion + ")")
 console.log("Using settings:", JSON.stringify(settings))
@@ -244,7 +244,7 @@ io.on("connection", function (socket: any)
 
         try
         {
-            log.info("user-move", user.id, direction)
+            log.debug("user-move", user.id, direction)
             setUserAsActive(user)
 
             const shouldSpinwalk = user.directionChangedAt !== null
@@ -276,7 +276,7 @@ io.on("connection", function (socket: any)
 
                 const rejectMovement = () =>
                 {
-                    log.info("movement rejected", user.id)
+                    log.debug("movement rejected", user.id)
                     socket.emit("server-reject-movement")
                 }
 
