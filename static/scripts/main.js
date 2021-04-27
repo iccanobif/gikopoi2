@@ -156,7 +156,6 @@ const vueApp = new Vue({
         wantToStream: false,
         connectionLost: false,
         connectionRefused: false,
-        steppingOnPortalToNonAvailableRoom: false,
 
         pageRefreshRequired: false,
         passwordInputVisible: false,
@@ -1344,8 +1343,6 @@ const vueApp = new Vue({
 
             if (currentUser.isWalking) return;
 
-            this.steppingOnPortalToNonAvailableRoom = false;
-
             const door = Object.values(this.currentRoom.doors).find(
                 (d) =>
                     d.target !== null &&
@@ -1354,12 +1351,6 @@ const vueApp = new Vue({
             );
 
             if (!door) return;
-
-            if (door.target == "NOT_READY_YET")
-            {
-                this.steppingOnPortalToNonAvailableRoom = true;
-                return;
-            }
 
             const { roomId, doorId } = door.target;
 
