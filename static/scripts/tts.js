@@ -1,5 +1,15 @@
 import { urlRegex } from "./utils.js";
 
+const synth = new Animalese('animalese.wav', function() { console.log("test") });
+
+function speakAnimalese(text, pitch) {
+  // scale pitch so that it's within the range 0.2 - 2.0
+  pitch =  (pitch/2)*1.8+0.2
+  var audio = new Audio();
+  audio.src = synth.Animalese(text, false, 1).dataURI;
+  audio.play();
+}
+
 function isJapanese(text)
 {
     // very simple heuristic, we just assume that if a sentence has at least one japanese character, then it must be japanese
@@ -24,6 +34,12 @@ export function speak(message, voiceURI, volume, pitch)
         .replace(urlRegex, "URL")
         .replace(/ww+/gi, "わらわら")
         .replace(/88+/gi, "ぱちぱち")
+
+    if (voiceURI == "animalese")
+    {
+        speakAnimalese(message)
+        return
+    }
 
     const allVoices = speechSynthesis.getVoices()
 

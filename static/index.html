@@ -493,7 +493,8 @@
                         <div class='popup-item'>
                             <label for="preferences-tts-voice">{{ $t("ui.preferences_tts_voice") }}</label>
                             <select id="preferences-tts-voice" v-model="ttsVoiceURI" v-on:change="changeVoice">
-                                <option value="automatic">Automatic</option>
+                                <option value="automatic">{{ $t("ui.preferences_tts_voice_automatic") }}</option>
+                                <option value="animalese">{{ $t("ui.preferences_tts_voice_animalese") }}</option>
                                 <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}</option>
                             </select>
                         </div>
@@ -536,6 +537,13 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src='scripts/jquery.ui.touch-punch.min.js'></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script type="module" src='scripts/main.js'></script>
+    <script type="module" src='scripts/main.js'></script>
+    
+    <script src="scripts/riffwave.js"></script>
+    <script src="scripts/Blob.js"></script>
+    <script src="scripts/animalese.js"></script>
+
     <script type="module" src='scripts/polyfills.js'></script>
     <script type="module" src='scripts/main.js'></script>
 
