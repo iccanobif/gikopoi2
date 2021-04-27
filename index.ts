@@ -1167,7 +1167,7 @@ setInterval(() =>
             }
             else if (!user.connectionTime && user.isGhost)
             {
-                log.info(user.id, "is a ghost without disconnection time")
+                log.info(user.id, "is a ghost without connection time")
                 disconnectUser(user)
             }
             else

@@ -112,6 +112,7 @@ export function deserializeUserState(serializedState: string)
     for (const user of Object.values(users))
     {
         user.isGhost = true;
+        user.disconnectionTime = Date.now()
         if (user.blockedIps === undefined)
             user.blockedIps = []
         if (user.lastMessageDates === undefined)
