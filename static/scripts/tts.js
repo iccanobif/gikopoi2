@@ -5,9 +5,12 @@ const synth = new Animalese('animalese.wav', function () { console.log("test") }
 function speakAnimalese(text, pitch)
 {
     // replace every japanese character with a random roman letter
-    text = text.split("").map(c => isJapaneseCharacter(c) ?
-        ["a", "e", "i", "o", "u"][Math.floor(Math.random() * 5)]
-        : c).join("")
+    text = text
+        .split("")
+        .map(c => isJapaneseCharacter(c) 
+                  ? ["a", "e", "i", "o", "u"][Math.floor(Math.random() * 5)]
+                  : c)
+        .join("")
 
     console.log(text)
 
