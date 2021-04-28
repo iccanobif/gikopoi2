@@ -765,7 +765,7 @@ app.get("/", (req, res) =>
         return
     }
 
-    log.info("Fetching root...")
+    log.info("Fetching root..." + req.ip + " " + req.rawHeaders.join("|"))
     readFile("static/index.html", 'utf8', async (err, data) =>
     {
         try
