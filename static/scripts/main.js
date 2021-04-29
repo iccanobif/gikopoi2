@@ -1904,7 +1904,7 @@ const vueApp = new Vue({
                         throw new UserException("error_obtaining_audio");
                     
                     // VU Meter
-                    if (AudioContext)
+                    if (window.AudioContext)
                     {
                         const context = new AudioContext();
                         const microphone = context.createMediaStreamSource(this.mediaStream);
