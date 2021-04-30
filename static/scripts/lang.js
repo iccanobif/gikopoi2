@@ -79,6 +79,9 @@ export const messages =
             stream_form_screen_capture: "画面共有",
             stream_form_screen_capture_audio: "画面の音声を共有",
             stream_form_screen_capture_audio_notice: "この機能は実験中です。ChromeとEdgeでのみ有効です。\nWindowsでは、画面の音声とタブの音声しか取得できません。",
+            stream_form_camera_facing: "スマホのカメラ：",
+            stream_form_camera_facing_user: "フロント",
+            stream_form_camera_facing_environment: "バック",
             
             preferences_title: "設定",
             preferences_name_bg: "名前の背景を表示",
@@ -252,6 +255,9 @@ export const messages =
             stream_form_screen_capture: "Screen Capture",
             stream_form_screen_capture_audio: "Screen Capture Audio",
             stream_form_screen_capture_audio_notice: "This feature is experimental. Chrome and Edge only. \nOn Windows, only the screen audio or tab audio can be captured.",
+            stream_form_camera_facing: "Phone Camera:",
+            stream_form_camera_facing_user: "Front",
+            stream_form_camera_facing_environment: "Back",
             
             preferences_title: "Preferences",
             preferences_name_bg: "Show Username Background",

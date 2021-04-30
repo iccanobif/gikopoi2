@@ -340,6 +340,14 @@
                         <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label 
                             for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
                     </div>
+                    <div class='popup-item' v-if="streamMode != 'sound'">
+                        <span>{{ $t("ui.stream_form_camera_facing") }}</span><input type="radio"
+                            id="stream-form-camera-facing-user" value="user" v-model="streamCameraFacing"><label
+                            for="stream-form-camera-facing-user">{{ $t("ui.stream_form_camera_facing_user") }}</label>
+
+                        <input type="radio" id="stream-form-camera-facing-environment" value="environment" v-model="streamCameraFacing"><label
+                            for="stream-form-camera-facing-environment">{{ $t("ui.stream_form_camera_facing_environment") }}</label>
+                    </div>
                     <div v-if="streamMode != 'video'">
                         <div class='popup-item'>
                             <button v-if="!displayAdvancedStreamSettings"
