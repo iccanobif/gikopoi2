@@ -137,6 +137,7 @@ const vueApp = new Vue({
         streamAutoGain: false,
         streamScreenCapture: false,
         streamScreenCaptureAudio: false,
+        streamCameraFacing: "user",
 
         // Warning Toast
         isWarningToastOpen: false,
@@ -1859,6 +1860,7 @@ const vueApp = new Vue({
                                     ideal: 24,
                                     min: 10,
                                 },
+                                facingMode: this.streamCameraFacing,
                             },
                             audio: !withSound ? undefined : audioConstraints
                         }
@@ -2157,6 +2159,7 @@ const vueApp = new Vue({
             this.streamAutoGain = false;
             this.streamScreenCapture = false;
             this.streamScreenCaptureAudio = false;
+            this.streamCameraFacing = "user";
         },
         closeStreamPopup: function ()
         {
