@@ -777,12 +777,18 @@ app.get("/", (req, res) =>
                 return
             }
 
-            const { statusCode, body } = await got(
-                'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
+            try {
+                const { statusCode, body } = await got(
+                    'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
+                    
+                data = data.replace("@LOGIN_FOOTER@", statusCode === 200 ? body : "")
+            }
+            catch (e)
+            {
+                log.error(e.message + " " + e.stack);
+            }
 
-            data = data
-                .replace("@LOGIN_FOOTER@", statusCode === 200 ? body : "")
-                .replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
+            data = data.replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
             
             for (const areaId in roomStates)
             {

@@ -1,3 +1,4 @@
+import { kanaToRomajiMap, kanjiToKanaMap, katakanaToHiragana } from "./japanese-tools.js";
 import { urlRegex } from "./utils.js";
 
 const synth = new Animalese('animalese.wav', function () { console.log("test") });
@@ -5,11 +6,25 @@ const synth = new Animalese('animalese.wav', function () { console.log("test") }
 function speakAnimalese(text, pitch)
 {
     // replace every japanese character with a random roman letter
-    text = text
+    // text = text
+    //     .split("")
+    //     .map(c => isJapaneseCharacter(c) 
+    //               ? ["a", "e", "i", "o", "u"][Math.floor(Math.random() * 5)]
+    //               : c)
+    //     .join("")
+
+    // attempt to translate each japanese character to romaji
+    text = katakanaToHiragana(text)
         .split("")
-        .map(c => isJapaneseCharacter(c) 
-                  ? ["a", "e", "i", "o", "u"][Math.floor(Math.random() * 5)]
-                  : c)
+        .map(c =>
+        {
+            const kanaizedKanji = kanjiToKanaMap[c]
+            if (kanaizedKanji)
+                return katakanaToHiragana(kanaizedKanji).split("").map(x => kanaToRomajiMap[x]).join("")
+
+            return kanaToRomajiMap[c] || c
+        })
+
         .join("")
 
     console.log(text)
@@ -37,7 +52,7 @@ function isJapanese(text)
     // very simple heuristic, we just assume that if a sentence has at least one japanese character, then it must be japanese
     for (let i = 0; i < text.length; i++)
         if (isJapaneseCharacter(text.charAt(i))) return true
-    
+
     return false
 }
 
