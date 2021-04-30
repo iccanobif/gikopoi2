@@ -707,6 +707,9 @@ const vueApp = new Vue({
             messageDiv.dataset.userId = userId
             if (userId && userId == this.highlightedUserId)
                 messageDiv.classList.add("highlighted-message")
+            
+            if (!userId && userName == "SYSTEM")
+                messageDiv.classList.add("system-message")
 
             const [displayName, tripcode] = this.toDisplayName(userName).split("◆")
 

@@ -681,6 +681,11 @@ button.checked {
     color: red;
 }
 
+.system-message
+{
+    font-weight: bold;
+}
+
 .message-author
 {
     cursor: pointer;
