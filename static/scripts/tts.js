@@ -73,7 +73,7 @@ export function speak(message, voiceURI, volume, pitch)
 
     if (voiceURI == "animalese")
     {
-        speakAnimalese(message, pitch, volume)
+        speakAnimalese(cleanMsgForSpeech, pitch, volume)
         return
     }
 
