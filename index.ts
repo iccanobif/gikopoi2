@@ -1,8 +1,8 @@
 import express from "express"
 import { readFile, readFileSync, writeFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
-import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot } from "./types";
-import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, serializeUserState, createPlayerDto, getFilteredConnectedUserList, setUserAsActive } from "./users";
+import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState } from "./types";
+import { addNewUser, restoreUserState, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive } from "./users";
 import { sleep } from "./utils";
 import got from "got";
 import log from "loglevel";
@@ -131,7 +131,11 @@ io.on("connection", function (socket: any)
             user.disconnectionTime = Date.now()
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-user-left-room", user.id);
-            clearStream(user)
+
+            setTimeout(() => {
+                if (user.isGhost)
+                    clearStream(user)
+            })
             emitServerStats(user.areaId)
         }
         catch (e)
@@ -1219,23 +1223,23 @@ async function persistState()
 {
     try
     {
+        const state: PersistedState = { users: getAllUsers(), rooms: roomStates }
+
         if (process.env.PERSISTOR_URL)
         {
-            const serializedUserState = serializeUserState(false)
             await got.post(process.env.PERSISTOR_URL, {
                 headers: {
                     "persistor-secret": process.env.PERSISTOR_SECRET,
                     "Content-Type": "text/plain"
                 },
-                body: serializedUserState
+                body: JSON.stringify(state)
             })
         }
         else
         {
-            const serializedUserState = serializeUserState(true)
             // use local file
             writeFile("persisted-state",
-                serializedUserState,
+                JSON.stringify(state, null, 2),
                 { encoding: "utf-8" },
                 (err) =>
                 {
@@ -1268,7 +1272,7 @@ function restoreState()
                     }
                 })
                 if (response.statusCode == 200)
-                    deserializeUserState(response.body)
+                    restoreUserState(response.body)
                 resolve()
             }
             catch (exc)
@@ -1289,7 +1293,7 @@ function restoreState()
                 {
                     try
                     {
-                        deserializeUserState(data)
+                        restoreUserState(data)
                     }
                     catch (exc)
                     {

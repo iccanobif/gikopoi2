@@ -111,18 +111,9 @@ export function removeUser(user: Player)
     delete users[user.id];
 }
 
-export function serializeUserState(prettify: boolean): string
+export function restoreUserState(persistedUsers: Player[])
 {
-    if (prettify)
-        return JSON.stringify(users, null, 2)
-    else
-        return JSON.stringify(users)
-
-}
-
-export function deserializeUserState(serializedState: string)
-{
-    users = JSON.parse(serializedState)
+    const a = persistedUsers.reduce((acc, cur) => acc[cur.id] = cur, {})
 
     // Initialize all users as ghosts (they'll be unflagged when users connect again through the websocket)
     for (const user of Object.values(users))
