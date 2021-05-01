@@ -231,12 +231,15 @@ const vueApp = new Vue({
 
         document.getElementById("username-textbox").focus()
 
-        this.availableTTSVoices = speechSynthesis.getVoices()
-        if (speechSynthesis.addEventListener)
+        if (window.speechSynthesis)
         {
-            speechSynthesis.addEventListener("voiceschanged", () => {
-                this.availableTTSVoices = speechSynthesis.getVoices()
-            })
+            this.availableTTSVoices = speechSynthesis.getVoices()
+            if (speechSynthesis.addEventListener)
+            {
+                speechSynthesis.addEventListener("voiceschanged", () => {
+                    this.availableTTSVoices = speechSynthesis.getVoices()
+                })
+            }
         }
         
         this.setMentionSoundFunction()
@@ -293,12 +296,15 @@ const vueApp = new Vue({
 
                 this.updateAudioElementsVolume()
                 
-                if (Notification.permission == "granted")
-                    this.notificationPermissionsGranted = true
-                else if (this.showNotifications)
-                    Notification.requestPermission()
-                                .then((permission) => this.notificationPermissionsGranted = permission == "granted")
-                
+                if (window.Notification)
+                {
+                    if (Notification.permission == "granted")
+                        this.notificationPermissionsGranted = true
+                    else if (this.showNotifications)
+                        Notification.requestPermission()
+                                    .then((permission) => this.notificationPermissionsGranted = permission == "granted")
+                }
+
                 $( "#sound-effect-volume" ).slider({
                     orientation: "vertical",
                     range: "min",
@@ -791,18 +797,21 @@ const vueApp = new Vue({
                 speak(plainMsg, this.ttsVoiceURI, this.voiceVolume, user.voicePitch)
             }
             
-            if (!this.showNotifications
-                || document.visibilityState == "visible"
-                || user.id == this.myUserID) return;
-
-            const permission = await Notification.requestPermission()
-            if (permission != "granted") return;
-            
-            const character = user.character
-            new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
+            if (window.Notification)
             {
-                icon: "characters/" + character.characterName + "/front-standing." + character.format
-            })
+                if (!this.showNotifications
+                    || document.visibilityState == "visible"
+                    || user.id == this.myUserID) return;
+
+                const permission = await Notification.requestPermission()
+                if (permission != "granted") return;
+                
+                const character = user.character
+                new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
+                {
+                    icon: "characters/" + character.characterName + "/front-standing." + character.format
+                })
+            }
         },
         toDisplayName: function (name)
         {
@@ -1364,7 +1373,8 @@ const vueApp = new Vue({
         {
             if (this.mediaStream) this.stopStreaming();
 
-            speechSynthesis.cancel();
+            if (window.speechSynthesis)
+                speechSynthesis.cancel();
             this.requestedRoomChange = true;
             this.socket.emit("user-change-room", { targetRoomId, targetDoorId });
         },
@@ -2247,6 +2257,11 @@ const vueApp = new Vue({
         },
         handleShowNotifications: async function ()
         {
+            if (!window.Notification)
+            {
+                this.notificationPermissionsGranted = false
+                return
+            }
             if (this.showNotifications)
             {
                 const permission = await Notification.requestPermission()
@@ -2309,14 +2324,18 @@ const vueApp = new Vue({
         },
         handleEnableTextToSpeech: function () 
         {
-            speechSynthesis.cancel()
+            if (window.speechSynthesis)
+                speechSynthesis.cancel()
             this.storeSet('enableTextToSpeech')
         },
         changeVoice: function () {
             speak(i18n.t("test"), this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('ttsVoiceURI')
         },
+        // I think this getVoices() function isn't called anywhere, might be okay to remove
         getVoices: function () {
+            if (!window.speechSynthesis)
+                return []
             return speechSynthesis.getVoices()
         },
         changeVoiceVolume: function(newValue) {
@@ -2398,6 +2417,9 @@ const vueApp = new Vue({
 });
 
 const debouncedSpeakTest = debounceWithDelayedExecution((ttsVoiceURI, voiceVolume) => {
-    speechSynthesis.cancel()
-    speak(i18n.t("test"), ttsVoiceURI, voiceVolume)
+    if (window.speechSynthesis)
+    {
+        speechSynthesis.cancel()
+        speak(i18n.t("test"), ttsVoiceURI, voiceVolume)
+    }
 }, 150)

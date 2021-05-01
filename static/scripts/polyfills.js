@@ -10,16 +10,16 @@ Promise.allSettled = Promise.allSettled ||
         }))
     )));
 
-window.Notification = window.Notification ||
-{
-    requestPermission: () => { return Promise.resolve("denied") },
-    permission: "default",
-}
+// window.Notification = window.Notification ||
+// {
+//     requestPermission: () => { return Promise.resolve("denied") },
+//     permission: "default",
+// }
 
-if (!window.speechSynthesis)
-    window.speechSynthesis = {
-        getVoices: () => [],
-        cancel: () => {}
-    }
+// if (!window.speechSynthesis)
+//     window.speechSynthesis = {
+//         getVoices: () => [],
+//         cancel: () => {}
+//     }
 
-window.speechSynthesis.addEventListener = window.speechSynthesis.addEventListener || (() => { })
+// window.speechSynthesis.addEventListener = window.speechSynthesis.addEventListener || (() => { })
