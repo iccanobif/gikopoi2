@@ -934,7 +934,7 @@ const vueApp = new Vue({
                         }
                         preparedLines.push(lastPreparedLine)
                         if (line.length > lastPreparedLine.length)
-                            messageLines.push(line.substring(lastPreparedLine.length))
+                            messageLines.unshift(line.substring(lastPreparedLine.length))
                         textWidth = Math.max(textWidth, lastLineWidth);
                     }
                     messageLines = null;
