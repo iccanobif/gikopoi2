@@ -3,7 +3,7 @@ import { urlRegex } from "./utils.js";
 
 const synth = new Animalese('animalese.wav', function () { console.log("test") });
 
-function speakAnimalese(text, pitch)
+function speakAnimalese(text, pitch, volume)
 {
     // replace every japanese character with a random roman letter
     // text = text
@@ -27,12 +27,17 @@ function speakAnimalese(text, pitch)
 
         .join("")
 
-    console.log(text)
-
     // scale pitch so that it's within the range 0.2 - 2.0
-    pitch = (pitch / 2) * 1.8 + 0.2
+    if (pitch === null || pitch === undefined)
+        pitch = 1
+    else
+        pitch = (pitch / 2) * 1.3 + 0.7
     var audio = new Audio();
-    audio.src = synth.Animalese(text, false, 1).dataURI;
+    audio.src = synth.Animalese(text, false, pitch).dataURI;
+    audio.volume = volume / 100
+
+    console.log(pitch)
+
     audio.play();
 }
 
@@ -68,7 +73,7 @@ export function speak(message, voiceURI, volume, pitch)
 
     if (voiceURI == "animalese")
     {
-        speakAnimalese(message)
+        speakAnimalese(message, pitch, volume)
         return
     }
 
