@@ -1425,7 +1425,11 @@ const vueApp = new Vue({
             else if (message.trim() == '#ﾘｽﾄ' || message.trim() == '#list')
                 this.openUserListPopup();
             else
-                this.socket.emit("user-msg", message);
+            {
+                // If the user has already cleared their bubble, avoid sending any more empty messages.
+                if (message || this.users[this.myUserID].message)
+                    this.socket.emit("user-msg", message);
+            }
             inputTextbox.value = "";
         },
         registerKeybindings: function ()
