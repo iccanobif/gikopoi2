@@ -58,6 +58,7 @@ export interface Room
     blocked: Coordinates[];
     forbiddenMovements: { xFrom: number, yFrom: number, xTo: number, yTo: number }[],
     doors: { [doorId: string]: Door };
+    worldSpawns?: Door[];
     streamSlotCount: number;
     secret: boolean;
     forcedAnonymous?: boolean;

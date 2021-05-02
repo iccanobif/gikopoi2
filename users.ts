@@ -7,19 +7,20 @@ function generateId()
     return v4()
 }
 
-const doorId = ("world_spawn" in defaultRoom.doors ? "world_spawn" : defaultRoom.spawnPoint);
-const defaultSpawn = defaultRoom.doors[doorId];
+// const doorId = ("world_spawn" in defaultRoom.doors ? "world_spawn" : defaultRoom.spawnPoint);
+// const defaultSpawn = defaultRoom.doors[defaultRoom.spawnPoint];
 
 const possibleVoicePitches = [0, 0.5, 1, 1.5, 2]
 let lastUsedVoicePitchIndex = 0
+let lastUsedSpawnPointIndex = 0
 
 export class Player
 {
     public id: string = generateId();
     public privateId: string | undefined = generateId();
     public name: string = "Anonymous";
-    public position: { x: number, y: number } = { x: defaultSpawn.x, y: defaultSpawn.y };
-    public direction: Direction = (defaultSpawn.direction !== null ? defaultSpawn.direction : "down");
+    public position: { x: number, y: number };
+    public direction: Direction;
     public lastDirection: Direction | null = null;
     public directionChangedAt: number | null = null;
     public isGhost: boolean = true;
@@ -40,6 +41,21 @@ export class Player
 
     constructor(options: { name?: string, characterId: string, areaId: Area, ip: string })
     {
+        const spawn = (() => {
+            if (defaultRoom.worldSpawns)
+            {
+                lastUsedSpawnPointIndex = (lastUsedSpawnPointIndex + 1) % defaultRoom.worldSpawns!.length
+                return defaultRoom.worldSpawns![lastUsedSpawnPointIndex]
+            }
+            else
+            {
+                return defaultRoom.doors[defaultRoom.spawnPoint]
+            }
+        })()
+        
+        this.direction = (spawn.direction !== null ? spawn.direction : "down")
+        this.position = { x: spawn.x, y: spawn.y }
+        
         if (typeof options.name === "string") this.name = options.name
         this.characterId = options.characterId
         this.areaId = options.areaId
