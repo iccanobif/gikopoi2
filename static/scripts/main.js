@@ -599,7 +599,7 @@ const vueApp = new Vue({
 
             this.socket.on("server-user-joined-room", async (user) =>
             {
-                if (this.isLoginSoundEnabled)
+                if (this.isLoginSoundEnabled && this.soundEffectVolume > 0)
                     document.getElementById("login-sound").play();
                 this.addUser(user);
                 this.updateCanvasObjects();
@@ -784,12 +784,15 @@ const vueApp = new Vue({
             
             if(!user.message) return;
             
-            if (this.mentionSoundFunction &&
-                this.mentionSoundFunction(plainMsg))
-                document.getElementById("mention-sound").play();
-            else if (this.isMessageSoundEnabled)
-                document.getElementById("message-sound").play();
-            
+            if (this.soundEffectVolume > 0)
+            {
+                if (this.mentionSoundFunction &&
+                    this.mentionSoundFunction(plainMsg))
+                    document.getElementById("mention-sound").play();
+                else if (this.isMessageSoundEnabled)
+                    document.getElementById("message-sound").play();
+            }
+
             this.writeMessageToLog(user.name, msg, user.id)
 
             if (this.enableTextToSpeech)
