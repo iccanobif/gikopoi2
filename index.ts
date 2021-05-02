@@ -408,6 +408,7 @@ io.on("connection", function (socket: any)
 
     socket.on("user-want-to-take-stream", async function (streamSlotId: number)
     {
+        log.info("user-want-to-take-stream", user.id, streamSlotId)
         try
         {
             if (streamSlotId === undefined) return;
@@ -419,6 +420,7 @@ io.on("connection", function (socket: any)
                 || stream.publisherId === null
                 || roomState.janusRoomServer === null)
             {
+                log.info("server-not-ok-to-take-stream", user.id, streamSlotId)
                 socket.emit("server-not-ok-to-take-stream", streamSlotId);
                 return;
             };

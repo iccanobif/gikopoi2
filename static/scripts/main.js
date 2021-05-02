@@ -2197,6 +2197,7 @@ const vueApp = new Vue({
         },
         changeSoundEffectVolume: function (newVolume)
         {
+            debouncedLogSoundVolume(this.myUserID, newVolume)
             this.soundEffectVolume = newVolume
 
             this.updateAudioElementsVolume()
@@ -2425,4 +2426,8 @@ const debouncedSpeakTest = debounceWithDelayedExecution((ttsVoiceURI, voiceVolum
         speechSynthesis.cancel()
         speak(i18n.t("test"), ttsVoiceURI, voiceVolume)
     }
+}, 150)
+
+const debouncedLogSoundVolume = debounceWithDelayedExecution((myUserID, volume) => {
+    logToServer(myUserID + " SFX volume: " + volume)
 }, 150)
