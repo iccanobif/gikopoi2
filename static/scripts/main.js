@@ -1942,7 +1942,10 @@ const vueApp = new Vue({
                         this.vuMeterTimer = setInterval(() => {
                             try {
                                 if (this.streamSlotIdInWhichIWantToStream == null)
-                                    clearInterval(this.vuMeterTimer)    
+                                {
+                                    clearInterval(this.vuMeterTimer)
+                                    return
+                                }
                                 analyser.getByteFrequencyData(dataArrayAlt)
                                 
                                 const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
