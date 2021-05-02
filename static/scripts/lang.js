@@ -121,9 +121,9 @@ export const messages =
             connection_refused: "接続が失われました。ページを再読み込みしてください。",
             page_refresh_required: "サーバーが更新されたので、ページを再読み込みしてください。",
             
-            error_obtaining_media: "メディアを取得できませんでした。",
-            error_obtaining_video: "動画を取得できませんでした。",
-            error_obtaining_audio: "音声を取得できませんでした。",
+            error_obtaining_media: "メディアを取得できませんでした。ブラウザの許可を確認してください。",
+            error_obtaining_video: "動画を取得できませんでした。ブラウザの許可を確認してください。",
+            error_obtaining_audio: "音声を取得できませんでした。ブラウザの許可を確認してください。",
             no_webrtc: "このブラウザはWebRTCをサポートしていません。",
 
             unknown_error: "不明なエラーで接続に失敗しました。",
@@ -298,9 +298,9 @@ export const messages =
             connection_refused: "Connection Lost, please refresh the page.",
             page_refresh_required: "An update is ready, so please refresh this page.",
             
-            error_obtaining_media: "Unable to obtain media.",
-            error_obtaining_video: "Unable to obtain video.",
-            error_obtaining_audio: "Unable to obtain audio.",
+            error_obtaining_media: "Unable to obtain media. Please check the browser permissions.",
+            error_obtaining_video: "Unable to obtain video. Please check the browser permissions.",
+            error_obtaining_audio: "Unable to obtain audio. Please check the browser permissions.",
             no_webrtc: "Sorry, your browser doesn't support WebRTC.",
             
             unknown_error: "The connection failed due to an unknown error.",
