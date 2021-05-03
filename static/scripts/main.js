@@ -1470,12 +1470,15 @@ const vueApp = new Vue({
                 }
             }, 100)
 
-            const observer = new ResizeObserver((mutationsList, observer) =>
+            if (window.ResizeObserver)
             {
-                this.isRedrawRequired = true
-                this.paint()
-            });
-            observer.observe(document.getElementById("canvas-container"));
+                const observer = new ResizeObserver((mutationsList, observer) =>
+                {
+                    this.isRedrawRequired = true
+                    this.paint()
+                });
+                observer.observe(document.getElementById("canvas-container"));
+            }
         },
         toggleInfobox: function ()
         {
@@ -2236,7 +2239,7 @@ const vueApp = new Vue({
         {
             this.isRedrawRequired = true
             
-            if(chatLog.lastChild)
+            if(chatLog.lastChild && window.ResizeObserver)
             {
                 const observer = new ResizeObserver((mutationsList, observer) =>
                 {
