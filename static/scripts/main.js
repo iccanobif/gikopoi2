@@ -2072,9 +2072,16 @@ const vueApp = new Vue({
                 "track",
                 (event) =>
                 {
-                    const videoElement = document.getElementById("received-video-" + streamSlotId)
-                    videoElement.srcObject = event.streams[0];
-                    $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
+                    try 
+                    {
+                        const videoElement = document.getElementById("received-video-" + streamSlotId)
+                        videoElement.srcObject = event.streams[0];
+                        $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
+                    }
+                    catch (exc)
+                    {
+                        console.error(exc)
+                    }
                 },
                 { once: true }
             );
