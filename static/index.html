@@ -524,10 +524,6 @@
                     <button v-on:click="closeWarningToast">{{ $t("ui.popup_button_ok") }}</button>
                 </div>
             </div>
-
-            <audio id="message-sound" src="message.mp3"></audio>
-            <audio id="mention-sound" src="mention.mp3"></audio>
-            <audio id="login-sound" src="login.mp3"></audio>
         </div>
         <div id="logged-out-page" v-if="loggedOut" class="full-screen-page">
             {{ $t("msg.goodbye") }}
@@ -538,6 +534,10 @@
             💩
         </div>
     </div>
+
+    <audio id="message-sound" src="message.mp3"></audio>
+    <audio id="mention-sound" src="mention.mp3"></audio>
+    <audio id="login-sound" src="login.mp3"></audio>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-i18n@8.22.4/dist/vue-i18n.js"></script>

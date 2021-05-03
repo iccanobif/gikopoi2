@@ -1037,7 +1037,7 @@ app.post("/login", (req, res) =>
 
         const user = addNewUser(processedUserName, characterId, areaId, req.ip);
 
-        log.info("Logged in", user.id, user.privateId, "<" + user.name + ">", "from", req.ip)
+        log.info("Logged in", user.id, user.privateId, "<" + user.name + ">", "from", req.ip, areaId)
         sendResponse({
             appVersion,
             isLoginSuccessful: true,
