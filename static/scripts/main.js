@@ -173,7 +173,7 @@ const vueApp = new Vue({
     mounted: function ()
     {
         console.log("referrer:", document.referrer)
-        
+       
         window.addEventListener("keydown", (ev) =>
         {
             if (ev.shiftKey && ev.ctrlKey && ev.code == "Digit9")
@@ -327,6 +327,15 @@ const vueApp = new Vue({
                         this.changeVoiceVolume(ui.value);
                     }
                 });
+
+                const VP8 = await isWebrtcReceiveCodecSupported(WebrtcCodec.VP8);
+                const VP9 = await isWebrtcReceiveCodecSupported(WebrtcCodec.VP9);
+                const H264 = await isWebrtcReceiveCodecSupported(WebrtcCodec.H264);
+                const OPUS = await isWebrtcReceiveCodecSupported(WebrtcCodec.OPUS);
+                const ISAC = await isWebrtcReceiveCodecSupported(WebrtcCodec.ISAC);
+    
+                logToServer(this.myUserID + " CODECS: VP8: " + VP8 + " VP9: " + VP9 + " H264: " + H264 + " OPUS: " + OPUS + " ISAC: " + ISAC)
+        
             }
             catch (e)
             {
