@@ -334,7 +334,7 @@ const vueApp = new Vue({
                 const OPUS = await isWebrtcReceiveCodecSupported(WebrtcCodec.OPUS);
                 const ISAC = await isWebrtcReceiveCodecSupported(WebrtcCodec.ISAC);
     
-                logToServer(this.myUserID + " CODECS: VP8: " + VP8 + " VP9: " + VP9 + " H264: " + H264 + " OPUS: " + OPUS + " ISAC: " + ISAC)
+                logToServer(this.myUserID + " RECEIVE CODECS: VP8: " + VP8 + " VP9: " + VP9 + " H264: " + H264 + " OPUS: " + OPUS + " ISAC: " + ISAC)
         
             }
             catch (e)
@@ -1925,6 +1925,24 @@ const vueApp = new Vue({
                         const audioTrack = userMedia.getAudioTracks()[0]
                         this.mediaStream.addTrack(audioTrack)
                     }
+                }
+
+                // Log supported codecs
+                try {
+                    const VP8 = await isWebrtcPublishCodecSupported(this.mediaStream, WebrtcCodec.VP8);
+                    const VP9 = await isWebrtcPublishCodecSupported(this.mediaStream, WebrtcCodec.VP9);
+                    const H264 = await isWebrtcPublishCodecSupported(this.mediaStream, WebrtcCodec.H264);
+                    const OPUS = await isWebrtcPublishCodecSupported(this.mediaStream, WebrtcCodec.OPUS);
+                    const ISAC = await isWebrtcPublishCodecSupported(this.mediaStream, WebrtcCodec.ISAC);
+                    
+                    if (withVideo)
+                       logToServer(this.myUserID + " PUBLISH VIDEO CODECS: VP8: " + VP8 + " VP9: " + VP9 + " H264: " + H264)
+                    if (withSound)
+                        logToServer(this.myUserID + " PUBLISH SOUND CODECS: OPUS: " + OPUS + " ISAC: " + ISAC)
+                }
+                catch (exc)
+                {
+                    console.error(exc)
                 }
                 
                 if (withVideo)
