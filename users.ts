@@ -133,6 +133,8 @@ export function deserializeUserState(serializedState: string)
             user.blockedIps = []
         if (user.lastMessageDates === undefined)
             user.lastMessageDates = []
+        if (user.lastRoomMessage.match(/(合言葉)|(あいことば)|(アイコトバ)|aikotoba/gi))
+            user.lastRoomMessage = "٩(ˊᗜˋ*)و"
     }
     console.info("Restored user state (" + Object.values(users).length + " users)")
 }

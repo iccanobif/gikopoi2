@@ -210,6 +210,9 @@ io.on("connection", function (socket: any)
                 if (msg.match(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)|(ボクデン)|(ぼくでん)|(卜伝)|(ﾎﾞｸﾃﾞﾝ)/gi))
                     msg = "o(≧▽≦)o"
 
+                if (msg.match(/(合言葉)|(あいことば)|(アイコトバ)|aikotoba/gi))
+                    msg = "٩(ˊᗜˋ*)و"
+
                 // and for the love of god no moonwalking
                 if (msg.toLowerCase().includes("moonwalk") || msg.toLowerCase().includes("moon-walk"))
                     msg = "(^Д^)"
