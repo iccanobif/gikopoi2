@@ -453,25 +453,6 @@ io.on("connection", function (socket: any)
         }
     })
 
-    // Not sure this is needed anymore:
-    /*
-        socket.on("user-want-to-drop-stream", function (streamSlotId: number)
-        {
-            try
-            {
-                const streams = roomStates[user.areaId][currentRoom.id].streams
-                const userid = streams[streamSlotId].userId;
-                if (userid === null) return;
-                const userWhoIsStreaming = getUser(userid)
-                
-            }
-            catch (e)
-            {
-                log.error(e.message + " " + e.stack);
-            }
-        })
-    */
-
     socket.on("user-rtc-message", async function (data: { streamSlotId: number, type: string, msg: any })
     {
         try
