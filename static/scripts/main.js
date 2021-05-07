@@ -1440,6 +1440,7 @@ const vueApp = new Vue({
                     this.socket.emit("user-msg", message);
             }
             inputTextbox.value = "";
+            inputTextbox.focus()
         },
         registerKeybindings: function ()
         {
