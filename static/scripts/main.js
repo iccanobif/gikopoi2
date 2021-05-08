@@ -1819,10 +1819,10 @@ window.vueApp = new Vue({
         
         updateCurrentRoomStreams: function (streams)
         {
-            this.takenStreams = streams.map((s, index) => {
+            this.takenStreams = streams.map((s, slotId) => {
                 // If it's a stream from the same user, keep the same takenStreams[index] value
                 if (this.streams[slotId] && s.userId == this.streams[slotId].userId)
-                    return this.takenStreams[index]
+                    return this.takenStreams[slotId]
                 
                 return false
             });
