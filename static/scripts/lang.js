@@ -134,7 +134,7 @@ export const messages =
             start_stream_stream_slot_already_taken_by_blocking_streamer: "あなたをあぼーんしている誰かがすでにこのぱねで配信しています。",
             start_stream_unknown_error: "配信を開始できませんでした。",
             are_you_sure_you_want_to_logout: "本当にログアウトしますか？",
-            are_you_sure_you_want_to_block: "子のユーザーを相互あぼーんしますか？",
+            are_you_sure_you_want_to_block: "このユーザーを相互あぼーんしますか？",
             goodbye: "　またね！",
             flood_warning: "おい、早口すぎるじゃないか！",
         },
