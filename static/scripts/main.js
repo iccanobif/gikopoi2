@@ -45,7 +45,7 @@ const i18n = new VueI18n({
     messages,
 });
 
-const vueApp = new Vue({
+window.vueApp = new Vue({
     i18n,
     el: "#vue-app",
     data: {
@@ -415,7 +415,7 @@ const vueApp = new Vue({
             const streamsDto = dto.streams
 
             this.isLoadingRoom = true;
-            const roomLoadId = this.roomLoadId = this.roomLoadId + 1;
+            this.roomLoadId = this.roomLoadId + 1;
 
             if (this.currentRoom.needsFixedCamera)
                 this.canvasManualOffset = { x: 0, y: 0 }
@@ -439,7 +439,6 @@ const vueApp = new Vue({
             this.blockHeight = this.currentRoom.blockHeight ? this.currentRoom.blockHeight : BLOCK_HEIGHT;
 
             // stream stuff
-            this.takenStreams = streamsDto.map(() => false);
             this.updateCurrentRoomStreams(streamsDto);
 
             // Force update of user coordinates using the current room's logics (origin coordinates, etc)
@@ -449,9 +448,6 @@ const vueApp = new Vue({
             this.justSpawnedToThisRoom = true;
             this.isLoadingRoom = false;
             this.requestedRoomChange = false;
-            
-            this.rtcPeerSlots.forEach(s => s !== null && s.rtcPeer.close());
-            this.rtcPeerSlots = streamsDto.map(() => null);
         },
         connectToServer: async function ()
         {
@@ -671,7 +667,7 @@ const vueApp = new Vue({
 
             this.socket.on("server-rtc-message", async (streamSlotId, type, msg) =>
             {
-                console.log(streamSlotId, type, msg);
+                console.log("server-rtc-message", streamSlotId, type, msg);
                 const rtcPeer = this.rtcPeerSlots[streamSlotId].rtcPeer;
                 if (rtcPeer === null) return;
                 if(type == "offer")
@@ -1384,6 +1380,12 @@ const vueApp = new Vue({
         changeRoom: function (targetRoomId, targetDoorId)
         {
             if (this.mediaStream) this.stopStreaming();
+            for (let i = 0; i < this.takenStreams.length; i++)
+            {
+                this.dropStream(i)
+                // when going to a new room, all streams must be off by default
+                this.takenStreams[i] = false
+            }
 
             if (window.speechSynthesis)
                 speechSynthesis.cancel();
@@ -1764,6 +1766,7 @@ const vueApp = new Vue({
                 else if (this.takenStreams[slotId])
                 {
                     console.log("Attempting to retake stream")
+                    this.dropStream(slotId)
                     this.takeStream(slotId)
                 }
                 else
@@ -1779,7 +1782,7 @@ const vueApp = new Vue({
                 else if (this.takenStreams[slotId])
                     this.wantToDropStream(slotId)
             };
-            
+
             rtcPeer.open();
             rtcPeer.conn.addEventListener("icecandidateerror", (ev) => 
             {
@@ -1820,8 +1823,25 @@ const vueApp = new Vue({
         
         updateCurrentRoomStreams: function (streams)
         {
+            this.takenStreams = streams.map((s, slotId) => {
+                return !!this.takenStreams[slotId]
+            });
+
+            this.rtcPeerSlots = streams.map((s, slotId) => {
+                if (!this.rtcPeerSlots[slotId])
+                    return null
+
+                // this.takenStreams[slotId] should be true only if updateCurrentRoomStreams()
+                // was called on an event different from a room change.
+                if (this.takenStreams[slotId] || this.streamSlotIdInWhichIWantToStream == slotId)
+                    return this.rtcPeerSlots[slotId]
+
+                this.dropStream(slotId);
+                return null
+            });
+
             this.streams = streams;
-                
+
             this.streamSlotIdInWhichIWantToStream = null;
 
             for (const slotId in streams)
@@ -1851,7 +1871,7 @@ const vueApp = new Vue({
                 if (this.slotVolume[slotId] === undefined)
                     this.slotVolume[slotId] = 1
                 
-                // Sadly it looks like there's no other way but this setTimeout() to set a default volume for the video,
+                // Sadly it looks like there's no other way to set a default volume for the video,
                 // since apparently <video> elements have no "volume" attribute and it must be set via javascript.
                 // So, i use Vue.nextTick() to execute this piece of code only after the element has been added to the DOM.
                 Vue.nextTick(() => {
@@ -1877,8 +1897,6 @@ const vueApp = new Vue({
                     noiseSuppression: this.streamNoiseSuppression,
                     autoGainControl: this.streamAutoGain,
                 }
-
-                // TODO use Promise.all() for both promises
 
                 let userMediaPromise = null
                 if ((withSound && !withScreenCaptureAudio) || !withScreenCapture)
@@ -2094,6 +2112,8 @@ const vueApp = new Vue({
         },
         takeStream: function (streamSlotId)
         {
+            if (this.rtcPeerSlots[streamSlotId]) return // no need to attempt again to take this stream
+
             const rtcPeer = this.setupRtcPeerSlot(streamSlotId).rtcPeer;
 
             rtcPeer.conn.addEventListener(
@@ -2125,7 +2145,6 @@ const vueApp = new Vue({
         {
             Vue.set(this.takenStreams, streamSlotId, false);
             this.dropStream(streamSlotId);
-            //this.socket.emit("user-want-to-drop-stream", streamSlotId);
         },
         rula: function (roomId)
         {
