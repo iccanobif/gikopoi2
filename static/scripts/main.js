@@ -1898,8 +1898,6 @@ window.vueApp = new Vue({
                     autoGainControl: this.streamAutoGain,
                 }
 
-                // TODO use Promise.all() for both promises
-
                 let userMediaPromise = null
                 if ((withSound && !withScreenCaptureAudio) || !withScreenCapture)
                     userMediaPromise = navigator.mediaDevices.getUserMedia(
