@@ -667,7 +667,7 @@ window.vueApp = new Vue({
 
             this.socket.on("server-rtc-message", async (streamSlotId, type, msg) =>
             {
-                console.log(streamSlotId, type, msg);
+                console.log("server-rtc-message", streamSlotId, type, msg);
                 const rtcPeer = this.rtcPeerSlots[streamSlotId].rtcPeer;
                 if (rtcPeer === null) return;
                 if(type == "offer")
@@ -1832,11 +1832,13 @@ window.vueApp = new Vue({
                     return null
 
                 if (s.userId == this.streams[slotId].userId)
-                    return s
+                    return this.rtcPeerSlots[slotId]
 
                 this.dropStream(slotId);
                 return null
             });
+
+            console.log("updated", this.rtcPeerSlots)
 
             this.streams = streams;
 
@@ -2138,6 +2140,8 @@ window.vueApp = new Vue({
         dropStream: function (streamSlotId)
         {
             if(!this.rtcPeerSlots[streamSlotId]) return;
+
+            console.log("dropping stream", streamSlotId)
             this.rtcPeerSlots[streamSlotId].rtcPeer.close()
             this.rtcPeerSlots[streamSlotId] = null;
         },
