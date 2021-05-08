@@ -1778,7 +1778,7 @@ window.vueApp = new Vue({
                 else if (this.takenStreams[slotId])
                     this.wantToDropStream(slotId)
             };
-            
+
             rtcPeer.open();
             rtcPeer.conn.addEventListener("icecandidateerror", (ev) => 
             {
@@ -1819,13 +1819,26 @@ window.vueApp = new Vue({
         
         updateCurrentRoomStreams: function (streams)
         {
-            this.streams = streams;
-            this.takenStreams = streams.map((_, index) => !!this.takenStreams[index]);
+            this.takenStreams = streams.map((s, index) => {
+                // If it's a stream from the same user, keep the same takenStreams[index] value
+                if (this.streams[slotId] && s.userId == this.streams[slotId].userId)
+                    return this.takenStreams[index]
+                
+                return false
+            });
 
-            // TODO initialize rtcPeerSlots, but also keep the old peers if any, but close them
-            // if that slot doesn't exist anymore (for example because i changed room)
-            // too bad that updateCurrentRoomStreams() isn't aware of room changes... what to do?
-            // this.rtcPeerSlots = 
+            this.rtcPeerSlots = streams.map((s, slotId) => {
+                if (!this.rtcPeerSlots[slotId])
+                    return null
+
+                if (s.userId == this.streams[slotId].userId)
+                    return s
+
+                this.dropStream(slotId);
+                return null
+            });
+
+            this.streams = streams;
 
             this.streamSlotIdInWhichIWantToStream = null;
 
