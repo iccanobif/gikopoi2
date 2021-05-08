@@ -1381,7 +1381,11 @@ window.vueApp = new Vue({
         {
             if (this.mediaStream) this.stopStreaming();
             for (let i = 0; i < this.takenStreams.length; i++)
+            {
                 this.dropStream(i)
+                // when going to a new room, all streams must be off by default
+                this.takenStreams[i] = false
+            }
 
             if (window.speechSynthesis)
                 speechSynthesis.cancel();
@@ -1820,25 +1824,21 @@ window.vueApp = new Vue({
         updateCurrentRoomStreams: function (streams)
         {
             this.takenStreams = streams.map((s, slotId) => {
-                // If it's a stream from the same user, keep the same takenStreams[index] value
-                if (this.streams[slotId] && s.userId == this.streams[slotId].userId)
-                    return this.takenStreams[slotId]
-                
-                return false
+                return !!this.takenStreams[slotId]
             });
 
             this.rtcPeerSlots = streams.map((s, slotId) => {
                 if (!this.rtcPeerSlots[slotId])
                     return null
 
-                if (s.userId == this.streams[slotId].userId)
+                // this.takenStreams[slotId] should be true only if updateCurrentRoomStreams()
+                // was called on an event different from a room change.
+                if (this.takenStreams[slotId] || this.streamSlotIdInWhichIWantToStream == slotId)
                     return this.rtcPeerSlots[slotId]
 
                 this.dropStream(slotId);
                 return null
             });
-
-            console.log("updated", this.rtcPeerSlots)
 
             this.streams = streams;
 
@@ -2140,8 +2140,6 @@ window.vueApp = new Vue({
         dropStream: function (streamSlotId)
         {
             if(!this.rtcPeerSlots[streamSlotId]) return;
-
-            console.log("dropping stream", streamSlotId)
             this.rtcPeerSlots[streamSlotId].rtcPeer.close()
             this.rtcPeerSlots[streamSlotId] = null;
         },
