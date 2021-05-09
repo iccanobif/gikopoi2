@@ -32,6 +32,7 @@ export default class User
         this.bubblePosition = "up";
         this.bubbleImage = null;
         this.voicePitch = null;
+        this.isMoonwalking = false;
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)
@@ -115,11 +116,21 @@ export default class User
                     // this.direction = "right"
                     return this.character.frontWalking1Image;
             }
+            return
         }
-        else if (this.isWalking)
+
+        const adjustedDirection = !this.isMoonwalking 
+                          ? this.direction
+                            : this.direction == "up" ? "down"
+                            : this.direction == "down" ? "up"
+                            : this.direction == "left" ? "right"
+                            : this.direction == "right" ? "left"
+                            : null // should never happen
+
+        if (this.isWalking)
         {
             const walkCycle = this.framesUntilNextStep > STEP_LENGTH / 2
-            switch (this.direction)
+            switch (adjustedDirection)
             {
                 case "up":
                     return walkCycle ? this.character.backWalking1Image : this.character.backWalking2Image;
@@ -135,7 +146,7 @@ export default class User
         {
             const isSitting = !!room.sit.find(s => s.x == this.logicalPositionX && s.y == this.logicalPositionY)
 
-            switch (this.direction)
+            switch (adjustedDirection)
             {
                 case "up":
                     return isSitting ? this.character.backSittingImage : this.character.backStandingImage;

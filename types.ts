@@ -106,6 +106,7 @@ export interface PlayerDto
     bubblePosition: Direction,
     voicePitch: number,
     lastRoomMessage: string,
+    isMoonwalking: boolean,
 }
 
 export interface StreamSlotDto

@@ -690,6 +690,10 @@ window.vueApp = new Vue({
                 this.users[userId].character = characters[characterId]
                 this.isRedrawRequired = true
             })
+            this.socket.on("server-character-is-moonwalking", (userId, isMoonwalking) => {
+                this.users[userId].isMoonwalking = isMoonwalking
+                this.isRedrawRequired = true
+            })
         },
         addUser: function (userDTO)
         {
@@ -705,6 +709,7 @@ window.vueApp = new Vue({
             newUser.bubblePosition = userDTO.bubblePosition;
             newUser.id = userDTO.id;
             newUser.voicePitch = userDTO.voicePitch
+            newUser.isMoonwalking = userDTO.isMoonwalking
             
             this.users[userDTO.id] = newUser;
         },

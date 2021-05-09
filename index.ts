@@ -196,6 +196,14 @@ io.on("connection", function (socket: any)
 
             setUserAsActive(user)
 
+            if (msg == "#moonwalk")
+            {
+                log.info("moonwalk", user.id)
+                user.isMoonwalking = !user.isMoonwalking
+                userRoomEmit(user, user.areaId, user.roomId, "server-character-is-moonwalking", user.id, user.isMoonwalking)
+                return
+            }
+
             // Whitespace becomes an empty string (to clear bubbles)
             if (!msg.match(/[^\s]/g))
             {

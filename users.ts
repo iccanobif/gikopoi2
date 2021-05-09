@@ -38,6 +38,7 @@ export class Player
     public socketId: string | null = null;
     public blockedIps: string[] = [];
     public lastMessageDates: number[] = [];
+    public isMoonwalking: boolean = false;
 
     constructor(options: { name?: string, characterId: string, areaId: Area, ip: string })
     {
@@ -152,6 +153,7 @@ export function createPlayerDto(player: Player): PlayerDto
         bubblePosition: player.bubblePosition,
         voicePitch: player.voicePitch,
         lastRoomMessage: player.lastRoomMessage,
+        isMoonwalking: player.isMoonwalking,
     }
 }
 
