@@ -2166,7 +2166,16 @@ window.vueApp = new Vue({
                 this.showWarningToast(i18n.t("msg.no_other_users_in_this_room"));
             }
             else
+            {
                 this.isUserListPopupOpen = true;
+                if (this.highlightedUserId)
+                {
+                    Vue.nextTick(() => {
+                        document.getElementById("user-list-element-" + this.highlightedUserId)
+                                .scrollIntoView({ block: "nearest" })
+                    })
+                }
+            }
         },
         closeUserListPopup: function ()
         {

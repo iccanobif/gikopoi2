@@ -301,7 +301,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="user in Object.values(users).filter(u => u.id != myUserID)" 
+                            <tr :id="'user-list-element-' + user.id"
+                                v-for="user in Object.values(users).filter(u => u.id != myUserID)" 
                                 v-bind:class="{'popup-row-is-selected': user.id == highlightedUserId}">
                                 <td>
                                     <div v-on:click="highlightUser(user.id)">
