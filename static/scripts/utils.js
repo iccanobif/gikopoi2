@@ -99,3 +99,58 @@ export const debounceWithImmediateExecution = (func, wait) => {
       }
     };
   };
+
+export class AudioProcessor
+{
+    constructor(stream)
+    {
+        this.stream = stream
+        if (window.AudioContext)
+        {
+            this.context = new AudioContext()
+            
+            this.source = this.context.createMediaStreamSource(stream);
+            this.compressor = this.context.createDynamicsCompressor();
+            this.compressor.threshold.value = -50;
+            this.compressor.knee.value = 40;
+            this.compressor.ratio.value = 12;
+            this.compressor.attack.value = 0;
+            this.compressor.release.value = 0.25;
+            this.gain = this.context.createGain()
+            this.gain.gain.value = 2
+
+            this.source.connect(this.context.destination)
+        }
+    }
+
+    getOutputStream()
+    {
+        if (window.AudioContext)
+            return this.context.createMediaStreamDestination().stream
+
+        return this.stream
+    }
+
+    setGain(gain)
+    {
+        this.gain.gain.value = gain
+    }
+
+    enableCompression()
+    {
+        this.source.disconnect(this.context.destination)
+
+        this.source.connect(this.compressor)
+        this.compressor.connect(this.gain)
+        this.gain.connect(this.context.destination)
+    }
+    
+    disableCompression()
+    {
+        this.source.disconnect(this.compressor)
+        this.compressor.disconnect(this.gain)
+        this.gain.disconnect(this.context.destination)
+
+        this.source.connect(this.context.destination)
+    }
+}

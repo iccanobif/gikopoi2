@@ -2123,7 +2123,31 @@ window.vueApp = new Vue({
                     try 
                     {
                         const videoElement = document.getElementById("received-video-" + streamSlotId)
-                        videoElement.srcObject = event.streams[0];
+
+                        const stream = event.streams[0]
+                        videoElement.srcObject = stream;
+                        videoElement.volume = 0
+                        
+                        const volumeSlider = document.getElementById("volume-" + streamSlotId);
+
+                        // compressor
+                        const audioCtx = new AudioContext()
+                        const source = audioCtx.createMediaStreamSource(stream);
+                        const compressor = audioCtx.createDynamicsCompressor();
+                        compressor.threshold.value = -50;
+                        compressor.knee.value = 40;
+                        compressor.ratio.value = 12;
+                        compressor.attack.value = 0;
+                        compressor.release.value = 0.25;
+                        const gain = audioCtx.createGain()
+                        gain.gain.value = volumeSlider.value
+
+                        source.connect(compressor);
+                        compressor.connect(gain);
+                        gain.connect(audioCtx.destination)
+
+                        // videoElement.srcObject = audioCtx.createMediaStreamDestination().stream
+
                         $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
                     }
                     catch (exc)
