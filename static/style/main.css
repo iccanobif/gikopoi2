@@ -101,6 +101,15 @@ input[type='range']
     unicode-bidi: isolate;
 }
 
+.message .message-timestamp
+{
+    display: inline-block;
+    width: 0;
+    height: 0;
+    white-space: nowrap;
+    overflow: clip;
+}
+
 .video-container
 {
     z-index: 50;
