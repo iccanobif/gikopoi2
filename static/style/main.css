@@ -107,7 +107,7 @@ input[type='range']
     width: 0;
     height: 0;
     white-space: nowrap;
-    overflow: clip;
+    overflow: hidden;
 }
 
 .video-container
