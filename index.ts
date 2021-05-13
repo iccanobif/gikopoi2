@@ -742,13 +742,46 @@ app.use(compression({
     }
 }))
 
-app.get("/", (req, res) =>
+app.get("/", async (req, res) =>
 {
     if (req.headers.host == "gikopoi2.herokuapp.com")
     {
-        log.info("Redirecting to gikopoipoi.net")
+        log.info("Redirecting to gikopoipoi.net ", req.ip)
         res.redirect(301, 'https://gikopoipoi.net')
         return
+    }
+
+    // Check if bad IP
+    if (settings.abuseIpDBApiKey)
+    {
+        try 
+        {
+            const { statusCode: abuseIpStatusCode, body: abuseIpBody } = await got('https://api.abuseipdb.com/api/v2/check', 
+            { 
+                searchParams: { ipAddress: req.ip },
+                headers: { 
+                    "Key": settings.abuseIpDBApiKey,
+                    "Accept" : "application/json",
+                },
+            })
+            
+            if (abuseIpStatusCode == 200)
+            {
+                const confidenceScore = JSON.parse(abuseIpBody)?.data?.abuseConfidenceScore
+                // const confidenceScore = 80
+                log.info("Confidence score " + req.ip + ": " + confidenceScore)
+                if (confidenceScore > 50)
+                {
+                    log.info("Rejected " + req.ip + " " + abuseIpBody)
+                    res.end(":)")
+                    return
+                }
+            }
+        }
+        catch (exc)
+        {
+            log.error(exc)
+        }
     }
 
     log.info("Fetching root..." + req.ip + " " + req.rawHeaders.join("|"))
@@ -764,10 +797,10 @@ app.get("/", (req, res) =>
             }
 
             try {
-                const { statusCode, body } = await got(
+                const { statusCode: loginFooterStatusCode, body: loginFooterBody } = await got(
                     'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
                     
-                data = data.replace("@LOGIN_FOOTER@", statusCode === 200 ? body : "")
+                data = data.replace("@LOGIN_FOOTER@", loginFooterStatusCode === 200 ? loginFooterBody : "")
             }
             catch (e)
             {

@@ -19,4 +19,5 @@ export const settings = {
     janusRoomNameIntPrefix: (fileJsonContents?.janusRoomNameIntPrefix || Number.parseInt(process.env.GIKO2_JANUS_ROOM_NAME_INT_PREFIX!)) as number,
     isBehindProxy: fileJsonContents?.isBehindProxy == undefined ? true : fileJsonContents.isBehindProxy,
     restrictLoginByIp: fileJsonContents?.restrictLoginByIp == undefined ? true : fileJsonContents.restrictLoginByIp,
+    abuseIpDBApiKey: (fileJsonContents?.abuseIpDBApiKey || process.env.ABUSE_IPDB_API_KEY) as string,
 }
