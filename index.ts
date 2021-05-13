@@ -652,6 +652,8 @@ io.on("connection", function (socket: any)
     socket.on("user-ping", function() {
         try
         {
+            if (!user) return
+
             log.info("user-ping", user.id)
             setUserAsActive(user)
             userRoomEmit(user, user.areaId, user.roomId, "server-user-active", user.id);
