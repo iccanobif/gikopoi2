@@ -1,7 +1,7 @@
 import { kanaToRomajiMap, kanjiToKanaMap, katakanaToHiragana } from "./japanese-tools.js";
 import { urlRegex } from "./utils.js";
 
-const synth = new Animalese('animalese.wav', function () { console.log("test") });
+const synth = new Animalese('animalese.wav', function () {  });
 
 function speakAnimalese(text, pitch, volume)
 {

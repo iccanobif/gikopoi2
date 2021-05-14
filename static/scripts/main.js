@@ -172,7 +172,8 @@ window.vueApp = new Vue({
     },
     mounted: function ()
     {
-        console.log("referrer:", document.referrer)
+        console.log("%c(,,ﾟДﾟ)", 
+                    "background-color: white; color: black; font-weight: bold; padding: 4px 6px; font-size: 50px",);
        
         window.addEventListener("keydown", (ev) =>
         {
