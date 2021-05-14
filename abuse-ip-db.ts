@@ -29,7 +29,7 @@ export async function getAbuseConfidenceScore(ip: string): Promise<number>
         if (abuseIpStatusCode != 200)
             return 0
 
-            const confidenceScore = JSON.parse(abuseIpBody)?.data?.abuseConfidenceScore
+        const confidenceScore = JSON.parse(abuseIpBody)?.data?.abuseConfidenceScore
         abuseIpDBabuseConfidenceScoreCache[ip] = confidenceScore
         log.info("Confidence score " + ip + ": " + confidenceScore)
         return confidenceScore
