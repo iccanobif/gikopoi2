@@ -8,6 +8,7 @@ import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
 import compression from 'compression';
+import { getAbuseConfidenceScore } from "./abuse-ip-db";
 
 const app: express.Application = express()
 const http = require('http').Server(app);
@@ -745,7 +746,7 @@ app.use(compression({
     }
 }))
 
-const abuseIpDBabuseConfidenceScoreCache: { [ip: string]: number } = {};
+
 
 app.get("/", async (req, res) =>
 {
@@ -757,45 +758,14 @@ app.get("/", async (req, res) =>
     }
 
     // Check if bad IP
-    if (settings.abuseIpDBApiKey)
-    {
-        if (abuseIpDBabuseConfidenceScoreCache[req.ip] > maximumAbuseConfidenceScore)
-        {
-            log.info("Rejected " + req.ip)
-            res.end(":)")
-            return
-        }
-        else if (abuseIpDBabuseConfidenceScoreCache[req.ip] === undefined)
-        {
-            try
-            {
-                const { statusCode: abuseIpStatusCode, body: abuseIpBody } = await got('https://api.abuseipdb.com/api/v2/check',
-                {
-                    searchParams: { ipAddress: req.ip },
-                    headers: {
-                        "Key": settings.abuseIpDBApiKey,
-                        "Accept" : "application/json",
-                    },
-                })
 
-                if (abuseIpStatusCode == 200)
-                {
-                    const confidenceScore = JSON.parse(abuseIpBody)?.data?.abuseConfidenceScore
-                    abuseIpDBabuseConfidenceScoreCache[req.ip] = confidenceScore
-                    log.info("Confidence score " + req.ip + ": " + confidenceScore)
-                    if (confidenceScore > maximumAbuseConfidenceScore)
-                    {
-                        log.info("Rejected " + req.ip + " " + abuseIpBody)
-                        res.end(":)")
-                        return
-                    }
-                }
-            }
-            catch (exc)
-            {
-                log.error(exc)
-            }
-        }
+    const confidenceScore = await getAbuseConfidenceScore(req.ip)
+    
+    if (confidenceScore > maximumAbuseConfidenceScore)
+    {
+        log.info("Rejected " + req.ip)
+        res.end(":)")
+        return
     }
 
     log.info("Fetching root..." + req.ip + " " + req.rawHeaders.join("|"))
