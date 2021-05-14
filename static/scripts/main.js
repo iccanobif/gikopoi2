@@ -725,6 +725,10 @@ window.vueApp = new Vue({
 
             const [displayName, tripcode] = this.toDisplayName(userName).split("◆")
 
+            const timestampSpan = document.createElement("span")
+            timestampSpan.className = "message-timestamp"
+            timestampSpan.innerHTML = new Date() + "&nbsp;"
+
             const authorSpan = document.createElement("span");
             authorSpan.className = "message-author";
             authorSpan.title = new Date()
@@ -760,6 +764,7 @@ window.vueApp = new Vue({
                     return anchor.outerHTML;
                 });
 
+            messageDiv.append(timestampSpan);
             messageDiv.append(authorSpan);
             messageDiv.append(tripcodeSpan);
             messageDiv.append(document.createTextNode(i18n.t("message_colon")));

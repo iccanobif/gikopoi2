@@ -8,6 +8,7 @@ import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
 import compression from 'compression';
+import { getAbuseConfidenceScore } from "./abuse-ip-db";
 
 const app: express.Application = express()
 const http = require('http').Server(app);
@@ -24,6 +25,7 @@ const persistInterval = 5 * 1000
 const maxGhostRetention = 30 * 60 * 1000
 const inactivityTimeout = 30 * 60 * 1000
 const maximumUsersPerIpPerArea = 2
+const maximumAbuseConfidenceScore = 50
 
 const appVersion = Number.parseInt(readFileSync("version").toString())
 
@@ -93,11 +95,11 @@ io.on("connection", function (socket: any)
     let currentRoom = defaultRoom;
     let janusHandleSlots: any[] = [];
 
-    const sendCurrentRoomState = () => 
+    const sendCurrentRoomState = () =>
     {
         const connectedUsers: PlayerDto[] = getFilteredConnectedUserList(user, user.roomId, user.areaId)
             .map(p => toPlayerDto(p, user.roomId, user.areaId))
-        
+
         socket.emit("server-update-current-room-state",
             <RoomStateDto>{
                 currentRoom,
@@ -315,7 +317,7 @@ io.on("connection", function (socket: any)
                 user.position.x = newX
                 user.position.y = newY
             }
-            
+
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-move",
                 {
@@ -337,7 +339,7 @@ io.on("connection", function (socket: any)
         try
         {
             user.bubblePosition = position;
-            
+
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-bubble-position", user.id, position);
         }
@@ -357,7 +359,7 @@ io.on("connection", function (socket: any)
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId]
             const streamer = getUser(stream.userId!);
-            
+
             if (stream.userId == user.id) clearStream(user);
 
             if (stream.isActive && streamer)
@@ -507,7 +509,7 @@ io.on("connection", function (socket: any)
 
                 stream.isReady = true
                 stream.publisherId = janusHandle.getPublisherId();
-                
+
                 userRoomEmit(user, user.areaId, user.roomId,
                     "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
 
@@ -599,7 +601,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            const roomList: { id: string, userCount: number, streamers: string[] }[] = 
+            const roomList: { id: string, userCount: number, streamers: string[] }[] =
                 Object.values(rooms)
                 .filter(room => !room.secret)
                 .map(room => ({
@@ -617,7 +619,7 @@ io.on("connection", function (socket: any)
             log.error(e.message + " " + e.stack);
         }
     })
-    
+
     socket.on("user-block", function ( userId: string )
     {
         try
@@ -626,21 +628,21 @@ io.on("connection", function (socket: any)
             const blockedUser = getUser(userId);
             if (!blockedUser) return;
             user.blockedIps.push(blockedUser.ip);
-            
+
             const streams = roomStates[user.areaId][user.roomId].streams;
-            
+
             getConnectedUserList(user.roomId, user.areaId)
                 .filter((u) => u.socketId && user.blockedIps.includes(u.ip))
                 .forEach((u) =>
             {
                 io.to(u.socketId!).emit("server-user-left-room", user.id)
                 io.to(u.socketId!).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, streams))
-                
+
                 socket.emit("server-user-left-room", u.id);
             })
-                
+
             socket.emit("server-update-current-room-streams", toStreamSlotDtoArray(user, streams))
-            
+
             emitServerStats(user.areaId);
         }
         catch (e)
@@ -652,6 +654,8 @@ io.on("connection", function (socket: any)
     socket.on("user-ping", function() {
         try
         {
+            if (!user) return
+
             log.info("user-ping", user.id)
             setUserAsActive(user)
             userRoomEmit(user, user.areaId, user.roomId, "server-user-active", user.id);
@@ -742,12 +746,25 @@ app.use(compression({
     }
 }))
 
-app.get("/", (req, res) =>
+
+
+app.get("/", async (req, res) =>
 {
     if (req.headers.host == "gikopoi2.herokuapp.com")
     {
-        log.info("Redirecting to gikopoipoi.net")
+        log.info("Redirecting to gikopoipoi.net ", req.ip)
         res.redirect(301, 'https://gikopoipoi.net')
+        return
+    }
+
+    // Check if bad IP
+
+    const confidenceScore = await getAbuseConfidenceScore(req.ip)
+    
+    if (confidenceScore > maximumAbuseConfidenceScore)
+    {
+        log.info("Rejected " + req.ip)
+        res.end(":)")
         return
     }
 
@@ -764,10 +781,10 @@ app.get("/", (req, res) =>
             }
 
             try {
-                const { statusCode, body } = await got(
+                const { statusCode: loginFooterStatusCode, body: loginFooterBody } = await got(
                     'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
-                    
-                data = data.replace("@LOGIN_FOOTER@", statusCode === 200 ? body : "")
+
+                data = data.replace("@LOGIN_FOOTER@", loginFooterStatusCode === 200 ? loginFooterBody : "")
             }
             catch (e)
             {
@@ -775,13 +792,13 @@ app.get("/", (req, res) =>
             }
 
             data = data.replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
-            
+
             for (const areaId in roomStates)
             {
                 const connectedUserIds: Set<string> = getConnectedUserList(null, areaId)
                     .filter((u) => !u.blockedIps.includes(req.ip))
                     .reduce((acc, val) => acc.add(val.id), new Set<string>())
-                
+
                 data = data
                     .replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
                         connectedUserIds.size.toString())
@@ -860,7 +877,7 @@ app.get(/(.+)\.crisp\.svg$/i, (req, res) =>
 })
 
 app.use(express.static('static',
-    { 
+    {
         setHeaders: (res, path) => {
             // Cache images for one week. I made the frontend append ?v=version to image URLs,
             // so that it won't try to use the cached images when it's opening a new version of the website.
@@ -878,10 +895,10 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
     {
         const roomId = req.params.roomId
         const areaId = req.params.areaId
-        
+
         const connectedUsers: PlayerDto[] = getConnectedUserList(roomId, areaId)
             .map(p => toPlayerDto(p, roomId, areaId))
-        
+
         const dto: RoomStateDto = {
             currentRoom: rooms[roomId],
             connectedUsers,
@@ -970,7 +987,7 @@ app.post("/login", (req, res) =>
                 log.info("Invalid username", req.ip, "<" + JSON.stringify(userName) + ">", characterId, areaId)
             }
             catch {}
-            
+
             res.statusCode = 500
             sendResponse({
                 appVersion,
@@ -995,7 +1012,7 @@ app.post("/login", (req, res) =>
                     sameIpUserCount++
 
                 if (sameIpUserCount >= maximumUsersPerIpPerArea)
-                    // No need to keep counting, 
+                    // No need to keep counting,
                     break;
             }
             if (sameIpUserCount >= maximumUsersPerIpPerArea)
@@ -1245,7 +1262,7 @@ function restoreState()
                 resolve()
             }
         }
-        else 
+        else
         {
             readFile("persisted-state", { encoding: "utf-8" }, (err, data) =>
             {
