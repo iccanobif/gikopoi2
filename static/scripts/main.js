@@ -40,8 +40,6 @@ function UserException(message) {
 
 let loadCharacterImagesPromise = null
 
-const canUseAudioProcessor = !!window.AudioContext
-
 // the key is the slot ID
 const audioProcessors = {}
 
@@ -1894,7 +1892,7 @@ window.vueApp = new Vue({
             }
         },
 
-        wantToStartStreaming: async function (streamSlotId)
+        wantToStartStreaming: async function ()
         {
             try
             {
@@ -2136,24 +2134,19 @@ window.vueApp = new Vue({
                 {
                     try 
                     {
-                        const videoElement = document.getElementById("received-video-" + streamSlotId)
-
                         const stream = event.streams[0]
+
+                        const videoElement = document.getElementById("received-video-" + streamSlotId)
                         videoElement.srcObject = stream;
-                        
-                        if (canUseAudioProcessor)
-                        {
-                            videoElement.volume = 0
-
-                            if (audioProcessors[streamSlotId])
-                                audioProcessors[streamSlotId].dispose()
-                            audioProcessors[streamSlotId] = new AudioProcessor(stream)
-
-                            if (this.slotCompression[streamSlotId])
-                                audioProcessors[streamSlotId].enableCompression()
-                        }
-
                         $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
+
+                        if (audioProcessors[streamSlotId])
+                            audioProcessors[streamSlotId].dispose()
+                        
+                        audioProcessors[streamSlotId] = new AudioProcessor(stream, videoElement)
+
+                        if (this.slotCompression[streamSlotId])
+                            audioProcessors[streamSlotId].enableCompression()
                     }
                     catch (exc)
                     {
@@ -2290,11 +2283,8 @@ window.vueApp = new Vue({
         {
             const volumeSlider = document.getElementById("volume-" + streamSlotId);
 
-            const videoElement = document.getElementById(
-                "received-video-" + streamSlotId
-            );
+            audioProcessors[streamSlotId].setVolume(volumeSlider.value)
 
-            videoElement.volume = volumeSlider.value;
             this.slotVolume[streamSlotId] = volumeSlider.value;
             localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
         },

@@ -100,26 +100,33 @@ export const debounceWithImmediateExecution = (func, wait) => {
     };
   };
 
+const canUseAudioContext = !!window.AudioContext
+// const canUseAudioContext = false
+const maxGain = 1.3
 export class AudioProcessor
 {
-    constructor(stream)
+    constructor(stream, videoElement)
     {
         this.stream = stream
         if (window.AudioContext)
         {
-            this.context = new AudioContext()
+            this.videoElement = videoElement
+            this.isBoostEnabled = false
+            this.volume = videoElement.volume
             
-            this.source = this.context.createMediaStreamSource(stream);
-            this.compressor = this.context.createDynamicsCompressor();
-            this.compressor.threshold.value = -50;
-            this.compressor.knee.value = 40;
-            this.compressor.ratio.value = 12;
-            this.compressor.attack.value = 0;
-            this.compressor.release.value = 0.25;
-            this.gain = this.context.createGain()
-            this.gain.gain.value = 230
-
-            this.source.connect(this.context.destination)
+            if (canUseAudioContext)
+            {
+                this.context = new AudioContext()
+                this.source = this.context.createMediaStreamSource(stream);
+                this.compressor = this.context.createDynamicsCompressor();
+                this.compressor.threshold.value = -50;
+                this.compressor.knee.value = 40;
+                this.compressor.ratio.value = 12;
+                this.compressor.attack.value = 0;
+                this.compressor.release.value = 0.25;
+                this.gain = this.context.createGain()
+                this.gain.gain.value = maxGain
+            }
         }
     }
 
@@ -128,37 +135,41 @@ export class AudioProcessor
         return this.context.close().catch(console.error)
     }
 
-    getOutputStream()
+    setVolume(volume)
     {
-        if (window.AudioContext)
-            return this.context.createMediaStreamDestination().stream
+        this.volume = volume
+        if (!this.isBoostEnabled)
+            this.videoElement.volume = volume
 
-        return this.stream
-    }
-
-    setGain(gain)
-    {
-        this.gain.gain.value = gain
+        if (canUseAudioContext)
+            this.gain.gain.value = volume * maxGain
     }
 
     enableCompression()
     {
         console.log("enable compression")
-        this.source.disconnect(this.context.destination)
-        // this.source.connect(this.compressor)
-        // this.compressor.connect(this.gain)
+        if (!canUseAudioContext) return 
 
-        this.source.connect(this.gain)
+        logToServer("enable compression")
+        this.source.connect(this.compressor)
+        this.compressor.connect(this.gain)
         this.gain.connect(this.context.destination)
+
+        this.videoElement.volume = 0
+        this.isBoostEnabled = true
     }
     
     disableCompression()
     {
-        console.log("disable compression")
+        console.log("enable compression")
+        if (!canUseAudioContext) return 
+
+        logToServer("disable compression")
         this.source.disconnect()
-        // this.compressor.disconnect(this.gain)
+        this.compressor.disconnect()
         this.gain.disconnect()
 
-        this.source.connect(this.context.destination)
+        this.videoElement.volume = this.volume
+        this.isBoostEnabled = false
     }
 }
