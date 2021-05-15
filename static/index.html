@@ -221,7 +221,8 @@
                         <label :for="'enable-compression-' + index">{{ "ui.enable_compression" }}</label>
                         <input type="checkbox" 
                             :id="'enable-compression-' + index" 
-                            v-on:change="storeSet('isNewlineOnShiftEnter')">
+                            v-model="slotCompression[index]"
+                            v-on:change="onCompressionChanged(index)">
                     </div>
                     <div class="stream-buttons">
                         <button :id="'take-stream-button-' + index"

@@ -14,6 +14,7 @@ import {
     debounceWithDelayedExecution,
     debounceWithImmediateExecution,
     urlRegex,
+    AudioProcessor,
 } from "./utils.js";
 import { messages } from "./lang.js";
 import { speak } from "./tts.js";
@@ -38,6 +39,11 @@ function UserException(message) {
 }
 
 let loadCharacterImagesPromise = null
+
+const canUseAudioProcessor = !!window.AudioContext
+
+// the key is the slot ID
+const audioProcessors = {}
 
 const i18n = new VueI18n({
     locale: "ja",
@@ -127,6 +133,7 @@ window.vueApp = new Vue({
         rtcPeerSlots: [],
         takenStreams: [], // streams taken by me
         slotVolume: JSON.parse(localStorage.getItem("slotVolume")) || {}, // key: slot Id / value: volume
+        slotCompression: [],
 
         // stream settings
         isStreamPopupOpen: false,
@@ -1875,6 +1882,8 @@ window.vueApp = new Vue({
 
                 if (this.slotVolume[slotId] === undefined)
                     this.slotVolume[slotId] = 1
+                if (this.slotCompression[slotId] === undefined)
+                    this.slotCompression[slotId] = false
                 
                 // Sadly it looks like there's no other way to set a default volume for the video,
                 // since apparently <video> elements have no "volume" attribute and it must be set via javascript.
@@ -2131,27 +2140,18 @@ window.vueApp = new Vue({
 
                         const stream = event.streams[0]
                         videoElement.srcObject = stream;
-                        videoElement.volume = 0
                         
-                        const volumeSlider = document.getElementById("volume-" + streamSlotId);
+                        if (canUseAudioProcessor)
+                        {
+                            videoElement.volume = 0
 
-                        // compressor
-                        const audioCtx = new AudioContext()
-                        const source = audioCtx.createMediaStreamSource(stream);
-                        const compressor = audioCtx.createDynamicsCompressor();
-                        compressor.threshold.value = -50;
-                        compressor.knee.value = 40;
-                        compressor.ratio.value = 12;
-                        compressor.attack.value = 0;
-                        compressor.release.value = 0.25;
-                        const gain = audioCtx.createGain()
-                        gain.gain.value = volumeSlider.value
+                            if (audioProcessors[streamSlotId])
+                                audioProcessors[streamSlotId].dispose()
+                            audioProcessors[streamSlotId] = new AudioProcessor(stream)
 
-                        source.connect(compressor);
-                        compressor.connect(gain);
-                        gain.connect(audioCtx.destination)
-
-                        // videoElement.srcObject = audioCtx.createMediaStreamDestination().stream
+                            if (this.slotCompression[streamSlotId])
+                                audioProcessors[streamSlotId].enableCompression()
+                        }
 
                         $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
                     }
@@ -2520,6 +2520,13 @@ window.vueApp = new Vue({
             this.showNotifications = !this.showNotifications
             this.handleShowNotifications()
         },
+        onCompressionChanged: function(streamSlotID)
+        {
+            if (this.slotCompression[streamSlotID])
+                audioProcessors[streamSlotID].enableCompression()
+            else
+                audioProcessors[streamSlotID].disableCompression()
+        }
     },
 });
 

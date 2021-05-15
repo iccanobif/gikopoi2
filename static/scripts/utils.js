@@ -117,10 +117,15 @@ export class AudioProcessor
             this.compressor.attack.value = 0;
             this.compressor.release.value = 0.25;
             this.gain = this.context.createGain()
-            this.gain.gain.value = 2
+            this.gain.gain.value = 230
 
             this.source.connect(this.context.destination)
         }
+    }
+
+    dispose()
+    {
+        return this.context.close().catch(console.error)
     }
 
     getOutputStream()
@@ -138,18 +143,21 @@ export class AudioProcessor
 
     enableCompression()
     {
+        console.log("enable compression")
         this.source.disconnect(this.context.destination)
+        // this.source.connect(this.compressor)
+        // this.compressor.connect(this.gain)
 
-        this.source.connect(this.compressor)
-        this.compressor.connect(this.gain)
+        this.source.connect(this.gain)
         this.gain.connect(this.context.destination)
     }
     
     disableCompression()
     {
-        this.source.disconnect(this.compressor)
-        this.compressor.disconnect(this.gain)
-        this.gain.disconnect(this.context.destination)
+        console.log("disable compression")
+        this.source.disconnect()
+        // this.compressor.disconnect(this.gain)
+        this.gain.disconnect()
 
         this.source.connect(this.context.destination)
     }
