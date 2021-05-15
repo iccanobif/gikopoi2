@@ -14,6 +14,8 @@ import {
     debounceWithDelayedExecution,
     debounceWithImmediateExecution,
     urlRegex,
+    AudioProcessor,
+    canUseAudioContext
 } from "./utils.js";
 import { messages } from "./lang.js";
 import { speak } from "./tts.js";
@@ -38,6 +40,9 @@ function UserException(message) {
 }
 
 let loadCharacterImagesPromise = null
+
+// the key is the slot ID
+const audioProcessors = {}
 
 const i18n = new VueI18n({
     locale: "ja",
@@ -127,6 +132,7 @@ window.vueApp = new Vue({
         rtcPeerSlots: [],
         takenStreams: [], // streams taken by me
         slotVolume: JSON.parse(localStorage.getItem("slotVolume")) || {}, // key: slot Id / value: volume
+        slotCompression: [],
 
         // stream settings
         isStreamPopupOpen: false,
@@ -169,6 +175,7 @@ window.vueApp = new Vue({
         movementDirection: null,
         underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
         notificationPermissionsGranted: false,
+        canUseAudioContext: canUseAudioContext
     },
     mounted: function ()
     {
@@ -1876,6 +1883,8 @@ window.vueApp = new Vue({
 
                 if (this.slotVolume[slotId] === undefined)
                     this.slotVolume[slotId] = 1
+                if (this.slotCompression[slotId] === undefined)
+                    this.slotCompression[slotId] = false
                 
                 // Sadly it looks like there's no other way to set a default volume for the video,
                 // since apparently <video> elements have no "volume" attribute and it must be set via javascript.
@@ -1886,7 +1895,7 @@ window.vueApp = new Vue({
             }
         },
 
-        wantToStartStreaming: async function (streamSlotId)
+        wantToStartStreaming: async function ()
         {
             try
             {
@@ -2128,9 +2137,22 @@ window.vueApp = new Vue({
                 {
                     try 
                     {
+                        const stream = event.streams[0]
+
                         const videoElement = document.getElementById("received-video-" + streamSlotId)
-                        videoElement.srcObject = event.streams[0];
+                        videoElement.srcObject = stream;
                         $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
+
+                        if (audioProcessors[streamSlotId])
+                            audioProcessors[streamSlotId].dispose()
+                        
+                        if (this.streams[streamSlotId].withSound)
+                        {
+                            audioProcessors[streamSlotId] = new AudioProcessor(stream, videoElement)
+                            
+                            if (this.slotCompression[streamSlotId])
+                               audioProcessors[streamSlotId].enableCompression()
+                        }
                     }
                     catch (exc)
                     {
@@ -2267,11 +2289,8 @@ window.vueApp = new Vue({
         {
             const volumeSlider = document.getElementById("volume-" + streamSlotId);
 
-            const videoElement = document.getElementById(
-                "received-video-" + streamSlotId
-            );
+            audioProcessors[streamSlotId].setVolume(volumeSlider.value)
 
-            videoElement.volume = volumeSlider.value;
             this.slotVolume[streamSlotId] = volumeSlider.value;
             localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
         },
@@ -2497,6 +2516,13 @@ window.vueApp = new Vue({
             this.showNotifications = !this.showNotifications
             this.handleShowNotifications()
         },
+        onCompressionChanged: function(streamSlotID)
+        {
+            if (this.slotCompression[streamSlotID])
+                audioProcessors[streamSlotID].enableCompression()
+            else
+                audioProcessors[streamSlotID].disableCompression()
+        }
     },
 });
 
