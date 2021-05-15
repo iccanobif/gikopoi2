@@ -218,6 +218,8 @@ io.on("connection", function (socket: any)
                 // and for the love of god no moonwalking
                 if (msg.toLowerCase().includes("moonwalk") || msg.toLowerCase().includes("moon-walk"))
                     msg = "(^Д^)"
+
+                msg = msg.replace(/◆/g, "◇")
             }
 
             if (msg == "#ika")
