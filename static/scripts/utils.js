@@ -109,31 +109,29 @@ export class AudioProcessor
     constructor(stream, videoElement)
     {
         this.stream = stream
-        if (window.AudioContext)
+        this.isBoostEnabled = false
+        this.videoElement = videoElement
+        this.volume = videoElement.volume
+
+        if (canUseAudioContext)
         {
-            this.videoElement = videoElement
-            this.isBoostEnabled = false
-            this.volume = videoElement.volume
-            
-            if (canUseAudioContext)
-            {
-                this.context = new AudioContext()
-                this.source = this.context.createMediaStreamSource(stream);
-                this.compressor = this.context.createDynamicsCompressor();
-                this.compressor.threshold.value = -50;
-                this.compressor.knee.value = 40;
-                this.compressor.ratio.value = 12;
-                this.compressor.attack.value = 0;
-                this.compressor.release.value = 0.25;
-                this.gain = this.context.createGain()
-                this.gain.gain.value = maxGain
-            }
+            this.context = new AudioContext()
+            this.source = this.context.createMediaStreamSource(stream);
+            this.compressor = this.context.createDynamicsCompressor();
+            this.compressor.threshold.value = -50;
+            this.compressor.knee.value = 40;
+            this.compressor.ratio.value = 12;
+            this.compressor.attack.value = 0;
+            this.compressor.release.value = 0.25;
+            this.gain = this.context.createGain()
+            this.gain.gain.value = maxGain
         }
     }
 
     dispose()
     {
-        return this.context.close().catch(console.error)
+        if (canUseAudioContext)
+            this.context.close().catch(console.error)
     }
 
     setVolume(volume)
