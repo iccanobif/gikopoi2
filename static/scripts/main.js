@@ -501,7 +501,6 @@ window.vueApp = new Vue({
         },
         initializeSocket: function()
         {
-            console.log("initializeSocket")
             this.socket = io();
 
             const immanentizeConnection = async () =>
@@ -2199,8 +2198,8 @@ window.vueApp = new Vue({
                 if (this.highlightedUserId)
                 {
                     Vue.nextTick(() => {
-                        document.getElementById("user-list-element-" + this.highlightedUserId)
-                                .scrollIntoView({ block: "nearest" })
+                        const element = document.getElementById("user-list-element-" + this.highlightedUserId)
+                        if (element) element.scrollIntoView({ block: "nearest" })
                     })
                 }
             }
