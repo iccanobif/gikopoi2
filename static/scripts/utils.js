@@ -147,10 +147,8 @@ export class AudioProcessor
 
     enableCompression()
     {
-        console.log("enable compression")
         if (!canUseAudioContext) return 
 
-        logToServer("enable compression")
         this.source.connect(this.compressor)
         this.compressor.connect(this.gain)
         this.gain.connect(this.context.destination)
@@ -161,10 +159,8 @@ export class AudioProcessor
     
     disableCompression()
     {
-        console.log("enable compression")
         if (!canUseAudioContext) return 
 
-        logToServer("disable compression")
         this.source.disconnect()
         this.compressor.disconnect()
         this.gain.disconnect()

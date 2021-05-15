@@ -2143,10 +2143,13 @@ window.vueApp = new Vue({
                         if (audioProcessors[streamSlotId])
                             audioProcessors[streamSlotId].dispose()
                         
-                        audioProcessors[streamSlotId] = new AudioProcessor(stream, videoElement)
-
-                        if (this.slotCompression[streamSlotId])
-                            audioProcessors[streamSlotId].enableCompression()
+                        if (this.streams[streamSlotId].withSound)
+                        {
+                            audioProcessors[streamSlotId] = new AudioProcessor(stream, videoElement)
+                            
+                            if (this.slotCompression[streamSlotId])
+                               audioProcessors[streamSlotId].enableCompression()
+                        }
                     }
                     catch (exc)
                     {
