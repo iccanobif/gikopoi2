@@ -100,9 +100,10 @@ export const debounceWithImmediateExecution = (func, wait) => {
     };
   };
 
-const canUseAudioContext = !!window.AudioContext
-// const canUseAudioContext = false
+export const canUseAudioContext = !!window.AudioContext
+// export const canUseAudioContext = false
 const maxGain = 1.3
+
 export class AudioProcessor
 {
     constructor(stream, videoElement)

@@ -15,6 +15,7 @@ import {
     debounceWithImmediateExecution,
     urlRegex,
     AudioProcessor,
+    canUseAudioContext
 } from "./utils.js";
 import { messages } from "./lang.js";
 import { speak } from "./tts.js";
@@ -174,6 +175,7 @@ window.vueApp = new Vue({
         movementDirection: null,
         underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
         notificationPermissionsGranted: false,
+        canUseAudioContext: canUseAudioContext
     },
     mounted: function ()
     {
