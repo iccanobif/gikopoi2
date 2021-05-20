@@ -220,6 +220,8 @@ io.on("connection", function (socket: any)
                     msg = "(^Д^)"
 
                 msg = msg.replace(/◆/g, "◇")
+
+                msg = msg.replace(/bread/g, "cocaine")
             }
 
             if (msg == "#ika")
