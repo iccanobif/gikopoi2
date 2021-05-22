@@ -311,7 +311,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr :id="'user-list-element-' + user.id"
+                            <tr :id="'user-list-element-' + u.id"
                                 v-for="u in getUserListForListPopup()" 
                                 v-bind:class="{'popup-row-is-selected': u.id == highlightedUserId}">
                                 <td>
