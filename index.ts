@@ -209,8 +209,8 @@ io.on("connection", function (socket: any)
                 if ("TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
 
-                if (msg.match(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)|(ボクデン)|(ぼくでん)|(卜伝)|(ﾎﾞｸﾃﾞﾝ)/gi))
-                    msg = "o(≧▽≦)o"
+                msg = msg.replace(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)|(ボクデン)|(ぼくでん)|(卜伝)|(ﾎﾞｸﾃﾞﾝ)|(ボクデソ)/gi, 
+                    "$&o(≧▽≦)o")
 
                 if (msg.match(/(合言葉)|(あいことば)|(アイコトバ)|aikotoba/gi))
                     msg = "٩(ˊᗜˋ*)و"
