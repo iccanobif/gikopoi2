@@ -169,3 +169,24 @@ export class AudioProcessor
         this.isBoostEnabled = false
     }
 }
+
+export function getFormattedCurrentDate() {
+    const date = new Date()
+    var mm = date.getMonth() + 1; // getMonth() is zero-based
+    var dd = date.getDate();
+  
+    return [date.getFullYear(),
+            ".",
+            (mm>9 ? '' : '0') + mm,
+            ".",
+            (dd>9 ? '' : '0') + dd,
+            " ",
+            date.getHours(),
+            ":",
+            date.getMinutes(),
+            ":",
+            date.getSeconds(),
+           ].join('');
+  };
+  
+  

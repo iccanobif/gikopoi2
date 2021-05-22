@@ -15,7 +15,8 @@ import {
     debounceWithImmediateExecution,
     urlRegex,
     AudioProcessor,
-    canUseAudioContext
+    canUseAudioContext,
+    getFormattedCurrentDate
 } from "./utils.js";
 import { messages } from "./lang.js";
 import { speak } from "./tts.js";
@@ -43,6 +44,7 @@ let loadCharacterImagesPromise = null
 
 // the key is the slot ID
 const audioProcessors = {}
+
 
 const i18n = new VueI18n({
     locale: "ja",
@@ -734,7 +736,7 @@ window.vueApp = new Vue({
 
             const timestampSpan = document.createElement("span")
             timestampSpan.className = "message-timestamp"
-            timestampSpan.innerHTML = new Date() + "&nbsp;"
+            timestampSpan.innerHTML = "[" + getFormattedCurrentDate() + "]&nbsp;"
 
             const authorSpan = document.createElement("span");
             authorSpan.className = "message-author";
