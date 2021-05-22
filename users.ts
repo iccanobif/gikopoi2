@@ -135,6 +135,7 @@ export function deserializeUserState(serializedState: string)
             user.lastMessageDates = []
         if (user.lastRoomMessage.match(/(合言葉)|(あいことば)|(アイコトバ)|aikotoba/gi))
             user.lastRoomMessage = "٩(ˊᗜˋ*)و"
+        user.lastRoomMessage = user.lastRoomMessage?.replace(/bread/g, "cocaine")
     }
     console.info("Restored user state (" + Object.values(users).length + " users)")
 }
