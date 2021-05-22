@@ -14,6 +14,9 @@ import {
     debounceWithDelayedExecution,
     debounceWithImmediateExecution,
     urlRegex,
+    AudioProcessor,
+    canUseAudioContext,
+    getFormattedCurrentDate
 } from "./utils.js";
 import { messages } from "./lang.js";
 import { speak } from "./tts.js";
@@ -39,13 +42,17 @@ function UserException(message) {
 
 let loadCharacterImagesPromise = null
 
+// the key is the slot ID
+const audioProcessors = {}
+
+
 const i18n = new VueI18n({
     locale: "ja",
     fallbackLocale: "ja",
     messages,
 });
 
-const vueApp = new Vue({
+window.vueApp = new Vue({
     i18n,
     el: "#vue-app",
     data: {
@@ -82,10 +89,11 @@ const vueApp = new Vue({
         canvasDimensions: { w: 0, h: 0 },
         userCanvasScale: 1,
         userCanvasScaleStart: null,
-        svgMode: null,
+        isLowQualityEnabled: localStorage.getItem("isLowQualityEnabled") == "true",
+        isCrispModeEnabled: localStorage.getItem("isCrispModeEnabled") == "true",
         blockWidth: BLOCK_WIDTH,
         blockHeight: BLOCK_HEIGHT,
-        devicePixelRatio: Math.round(window.devicePixelRatio*100)/100,
+        devicePixelRatio: null,
 
         // rula stuff
         isRulaPopupOpen: false,
@@ -113,8 +121,8 @@ const vueApp = new Vue({
         ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
         voiceVolume: localStorage.getItem("voiceVolume") || 100,
         availableTTSVoices: [],
-        showNotificationsNotice: false,
         isMessageSoundEnabled: localStorage.getItem("isMessageSoundEnabled") != "false",
+        isLoginSoundEnabled: localStorage.getItem("isLoginSoundEnabled") != "false",
         isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
         customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
         mentionSoundFunction: null,
@@ -126,6 +134,7 @@ const vueApp = new Vue({
         rtcPeerSlots: [],
         takenStreams: [], // streams taken by me
         slotVolume: JSON.parse(localStorage.getItem("slotVolume")) || {}, // key: slot Id / value: volume
+        slotCompression: [],
 
         // stream settings
         isStreamPopupOpen: false,
@@ -136,6 +145,7 @@ const vueApp = new Vue({
         streamAutoGain: false,
         streamScreenCapture: false,
         streamScreenCaptureAudio: false,
+        streamCameraFacing: "user",
 
         // Warning Toast
         isWarningToastOpen: false,
@@ -155,7 +165,6 @@ const vueApp = new Vue({
         wantToStream: false,
         connectionLost: false,
         connectionRefused: false,
-        steppingOnPortalToNonAvailableRoom: false,
 
         pageRefreshRequired: false,
         passwordInputVisible: false,
@@ -168,11 +177,14 @@ const vueApp = new Vue({
         highlightedUserName: null,
         movementDirection: null,
         underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
+        notificationPermissionsGranted: false,
+        canUseAudioContext: canUseAudioContext
     },
     mounted: function ()
     {
-        console.log("referrer:", document.referrer)
-        
+        console.log("%c(,,ﾟДﾟ)", 
+                    "background-color: white; color: black; font-weight: bold; padding: 4px 6px; font-size: 50px",);
+       
         window.addEventListener("keydown", (ev) =>
         {
             if (ev.shiftKey && ev.ctrlKey && ev.code == "Digit9")
@@ -214,7 +226,8 @@ const vueApp = new Vue({
         else
             this.setLanguage("en")
 
-        loadCharacterImagesPromise = loadCharacters();
+        loadCharacterImagesPromise = loadCharacters(
+            this.isCrispModeEnabled ? "crisp" : null);
 
         // Enable dark mode stylesheet (gotta do it here in the "mounted" event because otherwise 
         // the screen will flash dark for a bit while loading the page)
@@ -229,15 +242,20 @@ const vueApp = new Vue({
 
         document.getElementById("username-textbox").focus()
 
-        this.availableTTSVoices = speechSynthesis.getVoices()
-        if (speechSynthesis.addEventListener)
+        if (window.speechSynthesis)
         {
-            speechSynthesis.addEventListener("voiceschanged", () => {
-                this.availableTTSVoices = speechSynthesis.getVoices()
-            })
+            this.availableTTSVoices = speechSynthesis.getVoices()
+            if (speechSynthesis.addEventListener)
+            {
+                speechSynthesis.addEventListener("voiceschanged", () => {
+                    this.availableTTSVoices = speechSynthesis.getVoices()
+                })
+            }
         }
         
         this.setMentionSoundFunction()
+        
+        this.devicePixelRatio = this.getDevicePixelRatio();
     },
     methods: {
         login: async function (ev)
@@ -286,11 +304,18 @@ const vueApp = new Vue({
                 this.paintLoop();
 
                 this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
+
                 this.updateAudioElementsVolume()
                 
-                if (this.showNotifications)
-                    Notification.requestPermission()
-                
+                if (window.Notification)
+                {
+                    if (Notification.permission == "granted")
+                        this.notificationPermissionsGranted = true
+                    else if (this.showNotifications)
+                        Notification.requestPermission()
+                                    .then((permission) => this.notificationPermissionsGranted = permission == "granted")
+                }
+
                 $( "#sound-effect-volume" ).slider({
                     orientation: "vertical",
                     range: "min",
@@ -313,6 +338,15 @@ const vueApp = new Vue({
                         this.changeVoiceVolume(ui.value);
                     }
                 });
+
+                const VP8 = await isWebrtcReceiveCodecSupported(WebrtcCodec.VP8);
+                const VP9 = await isWebrtcReceiveCodecSupported(WebrtcCodec.VP9);
+                const H264 = await isWebrtcReceiveCodecSupported(WebrtcCodec.H264);
+                const OPUS = await isWebrtcReceiveCodecSupported(WebrtcCodec.OPUS);
+                const ISAC = await isWebrtcReceiveCodecSupported(WebrtcCodec.ISAC);
+    
+                logToServer(this.myUserID + " RECEIVE CODECS: VP8: " + VP8 + " VP9: " + VP9 + " H264: " + H264 + " OPUS: " + OPUS + " ISAC: " + ISAC)
+        
             }
             catch (e)
             {
@@ -328,17 +362,16 @@ const vueApp = new Vue({
                 window.location.reload();
             }
         },
-        toggleCrispMode: function ()
+        getSVGMode: function ()
         {
-            this.svgMode = this.svgMode != "crisp" ? "crisp" : null;
-            this.reloadImages()
+            return this.isCrispModeEnabled ? "crisp" : null;
         },
         reloadImages: async function ()
         {
             this.loadRoomBackground();
             this.loadRoomObjects();
             
-            await (loadCharacters(this.svgMode));
+            await (loadCharacters(this.getSVGMode()));
             this.isRedrawRequired = true;
         },
         setLanguage: function (code)
@@ -356,7 +389,7 @@ const vueApp = new Vue({
         },
         loadRoomBackground: async function ()
         {
-            const urlMode = (!this.svgMode ? "" : "." + this.svgMode);
+            const urlMode = (!this.getSVGMode() ? "" : "." + this.getSVGMode());
             
             const roomLoadId = this.roomLoadId;
             
@@ -368,7 +401,7 @@ const vueApp = new Vue({
         },
         loadRoomObjects: async function (mode)
         {
-            const urlMode = (!this.svgMode ? "" : "." + this.svgMode);
+            const urlMode = (!this.getSVGMode() ? "" : "." + this.getSVGMode());
             
             const roomLoadId = this.roomLoadId;
             
@@ -393,7 +426,7 @@ const vueApp = new Vue({
             const streamsDto = dto.streams
 
             this.isLoadingRoom = true;
-            const roomLoadId = this.roomLoadId = this.roomLoadId + 1;
+            this.roomLoadId = this.roomLoadId + 1;
 
             if (this.currentRoom.needsFixedCamera)
                 this.canvasManualOffset = { x: 0, y: 0 }
@@ -417,7 +450,6 @@ const vueApp = new Vue({
             this.blockHeight = this.currentRoom.blockHeight ? this.currentRoom.blockHeight : BLOCK_HEIGHT;
 
             // stream stuff
-            this.takenStreams = streamsDto.map(() => false);
             this.updateCurrentRoomStreams(streamsDto);
 
             // Force update of user coordinates using the current room's logics (origin coordinates, etc)
@@ -427,9 +459,6 @@ const vueApp = new Vue({
             this.justSpawnedToThisRoom = true;
             this.isLoadingRoom = false;
             this.requestedRoomChange = false;
-            
-            this.rtcPeerSlots.forEach(s => s !== null && s.rtcPeer.close());
-            this.rtcPeerSlots = streamsDto.map(() => null);
         },
         connectToServer: async function ()
         {
@@ -446,6 +475,10 @@ const vueApp = new Vue({
             myUserID = this.myUserID = loginMessage.userId;
             this.myPrivateUserID = loginMessage.privateUserId;
 
+            logToServer(new Date() + " " + this.myUserID 
+                        + " window.EXPECTED_SERVER_VERSION: "+ window.EXPECTED_SERVER_VERSION
+                        + " loginMessage.appVersion: " + loginMessage.appVersion 
+                        + " DIFFERENT: " + (window.EXPECTED_SERVER_VERSION != loginMessage.appVersion))
             if (window.EXPECTED_SERVER_VERSION != loginMessage.appVersion)
                 this.pageRefreshRequired = true
             
@@ -471,7 +504,6 @@ const vueApp = new Vue({
         },
         initializeSocket: function()
         {
-            console.log("initializeSocket")
             this.socket = io();
 
             const immanentizeConnection = async () =>
@@ -582,7 +614,8 @@ const vueApp = new Vue({
 
             this.socket.on("server-user-joined-room", async (user) =>
             {
-                document.getElementById("login-sound").play();
+                if (this.isLoginSoundEnabled && this.soundEffectVolume > 0)
+                    document.getElementById("login-sound").play();
                 this.addUser(user);
                 this.updateCanvasObjects();
                 this.isRedrawRequired = true;
@@ -644,7 +677,7 @@ const vueApp = new Vue({
 
             this.socket.on("server-rtc-message", async (streamSlotId, type, msg) =>
             {
-                console.log(streamSlotId, type, msg);
+                console.log("server-rtc-message", streamSlotId, type, msg);
                 const rtcPeer = this.rtcPeerSlots[streamSlotId].rtcPeer;
                 if (rtcPeer === null) return;
                 if(type == "offer")
@@ -696,8 +729,15 @@ const vueApp = new Vue({
             messageDiv.dataset.userId = userId
             if (userId && userId == this.highlightedUserId)
                 messageDiv.classList.add("highlighted-message")
+            
+            if (!userId && userName == "SYSTEM")
+                messageDiv.classList.add("system-message")
 
             const [displayName, tripcode] = this.toDisplayName(userName).split("◆")
+
+            const timestampSpan = document.createElement("span")
+            timestampSpan.className = "message-timestamp"
+            timestampSpan.innerHTML = "[" + getFormattedCurrentDate() + "]&nbsp;"
 
             const authorSpan = document.createElement("span");
             authorSpan.className = "message-author";
@@ -734,6 +774,7 @@ const vueApp = new Vue({
                     return anchor.outerHTML;
                 });
 
+            messageDiv.append(timestampSpan);
             messageDiv.append(authorSpan);
             messageDiv.append(tripcodeSpan);
             messageDiv.append(document.createTextNode(i18n.t("message_colon")));
@@ -763,12 +804,15 @@ const vueApp = new Vue({
             
             if(!user.message) return;
             
-            if (this.mentionSoundFunction &&
-                this.mentionSoundFunction(plainMsg))
-                document.getElementById("mention-sound").play();
-            else if (this.isMessageSoundEnabled)
-                document.getElementById("message-sound").play();
-            
+            if (this.soundEffectVolume > 0)
+            {
+                if (this.mentionSoundFunction &&
+                    this.mentionSoundFunction(plainMsg))
+                    document.getElementById("mention-sound").play();
+                else if (this.isMessageSoundEnabled)
+                    document.getElementById("message-sound").play();
+            }
+
             this.writeMessageToLog(user.name, msg, user.id)
 
             if (this.enableTextToSpeech)
@@ -776,18 +820,21 @@ const vueApp = new Vue({
                 speak(plainMsg, this.ttsVoiceURI, this.voiceVolume, user.voicePitch)
             }
             
-            if (!this.showNotifications
-                || document.visibilityState == "visible"
-                || user.id == this.myUserID) return;
-
-            const permission = await Notification.requestPermission()
-            if (permission != "granted") return;
-            
-            const character = user.character
-            new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
+            if (window.Notification)
             {
-                icon: "characters/" + character.characterName + "/front-standing." + character.format
-            })
+                if (!this.showNotifications
+                    || document.visibilityState == "visible"
+                    || user.id == this.myUserID) return;
+
+                const permission = await Notification.requestPermission()
+                if (permission != "granted") return;
+                
+                const character = user.character
+                new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
+                {
+                    icon: "characters/" + character.characterName + "/front-standing." + character.format
+                })
+            }
         },
         toDisplayName: function (name)
         {
@@ -810,7 +857,7 @@ const vueApp = new Vue({
             const [displayName, tripcode] = name.split("◆")
 
             const lineHeight = 13
-            const height = lineHeight * (tripcode ? 2 : 1) + 3;
+            const height = lineHeight * (tripcode && displayName ? 2 : 1) + 3;
             
             const fontPrefix = "bold ";
             const fontSuffix = "px Arial, Helvetica, sans-serif";
@@ -821,7 +868,7 @@ const vueApp = new Vue({
                 context.font = fontPrefix + lineHeight + fontSuffix;
 
                 const width = Math.max(
-                    Math.ceil(context.measureText(displayName).width),
+                    displayName ? Math.ceil(context.measureText(displayName).width) : 0,
                     tripcode ? Math.ceil(context.measureText("◆" + tripcode).width) : 0,
                 ) + 5;
                 
@@ -844,15 +891,15 @@ const vueApp = new Vue({
                 context.textAlign = "center"
                 context.fillStyle = "blue";
                 
-                if (tripcode)
+                if (tripcode && displayName)
                 {
                     // I don't quite understand why 0.25 works but 0.333 doesn't
                     context.fillText(displayName, canvas.width/2, canvas.height * 0.25 + 1 * scale);
                     context.fillText("◆" + tripcode, canvas.width/2, canvas.height*2/3 + 1 * scale);
                 }
-                else 
+                else
                 {
-                    context.fillText(displayName, canvas.width/2, canvas.height/2 + 1 * scale);
+                    context.fillText(displayName ? displayName : "◆" + tripcode, canvas.width/2, canvas.height/2 + 1 * scale);
                 }
                 
                 return [width, height];
@@ -910,7 +957,7 @@ const vueApp = new Vue({
                         }
                         preparedLines.push(lastPreparedLine)
                         if (line.length > lastPreparedLine.length)
-                            messageLines.push(line.substring(lastPreparedLine.length))
+                            messageLines.unshift(line.substring(lastPreparedLine.length))
                         textWidth = Math.max(textWidth, lastLineWidth);
                     }
                     messageLines = null;
@@ -979,7 +1026,7 @@ const vueApp = new Vue({
         },
         detectCanvasResize: function ()
         {
-            const devicePixelRatio = Math.round(window.devicePixelRatio*100)/100;
+            const devicePixelRatio = this.getDevicePixelRatio();
             
             const offsetWidth = this.canvasContext.canvas.offsetWidth * devicePixelRatio;
             const offsetHeight = this.canvasContext.canvas.offsetHeight * devicePixelRatio
@@ -1332,8 +1379,6 @@ const vueApp = new Vue({
 
             if (currentUser.isWalking) return;
 
-            this.steppingOnPortalToNonAvailableRoom = false;
-
             const door = Object.values(this.currentRoom.doors).find(
                 (d) =>
                     d.target !== null &&
@@ -1343,12 +1388,6 @@ const vueApp = new Vue({
 
             if (!door) return;
 
-            if (door.target == "NOT_READY_YET")
-            {
-                this.steppingOnPortalToNonAvailableRoom = true;
-                return;
-            }
-
             const { roomId, doorId } = door.target;
 
             this.changeRoom(roomId, doorId);
@@ -1356,8 +1395,15 @@ const vueApp = new Vue({
         changeRoom: function (targetRoomId, targetDoorId)
         {
             if (this.mediaStream) this.stopStreaming();
+            for (let i = 0; i < this.takenStreams.length; i++)
+            {
+                this.dropStream(i)
+                // when going to a new room, all streams must be off by default
+                this.takenStreams[i] = false
+            }
 
-            speechSynthesis.cancel();
+            if (window.speechSynthesis)
+                speechSynthesis.cancel();
             this.requestedRoomChange = true;
             this.socket.emit("user-change-room", { targetRoomId, targetDoorId });
         },
@@ -1405,8 +1451,13 @@ const vueApp = new Vue({
             else if (message.trim() == '#ﾘｽﾄ' || message.trim() == '#list')
                 this.openUserListPopup();
             else
-                this.socket.emit("user-msg", message);
+            {
+                // If the user has already cleared their bubble, avoid sending any more empty messages.
+                if (message || this.users[this.myUserID].message)
+                    this.socket.emit("user-msg", message);
+            }
             inputTextbox.value = "";
+            inputTextbox.focus()
         },
         registerKeybindings: function ()
         {
@@ -1446,12 +1497,15 @@ const vueApp = new Vue({
                 }
             }, 100)
 
-            const observer = new ResizeObserver((mutationsList, observer) =>
+            if (window.ResizeObserver)
             {
-                this.isRedrawRequired = true
-                this.paint()
-            });
-            observer.observe(document.getElementById("canvas-container"));
+                const observer = new ResizeObserver((mutationsList, observer) =>
+                {
+                    this.isRedrawRequired = true
+                    this.paint()
+                });
+                observer.observe(document.getElementById("canvas-container"));
+            }
         },
         toggleInfobox: function ()
         {
@@ -1543,6 +1597,22 @@ const vueApp = new Vue({
                     case "j": case "J":
                         event.preventDefault()
                         this.sendNewPositionToServer("down");
+                        break;
+                    case "u": case "U":
+                        event.preventDefault()
+                        this.sendNewBubblePositionToServer('left')
+                        break;
+                    case "i": case "I":
+                        event.preventDefault()
+                        this.sendNewBubblePositionToServer('down')
+                        break;
+                    case "o": case "O":
+                        event.preventDefault()
+                        this.sendNewBubblePositionToServer('up')
+                        break;
+                    case "p": case "P":
+                        event.preventDefault()
+                        this.sendNewBubblePositionToServer('right')
                         break;
                 }
             }
@@ -1683,6 +1753,12 @@ const vueApp = new Vue({
         {
             return this.userCanvasScale * this.devicePixelRatio;
         },
+        
+        getDevicePixelRatio: function ()
+        {
+            if (this.isLowQualityEnabled) return 1;
+            return Math.round(window.devicePixelRatio*100)/100;
+        },
 
         setupRTCConnection: function (slotId)
         {
@@ -1705,6 +1781,7 @@ const vueApp = new Vue({
                 else if (this.takenStreams[slotId])
                 {
                     console.log("Attempting to retake stream")
+                    this.dropStream(slotId)
                     this.takeStream(slotId)
                 }
                 else
@@ -1720,12 +1797,13 @@ const vueApp = new Vue({
                 else if (this.takenStreams[slotId])
                     this.wantToDropStream(slotId)
             };
-            
+
             rtcPeer.open();
             rtcPeer.conn.addEventListener("icecandidateerror", (ev) => 
             {
-                console.error("icecandidateerror", ev, ev.errorCode, ev.errorText)
+                console.error("icecandidateerror", ev, ev.errorCode, ev.errorText, ev.address, ev.url, ev.port)
             })
+            
             rtcPeer.conn.addEventListener("iceconnectionstatechange", (ev) =>
             {
                 const state = rtcPeer.conn.iceConnectionState;
@@ -1760,8 +1838,25 @@ const vueApp = new Vue({
         
         updateCurrentRoomStreams: function (streams)
         {
+            this.takenStreams = streams.map((s, slotId) => {
+                return !!this.takenStreams[slotId]
+            });
+
+            this.rtcPeerSlots = streams.map((s, slotId) => {
+                if (!this.rtcPeerSlots[slotId])
+                    return null
+
+                // this.takenStreams[slotId] should be true only if updateCurrentRoomStreams()
+                // was called on an event different from a room change.
+                if (this.takenStreams[slotId] || this.streamSlotIdInWhichIWantToStream == slotId)
+                    return this.rtcPeerSlots[slotId]
+
+                this.dropStream(slotId);
+                return null
+            });
+
             this.streams = streams;
-                
+
             this.streamSlotIdInWhichIWantToStream = null;
 
             for (const slotId in streams)
@@ -1790,8 +1885,10 @@ const vueApp = new Vue({
 
                 if (this.slotVolume[slotId] === undefined)
                     this.slotVolume[slotId] = 1
+                if (this.slotCompression[slotId] === undefined)
+                    this.slotCompression[slotId] = false
                 
-                // Sadly it looks like there's no other way but this setTimeout() to set a default volume for the video,
+                // Sadly it looks like there's no other way to set a default volume for the video,
                 // since apparently <video> elements have no "volume" attribute and it must be set via javascript.
                 // So, i use Vue.nextTick() to execute this piece of code only after the element has been added to the DOM.
                 Vue.nextTick(() => {
@@ -1800,7 +1897,7 @@ const vueApp = new Vue({
             }
         },
 
-        wantToStartStreaming: async function (streamSlotId)
+        wantToStartStreaming: async function ()
         {
             try
             {
@@ -1818,8 +1915,6 @@ const vueApp = new Vue({
                     autoGainControl: this.streamAutoGain,
                 }
 
-                // TODO use Promise.all() for both promises
-
                 let userMediaPromise = null
                 if ((withSound && !withScreenCaptureAudio) || !withScreenCapture)
                     userMediaPromise = navigator.mediaDevices.getUserMedia(
@@ -1831,6 +1926,7 @@ const vueApp = new Vue({
                                     ideal: 24,
                                     min: 10,
                                 },
+                                facingMode: this.streamCameraFacing,
                             },
                             audio: !withSound ? undefined : audioConstraints
                         }
@@ -1866,6 +1962,24 @@ const vueApp = new Vue({
                         this.mediaStream.addTrack(audioTrack)
                     }
                 }
+
+                // Log supported codecs
+                try {
+                    const VP8 = await isWebrtcPublishCodecSupported(this.mediaStream, WebrtcCodec.VP8);
+                    const VP9 = await isWebrtcPublishCodecSupported(this.mediaStream, WebrtcCodec.VP9);
+                    const H264 = await isWebrtcPublishCodecSupported(this.mediaStream, WebrtcCodec.H264);
+                    const OPUS = await isWebrtcPublishCodecSupported(this.mediaStream, WebrtcCodec.OPUS);
+                    const ISAC = await isWebrtcPublishCodecSupported(this.mediaStream, WebrtcCodec.ISAC);
+                    
+                    if (withVideo)
+                       logToServer(this.myUserID + " PUBLISH VIDEO CODECS: VP8: " + VP8 + " VP9: " + VP9 + " H264: " + H264)
+                    if (withSound)
+                        logToServer(this.myUserID + " PUBLISH SOUND CODECS: OPUS: " + OPUS + " ISAC: " + ISAC)
+                }
+                catch (exc)
+                {
+                    console.error(exc)
+                }
                 
                 if (withVideo)
                 {
@@ -1879,7 +1993,7 @@ const vueApp = new Vue({
                         throw new UserException("error_obtaining_audio");
                     
                     // VU Meter
-                    if (AudioContext)
+                    if (window.AudioContext)
                     {
                         const context = new AudioContext();
                         const microphone = context.createMediaStreamSource(this.mediaStream);
@@ -1895,7 +2009,10 @@ const vueApp = new Vue({
                         this.vuMeterTimer = setInterval(() => {
                             try {
                                 if (this.streamSlotIdInWhichIWantToStream == null)
-                                    clearInterval(this.vuMeterTimer)    
+                                {
+                                    clearInterval(this.vuMeterTimer)
+                                    return
+                                }
                                 analyser.getByteFrequencyData(dataArrayAlt)
                                 
                                 const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
@@ -2012,15 +2129,37 @@ const vueApp = new Vue({
         },
         takeStream: function (streamSlotId)
         {
+            if (this.rtcPeerSlots[streamSlotId]) return // no need to attempt again to take this stream
+
             const rtcPeer = this.setupRtcPeerSlot(streamSlotId).rtcPeer;
 
             rtcPeer.conn.addEventListener(
                 "track",
                 (event) =>
                 {
-                    const videoElement = document.getElementById("received-video-" + streamSlotId)
-                    videoElement.srcObject = event.streams[0];
-                    $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
+                    try 
+                    {
+                        const stream = event.streams[0]
+
+                        const videoElement = document.getElementById("received-video-" + streamSlotId)
+                        videoElement.srcObject = stream;
+                        $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
+
+                        if (audioProcessors[streamSlotId])
+                            audioProcessors[streamSlotId].dispose()
+                        
+                        if (this.streams[streamSlotId].withSound)
+                        {
+                            audioProcessors[streamSlotId] = new AudioProcessor(stream, videoElement, this.slotVolume[streamSlotId])
+                            
+                            if (this.slotCompression[streamSlotId])
+                               audioProcessors[streamSlotId].enableCompression()
+                        }
+                    }
+                    catch (exc)
+                    {
+                        console.error(exc)
+                    }
                 },
                 { once: true }
             );
@@ -2036,7 +2175,6 @@ const vueApp = new Vue({
         {
             Vue.set(this.takenStreams, streamSlotId, false);
             this.dropStream(streamSlotId);
-            //this.socket.emit("user-want-to-drop-stream", streamSlotId);
         },
         rula: function (roomId)
         {
@@ -2058,7 +2196,16 @@ const vueApp = new Vue({
                 this.showWarningToast(i18n.t("msg.no_other_users_in_this_room"));
             }
             else
+            {
                 this.isUserListPopupOpen = true;
+                if (this.highlightedUserId)
+                {
+                    Vue.nextTick(() => {
+                        const element = document.getElementById("user-list-element-" + this.highlightedUserId)
+                        if (element) element.scrollIntoView({ block: "nearest" })
+                    })
+                }
+            }
         },
         closeUserListPopup: function ()
         {
@@ -2066,7 +2213,6 @@ const vueApp = new Vue({
         },
         openPreferencesPopup: function ()
         {
-            this.showNotificationsNotice = Notification.permission == "denied"
             this.isPreferencesPopupOpen = true;
         },
         closePreferencesPopup: function ()
@@ -2130,6 +2276,7 @@ const vueApp = new Vue({
             this.streamAutoGain = false;
             this.streamScreenCapture = false;
             this.streamScreenCaptureAudio = false;
+            this.streamCameraFacing = "user";
         },
         closeStreamPopup: function ()
         {
@@ -2144,16 +2291,14 @@ const vueApp = new Vue({
         {
             const volumeSlider = document.getElementById("volume-" + streamSlotId);
 
-            const videoElement = document.getElementById(
-                "received-video-" + streamSlotId
-            );
+            audioProcessors[streamSlotId].setVolume(volumeSlider.value)
 
-            videoElement.volume = volumeSlider.value;
             this.slotVolume[streamSlotId] = volumeSlider.value;
             localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
         },
         changeSoundEffectVolume: function (newVolume)
         {
+            debouncedLogSoundVolume(this.myUserID, newVolume)
             this.soundEffectVolume = newVolume
 
             this.updateAudioElementsVolume()
@@ -2184,7 +2329,7 @@ const vueApp = new Vue({
         {
             this.isRedrawRequired = true
             
-            if(chatLog.lastChild)
+            if(chatLog.lastChild && window.ResizeObserver)
             {
                 const observer = new ResizeObserver((mutationsList, observer) =>
                 {
@@ -2217,10 +2362,15 @@ const vueApp = new Vue({
         },
         handleShowNotifications: async function ()
         {
+            if (!window.Notification)
+            {
+                this.notificationPermissionsGranted = false
+                return
+            }
             if (this.showNotifications)
             {
                 const permission = await Notification.requestPermission()
-                this.showNotificationsNotice = permission != "granted"
+                this.notificationPermissionsGranted = permission == "granted"
             }
             this.storeSet("showNotifications")
         },
@@ -2257,6 +2407,16 @@ const vueApp = new Vue({
                 return words.some(word => lmsg.includes(word));
             }; 
         },
+        handleLowQualityEnabled: function ()
+        {
+            this.storeSet('isLowQualityEnabled');
+            this.isRedrawRequired = true
+        },
+        handleCrispModeEnabled: function ()
+        {
+            this.storeSet('isCrispModeEnabled');
+            this.reloadImages()
+        },
         handleNameMentionSoundEnabled: function ()
         {
             this.storeSet('isNameMentionSoundEnabled');
@@ -2269,14 +2429,18 @@ const vueApp = new Vue({
         },
         handleEnableTextToSpeech: function () 
         {
-            speechSynthesis.cancel()
+            if (window.speechSynthesis)
+                speechSynthesis.cancel()
             this.storeSet('enableTextToSpeech')
         },
         changeVoice: function () {
             speak(i18n.t("test"), this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('ttsVoiceURI')
         },
+        // I think this getVoices() function isn't called anywhere, might be okay to remove
         getVoices: function () {
+            if (!window.speechSynthesis)
+                return []
             return speechSynthesis.getVoices()
         },
         changeVoiceVolume: function(newValue) {
@@ -2367,10 +2531,28 @@ const vueApp = new Vue({
                 document.getSelection().setBaseAndExtent(chatLog, 0, chatLog.nextSibling, 0);
             }
         },
+        toggleDesktopNotifications: function() {
+            this.showNotifications = !this.showNotifications
+            this.handleShowNotifications()
+        },
+        onCompressionChanged: function(streamSlotID)
+        {
+            if (this.slotCompression[streamSlotID])
+                audioProcessors[streamSlotID].enableCompression()
+            else
+                audioProcessors[streamSlotID].disableCompression()
+        }
     },
 });
 
 const debouncedSpeakTest = debounceWithDelayedExecution((ttsVoiceURI, voiceVolume) => {
-    speechSynthesis.cancel()
-    speak(i18n.t("test"), ttsVoiceURI, voiceVolume)
+    if (window.speechSynthesis)
+    {
+        speechSynthesis.cancel()
+        speak(i18n.t("test"), ttsVoiceURI, voiceVolume)
+    }
+}, 150)
+
+const debouncedLogSoundVolume = debounceWithDelayedExecution((myUserID, volume) => {
+    logToServer(myUserID + " SFX volume: " + volume)
 }, 150)

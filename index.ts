@@ -8,6 +8,7 @@ import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
 import compression from 'compression';
+import { getAbuseConfidenceScore } from "./abuse-ip-db";
 
 const app: express.Application = express()
 const http = require('http').Server(app);
@@ -21,13 +22,14 @@ const JanusClient = require('janus-videoroom-client').Janus;
 
 const delay = 0
 const persistInterval = 5 * 1000
-const maxGhostRetention = 5 * 60 * 1000
+const maxGhostRetention = 30 * 60 * 1000
 const inactivityTimeout = 30 * 60 * 1000
 const maximumUsersPerIpPerArea = 2
+const maximumAbuseConfidenceScore = 50
 
 const appVersion = Number.parseInt(readFileSync("version").toString())
 
-log.setLevel(log.levels.DEBUG)
+log.setLevel(log.levels.INFO)
 
 console.log("Gikopoipoi (version " + appVersion + ")")
 console.log("Using settings:", JSON.stringify(settings))
@@ -93,11 +95,11 @@ io.on("connection", function (socket: any)
     let currentRoom = defaultRoom;
     let janusHandleSlots: any[] = [];
 
-    const sendCurrentRoomState = () => 
+    const sendCurrentRoomState = () =>
     {
         const connectedUsers: PlayerDto[] = getFilteredConnectedUserList(user, user.roomId, user.areaId)
             .map(p => toPlayerDto(p, user.roomId, user.areaId))
-        
+
         socket.emit("server-update-current-room-state",
             <RoomStateDto>{
                 currentRoom,
@@ -210,15 +212,21 @@ io.on("connection", function (socket: any)
                 if (msg.match(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)|(ボクデン)|(ぼくでん)|(卜伝)|(ﾎﾞｸﾃﾞﾝ)/gi))
                     msg = "o(≧▽≦)o"
 
+                if (msg.match(/(合言葉)|(あいことば)|(アイコトバ)|aikotoba/gi))
+                    msg = "٩(ˊᗜˋ*)و"
+
                 // and for the love of god no moonwalking
                 if (msg.toLowerCase().includes("moonwalk") || msg.toLowerCase().includes("moon-walk"))
                     msg = "(^Д^)"
+
+                msg = msg.replace(/◆/g, "◇")
+
+                msg = msg.replace(/bread/g, "cocaine")
             }
 
             if (msg == "#ika")
             {
-                user.characterId = "ika"
-                userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId)
+                changeCharacter(user, "ika")
                 user.lastAction = Date.now()
                 return;
             }
@@ -245,7 +253,7 @@ io.on("connection", function (socket: any)
 
         try
         {
-            log.info("user-move", user.id, direction)
+            log.debug("user-move", user.id, direction)
             setUserAsActive(user)
 
             const shouldSpinwalk = user.directionChangedAt !== null
@@ -277,7 +285,7 @@ io.on("connection", function (socket: any)
 
                 const rejectMovement = () =>
                 {
-                    log.info("movement rejected", user.id)
+                    log.debug("movement rejected", user.id)
                     socket.emit("server-reject-movement")
                 }
 
@@ -304,17 +312,16 @@ io.on("connection", function (socket: any)
                 }
 
                 // Become fat if you're at position 2,4 in yoshinoya room
+                // But if you're a squid, you'll stay a squid all your life!
                 if (currentRoom.id == "yoshinoya" && user.position.x == 2 && user.position.y == 4)
                 {
-                    user.characterId = "hungry_giko"
-                    // sendCurrentRoomState()
-                    userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId)
+                    changeCharacter(user, "hungry_giko")
                 }
 
                 user.position.x = newX
                 user.position.y = newY
             }
-            
+
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-move",
                 {
@@ -336,7 +343,7 @@ io.on("connection", function (socket: any)
         try
         {
             user.bubblePosition = position;
-            
+
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-bubble-position", user.id, position);
         }
@@ -356,8 +363,11 @@ io.on("connection", function (socket: any)
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId]
             const streamer = getUser(stream.userId!);
-            
-            if (stream.userId == user.id) clearStream(user);
+
+            if (stream.userId == user.id)
+            {
+                clearStream(user);
+            }
 
             if (stream.isActive && streamer)
             {
@@ -380,7 +390,11 @@ io.on("connection", function (socket: any)
 
             setTimeout(() =>
             {
-                if (stream.publisherId == null) clearStream(user)
+                if (stream.publisherId == null)
+                {
+                    log.info(user.id, "stream.publisherId == null")
+                    clearStream(user)
+                }
             }, 10000);
 
             userRoomEmit(user, user.areaId, user.roomId,
@@ -400,6 +414,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
+            log.info(user.id, "user-want-to-stop-stream")
             clearStream(user)
         }
         catch (e)
@@ -410,6 +425,7 @@ io.on("connection", function (socket: any)
 
     socket.on("user-want-to-take-stream", async function (streamSlotId: number)
     {
+        log.info("user-want-to-take-stream", user.id, streamSlotId)
         try
         {
             if (streamSlotId === undefined) return;
@@ -421,6 +437,7 @@ io.on("connection", function (socket: any)
                 || stream.publisherId === null
                 || roomState.janusRoomServer === null)
             {
+                log.info("server-not-ok-to-take-stream", user.id, streamSlotId)
                 socket.emit("server-not-ok-to-take-stream", streamSlotId);
                 return;
             };
@@ -450,31 +467,12 @@ io.on("connection", function (socket: any)
         }
     })
 
-    // Not sure this is needed anymore:
-    /*
-        socket.on("user-want-to-drop-stream", function (streamSlotId: number)
-        {
-            try
-            {
-                const streams = roomStates[user.areaId][currentRoom.id].streams
-                const userid = streams[streamSlotId].userId;
-                if (userid === null) return;
-                const userWhoIsStreaming = getUser(userid)
-                
-            }
-            catch (e)
-            {
-                log.error(e.message + " " + e.stack);
-            }
-        })
-    */
-
     socket.on("user-rtc-message", async function (data: { streamSlotId: number, type: string, msg: any })
     {
         try
         {
             const { streamSlotId, type, msg } = data
-            log.debug("user-rtc-message start", user.id, streamSlotId, type, msg);
+            log.info("user-rtc-message start", user.id, streamSlotId, type);
 
             if (type == "offer")
             {
@@ -523,7 +521,7 @@ io.on("connection", function (socket: any)
 
                 stream.isReady = true
                 stream.publisherId = janusHandle.getPublisherId();
-                
+
                 userRoomEmit(user, user.areaId, user.roomId,
                     "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
 
@@ -615,7 +613,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            const roomList: { id: string, userCount: number, streamers: string[] }[] = 
+            const roomList: { id: string, userCount: number, streamers: string[] }[] =
                 Object.values(rooms)
                 .filter(room => !room.secret)
                 .map(room => ({
@@ -633,7 +631,7 @@ io.on("connection", function (socket: any)
             log.error(e.message + " " + e.stack);
         }
     })
-    
+
     socket.on("user-block", function ( userId: string )
     {
         try
@@ -642,21 +640,21 @@ io.on("connection", function (socket: any)
             const blockedUser = getUser(userId);
             if (!blockedUser) return; // TODO Return a message to tell the user that the blocking failed
             user.blockedIps.push(blockedUser.ip);
-            
+
             const streams = roomStates[user.areaId][user.roomId].streams;
-            
+
             getConnectedUserList(user.roomId, user.areaId)
                 .filter((u) => u.socketId && user.blockedIps.includes(u.ip))
                 .forEach((u) =>
             {
                 io.to(u.socketId!).emit("server-user-left-room", user.id)
                 io.to(u.socketId!).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, streams))
-                
+
                 socket.emit("server-user-left-room", u.id);
             })
-                
+
             socket.emit("server-update-current-room-streams", toStreamSlotDtoArray(user, streams))
-            
+
             emitServerStats(user.areaId);
         }
         catch (e)
@@ -668,6 +666,8 @@ io.on("connection", function (socket: any)
     socket.on("user-ping", function() {
         try
         {
+            if (!user) return
+
             log.info("user-ping", user.id)
             setUserAsActive(user)
             userRoomEmit(user, user.areaId, user.roomId, "server-user-active", user.id);
@@ -686,7 +686,7 @@ function emitServerStats(areaId: string)
         const connectedUserIds: Set<string> = getFilteredConnectedUserList(u, null, areaId)
             .reduce((acc, val) => acc.add(val.id), new Set<string>())
 
-        userRoomEmit(u, areaId, null, "server-stats", {
+        io.to(u.socketId).emit("server-stats", {
             userCount: connectedUserIds.size,
             streamCount: Object.values(roomStates[areaId])
                 .map(s => s.streams)
@@ -695,6 +695,15 @@ function emitServerStats(areaId: string)
                 .length.toString()
         })
     });
+}
+
+function changeCharacter(user: Player, characterId: string)
+{
+    if (user.characterId == "ika")
+        return // The curse of being a squid can never be lifted.
+
+    user.characterId = characterId
+    userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId)
 }
 
 function userRoomEmit(user: Player, areaId: string, roomId: string | null, ...msg: any[])
@@ -749,16 +758,29 @@ app.use(compression({
     }
 }))
 
-app.get("/", (req, res) =>
+
+
+app.get("/", async (req, res) =>
 {
     if (req.headers.host == "gikopoi2.herokuapp.com")
     {
-        log.info("Redirecting to gikopoipoi.net")
+        log.info("Redirecting to gikopoipoi.net ", req.ip)
         res.redirect(301, 'https://gikopoipoi.net')
         return
     }
 
-    log.info("Fetching root...")
+    // Check if bad IP
+
+    const confidenceScore = await getAbuseConfidenceScore(req.ip)
+    
+    if (confidenceScore > maximumAbuseConfidenceScore)
+    {
+        log.info("Rejected " + req.ip)
+        res.end(":)")
+        return
+    }
+
+    log.info("Fetching root..." + req.ip + " " + req.rawHeaders.join("|"))
     readFile("static/index.html", 'utf8', async (err, data) =>
     {
         try
@@ -770,19 +792,25 @@ app.get("/", (req, res) =>
                 return
             }
 
-            const { statusCode, body } = await got(
-                'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
+            try {
+                const { statusCode: loginFooterStatusCode, body: loginFooterBody } = await got(
+                    'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
 
-            data = data
-                .replace("@LOGIN_FOOTER@", statusCode === 200 ? body : "")
-                .replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
-            
+                data = data.replace("@LOGIN_FOOTER@", loginFooterStatusCode === 200 ? loginFooterBody : "")
+            }
+            catch (e)
+            {
+                log.error(e.message + " " + e.stack);
+            }
+
+            data = data.replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
+
             for (const areaId in roomStates)
             {
                 const connectedUserIds: Set<string> = getConnectedUserList(null, areaId)
                     .filter((u) => !u.blockedIps.includes(req.ip))
                     .reduce((acc, val) => acc.add(val.id), new Set<string>())
-                
+
                 data = data
                     .replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
                         connectedUserIds.size.toString())
@@ -861,7 +889,7 @@ app.get(/(.+)\.crisp\.svg$/i, (req, res) =>
 })
 
 app.use(express.static('static',
-    { 
+    {
         setHeaders: (res, path) => {
             // Cache images for one week. I made the frontend append ?v=version to image URLs,
             // so that it won't try to use the cached images when it's opening a new version of the website.
@@ -879,10 +907,10 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
     {
         const roomId = req.params.roomId
         const areaId = req.params.areaId
-        
+
         const connectedUsers: PlayerDto[] = getConnectedUserList(roomId, areaId)
             .map(p => toPlayerDto(p, roomId, areaId))
-        
+
         const dto: RoomStateDto = {
             currentRoom: rooms[roomId],
             connectedUsers,
@@ -971,7 +999,7 @@ app.post("/login", (req, res) =>
                 log.info("Invalid username", req.ip, "<" + JSON.stringify(userName) + ">", characterId, areaId)
             }
             catch {}
-            
+
             res.statusCode = 500
             sendResponse({
                 appVersion,
@@ -996,7 +1024,7 @@ app.post("/login", (req, res) =>
                     sameIpUserCount++
 
                 if (sameIpUserCount >= maximumUsersPerIpPerArea)
-                    // No need to keep counting, 
+                    // No need to keep counting,
                     break;
             }
             if (sameIpUserCount >= maximumUsersPerIpPerArea)
@@ -1022,7 +1050,7 @@ app.post("/login", (req, res) =>
 
         const user = addNewUser(processedUserName, characterId, areaId, req.ip);
 
-        log.info("Logged in", user.id, user.privateId, "<" + user.name + ">", "from", req.ip)
+        log.info("Logged in", user.id, user.privateId, "<" + user.name + ">", "from", req.ip, areaId)
         sendResponse({
             appVersion,
             isLoginSuccessful: true,
@@ -1160,7 +1188,7 @@ setInterval(() =>
             }
             else if (!user.connectionTime && user.isGhost)
             {
-                log.info(user.id, "is a ghost without disconnection time")
+                log.info(user.id, "is a ghost without connection time")
                 disconnectUser(user)
             }
             else
@@ -1246,7 +1274,7 @@ function restoreState()
                 resolve()
             }
         }
-        else 
+        else
         {
             readFile("persisted-state", { encoding: "utf-8" }, (err, data) =>
             {

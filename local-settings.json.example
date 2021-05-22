@@ -4,5 +4,6 @@
     "janusRoomNamePrefix": "prod",
     "janusRoomNameIntPrefix": 1,
     "isBehindProxy": true,
-    "restrictLoginByIp": true
+    "restrictLoginByIp": true,
+    "abuseIpDBApiKey": "",
 }

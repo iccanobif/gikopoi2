@@ -4,6 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <meta name="abuseipdb-verification" content="DmbG28jg" />
+
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel='stylesheet' href='style/main.css' />
     <link rel='stylesheet' href='style/dark-mode.css' />
     <link href="font-awesome/css/all.css" rel="stylesheet">
@@ -60,17 +63,17 @@
                 @LOGIN_FOOTER@
             </div>
         </div>
-        <div id="stage" v-if="loggedIn && !isPoop && !connectionRefused">
+        <div id="stage" v-if="loggedIn && !isPoop">
             <h2 class="big-red-alert" v-if="connectionLost && !connectionRefused">
                 {{ $t("msg.connection_lost") }}
-            </h2>
-            <h2 class="big-red-alert" v-if="steppingOnPortalToNonAvailableRoom">
-                {{ $t("msg.room_unavailable") }}
             </h2>
             <h2 class="big-red-alert" v-if="pageRefreshRequired">
                 {{ $t("msg.page_refresh_required") }}
             </h2>
-            <div id="canvas-container">
+            <h2 v-if="connectionRefused">
+                {{ $t("msg.connection_refused") }}
+            </h2>
+            <div id="canvas-container" v-if="!connectionRefused">
                 <canvas id="room-canvas" tabindex="1" v-on:keydown="handleCanvasKeydown($event)"
                     v-on:mousedown="handleCanvasPointerDown($event)"
                     v-on:mousemove="handleCanvasPointerMove($event)"
@@ -129,8 +132,14 @@
                         <button id="btn-list" v-on:click="openUserListPopup()">{{ $t("ui.button_list") }}</button>
                     </div>
                     <div class="tooltip-section">
-                        <button v-on:click="openPreferencesPopup">{{ $t("ui.button_preferences") }}</button>
-                        <button v-on:click="toggleCrispMode" v-bind:class="{'checked': svgMode == 'crisp'}">{{ $t("ui.button_crisp") }}</button>
+                        <button v-on:click="openPreferencesPopup" 
+                                v-bind:title="$t('ui.button_preferences')" 
+                                class="fas fa-cogs"></button>
+                        <button v-if="notificationPermissionsGranted" 
+                                v-on:click="toggleDesktopNotifications" 
+                                v-bind:title="$t('ui.preferences_show_notifications')"
+                                class="fas"
+                                v-bind:class="{'fa-bell': showNotifications, 'fa-bell-slash': !showNotifications}"></button>
                     </div>
                     <div class="tooltip-section" v-if="isMoveSectionVisible">
                         <div class='tooltip-section-title'>
@@ -211,6 +220,13 @@
                         <label for="stream-volume">{{ $t("ui.volume") }}</label>
                         <input type="range" :id="'volume-' + index" v-on:change="changeStreamVolume(index)"
                             name="stream-volume" min="0" max="1" step="0.01" :value="slotVolume[index]">
+                        <div v-if="canUseAudioContext">
+                            <label :for="'enable-compression-' + index">{{ $t("ui.enable_compression") }}</label>
+                            <input type="checkbox" 
+                                :id="'enable-compression-' + index" 
+                                v-model="slotCompression[index]"
+                                v-on:change="onCompressionChanged(index)">
+                        </div>
                     </div>
                     <div class="stream-buttons">
                         <button :id="'take-stream-button-' + index"
@@ -295,7 +311,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="u in getUserListForListPopup()" 
+                            <tr :id="'user-list-element-' + user.id"
+                                v-for="u in getUserListForListPopup()" 
                                 v-bind:class="{'popup-row-is-selected': u.id == highlightedUserId}">
                                 <td>
                                     <div v-on:click="highlightUser(u.id, u.name)">
@@ -333,6 +350,14 @@
                     <div class='popup-item' v-if="streamMode != 'sound'">
                         <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label 
                             for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
+                    </div>
+                    <div class='popup-item' v-if="streamMode != 'sound' && !streamScreenCapture">
+                        <span>{{ $t("ui.stream_form_camera_facing") }}</span><input type="radio"
+                            id="stream-form-camera-facing-user" value="user" v-model="streamCameraFacing"><label
+                            for="stream-form-camera-facing-user">{{ $t("ui.stream_form_camera_facing_user") }}</label>
+
+                        <input type="radio" id="stream-form-camera-facing-environment" value="environment" v-model="streamCameraFacing"><label
+                            for="stream-form-camera-facing-environment">{{ $t("ui.stream_form_camera_facing_environment") }}</label>
                     </div>
                     <div v-if="streamMode != 'video'">
                         <div class='popup-item'>
@@ -404,7 +429,12 @@
                                     v-model="showNotifications" v-on:change="handleShowNotifications"><label
                                     for="preferences-show-notifications">{{ $t("ui.preferences_show_notifications") }}</label>
                             </div>
-                            <div v-if="showNotificationsNotice" class="popup-notice">{{ $t("ui.notifications_are_denied") }}</div>
+                            <div v-if="!notificationPermissionsGranted" class="popup-notice">{{ $t("ui.notifications_are_denied") }}</div>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-login-sound-enabled"
+                                v-model="isLoginSoundEnabled" v-on:change="storeSet('isLoginSoundEnabled')"><label
+                                for="preferences-login-sound-enabled">{{ $t("ui.preferences_login_sound_enabled") }}</label>
                         </div>
                         <div class='popup-item'>
                             <input type="checkbox" id="preferences-message-sound-enabled"
@@ -437,6 +467,16 @@
                             <input type="range" id="preferences-bubble-opacity"
                                 min="50" max="100" v-model="bubbleOpacity" v-on:change="handleBubbleOpacity"><div
                                 class='preferences-percentage'>{{ bubbleOpacity }}%</div>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-low-quality"
+                                v-model="isLowQualityEnabled" v-on:change="handleLowQualityEnabled"><label
+                                for="preferences-low-quality">{{ $t("ui.preferences_low_quality") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-crisp-mode"
+                                v-model="isCrispModeEnabled" v-on:change="handleCrispModeEnabled"><label
+                                for="preferences-crisp-mode">{{ $t("ui.preferences_crisp_mode") }}</label>
                         </div>
                     </div>
                     <div class='popup-section'>
@@ -472,7 +512,8 @@
                         <div class='popup-item'>
                             <label for="preferences-tts-voice">{{ $t("ui.preferences_tts_voice") }}</label>
                             <select id="preferences-tts-voice" v-model="ttsVoiceURI" v-on:change="changeVoice">
-                                <option value="automatic">Automatic</option>
+                                <option value="automatic">{{ $t("ui.preferences_tts_voice_automatic") }}</option>
+                                <option value="animalese">{{ $t("ui.preferences_tts_voice_animalese") }}</option>
                                 <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}</option>
                             </select>
                         </div>
@@ -494,10 +535,6 @@
                     <button v-on:click="closeWarningToast">{{ $t("ui.popup_button_ok") }}</button>
                 </div>
             </div>
-
-            <audio id="message-sound" src="message.mp3"></audio>
-            <audio id="mention-sound" src="mention.mp3"></audio>
-            <audio id="login-sound" src="login.mp3"></audio>
         </div>
         <div id="logged-out-page" v-if="loggedOut" class="full-screen-page">
             {{ $t("msg.goodbye") }}
@@ -507,10 +544,11 @@
         <div id="poop-page" v-if="isPoop" class="full-screen-page">
             💩
         </div>
-        <div id="connection-refused-page" v-if="connectionRefused" class="full-screen-page">
-            {{ $t("msg.connection_refused") }}
-        </div>
     </div>
+
+    <audio id="message-sound" src="message.mp3"></audio>
+    <audio id="mention-sound" src="mention.mp3"></audio>
+    <audio id="login-sound" src="login.mp3"></audio>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-i18n@8.22.4/dist/vue-i18n.js"></script>
@@ -518,14 +556,15 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src='scripts/jquery.ui.touch-punch.min.js'></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src='scripts/webrtc-codec-support.min.js'></script>
+    <script type="module" src='scripts/main.js'></script>
+    
+    <script src="scripts/riffwave.js"></script>
+    <script src="scripts/Blob.js"></script>
+    <script src="scripts/animalese.js"></script>
+
     <script type="module" src='scripts/polyfills.js'></script>
     <script type="module" src='scripts/main.js'></script>
-
-    <!-- <script>
-    $( function() {
-        $( "#draggable" ).draggable();
-    } );
-    </script> -->
 </body>
 
 </html>

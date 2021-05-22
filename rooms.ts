@@ -143,8 +143,13 @@ export const rooms: { [roomId: string]: Room } = {
             { xFrom: 9, yFrom: 4, xTo: 8, yTo: 4 },
 
         ],
+        worldSpawns: [
+            { x: 3, y: 2, direction: "right", target: null },
+            { x: 4, y: 2, direction: "right", target: null },
+            { x: 5, y: 2, direction: "right", target: null },
+            { x: 6, y: 2, direction: "right", target: null },
+        ],
         doors: {
-            world_spawn: { x: 5, y: 2, direction: "right", target: null },
             left: { x: 0, y: 2, direction: "right", target: { roomId: "bar_st", doorId: "right" } },
             admin: { x: 2, y: 4, direction: "down", target: { roomId: "admin", doorId: "down" } },
             barrier: { x: 7, y: 4, direction: "down", target: { roomId: "radio", doorId: "down" } },
@@ -293,8 +298,10 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 0, y: 7 },
         ],
         forbiddenMovements: [],
+        worldSpawns: [
+            { x: 3, y: 4, direction: "down", target: null }
+        ],
         doors: {
-            world_spawn: { x: 3, y: 4, direction: "down", target: null },
             left: { x: 0, y: 2, direction: "right", target: { roomId: "busstop", doorId: "right" } },
             school: { x: 0, y: 5, direction: "right", target: { roomId: "school_rouka", doorId: "right_top" } },
             up: { x: 3, y: 7, direction: "down", target: { roomId: "bar_st", doorId: "down" } },

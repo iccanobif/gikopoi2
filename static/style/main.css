@@ -3,7 +3,6 @@
     background-color: #c0c0c0;
     font-family: IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif;
     font-size: 16px;
-    
     position: fixed;
     top: 0;
     left: 0;
@@ -94,13 +93,27 @@ input[type='range']
 {
     overflow: hidden;
     line-height: 20px;
-    display: flex; /* This prevents RTL text from making the username display on the right of the message  */
+}
+
+.message span
+{
+    unicode-bidi: isolate;
+}
+
+.message .message-timestamp
+{
+    display: inline-block;
+    width: 1px; /* must be at least 1px for chrome to include its content when copy-pasting */
+    height: 1px; /* must be at least 1px for chrome to include its content when copy-pasting */
+    white-space: nowrap;
+    overflow: hidden; /* overflow: clip doesn't work on safari */
 }
 
 .video-container
 {
     z-index: 50;
     width: 219px;
+    height: auto !important;
 }
 
 video {
@@ -675,6 +688,11 @@ button.checked {
 .highlighted-message
 {
     color: red;
+}
+
+.system-message
+{
+    font-weight: bold;
 }
 
 .message-author
