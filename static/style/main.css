@@ -525,6 +525,12 @@ video {
     background-color: #cdffc1;
 }
 
+.popup-row-is-selected .user-not-in-room-warning
+{
+    padding-right: 6px;
+    font-size: 13px
+}
+
 .popup-sortable-table th
 {
     cursor: pointer

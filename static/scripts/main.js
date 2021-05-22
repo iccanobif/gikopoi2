@@ -2491,10 +2491,18 @@ window.vueApp = new Vue({
         {
             const output = Object.values(this.users)
                                  .filter(u => u.id != this.myUserID)
-                                 .map(u => ({ id: u.id, name: u.name }))
+                                 .map(u => ({ 
+                                     id: u.id, 
+                                     name: u.name,
+                                     isInRoom: true,
+                                    }))
             // Add highlighted users that are not in the room anymore
             if (this.highlightedUserId && !this.users[this.highlightedUserId])
-                output.unshift({ id: this.highlightedUserId, name: this.highlightedUserName })
+                output.unshift({
+                    id: this.highlightedUserId, 
+                    name: this.highlightedUserName,
+                    isInRoom: false,
+                 })
 
             return output
         },

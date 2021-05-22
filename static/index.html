@@ -315,7 +315,10 @@
                                 v-for="u in getUserListForListPopup()" 
                                 v-bind:class="{'popup-row-is-selected': u.id == highlightedUserId}">
                                 <td>
-                                    <div v-on:click="highlightUser(u.id, u.name)">
+                                    <div v-on:click="u.isInRoom && highlightUser(u.id, u.name)">
+                                        <span v-bind:title="$t('ui.user_not_in_room')" 
+                                              class="user-not-in-room-warning fas fa-exclamation-triangle"
+                                              v-if="!u.isInRoom"></span>
                                         {{ u.name || $t("default_user_name") }}
                                     </div>
                                     <button v-if="ignoredUserIds.has(u.id)" v-on:click="unignoreUser(u.id)">{{ $t("ui.user_list_popup_unignore") }}</button>
