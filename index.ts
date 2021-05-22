@@ -362,7 +362,10 @@ io.on("connection", function (socket: any)
             const stream = roomState.streams[streamSlotId]
             const streamer = getUser(stream.userId!);
 
-            if (stream.userId == user.id) clearStream(user);
+            if (stream.userId == user.id)
+            {
+                clearStream(user);
+            }
 
             if (stream.isActive && streamer)
             {
@@ -385,7 +388,11 @@ io.on("connection", function (socket: any)
 
             setTimeout(() =>
             {
-                if (stream.publisherId == null) clearStream(user)
+                if (stream.publisherId == null)
+                {
+                    log.info(user.id, "stream.publisherId == null")
+                    clearStream(user)
+                }
             }, 10000);
 
             userRoomEmit(user, user.areaId, user.roomId,
@@ -405,6 +412,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
+            log.info(user.id, "user-want-to-stop-stream")
             clearStream(user)
         }
         catch (e)
