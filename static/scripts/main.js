@@ -2147,7 +2147,7 @@ window.vueApp = new Vue({
                         
                         if (this.streams[streamSlotId].withSound)
                         {
-                            audioProcessors[streamSlotId] = new AudioProcessor(stream, videoElement)
+                            audioProcessors[streamSlotId] = new AudioProcessor(stream, videoElement, this.slotVolume[streamSlotId])
                             
                             if (this.slotCompression[streamSlotId])
                                audioProcessors[streamSlotId].enableCompression()

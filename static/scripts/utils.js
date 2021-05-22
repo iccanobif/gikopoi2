@@ -106,12 +106,13 @@ const maxGain = 1.3
 
 export class AudioProcessor
 {
-    constructor(stream, videoElement)
+    constructor(stream, videoElement, volume)
     {
         this.stream = stream
         this.isBoostEnabled = false
         this.videoElement = videoElement
-        this.volume = videoElement.volume
+        this.volume = volume
+        videoElement.volume = volume
 
         if (canUseAudioContext)
         {
