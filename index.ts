@@ -638,7 +638,7 @@ io.on("connection", function (socket: any)
         {
             log.info("user-block", user.id, userId)
             const blockedUser = getUser(userId);
-            if (!blockedUser) return;
+            if (!blockedUser) return; // TODO Return a message to tell the user that the blocking failed
             user.blockedIps.push(blockedUser.ip);
 
             const streams = roomStates[user.areaId][user.roomId].streams;

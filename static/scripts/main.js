@@ -174,6 +174,7 @@ window.vueApp = new Vue({
 
         vuMeterTimer: null,
         highlightedUserId: null,
+        highlightedUserName: null,
         movementDirection: null,
         underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
         notificationPermissionsGranted: false,
@@ -743,7 +744,7 @@ window.vueApp = new Vue({
             authorSpan.title = new Date()
             authorSpan.textContent = displayName;
             authorSpan.addEventListener("click", (ev) => {
-                this.highlightUser(userId)
+                this.highlightUser(userId, this.toDisplayName(userName))
             })
             
             const tripcodeSpan = document.createElement("span");
@@ -2190,7 +2191,7 @@ window.vueApp = new Vue({
         },
         openUserListPopup: function ()
         {
-            if (Object.values(this.users).filter(u => u.id != this.myUserID).length == 0)
+            if (this.getUserListForListPopup().length == 0)
             {
                 this.showWarningToast(i18n.t("msg.no_other_users_in_this_room"));
             }
@@ -2218,23 +2219,23 @@ window.vueApp = new Vue({
         {
             this.isPreferencesPopupOpen = false;
         },
-        ignoreUser: function(user)
+        ignoreUser: function(userId)
         {
-            this.ignoredUserIds.add(user.id)
+            this.ignoredUserIds.add(userId)
             this.isRedrawRequired = true
             this.$forceUpdate() // HACK: the v-if for the ignore and unignore buttons doesn't get automatically re-evaluated
         },
-        unignoreUser: function(user)
+        unignoreUser: function(userId)
         {
-            this.ignoredUserIds.delete(user.id)
+            this.ignoredUserIds.delete(userId)
             this.isRedrawRequired = true
             this.$forceUpdate() // HACK: the v-if for the ignore and unignore buttons doesn't get automatically re-evaluated
         },
-        blockUser: function(user)
+        blockUser: function(userId)
         {
             if (confirm(i18n.t("msg.are_you_sure_you_want_to_block")))
             {
-                this.socket.emit("user-block", user.id);
+                this.socket.emit("user-block", userId);
             }
         },
         sortRoomList: function (key, direction)
@@ -2465,12 +2466,18 @@ window.vueApp = new Vue({
                 videoContainer.style = ""
             }
         },
-        highlightUser: function(userId)
+        highlightUser: function(userId, userName)
         {
             if (this.highlightedUserId == userId)
+            {
                 this.highlightedUserId = null
+                this.highlightedUserName = null
+            }
             else
+            {
                 this.highlightedUserId = userId
+                this.highlightedUserName = userName
+            }
 
             for (const messageElement of document.getElementsByClassName("message"))
             {
@@ -2479,6 +2486,25 @@ window.vueApp = new Vue({
                 else
                     messageElement.classList.remove("highlighted-message")
             }
+        },
+        getUserListForListPopup: function ()
+        {
+            const output = Object.values(this.users)
+                                 .filter(u => u.id != this.myUserID)
+                                 .map(u => ({ 
+                                     id: u.id, 
+                                     name: u.name,
+                                     isInRoom: true,
+                                    }))
+            // Add highlighted users that are not in the room anymore
+            if (this.highlightedUserId && !this.users[this.highlightedUserId])
+                output.unshift({
+                    id: this.highlightedUserId, 
+                    name: this.highlightedUserName,
+                    isInRoom: false,
+                 })
+
+            return output
         },
         handleRulaPopupKeydown: function(event)
         {
