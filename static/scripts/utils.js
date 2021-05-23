@@ -172,20 +172,17 @@ export class AudioProcessor
 
 export function getFormattedCurrentDate() {
     const date = new Date()
-    var mm = date.getMonth() + 1; // getMonth() is zero-based
-    var dd = date.getDate();
-  
     return [date.getFullYear(),
-            ".",
-            (mm>9 ? '' : '0') + mm,
-            ".",
-            (dd>9 ? '' : '0') + dd,
+            "-",
+            (date.getMonth() + 1).toString().padStart(2, '0'),
+            "-",
+            date.getDate().toString().padStart(2, '0'),
             " ",
-            date.getHours(),
+            date.getHours().toString().padStart(2, '0'),
             ":",
-            date.getMinutes(),
+            date.getMinutes().toString().padStart(2, '0'),
             ":",
-            date.getSeconds(),
+            date.getSeconds().toString().padStart(2, '0'),
            ].join('');
   };
   
