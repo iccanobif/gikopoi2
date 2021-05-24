@@ -16,7 +16,8 @@ import {
     urlRegex,
     AudioProcessor,
     canUseAudioContext,
-    getFormattedCurrentDate
+    getFormattedCurrentDate,
+    requestNotificationPermission
 } from "./utils.js";
 import { messages } from "./lang.js";
 import { speak } from "./tts.js";
@@ -313,13 +314,9 @@ window.vueApp = new Vue({
                         this.notificationPermissionsGranted = true
                     else if (this.showNotifications)
                     {
-                        // On normal god-fearing browsers requestPermission() returns a Promise, while
-                        // safari uses a callback parameter.
-                        const callback = (permission) => this.notificationPermissionsGranted = permission == "granted"
+                        const permission = await requestNotificationPermission()
 
-                        const promise = Notification.requestPermission(callback)
-                        if (promise)
-                            promise.then(callback)
+                        this.notificationPermissionsGranted = permission == "granted"
                     }
                 }
 
@@ -833,7 +830,7 @@ window.vueApp = new Vue({
                     || document.visibilityState == "visible"
                     || user.id == this.myUserID) return;
 
-                const permission = await Notification.requestPermission()
+                const permission = await requestNotificationPermission()
                 if (permission != "granted") return;
                 
                 const character = user.character
@@ -2376,7 +2373,7 @@ window.vueApp = new Vue({
             }
             if (this.showNotifications)
             {
-                const permission = await Notification.requestPermission()
+                const permission = await requestNotificationPermission()
                 this.notificationPermissionsGranted = permission == "granted"
             }
             this.storeSet("showNotifications")

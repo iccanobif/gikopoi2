@@ -186,4 +186,13 @@ export function getFormattedCurrentDate() {
            ].join('');
   };
   
-  
+// On normal god-fearing browsers requestPermission() returns a Promise, while
+// safari uses a callback parameter.
+export function requestNotificationPermission()
+{
+    return new Promise((resolve, reject) => {
+        const promise = Notification.requestPermission(resolve)
+        if (promise)
+            promise.then(resolve)
+    })
+}

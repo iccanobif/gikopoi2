@@ -9,17 +9,3 @@ Promise.allSettled = Promise.allSettled ||
             reason: e,
         }))
     )));
-
-// window.Notification = window.Notification ||
-// {
-//     requestPermission: () => { return Promise.resolve("denied") },
-//     permission: "default",
-// }
-
-// if (!window.speechSynthesis)
-//     window.speechSynthesis = {
-//         getVoices: () => [],
-//         cancel: () => {}
-//     }
-
-// window.speechSynthesis.addEventListener = window.speechSynthesis.addEventListener || (() => { })
