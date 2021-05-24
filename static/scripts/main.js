@@ -312,8 +312,15 @@ window.vueApp = new Vue({
                     if (Notification.permission == "granted")
                         this.notificationPermissionsGranted = true
                     else if (this.showNotifications)
-                        Notification.requestPermission()
-                                    .then((permission) => this.notificationPermissionsGranted = permission == "granted")
+                    {
+                        // On normal god-fearing browsers requestPermission() returns a Promise, while
+                        // safari uses a callback parameter.
+                        const callback = (permission) => this.notificationPermissionsGranted = permission == "granted"
+
+                        const promise = Notification.requestPermission(callback)
+                        if (promise)
+                            promise.then(callback)
+                    }
                 }
 
                 $( "#sound-effect-volume" ).slider({
