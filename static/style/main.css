@@ -152,23 +152,13 @@ video {
 
 /* --- canvas triangle buttons --- */
 
-.canvas-button-top-right,
-.canvas-button-bottom-right,
-.canvas-button-bottom-left,
-.canvas-button-top-left
+.canvas-button-top-right
 {
     width: 12px;
     height: 12px;
     
     padding: 0;
     border: 0;
-}
-
-.canvas-button-top-right:hover,
-.canvas-button-bottom-right:hover,
-.canvas-button-bottom-left:hover,
-.canvas-button-top-left:hover
-{
     cursor: pointer;
 }
 
@@ -176,22 +166,6 @@ video {
     {background: linear-gradient(to bottom left, transparent 50%, #787878 50%);}
 .canvas-button-top-right:active
     {background: linear-gradient(to bottom left, transparent 50%, #ffffff 50%);}
-    
-.canvas-button-bottom-right
-    {background: linear-gradient(to top left, transparent 50%, #787878 50%);}
-.canvas-button-bottom-right:active
-    {background: linear-gradient(to top left, transparent 50%, #ffffff 50%);}
-    
-.canvas-button-bottom-left
-    {background: linear-gradient(to top right, transparent 50%, #787878 50%);}
-.canvas-button-bottom-left:active
-    {background: linear-gradient(to top right, transparent 50%, #ffffff 50%);}
-
-.canvas-button-top-left
-    {background: linear-gradient(to bottom right, transparent 50%, #787878 50%);}
-.canvas-button-top-left:active
-    {background: linear-gradient(to bottom right, transparent 50%, #ffffff 50%);}
-
 
 /* --- infobox with names and stats etc --- */
 
@@ -309,30 +283,19 @@ video {
     white-space: nowrap;
 }
 
+#login-page button:hover,
+#toolbar button:hover,
+.stream-buttons button:hover,
+.popup button:hover
+{
+    border-color: black;
+}
+
 .preferences-percentage
 {
     display: inline-block;
     width: 36px;
     text-align: right;
-}
-
-#style-selectors
-{
-    display: flex;
-    justify-content: center;
-}
-
-#style-selectors button
-{
-    /* position: absolute;
-    right: 0;
-    top: 0; */
-    outline: none;
-    cursor: pointer;
-    background: none;
-    border: none;
-    text-decoration: underline;
-    z-index: 1;
 }
 
 #toolbar-text-input
