@@ -113,6 +113,7 @@ export const messages =
             preferences_underlined_usernames: "ログの名前にアンダーラインを付ける",
             preferences_low_quality: "低画質",
             preferences_crisp_mode: "シャープ",
+            preferences_timestamps_in_copied_log: "コピーしたログに時刻を含む",
 
             back_to_homepage: "トップへ戻る",
         },
@@ -291,6 +292,7 @@ export const messages =
             preferences_underlined_usernames: "Underline Usernames",
             preferences_low_quality: "Low Quality",
             preferences_crisp_mode: "Crisp",
+            preferences_timestamps_in_copied_log: "Include timestamps in copied logs.",
             
 
             back_to_homepage: "Go back to home page",
