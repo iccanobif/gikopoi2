@@ -189,7 +189,7 @@
                 </div>
             </div>
             {{ $t("ui.label_log") }}
-            <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames}" v-on:keydown="handlechatLogKeydown($event)">
+            <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames, 'timestamps-in-copied-log': timestampsInCopiedLog}" v-on:keydown="handlechatLogKeydown($event)">
             </div>
             <div id="video-streams" v-if="streams.length > 0">
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
@@ -417,6 +417,11 @@
                             <input type="checkbox" id="preferences-underlined-usernames"
                                 v-model="underlinedUsernames" v-on:change="storeSet('underlinedUsernames')"><label
                                 for="preferences-underlined-usernames">{{ $t("ui.preferences_underlined_usernames") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-timestamps-in-copied-log"
+                                v-model="timestampsInCopiedLog" v-on:change="storeSet('timestampsInCopiedLog')"><label
+                                for="preferences-timestamps-in-copied-log">{{ $t("ui.preferences_timestamps_in_copied_log") }}</label>
                         </div>
                         <div class='popup-item'>
                             <input type="checkbox" id="preferences-dark-mode"

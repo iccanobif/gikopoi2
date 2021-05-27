@@ -100,9 +100,14 @@ input[type='range']
     unicode-bidi: isolate;
 }
 
-.message .message-timestamp
+.timestamps-in-copied-log .message .message-timestamp
 {
     display: inline-block;
+}
+
+.message .message-timestamp
+{
+    display: none;
     width: 1px; /* must be at least 1px for chrome to include its content when copy-pasting */
     height: 1px; /* must be at least 1px for chrome to include its content when copy-pasting */
     white-space: nowrap;
