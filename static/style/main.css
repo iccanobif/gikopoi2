@@ -281,6 +281,7 @@ video {
     min-height: 32px;
     border-radius: 3px;
     white-space: nowrap;
+    color: black;
 }
 
 #login-page button:hover,
