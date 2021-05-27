@@ -292,7 +292,7 @@ export const messages =
             preferences_underlined_usernames: "Underline Usernames",
             preferences_low_quality: "Low Quality",
             preferences_crisp_mode: "Crisp",
-            preferences_timestamps_in_copied_log: "Include timestamps in copied logs.",
+            preferences_timestamps_in_copied_log: "Include timestamps in copied logs",
             
 
             back_to_homepage: "Go back to home page",
