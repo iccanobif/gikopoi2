@@ -1272,7 +1272,12 @@ function restoreState()
                     }
                 })
                 if (response.statusCode == 200)
-                    restoreUserState(response.body)
+                {
+                    const state = JSON.parse(response.body) as PersistedState
+
+                    restoreUserState(state.users)
+                    roomStates = state.rooms
+                }
                 resolve()
             }
             catch (exc)
@@ -1293,7 +1298,10 @@ function restoreState()
                 {
                     try
                     {
-                        restoreUserState(data)
+                        const state = JSON.parse(data) as PersistedState
+
+                        restoreUserState(state.users)
+                        roomStates = state.rooms
                     }
                     catch (exc)
                     {
