@@ -87,6 +87,7 @@ export const characters = {
     funkynaito: new Character("funkynaito", "png", true),
     molgiko: new Character("molgiko", "png", true),
     tikan_giko: new Character("tikan_giko", "svg", true),
+    hotsuma_giko: new Character("hotsuma_giko", "svg", false),
 }
 
 export const loadCharacters = (mode) => Promise.all(Object.values(characters).map(c => c.loadImages(mode)))
