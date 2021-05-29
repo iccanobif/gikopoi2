@@ -776,7 +776,10 @@ app.get("/", async (req, res) =>
     if (confidenceScore > maximumAbuseConfidenceScore)
     {
         log.info("Rejected " + req.ip)
-        res.end(":)")
+        res.setHeader("Content-Type", "text/html; charset=utf-8")
+
+        const abuseIPDBURL = "https://www.abuseipdb.com/check/" + req.ip
+        res.end("あなたのIPは拒否されました。TorやVPNを使わないでください。Your IP was rejected. Please do not use Tor or VPNs. <a href='" + abuseIPDBURL + "'>" + abuseIPDBURL + "</a>")
         return
     }
 
