@@ -9,6 +9,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel='stylesheet' href='style/main.css' />
     <link rel='stylesheet' href='style/dark-mode.css' />
+    <link rel='stylesheet' href='chess/css/chessboard-1.0.0.min.css' />
     <link href="font-awesome/css/all.css" rel="stylesheet">
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -191,7 +192,7 @@
             {{ $t("ui.label_log") }}
             <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames, 'timestamps-in-copied-log': timestampsInCopiedLog}" v-on:keydown="handlechatLogKeydown($event)">
             </div>
-            <div id="video-streams" v-if="streams.length > 0">
+            <div id="video-streams">
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
                     <hr v-if="index != 0" />
                     <div>
@@ -251,6 +252,9 @@
                             {{ $t("ui.button_stream_stop") }}
                         </button>
                     </div>
+                </div>
+                <div id="chessboard-slot" v-show="currentRoom.hasChessboard">
+                    <div id="chessboard" style="width: 400px"></div>
                 </div>
             </div>
 
@@ -575,6 +579,7 @@
     <script src="scripts/riffwave.js"></script>
     <script src="scripts/Blob.js"></script>
     <script src="scripts/animalese.js"></script>
+    <script src="chess/js/chessboard-1.0.0.min.js"></script>
 
     <script type="module" src='scripts/polyfills.js'></script>
     <script type="module" src='scripts/main.js'></script>

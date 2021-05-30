@@ -162,7 +162,8 @@ export const rooms: { [roomId: string]: Room } = {
             trash: { x: 5, y: 4, direction: "down", target: null },
         },
         streamSlotCount: 0,
-        secret: false
+        secret: false,
+        hasChessboard: true,
     },
     basement: {
         id: "basement",

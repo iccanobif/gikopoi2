@@ -66,6 +66,7 @@ export interface Room
     forcedAnonymous?: boolean;
     blockWidth?: number;
     blockHeight?: number;
+    hasChessboard?: boolean;
 }
 
 export interface JanusServer

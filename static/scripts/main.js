@@ -64,6 +64,7 @@ window.vueApp = new Vue({
         currentRoom: {
             id: null,
             objects: [],
+            hasChessboard: false,
         },
         myUserID: null,
         myPrivateUserID: null,
@@ -182,6 +183,7 @@ window.vueApp = new Vue({
         notificationPermissionsGranted: false,
         canUseAudioContext: canUseAudioContext,
         lastFrameTimestamp: null,
+        chessboard: null,
     },
     mounted: function ()
     {
@@ -343,6 +345,36 @@ window.vueApp = new Vue({
                         this.changeVoiceVolume(ui.value);
                     }
                 });
+
+                this.chessboard = Chessboard('chessboard', {
+                    pieceTheme: 'chess/img/chesspieces/wikipedia/{piece}.png',
+                    position: 'start',
+                    draggable: true,
+                    onDragStart: (source, piece, position, orientation) => {
+                        // TODO
+                        // if (game is over or it's the other player's turn)
+                        //   return false
+                      },
+                    onDrop: (source, target) => {
+                        // see if the move is legal
+                        // var move = game.move({
+                        //   from: source,
+                        //   to: target,
+                        //   promotion: 'q' // NOTE: always promote to a queen for example simplicity
+                        // })
+                      
+                        // // illegal move
+                        // if (move === null) return 'snapback'
+
+                        // TODO send move to server
+                      }
+                      ,
+                    onSnapEnd: () => {
+                        // update the board position after the piece snap
+                        // for castling, en passant, pawn promotion
+                        this.chessboard.position(game.fen())
+                    }
+                  })
 
                 const VP8 = await isWebrtcReceiveCodecSupported(WebrtcCodec.VP8);
                 const VP9 = await isWebrtcReceiveCodecSupported(WebrtcCodec.VP9);
