@@ -113,7 +113,10 @@ export function removeUser(user: Player)
 
 export function restoreUserState(persistedUsers: Player[])
 {
-    const a = persistedUsers.reduce((acc, cur) => acc[cur.id] = cur, {})
+    users = persistedUsers.reduce((acc, val) => { 
+        acc[val.id] = val; 
+        return acc; 
+    }, {} as { [id: string]: Player; })
 
     // Initialize all users as ghosts (they'll be unflagged when users connect again through the websocket)
     for (const user of Object.values(users))

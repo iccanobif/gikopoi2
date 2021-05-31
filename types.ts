@@ -68,12 +68,14 @@ export interface Room
     blockHeight?: number;
 }
 
-export interface JanusServer {
+export interface JanusServer
+{
     id: string;
     client: typeof JanusClient;
 }
 
-export interface RoomState {
+export interface RoomState
+{
     streams: StreamSlot[],
     janusRoomServer: JanusServer | null,
     janusRoomIntName: number | null,
@@ -122,5 +124,10 @@ export interface StreamSlotDto
 export interface PersistedState
 {
     users: Player[],
-    rooms: { [areaId: string]: { [roomId: string]: RoomState } }
+    streamSlots: {
+        areaId: string,
+        roomId: string,
+        janusServerId: string | null,
+        streams: StreamSlot[]
+    }[]
 }

@@ -436,6 +436,9 @@ io.on("connection", function (socket: any)
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId];
             const streamer = getUser(stream.userId!);
+            console.log(streamer)
+            console.log(stream)
+            console.log(roomState)
             if (!streamer
                 || streamer.blockedIps.includes(user.ip)
                 || stream.publisherId === null
@@ -1223,7 +1226,26 @@ async function persistState()
 {
     try
     {
-        const state: PersistedState = { users: getAllUsers(), rooms: roomStates }
+        const streamSlots: {
+            areaId: string,
+            roomId: string,
+            janusServerId: string | null,
+            streams: StreamSlot[]
+        }[] = []
+
+        for (const areaId in roomStates)
+            for (const roomId in roomStates[areaId])
+                streamSlots.push({
+                    areaId: areaId,
+                    roomId: roomId,
+                    janusServerId: roomStates[areaId][roomId].janusRoomServer?.id || null,
+                    streams: roomStates[areaId][roomId].streams,
+                })
+
+        const state: PersistedState = {
+            users: getAllUsers(),
+            streamSlots: streamSlots,
+        }
 
         if (process.env.PERSISTOR_URL)
         {
@@ -1253,6 +1275,26 @@ async function persistState()
     }
 }
 
+function applyState(state: PersistedState)
+{
+    // This should happen only the first time this code runs in production.
+    if (state.users)
+        restoreUserState(state.users)
+
+    if (state.streamSlots)
+    {
+        for (const slot of state.streamSlots)
+        {
+            roomStates[slot.areaId][slot.roomId].streams = slot.streams
+            const janusServer = janusServers.find(s => s.id == slot.janusServerId)
+            if (janusServer)
+                roomStates[slot.areaId][slot.roomId].janusRoomServer = janusServer
+        }
+    }
+    else
+        initializeRoomStates()
+}
+
 function restoreState()
 {
     initializeRoomStates()
@@ -1275,8 +1317,7 @@ function restoreState()
                 {
                     const state = JSON.parse(response.body) as PersistedState
 
-                    restoreUserState(state.users)
-                    roomStates = state.rooms
+                    applyState(state)
                 }
                 resolve()
             }
@@ -1300,8 +1341,7 @@ function restoreState()
                     {
                         const state = JSON.parse(data) as PersistedState
 
-                        restoreUserState(state.users)
-                        roomStates = state.rooms
+                        applyState(state)
                     }
                     catch (exc)
                     {
