@@ -1,3 +1,5 @@
+import { Player } from "./users";
+
 const JanusClient = require('janus-videoroom-client').Janus;
 
 export type Direction = 'up' | 'down' | 'left' | 'right'
@@ -66,12 +68,14 @@ export interface Room
     blockHeight?: number;
 }
 
-export interface JanusServer {
+export interface JanusServer
+{
     id: string;
     client: typeof JanusClient;
 }
 
-export interface RoomState {
+export interface RoomState
+{
     streams: StreamSlot[],
     janusRoomServer: JanusServer | null,
     janusRoomIntName: number | null,
@@ -115,4 +119,9 @@ export interface StreamSlotDto
     withSound: boolean | null,
     withVideo: boolean | null,
     userId: string | null,
+}
+
+export interface PersistedState
+{
+    users: Player[],
 }

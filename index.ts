@@ -1,8 +1,8 @@
 import express from "express"
 import { readFile, readFileSync, writeFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
-import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot } from "./types";
-import { addNewUser, deserializeUserState, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, serializeUserState, createPlayerDto, getFilteredConnectedUserList, setUserAsActive } from "./users";
+import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState } from "./types";
+import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
 import { sleep } from "./utils";
 import got from "got";
 import log from "loglevel";
@@ -1219,23 +1219,25 @@ async function persistState()
 {
     try
     {
+        const state: PersistedState = {
+            users: getAllUsers(),
+        }
+
         if (process.env.PERSISTOR_URL)
         {
-            const serializedUserState = serializeUserState(false)
             await got.post(process.env.PERSISTOR_URL, {
                 headers: {
                     "persistor-secret": process.env.PERSISTOR_SECRET,
                     "Content-Type": "text/plain"
                 },
-                body: serializedUserState
+                body: JSON.stringify(state)
             })
         }
         else
         {
-            const serializedUserState = serializeUserState(true)
             // use local file
             writeFile("persisted-state",
-                serializedUserState,
+                JSON.stringify(state, null, 2),
                 { encoding: "utf-8" },
                 (err) =>
                 {
@@ -1247,6 +1249,13 @@ async function persistState()
     {
         log.error(exc)
     }
+}
+
+function applyState(state: PersistedState)
+{
+    // state.users should be undefined only the first time this code runs in production.
+    if (state.users)
+        restoreUserState(state.users)
 }
 
 function restoreState()
@@ -1268,7 +1277,10 @@ function restoreState()
                     }
                 })
                 if (response.statusCode == 200)
-                    deserializeUserState(response.body)
+                {
+                    const state = JSON.parse(response.body) as PersistedState
+                    applyState(state)
+                }
                 resolve()
             }
             catch (exc)
@@ -1289,7 +1301,8 @@ function restoreState()
                 {
                     try
                     {
-                        deserializeUserState(data)
+                        const state = JSON.parse(data) as PersistedState
+                        applyState(state)
                     }
                     catch (exc)
                     {
