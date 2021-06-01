@@ -180,7 +180,8 @@ window.vueApp = new Vue({
         underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
         timestampsInCopiedLog: localStorage.getItem("timestampsInCopiedLog") != "false",
         notificationPermissionsGranted: false,
-        canUseAudioContext: canUseAudioContext
+        canUseAudioContext: canUseAudioContext,
+        lastFrameTimestamp: null,
     },
     mounted: function ()
     {
@@ -1113,11 +1114,11 @@ window.vueApp = new Vue({
             this.canvasGlobalOffset.y = canvasOffset.y;
         },
         
-        calculateUserPhysicalPositions: function ()
+        calculateUserPhysicalPositions: function (delta)
         {
             for (const id in this.users)
             {
-                this.users[id].calculatePhysicalPosition(this.currentRoom);
+                this.users[id].calculatePhysicalPosition(this.currentRoom, delta);
             }
         },
         
@@ -1322,7 +1323,7 @@ window.vueApp = new Vue({
                 }
         },
         
-        paint: function ()
+        paint: function (delta)
         {
             if (this.forceUserInstantMove)
             {
@@ -1344,7 +1345,7 @@ window.vueApp = new Vue({
                 || usersRequiringRedraw.length
                 || this.enableGridNumbers)
             {
-                this.calculateUserPhysicalPositions();
+                this.calculateUserPhysicalPositions(delta);
                 this.setCanvasGlobalOffset();
                 this.paintBackground();
                 this.drawObjects();
@@ -1363,14 +1364,11 @@ window.vueApp = new Vue({
 
         paintLoop: function (timestamp)
         {
-            // try
-            // {
-                this.paint()
-            // }
-            // catch (err)
-            // {
-            //     console.error(err, err.lineNumber);
-            // }
+            const delta = this.lastFrameTimestamp === null ? 0 : timestamp - this.lastFrameTimestamp;
+
+            this.lastFrameTimestamp = timestamp
+
+            this.paint(delta)
 
             requestAnimationFrame(this.paintLoop);
         },

@@ -58,16 +58,20 @@ export default class User
         this.isMoved = true;
     }
     
-    calculatePhysicalPosition(room)
+    calculatePhysicalPosition(room, delta)
     {
         if (!this.isWalking)
             return
             
         const blockWidth = room.blockWidth ? room.blockWidth : BLOCK_WIDTH;
         const blockHeight = room.blockHeight ? room.blockHeight : BLOCK_HEIGHT;
-            
-        const walkingSpeedX = blockWidth / ( this.character.characterName == "shar_naito" ? 20 : 40)
-        const walkingSpeedY = blockHeight / ( this.character.characterName == "shar_naito" ? 20 : 40)
+        
+        let walkingSpeedX = blockWidth / ( this.character.characterName == "shar_naito" ? 13 : 40)
+        let walkingSpeedY = blockHeight / ( this.character.characterName == "shar_naito" ? 13 : 40)
+
+        // Adjust for delta since last animation frame
+        walkingSpeedX *= delta / (1000 / 60)
+        walkingSpeedY *= delta / (1000 / 60)
 
         const realTargetCoordinates = calculateRealCoordinates(room, this.logicalPositionX, this.logicalPositionY);
 
