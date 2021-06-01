@@ -760,7 +760,7 @@ window.vueApp = new Vue({
                 tripcodeSpan.title = new Date()
                 tripcodeSpan.textContent = "◆" + tripcode;
                 tripcodeSpan.addEventListener("click", (ev) => {
-                    this.highlightUser(userId)
+                    this.highlightUser(userId, this.toDisplayName(userName))
                 })
             }
 
@@ -2506,6 +2506,8 @@ window.vueApp = new Vue({
                     name: this.highlightedUserName,
                     isInRoom: false,
                  })
+
+            console.log("user list", output)
 
             return output
         },
