@@ -500,6 +500,15 @@ video {
     font-size: 13px
 }
 
+.inactive-user-icon
+{
+    height: 15px;
+    margin-right: 5px;
+    /* this strange filter is a way to turn a black image into a sort of light blue. */
+    /* no idea of how it actually does that. */
+    filter: brightness(90%) invert(57%) sepia(52%) hue-rotate(152deg) saturate(275%);
+}
+
 .popup-sortable-table th
 {
     cursor: pointer

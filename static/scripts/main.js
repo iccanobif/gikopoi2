@@ -2494,10 +2494,11 @@ window.vueApp = new Vue({
         {
             const output = Object.values(this.users)
                                  .filter(u => u.id != this.myUserID)
-                                 .map(u => ({ 
-                                     id: u.id, 
+                                 .map(u => ({
+                                     id: u.id,
                                      name: u.name,
                                      isInRoom: true,
+                                     isInactive: u.isInactive,
                                     }))
             // Add highlighted users that are not in the room anymore
             if (this.highlightedUserId && !this.users[this.highlightedUserId])
@@ -2505,6 +2506,7 @@ window.vueApp = new Vue({
                     id: this.highlightedUserId, 
                     name: this.highlightedUserName,
                     isInRoom: false,
+                    isInactive: false,
                  })
 
             console.log("user list", output)

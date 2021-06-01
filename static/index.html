@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-    
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
@@ -12,7 +12,7 @@
     <link href="font-awesome/css/all.css" rel="stylesheet">
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-   
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ギコっぽいぽい</title>
     <script>
@@ -112,9 +112,9 @@
             <div id="toolbar">
                 <div id="toolbar-text-input">
                     {{ $t("ui.label_input") }} <textarea id="input-textbox"
-                        v-on:keypress="handleMessageInputKeypress($event)" 
-                        v-on:keydown="handleMessageInputKeydown($event)" 
-                        tabindex="2" 
+                        v-on:keypress="handleMessageInputKeypress($event)"
+                        v-on:keydown="handleMessageInputKeydown($event)"
+                        tabindex="2"
                         maxlength="500"></textarea>
                     <button id="send-button" v-on:click="sendMessageToServer" tabindex="3">{{ $t("ui.button_send") }}</button>
                 </div>
@@ -132,11 +132,11 @@
                         <button id="btn-list" v-on:click="openUserListPopup()">{{ $t("ui.button_list") }}</button>
                     </div>
                     <div class="tooltip-section">
-                        <button v-on:click="openPreferencesPopup" 
-                                v-bind:title="$t('ui.button_preferences')" 
+                        <button v-on:click="openPreferencesPopup"
+                                v-bind:title="$t('ui.button_preferences')"
                                 class="fas fa-cogs"></button>
-                        <button v-if="notificationPermissionsGranted" 
-                                v-on:click="toggleDesktopNotifications" 
+                        <button v-if="notificationPermissionsGranted"
+                                v-on:click="toggleDesktopNotifications"
                                 v-bind:title="$t('ui.preferences_show_notifications')"
                                 class="fas"
                                 v-bind:class="{'fa-bell': showNotifications, 'fa-bell-slash': !showNotifications}"></button>
@@ -146,24 +146,24 @@
                             <div>{{ $t("ui.label_move") }}</div>
                         </div>
                         <div class="non-wrappable-buttons">
-                            <button id="btn-move-left" class="grid-button" 
+                            <button id="btn-move-left" class="grid-button"
                                     v-on:mousedown="setMovementDirection('left')"
                                     v-on:mouseup="setMovementDirection(null)"
                                     v-on:touchstart="setMovementDirection('left')"
                                     v-on:touchend="setMovementDirection(null)">↖</button
-                            ><button id="btn-move-up" class="grid-button" 
+                            ><button id="btn-move-up" class="grid-button"
                                     v-on:mousedown="setMovementDirection('up')"
                                     v-on:mouseup="setMovementDirection(null)"
                                     v-on:touchstart="setMovementDirection('up')"
                                     v-on:touchend="setMovementDirection(null)">↗</button>
                         </div>
                         <div class="non-wrappable-buttons">
-                            <button id="btn-move-down" class="grid-button" 
+                            <button id="btn-move-down" class="grid-button"
                                     v-on:mousedown="setMovementDirection('down')"
                                     v-on:mouseup="setMovementDirection(null)"
                                     v-on:touchstart="setMovementDirection('down')"
                                     v-on:touchend="setMovementDirection(null)">↙</button
-                            ><button id="btn-move-right" class="grid-button" 
+                            ><button id="btn-move-right" class="grid-button"
                                     v-on:mousedown="setMovementDirection('right')"
                                     v-on:mouseup="setMovementDirection(null)"
                                     v-on:touchstart="setMovementDirection('right')"
@@ -199,7 +199,7 @@
                             }}</span>
                     </div>
                     <div :id="'video-container-' + index" class='video-container pinned-video' v-show="streamSlot.withVideo && ((takenStreams[index] && streamSlot.isReady) || index == streamSlotIdInWhichIWantToStream)">
-                        <button 
+                        <button
                             class="fas fa-thumbtack pin-video-button"
                             v-show="takenStreams[index] || (streamSlot.isActive && index == streamSlotIdInWhichIWantToStream)"
                             v-on:click="toggleVideoSlotPinStatus(index)"></button>
@@ -222,8 +222,8 @@
                             name="stream-volume" min="0" max="1" step="0.01" :value="slotVolume[index]">
                         <div v-if="canUseAudioContext">
                             <label :for="'enable-compression-' + index">{{ $t("ui.enable_compression") }}</label>
-                            <input type="checkbox" 
-                                :id="'enable-compression-' + index" 
+                            <input type="checkbox"
+                                :id="'enable-compression-' + index"
                                 v-model="slotCompression[index]"
                                 v-on:change="onCompressionChanged(index)">
                         </div>
@@ -240,7 +240,7 @@
                             v-on:click="wantToDropStream(index)">
                             {{ $t("ui.button_stream_drop") }}
                         </button>
-                        
+
                         <button :id="'start-video-streaming-button-' + index"
                             v-if="!streamSlot.isActive && !wantToStream && streamSlotIdInWhichIWantToStream == null"
                             v-on:click="openStreamPopup(index)">
@@ -312,13 +312,18 @@
                         </thead>
                         <tbody>
                             <tr :id="'user-list-element-' + u.id"
-                                v-for="u in getUserListForListPopup()" 
+                                v-for="u in getUserListForListPopup()"
                                 v-bind:class="{'popup-row-is-selected': u.id == highlightedUserId}">
                                 <td>
                                     <div v-on:click="u.isInRoom && highlightUser(u.id, u.name)">
-                                        <span v-bind:title="$t('ui.user_not_in_room')" 
+                                        <span v-bind:title="$t('ui.user_not_in_room')"
                                               class="user-not-in-room-warning fas fa-exclamation-triangle"
                                               v-if="!u.isInRoom"></span>
+                                        <img v-bind:title="$t('ui.user_inactive')"
+                                             v-if="u.isInactive"
+                                             class="inactive-user-icon"
+                                             src="zzz-sleep-symbol.svg"
+                                              ></img>
                                         {{ u.name || $t("default_user_name") }}
                                     </div>
                                     <button v-if="ignoredUserIds.has(u.id)" v-on:click="unignoreUser(u.id)">{{ $t("ui.user_list_popup_unignore") }}</button>
@@ -351,7 +356,7 @@
                             for="stream-form-video-only-mode">{{ $t("ui.stream_form_video_only_mode") }}</label>
                     </div>
                     <div class='popup-item' v-if="streamMode != 'sound'">
-                        <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label 
+                        <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label
                             for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
                     </div>
                     <div class='popup-item' v-if="streamMode != 'sound' && !streamScreenCapture">
@@ -372,7 +377,7 @@
                         <div v-if="displayAdvancedStreamSettings">
                             <div class='popup-item' v-if="streamMode != 'sound' && streamScreenCapture">
                                 <div>
-                                    <input type="checkbox" id="stream-form-screen-capture-audio" v-model="streamScreenCaptureAudio"><label 
+                                    <input type="checkbox" id="stream-form-screen-capture-audio" v-model="streamScreenCaptureAudio"><label
                                         for="stream-form-screen-capture-audio">{{ $t("ui.stream_form_screen_capture_audio") }}</label>
                                 </div>
                                 <div class='popup-notice'>{{ $t("ui.stream_form_screen_capture_audio_notice") }}</div>
@@ -401,7 +406,7 @@
                         v-on:click="closeStreamPopup">{{ $t("ui.popup_button_cancel") }}</button>
                 </div>
             </div>
-            
+
             <div class="popup-overlay" v-if="isPreferencesPopupOpen" v-on:click="closePreferencesPopup"></div>
             <div class="popup" v-if="isPreferencesPopupOpen">
                 <div class="popup-title">{{ $t("ui.preferences_title") }}</div>
@@ -566,7 +571,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src='scripts/webrtc-codec-support.min.js'></script>
     <script type="module" src='scripts/main.js'></script>
-    
+
     <script src="scripts/riffwave.js"></script>
     <script src="scripts/Blob.js"></script>
     <script src="scripts/animalese.js"></script>
