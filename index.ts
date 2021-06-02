@@ -1278,19 +1278,19 @@ function applyState(state: PersistedState)
     }
 }
 
-function restoreState()
+async function restoreState()
 {
-    initializeRoomStates()
-    // If there's an error, just don't deserialize anything
-    // and start with a fresh state
-    return new Promise<void>(async (resolve, reject) =>
+    try
     {
+        initializeRoomStates()
+        // If there's an error, just don't deserialize anything
+        // and start with a fresh state
+        
         log.info("Restoring state...")
         if (process.env.PERSISTOR_URL)
         {
             // remember to do it as defensive as possible
-            try
-            {
+
                 const response = await got.get(process.env.PERSISTOR_URL, {
                     headers: {
                         "persistor-secret": process.env.PERSISTOR_SECRET
@@ -1301,13 +1301,6 @@ function restoreState()
                     const state = JSON.parse(response.body) as PersistedState
                     applyState(state)
                 }
-                resolve()
-            }
-            catch (exc)
-            {
-                log.error(exc)
-                resolve()
-            }
         }
         else
         {
@@ -1321,9 +1314,12 @@ function restoreState()
             {
                 log.error(exc)
             }
-            resolve()
         }
-    })
+    }
+    catch (exc)
+    {
+        log.error(exc)
+    }
 }
 
 setInterval(() => persistState(), persistInterval)
