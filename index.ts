@@ -1,7 +1,6 @@
 import express from "express"
-import { readFile, readFileSync, writeFile } from "fs";
 import { defaultRoom, rooms } from "./rooms";
-import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState } from "./types";
+import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
 import { sleep } from "./utils";
 import got from "got";
@@ -9,6 +8,8 @@ import log from "loglevel";
 import { settings } from "./settings";
 import compression from 'compression';
 import { getAbuseConfidenceScore } from "./abuse-ip-db";
+import { readFileSync } from "fs";
+import { readdir, readFile, writeFile } from "fs/promises";
 
 const app: express.Application = express()
 const http = require('http').Server(app);
@@ -784,111 +785,90 @@ app.get("/", async (req, res) =>
     }
 
     log.info("Fetching root..." + req.ip + " " + req.rawHeaders.join("|"))
-    readFile("static/index.html", 'utf8', async (err, data) =>
-    {
-        try
-        {
-            if (err)
-            {
-                res.statusCode = 500
-                res.end("Could not retrieve index.html [" + err + "]")
-                return
-            }
-
-            try {
-                const { statusCode: loginFooterStatusCode, body: loginFooterBody } = await got(
-                    'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
-
-                data = data.replace("@LOGIN_FOOTER@", loginFooterStatusCode === 200 ? loginFooterBody : "")
-            }
-            catch (e)
-            {
-                log.error(e.message + " " + e.stack);
-            }
-
-            data = data.replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
-
-            for (const areaId in roomStates)
-            {
-                const connectedUserIds: Set<string> = getConnectedUserList(null, areaId)
-                    .filter((u) => !u.blockedIps.includes(req.ip))
-                    .reduce((acc, val) => acc.add(val.id), new Set<string>())
-
-                data = data
-                    .replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
-                        connectedUserIds.size.toString())
-                    .replace("@STREAMER_COUNT_" + areaId.toUpperCase() + "@",
-                        Object.values(roomStates[areaId])
-                            .map(s => s.streams)
-                            .flat()
-                            .filter(s => s.userId && connectedUserIds.has(s.userId))
-                            .length.toString())
-            }
-
-            res.set({
-                'Content-Type': 'text/html; charset=utf-8',
-                'Cache-Control': 'no-cache'
-            })
-            res.end(data)
-        }
-        catch (e)
-        {
-            res.end(e.message + " " + e.stack)
-        }
-    })
-})
-
-//const svgCrispCache: { [path: string]: string }[] = {};
-const svgCrispCache: any = {};
-app.get(/(.+)\.crisp\.svg$/i, (req, res) =>
-{
-    const returnImage = function (data: string)
-    {
-        res.set({
-            'Content-Type': 'image/svg+xml',
-            'Cache-Control': 'public, max-age=604800, immutable'
-        });
-        res.end(data);
-    };
-
-    const svgPath = req.params[0] + ".svg";
 
     try
     {
-        if (svgPath in svgCrispCache)
-        {
-            returnImage(svgCrispCache[svgPath]);
-            return;
+        let data = await readFile("static/index.html", 'utf8')
+
+        try {
+            const { statusCode: loginFooterStatusCode, body: loginFooterBody } = await got(
+                'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
+
+            data = data.replace("@LOGIN_FOOTER@", loginFooterStatusCode === 200 ? loginFooterBody : "")
         }
+        catch (e)
+        {
+            log.error(e.message + " " + e.stack);
+        }
+
+        data = data.replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
+
+        for (const areaId in roomStates)
+        {
+            const connectedUserIds: Set<string> = getConnectedUserList(null, areaId)
+                .filter((u) => !u.blockedIps.includes(req.ip))
+                .reduce((acc, val) => acc.add(val.id), new Set<string>())
+
+            data = data
+                .replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
+                    connectedUserIds.size.toString())
+                .replace("@STREAMER_COUNT_" + areaId.toUpperCase() + "@",
+                    Object.values(roomStates[areaId])
+                        .map(s => s.streams)
+                        .flat()
+                        .filter(s => s.userId && connectedUserIds.has(s.userId))
+                        .length.toString())
+        }
+
+        res.set({
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-cache'
+        })
+        res.end(data)
     }
     catch (e)
     {
         res.end(e.message + " " + e.stack)
     }
 
-    log.info("Fetching svg: " + svgPath)
-    readFile("static" + svgPath, 'utf8', async (err, data) =>
+})
+
+const svgCrispCache: { [path: string]: string } = {};
+
+app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
+{
+    try
     {
-        try
+        const returnImage = function (data: string)
         {
-            if (err)
+            res.set({
+                'Content-Type': 'image/svg+xml',
+                'Cache-Control': 'public, max-age=604800, immutable'
+            });
+            res.end(data);
+        };
+
+        const svgPath = req.params[0] + ".svg";
+
+            if (svgPath in svgCrispCache)
             {
-                res.statusCode = 500
-                res.end("Could not retrieve index.html [" + err + "]")
-                return
+                returnImage(svgCrispCache[svgPath]);
+                return;
             }
 
-            data = data.replace('<svg', '<svg shape-rendering="crispEdges"');
+        log.info("Fetching svg: " + svgPath)
+        let data = await readFile("static" + svgPath, 'utf8')
+        
+        data = data.replace('<svg', '<svg shape-rendering="crispEdges"');
 
-            svgCrispCache[svgPath] = data;
+        svgCrispCache[svgPath] = data;
 
-            returnImage(data);
-        }
-        catch (e)
-        {
-            res.end(e.message + " " + e.stack)
-        }
-    })
+        returnImage(data);
+    }
+    catch (e)
+    {
+        res.end(e.message + " " + e.stack)
+    }
 })
 
 app.use(express.static('static',
@@ -921,6 +901,44 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
         }
 
         res.json(dto)
+    }
+    catch (e)
+    {
+        res.end(e.message + " " + e.stack)
+    }
+})
+
+app.get("/characters", async (req, res) =>
+{
+    try
+    {
+        const characterIds = await readdir("static/characters")
+        
+        const output: { [characterId: string]: CharacterSvgDto} = {}
+        for (const characterId of characterIds)
+        {
+            output[characterId] = {
+                frontSitting: "ciao",
+                frontStanding: "ciao",
+                frontWalking1: "ciao",
+                frontWalking2: "ciao",
+                backSitting: "ciao",
+                backStanding: "ciao",
+                backWalking1: "ciao",
+                backWalking: "ciao",
+            }
+        }
+        res.json(output)
+            
+        // readFile("persisted-state", { encoding: "utf-8" }, (err, data) =>
+        //     {
+        //         if (err)
+        //         {
+        //             log.error(err)
+        //         }
+        // })
+
+        // const output = null
     }
     catch (e)
     {
@@ -1236,13 +1254,10 @@ async function persistState()
         else
         {
             // use local file
-            writeFile("persisted-state",
+            await writeFile("persisted-state",
                 JSON.stringify(state, null, 2),
                 { encoding: "utf-8" },
-                (err) =>
-                {
-                    if (err) log.error(err)
-                })
+                )
         }
     }
     catch (exc)
@@ -1296,26 +1311,17 @@ function restoreState()
         }
         else
         {
-            readFile("persisted-state", { encoding: "utf-8" }, (err, data) =>
+            const data = await readFile("persisted-state", { encoding: "utf-8" })
+            try
             {
-                if (err)
-                {
-                    log.error(err)
-                }
-                else
-                {
-                    try
-                    {
-                        const state = JSON.parse(data) as PersistedState
-                        applyState(state)
-                    }
-                    catch (exc)
-                    {
-                        log.error(exc)
-                    }
-                }
-                resolve()
-            })
+                const state = JSON.parse(data) as PersistedState
+                applyState(state)
+            }
+            catch (exc)
+            {
+                log.error(exc)
+            }
+            resolve()
         }
     })
 }

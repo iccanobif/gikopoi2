@@ -125,3 +125,15 @@ export interface PersistedState
 {
     users: Player[],
 }
+
+export interface CharacterSvgDto
+{
+    frontSitting: string
+    frontStanding: string
+    frontWalking1: string
+    frontWalking2: string
+    backSitting: string
+    backStanding: string
+    backWalking1: string
+    backWalking: string
+}
