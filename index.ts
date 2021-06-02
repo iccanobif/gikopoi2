@@ -1256,6 +1256,11 @@ function applyState(state: PersistedState)
     // state.users should be undefined only the first time this code runs in production.
     if (state.users)
         restoreUserState(state.users)
+    else
+    {
+        const users = (state as unknown) as { [id: string]: Player; }
+        restoreUserState(Object.values(users))
+    }
 }
 
 function restoreState()
