@@ -128,6 +128,7 @@ export interface PersistedState
 
 export interface CharacterSvgDto
 {
+    isBase64: boolean
     frontSitting: string
     frontStanding: string
     frontWalking1: string
@@ -135,5 +136,5 @@ export interface CharacterSvgDto
     backSitting: string
     backStanding: string
     backWalking1: string
-    backWalking: string
+    backWalking2: string
 }

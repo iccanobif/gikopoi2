@@ -908,42 +908,47 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
     }
 })
 
-app.get("/characters", async (req, res) =>
+async function getCharacterImages(crisp: boolean)
 {
-    try
-    {
-        const characterIds = await readdir("static/characters")
+    const characterIds = await readdir("static/characters")
         
-        const output: { [characterId: string]: CharacterSvgDto} = {}
-        for (const characterId of characterIds)
-        {
-            output[characterId] = {
-                frontSitting: "ciao",
-                frontStanding: "ciao",
-                frontWalking1: "ciao",
-                frontWalking2: "ciao",
-                backSitting: "ciao",
-                backStanding: "ciao",
-                backWalking1: "ciao",
-                backWalking: "ciao",
-            }
-        }
-        res.json(output)
-            
-        // readFile("persisted-state", { encoding: "utf-8" }, (err, data) =>
-        //     {
-        //         if (err)
-        //         {
-        //             log.error(err)
-        //         }
-        // })
-
-        // const output = null
-    }
-    catch (e)
+    const output: { [characterId: string]: CharacterSvgDto} = {}
+    for (const characterId of characterIds)
     {
-        res.end(e.message + " " + e.stack)
+        const extension = characterId == "funkynaito" || characterId == "molgiko" ? "png" : "svg"
+
+        const getCharacterImage = async (path: string, crisp: boolean) => {
+            let text = await readFile("static/characters/" + path, { encoding: path.endsWith(".svg") ? "utf-8" : "base64"})
+
+            if (crisp && path.endsWith(".svg")) 
+                text = text.replace('<svg', '<svg shape-rendering="crispEdges"')
+
+            return text
+        }
+
+        output[characterId] = {
+            isBase64: extension == "png",
+            frontSitting: await getCharacterImage(characterId + "/front-sitting." + extension, crisp),
+            frontStanding: await getCharacterImage(characterId + "/front-standing." + extension, crisp),
+            frontWalking1: await getCharacterImage(characterId + "/front-walking-1." + extension, crisp),
+            frontWalking2: await getCharacterImage(characterId + "/front-walking-2." + extension, crisp),
+            backSitting: await getCharacterImage(characterId + "/back-sitting." + extension, crisp),
+            backStanding: await getCharacterImage(characterId + "/back-standing." + extension, crisp),
+            backWalking1: await getCharacterImage(characterId + "/back-walking-1." + extension, crisp),
+            backWalking2: await getCharacterImage(characterId + "/back-walking-2." + extension, crisp),
+        }
     }
+    return output
+}
+
+app.get("/characters/regular", async (req, res) =>
+{
+    try { res.json(await getCharacterImages(false)) } catch (e) { res.end(e.message + " " + e.stack) }
+})
+
+app.get("/characters/crisp", async (req, res) =>
+{
+    try { res.json(await getCharacterImages(true)) } catch (e) { res.end(e.message + " " + e.stack) }
 })
 
 app.get("/areas/:areaId/streamers", (req, res) =>

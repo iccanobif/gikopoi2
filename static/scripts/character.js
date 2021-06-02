@@ -32,7 +32,7 @@ export class Character
             loadImage("characters/" + this.characterName + "/back-sitting." + urlMode + this.format),
             loadImage("characters/" + this.characterName + "/back-standing." + urlMode + this.format),
             loadImage("characters/" + this.characterName + "/back-walking-1." + urlMode + this.format),
-            loadImage("characters/" + this.characterName + "/back-walking-2." + urlMode + this.format)
+            loadImage("characters/" + this.characterName + "/back-walking-2." + urlMode + this.format),
         ])
         
         this.frontSittingImage = RenderCache.Image(results[0], this.scale)
