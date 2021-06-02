@@ -229,8 +229,7 @@ window.vueApp = new Vue({
         else
             this.setLanguage("en")
 
-        loadCharacterImagesPromise = loadCharacters(
-            this.isCrispModeEnabled ? "crisp" : null);
+        loadCharacterImagesPromise = loadCharacters(this.isCrispModeEnabled);
 
         // Enable dark mode stylesheet (gotta do it here in the "mounted" event because otherwise 
         // the screen will flash dark for a bit while loading the page)

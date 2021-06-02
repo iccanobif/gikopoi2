@@ -21,37 +21,34 @@ export class Character
         this.backWalking2Image = null;
     }
 
-    async loadImages(svgMode)
+    async loadImages(dto)
     {
-        const urlMode = (!svgMode || this.format != "svg" ? "" : svgMode + ".");
-        const results = await Promise.all([
-            loadImage("characters/" + this.characterName + "/front-sitting." + urlMode + this.format),
-            loadImage("characters/" + this.characterName + "/front-standing." + urlMode + this.format),
-            loadImage("characters/" + this.characterName + "/front-walking-1." + urlMode + this.format),
-            loadImage("characters/" + this.characterName + "/front-walking-2." + urlMode + this.format),
-            loadImage("characters/" + this.characterName + "/back-sitting." + urlMode + this.format),
-            loadImage("characters/" + this.characterName + "/back-standing." + urlMode + this.format),
-            loadImage("characters/" + this.characterName + "/back-walking-1." + urlMode + this.format),
-            loadImage("characters/" + this.characterName + "/back-walking-2." + urlMode + this.format),
-        ])
+        const stringToImage = (svgString) => new Promise((resolve) => {
+            const img = new Image()
+            if (dto.isBase64)
+                img.src = "data:image/png;base64," + svgString
+            else
+                img.src = "data:image/svg+xml;base64," + btoa(svgString)
+            img.addEventListener("load", () => resolve(img))
+        })
+
+        this.frontSittingImage = RenderCache.Image(await stringToImage(dto.frontSitting), this.scale)
+        this.frontStandingImage = RenderCache.Image(await stringToImage(dto.frontStanding), this.scale)
+        this.frontWalking1Image = RenderCache.Image(await stringToImage(dto.frontWalking1), this.scale)
+        this.frontWalking2Image = RenderCache.Image(await stringToImage(dto.frontWalking2), this.scale)
+        this.backSittingImage = RenderCache.Image(await stringToImage(dto.backSitting), this.scale)
+        this.backStandingImage = RenderCache.Image(await stringToImage(dto.backStanding), this.scale)
+        this.backWalking1Image = RenderCache.Image(await stringToImage(dto.backWalking1), this.scale)
+        this.backWalking2Image = RenderCache.Image(await stringToImage(dto.backWalking2), this.scale)
         
-        this.frontSittingImage = RenderCache.Image(results[0], this.scale)
-        this.frontStandingImage = RenderCache.Image(results[1], this.scale)
-        this.frontWalking1Image = RenderCache.Image(results[2], this.scale)
-        this.frontWalking2Image = RenderCache.Image(results[3], this.scale)
-        this.backSittingImage = RenderCache.Image(results[4], this.scale)
-        this.backStandingImage = RenderCache.Image(results[5], this.scale)
-        this.backWalking1Image = RenderCache.Image(results[6], this.scale)
-        this.backWalking2Image = RenderCache.Image(results[7], this.scale)
-        
-        this.frontSittingFlippedImage = RenderCache.Image(results[0], this.scale, true)
-        this.frontStandingFlippedImage = RenderCache.Image(results[1], this.scale, true)
-        this.frontWalking1FlippedImage = RenderCache.Image(results[2], this.scale, true)
-        this.frontWalking2FlippedImage = RenderCache.Image(results[3], this.scale, true)
-        this.backSittingFlippedImage = RenderCache.Image(results[4], this.scale, true)
-        this.backStandingFlippedImage = RenderCache.Image(results[5], this.scale, true)
-        this.backWalking1FlippedImage = RenderCache.Image(results[6], this.scale, true)
-        this.backWalking2FlippedImage = RenderCache.Image(results[7], this.scale, true)
+        this.frontSittingFlippedImage = RenderCache.Image(await stringToImage(dto.frontSitting), this.scale, true)
+        this.frontStandingFlippedImage = RenderCache.Image(await stringToImage(dto.frontStanding), this.scale, true)
+        this.frontWalking1FlippedImage = RenderCache.Image(await stringToImage(dto.frontWalking1), this.scale, true)
+        this.frontWalking2FlippedImage = RenderCache.Image(await stringToImage(dto.frontWalking2), this.scale, true)
+        this.backSittingFlippedImage = RenderCache.Image(await stringToImage(dto.backSitting), this.scale, true)
+        this.backStandingFlippedImage = RenderCache.Image(await stringToImage(dto.backStanding), this.scale, true)
+        this.backWalking1FlippedImage = RenderCache.Image(await stringToImage(dto.backWalking1), this.scale, true)
+        this.backWalking2FlippedImage = RenderCache.Image(await stringToImage(dto.backWalking2), this.scale, true)
     }
 }
 
@@ -90,4 +87,10 @@ export const characters = {
     hotsuma_giko: new Character("hotsuma_giko", "svg", false),
 }
 
-export const loadCharacters = (mode) => Promise.all(Object.values(characters).map(c => c.loadImages(mode)))
+export const loadCharacters = async (crispMode) => {
+
+    const response = await fetch("/characters/" + (crispMode ? "crisp" : "regular"))
+    const dto = await response.json()
+
+    return Promise.all(Object.keys(characters).map(characterId => characters[characterId].loadImages(dto[characterId])))
+}
