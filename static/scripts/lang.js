@@ -60,7 +60,7 @@ export const messages =
 
             user_list_popup_title: "ユーザーリスト",
             user_list_popup_column_user_name: "ユーザー名",
-            user_not_in_room: "このユーザーはもうこの部屋にいない。",
+            user_not_in_room: "このユーザーはこの部屋にいません。",
             user_inactive: "このユーザーは活動停止中。",
             user_list_popup_ignore: "一方あぼーん",
             user_list_popup_unignore: "一方あぼーん解除",
@@ -240,7 +240,7 @@ export const messages =
 
             user_list_popup_title: "User List",
             user_list_popup_column_user_name: "User name",
-            user_not_in_room: "This user has already left this room.",
+            user_not_in_room: "This user is not in this room.",
             user_inactive: "This user is inactive.",
             user_list_popup_ignore: "Ignore",
             user_list_popup_unignore: "Unignore",
