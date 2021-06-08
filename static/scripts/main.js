@@ -2515,8 +2515,6 @@ window.vueApp = new Vue({
                     isInactive: false,
                  })
 
-            console.log("user list", output)
-
             return output
         },
         handleRulaPopupKeydown: function(event)
