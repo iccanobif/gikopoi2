@@ -1402,6 +1402,12 @@ window.vueApp = new Vue({
                 this.dropStream(i)
                 // when going to a new room, all streams must be off by default
                 this.takenStreams[i] = false
+                
+                if (audioProcessors[i])
+                {
+                    audioProcessors[i].dispose()
+                    delete audioProcessors[i]
+                }
             }
 
             if (window.speechSynthesis)
