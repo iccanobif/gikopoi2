@@ -69,6 +69,7 @@ export function speak(message, voiceURI, volume, pitch)
     const cleanMsgForSpeech = message
         .replace(urlRegex, "URL")
         .replace(/ww+/gi, "わらわら")
+        .replace(/ｗｗ+/gi, "わらわら")
         .replace(/88+/gi, "ぱちぱち")
 
     if (voiceURI == "animalese")
@@ -100,4 +101,21 @@ export function speak(message, voiceURI, volume, pitch)
     }
 
     speechSynthesis.speak(utterance)
+}
+
+// Horrible workaround for this chrome bug https://bugs.chromium.org/p/chromium/issues/detail?id=679437
+// Basically TTS will hang when playing an utterance longer than 15 seconds, and when that happens it will
+// remain stuck until speechSynthesis.cancel() is called. As a workaround, I pause and resume TTS every 14 seconds.
+if (navigator.userAgent.match(/Chrome/) && !navigator.userAgent.match(/Edg/))
+{
+    console.log("Applying chrome TTS bug workaround")
+
+    setInterval(() => {
+        if (speechSynthesis.speaking)
+        {
+            console.log("Restarting TTS")
+            speechSynthesis.pause()
+            speechSynthesis.resume()
+        }
+    }, 14 * 1000)
 }
