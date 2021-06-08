@@ -115,7 +115,7 @@ if (navigator.userAgent.match(/Chrome/) && !navigator.userAgent.match(/Edg/))
         {
             console.log("Restarting TTS")
             speechSynthesis.pause()
-            speechSynthesis.resume()
+            setTimeout(() => speechSynthesis.resume(), 0)
         }
     }, 14 * 1000)
 }
