@@ -5,6 +5,7 @@ Vue.component('chessboard-slot', {
     {
         return {
             chessboard: null,
+            visible: false,
         }
     },
     mounted: function ()
@@ -90,15 +91,24 @@ Vue.component('chessboard-slot', {
         wantToJoinGame: function ()
         {
             this.socket.emit("user-want-to-play-chess")
+            this.visible = true
         },
         wantToQuitGame: function ()
         {
             this.socket.emit("user-want-to-quit-chess")
         },
+        wantToDisplayGame: function ()
+        {
+            this.visible = true
+        },
+        wantToHideGame: function ()
+        {
+            this.visible = false
+        },
         amIPlaying: function ()
         {
             return this.chessboardState.blackUserID == myUserID 
                    || this.chessboardState.whiteUserID == myUserID
-        }
+        },
     },
 })

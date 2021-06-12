@@ -232,7 +232,7 @@
                     </div>
                     <div class="stream-buttons">
                         <button :id="'take-stream-button-' + index"
-                            v-bind:class="{'streamer-button-red': streamSlot.isReady}"
+                            v-bind:class="{'red-button': streamSlot.isReady}"
                             v-if="!takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
                             v-on:click="wantToTakeStream(index)">
                             {{ $t("ui.button_stream_take") }}
@@ -254,6 +254,7 @@
                         </button>
                     </div>
                 </div>
+                <hr v-if="streams.length" />
                 <chessboard-slot
                     v-if="currentRoom.hasChessboard"
                     v-bind:socket="socket"
@@ -569,27 +570,37 @@
 
     <script type="text/x-template" id="chessboard-slot">
         <div class="chessboard-slot-wrapper">
-            <button v-on:click="wantToJoinGame()" v-if="!amIPlaying()">
-                join game
+            <button v-on:click="wantToDisplayGame()"
+                    v-if="!visible"
+                    v-bind:class="{'red-button': chessboardState?.blackUserID || chessboardState?.whiteUserID}">
+                Display game
+            </button>
+            <button v-on:click="wantToHideGame()" v-if="visible">
+                Hide game
+            </button>
+            <button v-on:click="wantToJoinGame()" v-if="!amIPlaying() && !chessboardState?.blackUserID">
+                Join game
             </button>
             <button v-on:click="wantToQuitGame()" v-if="amIPlaying()">
-                quit game
+                Quit game
             </button>
-            {{ !chessboardState?.whiteUserID ? "waiting for white"
-                : !chessboardState?.blackUserID ? "waiting for black"
-                : "" }}
-            <div v-if="chessboardState?.whiteUserID">
-                White: {{ users[chessboardState?.whiteUserID]?.name || $t("default_user_name") }}
-                <span v-if="chessboardState?.turn == 'w'">*</span>
+            <div v-show="visible">
+                {{ !chessboardState?.whiteUserID ? "waiting for white"
+                    : !chessboardState?.blackUserID ? "waiting for black"
+                    : "" }}
+                <span v-if="chessboardState?.whiteUserID">
+                    White: {{ users[chessboardState?.whiteUserID]?.name || $t("default_user_name") }}
+                    <span v-if="chessboardState?.turn == 'w'">*</span>
+                </span>
+                <span v-if="chessboardState?.blackUserID">
+                    Black: {{ users[chessboardState?.blackUserID]?.name || $t("default_user_name") }} 
+                    <span v-if="chessboardState?.turn == 'b'">*</span>
+                </span>
+                <div 
+                    id="chessboard"
+                    v-show="chessboardState?.whiteUserID && chessboardState?.blackUserID"
+                    style="width: 300px"></div>
             </div>
-            <div v-if="chessboardState?.blackUserID">
-                Black: {{ users[chessboardState?.blackUserID]?.name || $t("default_user_name") }} 
-                <span v-if="chessboardState?.turn == 'b'">*</span>
-            </div>
-            <div 
-                id="chessboard"
-                v-show="chessboardState?.whiteUserID && chessboardState?.blackUserID"
-                style="width: 300px"></div>
         </div>
     </script>
 

@@ -703,9 +703,8 @@ io.on("connection", function (socket: any)
                 chessState.whiteUserID = user.id
             else
             {
-                // TODO uncomment this
-                // if (chessState.whiteUserID == user.id)
-                //     return // can't play against yourself
+                if (chessState.whiteUserID == user.id)
+                    return // can't play against yourself
 
                 chessState.blackUserID = user.id
                 chessState.instance = new Chess()

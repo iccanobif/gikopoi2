@@ -278,6 +278,7 @@ video {
 #login-page button,
 #toolbar button,
 .stream-buttons button,
+.chessboard-slot-wrapper button,
 .popup button
 {
     border: 1px solid #959595;
@@ -657,13 +658,15 @@ button.checked {
     opacity: 1;
 }
 
-.stream-buttons button
+.stream-buttons button,
+.chessboard-slot-wrapper button
 {
     background-color: #4d4d9f;
     color: white;
 }
 
-.stream-buttons button.streamer-button-red
+.stream-buttons button.red-button,
+.chessboard-slot-wrapper button.red-button
 {
     background-color: #9f6161;
     color: white;
