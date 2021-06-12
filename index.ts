@@ -719,6 +719,17 @@ io.on("connection", function (socket: any)
         }
     })
 
+    socket.on("user-want-to-quit-chess", function () {
+        try
+        {
+            stopChessGame(roomStates, user)
+        }
+        catch (e)
+        {
+            log.error(e.message + " " + e.stack);
+        }
+    })
+
     socket.on("user-chess-move", function(source: any, target: any) {
         console.log(source, target)
 

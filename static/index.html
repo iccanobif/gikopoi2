@@ -569,17 +569,20 @@
 
     <script type="text/x-template" id="chessboard-slot">
         <div class="chessboard-slot-wrapper">
-            <button v-on:click="wantToStartPlaying()">
-                take stream
+            <button v-on:click="wantToJoinGame()" v-if="!amIPlaying()">
+                join game
+            </button>
+            <button v-on:click="wantToQuitGame()" v-if="amIPlaying()">
+                quit game
             </button>
             {{ !chessboardState?.whiteUserID ? "waiting for white"
                 : !chessboardState?.blackUserID ? "waiting for black"
                 : "" }}
-            <div>
+            <div v-if="chessboardState?.whiteUserID">
                 White: {{ users[chessboardState?.whiteUserID]?.name || $t("default_user_name") }}
                 <span v-if="chessboardState?.turn == 'w'">*</span>
             </div>
-            <div>
+            <div v-if="chessboardState?.blackUserID">
                 Black: {{ users[chessboardState?.blackUserID]?.name || $t("default_user_name") }} 
                 <span v-if="chessboardState?.turn == 'b'">*</span>
             </div>

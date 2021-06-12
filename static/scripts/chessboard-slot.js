@@ -4,16 +4,16 @@ Vue.component('chessboard-slot', {
     data: function ()
     {
         return {
-            chessboard: null
+            chessboard: null,
         }
     },
     mounted: function ()
     {
-        
+
     },
-    watch: 
+    watch:
     {
-        chessboardState: function(newVal, oldVal)
+        chessboardState: function (newVal, oldVal)
         {
             console.log("changed chessboardState", newVal, oldVal)
 
@@ -42,9 +42,9 @@ Vue.component('chessboard-slot', {
             console.log("buildChessboard", myUserID)
             const chessboardElement = document.getElementById("chessboard")
 
-            const position = this.chessboardState 
-                             ? (this.chessboardState.position || "start") 
-                             : "start"
+            const position = this.chessboardState
+                ? (this.chessboardState.position || "start")
+                : "start"
 
             this.chessboard = Chessboard(chessboardElement, {
                 pieceTheme: 'chess/img/chesspieces/wikipedia/{piece}.png',
@@ -81,14 +81,24 @@ Vue.component('chessboard-slot', {
                 {
                     // TODO Understand why after the first resize operation the chessboard stops
                     // being resizable
-                    
+
                     // console.log("stop")
                     // setTimeout(() => this.makeResizable(), 100)
                 }
             })
         },
-        wantToStartPlaying: function () {
+        wantToJoinGame: function ()
+        {
             this.socket.emit("user-want-to-play-chess")
         },
+        wantToQuitGame: function ()
+        {
+            this.socket.emit("user-want-to-quit-chess")
+        },
+        amIPlaying: function ()
+        {
+            return this.chessboardState.blackUserID == myUserID 
+                   || this.chessboardState.whiteUserID == myUserID
+        }
     },
 })
