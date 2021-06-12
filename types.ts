@@ -63,7 +63,7 @@ export interface Room
     doors: { [doorId: string]: Door };
     worldSpawns?: Door[];
     streamSlotCount: number;
-    secret: boolean;
+    secret?: boolean;
     forcedAnonymous?: boolean;
     blockWidth?: number;
     blockHeight?: number;

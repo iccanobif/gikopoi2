@@ -720,6 +720,9 @@ io.on("connection", function (socket: any)
         if (!chessState.instance)
             return
 
+        if (source == target)
+            return
+
         // Check if move comes from the right user
         if (chessState.instance.turn() == "b" && chessState.blackUserID != user.id)
             return
