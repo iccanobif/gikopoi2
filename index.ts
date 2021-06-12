@@ -26,6 +26,7 @@ const delay = 0
 const persistInterval = 5 * 1000
 const maxGhostRetention = 30 * 60 * 1000
 const inactivityTimeout = 30 * 60 * 1000
+const maxWaitForChessMove = 1000 * 60 * 5
 const maximumUsersPerIpPerArea = 2
 const maximumAbuseConfidenceScore = 50
 
@@ -71,6 +72,8 @@ function initializeRoomStates()
                     instance: null,
                     blackUserID: null,
                     whiteUserID: null,
+                    lastMoveTime: null,
+                    timer: null,
                 }
             }
             for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
@@ -201,7 +204,7 @@ io.on("connection", function (socket: any)
                 const firstMessageTime = user.lastMessageDates.shift()!
                 if (Date.now() - firstMessageTime < 5000)
                 {
-                    socket.emit("server-flood-detected")
+                    socket.emit("server-system-message", "msg.flood_warning")
                     return
                 }
             }
@@ -687,10 +690,24 @@ io.on("connection", function (socket: any)
         }
     })
 
+    function createChessMoveTimeout() {
+        return setTimeout(() => {
+            const chessState = roomStates[user.areaId][user.roomId].chess
+
+            if (chessState?.blackUserID)
+                io.to(getUser(chessState?.blackUserID).socketId).emit("server-system-message", "msg.chess_timeout_reached")
+            if (chessState?.whiteUserID)
+                io.to(getUser(chessState?.whiteUserID).socketId).emit("server-system-message", "msg.chess_timeout_reached")
+
+            stopChessGame(roomStates, user)
+        }, maxWaitForChessMove)
+    }
+
     socket.on("user-want-to-play-chess", function () {
         try {
             // The first user who requests a game will be white, the second one will be black
 
+            log.info("user-want-to-play-chess", user.id)
             const chessState = roomStates[user.areaId][user.roomId].chess
 
             if (chessState.blackUserID)
@@ -706,8 +723,11 @@ io.on("connection", function (socket: any)
                 if (chessState.whiteUserID == user.id)
                     return // can't play against yourself
 
+                log.info("chess game starts", user.id)
+
                 chessState.blackUserID = user.id
                 chessState.instance = new Chess()
+                chessState.timer = createChessMoveTimeout()
             }
 
             sendUpdatedChessboardState(roomStates, user.areaId, user.roomId)
@@ -721,6 +741,7 @@ io.on("connection", function (socket: any)
     socket.on("user-want-to-quit-chess", function () {
         try
         {
+            log.info("user-want-to-quit-chess", user.id)
             stopChessGame(roomStates, user)
         }
         catch (e)
@@ -730,41 +751,64 @@ io.on("connection", function (socket: any)
     })
 
     socket.on("user-chess-move", function(source: any, target: any) {
-        console.log(source, target)
+        try {
+            log.info("user-chess-move", user.id, source, target)
 
-        const chessState = roomStates[user.areaId][user.roomId].chess
+            const chessState = roomStates[user.areaId][user.roomId].chess
 
-        // Check if a game is on
-        if (!chessState.instance)
-            return
+            // Check if a game is on
+            if (!chessState.instance)
+                return
 
-        if (source == target)
-            return
+            if (source == target)
+                return
 
-        // Check if move comes from the right user
-        if ((chessState.instance.turn() == "b" && chessState.blackUserID != user.id)
-            || (chessState.instance.turn() == "w" && chessState.whiteUserID != user.id))
-        {
-            const stateDTO: ChessboardStateDto = buildChessboardStateDto(roomStates, user.areaId, user.roomId)
-            socket.emit("server-update-chessboard", stateDTO);
-            return
-        }
-        
-        // If the move is illegal, nothing happens
-        const result = chessState.instance.move({ from: source, to: target, promotion: "q" })
-        console.log(result)
-
-        // If the game is over, clear the game and send a message declaring the winner
-        if (chessState.instance.game_over())
-        {
-            roomStates[user.areaId][user.roomId].chess = {
-                blackUserID: null,
-                instance: null,
-                whiteUserID: null
+            // Check if move comes from the right user
+            if ((chessState.instance.turn() == "b" && chessState.blackUserID != user.id)
+                || (chessState.instance.turn() == "w" && chessState.whiteUserID != user.id))
+            {
+                const stateDTO: ChessboardStateDto = buildChessboardStateDto(roomStates, user.areaId, user.roomId)
+                socket.emit("server-update-chessboard", stateDTO);
+                return
             }
+            
+            // If the move is illegal, nothing happens
+            const result = chessState.instance.move({ from: source, to: target, promotion: "q" })
+            
+            if (result)
+            {
+                // Move was legal
+                chessState.lastMoveTime = Date.now()
+                if (chessState.timer)
+                    clearTimeout(chessState.timer)
+                chessState.timer = createChessMoveTimeout()
+            }
+
+            // If the game is over, clear the game and send a message declaring the winner
+            if (chessState.instance.game_over())
+            {
+                const winnerUserID = chessState.instance?.turn() == "w" ? chessState.whiteUserID : chessState.blackUserID
+                log.info("game over", winnerUserID)
+
+                const blackUser = getUser(chessState?.blackUserID!)
+                const whiteUser = getUser(chessState?.whiteUserID!)
+                const usersToNotify = new Set<Player>()
+                getFilteredConnectedUserList(blackUser, blackUser.roomId, blackUser.areaId)
+                    .forEach(u => usersToNotify.add(u))
+                getFilteredConnectedUserList(whiteUser, whiteUser.roomId, whiteUser.areaId)
+                    .forEach(u => usersToNotify.add(u))
+
+                usersToNotify.forEach(u => io.to(u.socketId).emit("server-chess-win", winnerUserID))
+
+                stopChessGame(roomStates, user)
+            }
+        
+            sendUpdatedChessboardState(roomStates, user.areaId, user.roomId)
         }
-       
-        sendUpdatedChessboardState(roomStates, user.areaId, user.roomId)
+        catch (e)
+        {
+            log.error(e.message + " " + e.stack);
+        }
     })
 
 });
@@ -1303,14 +1347,22 @@ function sendUpdatedChessboardState(roomStates: RoomStateCollection, areaId: str
 
 function stopChessGame(roomStates: RoomStateCollection, user: Player)
 {
+    log.info("stopChessGame", user.id)
     const state = roomStates[user.areaId][user.roomId].chess
 
     if (user.id != state.blackUserID && user.id != state.whiteUserID)
         return
 
-    state.instance = null
-    state.blackUserID = null
-    state.whiteUserID = null
+    if (state.timer)
+        clearTimeout(state.timer)
+
+    roomStates[user.areaId][user.roomId].chess = {
+        instance: null,
+        blackUserID: null,
+        whiteUserID: null,
+        lastMoveTime: null,
+        timer: null,
+    }
 
     sendUpdatedChessboardState(roomStates, user.areaId,user. roomId)
 }

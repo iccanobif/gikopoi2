@@ -570,31 +570,32 @@
 
     <script type="text/x-template" id="chessboard-slot">
         <div class="chessboard-slot-wrapper">
+            <div>{{ $t("ui.chess_slot_title") }}</div>
             <button v-on:click="wantToDisplayGame()"
                     v-if="!visible"
                     v-bind:class="{'red-button': chessboardState?.blackUserID || chessboardState?.whiteUserID}">
-                Display game
+                {{ $t("ui.chess_display_game")}}
             </button>
             <button v-on:click="wantToHideGame()" v-if="visible">
-                Hide game
+                {{ $t("ui.chess_hide_game")}}
             </button>
             <button v-on:click="wantToJoinGame()" v-if="!amIPlaying() && !chessboardState?.blackUserID">
-                Join game
+                {{ $t("ui.chess_join_game")}}
             </button>
             <button v-on:click="wantToQuitGame()" v-if="amIPlaying()">
-                Quit game
+                {{ $t("ui.chess_quit_game")}}
             </button>
             <div v-show="visible">
-                {{ !chessboardState?.whiteUserID ? "waiting for white"
-                    : !chessboardState?.blackUserID ? "waiting for black"
-                    : "" }}
-                <span v-if="chessboardState?.whiteUserID">
-                    White: {{ users[chessboardState?.whiteUserID]?.name || $t("default_user_name") }}
-                    <span v-if="chessboardState?.turn == 'w'">*</span>
+                <div>
+                {{ $t(!chessboardState?.whiteUserID ? "ui.chess_waiting_for_white"
+                    : !chessboardState?.blackUserID ? "ui.chess_waiting_for_black"
+                    : "") }}
+                </div>
+                <span v-if="chessboardState?.whiteUserID" v-bind:class="{'next-move-chess-player': chessboardState?.turn == 'w'}">
+                    {{ $t("ui.chess_white") }}{{ users[chessboardState?.whiteUserID]?.name || $t("default_user_name") }}
                 </span>
-                <span v-if="chessboardState?.blackUserID">
-                    Black: {{ users[chessboardState?.blackUserID]?.name || $t("default_user_name") }} 
-                    <span v-if="chessboardState?.turn == 'b'">*</span>
+                <span v-if="chessboardState?.blackUserID" v-bind:class="{'next-move-chess-player': chessboardState?.turn == 'b'}">
+                    {{ $t("ui.chess_black") }}{{ users[chessboardState?.blackUserID]?.name || $t("default_user_name") }} 
                 </span>
                 <div 
                     id="chessboard"

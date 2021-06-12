@@ -572,9 +572,9 @@ window.vueApp = new Vue({
                 }
             });
 
-            this.socket.on("server-flood-detected", () =>
+            this.socket.on("server-system-message", (messageCode) =>
             {
-                this.writeMessageToLog("SYSTEM", i18n.t("msg.flood_warning"), null)
+                this.writeMessageToLog("SYSTEM", i18n.t(messageCode), null)
             });
 
             this.socket.on("server-stats", (serverStats) =>
@@ -712,6 +712,12 @@ window.vueApp = new Vue({
 
             this.socket.on("server-update-chessboard", (state) => {
                 this.chessboardState = state
+            })
+
+            this.socket.on("server-chess-win", winnerUserId => {
+                const winnerUserName = this.toDisplayName(this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A")
+
+                this.writeMessageToLog("SYSTEM", i18n.t("msg.chess_win").replace("@USER_NAME@", winnerUserName), null)
             })
         },
         addUser: function (userDTO)

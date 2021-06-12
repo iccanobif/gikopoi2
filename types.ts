@@ -133,6 +133,8 @@ export interface ChessboardState {
     instance: ChessInstance | null,
     blackUserID: string | null,
     whiteUserID: string | null,
+    lastMoveTime: number | null,
+    timer: any
 }
 
 export interface ChessboardStateDto

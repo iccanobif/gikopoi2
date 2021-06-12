@@ -10,14 +10,16 @@ Vue.component('chessboard-slot', {
     },
     mounted: function ()
     {
-
+        if (!this.chessboard && this.chessboardState && this.chessboardState.blackUserID)
+        {
+            this.buildChessboard()
+            this.makeResizable()
+        }
     },
     watch:
     {
         chessboardState: function (newVal, oldVal)
         {
-            console.log("changed chessboardState", newVal, oldVal)
-
             // initialize chessboard when game starts (that is, when a black player joins)
             if (!this.chessboard && newVal.blackUserID)
             {
@@ -40,11 +42,10 @@ Vue.component('chessboard-slot', {
     {
         buildChessboard: function ()
         {
-            console.log("buildChessboard", myUserID)
             const chessboardElement = document.getElementById("chessboard")
 
             const position = this.chessboardState
-                ? (this.chessboardState.position || "start")
+                ? (this.chessboardState.fenString || "start")
                 : "start"
 
             this.chessboard = Chessboard(chessboardElement, {
@@ -72,21 +73,21 @@ Vue.component('chessboard-slot', {
         },
         makeResizable: function ()
         {
-            $("#chessboard").resizable({
-                aspectRatio: true,
-                resize: (event, ui) =>
-                {
-                    this.buildChessboard()
-                },
-                stop: () => 
-                {
-                    // TODO Understand why after the first resize operation the chessboard stops
-                    // being resizable
+            // $("#chessboard").resizable({
+            //     aspectRatio: true,
+            //     resize: (event, ui) =>
+            //     {
+            //         this.buildChessboard()
+            //     },
+            //     stop: () => 
+            //     {
+            //         // TODO Understand why after the first resize operation the chessboard stops
+            //         // being resizable
 
-                    // console.log("stop")
-                    // setTimeout(() => this.makeResizable(), 100)
-                }
-            })
+            //         // console.log("stop")
+            //         // setTimeout(() => this.makeResizable(), 100)
+            //     }
+            // })
         },
         wantToJoinGame: function ()
         {

@@ -672,6 +672,11 @@ button.checked {
     color: white;
 }
 
+.next-move-chess-player
+{
+    text-decoration: underline;
+}
+
 .highlighted-message
 {
     color: red;
