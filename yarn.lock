@@ -64,6 +64,11 @@
     "@types/node" "*"
     "@types/responselike" "*"
 
+"@types/chess.js@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@types/chess.js/-/chess.js-0.11.0.tgz#d6a6302653da7293055480205a801f7cc077d2fb"
+  integrity sha512-dwb29C90HRq9D4mbROGSe7CiUhrOcvoujLLTmM1A50/O37d/FyXWDhFjy3EMmbolNU3piySb+uQZIMdE4SShuA==
+
 "@types/component-emitter@^1.2.10":
   version "1.2.10"
   resolved "https://registry.yarnpkg.com/@types/component-emitter/-/component-emitter-1.2.10.tgz#ef5b1589b9f16544642e473db5ea5639107ef3ea"
@@ -428,6 +433,11 @@ check-error@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/check-error/-/check-error-1.0.2.tgz#574d312edd88bb5dd8912e9286dd6c0aed4aac82"
   integrity sha1-V00xLt2Iu13YkS6Sht1sCu1KrII=
+
+chess.js@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/chess.js/-/chess.js-0.12.0.tgz#ffca1773b93a4aa044891de81286e264ca229b00"
+  integrity sha512-eF1xf4j88r/AwIRxqV1FXZbVgMt4yUx05xrL+ZMqUrY+snFrUxGVHs0VgEd3AvngujDE9th7XZqqCwEKEQ7mWQ==
 
 chokidar@^3.2.2, chokidar@^3.5.1:
   version "3.5.1"

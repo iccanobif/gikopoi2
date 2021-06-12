@@ -117,6 +117,16 @@ export const messages =
             preferences_timestamps_in_copied_log: "コピーしたログに時刻を含む",
 
             back_to_homepage: "トップへ戻る",
+
+            chess_slot_title: "チェス",
+            chess_waiting_for_white: "白を待機中",
+            chess_waiting_for_black: "黒を待機中",
+            chess_white: "白：",
+            chess_black: "黒：",
+            chess_display_game: "表示",
+            chess_hide_game: "非表示",
+            chess_join_game: "参加",
+            chess_quit_game: "投了",
         },
         msg:
         {
@@ -141,6 +151,8 @@ export const messages =
             are_you_sure_you_want_to_block: "このユーザーを相互あぼーんしますか？",
             goodbye: "　またね！",
             flood_warning: "おい、早口すぎるじゃないか！",
+            chess_timeout_reached: "チェス対局が終わりました：時間切れ",
+            chess_win: "チェス対局が終わりました：@USER_NAME@の勝利。",
         },
         room:
         {
@@ -298,6 +310,16 @@ export const messages =
             
 
             back_to_homepage: "Go back to home page",
+
+            chess_slot_title: "Chess",
+            chess_waiting_for_white: "Waiting for white to join...",
+            chess_waiting_for_black: "Waiting for black to join...",
+            chess_white: "White: ",
+            chess_black: "Black: ",
+            chess_display_game: "Display game",
+            chess_hide_game: "Hide game",
+            chess_join_game: "Join game",
+            chess_quit_game: "Quit game",
         },
         msg:
         {
@@ -322,6 +344,8 @@ export const messages =
             are_you_sure_you_want_to_block: "Are you sure you want to block this user?",
             goodbye: "See you soon!",
             flood_warning: "Hey, aren't you talking a bit too fast?",
+            chess_timeout_reached: "The chess game is over: timeout reached.",
+            chess_win: "The chess game is over: the winner is @USER_NAME@.",
         },
         room:
         {

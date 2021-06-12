@@ -9,6 +9,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel='stylesheet' href='style/main.css' />
     <link rel='stylesheet' href='style/dark-mode.css' />
+    <link rel='stylesheet' href='chess/css/chessboard-1.0.0.min.css' />
     <link href="font-awesome/css/all.css" rel="stylesheet">
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -30,6 +31,7 @@
                 </div>
             </header>
             <form id="login-form">
+
                 <input v-if="passwordInputVisible" type="text" v-model="password"></input>
                 <div id="area-selection">
                     <label for="gen-selection"><input type="radio" id="gen-selection" value="gen" v-model="areaId"
@@ -191,7 +193,7 @@
             {{ $t("ui.label_log") }}
             <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames, 'timestamps-in-copied-log': timestampsInCopiedLog}" v-on:keydown="handlechatLogKeydown($event)">
             </div>
-            <div id="video-streams" v-if="streams.length > 0">
+            <div id="video-streams">
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
                     <hr v-if="index != 0" />
                     <div>
@@ -230,7 +232,7 @@
                     </div>
                     <div class="stream-buttons">
                         <button :id="'take-stream-button-' + index"
-                            v-bind:class="{'streamer-button-red': streamSlot.isReady}"
+                            v-bind:class="{'red-button': streamSlot.isReady}"
                             v-if="!takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
                             v-on:click="wantToTakeStream(index)">
                             {{ $t("ui.button_stream_take") }}
@@ -252,6 +254,13 @@
                         </button>
                     </div>
                 </div>
+                <hr v-if="streams.length" />
+                <chessboard-slot
+                    v-if="currentRoom.hasChessboard"
+                    v-bind:socket="socket"
+                    v-bind:chessboard-state="chessboardState"
+                    v-bind:users="users"
+                    ></chessboard-slot>
             </div>
 
             <div class="popup-overlay" v-if="isRulaPopupOpen" v-on:click="closeRulaPopup"></div>
@@ -559,6 +568,47 @@
         </div>
     </div>
 
+    <script type="text/x-template" id="chessboard-slot">
+        <div class="chessboard-slot-wrapper">
+            <div>{{ $t("ui.chess_slot_title") }}</div>
+            <button v-on:click="wantToDisplayGame()"
+                    v-if="!visible"
+                    v-bind:class="{'red-button': chessboardState?.blackUserID || chessboardState?.whiteUserID}">
+                {{ $t("ui.chess_display_game")}}
+            </button>
+            <button v-on:click="wantToHideGame()" v-if="visible">
+                {{ $t("ui.chess_hide_game")}}
+            </button>
+            <button v-on:click="wantToJoinGame()" v-if="!amIPlaying() && !chessboardState?.blackUserID">
+                {{ $t("ui.chess_join_game")}}
+            </button>
+            <button v-on:click="wantToQuitGame()" v-if="amIPlaying()">
+                {{ $t("ui.chess_quit_game")}}
+            </button>
+            <div v-show="visible">
+                <div>
+                {{ $t(!chessboardState?.whiteUserID ? "ui.chess_waiting_for_white"
+                    : !chessboardState?.blackUserID ? "ui.chess_waiting_for_black"
+                    : "") }}
+                </div>
+                <span v-if="chessboardState?.whiteUserID" v-bind:class="{'next-move-chess-player': chessboardState?.turn == 'w'}">
+                    {{ $t("ui.chess_white") }}{{ users[chessboardState?.whiteUserID]
+                                                ? (users[chessboardState?.whiteUserID]?.name || $t("default_user_name"))
+                                                : "N/A" }}
+                </span>
+                <span v-if="chessboardState?.blackUserID" v-bind:class="{'next-move-chess-player': chessboardState?.turn == 'b'}">
+                    {{ $t("ui.chess_black") }}{{ users[chessboardState?.blackUserID]
+                                                 ? (users[chessboardState?.blackUserID]?.name || $t("default_user_name"))
+                                                 : "N/A" }} 
+                </span>
+                <div 
+                    id="chessboard"
+                    v-show="chessboardState?.whiteUserID && chessboardState?.blackUserID"
+                    style="width: 300px"></div>
+            </div>
+        </div>
+    </script>
+
     <audio id="message-sound" src="message.mp3"></audio>
     <audio id="mention-sound" src="mention.mp3"></audio>
     <audio id="login-sound" src="login.mp3"></audio>
@@ -570,11 +620,13 @@
     <script src='scripts/jquery.ui.touch-punch.min.js'></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src='scripts/webrtc-codec-support.min.js'></script>
+    <script type="module" src='scripts/chessboard-slot.js'></script>
     <script type="module" src='scripts/main.js'></script>
 
     <script src="scripts/riffwave.js"></script>
     <script src="scripts/Blob.js"></script>
     <script src="scripts/animalese.js"></script>
+    <script src="chess/js/chessboard-1.0.0.min.js"></script>
 
     <script type="module" src='scripts/polyfills.js'></script>
     <script type="module" src='scripts/main.js'></script>
