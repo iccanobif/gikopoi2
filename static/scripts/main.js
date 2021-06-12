@@ -183,6 +183,7 @@ window.vueApp = new Vue({
         notificationPermissionsGranted: false,
         canUseAudioContext: canUseAudioContext,
         lastFrameTimestamp: null,
+        chessboardState: null,
     },
     mounted: function ()
     {
@@ -430,6 +431,8 @@ window.vueApp = new Vue({
             const roomDto = dto.currentRoom
             const usersDto = dto.connectedUsers
             const streamsDto = dto.streams
+
+            this.chessboardState = dto.chessboardState
 
             this.isLoadingRoom = true;
             this.roomLoadId = this.roomLoadId + 1;
@@ -708,12 +711,7 @@ window.vueApp = new Vue({
             })
 
             this.socket.on("server-update-chessboard", (state) => {
-                // this.chessboard.move({
-                //     from: source,
-                //     to: target,
-                //     promotion: "q" // TODO allow other kinds of promotion
-                // })
-                this.chessboard.position(state.fenString)
+                this.chessboardState = state
             })
         },
         addUser: function (userDTO)

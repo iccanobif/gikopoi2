@@ -1,5 +1,5 @@
 Vue.component('chessboard-slot', {
-    props: ["socket"],
+    props: ["socket", "chessboardState", "users"],
     template: "#chessboard-slot",
     data: function ()
     {
@@ -12,15 +12,31 @@ Vue.component('chessboard-slot', {
         this.buildChessboard()
         this.makeResizable()
     },
+    watch: 
+    {
+        chessboardState: function(newVal, oldVal)
+        {
+            console.log("changed chessboardState", newVal, oldVal)
+            if (this.chessboard && newVal)
+            {
+                this.chessboard.position(newVal.fenString)
+            }
+        }
+    },
     methods:
     {
         buildChessboard: function ()
         {
+            console.log("buildChessboard")
             const chessboardElement = document.getElementById("chessboard")
+
+            const position = this.chessboardState 
+                             ? (this.chessboardState.position || "start") 
+                             : "start"
 
             this.chessboard = Chessboard(chessboardElement, {
                 pieceTheme: 'chess/img/chesspieces/wikipedia/{piece}.png',
-                position: 'start',
+                position,
                 draggable: true,
                 onDragStart: (source, piece, position, orientation) =>
                 {
@@ -57,6 +73,9 @@ Vue.component('chessboard-slot', {
                     // setTimeout(() => this.makeResizable(), 100)
                 }
             })
-        }
+        },
+        wantToStartPlaying: function () {
+            this.socket.emit("user-want-to-play-chess")
+        },
     },
 })

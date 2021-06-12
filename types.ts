@@ -76,17 +76,17 @@ export interface JanusServer
     client: typeof JanusClient;
 }
 
+export type RoomStateCollection = {
+    [areaId: string]: { [roomId: string]: RoomState }
+}
+
 export interface RoomState
 {
     streams: StreamSlot[],
     janusRoomServer: JanusServer | null,
     janusRoomIntName: number | null,
     janusRoomName: string | null,
-    chess: {
-        instance: ChessInstance | null,
-        blackUserID: string | null,
-        whiteUserID: string | null,
-    }
+    chess: ChessboardState
 }
 
 export interface RoomStateDto
@@ -94,6 +94,7 @@ export interface RoomStateDto
     currentRoom: Room,
     connectedUsers: PlayerDto[],
     streams: StreamSlotDto[],
+    chessboardState: ChessboardStateDto
 }
 
 export interface LoginResponseDto
@@ -128,13 +129,18 @@ export interface StreamSlotDto
     userId: string | null,
 }
 
-export interface ChessboardStateDto
-{
-    fenString: string,
+export interface ChessboardState {
+    instance: ChessInstance | null,
     blackUserID: string | null,
     whiteUserID: string | null,
-    isBlackToPlay: boolean,
-    isWhiteToPlay: boolean,
+}
+
+export interface ChessboardStateDto
+{
+    fenString: string | null,
+    blackUserID: string | null,
+    whiteUserID: string | null,
+    turn: "b" | "w" | null,
 }
 
 export interface PersistedState

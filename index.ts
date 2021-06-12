@@ -1,6 +1,6 @@
 import express from "express"
 import { defaultRoom, rooms } from "./rooms";
-import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto } from "./types";
+import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
 import { sleep } from "./utils";
 import got from "got";
@@ -50,9 +50,7 @@ const janusServers: JanusServer[] =
 const janusServersObject = Object.fromEntries(janusServers.map(o => [o.id, o]));
 
 // Initialize room states:
-let roomStates: {
-    [areaId: string]: { [roomId: string]: RoomState }
-} = {};
+let roomStates: RoomStateCollection = {};
 
 function initializeRoomStates()
 {
@@ -107,12 +105,15 @@ io.on("connection", function (socket: any)
         const connectedUsers: PlayerDto[] = getFilteredConnectedUserList(user, user.roomId, user.areaId)
             .map(p => toPlayerDto(p, user.roomId, user.areaId))
 
+        const state: RoomStateDto = {
+            currentRoom,
+            connectedUsers,
+            streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams),
+            chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId)
+        }
+
         socket.emit("server-update-current-room-state",
-            <RoomStateDto>{
-                currentRoom,
-                connectedUsers,
-                streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams)
-            })
+            state)
     }
 
     const sendNewUserInfo = () =>
@@ -136,6 +137,8 @@ io.on("connection", function (socket: any)
 
             user.isGhost = true
             user.disconnectionTime = Date.now()
+
+            stopChessGame(roomStates, user)
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-user-left-room", user.id);
             clearStream(user)
@@ -581,6 +584,7 @@ io.on("connection", function (socket: any)
             currentRoom = rooms[targetRoomId]
 
             clearStream(user)
+            stopChessGame(roomStates, user)
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-user-left-room", user.id)
             socket.leave(user.areaId + user.roomId)
@@ -699,11 +703,15 @@ io.on("connection", function (socket: any)
                 chessState.whiteUserID = user.id
             else
             {
+                // TODO uncomment this
+                // if (chessState.whiteUserID == user.id)
+                //     return // can't play against yourself
+
                 chessState.blackUserID = user.id
                 chessState.instance = new Chess()
             }
 
-            sendUpdatedChessboardState(user.areaId, user.roomId)
+            sendUpdatedChessboardState(roomStates, user.areaId, user.roomId)
         }
         catch (e)
         {
@@ -742,24 +750,9 @@ io.on("connection", function (socket: any)
             }
         }
        
-        sendUpdatedChessboardState(user.areaId, user.roomId)
+        sendUpdatedChessboardState(roomStates, user.areaId, user.roomId)
     })
-    
-    function sendUpdatedChessboardState(areaId: string, roomId: string)
-    {
-        const state = roomStates[user.areaId][user.roomId].chess
 
-        const stateDTO = {
-            fenString: state.instance?.fen(),
-            turn: state.instance?.turn(),
-            blackUserID: state.blackUserID,
-            whiteUserID: state.whiteUserID,
-        }
-
-        console.log(stateDTO)
-
-        roomEmit(user.areaId, user.roomId, "server-update-chessboard", stateDTO);
-    }
 });
 
 function emitServerStats(areaId: string)
@@ -986,7 +979,8 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
         const dto: RoomStateDto = {
             currentRoom: rooms[roomId],
             connectedUsers,
-            streams: roomStates[areaId][roomId].streams
+            streams: roomStates[areaId][roomId].streams,
+            chessboardState: buildChessboardStateDto(roomStates, areaId, roomId)
         }
 
         res.json(dto)
@@ -1272,6 +1266,39 @@ function clearStream(user: Player)
     {
         log.error(error)
     }
+}
+
+function buildChessboardStateDto(roomStates: RoomStateCollection, areaId: string, roomId: string): ChessboardStateDto
+{
+    const state = roomStates[areaId][roomId].chess
+
+    return {
+        fenString: state.instance?.fen() || null,
+        turn: state.instance?.turn() || null,
+        blackUserID: state.blackUserID,
+        whiteUserID: state.whiteUserID,
+    }
+}
+
+function sendUpdatedChessboardState(roomStates: RoomStateCollection, areaId: string, roomId: string)
+{
+    const stateDTO: ChessboardStateDto = buildChessboardStateDto(roomStates, areaId, roomId)
+
+    roomEmit(areaId, roomId, "server-update-chessboard", stateDTO);
+}
+
+function stopChessGame(roomStates: RoomStateCollection, user: Player)
+{
+    const state = roomStates[user.areaId][user.roomId].chess
+
+    if (user.id != state.blackUserID && user.id != state.whiteUserID)
+        return
+
+    state.instance = null
+    state.blackUserID = null
+    state.whiteUserID = null
+
+    sendUpdatedChessboardState(roomStates, user.areaId,user. roomId)
 }
 
 
