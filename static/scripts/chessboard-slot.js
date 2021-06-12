@@ -9,14 +9,26 @@ Vue.component('chessboard-slot', {
     },
     mounted: function ()
     {
-        this.buildChessboard()
-        this.makeResizable()
+        
     },
     watch: 
     {
         chessboardState: function(newVal, oldVal)
         {
             console.log("changed chessboardState", newVal, oldVal)
+
+            // initialize chessboard when game starts (that is, when a black player joins)
+            if (!this.chessboard && newVal.blackUserID)
+            {
+                this.buildChessboard()
+                this.makeResizable()
+            }
+
+            if (!newVal.blackUserID)
+            {
+                this.chessboard = null
+            }
+
             if (this.chessboard && newVal)
             {
                 this.chessboard.position(newVal.fenString)
@@ -27,7 +39,7 @@ Vue.component('chessboard-slot', {
     {
         buildChessboard: function ()
         {
-            console.log("buildChessboard")
+            console.log("buildChessboard", myUserID)
             const chessboardElement = document.getElementById("chessboard")
 
             const position = this.chessboardState 
@@ -37,6 +49,7 @@ Vue.component('chessboard-slot', {
             this.chessboard = Chessboard(chessboardElement, {
                 pieceTheme: 'chess/img/chesspieces/wikipedia/{piece}.png',
                 position,
+                orientation: this.chessboardState.blackUserID == myUserID ? "black" : "white",
                 draggable: true,
                 onDragStart: (source, piece, position, orientation) =>
                 {

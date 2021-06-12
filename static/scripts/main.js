@@ -26,7 +26,7 @@ import { RenderCache } from "./rendercache.js";
 
 // I define myUserID here outside of the vue.js component to make it 
 // visible to console.error
-let myUserID = null; 
+window.myUserID = null; 
 
 const originalConsoleError = console.error
 console.error = function() {

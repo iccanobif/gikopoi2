@@ -732,13 +732,17 @@ io.on("connection", function (socket: any)
             return
 
         // Check if move comes from the right user
-        if (chessState.instance.turn() == "b" && chessState.blackUserID != user.id)
+        if ((chessState.instance.turn() == "b" && chessState.blackUserID != user.id)
+            || (chessState.instance.turn() == "w" && chessState.whiteUserID != user.id))
+        {
+            const stateDTO: ChessboardStateDto = buildChessboardStateDto(roomStates, user.areaId, user.roomId)
+            socket.emit("server-update-chessboard", stateDTO);
             return
-        if (chessState.instance.turn() == "w" && chessState.whiteUserID != user.id)
-            return
-
+        }
+        
         // If the move is illegal, nothing happens
-        chessState.instance.move({ from: source, to: target, promotion: "q" })
+        const result = chessState.instance.move({ from: source, to: target, promotion: "q" })
+        console.log(result)
 
         // If the game is over, clear the game and send a message declaring the winner
         if (chessState.instance.game_over())
