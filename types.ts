@@ -1,4 +1,5 @@
 import { Player } from "./users";
+import { ChessInstance } from "chess.js"
 
 const JanusClient = require('janus-videoroom-client').Janus;
 
@@ -81,6 +82,11 @@ export interface RoomState
     janusRoomServer: JanusServer | null,
     janusRoomIntName: number | null,
     janusRoomName: string | null,
+    chess: {
+        instance: ChessInstance | null,
+        blackUserID: string | null,
+        whiteUserID: string | null,
+    }
 }
 
 export interface RoomStateDto
@@ -120,6 +126,15 @@ export interface StreamSlotDto
     withSound: boolean | null,
     withVideo: boolean | null,
     userId: string | null,
+}
+
+export interface ChessboardStateDto
+{
+    fenString: string,
+    blackUserID: string | null,
+    whiteUserID: string | null,
+    isBlackToPlay: boolean,
+    isWhiteToPlay: boolean,
 }
 
 export interface PersistedState

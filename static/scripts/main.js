@@ -367,12 +367,14 @@ window.vueApp = new Vue({
                         // if (move === null) return 'snapback'
 
                         // TODO send move to server
+
+                        this.socket.emit("user-chess-move", source, target);
                       }
                       ,
                     onSnapEnd: () => {
                         // update the board position after the piece snap
                         // for castling, en passant, pawn promotion
-                        this.chessboard.position(game.fen())
+                        // this.chessboard.position(game.fen())
                     }
                   })
 
@@ -736,6 +738,15 @@ window.vueApp = new Vue({
             this.socket.on("server-character-changed", (userId, characterId) => {
                 this.users[userId].character = characters[characterId]
                 this.isRedrawRequired = true
+            })
+
+            this.socket.on("server-update-chessboard", (state) => {
+                // this.chessboard.move({
+                //     from: source,
+                //     to: target,
+                //     promotion: "q" // TODO allow other kinds of promotion
+                // })
+                this.chessboard.position(state.fenString)
             })
         },
         addUser: function (userDTO)

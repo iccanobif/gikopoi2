@@ -10,6 +10,7 @@ import compression from 'compression';
 import { getAbuseConfidenceScore } from "./abuse-ip-db";
 import { readFileSync } from "fs";
 import { readdir, readFile, writeFile } from "fs/promises";
+import { Chess } from "chess.js";
 
 const app: express.Application = express()
 const http = require('http').Server(app);
@@ -68,6 +69,11 @@ function initializeRoomStates()
                 janusRoomServer: null,
                 janusRoomName: settings.janusRoomNamePrefix + ":" + areaId + ":" + roomId,
                 janusRoomIntName: (settings.janusRoomNameIntPrefix * 10000000) + (areaNumberId * 10000) + roomNumberId,
+                chess: {
+                    instance: null,
+                    blackUserID: null,
+                    whiteUserID: null,
+                }
             }
             for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
             {
@@ -676,6 +682,81 @@ io.on("connection", function (socket: any)
             log.error(e.message + " " + e.stack);
         }
     })
+
+    socket.on("user-want-to-play-chess", function () {
+        try {
+            // The first user who requests a game will be white, the second one will be black
+
+            const chessState = roomStates[user.areaId][user.roomId].chess
+
+            if (chessState.blackUserID)
+            {
+                // Game already started
+                return // TODO display error message to user
+            }
+
+            if (!chessState.whiteUserID)
+                chessState.whiteUserID = user.id
+            else
+            {
+                chessState.blackUserID = user.id
+                chessState.instance = new Chess()
+            }
+
+            sendUpdatedChessboardState(user.areaId, user.roomId)
+        }
+        catch (e)
+        {
+            log.error(e.message + " " + e.stack);
+        }
+    })
+
+    socket.on("user-chess-move", function(source: any, target: any) {
+        console.log(source, target)
+
+        const chessState = roomStates[user.areaId][user.roomId].chess
+
+        // Check if a game is on
+        if (!chessState.instance)
+            return
+
+        // Check if move comes from the right user
+        if (chessState.instance.turn() == "b" && chessState.blackUserID != user.id)
+            return
+        if (chessState.instance.turn() == "w" && chessState.whiteUserID != user.id)
+            return
+
+        // If the move is illegal, nothing happens
+        chessState.instance.move({ from: source, to: target, promotion: "q" })
+
+        // If the game is over, clear the game and send a message declaring the winner
+        if (chessState.instance.game_over())
+        {
+            roomStates[user.areaId][user.roomId].chess = {
+                blackUserID: null,
+                instance: null,
+                whiteUserID: null
+            }
+        }
+       
+        sendUpdatedChessboardState(user.areaId, user.roomId)
+    })
+    
+    function sendUpdatedChessboardState(areaId: string, roomId: string)
+    {
+        const state = roomStates[user.areaId][user.roomId].chess
+
+        const stateDTO = {
+            fenString: state.instance?.fen(),
+            turn: state.instance?.turn(),
+            blackUserID: state.blackUserID,
+            whiteUserID: state.whiteUserID,
+        }
+
+        console.log(stateDTO)
+
+        roomEmit(user.areaId, user.roomId, "server-update-chessboard", stateDTO);
+    }
 });
 
 function emitServerStats(areaId: string)
@@ -705,9 +786,16 @@ function changeCharacter(user: Player, characterId: string)
     userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId)
 }
 
+// TODO remove areaId and roomId parameters, we can get them from user.areaId and user.roomId
 function userRoomEmit(user: Player, areaId: string, roomId: string | null, ...msg: any[])
 {
     getFilteredConnectedUserList(user, roomId, areaId)
+        .forEach((u) => u.socketId && io.to(u.socketId).emit(...msg));
+}
+
+function roomEmit(areaId: string, roomId: string, ...msg: any[])
+{
+    getConnectedUserList(roomId, areaId)
         .forEach((u) => u.socketId && io.to(u.socketId).emit(...msg));
 }
 
