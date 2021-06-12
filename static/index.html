@@ -254,7 +254,10 @@
                         </button>
                     </div>
                 </div>
-            <chessboard-slot v-bind:socket="socket"></chessboard-slot>
+            <chessboard-slot
+                v-if="currentRoom.hasChessboard"
+                v-bind:socket="socket"
+                ></chessboard-slot>
             </div>
 
             <div class="popup-overlay" v-if="isRulaPopupOpen" v-on:click="closeRulaPopup"></div>
@@ -563,7 +566,7 @@
     </div>
 
     <script type="text/x-template" id="chessboard-slot">
-        <div id="chessboard" style="width: 400px"></div>
+        <div id="chessboard" style="width: 300px"></div>
     </script>
 
     <audio id="message-sound" src="message.mp3"></audio>
