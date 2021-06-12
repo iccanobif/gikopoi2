@@ -787,7 +787,7 @@ io.on("connection", function (socket: any)
             // If the game is over, clear the game and send a message declaring the winner
             if (chessState.instance.game_over())
             {
-                const winnerUserID = chessState.instance?.turn() == "w" ? chessState.whiteUserID : chessState.blackUserID
+                const winnerUserID = chessState.instance?.turn() == "b" ? chessState.whiteUserID : chessState.blackUserID
                 log.info("game over", winnerUserID)
 
                 const blackUser = getUser(chessState?.blackUserID!)
