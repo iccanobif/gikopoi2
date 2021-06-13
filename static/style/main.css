@@ -278,6 +278,9 @@ video {
     flex-grow: 1;
     box-sizing: border-box;
     min-width: 200px;
+    /* position relative to make it so that when a video is unpinned it doesn't jump all the way towards */
+    /* the left border of the screen */
+    position: relative; 
 }
 
 #room-canvas
