@@ -79,7 +79,6 @@ input[type='range']
     background-color: white;
     height: 150px;
     overflow-y: auto;
-    resize: both;
     padding-left: 5px;
 }
 
@@ -125,12 +124,12 @@ video {
     width: 100%;
 }
 
-@media (min-width: 947px) {
+/* @media (min-width: 947px) {
     #video-streams {
         position: absolute;
         left: 700px;
     }
-  }
+  } */
 
 #video-streams{
     width: 232px;
@@ -245,8 +244,14 @@ video {
 #stage
 {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     padding: 5px;
+}
+
+#main-section
+{
+    resize: horizontal;
+    overflow: auto;
 }
 
 #room-canvas
@@ -259,10 +264,9 @@ video {
 #canvas-container
 {
     position: relative;
-    max-width: 700px;
     height: 511px;
     font-family: Arial, Helvetica, sans-serif;
-    resize: both;
+    resize: vertical;
     overflow: auto;
 }
 
@@ -271,7 +275,6 @@ video {
     display: flex;
     align-items: stretch;
     flex-wrap: wrap;
-    resize: horizontal;
     overflow: auto;
 }
 
