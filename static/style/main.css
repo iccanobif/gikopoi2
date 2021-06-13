@@ -79,7 +79,6 @@ input[type='range']
     background-color: white;
     height: 150px;
     overflow-y: auto;
-    resize: both;
     padding-left: 5px;
 }
 
@@ -125,17 +124,8 @@ video {
     width: 100%;
 }
 
-@media (min-width: 947px) {
-    #video-streams {
-        position: absolute;
-        left: 700px;
-    }
-  }
 
-#video-streams{
-    width: 232px;
-    padding: 5px
-}
+
 
 .stream-title
 {
@@ -245,8 +235,52 @@ video {
 #stage
 {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     padding: 5px;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+#main-section
+{
+    flex-grow: 1;
+    width: 70%;
+    position: relative;
+    padding-right: 7px;
+}
+#main-section::after
+{
+    cursor: e-resize;
+    width: 3px;
+    height: 100%;
+    display: block;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    content: '';
+}
+
+@media (min-width: 947px)
+{
+    #main-section
+    {
+        flex-grow: initial;
+    }
+    #video-streams
+    {
+        flex-wrap: nowrap;
+    }
+}
+
+#video-streams{
+    padding: 5px;
+    flex-grow: 1;
+    box-sizing: border-box;
+    min-width: 200px;
+    /* position relative to make it so that when a video is unpinned it doesn't jump all the way towards */
+    /* the left border of the screen */
+    position: relative; 
 }
 
 #room-canvas
@@ -259,10 +293,9 @@ video {
 #canvas-container
 {
     position: relative;
-    max-width: 700px;
     height: 511px;
     font-family: Arial, Helvetica, sans-serif;
-    resize: both;
+    resize: vertical;
     overflow: auto;
 }
 
@@ -271,7 +304,6 @@ video {
     display: flex;
     align-items: stretch;
     flex-wrap: wrap;
-    resize: horizontal;
     overflow: auto;
 }
 
@@ -328,6 +360,7 @@ video {
     width: 0px; 
     flex-grow: 1;
     resize: vertical;
+    min-width: 180px;
 }
 
 .tooltip-section
