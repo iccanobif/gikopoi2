@@ -183,7 +183,7 @@ window.vueApp = new Vue({
         notificationPermissionsGranted: false,
         canUseAudioContext: canUseAudioContext,
         lastFrameTimestamp: null,
-        chessboardState: null,
+        chessboardState: {},
     },
     mounted: function ()
     {
