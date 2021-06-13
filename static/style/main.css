@@ -80,6 +80,7 @@ input[type='range']
     height: 150px;
     overflow-y: auto;
     padding-left: 5px;
+    resize: vertical;
 }
 
 .underlined-usernames .message-author
