@@ -256,7 +256,7 @@
                         </button>
                     </div>
                 </div>
-                <hr v-if="streams.length" />
+                <hr v-if="streams.length && currentRoom.hasChessboard" />
                 <chessboard-slot
                     v-if="currentRoom.hasChessboard"
                     v-bind:socket="socket"

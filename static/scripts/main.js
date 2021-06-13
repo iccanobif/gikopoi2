@@ -346,6 +346,10 @@ window.vueApp = new Vue({
                     }
                 });
 
+                $( "#main-section" ).resizable({
+                    handles: "e"
+                })
+
                 const VP8 = await isWebrtcReceiveCodecSupported(WebrtcCodec.VP8);
                 const VP9 = await isWebrtcReceiveCodecSupported(WebrtcCodec.VP9);
                 const H264 = await isWebrtcReceiveCodecSupported(WebrtcCodec.H264);
