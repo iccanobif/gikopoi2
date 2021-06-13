@@ -708,6 +708,7 @@ button.checked {
 .next-move-chess-player
 {
     text-decoration: underline;
+    font-weight: bold;
 }
 
 .highlighted-message
