@@ -1551,6 +1551,7 @@ window.vueApp = new Vue({
         },
         handleCanvasKeydown: function (event)
         {
+            console.log(event.code)
             if (event.code == "KeyG" && event.ctrlKey)
             {
                 // Stop propagation to avoid triggering the handler on the window object
@@ -1598,48 +1599,55 @@ window.vueApp = new Vue({
             }
             if (!event.shiftKey && !event.altKey && !event.ctrlKey)
             {
+                console.log("fuck")
                 // Move avatar
-                switch (event.key)
+                switch (event.code)
                 {
                     case "ArrowLeft":
-                    case "a": case "A":
-                    case "h": case "H":
+                    case "KeyA":
+                    case "KeyH":
                         event.preventDefault()
                         this.sendNewPositionToServer("left");
                         break;
                     case "ArrowRight":
-                    case "d": case "D":
-                    case "l": case "L":
+                    case "KeyD":
+                    case "KeyL":
                         event.preventDefault()
                         this.sendNewPositionToServer("right");
                         break;
                     case "ArrowUp":
-                    case "w": case "W":
-                    case "k": case "K":
+                    case "KeyW":
+                    case "KeyK":
                         event.preventDefault()
                         this.sendNewPositionToServer("up");
                         break;
                     case "ArrowDown":
-                    case "s": case "S":
-                    case "j": case "J":
+                    case "KeyS":
+                    case "KeyJ":
                         event.preventDefault()
                         this.sendNewPositionToServer("down");
                         break;
-                    case "u": case "U":
+                    case "KeyU":
                         event.preventDefault()
                         this.sendNewBubblePositionToServer('left')
                         break;
-                    case "i": case "I":
+                    case "KeyI":
                         event.preventDefault()
                         this.sendNewBubblePositionToServer('down')
                         break;
-                    case "o": case "O":
+                    case "KeyO":
                         event.preventDefault()
                         this.sendNewBubblePositionToServer('up')
                         break;
-                    case "p": case "P":
+                    case "KeyP":
                         event.preventDefault()
                         this.sendNewBubblePositionToServer('right')
+                        break;
+                    case "Equal":
+                        this.zoomIn()
+                        break;
+                    case "Minus":
+                        this.zoomOut()
                         break;
                 }
             }
@@ -1758,13 +1766,26 @@ window.vueApp = new Vue({
             event.preventDefault();
             return false;
         },
+        zoomIn: function ()
+        {
+            console.log("zoom in")
+            this.setCanvasScale(this.userCanvasScale + 0.1);
+        },
+        zoomOut: function ()
+        {
+            console.log("zoom out")
+            this.setCanvasScale(this.userCanvasScale - 0.1);
+        },
         handleCanvasWheel: function (event)
         {
-            this.setCanvasScale(this.userCanvasScale + (-Math.sign(event.deltaY) * 0.1));
+            if (event.deltaY > 0)
+                this.zoomIn()
+            else
+                this.zoomOut()
+        
             event.preventDefault();
             return false;
         },
-        
         setCanvasScale: function (canvasScale)
         {
             if(canvasScale > 3)

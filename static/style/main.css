@@ -250,7 +250,8 @@ video {
     position: relative;
     padding-right: 7px;
 }
-#main-section::after
+
+/* #main-section::after
 {
     cursor: e-resize;
     width: 3px;
@@ -260,7 +261,7 @@ video {
     top: 0px;
     right: 0px;
     content: '';
-}
+} */
 
 @media (min-width: 947px)
 {
