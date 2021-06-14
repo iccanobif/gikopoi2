@@ -751,3 +751,9 @@ button.checked {
 {
     left: -9px;
 }
+
+/* Workaround to prevent zoom in iOS when tapping quickly on a button */
+button
+{
+    touch-action: manipulation;
+}
