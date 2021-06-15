@@ -1774,7 +1774,7 @@ window.vueApp = new Vue({
         },
         handleCanvasWheel: function (event)
         {
-            if (event.deltaY > 0)
+            if (event.deltaY < 0)
                 this.zoomIn()
             else
                 this.zoomOut()
