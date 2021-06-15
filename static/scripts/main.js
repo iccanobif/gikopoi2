@@ -1551,7 +1551,6 @@ window.vueApp = new Vue({
         },
         handleCanvasKeydown: function (event)
         {
-            console.log(event.code)
             if (event.code == "KeyG" && event.ctrlKey)
             {
                 // Stop propagation to avoid triggering the handler on the window object
@@ -1599,7 +1598,6 @@ window.vueApp = new Vue({
             }
             if (!event.shiftKey && !event.altKey && !event.ctrlKey)
             {
-                console.log("fuck")
                 // Move avatar
                 switch (event.code)
                 {
@@ -1768,12 +1766,10 @@ window.vueApp = new Vue({
         },
         zoomIn: function ()
         {
-            console.log("zoom in")
             this.setCanvasScale(this.userCanvasScale + 0.1);
         },
         zoomOut: function ()
         {
-            console.log("zoom out")
             this.setCanvasScale(this.userCanvasScale - 0.1);
         },
         handleCanvasWheel: function (event)
