@@ -84,7 +84,8 @@ function initializeRoomStates()
                     withSound: null,
                     withVideo: null,
                     userId: null,
-                    publisherId: null
+                    publisherId: null,
+                    isPrivateStream: null,
                 })
             }
             roomNumberId++;
@@ -363,13 +364,19 @@ io.on("connection", function (socket: any)
             log.error(e.message + " " + e.stack);
         }
     });
-    socket.on("user-want-to-stream", function (data: { streamSlotId: number, withVideo: boolean, withSound: boolean, info: any })
+    socket.on("user-want-to-stream", function (data: { 
+        streamSlotId: number,
+        withVideo: boolean,
+        withSound: boolean,
+        isPrivateStream: boolean,
+        info: any 
+    })
     {
         try
         {
-            const { streamSlotId, withVideo, withSound, info } = data
+            const { streamSlotId, withVideo, withSound, info, isPrivateStream } = data
 
-            log.info("user-want-to-stream", user.id, JSON.stringify(info))
+            log.info("user-want-to-stream", user.id, "private: ", isPrivateStream, JSON.stringify(info))
 
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId]
@@ -398,6 +405,7 @@ io.on("connection", function (socket: any)
             stream.withSound = withSound
             stream.userId = user.id
             stream.publisherId = null
+            stream.isPrivateStream = isPrivateStream
 
             setTimeout(() =>
             {
@@ -514,7 +522,7 @@ io.on("connection", function (socket: any)
                 catch (e)
                 {
                     // Check if error isn't just that the room already exists, code 427
-                    if (e.getCode === undefined && e.getCode() !== 427) throw e;
+                    if (!e.getCode || e.getCode() !== 427) throw e;
                 }
 
                 const janusHandle = await session.videoRoom().publishFeed(
@@ -1112,7 +1120,10 @@ app.get("/areas/:areaId/streamers", (req, res) =>
 
             roomStates[areaId][roomId].streams.forEach(stream =>
             {
-                if (!stream.isActive || stream.userId == null) return;
+                if (!stream.isActive) return;
+                if (stream.userId == null) return;
+                if (stream.isPrivateStream) return;
+                
                 try
                 {
                     listRoom.streamers.push(getUser(stream.userId).name);

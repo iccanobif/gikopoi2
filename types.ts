@@ -20,6 +20,7 @@ export interface StreamSlot
     withVideo: boolean | null,
     userId: string | null,
     publisherId: number | null,
+    isPrivateStream: boolean | null,
 }
 
 export interface Door
