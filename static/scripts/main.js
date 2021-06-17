@@ -2494,8 +2494,6 @@ window.vueApp = new Vue({
             if (videoContainer.classList.contains("unpinned-video"))
             {
                 $(videoContainer).draggable()
-                $(videoContainer).css("left", 0)
-                $(videoContainer).css("top", 0)
             }
             else
             {
