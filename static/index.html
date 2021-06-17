@@ -367,8 +367,8 @@
                             for="stream-form-video-only-mode">{{ $t("ui.stream_form_video_only_mode") }}</label>
                     </div>
                     <div class='popup-item'>
-                        <input type="checkbox" id="stream-form-screen-capture" v-model="streamIsPrivateStream"><label
-                            for="stream-form-screen-capture">{{ $t("ui.stream_form_private_stream") }}</label>
+                        <input type="checkbox" id="stream-form-private-stream" v-model="streamIsPrivateStream"><label
+                            for="stream-form-private-stream">{{ $t("ui.stream_form_private_stream") }}</label>
                     </div>
                     <div class='popup-item' v-if="streamMode != 'sound'">
                         <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label
