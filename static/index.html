@@ -595,12 +595,12 @@
                 </div>
                 <span v-if="chessboardState.whiteUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'w'}">
                     {{ $t("ui.chess_white") }}{{ users[chessboardState.whiteUserID]
-                                                ? (users[chessboardState.whiteUserID]?.name || $t("default_user_name"))
+                                                ? (users[chessboardState.whiteUserID].name || $t("default_user_name"))
                                                 : "N/A" }}
                 </span>
                 <span v-if="chessboardState.blackUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'b'}">
                     {{ $t("ui.chess_black") }}{{ users[chessboardState.blackUserID]
-                                                 ? (users[chessboardState.blackUserID]?.name || $t("default_user_name"))
+                                                 ? (users[chessboardState.blackUserID].name || $t("default_user_name"))
                                                  : "N/A" }} 
                 </span>
                 <div 
