@@ -72,7 +72,6 @@ window.vueApp = new Vue({
         justSpawnedToThisRoom: true,
         isLoadingRoom: false,
         requestedRoomChange: false,
-        forceUserInstantMove: false,
         isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
         soundEffectVolume: 0,
         characterId: localStorage.getItem("characterId") || "giko",
@@ -1342,12 +1341,6 @@ window.vueApp = new Vue({
         
         paint: function (delta)
         {
-            if (this.forceUserInstantMove)
-            {
-                this.forcePhysicalPositionRefresh();
-                this.forceUserInstantMove = false;
-            }
-            
             if (this.isLoadingRoom || !this.currentRoom.backgroundImage)
                 return;
 
@@ -1495,7 +1488,6 @@ window.vueApp = new Vue({
             }, 10 * 60 * 1000)
 
             window.addEventListener("focus", () => {
-                this.forceUserInstantMove = true;
                 debouncedPing()
             });
 
