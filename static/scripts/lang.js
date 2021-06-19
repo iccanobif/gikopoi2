@@ -272,7 +272,7 @@ export const messages =
             stream_form_noise_suppression: "Noise Reduction",
             stream_form_auto_gain: "Auto Gain Control",
             stream_form_button_stream: "Start Streaming",
-            stream_form_private_stream: "Private Stream (not visibile on websites outside of gikopoipoi).",
+            stream_form_private_stream: "Private Stream (not visible on websites outside of gikopoipoi).",
             stream_form_screen_capture: "Screen Capture",
             stream_form_screen_capture_audio: "Screen Capture Audio",
             stream_form_screen_capture_audio_notice: "This feature is experimental. Chrome and Edge only. \nOn Windows, only the screen audio or tab audio can be captured.",
