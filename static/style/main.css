@@ -1,6 +1,13 @@
 #vue-app
 {
     background-color: #c0c0c0;
+    /* background-image: url("../characters/ika/front-standing.svg"); */
+    background-image: url("../background.svg");
+    background-blend-mode: soft-light;
+    background-size: 60vw;
+    background-position-x: calc(100% - 50px);
+    background-position-y: calc(100% - 50px);
+    background-repeat: no-repeat;
     font-family: IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif;
     font-size: 16px;
     position: fixed;
