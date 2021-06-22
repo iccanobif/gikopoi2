@@ -1352,7 +1352,6 @@ function buildChessboardStateDto(roomStates: RoomStateCollection, areaId: string
 function sendUpdatedChessboardState(roomStates: RoomStateCollection, areaId: string, roomId: string)
 {
     const stateDTO: ChessboardStateDto = buildChessboardStateDto(roomStates, areaId, roomId)
-
     roomEmit(areaId, roomId, "server-update-chessboard", stateDTO);
 }
 
@@ -1368,7 +1367,7 @@ function stopChessGame(roomStates: RoomStateCollection, user: Player)
         clearTimeout(state.timer)
 
     roomStates[user.areaId][user.roomId].chess = {
-        instance: null,
+        instance: state.instance,
         blackUserID: null,
         whiteUserID: null,
         lastMoveTime: null,

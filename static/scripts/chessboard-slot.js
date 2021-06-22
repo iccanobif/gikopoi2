@@ -21,15 +21,10 @@ Vue.component('chessboard-slot', {
         chessboardState: function (newVal, oldVal)
         {
             // initialize chessboard when game starts (that is, when a black player joins)
-            if (!this.chessboard && newVal.blackUserID)
+            if (!this.chessboard && newVal.fenString)
             {
                 this.buildChessboard()
                 this.makeResizable()
-            }
-
-            if (!newVal.blackUserID)
-            {
-                this.chessboard = null
             }
 
             if (this.chessboard && newVal)
@@ -61,7 +56,11 @@ Vue.component('chessboard-slot', {
                 },
                 onDrop: (source, target) =>
                 {
-                    this.socket.emit("user-chess-move", source, target);
+                    if (this.chessboardState.blackUserID == myUserID
+                        || this.chessboardState.whiteUserID == myUserID)
+                    {
+                        this.socket.emit("user-chess-move", source, target);
+                    }
                 },
                 onSnapEnd: () =>
                 {
