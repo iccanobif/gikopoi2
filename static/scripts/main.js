@@ -1522,7 +1522,10 @@ window.vueApp = new Vue({
                 const observer = new ResizeObserver((mutationsList, observer) =>
                 {
                     this.isRedrawRequired = true
-                    this.paint()
+                    // I thought a delta of 0 would be appropriate that for some reason it doesn't quite work (all avatars
+                    // snap to their final position instantly while resizing), so for now i'll just use 1. Good luck to anyone
+                    // who wants to figure out.
+                    this.paint(1)
                 });
                 observer.observe(document.getElementById("canvas-container"));
             }
