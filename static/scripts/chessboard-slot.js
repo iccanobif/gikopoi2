@@ -20,8 +20,8 @@ Vue.component('chessboard-slot', {
     {
         chessboardState: function (newVal, oldVal)
         {
-            // initialize chessboard when game starts (that is, when a black player joins)
-            if (!this.chessboard && newVal.fenString)
+            if ((!this.chessboard && newVal.fenString)
+                || (!oldVal.blackUserID && newVal.blackUserID))
             {
                 this.buildChessboard()
                 this.makeResizable()
@@ -50,9 +50,22 @@ Vue.component('chessboard-slot', {
                 draggable: true,
                 onDragStart: (source, piece, position, orientation) =>
                 {
-                    // TODO
-                    // if (game is over or it's the other player's turn)
-                    //   return false
+                    // onDragStart prevents dragging if it returns false.
+                    if (!this.chessboardState.blackUserID)
+                        return false
+
+                    // Don't move when it's not your turn
+                    if (this.chessboardState.turn == "w" && this.chessboardState.blackUserID == myUserID)
+                        return false
+
+                    if (this.chessboardState.turn == "b" && this.chessboardState.whiteUserID == myUserID)
+                        return false
+
+                    // Don't move the other player's pieces
+                    // console.log(source, piece, position, orientation)
+                    // const colorOfMovedPiece = piece[source][0]
+                    // if (colorOfMovedPiece != this.chessboardState.turn)
+                    //     return false
                 },
                 onDrop: (source, target) =>
                 {

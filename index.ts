@@ -710,6 +710,20 @@ io.on("connection", function (socket: any)
             stopChessGame(roomStates, user)
         }, maxWaitForChessMove)
     }
+    
+    function getUsersToNotifyAboutChessGame() {
+
+        const chessState = roomStates[user.areaId][user.roomId].chess
+        
+        const blackUser = getUser(chessState?.blackUserID!)
+        const whiteUser = getUser(chessState?.whiteUserID!)
+        const usersToNotify = new Set<Player>()
+        getFilteredConnectedUserList(blackUser, blackUser.roomId, blackUser.areaId)
+            .forEach(u => usersToNotify.add(u))
+        getFilteredConnectedUserList(whiteUser, whiteUser.roomId, whiteUser.areaId)
+            .forEach(u => usersToNotify.add(u))
+        return usersToNotify
+    }
 
     socket.on("user-want-to-play-chess", function () {
         try {
@@ -750,6 +764,10 @@ io.on("connection", function (socket: any)
         try
         {
             log.info("user-want-to-quit-chess", user.id)
+
+            const usersToNotify = getUsersToNotifyAboutChessGame()
+            usersToNotify.forEach(u => io.to(u.socketId).emit("server-chess-quit", user.id))
+
             stopChessGame(roomStates, user)
         }
         catch (e)
@@ -798,14 +816,7 @@ io.on("connection", function (socket: any)
                 const winnerUserID = chessState.instance?.turn() == "b" ? chessState.whiteUserID : chessState.blackUserID
                 log.info("game over", winnerUserID)
 
-                const blackUser = getUser(chessState?.blackUserID!)
-                const whiteUser = getUser(chessState?.whiteUserID!)
-                const usersToNotify = new Set<Player>()
-                getFilteredConnectedUserList(blackUser, blackUser.roomId, blackUser.areaId)
-                    .forEach(u => usersToNotify.add(u))
-                getFilteredConnectedUserList(whiteUser, whiteUser.roomId, whiteUser.areaId)
-                    .forEach(u => usersToNotify.add(u))
-
+                const usersToNotify = getUsersToNotifyAboutChessGame()
                 usersToNotify.forEach(u => io.to(u.socketId).emit("server-chess-win", winnerUserID))
 
                 stopChessGame(roomStates, user)

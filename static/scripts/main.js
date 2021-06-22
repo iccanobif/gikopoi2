@@ -723,6 +723,12 @@ window.vueApp = new Vue({
 
                 this.writeMessageToLog("SYSTEM", i18n.t("msg.chess_win").replace("@USER_NAME@", winnerUserName), null)
             })
+
+            this.socket.on("server-chess-quit", winnerUserId => {
+                const winnerUserName = this.toDisplayName(this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A")
+
+                this.writeMessageToLog("SYSTEM", i18n.t("msg.chess_quit").replace("@USER_NAME@", winnerUserName), null)
+            })
         },
         addUser: function (userDTO)
         {

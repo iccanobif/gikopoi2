@@ -154,6 +154,7 @@ export const messages =
             flood_warning: "おい、早口すぎるじゃないか！",
             chess_timeout_reached: "チェス対局が終わりました：時間切れ",
             chess_win: "チェス対局が終わりました：@USER_NAME@の勝利。",
+            chess_quit: "チェス対局が終わりました：@USER_NAME@が投了した。",
         },
         room:
         {
@@ -348,6 +349,7 @@ export const messages =
             flood_warning: "Hey, aren't you talking a bit too fast?",
             chess_timeout_reached: "The chess game is over: timeout reached.",
             chess_win: "The chess game is over: the winner is @USER_NAME@.",
+            chess_quit: "The chess game is over: @USER_NAME@ quit the game.",
         },
         room:
         {
