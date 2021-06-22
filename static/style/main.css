@@ -116,7 +116,7 @@ input[type='range']
 
 .video-container
 {
-    z-index: 50;
+    z-index: 150;
     width: 219px;
     height: auto !important;
 }
