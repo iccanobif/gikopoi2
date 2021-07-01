@@ -720,10 +720,12 @@ io.on("connection", function (socket: any)
         const blackUser = getUser(chessState?.blackUserID!)
         const whiteUser = getUser(chessState?.whiteUserID!)
         const usersToNotify = new Set<Player>()
-        getFilteredConnectedUserList(blackUser, blackUser.roomId, blackUser.areaId)
-            .forEach(u => usersToNotify.add(u))
-        getFilteredConnectedUserList(whiteUser, whiteUser.roomId, whiteUser.areaId)
-            .forEach(u => usersToNotify.add(u))
+        if (blackUser)
+            getFilteredConnectedUserList(blackUser, blackUser.roomId, blackUser.areaId)
+                .forEach(u => usersToNotify.add(u))
+        if (whiteUser)
+            getFilteredConnectedUserList(whiteUser, whiteUser.roomId, whiteUser.areaId)
+                .forEach(u => usersToNotify.add(u))
         return usersToNotify
     }
 
