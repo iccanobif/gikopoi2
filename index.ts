@@ -769,8 +769,14 @@ io.on("connection", function (socket: any)
         {
             log.info("user-want-to-quit-chess", user.id)
 
-            const usersToNotify = getUsersToNotifyAboutChessGame()
-            usersToNotify.forEach(u => io.to(u.socketId).emit("server-chess-quit", user.id))
+            const state = roomStates[user.areaId][user.roomId].chess
+
+            if (state.blackUserID)
+            {
+                // Notify only if the game was already started.
+                const usersToNotify = getUsersToNotifyAboutChessGame()
+                usersToNotify.forEach(u => io.to(u.socketId).emit("server-chess-quit", user.id))
+            }
 
             stopChessGame(roomStates, user)
         }
