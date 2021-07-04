@@ -1991,7 +1991,14 @@ window.vueApp = new Vue({
                 const promiseResults = await Promise.allSettled([userMediaPromise, screenMediaPromise])
 
                 if (promiseResults.find(r => r.status == "rejected"))
+                {
+                    // Close the devices that were successfully opened
+                    for (const mediaStream of promiseResults.filter(r => r.status == "fulfilled"))
+                        for (const track of mediaStream.value.getTracks()) 
+                            track.stop();
+                    
                     throw new Error(promiseResults.find(r => r.status == "rejected").reason)
+                }
 
                 const userMedia = promiseResults[0].value
                 const screenMedia = promiseResults[1].value
