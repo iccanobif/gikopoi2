@@ -58,7 +58,7 @@ export const messages =
             rula_menu_column_streamers: "配信者",
             rula_menu_button_rula: "ルーラ",
 
-            user_list_popup_title: "ユーザーリスト",
+            user_list_popup_title: "ユーザーリスト（@USER_COUNT@名）",
             user_list_popup_column_user_name: "ユーザー名",
             user_not_in_room: "このユーザーはこの部屋にいません。",
             user_inactive: "このユーザーは活動停止中。",
@@ -252,7 +252,7 @@ export const messages =
             rula_menu_column_streamers: "Streamers",
             rula_menu_button_rula: "Rula",
 
-            user_list_popup_title: "User List",
+            user_list_popup_title: "User List (total: @USER_COUNT@)",
             user_list_popup_column_user_name: "User name",
             user_not_in_room: "This user is not in this room.",
             user_inactive: "This user is inactive.",
