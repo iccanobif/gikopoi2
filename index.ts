@@ -1378,11 +1378,12 @@ function sendUpdatedChessboardState(roomStates: RoomStateCollection, areaId: str
 
 function stopChessGame(roomStates: RoomStateCollection, user: Player)
 {
-    log.info("stopChessGame", user.id)
     const state = roomStates[user.areaId][user.roomId].chess
 
     if (user.id != state.blackUserID && user.id != state.whiteUserID)
         return
+
+    log.info("stopChessGame", user.id)
 
     if (state.timer)
         clearTimeout(state.timer)
