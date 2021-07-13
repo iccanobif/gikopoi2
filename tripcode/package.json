@@ -1,0 +1,43 @@
+{
+  "name": "tripcode-2ch-fork",
+  "version": "1.0.0",
+  "description": "Calculate tripcodes.",
+  "keywords": [
+    "tripcode"
+  ],
+  "license": "MIT",
+  "author": "Kenan Yildirim <kenan@kenany.me> (http://kenany.me/)",
+  "bin": {
+    "tripcode": "bin/cmd.js"
+  },
+  "main": "index.js",
+  "files": [
+    "bin",
+    "lib",
+    "index.js"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "release": "semantic-release",
+    "pretest": "npm run -s lint",
+    "test": "tape test/index.js"
+  },
+  "dependencies": {
+    "lodash.foreach": "^4.5.0",
+    "minimist": "^1.2.5",
+    "split": "^1.0.1"
+  },
+  "devDependencies": {
+    "@kenan/eslint-config": "9.0.3",
+    "@kenan/renovate-config": "1.5.0",
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/git": "^9.0.0",
+    "concat-stream": "2.0.0",
+    "conventional-changelog-conventionalcommits": "^4.6.0",
+    "eslint": "7.29.0",
+    "graceful-fs": "4.2.6",
+    "semantic-release": "^17.4.4",
+    "tape": "5.2.2",
+    "utf8": "3.0.0"
+  }
+}
