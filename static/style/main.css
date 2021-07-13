@@ -761,3 +761,8 @@ button
 {
     touch-action: manipulation;
 }
+
+#main-section .ui-resizable-handle:hover
+{
+    background-color: gray;
+}
