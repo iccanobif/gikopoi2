@@ -188,6 +188,7 @@ window.vueApp = new Vue({
         takenStreams: [], // streams taken by me
         slotVolume: JSON.parse(localStorage.getItem("slotVolume")) || {}, // key: slot Id / value: volume
         detachedStreamTabs: {}, // key: slot Id
+        slotIsVtuberCharacterJumping: {}, // key: slot Id / value: boolean
 
         // stream settings
         isStreamPopupOpen: false,
@@ -200,6 +201,7 @@ window.vueApp = new Vue({
         streamScreenCaptureAudio: localStorage.getItem("streamScreenCaptureAudio") == "true",
         streamTarget: "all_room",
         allowedListenerIDs: new Set(),
+        streamIsVtuberMode: false,
 
         // Device selection popup
         isDeviceSelectionOpen: false,
@@ -2557,6 +2559,12 @@ window.vueApp = new Vue({
 
                         vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
                         vuMeterBarPrimary.style.width = level * 100 + "%"
+
+                        // if (level > 0.2)
+                        //     this.slotIsVtuberCharacterJumping[this.streamSlotIdInWhichIWantToStream] = true
+                        // else
+                        //     setTimeout(() => this.slotIsVtuberCharacterJumping[this.streamSlotIdInWhichIWantToStream] = false, 100)
+                        // this.$forceUpdate()
                     });
                 }
 
@@ -2565,6 +2573,7 @@ window.vueApp = new Vue({
                     withVideo: withVideo,
                     withSound: withSound,
                     isVisibleOnlyToSpecificUsers: this.streamTarget == "specific_users",
+                    streamIsVtuberMode: this.streamIsVtuberMode,
                     info: []
                         .concat(this.mediaStream.getAudioTracks().map(t => ({
                             constraints: t.getConstraints && t.getConstraints(),

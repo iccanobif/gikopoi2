@@ -247,6 +247,10 @@
                             v-on:dblclick="onVideoDoubleClick($event, index)"
                             v-bind:title="$t('ui.double_click_to_move_to_new_tab')"
                             autoplay playsinline></video>
+                        <img class="vtuber-character" 
+                            v-if="streamSlot.streamIsVtuberMode"
+                            :src="'characters/giko/front-standing.svg'"
+                            v-bind:class="{'jumping': slotIsVtuberCharacterJumping[index]}" />
                     </div>
                     <div :id="'vu-meter-container-' + index"
                          v-show="streamSlot.isActive
@@ -501,6 +505,10 @@
                         <input type="radio" id="stream-form-visible-only-to-specific-users" value="specific_users" v-model="streamTarget"><label
                             for="stream-form-visible-only-to-specific-users">{{ $t("ui.stream_form_visible_only_to_specific_users") }}</label>
 
+                    </div>
+                    <div class='popup-item' v-if="streamMode == 'video_sound'">
+                        <input type="checkbox" id="stream-form-vtuber-mode" v-model="streamIsVtuberMode"><label
+                            for="stream-form-vtuber-mode">{{ $t("ui.stream_form_vtuber_mode") }}</label>
                     </div>
                     <div v-if="streamMode != 'video'">
                         <div class='popup-item'>
