@@ -2695,7 +2695,6 @@ window.vueApp = new Vue({
                 {
                     try
                     {
-           
                         if (this.hideStreams)
                             return;
 
@@ -2703,7 +2702,7 @@ window.vueApp = new Vue({
 
                         const stream = event.streams[0]
                         videoElement.srcObject = stream;
-
+                        
                         $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
 
                         if (this.inboundAudioProcessors[streamSlotId])
