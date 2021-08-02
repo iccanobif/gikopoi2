@@ -1,4 +1,4 @@
-import express from "express"
+import express, { Request } from "express"
 import { defaultRoom, rooms } from "./rooms";
 import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
@@ -928,32 +928,37 @@ app.use(compression({
     }
 }))
 
-
+// https://stackoverflow.com/a/18517550
+// "The router doesn't overwrite X-Forwarded-For, but it does guarantee that the real origin will always be the last item in the list."
+function getRealIp(req: Request)
+{
+    return req.ips[req.ips.length - 1] ?? req.ip
+}
 
 app.get("/", async (req, res) =>
 {
     if (req.headers.host == "gikopoi2.herokuapp.com")
     {
-        log.info("Redirecting to gikopoipoi.net ", req.ip)
+        log.info("Redirecting to gikopoipoi.net ", getRealIp(req))
         res.redirect(301, 'https://gikopoipoi.net')
         return
     }
 
     // Check if bad IP
 
-    const confidenceScore = await getAbuseConfidenceScore(req.ip)
+    const confidenceScore = await getAbuseConfidenceScore(getRealIp(req))
     
     if (confidenceScore > maximumAbuseConfidenceScore)
     {
-        log.info("Rejected " + req.ip)
+        log.info("Rejected " + getRealIp(req))
         res.setHeader("Content-Type", "text/html; charset=utf-8")
 
-        const abuseIPDBURL = "https://www.abuseipdb.com/check/" + req.ip
+        const abuseIPDBURL = "https://www.abuseipdb.com/check/" + getRealIp(req)
         res.end("あなたのIPは拒否されました。TorやVPNを使わないでください。Your IP was rejected. Please do not use Tor or VPNs. <a href='" + abuseIPDBURL + "'>" + abuseIPDBURL + "</a>")
         return
     }
 
-    log.info("Fetching root..." + req.ip + " " + req.rawHeaders.join("|"))
+    log.info("Fetching root..." + getRealIp(req) + " " + req.rawHeaders.join("|"))
 
     try
     {
@@ -975,7 +980,7 @@ app.get("/", async (req, res) =>
         for (const areaId in roomStates)
         {
             const connectedUserIds: Set<string> = getConnectedUserList(null, areaId)
-                .filter((u) => !u.blockedIps.includes(req.ip))
+                .filter((u) => !u.blockedIps.includes(getRealIp(req)))
                 .reduce((acc, val) => acc.add(val.id), new Set<string>())
 
             data = data
@@ -1195,7 +1200,7 @@ app.post("/login", (req, res) =>
         {
             try
             {
-                log.info("Invalid username", req.ip, "<" + JSON.stringify(userName) + ">", characterId, areaId)
+                log.info("Invalid username", getRealIp(req), "<" + JSON.stringify(userName) + ">", characterId, areaId)
             }
             catch {}
 
@@ -1208,11 +1213,11 @@ app.post("/login", (req, res) =>
             return;
         }
 
-        log.info("Attempting to login", req.ip, "<" + userName.replace(/#.*/, "#??????") + ">", characterId, areaId)
+        log.info("Attempting to login", getRealIp(req), "<" + userName.replace(/#.*/, "#??????") + ">", characterId, areaId)
 
         if (settings.restrictLoginByIp)
         {
-            const users = getUsersByIp(req.ip, areaId);
+            const users = getUsersByIp(getRealIp(req), areaId);
             let sameIpUserCount = 0;
             for (const u of users)
             {
@@ -1247,9 +1252,9 @@ app.post("/login", (req, res) =>
         if (n >= 0)
             processedUserName = processedUserName + "◆" + (tripcode(userName.substr(n + 1)) || "fnkquv7jY2");
 
-        const user = addNewUser(processedUserName, characterId, areaId, req.ip);
+        const user = addNewUser(processedUserName, characterId, areaId, getRealIp(req));
 
-        log.info("Logged in", user.id, user.privateId, "<" + user.name + ">", "from", req.ip, areaId)
+        log.info("Logged in", user.id, user.privateId, "<" + user.name + ">", "from", getRealIp(req), areaId)
         sendResponse({
             appVersion,
             isLoginSuccessful: true,
