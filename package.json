@@ -10,10 +10,10 @@
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\"",
     "serve-be": "ts-node-dev --respawn src/backend/index.ts",
     "serve-fe": "vue-cli-service serve",
-    "start": "node backend-build/backend/index.js",
+    "start": "node backend-build/src/backend/index.js",
     "start-persistor": "cross-env PERSISTOR_SECRET=hello node state-persistor.js"
   },
-  "main": "backend-build/backend/index.js",
+  "main": "backend-build/src/backend/index.js",
   "dependencies": {
     "chess.js": "^0.12.0",
     "compression": "^1.7.4",
