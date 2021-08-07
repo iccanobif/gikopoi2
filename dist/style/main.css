@@ -1,0 +1,773 @@
+#app
+{
+    background-color: #c0c0c0;
+    /* background-image: url("../characters/ika/front-standing.svg"); */
+    background-image: url("../background.svg");
+    background-blend-mode: soft-light;
+    background-size: 60vw;
+    background-position-x: calc(100% - 50px);
+    background-position-y: calc(100% - 50px);
+    background-repeat: no-repeat;
+    font-family: IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif;
+    font-size: 16px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+header {
+    margin: 5px 20px 20px 20px;
+    height: 70px
+}
+
+header h1 {
+    margin: 0;
+}
+
+header h2 {
+    margin: 0;
+    font-size: medium;
+}
+
+header h1 a {
+    color: black;
+    text-decoration: none;
+}
+
+input[type='range']
+{
+    appearance: none;
+    background-color: #afb1b1;
+    width: 120px;
+    height: 4px;
+    font-size: 18px;
+}
+
+#login-page
+{
+    padding: 5px;
+}
+
+#login-form {
+    display: block;
+    margin: 20px;
+}
+
+#login-form > div {
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+#login-footer {
+    font-family: 'Courier New', Courier, monospace;
+    margin: 12px;
+}
+
+#login-footer h3
+{
+    margin-bottom: 5px;
+}
+
+[v-cloak]
+{
+    display: none;
+}
+
+#room
+{
+    position: relative;
+}
+
+#chatLog
+{
+    background-color: white;
+    height: 150px;
+    overflow-y: auto;
+    padding-left: 5px;
+    resize: vertical;
+}
+
+.underlined-usernames .message-author
+{
+    text-decoration: underline;
+    text-decoration-color: #929292;
+}
+
+.message
+{
+    overflow: hidden;
+    line-height: 20px;
+}
+
+.message span
+{
+    unicode-bidi: isolate;
+}
+
+.timestamps-in-copied-log .message .message-timestamp
+{
+    display: inline-block;
+}
+
+.message .message-timestamp
+{
+    display: none;
+    width: 1px; /* must be at least 1px for chrome to include its content when copy-pasting */
+    height: 1px; /* must be at least 1px for chrome to include its content when copy-pasting */
+    white-space: nowrap;
+    overflow: hidden; /* overflow: clip doesn't work on safari */
+}
+
+.video-container
+{
+    z-index: 150;
+    width: 219px;
+    height: auto !important;
+}
+
+video {
+    width: 100%;
+}
+
+
+
+
+.stream-title
+{
+    font-weight: bold;
+}
+
+.stream-is-active .stream-title
+{
+    font-weight: normal;
+}
+
+/* div[id^="received-video-"]
+{
+    position: absolute;
+    top: 18px;
+    left: 0px;
+}
+
+
+/* --- canvas triangle buttons --- */
+
+.canvas-button-top-right
+{
+    width: 12px;
+    height: 12px;
+    
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+}
+
+.canvas-button-top-right
+    {background: linear-gradient(to bottom left, transparent 50%, #787878 50%);}
+.canvas-button-top-right:active
+    {background: linear-gradient(to bottom left, transparent 50%, #ffffff 50%);}
+
+/* --- infobox with names and stats etc --- */
+
+#infobox-container
+{
+    position: absolute;
+    top: 7px;
+    right: 7px;
+}
+
+#infobox-button
+{
+    position: absolute;
+    top: 2px;
+    right: 2px;
+}
+
+#infobox
+{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 170px;
+    
+    background-color: rgba(120, 120, 120, 0.1);
+    color: #ffffff;
+    
+    padding: 3px;
+    
+    font-size: 12px;
+    text-shadow: #000 0 0 1px;
+}
+
+.infobox-line
+{
+    margin: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.infobox-title,
+.infobox-value
+{
+    display: inline-block;
+}
+
+.infobox-title
+{
+    width: 44px;
+}
+
+#infobox-usercount
+{
+    float: left;
+    margin-top: 0px;
+}
+
+#infobox-streamcount
+{
+    float: right;
+    margin-top: 0px;
+    margin-right: 8px;
+}
+
+.big-red-alert
+{
+    position: absolute;
+    z-index: 100;
+    color: #d00;
+}
+
+#stage
+{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 5px;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+#main-section
+{
+    flex-grow: 1;
+    width: 70%;
+    position: relative;
+    padding-right: 7px;
+}
+
+/* #main-section::after
+{
+    cursor: e-resize;
+    width: 3px;
+    height: 100%;
+    display: block;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    content: '';
+} */
+
+@media (min-width: 947px)
+{
+    #main-section
+    {
+        flex-grow: initial;
+    }
+    #video-streams
+    {
+        flex-wrap: nowrap;
+    }
+}
+
+#video-streams{
+    padding: 5px;
+    flex-grow: 1;
+    box-sizing: border-box;
+    min-width: 200px;
+}
+
+#room-canvas
+{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+#canvas-container
+{
+    position: relative;
+    height: 511px;
+    font-family: Arial, Helvetica, sans-serif;
+    resize: vertical;
+    overflow: auto;
+}
+
+#toolbar
+{
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    overflow: auto;
+}
+
+#login-page button,
+#toolbar button,
+.stream-buttons button,
+.chessboard-slot-wrapper button,
+.popup button
+{
+    border: 1px solid #959595;
+    padding: 3px 10px;
+    margin: 1px;
+    min-height: 32px;
+    border-radius: 3px;
+    white-space: nowrap;
+    color: black;
+}
+
+#login-page button:hover,
+#toolbar button:hover,
+.stream-buttons button:hover,
+.popup button:hover
+{
+    border-color: black;
+}
+
+.preferences-percentage
+{
+    display: inline-block;
+    width: 36px;
+    text-align: right;
+}
+
+#toolbar-text-input
+{
+    flex-grow: 1;
+    display: flex;
+    align-items: stretch;
+    flex-basis: 200px;
+}
+#toolbar-buttons
+{
+    display: flex;
+    align-items: stretch;
+}
+
+#input-textbox
+{
+    /* 
+        HACK(?): text areas can't seem to get shrinked more than a certain amount, and it broke the 
+        layout on mobile. because it's in a flex container, "width: 0px" doesn't really make it 0 pixels wide,
+        but at least it allows the text area to shrink as much as needed.
+    */
+    width: 0px; 
+    flex-grow: 1;
+    resize: vertical;
+    min-width: 180px;
+}
+
+.tooltip-section
+{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    align-content: stretch;
+}
+
+.tooltip-section > button
+{
+    flex-grow: 1;
+}
+
+.tooltip-section > label
+{
+    white-space: nowrap;
+}
+
+.non-wrappable-buttons
+{
+    display: flex;
+}
+
+.tooltip-section-title
+{
+    flex-grow: 1;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+}
+
+.tooltip-volume-section
+{
+    min-height: 80px;
+    align-items: center;
+}
+
+#toolbar button.grid-button
+{
+    font-weight: bold;
+    font-size: 20px;
+    padding: 3px 8px;
+}
+
+#rula-popup {
+    max-width: 600px;
+    width: 90%;
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%,-50%);
+
+    outline: 2px solid #afb1b1;
+    background-color: #ffffff;
+    z-index: 201;
+}
+
+@media (max-width: 600px) {
+    .popup {
+        width: 90%;
+    }
+}
+
+.popup-overlay
+{
+    content: "";
+    position: fixed;
+    z-index: 200;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:rgba(77,77,77,.4);
+}
+
+.popup-title
+{
+    font-size: 20px;
+    padding: 10px;
+    background-color: #fafafa;
+    border-bottom: 2px solid #afb1b1;
+}
+
+.popup-content
+{
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 300px;
+    margin: 5px;
+    border: 2px solid #afb1b1;
+}
+
+.popup-section:not(:first-child)
+{
+    border-top: 2px solid #afb1b1;
+}
+
+.popup-header
+{
+    margin: 10px 10px 10px 20px;
+    font-size: 18px;
+}
+
+.popup-item
+{
+    margin: 10px;
+}
+
+.popup-subsection
+{
+    margin-left: 20px;
+}
+
+.popup-notice
+{
+    white-space: pre-wrap;
+    font-size: 12px
+}
+
+.popup-table
+{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.popup-table col
+{
+    border-right: 1px solid #afb1b1;
+}
+
+.popup-table col:last-of-type
+{
+    border-right: 0;
+}
+
+.popup-table th
+{
+    text-align: left;
+    font-weight: normal;
+    background-color: #f3f3f3;
+    border-bottom: 1px solid #afb1b1;
+}
+
+.popup-table td,
+.popup-table th
+{
+    padding: 2px 5px;
+}
+
+.popup-selectable-table tr:hover td
+{
+    background-color: #e6ffe0;
+    cursor: pointer;
+}
+
+.popup-row-is-selected td
+{
+    background-color: #cdffc1;
+}
+
+.popup-row-is-selected .user-not-in-room-warning
+{
+    padding-right: 6px;
+    font-size: 13px
+}
+
+.inactive-user-icon
+{
+    height: 15px;
+    margin-right: 5px;
+    /* this strange filter is a way to turn a black image into a sort of light blue. */
+    /* no idea of how it actually does that. */
+    filter: brightness(90%) invert(57%) sepia(52%) hue-rotate(152deg) saturate(275%);
+}
+
+.popup-sortable-table th
+{
+    cursor: pointer
+}
+
+.popup-buttons
+{
+    text-align: right;
+    margin: 5px 20px 5px 20px;
+}
+
+.popup-buttons button
+{
+    display: inline-block;
+    margin-left: 5px;
+}
+
+#character-selection
+{
+    display: flex;
+    width: 100%;
+    overflow-x: auto;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    user-select: none;
+}
+
+#character-selection img {
+    height: 70px;
+    width: 60px;
+    padding-top: 10px;
+    min-width: 10px;
+    margin: 2px;
+    object-fit: contain;
+}
+
+#character-selection .character-selected {
+    border: solid 2px blue;
+    margin: 0;
+}
+
+#character-selection input {
+    display: none;
+}
+
+div[id^="vu-meter-container"]
+{
+    background-color: black;
+    height: 10px;
+    width: 219px;
+}
+
+div[id^="vu-meter-bar-primary-"]
+{
+    background-color: red;
+    height: 10px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+div[id^="vu-meter-bar-secondary-"]
+{
+    background-color: darkred;
+    height: 10px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    top: -10px;
+}
+
+button.checked {
+    text-decoration: underline;
+}
+
+#poop-page
+{
+    font-size: 100px;
+}
+
+.full-screen-page
+{
+    font-size: 25px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#user-list-popup td
+{
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    word-wrap: anywhere;
+}
+
+#user-list-popup td button
+{
+    flex-shrink: 0;
+}
+
+#user-list-popup tr div
+{
+    cursor: pointer;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+.pinned-video
+{
+    position: relative !important;
+}
+
+.unpinned-video
+{
+    position: absolute !important;
+}
+
+.unpinned-video .pin-video-button
+{
+    transform: rotate(90deg);
+}
+
+.video-container > .pin-video-button
+{
+    position: absolute;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.7);
+    border: 0;
+    margin: 7px;
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+    /* visibility: hidden; */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.video-container:hover > .pin-video-button
+{
+    /* visibility: visible; */
+    opacity: 1;
+}
+
+.stream-buttons button,
+.chessboard-slot-wrapper button
+{
+    background-color: #4d4d9f;
+    color: white;
+}
+
+.stream-buttons button.red-button,
+.chessboard-slot-wrapper button.red-button
+{
+    background-color: #9f6161;
+    color: white;
+}
+
+.next-move-chess-player
+{
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.highlighted-message
+{
+    color: red;
+}
+
+.system-message
+{
+    font-weight: bold;
+}
+
+.message-author
+{
+    cursor: pointer;
+}
+
+#area-selection
+{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* make all jquery slider handles round */
+#app .ui-corner-all
+{
+    border-radius: 10px;
+}
+
+.tooltip-section .ui-slider
+{
+    margin: 10px 0;
+    height: 100%;
+    width: 4px;
+}
+
+.tooltip-section .ui-slider-vertical .ui-slider-handle
+{
+    left: -9px;
+}
+
+/* Workaround to prevent zoom in iOS when tapping quickly on a button */
+button
+{
+    touch-action: manipulation;
+}
+
+#main-section .ui-resizable-handle:hover
+{
+    background-color: gray;
+}
+
+#login-footer-content
+{
+    display: none;
+}

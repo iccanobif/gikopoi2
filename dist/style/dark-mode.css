@@ -1,0 +1,71 @@
+#app.dark-mode {
+    background-color: #354F52;
+    color: #CAD2C5;
+}
+
+.dark-mode #chatLog {
+    background-color: #354F52;
+}
+.dark-mode .message {
+    background-color: #354F52;
+    border-top: 1px solid gray;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.dark-mode .message a {
+    color: #84A98C;
+}
+
+.dark-mode .message-author {
+    padding-right: 2px;
+    color: #84A98C;
+}
+
+.dark-mode .underlined-usernames .message-author
+{
+    text-decoration-color: #84A98C;
+}
+
+.dark-mode .message:nth-child(even) {
+    background-color: #2F3E46;
+}
+
+.dark-mode input[type="text"],
+.dark-mode textarea {
+
+    background-color: #2F3E46;
+    color: #CAD2C5;
+}
+
+.dark-mode #login-page button,
+.dark-mode #toolbar button,
+.dark-mode #video-streams button,
+.dark-mode .popup button {
+    background-color: #2F3E46;
+    color: #CAD2C5;
+}
+
+.dark-mode .popup {
+    background-color: #2F3E46;
+    color: #CAD2C5;
+}
+
+.dark-mode .popup .popup-title {
+    background-color: #2F3E46;
+    color: #CAD2C5;
+}
+
+.dark-mode .popup th {
+    background-color: #2F3E46;
+    color: #CAD2C5;
+}
+
+.dark-mode .popup-selectable-table tr:hover td {
+    background-color: #354F52;
+}
+
+.dark-mode .popup-selectable-table tr.popup-row-is-selected td {
+    color: #CAD2C5;
+    background-color: #354F52;
+}
