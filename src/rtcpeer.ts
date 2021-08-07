@@ -1,24 +1,24 @@
 export class RTCPeer
 {
-    constructor(iceConfig, sendCallback)
+    conn: RTCPeerConnection | null = null
+    _offer: string | null | undefined = null
+    sendCallback: (type: string, msg: RTCIceCandidate | string | undefined) => void
+
+    constructor(sendCallback: (type: string, msg: RTCIceCandidate | string | undefined) => void)
     {
-		if (iceConfig === undefined)
-			this.iceConfig = defaultIceConfig;
-		else
-			this.iceConfig = iceConfig
-        
         this.sendCallback = sendCallback
-        this.errorCallback = (error, event) => console.error(error, event)
-        
         this._offer = null
-        
         this.conn = null
     }
+
+    errorCallback(error: any, event: Event) {
+        console.error(error, event)
+    } 
     
     open()
     {
         if (this.conn !== null) return;
-        this.conn = new RTCPeerConnection(this.iceConfig);
+        this.conn = new RTCPeerConnection(defaultIceConfig);
         this.conn.addEventListener('negotiationneeded', (event) => 
         {
             try{this.sendOffer()}
@@ -49,7 +49,7 @@ export class RTCPeer
         this.sendCallback('offer', offer.sdp)
     }
     
-    async acceptOffer(offer) // : RTCSessionDescription
+    async acceptOffer(offer: string) // : RTCSessionDescription
     {
         if (this.conn === null) return;
         await this.conn.setRemoteDescription(
@@ -62,7 +62,7 @@ export class RTCPeer
         this.sendCallback('answer', answer.sdp)
     }
     
-    async acceptAnswer(answer) // : RTCSessionDescription
+    async acceptAnswer(answer: string) // : RTCSessionDescription
     {
         if (this.conn === null) return;
         if (this._offer !== null)
@@ -75,13 +75,13 @@ export class RTCPeer
             new RTCSessionDescription({type: 'answer', sdp: answer}))
     }
     
-    handleCandidateEvent(event) // private
+    handleCandidateEvent(event: RTCPeerConnectionIceEvent) // private
     {
         if (event.candidate)
             this.sendCallback('candidate', event.candidate)
     }
     
-    addCandidate(candidate) // : RTCIceCandidate
+    addCandidate(candidate: RTCIceCandidate) // : RTCIceCandidate
     {
         if (this.conn === null) return;
         this.conn.addIceCandidate(candidate);

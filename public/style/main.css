@@ -1,4 +1,4 @@
-#vue-app
+#app
 {
     background-color: #c0c0c0;
     /* background-image: url("../characters/ika/front-standing.svg"); */
@@ -739,7 +739,7 @@ button.checked {
 }
 
 /* make all jquery slider handles round */
-#vue-app .ui-corner-all
+#app .ui-corner-all
 {
     border-radius: 10px;
 }
@@ -765,4 +765,9 @@ button
 #main-section .ui-resizable-handle:hover
 {
     background-color: gray;
+}
+
+#login-footer-content
+{
+    display: none;
 }

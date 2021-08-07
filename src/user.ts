@@ -1,40 +1,45 @@
-import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils.js";
-import { RenderCache } from "./rendercache.js";
-import { characters } from "./character.js";
+import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils";
+import { RenderCache } from "./rendercache";
+import { Character, characters } from "./character";
+import { Direction, PlayerDto, Room } from "./backend/types";
 
 const STEP_LENGTH = 8;
 
 export default class User
 {
-    constructor(character, name)
-    {
-        this.id = null;
-        this.name = name;
-        // default to giko if the user has somehow set a non-existing character id
-        this.character = character || characters.giko; 
+    id: string;
+    name: string;
+    character: Character
+    logicalPositionX = 0;
+    logicalPositionY = 0;
+    currentPhysicalPositionX = 0;
+    currentPhysicalPositionY = 0;
+    isWalking = false;
+    isSpinning = false;
+    isMoved = true;
+    direction: Direction = "up";
+    framesUntilNextStep = STEP_LENGTH;
+    frameCount = 0
+    isInactive = false;
+    
+    nameImage: RenderCache | null = null;
+    
+    message: string | null = null;
+    lastMessage = null as string | null;
+    bubblePosition = "up";
+    bubbleImage: RenderCache | null = null;
+    voicePitch = 1;
 
-        this.logicalPositionX = 0;
-        this.logicalPositionY = 0;
-        this.currentPhysicalPositionX = 0;
-        this.currentPhysicalPositionY = 0;
-        this.isWalking = false;
-        this.isSpinning = false;
-        this.isMoved = true;
-        this.direction = "up";
-        this.framesUntilNextStep = STEP_LENGTH;
-        this.frameCount = 0
-        this.isInactive = false;
-        
-        this.nameImage = null;
-        
-        this.message = null;
-        this.lastMessage = null;
-        this.bubblePosition = "up";
-        this.bubbleImage = null;
-        this.voicePitch = null;
+    // constructor(character: Character, name: string)
+    constructor(userDto: PlayerDto)
+    {
+        this.id = userDto.id
+        this.name = userDto.name;
+        // default to giko if the user has somehow set a non-existing character id
+        this.character = characters[userDto.characterId] || characters.giko; 
     }
 
-    moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)
+    moveImmediatelyToPosition(room: Room, logicalPositionX: number, logicalPositionY: number, direction: Direction)
     {
         this.logicalPositionX = logicalPositionX;
         this.logicalPositionY = logicalPositionY;
@@ -47,7 +52,7 @@ export default class User
         this.isMoved = true;
     }
 
-    moveToPosition(logicalPositionX, logicalPositionY, direction)
+    moveToPosition(logicalPositionX: number, logicalPositionY: number, direction: Direction)
     {
         if (this.logicalPositionX != logicalPositionX || this.logicalPositionY != logicalPositionY)
             this.isWalking = true;
@@ -58,7 +63,7 @@ export default class User
         this.isMoved = true;
     }
     
-    calculatePhysicalPosition(room, delta)
+    calculatePhysicalPosition(room: Room, delta: number)
     {
         if (!this.isWalking)
             return
@@ -99,7 +104,7 @@ export default class User
             this.frameCount = 0
     }
 
-    getCurrentImage(room)
+    getCurrentImage(room: Room)
     {
         if (this.isSpinning)
         {

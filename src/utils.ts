@@ -1,9 +1,31 @@
+declare global {
+    interface Window {
+         EXPECTED_SERVER_VERSION: number; 
+         USER_COUNT_GEN: number;
+         STREAMER_COUNT_GEN: number;
+         USER_COUNT_FOR: number;
+         STREAMER_COUNT_FOR: number;
+    }
+    interface MediaDevices {
+        getDisplayMedia(constraints?: MediaStreamConstraints): Promise<MediaStream>;
+      }
+    
+      // if constraints config still lose some prop, you can define it by yourself also
+      interface MediaTrackConstraintSet {
+        displaySurface?: ConstrainDOMString;
+        logicalSurface?: ConstrainBoolean;
+        // more....
+      }
+}
+
+import { Room } from "./backend/types";
+
 export const BLOCK_WIDTH = 80
 export const BLOCK_HEIGHT = 40
 
 export const urlRegex = /(https?:\/\/|www\.)[^\s]+/gi
 
-export function loadImage(url)
+export function loadImage(url: string): Promise<HTMLImageElement>
 {
     return new Promise((resolve, reject) =>
     {
@@ -15,6 +37,7 @@ export function loadImage(url)
                 resolve(img)
             })
             img.addEventListener("error", reject)
+
             img.src = url + "?v=" + window.EXPECTED_SERVER_VERSION;
         }
         catch (err)
@@ -25,7 +48,7 @@ export function loadImage(url)
 }
 
 // returns "left" and "bottom" positions
-export function calculateRealCoordinates(room, x, y)
+export function calculateRealCoordinates(room: Room, x: number, y: number)
 {
     const blockWidth = room.blockWidth ? room.blockWidth : BLOCK_WIDTH;
     const blockHeight = room.blockHeight ? room.blockHeight : BLOCK_HEIGHT;
@@ -41,9 +64,9 @@ export function calculateRealCoordinates(room, x, y)
     return { x: realX, y: realY }
 }
 
-export const sleep = (milliseconds) => new Promise(resolve => setTimeout(resolve, milliseconds));
+export const sleep = (milliseconds: number) => new Promise(resolve => setTimeout(resolve, milliseconds));
 
-export function postJson(url, data)
+export function postJson(url: string, data: any)
 {
     return fetch(url, {
         method: "POST",
@@ -52,7 +75,7 @@ export function postJson(url, data)
     })
 }
 
-export function logToServer(msg)
+export function logToServer(msg: string)
 {
     return fetch("/error", {
         method: "POST",
@@ -63,7 +86,7 @@ export function logToServer(msg)
 
 // Some websites don't seem to realize that URL encoded strings should decode to UTF-8 and not to SHIFT-JIS.
 // example: https://seesaawiki.jp/your_heart/d/%A4%C8%A4%AD%A4%E1%A4%AD%A5%BB%A5%F3%A5%B5%A1%BC%A4%CB%A4%C4%A4%A4%A4%C6
-export function safeDecodeURI(str)
+export function safeDecodeURI(str: string)
 {
     try {
         return decodeURI(str)
@@ -74,10 +97,10 @@ export function safeDecodeURI(str)
     }
 }
 
-export const debounceWithDelayedExecution = (func, wait) => {
-    let timeout;
+export const debounceWithDelayedExecution = (func: (...args: any[]) => void, wait: number) => {
+    let timeout: NodeJS.Timeout;
   
-    return function executedFunction(...args) {
+    return function executedFunction(...args: any[]) {
       const later = () => {
         clearTimeout(timeout);
         func(...args);
@@ -88,10 +111,10 @@ export const debounceWithDelayedExecution = (func, wait) => {
     };
   };
 
-export const debounceWithImmediateExecution = (func, wait) => {
-    let lastExecution = null;
+export const debounceWithImmediateExecution = (func: (...args: any[]) => void, wait: number) => {
+    let lastExecution: number;
   
-    return function executedFunction(...args) {
+    return function executedFunction(...args: any[]) {
       if (Date.now() - lastExecution > wait)
       {
         lastExecution = Date.now()
@@ -106,10 +129,20 @@ const maxGain = 1.3
 
 export class AudioProcessor
 {
-    constructor(stream, videoElement, volume)
+    stream: MediaStream
+    videoElement: HTMLVideoElement
+    volume: number
+    isBoostEnabled = false
+
+    context: AudioContext | null = null
+    source: MediaStreamAudioSourceNode | null = null
+    compressor: DynamicsCompressorNode | null = null
+    gain: GainNode | null = null
+
+    constructor(stream: MediaStream, videoElement: HTMLVideoElement, volume: number)
     {
         this.stream = stream
-        this.isBoostEnabled = false
+        
         this.videoElement = videoElement
         this.volume = volume
         videoElement.volume = volume
@@ -131,23 +164,28 @@ export class AudioProcessor
 
     dispose()
     {
-        if (canUseAudioContext)
+        if (canUseAudioContext && this.context)
             this.context.close().catch(console.error)
     }
 
-    setVolume(volume)
+    setVolume(volume: number)
     {
         this.volume = volume
         if (!this.isBoostEnabled)
             this.videoElement.volume = volume
 
-        if (canUseAudioContext)
+        if (canUseAudioContext && this.gain)
             this.gain.gain.value = volume * maxGain
     }
 
     enableCompression()
     {
-        if (!canUseAudioContext) return 
+        if (!canUseAudioContext
+            // these checks are here only to make typescript happy...
+            || !this.source 
+            || !this.compressor
+            || !this.gain
+            || !this.context ) return 
 
         this.source.connect(this.compressor)
         this.compressor.connect(this.gain)
@@ -159,7 +197,11 @@ export class AudioProcessor
     
     disableCompression()
     {
-        if (!canUseAudioContext) return 
+        if (!canUseAudioContext
+            // these checks are here only to make typescript happy...
+            || !this.source 
+            || !this.compressor
+            || !this.gain ) return 
 
         this.source.disconnect()
         this.compressor.disconnect()
@@ -195,4 +237,17 @@ export function requestNotificationPermission()
         if (promise)
             promise.then(resolve)
     })
+}
+
+// TODO test if this UserException actually works
+export class UserException extends Error {
+    constructor(message: string)
+    {
+        super(message)
+    }
+}
+
+export function isRunningOnWebpackServer()
+{
+    return "webpackHotUpdate" in window
 }

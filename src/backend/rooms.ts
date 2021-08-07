@@ -143,10 +143,10 @@ export const rooms: { [roomId: string]: Room } = {
 
         ],
         worldSpawns: [
-            { x: 3, y: 2, direction: "right", target: null },
-            { x: 4, y: 2, direction: "right", target: null },
-            { x: 5, y: 2, direction: "right", target: null },
-            { x: 6, y: 2, direction: "right", target: null },
+            { x: 3, y: 2, direction: "right" },
+            { x: 4, y: 2, direction: "right" },
+            { x: 5, y: 2, direction: "right" },
+            { x: 6, y: 2, direction: "right" },
         ],
         doors: {
             left: { x: 0, y: 2, direction: "right", target: { roomId: "bar_st", doorId: "right" } },
@@ -295,7 +295,7 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [],
         worldSpawns: [
-            { x: 3, y: 4, direction: "down", target: null }
+            { x: 3, y: 4, direction: "down" }
         ],
         doors: {
             left: { x: 0, y: 2, direction: "right", target: { roomId: "busstop", doorId: "right" } },

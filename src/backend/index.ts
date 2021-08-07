@@ -1,6 +1,6 @@
-import express, { Request } from "express"
+import express from "express"
 import { defaultRoom, rooms } from "./rooms";
-import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
+import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, RoomListItemDto } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
 import { sleep } from "./utils";
 import got from "got";
@@ -16,7 +16,11 @@ const app: express.Application = express()
 const http = require('http').Server(app);
 const io = require("socket.io")(http, {
     pingInterval: 25 * 1000, // Heroku fails with "H15 Idle connection" if a socket is inactive for more than 55 seconds with
-    pingTimeout: 60 * 1000
+    pingTimeout: 60 * 1000,
+    cors: {
+        origin: "http://localhost:8080",
+        methods: ["GET", "POST"]
+    }
 });
 const tripcode = require('tripcode');
 const enforce = require('express-sslify');
@@ -130,6 +134,11 @@ io.on("connection", function (socket: any)
     {
         janusHandleSlots = roomStates[user.areaId][user.roomId].streams.map(() => null)
     }
+
+    socket.on("ping", function () {
+        console.log("pinged")
+        socket.emit("pong")
+    })
 
     socket.on("disconnect", function ()
     {
@@ -635,7 +644,7 @@ io.on("connection", function (socket: any)
     {
         try
         {
-            const roomList: { id: string, userCount: number, streamers: string[] }[] =
+            const roomList: RoomListItemDto[] =
                 Object.values(rooms)
                 .filter(room => !room.secret)
                 .map(room => ({
@@ -882,22 +891,39 @@ function roomEmit(areaId: string, roomId: string, ...msg: any[])
         .forEach((u) => u.socketId && io.to(u.socketId).emit(...msg));
 }
 
-function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSlotDto[]
+function toStreamSlotDtoArray(user: Player | null, streamSlots: StreamSlot[]): StreamSlotDto[]
 {
     return streamSlots.map((s) =>
     {
         const u = getUser(s.userId!);
-        const isInactive = !u
+
+        // If parameter "user" is null, it means that this method is called
+        // with the REST api before the websocket has been intialized.
+        // Since the browser will once again request the room state with the user-connect
+        // message, at this point we consider all streams invisible, to avoid potentially leaking
+        // info of blocked/blocking users.
+        const isInvisibleForThisUser = !u
+            || !user 
             || (u.id != user.id
                 && (user.blockedIps.includes(u.ip)
                 || u.blockedIps.includes(user.ip)));
-        return {
-            isActive: isInactive ? false : s.isActive,
-            isReady: isInactive ? false : s.isReady,
-            withSound: isInactive ? null : s.withSound,
-            withVideo: isInactive ? null : s.withVideo,
-            userId: isInactive ? null : s.userId,
-        }
+
+        if (s.isActive && !isInvisibleForThisUser)
+            return {
+                isActive: true,
+                isReady: s.isReady,
+                withSound: s.withSound!,
+                withVideo: s.withVideo!,
+                userId: s.userId!,
+            }
+        else
+            return {
+                isActive: false,
+                isReady: false,
+                withSound: false,
+                withVideo: false,
+                userId: null,
+            }
     })
 }
 
@@ -928,41 +954,36 @@ app.use(compression({
     }
 }))
 
-// https://stackoverflow.com/a/18517550
-// "The router doesn't overwrite X-Forwarded-For, but it does guarantee that the real origin will always be the last item in the list."
-function getRealIp(req: Request)
-{
-    return req.ips[req.ips.length - 1] ?? req.ip
-}
+
 
 app.get("/", async (req, res) =>
 {
     if (req.headers.host == "gikopoi2.herokuapp.com")
     {
-        log.info("Redirecting to gikopoipoi.net ", getRealIp(req))
+        log.info("Redirecting to gikopoipoi.net ", req.ip)
         res.redirect(301, 'https://gikopoipoi.net')
         return
     }
 
     // Check if bad IP
 
-    const confidenceScore = await getAbuseConfidenceScore(getRealIp(req))
+    const confidenceScore = await getAbuseConfidenceScore(req.ip)
     
     if (confidenceScore > maximumAbuseConfidenceScore)
     {
-        log.info("Rejected " + getRealIp(req))
+        log.info("Rejected " + req.ip)
         res.setHeader("Content-Type", "text/html; charset=utf-8")
 
-        const abuseIPDBURL = "https://www.abuseipdb.com/check/" + getRealIp(req)
+        const abuseIPDBURL = "https://www.abuseipdb.com/check/" + req.ip
         res.end("あなたのIPは拒否されました。TorやVPNを使わないでください。Your IP was rejected. Please do not use Tor or VPNs. <a href='" + abuseIPDBURL + "'>" + abuseIPDBURL + "</a>")
         return
     }
 
-    log.info("Fetching root..." + getRealIp(req) + " " + req.rawHeaders.join("|"))
+    log.info("Fetching root..." + req.ip + " " + req.rawHeaders.join("|"))
 
     try
     {
-        let data = await readFile("static/index.html", 'utf8')
+        let data = await readFile("dist/index.html", 'utf8')
 
         try {
             const { statusCode: loginFooterStatusCode, body: loginFooterBody } = await got(
@@ -980,7 +1001,7 @@ app.get("/", async (req, res) =>
         for (const areaId in roomStates)
         {
             const connectedUserIds: Set<string> = getConnectedUserList(null, areaId)
-                .filter((u) => !u.blockedIps.includes(getRealIp(req)))
+                .filter((u) => !u.blockedIps.includes(req.ip))
                 .reduce((acc, val) => acc.add(val.id), new Set<string>())
 
             data = data
@@ -1045,7 +1066,7 @@ app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
     }
 })
 
-app.use(express.static('static',
+app.use(express.static('dist',
     {
         setHeaders: (res, path) => {
             // Cache images for one week. I made the frontend append ?v=version to image URLs,
@@ -1068,10 +1089,12 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
         const connectedUsers: PlayerDto[] = getConnectedUserList(roomId, areaId)
             .map(p => toPlayerDto(p, roomId, areaId))
 
+        const streams = toStreamSlotDtoArray(null, roomStates[areaId][roomId].streams)
+
         const dto: RoomStateDto = {
             currentRoom: rooms[roomId],
             connectedUsers,
-            streams: roomStates[areaId][roomId].streams,
+            streams: streams,
             chessboardState: buildChessboardStateDto(roomStates, areaId, roomId)
         }
 
@@ -1085,7 +1108,7 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
 
 async function getCharacterImages(crisp: boolean)
 {
-    const characterIds = await readdir("static/characters")
+    const characterIds = await readdir("public/characters")
         
     const output: { [characterId: string]: CharacterSvgDto} = {}
     for (const characterId of characterIds)
@@ -1093,7 +1116,7 @@ async function getCharacterImages(crisp: boolean)
         const extension = characterId == "funkynaito" || characterId == "molgiko" ? "png" : "svg"
 
         const getCharacterImage = async (path: string, crisp: boolean) => {
-            let text = await readFile("static/characters/" + path, { encoding: path.endsWith(".svg") ? "utf-8" : "base64"})
+            let text = await readFile("public/characters/" + path, { encoding: path.endsWith(".svg") ? "utf-8" : "base64"})
 
             if (crisp && path.endsWith(".svg")) 
                 text = text.replace('<svg', '<svg shape-rendering="crispEdges"')
@@ -1200,7 +1223,7 @@ app.post("/login", (req, res) =>
         {
             try
             {
-                log.info("Invalid username", getRealIp(req), "<" + JSON.stringify(userName) + ">", characterId, areaId)
+                log.info("Invalid username", req.ip, "<" + JSON.stringify(userName) + ">", characterId, areaId)
             }
             catch {}
 
@@ -1213,11 +1236,11 @@ app.post("/login", (req, res) =>
             return;
         }
 
-        log.info("Attempting to login", getRealIp(req), "<" + userName.replace(/#.*/, "#??????") + ">", characterId, areaId)
+        log.info("Attempting to login", req.ip, "<" + userName.replace(/#.*/, "#??????") + ">", characterId, areaId)
 
         if (settings.restrictLoginByIp)
         {
-            const users = getUsersByIp(getRealIp(req), areaId);
+            const users = getUsersByIp(req.ip, areaId);
             let sameIpUserCount = 0;
             for (const u of users)
             {
@@ -1252,9 +1275,9 @@ app.post("/login", (req, res) =>
         if (n >= 0)
             processedUserName = processedUserName + "◆" + (tripcode(userName.substr(n + 1)) || "fnkquv7jY2");
 
-        const user = addNewUser(processedUserName, characterId, areaId, getRealIp(req));
+        const user = addNewUser(processedUserName, characterId, areaId, req.ip);
 
-        log.info("Logged in", user.id, user.privateId, "<" + user.name + ">", "from", getRealIp(req), areaId)
+        log.info("Logged in", user.id, user.privateId, "<" + user.name + ">", "from", req.ip, areaId)
         sendResponse({
             appVersion,
             isLoginSuccessful: true,

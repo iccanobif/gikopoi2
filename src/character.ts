@@ -1,29 +1,41 @@
-import { loadImage } from "./utils.js"
-import { RenderCache } from "./rendercache.js";
-import { annualEvents } from "./annualevents.js";
+import { RenderCache } from "./rendercache";
+import { annualEvents } from "./annualevents";
+import { CharacterSvgDto } from "./backend/types";
 
 export class Character
 {
-    constructor(name, format, isHidden, scale)
+    characterName: string
+    format: string
+    isHidden: boolean
+    scale: number
+    frontSittingImage: any = null
+    frontStandingImage: any = null
+    frontWalking1Image: any = null
+    frontWalking2Image: any = null
+    backSittingImage: any = null
+    backStandingImage: any = null
+    backWalking1Image: any = null
+    backWalking2Image: any = null
+    frontSittingFlippedImage: any = null
+    frontStandingFlippedImage: any = null
+    frontWalking1FlippedImage: any = null
+    frontWalking2FlippedImage: any = null
+    backSittingFlippedImage: any = null
+    backStandingFlippedImage: any = null
+    backWalking1FlippedImage: any = null
+    backWalking2FlippedImage: any = null
+
+    constructor(name: string, format: string, isHidden: boolean, scale: number = 0.5)
     {
         this.characterName = name;
         this.format = format;
         this.isHidden = isHidden
-        this.scale = scale || 0.5
-
-        this.frontSittingImage = null;
-        this.frontStandingImage = null;
-        this.frontWalking1Image = null;
-        this.frontWalking2Image = null;
-        this.backSittingImage = null;
-        this.backStandingImage = null;
-        this.backWalking1Image = null;
-        this.backWalking2Image = null;
+        this.scale = scale
     }
 
-    async loadImages(dto)
+    async loadImages(dto: CharacterSvgDto)
     {
-        const stringToImage = (svgString) => new Promise((resolve) => {
+        const stringToImage = (svgString: string) => new Promise<HTMLImageElement>((resolve) => {
             const img = new Image()
             if (dto.isBase64)
                 img.src = "data:image/png;base64," + svgString
@@ -52,7 +64,7 @@ export class Character
     }
 }
 
-export const characters = {
+export const characters: { [id: string]: Character } = {
     giko: new Character("giko", "svg", false),
     naito: new Character("naito", "svg", false),
     shii: new Character("shii", "svg", false),
@@ -87,9 +99,9 @@ export const characters = {
     hotsuma_giko: new Character("hotsuma_giko", "svg", false),
 }
 
-export const loadCharacters = async (crispMode) => {
+export const loadCharacters = async (isCrispMode: boolean) => {
 
-    const response = await fetch("/characters/" + (crispMode ? "crisp" : "regular"))
+    const response = await fetch("/characters/" + (isCrispMode ? "crisp" : "regular"))
     const dto = await response.json()
 
     return Promise.all(Object.keys(characters).map(characterId => characters[characterId].loadImages(dto[characterId])))

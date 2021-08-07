@@ -1,6 +1,11 @@
 class AnnualEvent
 {
-	constructor(monthFrom, dayFrom, monthTo, dayTo)
+	monthFrom: number
+	dayFrom: number
+	monthTo: number
+	dayTo: number
+
+	constructor(monthFrom: number, dayFrom: number, monthTo: number, dayTo: number)
 	{
 		this.monthFrom = monthFrom;
 		this.dayFrom = dayFrom
@@ -8,14 +13,14 @@ class AnnualEvent
 		this.dayTo = dayTo
 	}
 	
-	getOccurrence(y)
+	getOccurrence(year: number)
 	{
 		return [
-			new Date(y, this.monthFrom-1, this.dayFrom),
-			new Date(y, this.monthTo-1, this.dayTo)]
+			new Date(year, this.monthFrom-1, this.dayFrom),
+			new Date(year, this.monthTo-1, this.dayTo)]
 	}
 	
-	isBetween(date)
+	isBetween(date?: Date)
 	{
 		if (!date) date = new Date();
 		const [start, end] = this.getOccurrence(date.getFullYear());

@@ -1,6 +1,7 @@
-function r(text, reading)
+function r(text: string, reading: string)
 {
-    return ctx => !ctx.named("reading") ? text : reading;
+    // TODO use correct type instead of any
+    return (ctx: any) => !ctx.named("reading") ? text : reading;
 }
 
 export const messages =

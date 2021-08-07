@@ -1,9 +1,9 @@
-import { kanaToRomajiMap, kanjiToKanaMap, katakanaToHiragana } from "./japanese-tools.js";
-import { urlRegex } from "./utils.js";
+import { kanaToRomajiMap, kanjiToKanaMap, katakanaToHiragana } from "./japanese-tools";
+import { urlRegex } from "./utils";
 
 const synth = new Animalese('animalese.wav', function () {  });
 
-function speakAnimalese(text, pitch, volume)
+function speakAnimalese(text: string, pitch: number, volume: number)
 {
     // replace every japanese character with a random roman letter
     // text = text
@@ -41,7 +41,7 @@ function speakAnimalese(text, pitch, volume)
     audio.play();
 }
 
-function isJapaneseCharacter(character)
+function isJapaneseCharacter(character: string)
 {
     const charCode = character.charCodeAt(0)
     // CJK Unified Ideographs 
@@ -52,7 +52,7 @@ function isJapaneseCharacter(character)
         return true
 }
 
-function isJapanese(text)
+function isJapanese(text: string)
 {
     // very simple heuristic, we just assume that if a sentence has at least one japanese character, then it must be japanese
     for (let i = 0; i < text.length; i++)
@@ -61,7 +61,7 @@ function isJapanese(text)
     return false
 }
 
-export function speak(message, voiceURI, volume, pitch)
+export function speak(message: string, voiceURI: string, volume: number, pitch: number = 1)
 {
     if (volume == 0)
         return
@@ -86,9 +86,7 @@ export function speak(message, voiceURI, volume, pitch)
     const utterance = new SpeechSynthesisUtterance(cleanMsgForSpeech)
 
     utterance.volume = volume / 100
-
-    if (pitch !== undefined && pitch !== null)
-        utterance.pitch = pitch // range between 0 (lowest) and 2 (highest), with 1 being the default pitch 
+    utterance.pitch = pitch // range between 0 (lowest) and 2 (highest), with 1 being the default pitch 
 
     if (voiceURI == "automatic")
     {

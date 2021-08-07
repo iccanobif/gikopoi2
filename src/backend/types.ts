@@ -1,5 +1,6 @@
 import { Player } from "./users";
 import { ChessInstance } from "chess.js"
+import { RenderCache } from "@/rendercache";
 
 const JanusClient = require('janus-videoroom-client').Janus;
 
@@ -31,7 +32,31 @@ export interface Door
     target: {
         roomId: string
         doorId: string
-    } | string | null;
+    } | null;
+}
+
+export interface WorldSpawn
+{
+    x: number;
+    y: number;
+    direction: Direction | null;
+}
+
+export interface RoomObject
+{
+    x: number;
+    y: number;
+    url: string;
+    scale?: number;
+    offset?: {
+        x: number;
+        y: number;
+    }
+    xOffset?: number;
+    yOffset?: number;
+    image?: RenderCache, // for frontend use only
+    physicalPositionX?: number, // for frontend use only
+    physicalPositionY?: number, // for frontend use only
 }
 
 export interface Room
@@ -46,23 +71,12 @@ export interface Room
     spawnPoint: string;
     needsFixedCamera?: boolean;
     isBackgroundImageOffsetEdge?: boolean;
-    objects: {
-        x: number;
-        y: number;
-        url: string;
-        scale?: number;
-        offset?: {
-            x: number;
-            y: number;
-        }
-        xOffset?: number;
-        yOffset?: number;
-    }[];
+    objects: RoomObject[];
     sit: Coordinates[];
     blocked: Coordinates[];
     forbiddenMovements: { xFrom: number, yFrom: number, xTo: number, yTo: number }[],
     doors: { [doorId: string]: Door };
-    worldSpawns?: Door[];
+    worldSpawns?: WorldSpawn[];
     streamSlotCount: number;
     secret?: boolean;
     forcedAnonymous?: boolean;
@@ -121,13 +135,32 @@ export interface PlayerDto
     lastRoomMessage: string,
 }
 
-export interface StreamSlotDto
+// export interface StreamSlotDto
+// {
+//     isActive: true,
+//     isReady: boolean,
+//     withSound: boolean | null,
+//     withVideo: boolean | null,
+//     userId: string | null,
+// }
+
+export type StreamSlotDto = ActiveStreamSlotDto | InactiveStreamSlotDto
+
+export interface ActiveStreamSlotDto
 {
-    isActive: boolean,
+    isActive: true,
     isReady: boolean,
-    withSound: boolean | null,
-    withVideo: boolean | null,
-    userId: string | null,
+    withSound: boolean,
+    withVideo: boolean,
+    userId: string,
+}
+export interface InactiveStreamSlotDto
+{
+    isActive: false,
+    isReady: false,
+    withSound: false,
+    withVideo: false,
+    userId: null,
 }
 
 export interface ChessboardState {
@@ -162,4 +195,18 @@ export interface CharacterSvgDto
     backStanding: string
     backWalking1: string
     backWalking2: string
+}
+
+export interface RoomListItemDto
+{
+    id: string,
+    userCount: number,
+    streamers: string[]
+}
+
+export interface RoomListItem extends RoomListItemDto
+{
+    sortName: string,
+    streamerCount: number,
+    streamerDisplayNames: string[]
 }
