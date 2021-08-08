@@ -46,14 +46,6 @@ let loadCharacterImagesPromise = null
 // the key is the slot ID
 const audioProcessors = {}
 
-function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  }
-const tabID = uuidv4() + "@" + Date.now()
-
 const i18n = new VueI18n({
     locale: "ja",
     fallbackLocale: "ja",
@@ -364,25 +356,6 @@ window.vueApp = new Vue({
                 const ISAC = await isWebrtcReceiveCodecSupported(WebrtcCodec.ISAC);
     
                 logToServer(this.myUserID + " RECEIVE CODECS: VP8: " + VP8 + " VP9: " + VP9 + " H264: " + H264 + " OPUS: " + OPUS + " ISAC: " + ISAC)
-                
-                setInterval(() => {
-                    try {
-                        const list = JSON.parse(localStorage.getItem("meh") || "[]")
-                                    .filter(x => {
-                                        const oldTimestamp = x.split("@")[1]
-                                        return Date.now() - oldTimestamp < 1000 * 60 * 60 * 24
-                                    })
-                        
-                        if (!list.find(x => x == tabID))
-                        {
-                            list.push(tabID)
-                            localStorage.setItem("meh", JSON.stringify(list))
-                        }
-                        if (list.length > 4)
-                            this.socket.close()
-                    }
-                    catch {}
-                }, 1000)
             }
             catch (e)
             {
@@ -527,11 +500,6 @@ window.vueApp = new Vue({
                 // decides that he doesn't want to close the window.
                 this.initializeSocket();
                 return "Are you sure?";
-            }
-
-            window.onunload = () => {
-                const list = JSON.parse(localStorage.getItem("meh") || "[]")
-                localStorage.setItem("meh", JSON.stringify(list.filter(x => x != tabID)))
             }
             
             // load the room state before connecting the websocket, so that all
