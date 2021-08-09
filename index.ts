@@ -1214,7 +1214,8 @@ app.get("/version", (req, res) =>
 })
 
 app.get("/admin", (req, res) => {
-    const output = "<form action='user-list' method='post'><input type='text' name='pwd'><input type='submit'></form>"
+    const output = "<form action='user-list' method='post'><input type='text' name='pwd'><input type='submit' value='user-list'></form>"
+                 + "<form action='banned-ip-list' method='post'><input type='text' name='pwd'><input type='submit' value='unban'></form>"
 
     res.set({
         'Content-Type': 'text/html; charset=utf-8',
@@ -1237,11 +1238,12 @@ app.post("/user-list", (req, res) => {
                     .filter(u => !u.isGhost)
                     .sort((a, b) => (a.areaId + a.roomId + a.name + a.lastRoomMessage).localeCompare(b.areaId + b.roomId + b.name + b.lastRoomMessage))
 
-    const userList: string = users.map(user => "<input type='checkbox' name='" + user.id + "'>"
+    const userList: string = users.map(user => "<input type='checkbox' name='" + user.id + "' id='" + user.id + "'><label for='" + user.id + "'>"
                                                 + user.areaId + " "
                                                 + user.roomId + " "
                                                 + " &lt;" + user.name +  "&gt;"
-                                                + user.lastRoomMessage).join("</br>")
+                                                + user.lastRoomMessage
+                                                + "</label>").join("</br>")
 
     const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
     const banButton = "<br/><input type='submit'>"
@@ -1256,7 +1258,7 @@ app.post("/user-list", (req, res) => {
     res.end(output)
 })
 
-app.post("/ban", (req, res) => {
+app.post("/banned-ip-list", (req, res) => {
     const pwd = req.body.pwd
 
     if (pwd != settings.adminKey)
@@ -1265,14 +1267,71 @@ app.post("/ban", (req, res) => {
         return
     }
 
-    const userIdsToBan = Object.keys(req.body).filter(x => x != "pwd")
-    console.log(userIdsToBan)
-    for (const id of userIdsToBan)
+    const userList: string = Array.from(bannedIPs).map(ip => "<input type='checkbox' name='" + ip + "' id='" + ip + "'><label for='" + ip + "'>" + ip + "</label>").join("</br>")
+
+    const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
+    const banButton = "<br/><input type='submit'>"
+
+    const output = "<form action='unban' method='post'>" + pwdInput + userList + banButton + "</form>"
+
+    res.set({
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-store'
+    })
+
+    res.end(output)
+})
+
+app.post("/ban", (req, res) => {
+    try 
     {
-        const user = getUser(id)
-        banIP(user.ip)
+        const pwd = req.body.pwd
+
+        if (pwd != settings.adminKey)
+        {
+            res.end("nope")
+            return
+        }
+
+        const userIdsToBan = Object.keys(req.body).filter(x => x != "pwd")
+        console.log(userIdsToBan)
+        for (const id of userIdsToBan)
+        {
+            const user = getUser(id)
+            banIP(user.ip)
+        }
+        res.end("done")
     }
-    res.end("done")
+    catch (exc)
+    {
+        log.error(exc)
+        res.end("error")
+    }
+})
+
+app.post("/unban", (req, res) => {
+    try 
+    {
+        const pwd = req.body.pwd
+
+        if (pwd != settings.adminKey)
+        {
+            res.end("nope")
+            return
+        }
+
+        const userIPsToUnban = Object.keys(req.body).filter(x => x != "pwd")
+        for (const ip of userIPsToUnban)
+        {
+            bannedIPs.delete(ip)
+        }
+        res.end("done")
+    }
+    catch (exc)
+    {
+        log.error(exc)
+        res.end("error")
+    }
 })
 
 app.post("/error", (req, res) =>
@@ -1525,6 +1584,8 @@ function disconnectUser(user: Player)
 
 function banIP(ip: string)
 {
+    log.info("BANNING " + ip)
+
     bannedIPs.add(ip)
 
     for (const user of getUsersByIp(ip, null))
