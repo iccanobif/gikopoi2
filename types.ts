@@ -149,6 +149,7 @@ export interface ChessboardStateDto
 export interface PersistedState
 {
     users: Player[],
+    bannedIPs: string[],
 }
 
 export interface CharacterSvgDto
