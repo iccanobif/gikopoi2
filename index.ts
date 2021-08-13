@@ -1238,11 +1238,17 @@ app.post("/user-list", (req, res) => {
                     .filter(u => !u.isGhost)
                     .sort((a, b) => (a.areaId + a.roomId + a.name + a.lastRoomMessage).localeCompare(b.areaId + b.roomId + b.name + b.lastRoomMessage))
 
+    const streamSlots = Object.values(roomStates).map(x => Object.values(x))
+                            .flat()
+                            .map(x => x.streams)
+                            .flat()
+
     const userList: string = users.map(user => "<input type='checkbox' name='" + user.id + "' id='" + user.id + "'><label for='" + user.id + "'>"
                                                 + user.areaId + " "
                                                 + user.roomId + " "
                                                 + " &lt;" + user.name +  "&gt;"
                                                 + user.lastRoomMessage
+                                                + "streaming: " + (streamSlots.find(s=> s.userId == user.id) ? "Y" : "N")
                                                 + "</label>").join("</br>")
 
     const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
