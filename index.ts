@@ -465,8 +465,8 @@ io.on("connection", function (socket: Socket)
                 }
             }, 10000);
 
-            userRoomEmit(user, user.areaId, user.roomId,
-                "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
+            getFilteredConnectedUserList(user, user.areaId, user.roomId)
+                .forEach((u) => u.socketId && io.to(u.socketId).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, roomState.streams)));
 
             emitServerStats(user.areaId)
 
