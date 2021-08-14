@@ -1014,17 +1014,17 @@ export default defineComponent({
             }
         }
 
-        this.loadRoomBackground();
-        this.loadRoomObjects();
+        // Force update of user coordinates using the current room's logics (origin coordinates, etc)
+        this.forcePhysicalPositionRefresh();
+
+        await this.loadRoomBackground();
+        await this.loadRoomObjects();
 
         this.blockWidth = this.currentRoom.blockWidth ? this.currentRoom.blockWidth : BLOCK_WIDTH;
         this.blockHeight = this.currentRoom.blockHeight ? this.currentRoom.blockHeight : BLOCK_HEIGHT;
 
         // stream stuff
         this.updateCurrentRoomStreams(streamsDto);
-
-        // Force update of user coordinates using the current room's logics (origin coordinates, etc)
-        this.forcePhysicalPositionRefresh();
 
         // I can't remember why this focus() is here... commenting it for now because
         // it throws an error.
