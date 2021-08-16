@@ -578,6 +578,8 @@ import { speak } from "./tts";
 import { RTCPeer } from "./rtcpeer";
 import i18n from "./i18n";
 
+window.$ = $; // Horrible workaround for making $ visible to chessboard.js
+
 export default defineComponent({
   name: "App",
   data: () => ({
@@ -1054,7 +1056,6 @@ export default defineComponent({
                     + " loginMessage.appVersion: " + loginMessage.appVersion
                     + " DIFFERENT: " + (window.EXPECTED_SERVER_VERSION != loginMessage.appVersion))
 
-        console.log("loginMessage", loginMessage)
         if (window.EXPECTED_SERVER_VERSION < loginMessage.appVersion)
             this.pageRefreshRequired = true
 

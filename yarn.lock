@@ -1123,11 +1123,6 @@
   resolved "https://registry.yarnpkg.com/@types/chess.js/-/chess.js-0.11.2.tgz#e5d5f502b38f24efe854572ee33a939e1e395005"
   integrity sha512-ZgT0f5Dm1x+kjA/RhCQpBM2NoUGkdk9JFdwncW7/GdqzHCOkLsOTq4k/EKRiRTCFLXR4fTKk8j7KNOmzzHQVgg==
 
-"@types/chessboardjs@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@types/chessboardjs/-/chessboardjs-0.3.2.tgz#70150392548948251e147aee8593527aab111a0b"
-  integrity sha512-2Xrx3iemNvGAC4BWUBr4igbB/sRZu6W+rWogNS0wfWZaw1YhxGygcAU3Oyzruas/oUbZ35jrE96AGvLR1NZxbg==
-
 "@types/component-emitter@^1.2.10":
   version "1.2.10"
   resolved "https://registry.yarnpkg.com/@types/component-emitter/-/component-emitter-1.2.10.tgz#ef5b1589b9f16544642e473db5ea5639107ef3ea"

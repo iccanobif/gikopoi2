@@ -5,6 +5,7 @@ declare global {
          STREAMER_COUNT_GEN: number;
          USER_COUNT_FOR: number;
          STREAMER_COUNT_FOR: number;
+         $: any;
     }
     interface MediaDevices {
         getDisplayMedia(constraints?: MediaStreamConstraints): Promise<MediaStream>;

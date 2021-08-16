@@ -68,7 +68,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { ChessBoard } from "chessboardjs"
+const Chessboard = require("chessboardjs")
 
 export default defineComponent({
   name: "ChessboardSlot",
@@ -114,7 +114,7 @@ export default defineComponent({
         ? this.chessboardState.fenString || "start"
         : "start";
 
-      this.chessboard = ChessBoard(chessboardElement, {
+      this.chessboard = Chessboard(chessboardElement, {
         pieceTheme: "chess/img/chesspieces/wikipedia/{piece}.png",
         position,
         orientation:
@@ -137,12 +137,7 @@ export default defineComponent({
           )
             return false;
         },
-        onDrop: () => {
-          // I think the index.d.ts file for @types/chessboardjs is wrong, as
-          // all callbacks in BoardConfig seem to have no arguments...
-          const source = arguments[0]
-          const target = arguments[1]
-          
+        onDrop: (source: string, target: string) => {
           if (
             this.chessboardState.blackUserID == this.myUserId ||
             this.chessboardState.whiteUserID == this.myUserId
