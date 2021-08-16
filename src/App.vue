@@ -243,6 +243,7 @@
                     v-bind:socket="socket"
                     v-bind:chessboard-state="chessboardState"
                     v-bind:users="users"
+                    v-bind:my-user-id="myUserID"
                     ></chessboard-slot>
             </div>
 
@@ -561,7 +562,7 @@
 
 import { defineComponent, nextTick } from "vue";
 import { io, Socket } from "socket.io-client"
-import HelloWorld from "./components/HelloWorld.vue";
+import ChessboardSlot from "./components/ChessboardSlot.vue"
 import { DefaultEventsMap } from "socket.io-client/build/typed-events";
 import { BLOCK_HEIGHT, BLOCK_WIDTH, canUseAudioContext, getFormattedCurrentDate, loadImage, logToServer, postJson, requestNotificationPermission, safeDecodeURI, urlRegex, calculateRealCoordinates, UserException, debounceWithImmediateExecution, AudioProcessor, debounceWithDelayedExecution, isRunningOnWebpackServer } from "./utils"
 import { Direction, PlayerDto, Room, RoomListItem, RoomListItemDto, RoomObject, RoomStateDto, StreamSlot, StreamSlotDto } from "./backend/types"
@@ -3221,7 +3222,7 @@ export default defineComponent({
     }
   },
   components: {
-    HelloWorld,
+    ChessboardSlot,
   },
 });
 
