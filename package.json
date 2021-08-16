@@ -4,7 +4,7 @@
   "description": "gikopoi2",
   "scripts": {
     "build": "npx tsc",
-    "deploy-prod": "vue-cli-service build && git add dist && git commit -m vuejsbuild && git push origin master:CI-PROD",
+    "deploy-prod": "git checkout master && vue-cli-service build && git add dist && git commit -m vuejsbuild && git push origin master:CI-PROD",
     "deploy-test": "vue-cli-service build && git add dist && git commit -m vuejsbuild && git push origin HEAD:CI-TEST -f",
     "dev-remote-persistor": "cross-env PERSISTOR_URL=http://localhost:8086 PERSISTOR_SECRET=hello ts-node-dev --respawn index.ts",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\"",
