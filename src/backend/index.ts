@@ -1,4 +1,4 @@
-import express from "express"
+import express, { Request } from "express"
 import { defaultRoom, rooms } from "./rooms";
 import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, RoomListItemDto } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
@@ -11,6 +11,7 @@ import { getAbuseConfidenceScore } from "./abuse-ip-db";
 import { readFileSync } from "fs";
 import { readdir, readFile, writeFile } from "fs/promises";
 import { Chess } from "chess.js";
+import { Socket } from "socket.io";
 
 const app: express.Application = express()
 const http = require('http').Server(app);
@@ -56,6 +57,7 @@ const janusServersObject = Object.fromEntries(janusServers.map(o => [o.id, o]));
 
 // Initialize room states:
 let roomStates: RoomStateCollection = {};
+let bannedIPs: Set<string> = new Set<string>()
 
 function initializeRoomStates()
 {
@@ -100,9 +102,54 @@ function initializeRoomStates()
 
 initializeRoomStates()
 
-io.on("connection", function (socket: any)
+// Check if bad IP
+app.use(async function (req, res, next) {
+    const ip = getRealIp(req)
+
+    if (bannedIPs.has(ip))
+    {
+        res.end("")
+        return
+    }
+
+    const confidenceScore = await getAbuseConfidenceScore(ip)
+
+    if (confidenceScore > maximumAbuseConfidenceScore)
+    {
+        log.info("Rejected " + ip)
+        res.setHeader("Content-Type", "text/html; charset=utf-8")
+
+        const abuseIPDBURL = "https://www.abuseipdb.com/check/" + ip
+        res.end("あなたのIPは拒否されました。TorやVPNを使わないでください。Your IP was rejected. Please do not use Tor or VPNs. <a href='" + abuseIPDBURL + "'>" + abuseIPDBURL + "</a>")
+        return
+    }
+
+    next()
+})
+
+io.use(async (socket: Socket, next: () => void) => {
+    const ip = socket.request.socket.remoteAddress
+
+    if (!ip) {
+        next();
+        return;
+    }
+
+    if (bannedIPs.has(ip))
+        socket.disconnect()
+
+    const confidenceScore = await getAbuseConfidenceScore(ip)
+    if (confidenceScore > maximumAbuseConfidenceScore)
+        socket.disconnect()
+    else
+        next()
+})
+
+io.on("connection", function (socket: Socket)
 {
-    log.info("Connection attempt", socket.handshake.address, getAllUsers().filter(u => u.ip == socket.handshake.address).map(u => u.id).join(" "));
+    log.info("Connection attempt", socket.request.socket.remoteAddress, getAllUsers().filter(u => u.ip == socket.request.socket.remoteAddress).map(u => u.id).join(" "));
+
+    // TODO check socket.request.socket.remoteAddress against bannedIPs
 
     let user: Player;
     let currentRoom = defaultRoom;
@@ -232,7 +279,7 @@ io.on("connection", function (socket: any)
                 if ("TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
 
-                msg = msg.replace(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)|(ボクデン)|(ぼくでん)|(卜伝)|(ﾎﾞｸﾃﾞﾝ)|(ボクデソ)/gi, 
+                msg = msg.replace(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)|(ボクデン)|(ぼくでん)|(卜伝)|(ﾎﾞｸﾃﾞﾝ)|(ボクデソ)/gi,
                     "$&o(≧▽≦)o")
 
                 if (msg.match(/(合言葉)|(あいことば)|(アイコトバ)|aikotoba/gi))
@@ -375,12 +422,12 @@ io.on("connection", function (socket: any)
             log.error(e.message + " " + e.stack);
         }
     });
-    socket.on("user-want-to-stream", function (data: { 
+    socket.on("user-want-to-stream", function (data: {
         streamSlotId: number,
         withVideo: boolean,
         withSound: boolean,
         isPrivateStream: boolean,
-        info: any 
+        info: any
     })
     {
         try
@@ -427,8 +474,8 @@ io.on("connection", function (socket: any)
                 }
             }, 10000);
 
-            userRoomEmit(user, user.areaId, user.roomId,
-                "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
+            getFilteredConnectedUserList(user, user.areaId, user.roomId)
+                .forEach((u) => u.socketId && io.to(u.socketId).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, roomState.streams)));
 
             emitServerStats(user.areaId)
 
@@ -721,11 +768,11 @@ io.on("connection", function (socket: any)
             stopChessGame(roomStates, user)
         }, maxWaitForChessMove)
     }
-    
+
     function getUsersToNotifyAboutChessGame() {
 
         const chessState = roomStates[user.areaId][user.roomId].chess
-        
+
         const blackUser = getUser(chessState?.blackUserID!)
         const whiteUser = getUser(chessState?.whiteUserID!)
         const usersToNotify = new Set<Player>()
@@ -816,10 +863,10 @@ io.on("connection", function (socket: any)
                 socket.emit("server-update-chessboard", stateDTO);
                 return
             }
-            
+
             // If the move is illegal, nothing happens
             const result = chessState.instance.move({ from: source, to: target, promotion: "q" })
-            
+
             if (result)
             {
                 // Move was legal
@@ -840,7 +887,7 @@ io.on("connection", function (socket: any)
 
                 stopChessGame(roomStates, user)
             }
-        
+
             sendUpdatedChessboardState(roomStates, user.areaId, user.roomId)
         }
         catch (e)
@@ -954,32 +1001,23 @@ app.use(compression({
     }
 }))
 
-
+// https://stackoverflow.com/a/18517550
+// "The router doesn't overwrite X-Forwarded-For, but it does guarantee that the real origin will always be the last item in the list."
+function getRealIp(req: Request)
+{
+    return req.ips[req.ips.length - 1] ?? req.ip
+}
 
 app.get("/", async (req, res) =>
 {
     if (req.headers.host == "gikopoi2.herokuapp.com")
     {
-        log.info("Redirecting to gikopoipoi.net ", req.ip)
+        log.info("Redirecting to gikopoipoi.net ", getRealIp(req))
         res.redirect(301, 'https://gikopoipoi.net')
         return
     }
 
-    // Check if bad IP
-
-    const confidenceScore = await getAbuseConfidenceScore(req.ip)
-    
-    if (confidenceScore > maximumAbuseConfidenceScore)
-    {
-        log.info("Rejected " + req.ip)
-        res.setHeader("Content-Type", "text/html; charset=utf-8")
-
-        const abuseIPDBURL = "https://www.abuseipdb.com/check/" + req.ip
-        res.end("あなたのIPは拒否されました。TorやVPNを使わないでください。Your IP was rejected. Please do not use Tor or VPNs. <a href='" + abuseIPDBURL + "'>" + abuseIPDBURL + "</a>")
-        return
-    }
-
-    log.info("Fetching root..." + req.ip + " " + req.rawHeaders.join("|"))
+    log.info("Fetching root..." + getRealIp(req) + " " + req.rawHeaders.join("|"))
 
     try
     {
@@ -1001,7 +1039,7 @@ app.get("/", async (req, res) =>
         for (const areaId in roomStates)
         {
             const connectedUserIds: Set<string> = getConnectedUserList(null, areaId)
-                .filter((u) => !u.blockedIps.includes(req.ip))
+                .filter((u) => !u.blockedIps.includes(getRealIp(req)))
                 .reduce((acc, val) => acc.add(val.id), new Set<string>())
 
             data = data
@@ -1052,8 +1090,8 @@ app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
             }
 
         log.info("Fetching svg: " + svgPath)
-        let data = await readFile("static" + svgPath, 'utf8')
-        
+        let data = await readFile("public" + svgPath, 'utf8')
+
         data = data.replace('<svg', '<svg shape-rendering="crispEdges"');
 
         svgCrispCache[svgPath] = data;
@@ -1109,7 +1147,7 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
 async function getCharacterImages(crisp: boolean)
 {
     const characterIds = await readdir("public/characters")
-        
+
     const output: { [characterId: string]: CharacterSvgDto} = {}
     for (const characterId of characterIds)
     {
@@ -1118,7 +1156,7 @@ async function getCharacterImages(crisp: boolean)
         const getCharacterImage = async (path: string, crisp: boolean) => {
             let text = await readFile("public/characters/" + path, { encoding: path.endsWith(".svg") ? "utf-8" : "base64"})
 
-            if (crisp && path.endsWith(".svg")) 
+            if (crisp && path.endsWith(".svg"))
                 text = text.replace('<svg', '<svg shape-rendering="crispEdges"')
 
             return text
@@ -1172,7 +1210,7 @@ app.get("/areas/:areaId/streamers", (req, res) =>
                 if (!stream.isActive) return;
                 if (stream.userId == null) return;
                 if (stream.isPrivateStream) return;
-                
+
                 try
                 {
                     listRoom.streamers.push(getUser(stream.userId).name);
@@ -1194,12 +1232,140 @@ app.get("/areas/:areaId/streamers", (req, res) =>
     }
 })
 
+app.use(express.urlencoded())
 app.use(express.json());
 app.use(express.text());
 
 app.get("/version", (req, res) =>
 {
     res.json(appVersion)
+})
+
+app.get("/admin", (req, res) => {
+    const output = "<form action='user-list' method='post'><input type='text' name='pwd'><input type='submit' value='user-list'></form>"
+                 + "<form action='banned-ip-list' method='post'><input type='text' name='pwd'><input type='submit' value='unban'></form>"
+
+    res.set({
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-store'
+    })
+
+    res.end(output)
+})
+
+app.post("/user-list", (req, res) => {
+    const pwd = req.body.pwd
+
+    if (pwd != settings.adminKey)
+    {
+        res.end("nope")
+        return
+    }
+
+    const users = getAllUsers()
+                    .filter(u => !u.isGhost)
+                    .sort((a, b) => (a.areaId + a.roomId + a.name + a.lastRoomMessage).localeCompare(b.areaId + b.roomId + b.name + b.lastRoomMessage))
+
+    const streamSlots = Object.values(roomStates).map(x => Object.values(x))
+                            .flat()
+                            .map(x => x.streams)
+                            .flat()
+
+    const userList: string = users.map(user => "<input type='checkbox' name='" + user.id + "' id='" + user.id + "'><label for='" + user.id + "'>"
+                                                + user.areaId + " "
+                                                + user.roomId + " "
+                                                + " &lt;" + user.name +  "&gt;"
+                                                + user.lastRoomMessage
+                                                + "streaming: " + (streamSlots.find(s=> s.userId == user.id) ? "Y" : "N")
+                                                + "</label>").join("</br>")
+
+    const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
+    const banButton = "<br/><input type='submit'>"
+
+    const output = "<form action='ban' method='post'>" + pwdInput + userList + banButton + "</form>"
+
+    res.set({
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-store'
+    })
+
+    res.end(output)
+})
+
+app.post("/banned-ip-list", (req, res) => {
+    const pwd = req.body.pwd
+
+    if (pwd != settings.adminKey)
+    {
+        res.end("nope")
+        return
+    }
+
+    const userList: string = Array.from(bannedIPs).map(ip => "<input type='checkbox' name='" + ip + "' id='" + ip + "'><label for='" + ip + "'>" + ip + "</label>").join("</br>")
+
+    const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
+    const banButton = "<br/><input type='submit'>"
+
+    const output = "<form action='unban' method='post'>" + pwdInput + userList + banButton + "</form>"
+
+    res.set({
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-store'
+    })
+
+    res.end(output)
+})
+
+app.post("/ban", (req, res) => {
+    try 
+    {
+        const pwd = req.body.pwd
+
+        if (pwd != settings.adminKey)
+        {
+            res.end("nope")
+            return
+        }
+
+        const userIdsToBan = Object.keys(req.body).filter(x => x != "pwd")
+        console.log(userIdsToBan)
+        for (const id of userIdsToBan)
+        {
+            const user = getUser(id)
+            banIP(user.ip)
+        }
+        res.end("done")
+    }
+    catch (exc)
+    {
+        log.error(exc)
+        res.end("error")
+    }
+})
+
+app.post("/unban", (req, res) => {
+    try 
+    {
+        const pwd = req.body.pwd
+
+        if (pwd != settings.adminKey)
+        {
+            res.end("nope")
+            return
+        }
+
+        const userIPsToUnban = Object.keys(req.body).filter(x => x != "pwd")
+        for (const ip of userIPsToUnban)
+        {
+            bannedIPs.delete(ip)
+        }
+        res.end("done")
+    }
+    catch (exc)
+    {
+        log.error(exc)
+        res.end("error")
+    }
 })
 
 app.post("/error", (req, res) =>
@@ -1214,7 +1380,20 @@ app.post("/login", (req, res) =>
     {
         const sendResponse = (response: LoginResponseDto) =>
         {
+            if (!response.isLoginSuccessful)
+                res.statusCode = 500
             res.json(response)
+        }
+
+        const ip = getRealIp(req)
+        if (bannedIPs.has(ip))
+        {
+            sendResponse({
+                appVersion,
+                isLoginSuccessful: false,
+                error: "ip_restricted"
+            })
+            return
         }
 
         let { userName, characterId, areaId } = req.body
@@ -1223,11 +1402,10 @@ app.post("/login", (req, res) =>
         {
             try
             {
-                log.info("Invalid username", req.ip, "<" + JSON.stringify(userName) + ">", characterId, areaId)
+                log.info("Invalid username", getRealIp(req), "<" + JSON.stringify(userName) + ">", characterId, areaId)
             }
             catch {}
 
-            res.statusCode = 500
             sendResponse({
                 appVersion,
                 isLoginSuccessful: false,
@@ -1236,11 +1414,11 @@ app.post("/login", (req, res) =>
             return;
         }
 
-        log.info("Attempting to login", req.ip, "<" + userName.replace(/#.*/, "#??????") + ">", characterId, areaId)
+        log.info("Attempting to login", getRealIp(req), "<" + userName.replace(/#.*/, "#??????") + ">", characterId, areaId)
 
         if (settings.restrictLoginByIp)
         {
-            const users = getUsersByIp(req.ip, areaId);
+            const users = getUsersByIp(getRealIp(req), areaId);
             let sameIpUserCount = 0;
             for (const u of users)
             {
@@ -1256,7 +1434,6 @@ app.post("/login", (req, res) =>
             }
             if (sameIpUserCount >= maximumUsersPerIpPerArea)
             {
-                res.statusCode = 500
                 sendResponse({
                     appVersion,
                     isLoginSuccessful: false,
@@ -1275,9 +1452,9 @@ app.post("/login", (req, res) =>
         if (n >= 0)
             processedUserName = processedUserName + "◆" + (tripcode(userName.substr(n + 1)) || "fnkquv7jY2");
 
-        const user = addNewUser(processedUserName, characterId, areaId, req.ip);
+        const user = addNewUser(processedUserName, characterId, areaId, getRealIp(req));
 
-        log.info("Logged in", user.id, user.privateId, "<" + user.name + ">", "from", req.ip, areaId)
+        log.info("Logged in", user.id, user.privateId, "<" + user.name + ">", "from", getRealIp(req), areaId)
         sendResponse({
             appVersion,
             isLoginSuccessful: true,
@@ -1439,6 +1616,25 @@ function disconnectUser(user: Player)
     emitServerStats(user.areaId)
 }
 
+function banIP(ip: string)
+{
+    log.info("BANNING " + ip)
+
+    bannedIPs.add(ip)
+
+    for (const user of getUsersByIp(ip, null))
+    {
+        if (user.socketId)
+        {
+            const socket = io.sockets.sockets[user.socketId]
+            if (socket)
+                socket.disconnect();
+        }
+
+        disconnectUser(user)
+    }
+}
+
 setInterval(() =>
 {
     try
@@ -1486,6 +1682,7 @@ async function persistState()
     {
         const state: PersistedState = {
             users: getAllUsers(),
+            bannedIPs: Array.from(bannedIPs)
         }
 
         if (process.env.PERSISTOR_URL)
@@ -1523,6 +1720,8 @@ function applyState(state: PersistedState)
         const users = (state as unknown) as { [id: string]: Player; }
         restoreUserState(Object.values(users))
     }
+
+    bannedIPs = new Set(state.bannedIPs)
 }
 
 async function restoreState()
@@ -1532,7 +1731,7 @@ async function restoreState()
         initializeRoomStates()
         // If there's an error, just don't deserialize anything
         // and start with a fresh state
-        
+
         log.info("Restoring state...")
         if (process.env.PERSISTOR_URL)
         {

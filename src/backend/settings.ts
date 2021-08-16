@@ -20,4 +20,5 @@ export const settings = {
     isBehindProxy: fileJsonContents?.isBehindProxy == undefined ? true : fileJsonContents.isBehindProxy,
     restrictLoginByIp: fileJsonContents?.restrictLoginByIp == undefined ? true : fileJsonContents.restrictLoginByIp,
     abuseIpDBApiKey: (fileJsonContents?.abuseIpDBApiKey || process.env.ABUSE_IPDB_API_KEY) as string,
+    adminKey: (fileJsonContents?.adminKey || process.env.ADMIN_KEY) as string,
 }

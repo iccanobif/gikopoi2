@@ -11,7 +11,7 @@ export async function getAbuseConfidenceScore(ip: string): Promise<number>
 
     if (ip in abuseIpDBabuseConfidenceScoreCache)
     {
-        log.info("Cached confidence score " + ip + ": " + abuseIpDBabuseConfidenceScoreCache[ip])
+        // log.info("Cached confidence score " + ip + ": " + abuseIpDBabuseConfidenceScoreCache[ip])
         return abuseIpDBabuseConfidenceScoreCache[ip]
     }
 
