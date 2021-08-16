@@ -1,0 +1,111 @@
+# Change line to prevent Journald's log from getting too big
+--- /etc/systemd/journald.conf ---
+SystemMaxUse=1G
+---
+
+apt update
+apt upgrade
+
+apt install vnstat vnstati snapd nginx
+
+# Create self signed ssl cert initially which will be replaced by certbot's
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+
+# Create new file for Nginx to Janus port proxy
+-- /etc/nginx/sites-available/janus ---
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name <DOMAIN NAME>;
+
+    location / {
+        proxy_pass http://localhost:8088;
+    }
+
+    location /ws {
+        proxy_pass http://localhost:8188;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+    }
+
+    ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+    ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
+}
+
+server {
+        listen 80;
+        listen [::]:80;
+        server_name <DOMAIN NAME>;
+}
+---
+
+# Enable nginx janus proxy
+ln -s /etc/nginx/sites-available/janus /etc/nginx/sites-enabled/
+rm /etc/nginx/sites-enabled/default
+
+# Set up cerbot
+snap install --classic certbot
+ln -s /snap/bin/certbot /usr/bin/certbot
+certbot --nginx
+# More info: https://certbot.eff.org/lets-encrypt/ubuntufocal-nginx.html
+
+# Installing Janus
+snap install janus-gateway
+cd /var/snap/janus-gateway/common/etc/
+
+# Change the following lines in the files:
+
+--- janus.jcfg ---
+general:
+	api_secret = "<SECRET KEY>"
+	# comment out admin_secret
+	server_name = "<JANUS SERVER NAME>"
+	hide_dependencies = true
+
+media:
+	rtp_port_range = "39000-40000"
+
+nat:
+	ice_lite = true
+	ice_tcp = true
+
+	nat_1_1_mapping = "<SERVER IP ADDRESS>"
+
+plugins:
+	disable = "libjanus_audiobridge.so,libjanus_echotest.so,libjanus_nosip.so,libjanus_recordplay.so,libjanus_sip.so,libjanus_streaming.so,libjanus_textroom.so,libjanus_videocall.so,libjanus_voicemail.so"
+---
+
+--- janus.transport.http.jcfg ---
+general:
+	base_path = "/"
+---
+
+--- janus.plugin.videoroom.jcfg ---
+general:
+	publishers = 100
+
+# comment out demo rooms
+---
+
+# To increase process and file limits and such:
+systemctl edit snap.janus-gateway.janus-gateway.service
+--- Add the following
+[Service]
+LimitAS=infinity
+LimitRSS=infinity
+LimitCORE=infinity
+LimitNOFILE=500000
+LimitNPROC=500000
+LimitSIGPENDING=500000
+TasksMax=500000
+---
+
+# To increase thread limit:
+--- /etc/cron.d/increase_threads ---
+@reboot root echo 100000 > /proc/sys/kernel/threads-max
+---
+
+#Info on adding ionos agent monitoring which can be viewed from the ionos server dashboard thing:
+#https://www.ionos.co.uk/help/index.php?id=2107
