@@ -1,3 +1,11 @@
 language: node_js
 node_js:
   - 14.17.0
+script: yarn build
+deploy:
+  provider: heroku
+  api_key:
+    secure: "a05bc831-00e4-4091-8750-926ee1d0f7ab"
+  app: 
+    CI-TEST: gikopoi2-test
+    CI-PROD: gikopoi2-test # to switch to prod env
