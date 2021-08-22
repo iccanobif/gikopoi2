@@ -13,7 +13,8 @@
     "serve-be": "ts-node-dev --respawn src/backend/index.ts",
     "serve-fe": "vue-cli-service serve",
     "start": "node backend-build/src/backend/index.js",
-    "start-persistor": "cross-env PERSISTOR_SECRET=hello node state-persistor.js"
+    "start-persistor": "cross-env PERSISTOR_SECRET=hello node state-persistor.js",
+    "test": "echo no tests to be done lol"
   },
   "main": "backend-build/src/backend/index.js",
   "dependencies": {
