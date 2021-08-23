@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "gikopoi2",
   "scripts": {
-    "build": "npx --max_old_space_size=4095 vue-cli-service build && npx tsc",
+    "build": "node --max_old_space_size=4096 node_modules/@vue/cli-service/bin/vue-cli-service.js build && npx tsc",
     "deploy-prod": "git push origin master:CI-PROD",
     "deploy-test": "git push origin HEAD:CI-TEST -f",
     "dev-remote-persistor": "cross-env PERSISTOR_URL=http://localhost:8086 PERSISTOR_SECRET=hello ts-node-dev --respawn index.ts",
