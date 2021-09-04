@@ -276,7 +276,7 @@ io.on("connection", function (socket: Socket)
             else
             {
                 // no TIGER TIGER pls
-                if ("TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
+                if (msg.length > "TIGER".length && "TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
 
                 msg = msg.replace(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)|(ボクデン)|(ぼくでん)|(卜伝)|(ﾎﾞｸﾃﾞﾝ)|(ボクデソ)/gi,
@@ -628,6 +628,17 @@ io.on("connection", function (socket: Socket)
         catch (e)
         {
             log.error(e.message + "\n" + e.stack);
+
+            if (e.message.match(/Couldn't attach to plugin: error '-1'/))
+            {
+                // When this exception is raised, usually it means that the janus server has broken
+                // and so far the only thing that will fix it is to restart the server, so that all streams
+                // stop and all rooms are cleared. Would be nice to find a way to prevent this problem in the first place...
+                log.info("EMERGENCY SERVER RESTART BECAUSE OF JANUS FUCKUP")
+
+                process.exit()
+            }
+            
             try
             {
                 if (data.type === "offer")
