@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -36,13 +36,13 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="2081"
-     inkscape:window-height="1267"
+     inkscape:window-width="1920"
+     inkscape:window-height="1041"
      id="namedview1423"
      showgrid="false"
-     inkscape:zoom="5.5384615"
-     inkscape:cx="80"
-     inkscape:cy="91"
+     inkscape:zoom="62.660539"
+     inkscape:cx="43.004577"
+     inkscape:cy="70.107556"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
@@ -170,17 +170,19 @@
            transform="matrix(0.481142,0.136023,-0.136023,0.481142,-31.7036,-78.7091)"
            id="g1455">
           <path
-             d="m 43.661,54.807 c 0,0 -5.12,-7.68 -5.76,-3.008 0,0 0.576,0.96 4.48,2.752 3.904,1.792 1.28,0.256 1.28,0.256 z"
+             d="m 37.901,51.799 c 0,0 0.576,0.96 4.48,2.752 5.158628,3.366081 -3.701245,-6.8721 -4.48,-2.752 z"
              style="fill:#00e9ff;stroke:#00e9ff;stroke-width:1px;stroke-linecap:round"
-             id="path1453" />
+             id="path1453"
+             sodipodi:nodetypes="ccc" />
         </g>
         <g
            transform="matrix(0.249965,-0.433033,0.433033,0.249965,-58.9263,-33.0057)"
            id="g1459">
           <path
-             d="m 43.661,54.807 c 0,0 -5.12,-7.68 -5.76,-3.008 0,0 0.576,0.96 4.48,2.752 3.904,1.792 1.28,0.256 1.28,0.256 z"
+             d="m 37.901,51.799 c 0,0 0.576,0.96 4.48,2.752 5.158628,3.366081 -3.701245,-6.8721 -4.48,-2.752 z"
              style="fill:#00e9ff;stroke:#00e9ff;stroke-width:1px;stroke-linecap:round"
-             id="path1457" />
+             id="path1457"
+             sodipodi:nodetypes="ccc" />
         </g>
       </g>
       <g

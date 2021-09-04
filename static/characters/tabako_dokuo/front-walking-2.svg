@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -36,15 +36,15 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="2077"
-     inkscape:window-height="1323"
+     inkscape:window-width="1920"
+     inkscape:window-height="1041"
      id="namedview1689"
      showgrid="false"
-     inkscape:zoom="22.153846"
-     inkscape:cx="99.485698"
-     inkscape:cy="111.18747"
-     inkscape:window-x="7"
-     inkscape:window-y="125"
+     inkscape:zoom="88.615384"
+     inkscape:cx="47.091421"
+     inkscape:cy="61.447946"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg1687"
      inkscape:document-rotation="0" />
@@ -187,17 +187,19 @@
            transform="matrix(0.5,0,0,0.5,-41.1705,-72.1)"
            id="g1734">
           <path
-             d="m 43.661,54.807 c 0,0 -5.12,-7.68 -5.76,-3.008 0,0 0.576,0.96 4.48,2.752 3.904,1.792 1.28,0.256 1.28,0.256 z"
+             d="m 37.901,51.799 c 0,0 0.576,0.96 4.48,2.752 5.158628,3.366081 -3.701245,-6.8721 -4.48,-2.752 z"
              style="fill:#00e9ff;stroke:#00e9ff;stroke-width:1px;stroke-linecap:round"
-             id="path1732" />
+             id="path1732"
+             sodipodi:nodetypes="ccc" />
         </g>
         <g
            transform="matrix(0.356055,-0.351034,0.351034,0.356055,-56.8644,-44.6486)"
            id="g1738">
           <path
-             d="m 43.661,54.807 c 0,0 -5.12,-7.68 -5.76,-3.008 0,0 0.576,0.96 4.48,2.752 3.904,1.792 1.28,0.256 1.28,0.256 z"
+             d="m 37.901,51.799 c 0,0 0.576,0.96 4.48,2.752 5.158628,3.366081 -3.701245,-6.8721 -4.48,-2.752 z"
              style="fill:#00e9ff;stroke:#00e9ff;stroke-width:1px;stroke-linecap:round"
-             id="path1736" />
+             id="path1736"
+             sodipodi:nodetypes="ccc" />
         </g>
       </g>
       <g
