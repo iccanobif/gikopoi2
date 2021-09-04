@@ -178,7 +178,7 @@
                         {{ $t("ui.label_stream", {index: index+1}) }}<span class="stream-title">{{
                             streamSlot.isActive
                                 ? (streamSlot.userId in users
-                                    ? toDisplayName(this.users[stream.userId].name)
+                                    ? toDisplayName(this.users[streamSlot.userId].name)
                                     : "")
                                 : "OFF"
                         }}</span>
@@ -2692,17 +2692,19 @@ export default defineComponent({
                 withVideo: withVideo,
                 withSound: withSound,
                 isPrivateStream: this.streamIsPrivateStream,
-                info: this.mediaStream!.getAudioTracks().map(t => ({
+                info: this.mediaStream.getAudioTracks().map(t => ({
                         constraints: t.getConstraints && t.getConstraints(),
                         settings: t.getSettings && t.getSettings(),
                         capabilities: t.getCapabilities && t.getCapabilities(),
                     }))
-                    .concat(this.mediaStream!.getVideoTracks().map(t => ({
+                    .concat(this.mediaStream.getVideoTracks().map(t => ({
                         constraints: t.getConstraints && t.getConstraints(),
                         settings: t.getSettings && t.getSettings(),
                         capabilities: t.getCapabilities && t.getCapabilities(),
                     })))
             });
+
+            
 
             // On small screens, displaying the <video> element seems to cause a reflow in a way that
             // makes the canvas completely gray, so i force a redraw
@@ -2747,6 +2749,8 @@ export default defineComponent({
             );
 
         const videoElement = document.getElementById("local-video-" + slotId) as HTMLVideoElement
+
+        console.log("setting srcObject", videoElement, this.mediaStream)
         videoElement.srcObject = this.mediaStream;
     },
     stopStreaming: function ()
@@ -2805,6 +2809,7 @@ export default defineComponent({
                     const stream = event.streams[0]
 
                     const videoElement = document.getElementById("received-video-" + streamSlotId) as HTMLVideoElement
+                    
                     videoElement.srcObject = stream;
                     $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
 
