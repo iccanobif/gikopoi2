@@ -283,12 +283,11 @@ window.vueApp = new Vue({
 
                 await loadCharacterImagesPromise;
 
-                if (this.characterId === "naito")
-                {
-                    const die = Math.random()
-                    if (die < 0.25)
-                        this.characterId = "funkynaito"
-                }
+                const die = Math.random()
+                if (this.characterId === "naito" && die < 0.25)
+                    this.characterId = "funkynaito"
+                if (this.characterId === "dokuo" && die < 0.25)
+                    this.characterId = "tabako_dokuo"
 
                 if (this.password == "iapetus56")
                     this.characterId = "shar_naito"
