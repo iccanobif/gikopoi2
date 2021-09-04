@@ -267,7 +267,7 @@ io.on("connection", function (socket: Socket)
             else
             {
                 // no TIGER TIGER pls
-                if ("TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
+                if (msg.length > "TIGER".length && "TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
 
                 msg = msg.replace(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)|(ボクデン)|(ぼくでん)|(卜伝)|(ﾎﾞｸﾃﾞﾝ)|(ボクデソ)/gi,
