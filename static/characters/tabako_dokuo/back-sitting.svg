@@ -43,10 +43,11 @@
      inkscape:zoom="5.5384615"
      inkscape:cx="80"
      inkscape:cy="91"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-x="105"
+     inkscape:window-y="361"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg77" />
+     inkscape:current-layer="svg77"
+     inkscape:document-rotation="0" />
   <defs
      id="defs69">
     <path
@@ -89,74 +90,63 @@
     <g
        transform="translate(0.681818,-24.1212)"
        id="g159">
-        <path
-   d="m 83.704,137.624 12.367,-24.87 12.142,25.709"
-   style="fill:none;stroke:#000000;stroke-width:2px"
-   id="path157" />
-
+      <path
+         d="m 83.704,137.624 12.367,-24.87 12.142,25.709"
+         style="fill:none;stroke:#000000;stroke-width:2px"
+         id="path157" />
     </g>
     <g
        transform="translate(0.681818,-24.1212)"
        id="g163">
-        <path
-   d="m 59.026,138.305 9.88,-28.719 22.08,29.395"
-   style="fill:none;stroke:#000000;stroke-width:2px"
-   id="path161" />
-
+      <path
+         d="m 59.026,138.305 9.88,-28.719 22.08,29.395"
+         style="fill:none;stroke:#000000;stroke-width:2px"
+         id="path161" />
     </g>
     <g
        transform="translate(0.681818,-24.1212)"
        id="g167">
-        <path
-   d="m 83.7,104.095 12.989,8.025 c 0,0 1.89,0.01 8.37,-12.87"
-   style="fill:none;stroke:#000000;stroke-width:2px"
-   id="path165" />
-
+      <path
+         d="m 83.7,104.095 12.989,8.025 c 0,0 1.89,0.01 8.37,-12.87"
+         style="fill:none;stroke:#000000;stroke-width:2px"
+         id="path165" />
     </g>
     <g
        transform="matrix(2,0,0,2,82.0228,120.079)"
        id="g184">
-        <g
-   id="body-fill"
-   serif:id="body fill"
-   transform="matrix(0.5,0,0,0.5,-40.6705,-72.1)">
-            <path
-   d="m 57.045,94.382 c 0,0 -16.534,-6.916 -10.838,-26.18 3.106,-10.502 10.965,-14.348 16.315,-16.108 4.464,-1.469 8.543,-2.267 8.543,-2.267 0,0 15.42,-4.021 21.436,-1.013 6.016,3.008 8.357,1.759 17.253,11.487 2.445,2.674 2.978,4.897 3.706,6.124 1.922,3.24 1.258,2.239 4.321,5.813 0,0 3.2,14.144 -2.88,18.688 0,0 -8.192,13.376 -30.912,12.032 l -0.627,3.699 c 1.591,0.089 8.533,26.647 2.688,31.194 0,0 -5.798,5.273 -27.494,1.817 0,0 -8.935,-2.905 -7.207,-18.841 l 7.296,-25.549 z"
-   style="fill:#ffffff;stroke:#ffffff;stroke-width:0.21px;stroke-linecap:square"
-   id="path169" />
-
-        </g>
-
-        <g
-   transform="matrix(0.5,0,0,0.5,-40.6705,-72.1)"
-   id="g174">
-            <path
-   d="m 85.032,102.665 c 0,0 20.397,2.277 30.637,-12.955"
-   style="fill:none;stroke:#000000;stroke-width:2.5px;stroke-linecap:square"
-   id="path172" />
-
-        </g>
-
-        <g
-   transform="matrix(0.5,0,0,0.5,-40.6705,-72.1)"
-   id="g178">
-            <path
-   d="m 58.82,94.303 c 0,0 -9.559,25.67 -6.519,37.59"
-   style="fill:none;stroke:#000000;stroke-width:2.52px;stroke-linecap:butt"
-   id="path176" />
-
-        </g>
-
-        <g
-   transform="matrix(0.5,0,0,0.5,-41.0114,-72.0394)"
-   id="g182">
-            <path
-   d="m 46.178,74.886 c -1.75,-12.75 11.76,-20.72 11.76,-20.72 0,0 42.627,-22.12 59.587,17.88"
-   style="fill:none;stroke:#000000;stroke-width:2.5px;stroke-linecap:square"
-   id="path180" />
-
-        </g>
-
+      <g
+         id="body-fill"
+         serif:id="body fill"
+         transform="matrix(0.5,0,0,0.5,-40.6705,-72.1)">
+        <path
+           d="m 57.045,94.382 c 0,0 -16.534,-6.916 -10.838,-26.18 3.106,-10.502 10.965,-14.348 16.315,-16.108 4.464,-1.469 8.543,-2.267 8.543,-2.267 0,0 15.42,-4.021 21.436,-1.013 6.016,3.008 8.357,1.759 17.253,11.487 2.445,2.674 2.978,4.897 3.706,6.124 1.922,3.24 1.258,2.239 4.321,5.813 0,0 3.2,14.144 -2.88,18.688 0,0 -8.192,13.376 -30.912,12.032 l -0.627,3.699 c 1.591,0.089 8.533,26.647 2.688,31.194 0,0 -5.798,5.273 -27.494,1.817 0,0 -8.935,-2.905 -7.207,-18.841 l 7.296,-25.549 z"
+           style="fill:#ffffff;stroke:#ffffff;stroke-width:0.21px;stroke-linecap:square"
+           id="path169" />
+      </g>
+      <g
+         transform="matrix(0.5,0,0,0.5,-40.6705,-72.1)"
+         id="g174">
+        <path
+           d="m 85.032,102.665 c 0,0 20.397,2.277 30.637,-12.955"
+           style="fill:none;stroke:#000000;stroke-width:2.5px;stroke-linecap:square"
+           id="path172" />
+      </g>
+      <g
+         transform="matrix(0.5,0,0,0.5,-40.6705,-72.1)"
+         id="g178">
+        <path
+           d="m 58.82,94.303 c 0,0 -9.559,25.67 -6.519,37.59"
+           style="fill:none;stroke:#000000;stroke-width:2.52px;stroke-linecap:butt"
+           id="path176" />
+      </g>
+      <g
+         transform="matrix(0.5,0,0,0.5,-41.0114,-72.0394)"
+         id="g182">
+        <path
+           d="m 46.178,74.886 c -1.75,-12.75 11.76,-20.72 11.76,-20.72 0,0 42.627,-22.12 59.587,17.88"
+           style="fill:none;stroke:#000000;stroke-width:2.5px;stroke-linecap:square"
+           id="path180" />
+      </g>
     </g>
   </g>
 </svg>

@@ -40,13 +40,13 @@
      inkscape:window-height="2066"
      id="namedview895"
      showgrid="false"
-     inkscape:zoom="11.076923"
-     inkscape:cx="172.75934"
-     inkscape:cy="54.778392"
+     inkscape:zoom="8"
+     inkscape:cx="87.790456"
+     inkscape:cy="60.342986"
      inkscape:window-x="2869"
      inkscape:window-y="-11"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g938"
+     inkscape:current-layer="g956"
      inkscape:document-rotation="0" />
   <defs
      id="defs883">
@@ -170,8 +170,8 @@
              transform="matrix(0.5,0,0,0.5,-41.1705,-72.1)"
              id="g931">
             <path
-               d="m 120.79786,97.102338 15.00138,2.951252 c 0,0 2.73721,6.78956 -3.56417,5.81977 -6.30292,-0.9679 -13.8644,-2.44545 -13.8644,-2.44545"
-               style="fill:#ffffff;stroke:#000000;stroke-width:1.1477424;stroke-linecap:round;stroke-miterlimit:1.5;stroke-dasharray:none;stroke-opacity:1"
+               d="m 120.79786,97.102338 13.9918,3.397602 c 0.46634,8.3945 0.4143,7.07198 -4.42807,6.32019 -6.30292,-0.9679 -11.99092,-3.39222 -11.99092,-3.39222"
+               style="fill:#ffffff;stroke:#000000;stroke-width:1.14774;stroke-linecap:round;stroke-miterlimit:1.5;stroke-dasharray:none;stroke-opacity:1"
                id="path929"
                sodipodi:nodetypes="cccc" />
           </g>
@@ -179,9 +179,10 @@
              transform="matrix(0.5,0,0,0.5,-41.1705,-72.1)"
              id="g935">
             <path
-               d="m 119.72254,103.70633 c 0,0 -8.88567,0.54673 -5.7815,-5.439128 0,0 0.8374,-3.125501 6.84138,-1.285272 z"
-               style="fill:#ffae00;stroke:#000000;stroke-width:1.1477424;stroke-linecap:round;stroke-opacity:1;stroke-miterlimit:1.5;stroke-dasharray:none"
-               id="path933" />
+               d="m 119.72254,103.70633 c 0,0 -4.66853,-0.38405 -6.21035,-2.28535 -0.65763,-0.81097 -0.55026,-3.704309 0.37788,-5.494077 0,0 0.88837,-0.785202 6.89235,1.055027 z"
+               style="fill:#ffae00;stroke:#000000;stroke-width:1.14774;stroke-linecap:round;stroke-miterlimit:1.5;stroke-dasharray:none;stroke-opacity:1"
+               id="path933"
+               sodipodi:nodetypes="csccc" />
           </g>
         </g>
       </g>
