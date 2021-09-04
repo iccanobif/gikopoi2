@@ -36,7 +36,7 @@
                             v-bind:class="{'character-selected': character.characterName == characterId}"/>
                     </label>
                 </div>
-                <button id="login-button" v-on:click="login" :disabled="isLoggingIn">Login</button>
+                <button type="button" id="login-button" v-on:click="login" :disabled="isLoggingIn">Login</button>
             </form>
             <div id="login-footer" translate="no" class="notranslate" v-html="loginFooterContent">
             </div>
