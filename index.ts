@@ -465,8 +465,7 @@ io.on("connection", function (socket: Socket)
                 }
             }, 10000);
 
-            getFilteredConnectedUserList(user, user.areaId, user.roomId)
-                .forEach((u) => u.socketId && io.to(u.socketId).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, roomState.streams)));
+            sendUpdatedStreamSlotState(user)
 
             emitServerStats(user.areaId)
 
@@ -590,8 +589,7 @@ io.on("connection", function (socket: Socket)
                 stream.isReady = true
                 stream.publisherId = janusHandle.getPublisherId();
 
-                userRoomEmit(user, user.areaId, user.roomId,
-                    "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
+                sendUpdatedStreamSlotState(user)
 
                 socket.emit("server-rtc-message", streamSlotId, "answer", answer);
             }
@@ -1534,8 +1532,7 @@ function clearStream(user: Player)
             stream.isReady = false
             stream.userId = null
             stream.publisherId = null
-            userRoomEmit(user, user.areaId, user.roomId,
-                "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
+            sendUpdatedStreamSlotState(user)
             emitServerStats(user.areaId)
             annihilateJanusRoom(roomState);
         }
@@ -1616,6 +1613,21 @@ function banIP(ip: string)
 
         disconnectUser(user)
     }
+}
+
+function sendUpdatedStreamSlotState(user: Player)
+{
+    const roomState = roomStates[user.areaId][user.roomId] 
+    console.log("sendUpdatedStreamSlotState", roomState.streams)
+    getFilteredConnectedUserList(user, user.areaId, user.roomId)
+        .forEach((u) => 
+        {
+            if (u.socketId)
+            {
+                console.log("fuck")
+                io.to(u.socketId).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, roomState.streams))
+            }
+        });
 }
 
 setInterval(() =>
