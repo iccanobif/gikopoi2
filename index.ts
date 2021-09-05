@@ -154,7 +154,7 @@ io.on("connection", function (socket: Socket)
     const sendCurrentRoomState = () =>
     {
         const connectedUsers: PlayerDto[] = getFilteredConnectedUserList(user, user.roomId, user.areaId)
-            .map(p => toPlayerDto(p, user.roomId, user.areaId))
+            .map(p => toPlayerDto(p))
 
         const state: RoomStateDto = {
             currentRoom,
@@ -170,7 +170,7 @@ io.on("connection", function (socket: Socket)
     const sendNewUserInfo = () =>
     {
         userRoomEmit(user, user.areaId, user.roomId,
-            "server-user-joined-room", toPlayerDto(user, user.roomId, user.areaId));
+            "server-user-joined-room", toPlayerDto(user));
     }
 
     const setupJanusHandleSlots = () =>
@@ -195,9 +195,9 @@ io.on("connection", function (socket: Socket)
             clearStream(user)
             emitServerStats(user.areaId)
         }
-        catch (e)
+        catch (exc)
         {
-            log.error(e.message + " " + e.stack);
+            logException(exc)
         }
     })
 
@@ -238,7 +238,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     });
     socket.on("user-msg", function (msg: string)
@@ -305,7 +305,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     });
     socket.on("user-move", async function (direction: Direction)
@@ -396,7 +396,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     });
     socket.on("user-bubble-position", function (position: Direction)
@@ -410,7 +410,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     });
     socket.on("user-want-to-stream", function (data: {
@@ -473,7 +473,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
             socket.emit("server-not-ok-to-stream", "start_stream_unknown_error")
         }
     })
@@ -486,7 +486,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -529,7 +529,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
             socket.emit("server-not-ok-to-take-stream", streamSlotId);
         }
     })
@@ -616,7 +616,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + "\n" + e.stack);
+            logException(e)
 
             if (e.message.match(/Couldn't attach to plugin: error '-1'/))
             {
@@ -683,7 +683,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -706,7 +706,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -737,7 +737,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -752,7 +752,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -816,7 +816,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -838,7 +838,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -892,7 +892,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -957,7 +957,7 @@ function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSl
     })
 }
 
-function toPlayerDto(player: Player, roomId: string, areaId: string): PlayerDto
+function toPlayerDto(player: Player): PlayerDto
 {
     const playerDto = createPlayerDto(player);
     if (rooms[player.roomId].forcedAnonymous)
@@ -1014,7 +1014,7 @@ app.get("/", async (req, res) =>
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
 
         data = data.replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
@@ -1108,7 +1108,7 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
         const areaId = req.params.areaId
 
         const connectedUsers: PlayerDto[] = getConnectedUserList(roomId, areaId)
-            .map(p => toPlayerDto(p, roomId, areaId))
+            .map(p => toPlayerDto(p))
 
         const dto: RoomStateDto = {
             currentRoom: rooms[roomId],
@@ -1209,7 +1209,7 @@ app.get("/areas/:areaId/streamers", (req, res) =>
     }
     catch (e)
     {
-        log.error(e.message + " " + e.stack);
+        logException(e)
     }
 })
 
@@ -1319,7 +1319,7 @@ app.post("/ban", (req, res) => {
     }
     catch (exc)
     {
-        log.error(exc)
+        logException(exc)
         res.end("error")
     }
 })
@@ -1344,7 +1344,7 @@ app.post("/unban", (req, res) => {
     }
     catch (exc)
     {
-        log.error(exc)
+        logException(exc)
         res.end("error")
     }
 })
@@ -1626,6 +1626,12 @@ function sendUpdatedStreamSlotState(user: Player)
         });
 }
 
+export function logException(exception: any)
+{
+    const logMessage = exception.message + " " + exception.stack
+    log.error(logMessage.replace(/\n/g, ""));
+}
+
 setInterval(() =>
 {
     try
@@ -1661,7 +1667,7 @@ setInterval(() =>
     }
     catch (e)
     {
-        log.error(e.message + " " + e.stack);
+        logException(e)
     }
 }, 1 * 1000)
 
@@ -1697,7 +1703,7 @@ async function persistState()
     }
     catch (exc)
     {
-        log.error(exc)
+        logException(exc)
     }
 }
 
@@ -1749,13 +1755,13 @@ async function restoreState()
             }
             catch (exc)
             {
-                log.error(exc)
+                logException(exc)
             }
         }
     }
     catch (exc)
     {
-        log.error(exc)
+        logException(exc)
     }
 }
 

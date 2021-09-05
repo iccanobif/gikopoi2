@@ -505,7 +505,9 @@ export const rooms: { [roomId: string]: Room } = {
         objects: [
             { x: 4, y: 6, url: "piano.svg", scale: 1, offset: { x: 1092-345, y: 1192-393 } },
         ],
-        sit: [],
+        sit: [
+            { x: 3, y: 10 },
+        ],
         blocked: [
             { x: 0, y: 3 },
             { x: 0, y: 2 },
