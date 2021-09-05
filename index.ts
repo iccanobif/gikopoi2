@@ -623,7 +623,7 @@ io.on("connection", function (socket: Socket)
                 // When this exception is raised, usually it means that the janus server has broken
                 // and so far the only thing that will fix it is to restart the server, so that all streams
                 // stop and all rooms are cleared. Would be nice to find a way to prevent this problem in the first place...
-                log.info("EMERGENCY SERVER RESTART BECAUSE OF JANUS FUCKUP")
+                log.error("EMERGENCY SERVER RESTART BECAUSE OF JANUS FUCKUP")
 
                 process.exit()
             }
