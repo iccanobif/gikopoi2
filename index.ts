@@ -1618,15 +1618,11 @@ function banIP(ip: string)
 function sendUpdatedStreamSlotState(user: Player)
 {
     const roomState = roomStates[user.areaId][user.roomId] 
-    console.log("sendUpdatedStreamSlotState", roomState.streams)
-    getFilteredConnectedUserList(user, user.areaId, user.roomId)
+    getFilteredConnectedUserList(user, user.roomId, user.areaId)
         .forEach((u) => 
         {
             if (u.socketId)
-            {
-                console.log("fuck")
                 io.to(u.socketId).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, roomState.streams))
-            }
         });
 }
 
