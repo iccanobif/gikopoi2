@@ -87,7 +87,7 @@ export const characters = {
     hotsuma_giko: new Character("hotsuma_giko", "svg", false),
     dokuo: new Character("dokuo", "svg", false),
     tabako_dokuo: new Character("tabako_dokuo", "svg", true),
-    himawari: new Character("himawari", "svg", false),
+    himawari: new Character("himawari", "svg", true),
 }
 
 export const loadCharacters = async (crispMode) => {
