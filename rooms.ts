@@ -2406,7 +2406,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             left: { x: 0, y: 0, direction: "right", target: { roomId: "cafe_st", doorId: "water" } },
         },
-        streamSlotCount: 0,
+        streamSlotCount: 1,
     },
     idoB: {
         id: "idoB",
