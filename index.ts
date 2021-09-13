@@ -8,7 +8,7 @@ import log from "loglevel";
 import { settings } from "./settings";
 import compression from 'compression';
 import { getAbuseConfidenceScore } from "./abuse-ip-db";
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { readdir, readFile, writeFile } from "fs/promises";
 import { Chess } from "chess.js";
 import { Socket } from "socket.io";
@@ -285,8 +285,13 @@ io.on("connection", function (socket: Socket)
 
             if (msg == "#ika")
             {
-                changeCharacter(user, "ika")
-                user.lastAction = Date.now()
+                changeCharacter(user, "ika", false)
+                return;
+            }
+
+            if (msg == "#henshin")
+            {
+                changeCharacter(user, user.characterId, !user.isAlternateCharacter)
                 return;
             }
 
@@ -376,7 +381,7 @@ io.on("connection", function (socket: Socket)
                 // But if you're a squid, you'll stay a squid all your life!
                 if (currentRoom.id == "yoshinoya" && user.position.x == 2 && user.position.y == 4)
                 {
-                    changeCharacter(user, "hungry_giko")
+                    changeCharacter(user, "hungry_giko", false)
                 }
 
                 user.position.x = newX
@@ -567,7 +572,7 @@ io.on("connection", function (socket: Socket)
                         + "(" + roomState.janusRoomName + ") created on server "
                         + roomState.janusRoomServer.id)
                 }
-                catch (e)
+                catch (e: any)
                 {
                     // Check if error isn't just that the room already exists, code 427
                     if (!e.getCode || e.getCode() !== 427) throw e;
@@ -614,7 +619,7 @@ io.on("connection", function (socket: Socket)
                 }
             }
         }
-        catch (e)
+        catch (e: any)
         {
             logException(e)
 
@@ -916,13 +921,15 @@ function emitServerStats(areaId: string)
     });
 }
 
-function changeCharacter(user: Player, characterId: string)
+function changeCharacter(user: Player, characterId: string, isAlternateCharacter: boolean)
 {
     if (user.characterId == "ika")
         return // The curse of being a squid can never be lifted.
 
     user.characterId = characterId
-    userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId)
+    user.isAlternateCharacter = isAlternateCharacter
+    user.lastAction = Date.now()
+    userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId, user.isAlternateCharacter)
 }
 
 // TODO remove areaId and roomId parameters, we can get them from user.areaId and user.roomId
@@ -1044,7 +1051,7 @@ app.get("/", async (req, res) =>
     }
     catch (e)
     {
-        res.end(e.message + " " + e.stack)
+        res.end(stringifyException(e))
     }
 
 })
@@ -1083,7 +1090,7 @@ app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
     }
     catch (e)
     {
-        res.end(e.message + " " + e.stack)
+        res.end(stringifyException(e))
     }
 })
 
@@ -1121,7 +1128,7 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
     }
     catch (e)
     {
-        res.end(e.message + " " + e.stack)
+        res.end(stringifyException(e))
     }
 })
 
@@ -1135,7 +1142,12 @@ async function getCharacterImages(crisp: boolean)
         const extension = characterId == "funkynaito" || characterId == "molgiko" ? "png" : "svg"
 
         const getCharacterImage = async (path: string, crisp: boolean) => {
-            let text = await readFile("static/characters/" + path, { encoding: path.endsWith(".svg") ? "utf-8" : "base64"})
+            const completePath = "static/characters/" + path
+
+            if (!existsSync(completePath))
+                return null
+            
+            let text = await readFile(completePath, { encoding: path.endsWith(".svg") ? "utf-8" : "base64"})
 
             if (crisp && path.endsWith(".svg"))
                 text = text.replace('<svg', '<svg shape-rendering="crispEdges"')
@@ -1145,14 +1157,22 @@ async function getCharacterImages(crisp: boolean)
 
         output[characterId] = {
             isBase64: extension == "png",
-            frontSitting: await getCharacterImage(characterId + "/front-sitting." + extension, crisp),
-            frontStanding: await getCharacterImage(characterId + "/front-standing." + extension, crisp),
-            frontWalking1: await getCharacterImage(characterId + "/front-walking-1." + extension, crisp),
-            frontWalking2: await getCharacterImage(characterId + "/front-walking-2." + extension, crisp),
-            backSitting: await getCharacterImage(characterId + "/back-sitting." + extension, crisp),
-            backStanding: await getCharacterImage(characterId + "/back-standing." + extension, crisp),
-            backWalking1: await getCharacterImage(characterId + "/back-walking-1." + extension, crisp),
-            backWalking2: await getCharacterImage(characterId + "/back-walking-2." + extension, crisp),
+            frontSitting: (await getCharacterImage(characterId + "/front-sitting." + extension, crisp))!,
+            frontStanding: (await getCharacterImage(characterId + "/front-standing." + extension, crisp))!,
+            frontWalking1: (await getCharacterImage(characterId + "/front-walking-1." + extension, crisp))!,
+            frontWalking2: (await getCharacterImage(characterId + "/front-walking-2." + extension, crisp))!,
+            backSitting: (await getCharacterImage(characterId + "/back-sitting." + extension, crisp))!,
+            backStanding: (await getCharacterImage(characterId + "/back-standing." + extension, crisp))!,
+            backWalking1: (await getCharacterImage(characterId + "/back-walking-1." + extension, crisp))!,
+            backWalking2: (await getCharacterImage(characterId + "/back-walking-2." + extension, crisp))!,
+            frontSittingAlt: await getCharacterImage(characterId + "/front-sitting-alt." + extension, crisp),
+            frontStandingAlt: await getCharacterImage(characterId + "/front-standing-alt." + extension, crisp),
+            frontWalking1Alt: await getCharacterImage(characterId + "/front-walking-1-alt." + extension, crisp),
+            frontWalking2Alt: await getCharacterImage(characterId + "/front-walking-2-alt." + extension, crisp),
+            backSittingAlt: await getCharacterImage(characterId + "/back-sitting-alt." + extension, crisp),
+            backStandingAlt: await getCharacterImage(characterId + "/back-standing-alt." + extension, crisp),
+            backWalking1Alt: await getCharacterImage(characterId + "/back-walking-1-alt." + extension, crisp),
+            backWalking2Alt: await getCharacterImage(characterId + "/back-walking-2-alt." + extension, crisp),
         }
     }
     return output
@@ -1160,12 +1180,12 @@ async function getCharacterImages(crisp: boolean)
 
 app.get("/characters/regular", async (req, res) =>
 {
-    try { res.json(await getCharacterImages(false)) } catch (e) { res.end(e.message + " " + e.stack) }
+    try { res.json(await getCharacterImages(false)) } catch (e) { res.end(stringifyException(e)) }
 })
 
 app.get("/characters/crisp", async (req, res) =>
 {
-    try { res.json(await getCharacterImages(true)) } catch (e) { res.end(e.message + " " + e.stack) }
+    try { res.json(await getCharacterImages(true)) } catch (e) { res.end(stringifyException(e)) }
 })
 
 app.get("/areas/:areaId/streamers", (req, res) =>
@@ -1446,7 +1466,7 @@ app.post("/login", (req, res) =>
     }
     catch (e)
     {
-        res.end(e.message + " " + e.stack)
+        res.end(stringifyException(e))
     }
 })
 
@@ -1626,10 +1646,15 @@ function sendUpdatedStreamSlotState(user: Player)
         });
 }
 
-export function logException(exception: any)
+function stringifyException(exception: any)
 {
     const logMessage = exception.message + " " + exception.stack
-    log.error(logMessage.replace(/\n/g, ""));
+    return logMessage.replace(/\n/g, "")
+}
+
+export function logException(exception: any)
+{
+    log.error(stringifyException(exception));
 }
 
 setInterval(() =>

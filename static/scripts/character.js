@@ -49,6 +49,25 @@ export class Character
         this.backStandingFlippedImage = RenderCache.Image(await stringToImage(dto.backStanding), this.scale, true)
         this.backWalking1FlippedImage = RenderCache.Image(await stringToImage(dto.backWalking1), this.scale, true)
         this.backWalking2FlippedImage = RenderCache.Image(await stringToImage(dto.backWalking2), this.scale, true)
+        
+        // Alternate images
+        this.frontSittingImageAlt = RenderCache.Image(await stringToImage(dto.frontSittingAlt || dto.frontSitting), this.scale)
+        this.frontStandingImageAlt = RenderCache.Image(await stringToImage(dto.frontStandingAlt || dto.frontStanding), this.scale)
+        this.frontWalking1ImageAlt = RenderCache.Image(await stringToImage(dto.frontWalking1Alt || dto.frontWalking1), this.scale)
+        this.frontWalking2ImageAlt = RenderCache.Image(await stringToImage(dto.frontWalking2Alt || dto.frontWalking2), this.scale)
+        this.backSittingImageAlt = RenderCache.Image(await stringToImage(dto.backSittingAlt || dto.backSitting), this.scale)
+        this.backStandingImageAlt = RenderCache.Image(await stringToImage(dto.backStandingAlt || dto.backStanding), this.scale)
+        this.backWalking1ImageAlt = RenderCache.Image(await stringToImage(dto.backWalking1Alt || dto.backWalking1), this.scale)
+        this.backWalking2ImageAlt = RenderCache.Image(await stringToImage(dto.backWalking2Alt || dto.backWalking2), this.scale)
+        
+        this.frontSittingFlippedImageAlt = RenderCache.Image(await stringToImage(dto.frontSittingAlt || dto.frontSitting ), this.scale, true)
+        this.frontStandingFlippedImageAlt = RenderCache.Image(await stringToImage(dto.frontStandingAlt || dto.frontStanding ), this.scale, true)
+        this.frontWalking1FlippedImageAlt = RenderCache.Image(await stringToImage(dto.frontWalking1Alt || dto.frontWalking1 ), this.scale, true)
+        this.frontWalking2FlippedImageAlt = RenderCache.Image(await stringToImage(dto.frontWalking2Alt || dto.frontWalking2 ), this.scale, true)
+        this.backSittingFlippedImageAlt = RenderCache.Image(await stringToImage(dto.backSittingAlt || dto.backSitting ), this.scale, true)
+        this.backStandingFlippedImageAlt = RenderCache.Image(await stringToImage(dto.backStandingAlt || dto.backStanding ), this.scale, true)
+        this.backWalking1FlippedImageAlt = RenderCache.Image(await stringToImage(dto.backWalking1Alt || dto.backWalking1 ), this.scale, true)
+        this.backWalking2FlippedImageAlt = RenderCache.Image(await stringToImage(dto.backWalking2Alt || dto.backWalking2 ), this.scale, true)
     }
 }
 
@@ -88,6 +107,7 @@ export const characters = {
     dokuo: new Character("dokuo", "svg", false),
     tabako_dokuo: new Character("tabako_dokuo", "svg", true),
     himawari: new Character("himawari", "svg", true),
+    tokita_naito: new Character("tokita_naito", "svg", false),
 }
 
 export const loadCharacters = async (crispMode) => {

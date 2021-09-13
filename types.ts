@@ -119,6 +119,7 @@ export interface PlayerDto
     bubblePosition: Direction,
     voicePitch: number,
     lastRoomMessage: string,
+    isAlternateCharacter: boolean,
 }
 
 export interface StreamSlotDto
@@ -163,4 +164,12 @@ export interface CharacterSvgDto
     backStanding: string
     backWalking1: string
     backWalking2: string
+    frontSittingAlt: string | null
+    frontStandingAlt: string | null
+    frontWalking1Alt: string | null
+    frontWalking2Alt: string | null
+    backSittingAlt: string | null
+    backStandingAlt: string | null
+    backWalking1Alt: string | null
+    backWalking2Alt: string | null
 }
