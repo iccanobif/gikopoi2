@@ -706,8 +706,9 @@ window.vueApp = new Vue({
                 }
             });
 
-            this.socket.on("server-character-changed", (userId, characterId) => {
+            this.socket.on("server-character-changed", (userId, characterId, isAlternateCharacter) => {
                 this.users[userId].character = characters[characterId]
+                this.users[userId].isAlternateCharacter = isAlternateCharacter
                 this.isRedrawRequired = true
             })
 
@@ -741,6 +742,7 @@ window.vueApp = new Vue({
             newUser.bubblePosition = userDTO.bubblePosition;
             newUser.id = userDTO.id;
             newUser.voicePitch = userDTO.voicePitch
+            newUser.isAlternateCharacter = userDTO.isAlternateCharacter
             
             this.users[userDTO.id] = newUser;
         },

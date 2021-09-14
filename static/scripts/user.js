@@ -32,6 +32,7 @@ export default class User
         this.bubblePosition = "up";
         this.bubbleImage = null;
         this.voicePitch = null;
+        this.isAlternateCharacter = false;
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)
@@ -101,6 +102,23 @@ export default class User
 
     getCurrentImage(room)
     {
+        const frontSittingImage = this.isAlternateCharacter ? this.character.frontSittingImageAlt : this.character.frontSittingImage;
+        const frontStandingImage = this.isAlternateCharacter ? this.character.frontStandingImageAlt : this.character.frontStandingImage;
+        const frontWalking1Image = this.isAlternateCharacter ? this.character.frontWalking1ImageAlt : this.character.frontWalking1Image;
+        const frontWalking2Image = this.isAlternateCharacter ? this.character.frontWalking2ImageAlt : this.character.frontWalking2Image;
+        const backSittingImage = this.isAlternateCharacter ? this.character.backSittingImageAlt : this.character.backSittingImage;
+        const backStandingImage = this.isAlternateCharacter ? this.character.backStandingImageAlt : this.character.backStandingImage;
+        const backWalking1Image = this.isAlternateCharacter ? this.character.backWalking1ImageAlt : this.character.backWalking1Image;
+        const backWalking2Image = this.isAlternateCharacter ? this.character.backWalking2ImageAlt : this.character.backWalking2Image;
+        const frontSittingFlippedImage = this.isAlternateCharacter ? this.character.frontSittingFlippedImageAlt : this.character.frontSittingFlippedImage;
+        const frontStandingFlippedImage = this.isAlternateCharacter ? this.character.frontStandingFlippedImageAlt : this.character.frontStandingFlippedImage;
+        const frontWalking1FlippedImage = this.isAlternateCharacter ? this.character.frontWalking1FlippedImageAlt : this.character.frontWalking1FlippedImage;
+        const frontWalking2FlippedImage = this.isAlternateCharacter ? this.character.frontWalking2FlippedImageAlt : this.character.frontWalking2FlippedImage;
+        const backSittingFlippedImage = this.isAlternateCharacter ? this.character.backSittingFlippedImageAlt : this.character.backSittingFlippedImage;
+        const backStandingFlippedImage = this.isAlternateCharacter ? this.character.backStandingFlippedImageAlt : this.character.backStandingFlippedImage;
+        const backWalking1FlippedImage = this.isAlternateCharacter ? this.character.backWalking1FlippedImageAlt : this.character.backWalking1FlippedImage;
+        const backWalking2FlippedImage = this.isAlternateCharacter ? this.character.backWalking2FlippedImageAlt : this.character.backWalking2FlippedImage;
+
         if (this.isSpinning)
         {
             const spinCycle = Math.round(this.frameCount / 2) % 4
@@ -108,16 +126,16 @@ export default class User
             {
                 case 0:
                     // this.direction = "up"
-                    return this.character.backWalking1Image;
+                    return backWalking1Image;
                 case 1:
                     // this.direction = "left"
-                    return this.character.backWalking1FlippedImage;
+                    return backWalking1FlippedImage;
                 case 2:
                     // this.direction = "down"
-                    return this.character.frontWalking1FlippedImage;
+                    return frontWalking1FlippedImage;
                 case 3:
                     // this.direction = "right"
-                    return this.character.frontWalking1Image;
+                    return frontWalking1Image;
             }
         }
         else if (this.isWalking)
@@ -126,13 +144,13 @@ export default class User
             switch (this.direction)
             {
                 case "up":
-                    return walkCycle ? this.character.backWalking1Image : this.character.backWalking2Image;
+                    return walkCycle ? backWalking1Image : backWalking2Image;
                 case "left":
-                    return walkCycle ? this.character.backWalking1FlippedImage : this.character.backWalking2FlippedImage;
+                    return walkCycle ? backWalking1FlippedImage : backWalking2FlippedImage;
                 case "down":
-                    return walkCycle ? this.character.frontWalking1FlippedImage : this.character.frontWalking2FlippedImage;
+                    return walkCycle ? frontWalking1FlippedImage : frontWalking2FlippedImage;
                 case "right":
-                    return walkCycle ? this.character.frontWalking1Image : this.character.frontWalking2Image;
+                    return walkCycle ? frontWalking1Image : frontWalking2Image;
             }
         }
         else
@@ -142,13 +160,13 @@ export default class User
             switch (this.direction)
             {
                 case "up":
-                    return isSitting ? this.character.backSittingImage : this.character.backStandingImage;
+                    return isSitting ? backSittingImage : backStandingImage;
                 case "left":
-                    return isSitting ? this.character.backSittingFlippedImage : this.character.backStandingFlippedImage;
+                    return isSitting ? backSittingFlippedImage : backStandingFlippedImage;
                 case "down":
-                    return isSitting ? this.character.frontSittingFlippedImage : this.character.frontStandingFlippedImage;
+                    return isSitting ? frontSittingFlippedImage : frontStandingFlippedImage;
                 case "right":
-                    return isSitting ? this.character.frontSittingImage : this.character.frontStandingImage;
+                    return isSitting ? frontSittingImage : frontStandingImage;
             }
         }
     }
