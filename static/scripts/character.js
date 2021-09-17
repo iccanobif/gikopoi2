@@ -107,7 +107,10 @@ export const characters = {
     dokuo: new Character("dokuo", "svg", false),
     tabako_dokuo: new Character("tabako_dokuo", "svg", true),
     himawari: new Character("himawari", "svg", true),
-    tokita_naito: new Character("tokita_naito", "svg", true),
+    tokita_naito: new Character("tokita_naito", "svg", !annualEvents.spooktober.isNow()),
+    pumpkinhead: new Character("pumpkinhead", "svg", !annualEvents.spooktober.isNow()),
+    naito_yurei: new Character("naito_yurei", "svg", !annualEvents.spooktober.isNow()),
+    shiinigami: new Character("shiinigami", "svg", !annualEvents.spooktober.isNow()),
 }
 
 export const loadCharacters = async (crispMode) => {
