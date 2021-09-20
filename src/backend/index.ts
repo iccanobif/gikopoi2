@@ -8,7 +8,7 @@ import log from "loglevel";
 import { settings } from "./settings";
 import compression from 'compression';
 import { getAbuseConfidenceScore } from "./abuse-ip-db";
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { readdir, readFile, writeFile } from "fs/promises";
 import { Chess } from "chess.js";
 import { Socket } from "socket.io";
@@ -158,7 +158,7 @@ io.on("connection", function (socket: Socket)
     const sendCurrentRoomState = () =>
     {
         const connectedUsers: PlayerDto[] = getFilteredConnectedUserList(user, user.roomId, user.areaId)
-            .map(p => toPlayerDto(p, user.roomId, user.areaId))
+            .map(p => toPlayerDto(p))
 
         const state: RoomStateDto = {
             currentRoom,
@@ -174,7 +174,7 @@ io.on("connection", function (socket: Socket)
     const sendNewUserInfo = () =>
     {
         userRoomEmit(user, user.areaId, user.roomId,
-            "server-user-joined-room", toPlayerDto(user, user.roomId, user.areaId));
+            "server-user-joined-room", toPlayerDto(user));
     }
 
     const setupJanusHandleSlots = () =>
@@ -204,9 +204,9 @@ io.on("connection", function (socket: Socket)
             clearStream(user)
             emitServerStats(user.areaId)
         }
-        catch (e)
+        catch (exc)
         {
-            log.error(e.message + " " + e.stack);
+            logException(exc)
         }
     })
 
@@ -247,7 +247,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     });
     socket.on("user-msg", function (msg: string)
@@ -294,8 +294,13 @@ io.on("connection", function (socket: Socket)
 
             if (msg == "#ika")
             {
-                changeCharacter(user, "ika")
-                user.lastAction = Date.now()
+                changeCharacter(user, "ika", false)
+                return;
+            }
+
+            if (msg == "#henshin")
+            {
+                changeCharacter(user, user.characterId, !user.isAlternateCharacter)
                 return;
             }
 
@@ -314,7 +319,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     });
     socket.on("user-move", async function (direction: Direction)
@@ -385,7 +390,7 @@ io.on("connection", function (socket: Socket)
                 // But if you're a squid, you'll stay a squid all your life!
                 if (currentRoom.id == "yoshinoya" && user.position.x == 2 && user.position.y == 4)
                 {
-                    changeCharacter(user, "hungry_giko")
+                    changeCharacter(user, "hungry_giko", false)
                 }
 
                 user.position.x = newX
@@ -405,7 +410,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     });
     socket.on("user-bubble-position", function (position: Direction)
@@ -419,7 +424,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     });
     socket.on("user-want-to-stream", function (data: {
@@ -474,8 +479,7 @@ io.on("connection", function (socket: Socket)
                 }
             }, 10000);
 
-            getFilteredConnectedUserList(user, user.areaId, user.roomId)
-                .forEach((u) => u.socketId && io.to(u.socketId).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, roomState.streams)));
+            sendUpdatedStreamSlotState(user)
 
             emitServerStats(user.areaId)
 
@@ -483,7 +487,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
             socket.emit("server-not-ok-to-stream", "start_stream_unknown_error")
         }
     })
@@ -496,7 +500,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -539,7 +543,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
             socket.emit("server-not-ok-to-take-stream", streamSlotId);
         }
     })
@@ -577,7 +581,7 @@ io.on("connection", function (socket: Socket)
                         + "(" + roomState.janusRoomName + ") created on server "
                         + roomState.janusRoomServer.id)
                 }
-                catch (e)
+                catch (e: any)
                 {
                     // Check if error isn't just that the room already exists, code 427
                     if (!e.getCode || e.getCode() !== 427) throw e;
@@ -599,8 +603,7 @@ io.on("connection", function (socket: Socket)
                 stream.isReady = true
                 stream.publisherId = janusHandle.getPublisherId();
 
-                userRoomEmit(user, user.areaId, user.roomId,
-                    "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
+                sendUpdatedStreamSlotState(user)
 
                 socket.emit("server-rtc-message", streamSlotId, "answer", answer);
             }
@@ -625,16 +628,16 @@ io.on("connection", function (socket: Socket)
                 }
             }
         }
-        catch (e)
+        catch (e: any)
         {
-            log.error(e.message + "\n" + e.stack);
+            logException(e)
 
             if (e.message.match(/Couldn't attach to plugin: error '-1'/))
             {
                 // When this exception is raised, usually it means that the janus server has broken
                 // and so far the only thing that will fix it is to restart the server, so that all streams
                 // stop and all rooms are cleared. Would be nice to find a way to prevent this problem in the first place...
-                log.info("EMERGENCY SERVER RESTART BECAUSE OF JANUS FUCKUP")
+                log.error("EMERGENCY SERVER RESTART BECAUSE OF JANUS FUCKUP")
 
                 process.exit()
             }
@@ -694,7 +697,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -717,7 +720,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -748,7 +751,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -763,7 +766,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -827,7 +830,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -849,7 +852,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -903,7 +906,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
     })
 
@@ -927,13 +930,15 @@ function emitServerStats(areaId: string)
     });
 }
 
-function changeCharacter(user: Player, characterId: string)
+function changeCharacter(user: Player, characterId: string, isAlternateCharacter: boolean)
 {
     if (user.characterId == "ika")
         return // The curse of being a squid can never be lifted.
 
     user.characterId = characterId
-    userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId)
+    user.isAlternateCharacter = isAlternateCharacter
+    user.lastAction = Date.now()
+    userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId, user.isAlternateCharacter)
 }
 
 // TODO remove areaId and roomId parameters, we can get them from user.areaId and user.roomId
@@ -985,7 +990,7 @@ function toStreamSlotDtoArray(user: Player | null, streamSlots: StreamSlot[]): S
     })
 }
 
-function toPlayerDto(player: Player, roomId: string, areaId: string): PlayerDto
+function toPlayerDto(player: Player): PlayerDto
 {
     const playerDto = createPlayerDto(player);
     if (rooms[player.roomId].forcedAnonymous)
@@ -1042,7 +1047,7 @@ app.get("/", async (req, res) =>
         }
         catch (e)
         {
-            log.error(e.message + " " + e.stack);
+            logException(e)
         }
 
         data = data.replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
@@ -1072,7 +1077,7 @@ app.get("/", async (req, res) =>
     }
     catch (e)
     {
-        res.end(e.message + " " + e.stack)
+        res.end(stringifyException(e))
     }
 
 })
@@ -1111,7 +1116,7 @@ app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
     }
     catch (e)
     {
-        res.end(e.message + " " + e.stack)
+        res.end(stringifyException(e))
     }
 })
 
@@ -1136,7 +1141,7 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
         const areaId = req.params.areaId
 
         const connectedUsers: PlayerDto[] = getConnectedUserList(roomId, areaId)
-            .map(p => toPlayerDto(p, roomId, areaId))
+            .map(p => toPlayerDto(p))
 
         const streams = toStreamSlotDtoArray(null, roomStates[areaId][roomId].streams)
 
@@ -1151,7 +1156,7 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
     }
     catch (e)
     {
-        res.end(e.message + " " + e.stack)
+        res.end(stringifyException(e))
     }
 })
 
@@ -1165,7 +1170,12 @@ async function getCharacterImages(crisp: boolean)
         const extension = characterId == "funkynaito" || characterId == "molgiko" ? "png" : "svg"
 
         const getCharacterImage = async (path: string, crisp: boolean) => {
-            let text = await readFile("public/characters/" + path, { encoding: path.endsWith(".svg") ? "utf-8" : "base64"})
+            const completePath = "public/characters/" + path
+
+            if (!existsSync(completePath))
+                return null
+            
+            let text = await readFile(completePath, { encoding: path.endsWith(".svg") ? "utf-8" : "base64"})
 
             if (crisp && path.endsWith(".svg"))
                 text = text.replace('<svg', '<svg shape-rendering="crispEdges"')
@@ -1175,14 +1185,22 @@ async function getCharacterImages(crisp: boolean)
 
         output[characterId] = {
             isBase64: extension == "png",
-            frontSitting: await getCharacterImage(characterId + "/front-sitting." + extension, crisp),
-            frontStanding: await getCharacterImage(characterId + "/front-standing." + extension, crisp),
-            frontWalking1: await getCharacterImage(characterId + "/front-walking-1." + extension, crisp),
-            frontWalking2: await getCharacterImage(characterId + "/front-walking-2." + extension, crisp),
-            backSitting: await getCharacterImage(characterId + "/back-sitting." + extension, crisp),
-            backStanding: await getCharacterImage(characterId + "/back-standing." + extension, crisp),
-            backWalking1: await getCharacterImage(characterId + "/back-walking-1." + extension, crisp),
-            backWalking2: await getCharacterImage(characterId + "/back-walking-2." + extension, crisp),
+            frontSitting: (await getCharacterImage(characterId + "/front-sitting." + extension, crisp))!,
+            frontStanding: (await getCharacterImage(characterId + "/front-standing." + extension, crisp))!,
+            frontWalking1: (await getCharacterImage(characterId + "/front-walking-1." + extension, crisp))!,
+            frontWalking2: (await getCharacterImage(characterId + "/front-walking-2." + extension, crisp))!,
+            backSitting: (await getCharacterImage(characterId + "/back-sitting." + extension, crisp))!,
+            backStanding: (await getCharacterImage(characterId + "/back-standing." + extension, crisp))!,
+            backWalking1: (await getCharacterImage(characterId + "/back-walking-1." + extension, crisp))!,
+            backWalking2: (await getCharacterImage(characterId + "/back-walking-2." + extension, crisp))!,
+            frontSittingAlt: await getCharacterImage(characterId + "/front-sitting-alt." + extension, crisp),
+            frontStandingAlt: await getCharacterImage(characterId + "/front-standing-alt." + extension, crisp),
+            frontWalking1Alt: await getCharacterImage(characterId + "/front-walking-1-alt." + extension, crisp),
+            frontWalking2Alt: await getCharacterImage(characterId + "/front-walking-2-alt." + extension, crisp),
+            backSittingAlt: await getCharacterImage(characterId + "/back-sitting-alt." + extension, crisp),
+            backStandingAlt: await getCharacterImage(characterId + "/back-standing-alt." + extension, crisp),
+            backWalking1Alt: await getCharacterImage(characterId + "/back-walking-1-alt." + extension, crisp),
+            backWalking2Alt: await getCharacterImage(characterId + "/back-walking-2-alt." + extension, crisp),
         }
     }
     return output
@@ -1190,12 +1208,12 @@ async function getCharacterImages(crisp: boolean)
 
 app.get("/characters/regular", async (req, res) =>
 {
-    try { res.json(await getCharacterImages(false)) } catch (e) { res.end(e.message + " " + e.stack) }
+    try { res.json(await getCharacterImages(false)) } catch (e) { res.end(stringifyException(e)) }
 })
 
 app.get("/characters/crisp", async (req, res) =>
 {
-    try { res.json(await getCharacterImages(true)) } catch (e) { res.end(e.message + " " + e.stack) }
+    try { res.json(await getCharacterImages(true)) } catch (e) { res.end(stringifyException(e)) }
 })
 
 app.get("/areas/:areaId/streamers", (req, res) =>
@@ -1239,7 +1257,7 @@ app.get("/areas/:areaId/streamers", (req, res) =>
     }
     catch (e)
     {
-        log.error(e.message + " " + e.stack);
+        logException(e)
     }
 })
 
@@ -1349,7 +1367,7 @@ app.post("/ban", (req, res) => {
     }
     catch (exc)
     {
-        log.error(exc)
+        logException(exc)
         res.end("error")
     }
 })
@@ -1374,7 +1392,7 @@ app.post("/unban", (req, res) => {
     }
     catch (exc)
     {
-        log.error(exc)
+        logException(exc)
         res.end("error")
     }
 })
@@ -1476,7 +1494,7 @@ app.post("/login", (req, res) =>
     }
     catch (e)
     {
-        res.end(e.message + " " + e.stack)
+        res.end(stringifyException(e))
     }
 })
 
@@ -1562,8 +1580,7 @@ function clearStream(user: Player)
             stream.isReady = false
             stream.userId = null
             stream.publisherId = null
-            userRoomEmit(user, user.areaId, user.roomId,
-                "server-update-current-room-streams", toStreamSlotDtoArray(user, roomState.streams))
+            sendUpdatedStreamSlotState(user)
             emitServerStats(user.areaId)
             annihilateJanusRoom(roomState);
         }
@@ -1646,6 +1663,28 @@ function banIP(ip: string)
     }
 }
 
+function sendUpdatedStreamSlotState(user: Player)
+{
+    const roomState = roomStates[user.areaId][user.roomId] 
+    getFilteredConnectedUserList(user, user.roomId, user.areaId)
+        .forEach((u) => 
+        {
+            if (u.socketId)
+                io.to(u.socketId).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, roomState.streams))
+        });
+}
+
+function stringifyException(exception: any)
+{
+    const logMessage = exception.message + " " + exception.stack
+    return logMessage.replace(/\n/g, "")
+}
+
+export function logException(exception: any)
+{
+    log.error(stringifyException(exception));
+}
+
 setInterval(() =>
 {
     try
@@ -1681,7 +1720,7 @@ setInterval(() =>
     }
     catch (e)
     {
-        log.error(e.message + " " + e.stack);
+        logException(e)
     }
 }, 1 * 1000)
 
@@ -1717,7 +1756,7 @@ async function persistState()
     }
     catch (exc)
     {
-        log.error(exc)
+        logException(exc)
     }
 }
 
@@ -1769,13 +1808,13 @@ async function restoreState()
             }
             catch (exc)
             {
-                log.error(exc)
+                logException(exc)
             }
         }
     }
     catch (exc)
     {
-        log.error(exc)
+        logException(exc)
     }
 }
 
