@@ -16,7 +16,6 @@ const port = 8086
 app.use((req, res, next) =>
 {
     const secret = req.headers["persistor-secret"]
-    console.log(secret)
     if (secret === process.env.PERSISTOR_SECRET)
         next()
     else
@@ -27,7 +26,6 @@ app.get("/", async (req, res) =>
 {
     try
     {
-        console.log("get")
         fs.readFile("persisted-state")
             .then((state) => res.end(state))
             .catch((err) =>
@@ -49,9 +47,7 @@ app.post("/", async (req, res) =>
 {
     try
     {
-        console.log("post")
         const state = req.body
-        console.log(state)
 
         await fs.writeFile("persisted-state", state)
         res.end()
