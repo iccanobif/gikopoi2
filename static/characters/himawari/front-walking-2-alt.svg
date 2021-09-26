@@ -4,6 +4,12 @@
 
 <svg xmlns="http://www.w3.org/2000/svg"
      width="160" height="182">
+  <defs>
+    <radialGradient id="henshin">
+      <stop offset="0.6" stop-color="white" stop-opacity="1" />
+      <stop offset="1" stop-color="white" stop-opacity="0" />
+    </radialGradient>
+  </defs>
   <path fill="green"              
         d="M 76.38,98.38
            C 77.82,99.61 100.44,115.94 112.81,88.06
@@ -160,4 +166,6 @@
              76.92,54.34 76.11,57.24 76.11,59.69
              76.11,65.90 78.27,69.00 82.59,69.00
              85.34,69.00 86.93,67.44 87.36,64.33 Z" />
+  <circle cx="70" cy="38" r="22" fill="url('#henshin')" />
+  <circle cx="102" cy="38" r="22" fill="url('#henshin')" />
 </svg>
