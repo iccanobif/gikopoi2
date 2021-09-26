@@ -623,16 +623,6 @@ io.on("connection", function (socket: Socket)
         {
             logException(e)
 
-            if (e.message.match(/Couldn't attach to plugin: error '-1'/))
-            {
-                // When this exception is raised, usually it means that the janus server has broken
-                // and so far the only thing that will fix it is to restart the server, so that all streams
-                // stop and all rooms are cleared. Would be nice to find a way to prevent this problem in the first place...
-                log.error("EMERGENCY SERVER RESTART BECAUSE OF JANUS FUCKUP")
-
-                process.exit()
-            }
-            
             try
             {
                 if (data.type === "offer")
@@ -1532,7 +1522,7 @@ async function annihilateJanusRoom(roomState: RoomState)
     }
     catch (error)
     {
-        log.error(error)
+        logException(error)
     }
 }
 
@@ -1559,7 +1549,7 @@ function clearStream(user: Player)
     }
     catch (error)
     {
-        log.error(error)
+        logException(error)
     }
 }
 
@@ -1655,6 +1645,16 @@ function stringifyException(exception: any)
 export function logException(exception: any)
 {
     log.error(stringifyException(exception));
+
+    if (exception.message.match(/Couldn't attach to plugin: error '-1'/))
+    {
+        // When this exception is raised, usually it means that the janus server has broken
+        // and so far the only thing that will fix it is to restart the server, so that all streams
+        // stop and all rooms are cleared. Would be nice to find a way to prevent this problem in the first place...
+        log.error("EMERGENCY SERVER RESTART BECAUSE OF JANUS FUCKUP")
+
+        process.exit()
+    }
 }
 
 setInterval(() =>
