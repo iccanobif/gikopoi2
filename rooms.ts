@@ -3197,5 +3197,3 @@ export const rooms: { [roomId: string]: Room } = {
         streamSlotCount: 1,
     },
 };
-
-export const defaultRoom = rooms.admin_st

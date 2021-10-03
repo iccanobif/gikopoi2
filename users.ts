@@ -1,14 +1,11 @@
 import { v4 } from "uuid";
-import { defaultRoom } from "./rooms";
+import { rooms } from "./rooms";
 import { Area, Direction, PlayerDto } from "./types";
 
 function generateId()
 {
     return v4()
 }
-
-// const doorId = ("world_spawn" in defaultRoom.doors ? "world_spawn" : defaultRoom.spawnPoint);
-// const defaultSpawn = defaultRoom.doors[defaultRoom.spawnPoint];
 
 const possibleVoicePitches = [0, 0.5, 1, 1.5, 2]
 let lastUsedVoicePitchIndex = 0
@@ -24,7 +21,7 @@ export class Player
     public lastDirection: Direction | null = null;
     public directionChangedAt: number | null = null;
     public isGhost: boolean = true;
-    public roomId: string = defaultRoom.id;
+    public roomId: string;
     public lastAction = Date.now();
     public connectionTime = Date.now();
     public disconnectionTime: number | null = null;
@@ -40,17 +37,26 @@ export class Player
     public lastMessageDates: number[] = [];
     public isAlternateCharacter: boolean = false;
 
-    constructor(options: { name?: string, characterId: string, areaId: Area, ip: string })
+    constructor(options: { name?: string, characterId: string, areaId: Area, roomId: string, ip: string })
     {
+        if (options.areaId != "for" && options.areaId != "gen")
+            throw "invalid area id"
+
+        if (!(options.roomId in rooms))
+            throw "invalid room id"
+
+        this.roomId = options.roomId;
+        const room = rooms[this.roomId]
+
         const spawn = (() => {
-            if (defaultRoom.worldSpawns)
+            if (room.worldSpawns)
             {
-                lastUsedSpawnPointIndex = (lastUsedSpawnPointIndex + 1) % defaultRoom.worldSpawns!.length
-                return defaultRoom.worldSpawns![lastUsedSpawnPointIndex]
+                lastUsedSpawnPointIndex = (lastUsedSpawnPointIndex + 1) % room.worldSpawns!.length
+                return room.worldSpawns![lastUsedSpawnPointIndex]
             }
             else
             {
-                return defaultRoom.doors[defaultRoom.spawnPoint]
+                return room.doors[room.spawnPoint]
             }
         })()
         
@@ -68,9 +74,9 @@ export class Player
 
 let users: { [id: string]: Player; } = {}
 
-export function addNewUser(name: string, characterId: string, areaId: Area, ip: string)
+export function addNewUser(name: string, characterId: string, areaId: Area, roomId: string, ip: string)
 {
-    const p = new Player({ name, characterId, areaId, ip });
+    const p = new Player({ name, characterId, areaId, roomId, ip });
     users[p.id] = p;
 
     return p;

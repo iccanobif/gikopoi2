@@ -46,6 +46,32 @@ let loadCharacterImagesPromise = null
 // the key is the slot ID
 const audioProcessors = {}
 
+function getSpawnRoomId()
+{
+    try 
+    {
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        return urlSearchParams.get("roomid") || "admin_st"
+    }
+    catch 
+    {
+        return "admin_st"
+    }
+}
+
+function getDefaultAreaId()
+{
+    try 
+    {
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        return urlSearchParams.get("areaid") || localStorage.getItem("areaId") || "gen"
+    }
+    catch 
+    {
+        return localStorage.getItem("areaId") || "gen"
+    }
+}
+
 const i18n = new VueI18n({
     locale: "ja",
     fallbackLocale: "ja",
@@ -75,7 +101,7 @@ window.vueApp = new Vue({
         soundEffectVolume: 0,
         characterId: localStorage.getItem("characterId") || "giko",
         isLoggingIn: false,
-        areaId: localStorage.getItem("areaId") ||"gen", // 'gen' or 'for'
+        areaId: getDefaultAreaId(), // 'gen' or 'for'
         
         // canvas
         canvasContext: null,
@@ -476,6 +502,7 @@ window.vueApp = new Vue({
                 userName: this.username,
                 characterId: this.characterId,
                 areaId: this.areaId,
+                roomId: getSpawnRoomId(),
             });
 
             const loginMessage = await loginResponse.json();
@@ -505,7 +532,7 @@ window.vueApp = new Vue({
             // code handling websocket events (and paint() events) can assume that
             // currentRoom, streams etc... are all defined
 
-            const response = await fetch("/areas/" + this.areaId + "/rooms/admin_st")
+            const response = await fetch("/areas/" + this.areaId + "/rooms/" + getSpawnRoomId())
             this.updateRoomState(await response.json())
             
             logToServer(new Date() + " " + this.myUserID + " User agent: " + navigator.userAgent)

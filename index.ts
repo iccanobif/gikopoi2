@@ -1,5 +1,5 @@
 import express, { Request } from "express"
-import { defaultRoom, rooms } from "./rooms";
+import { rooms } from "./rooms";
 import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
 import { sleep } from "./utils";
@@ -148,7 +148,7 @@ io.on("connection", function (socket: Socket)
     // TODO check socket.request.socket.remoteAddress against bannedIPs
 
     let user: Player;
-    let currentRoom = defaultRoom;
+    let currentRoom = rooms.admin_st;
     let janusHandleSlots: any[] = [];
 
     const sendCurrentRoomState = () =>
@@ -1387,7 +1387,7 @@ app.post("/login", (req, res) =>
             return
         }
 
-        let { userName, characterId, areaId } = req.body
+        let { userName, characterId, areaId, roomId } = req.body
 
         if (typeof userName !== "string")
         {
@@ -1443,7 +1443,7 @@ app.post("/login", (req, res) =>
         if (n >= 0)
             processedUserName = processedUserName + "◆" + (tripcode(userName.substr(n + 1)) || "fnkquv7jY2");
 
-        const user = addNewUser(processedUserName, characterId, areaId, getRealIp(req));
+        const user = addNewUser(processedUserName, characterId, areaId, roomId, getRealIp(req));
 
         log.info("Logged in", user.id, user.privateId, "<" + user.name + ">", "from", getRealIp(req), areaId)
         sendResponse({
