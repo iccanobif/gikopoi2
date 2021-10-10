@@ -2434,9 +2434,17 @@ window.vueApp = new Vue({
         {
             if (confirm(i18n.t("msg.are_you_sure_you_want_to_logout")))
             {
+                if (this.streamSlotIdInWhichIWantToStream != null)
+                    this.stopStreaming()
+
                 this.socket.close()
                 this.loggedIn = false
                 this.loggedOut = true
+
+                for (let i = 0; i < this.takenStreams.length; i++)
+                    if (this.takenStreams[i])
+                        this.wantToDropStream(i)
+
                 window.onbeforeunload = null
             }
         },
