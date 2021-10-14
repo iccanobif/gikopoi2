@@ -111,6 +111,7 @@ export const characters = {
     pumpkinhead: new Character("pumpkinhead", "svg", !annualEvents.spooktober.isNow()),
     naito_yurei: new Character("naito_yurei", "svg", !annualEvents.spooktober.isNow()),
     shiinigami: new Character("shiinigami", "svg", !annualEvents.spooktober.isNow()),
+    onigiri: new Character("onigiri", "svg", false),
 }
 
 export const loadCharacters = async (crispMode) => {
