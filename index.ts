@@ -270,11 +270,11 @@ io.on("connection", function (socket: Socket)
                 if (msg.length > "TIGER".length && "TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
 
-                msg = msg.replace(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)|(ボクデン)|(ぼくでん)|(卜伝)|(ﾎﾞｸﾃﾞﾝ)|(ボクデソ)/gi,
-                    "$&o(≧▽≦)o")
+                // msg = msg.replace(/(BOKUDEN)|(ＢＯＫＵＤＥＮ)|(ボクデン)|(ぼくでん)|(卜伝)|(ﾎﾞｸﾃﾞﾝ)|(ボクデソ)/gi,
+                //     "$&o(≧▽≦)o")
 
-                if (msg.match(/(合言葉)|(あいことば)|(アイコトバ)|aikotoba/gi))
-                    msg = "٩(ˊᗜˋ*)و"
+                // if (msg.match(/(合言葉)|(あいことば)|(アイコトバ)|aikotoba/gi))
+                //     msg = "٩(ˊᗜˋ*)و"
 
                 // and for the love of god no moonwalking
                 if (msg.toLowerCase().includes("moonwalk") || msg.toLowerCase().includes("moon-walk"))
