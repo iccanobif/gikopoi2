@@ -2,8 +2,6 @@ import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils.js"
 import { RenderCache } from "./rendercache.js";
 import { characters } from "./character.js";
 
-const STEP_LENGTH = 8;
-
 export default class User
 {
     constructor(character, name)
@@ -21,7 +19,8 @@ export default class User
         this.isSpinning = false;
         this.isMoved = true;
         this.direction = "up";
-        this.framesUntilNextStep = STEP_LENGTH;
+        this.stepLength = character.characterName == "onigiri" ? 10 : 8;
+        this.framesUntilNextStep = this.stepLength;
         this.frameCount = 0
         this.isInactive = false;
         
@@ -93,7 +92,7 @@ export default class User
 
         this.framesUntilNextStep--
         if (this.framesUntilNextStep < 0)
-            this.framesUntilNextStep = STEP_LENGTH
+            this.framesUntilNextStep = this.stepLength
 
         this.frameCount++
         if (this.frameCount == Number.MAX_SAFE_INTEGER)
@@ -140,7 +139,7 @@ export default class User
         }
         else if (this.isWalking)
         {
-            const walkCycle = this.framesUntilNextStep > STEP_LENGTH / 2
+            const walkCycle = this.framesUntilNextStep > this.stepLength / 2
             switch (this.direction)
             {
                 case "up":
