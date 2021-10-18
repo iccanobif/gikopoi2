@@ -98,7 +98,7 @@ function initializeRoomStates()
 
 initializeRoomStates()
 
-// Check if bad IP
+// Reject HTTP connections from bad IPs
 app.use(async function (req, res, next) {
     const ip = getRealIp(req)
 
@@ -123,8 +123,9 @@ app.use(async function (req, res, next) {
     next()
 })
 
+// Reject websocket connections from bad IPs
 io.use(async (socket: Socket, next: () => void) => {
-    const ip = socket.request.socket.remoteAddress
+    const ip = getRealIpWebSocket(socket)
 
     if (!ip) {
         next();
@@ -143,10 +144,7 @@ io.use(async (socket: Socket, next: () => void) => {
 
 io.on("connection", function (socket: Socket)
 {
-    log.info(socket.request.headers)
-    log.info("Connection attempt", socket.request.socket.remoteAddress, getAllUsers().filter(u => u.ip == socket.request.socket.remoteAddress).map(u => u.id).join(" "));
-
-    // TODO check socket.request.socket.remoteAddress against bannedIPs
+    log.info("Connection attempt", getRealIpWebSocket(socket), getAllUsers().filter(u => u.ip == getRealIpWebSocket(socket)).map(u => u.id).join(" "));
 
     let user: Player;
     let currentRoom = rooms.admin_st;
@@ -990,6 +988,15 @@ function getRealIp(req: Request)
     return req.ips[req.ips.length - 1] ?? req.ip
 }
 
+function getRealIpWebSocket(socket: Socket): string
+{
+    const forwardedFor = socket.request.headers["x-forwarded-for"] as string
+    if (!forwardedFor)
+        return socket.request.socket.remoteAddress!
+
+    return forwardedFor.split(",").map(x => x.trim()).pop()!
+}
+
 app.get("/", async (req, res) =>
 {
     if (req.headers.host == "gikopoi2.herokuapp.com")
@@ -1225,7 +1232,7 @@ app.get("/areas/:areaId/streamers", (req, res) =>
     }
 })
 
-app.use(express.urlencoded())
+app.use(express.urlencoded({ extended: false }))
 app.use(express.json());
 app.use(express.text());
 
