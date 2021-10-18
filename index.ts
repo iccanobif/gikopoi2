@@ -143,6 +143,7 @@ io.use(async (socket: Socket, next: () => void) => {
 
 io.on("connection", function (socket: Socket)
 {
+    //log.info(socket.request.headers)
     log.info("Connection attempt", socket.request.socket.remoteAddress, getAllUsers().filter(u => u.ip == socket.request.socket.remoteAddress).map(u => u.id).join(" "));
 
     // TODO check socket.request.socket.remoteAddress against bannedIPs
@@ -245,6 +246,15 @@ io.on("connection", function (socket: Socket)
     {
         try
         {
+            setUserAsActive(user)
+
+            // Don't do flood control on henshin, after all it's not more spammy or affects performance more than user-move
+            if (msg == "#henshin")
+            {
+                changeCharacter(user, user.characterId, !user.isAlternateCharacter)
+                return;
+            }
+
             // No more than 5 messages in the last 5 seconds
             user.lastMessageDates.push(Date.now())
             if (user.lastMessageDates.length > 5)
@@ -256,8 +266,6 @@ io.on("connection", function (socket: Socket)
                     return
                 }
             }
-
-            setUserAsActive(user)
 
             // Whitespace becomes an empty string (to clear bubbles)
             if (!msg.match(/[^\s]/g))
@@ -286,12 +294,6 @@ io.on("connection", function (socket: Socket)
             if (msg == "#ika")
             {
                 changeCharacter(user, "ika", false)
-                return;
-            }
-
-            if (msg == "#henshin")
-            {
-                changeCharacter(user, user.characterId, !user.isAlternateCharacter)
                 return;
             }
 
