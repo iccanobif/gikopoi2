@@ -143,7 +143,7 @@ io.use(async (socket: Socket, next: () => void) => {
 
 io.on("connection", function (socket: Socket)
 {
-    //log.info(socket.request.headers)
+    log.info(socket.request.headers)
     log.info("Connection attempt", socket.request.socket.remoteAddress, getAllUsers().filter(u => u.ip == socket.request.socket.remoteAddress).map(u => u.id).join(" "));
 
     // TODO check socket.request.socket.remoteAddress against bannedIPs
