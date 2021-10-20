@@ -1085,7 +1085,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             steps: { x: 14, y: 4, direction: "left", target: { roomId: "jinja_st", doorId: "torii" } },
         },
-        streamSlotCount: 3,
+        streamSlotCount: 4,
         hasChessboard: true,
     },
     cafe_st: {
