@@ -39,7 +39,7 @@
                         一般 (_gen) [{{ $t("ui.login_user_count") }}@USER_COUNT_GEN@
                         {{ $t("ui.login_streamer_count") }}@STREAMER_COUNT_GEN@]</label>
                     <label for="for-selection"><input type="radio" id="for-selection" value="for" v-model="areaId"
-                            v-on:click="setLanguage('en')" :disabled="isLoggingIn">
+                            v-on:click="setLanguage(language)" :disabled="isLoggingIn">
                         International (_for) [{{ $t("ui.login_user_count") }}@USER_COUNT_FOR@
                         {{ $t("ui.login_streamer_count") }}@STREAMER_COUNT_FOR@]</label>
                 </div>
@@ -447,6 +447,14 @@
                             <input type="checkbox" id="preferences-dark-mode"
                                 v-model="isDarkMode" v-on:change="handleDarkMode"><label
                                 for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
+                        </div>
+                        <div class='popup-item' v-if="areaId != 'gen'">
+                            <label for="preferences-language">{{ $t("ui.preferences_language") }}</label>
+                            <select id="preferences-language" v-model="language" v-on:change="handleLanguageChange">
+                                <option value="en">English</option>
+                                <option value="ja">日本語</option>
+                                <option value="de">Deutsch</option>
+                            </select>
                         </div>
                     </div>
                     <div class='popup-section'>

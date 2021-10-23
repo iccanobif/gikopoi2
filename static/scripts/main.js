@@ -102,6 +102,7 @@ window.vueApp = new Vue({
         characterId: localStorage.getItem("characterId") || "giko",
         isLoggingIn: false,
         areaId: getDefaultAreaId(), // 'gen' or 'for'
+        language: localStorage.getItem("language") || "en",
         
         // canvas
         canvasContext: null,
@@ -254,7 +255,7 @@ window.vueApp = new Vue({
         if (this.areaId == "gen")
             this.setLanguage("ja")
         else
-            this.setLanguage("en")
+            this.setLanguage(this.language)
 
         loadCharacterImagesPromise = loadCharacters(this.isCrispModeEnabled);
 
@@ -2420,6 +2421,11 @@ window.vueApp = new Vue({
             }
 
             this.storeSet("isDarkMode");
+        },
+        handleLanguageChange: function ()
+        {
+            this.storeSet('language');
+            this.setLanguage(this.language);
         },
         storeSet: function (itemName)
         {
