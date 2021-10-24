@@ -2213,6 +2213,8 @@ window.vueApp = new Vue({
             if (this.rtcPeerSlots[streamSlotId]) return // no need to attempt again to take this stream
 
             const rtcPeer = this.setupRtcPeerSlot(streamSlotId).rtcPeer;
+            const videoElement = document.getElementById("received-video-" + streamSlotId)
+            videoElement.play(); // Needed for iphone
 
             rtcPeer.conn.addEventListener(
                 "track",
@@ -2221,9 +2223,8 @@ window.vueApp = new Vue({
                     try 
                     {
                         const stream = event.streams[0]
-
-                        const videoElement = document.getElementById("received-video-" + streamSlotId)
                         videoElement.srcObject = stream;
+                        
                         $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
 
                         if (audioProcessors[streamSlotId])
