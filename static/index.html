@@ -199,8 +199,9 @@
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
                     <hr v-if="index != 0" />
                     <div>
-                        {{ $t("ui.label_stream", {index: index+1}) }}<span class="stream-title">{{ streamSlot.title
-                            }}</span>
+                        {{ $t("ui.label_stream", {index: index+1}) }}<span v-bind:class="{'stream-title': true, 'highlighted-stream-title': streamSlot.userId && streamSlot.userId == highlightedUserId}">
+                            {{ streamSlot.title }}
+                        </span>
                     </div>
                     <div :id="'video-container-' + index" class='video-container pinned-video' v-show="streamSlot.withVideo && ((takenStreams[index] && streamSlot.isReady) || index == streamSlotIdInWhichIWantToStream)">
                         <button

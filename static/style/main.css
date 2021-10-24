@@ -132,8 +132,10 @@ video {
     width: 100%;
 }
 
-
-
+.highlighted-stream-title
+{
+    color: red;
+}
 
 .stream-title
 {
