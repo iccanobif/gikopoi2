@@ -137,6 +137,11 @@ video {
     color: red;
 }
 
+.active-stream-title
+{
+    cursor: pointer;
+}
+
 .stream-title
 {
     font-weight: bold;
