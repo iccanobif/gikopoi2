@@ -326,6 +326,10 @@ window.vueApp = new Vue({
 
                 this.registerKeybindings();
 
+                const canvasHeight = localStorage.getItem("canvasHeight")
+                if (canvasHeight)
+                    document.getElementById("canvas-container").style.height = canvasHeight;
+
                 this.isLoggingIn = false;
 
                 this.canvasContext = document.getElementById("room-canvas")
@@ -1557,7 +1561,11 @@ window.vueApp = new Vue({
                     this.isRedrawRequired = true
                     // I thought a delta of 0 would be appropriate that for some reason it doesn't quite work (all avatars
                     // snap to their final position instantly while resizing), so for now i'll just use 1. Good luck to anyone
-                    // who wants to figure out.
+                    // who wants to figure this out.
+
+                    const height = document.getElementById("canvas-container").style.height
+
+                    localStorage.setItem("canvasHeight", height);
                     this.paint(1)
                 });
                 observer.observe(document.getElementById("canvas-container"));
