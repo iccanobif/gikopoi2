@@ -786,7 +786,7 @@ export const messages =
     },
  es:
     {
-        default_user_name: "Anonymous",
+        default_user_name: "Anónimo",
         message_colon: ": ",
         test: "test",
         ui:
