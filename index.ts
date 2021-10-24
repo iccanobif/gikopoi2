@@ -1276,7 +1276,8 @@ app.post("/user-list", (req, res) => {
                                                 + user.roomId + " "
                                                 + " &lt;" + user.name +  "&gt;"
                                                 + user.lastRoomMessage
-                                                + "streaming: " + (streamSlots.find(s=> s.userId == user.id) ? "Y" : "N")
+                                                + " streaming: " + (streamSlots.find(s=> s.userId == user.id) ? "Y" : "N")
+                                                + " " + user.ip
                                                 + "</label>").join("</br>")
 
     const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
