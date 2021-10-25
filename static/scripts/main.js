@@ -206,6 +206,7 @@ window.vueApp = new Vue({
         movementDirection: null,
         underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
         timestampsInCopiedLog: localStorage.getItem("timestampsInCopiedLog") != "false",
+        showIgnoreIndicatorInLog: localStorage.getItem("showIgnoreIndicatorInLog") == "true",
         notificationPermissionsGranted: false,
         canUseAudioContext: canUseAudioContext,
         lastFrameTimestamp: null,
@@ -792,6 +793,9 @@ window.vueApp = new Vue({
             
             if (!userId && userName == "SYSTEM")
                 messageDiv.classList.add("system-message")
+            
+            if (this.ignoredUserIds.has(userId))
+                messageDiv.classList.add("ignored-message")
 
             const [displayName, tripcode] = this.toDisplayName(userName).split("◆")
 
@@ -848,21 +852,24 @@ window.vueApp = new Vue({
         },
         displayUserMessage: async function (user, msg)
         {
-            // Don't do anything for ignored users
-            if (this.ignoredUserIds.has(user.id))
-                return;
-
+            const isIgnored = this.ignoredUserIds.has(user.id);
+            
             const plainMsg = msg.replace(urlRegex, s => safeDecodeURI(s));
             
             user.message = plainMsg;
             if(user.lastMessage != user.message)
             {
                 user.bubbleImage = null;
-                this.isRedrawRequired = true;
+                if (!isIgnored)
+                    this.isRedrawRequired = true;
                 user.lastMessage = user.message;
             }
             
             if(!user.message) return;
+
+            this.writeMessageToLog(user.name, msg, user.id)
+            
+            if (isIgnored) return;
             
             if (this.soundEffectVolume > 0)
             {
@@ -872,9 +879,7 @@ window.vueApp = new Vue({
                 else if (this.isMessageSoundEnabled)
                     document.getElementById("message-sound").play();
             }
-
-            this.writeMessageToLog(user.name, msg, user.id)
-
+            
             if (this.enableTextToSpeech)
             {
                 speak(plainMsg, this.ttsVoiceURI, this.voiceVolume, user.voicePitch)
@@ -2308,12 +2313,26 @@ window.vueApp = new Vue({
         ignoreUser: function(userId)
         {
             this.ignoredUserIds.add(userId)
+            
+            for (const messageElement of document.getElementsByClassName("message"))
+            {
+                if (messageElement.dataset.userId == userId)
+                    messageElement.classList.add("ignored-message")
+            }
+            
             this.isRedrawRequired = true
             this.$forceUpdate() // HACK: the v-if for the ignore and unignore buttons doesn't get automatically re-evaluated
         },
         unignoreUser: function(userId)
         {
             this.ignoredUserIds.delete(userId)
+            
+            for (const messageElement of document.getElementsByClassName("message"))
+            {
+                if (messageElement.dataset.userId == userId)
+                    messageElement.classList.remove("ignored-message")
+            }
+            
             this.isRedrawRequired = true
             this.$forceUpdate() // HACK: the v-if for the ignore and unignore buttons doesn't get automatically re-evaluated
         },
