@@ -373,7 +373,7 @@ export const messages =
             busstop: "Bus Stop",
             school: "School: Classroom",
             school_rouka: "School: Hallway",
-            school_international: "School: Cultural Room", // Internation classroom
+            school_international: "School: Cultural Room", // International classroom
             school_pc: "School Computer Lab",
             seashore: "Seashore",
             radio: "Radio Studio", // Radio station
