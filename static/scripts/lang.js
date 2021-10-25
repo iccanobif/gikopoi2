@@ -580,7 +580,7 @@ export const messages =
             radio_room3: "Radiostation: Studio 3 G-SQUID",
             radio_gakuya: "Radiostation: Umkleideraum",
             radio_backstage: "Radiostation: Hinter den Kulissen",
-            yatai: "Ramen-Stand",
+            yatai: "Ramenbude",
             kaidan: "Bergtreppe",
             takadai: "Bergkuppe",
             yoshinoya: "Yoshinoya",
