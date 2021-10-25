@@ -192,7 +192,7 @@
                     </div>
                 </div>
                 {{ $t("ui.label_log") }}
-                <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames, 'timestamps-in-copied-log': timestampsInCopiedLog}" v-on:keydown="handlechatLogKeydown($event)">
+                <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames, 'timestamps-in-copied-log': timestampsInCopiedLog, 'ignore-indicators-in-log': showIgnoreIndicatorInLog}" v-on:keydown="handlechatLogKeydown($event)">
                 </div>
             </div>
             <div id="video-streams">
@@ -447,6 +447,11 @@
                             <input type="checkbox" id="preferences-timestamps-in-copied-log"
                                 v-model="timestampsInCopiedLog" v-on:change="storeSet('timestampsInCopiedLog')"><label
                                 for="preferences-timestamps-in-copied-log">{{ $t("ui.preferences_timestamps_in_copied_log") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-ignore-indicator-in-log"
+                                v-model="showIgnoreIndicatorInLog" v-on:change="storeSet('showIgnoreIndicatorInLog')"><label
+                                for="preferences-ignore-indicator-in-log">{{ $t("ui.preferences_ignore_indicator_in_log") }}</label>
                         </div>
                         <div class='popup-item'>
                             <input type="checkbox" id="preferences-dark-mode"

@@ -206,6 +206,7 @@ window.vueApp = new Vue({
         movementDirection: null,
         underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
         timestampsInCopiedLog: localStorage.getItem("timestampsInCopiedLog") != "false",
+        showIgnoreIndicatorInLog: localStorage.getItem("showIgnoreIndicatorInLog") == "true",
         notificationPermissionsGranted: false,
         canUseAudioContext: canUseAudioContext,
         lastFrameTimestamp: null,

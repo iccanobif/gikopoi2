@@ -740,6 +740,16 @@ button.checked {
     display: none;
 }
 
+.ignore-indicators-in-log .ignored-message
+{
+    display: block;
+    height: 2px;
+    width: 2px;
+    margin-bottom: -2px;
+    font-size: 0;
+    background-color: red;
+}
+
 .message-author
 {
     cursor: pointer;

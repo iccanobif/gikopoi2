@@ -115,6 +115,7 @@ export const messages =
             preferences_low_quality: "低画質",
             preferences_crisp_mode: "シャープ",
             preferences_timestamps_in_copied_log: "コピーしたログに時刻を含む",
+            preferences_ignore_indicator_in_log: "ログに、一方あぼーんされたユーザーによるメッセージのインジケーターを表示",
             preferences_language: "言語",
 
             back_to_homepage: "トップへ戻る",
@@ -309,6 +310,7 @@ export const messages =
             preferences_low_quality: "Low Quality",
             preferences_crisp_mode: "Crisp",
             preferences_timestamps_in_copied_log: "Include timestamps in copied logs",
+            preferences_ignore_indicator_in_log: "Show indicators for messages by ignored users in the log",
             preferences_language: "Language",
             
 
@@ -504,6 +506,7 @@ export const messages =
             preferences_low_quality: "Geringe Qualität",
             preferences_crisp_mode: "Knackig",
             preferences_timestamps_in_copied_log: "Zeitstempel in den kopierten Logs aufnehmen",
+            preferences_ignore_indicator_in_log: "Indikatoren für Nachrichten von ignorierten Benutzern im log anzeigen",
             preferences_language: "Sprache",
             
 
@@ -699,6 +702,7 @@ export const messages =
             preferences_low_quality: "Bassa qualità",
             preferences_crisp_mode: "Niente",
             preferences_timestamps_in_copied_log: "Includi timestamp nei registri copiati",
+            preferences_ignore_indicator_in_log: "Mostra indicatori per i messaggi di utenti ignorati nei registri",
             preferences_language: "Lingua",
             
 
@@ -894,6 +898,7 @@ export const messages =
             preferences_low_quality: "Baja calidad",
             preferences_crisp_mode: "Nítido",
             preferences_timestamps_in_copied_log: "Incluir fecha y hora en logs copiados",
+            preferences_ignore_indicator_in_log: "Mostrar indicadores de mensajes de usuario ignorados en logs",
             preferences_language: "Idioma",
             
 
