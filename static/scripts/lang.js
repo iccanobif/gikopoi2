@@ -310,7 +310,7 @@ export const messages =
             preferences_low_quality: "Low Quality",
             preferences_crisp_mode: "Crisp",
             preferences_timestamps_in_copied_log: "Include timestamps in copied logs",
-            preferences_ignore_indicator_in_log: "Show indicators for messages by ignored users in the log",
+            preferences_ignore_indicator_in_log: "Show in the log an indicator in place of the messages by ignored users",
             preferences_language: "Language",
             
 
