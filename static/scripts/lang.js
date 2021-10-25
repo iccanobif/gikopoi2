@@ -353,38 +353,38 @@ export const messages =
         },
         room:
         {
-            long_st: "Eel Track",
+            long_st: "Eel Track", // Eel road/way/alley
             jinja: "Shrine",
             jinja_st: "Shrine Entrance",
             school_ground: "School: Schoolyard",
             bar774: "Underground Town: Bar 774",
-            izakaya774: "Underground Town: Drunker's Bar",
+            izakaya774: "Underground Town: Drunker's Bar", // Izakaya Anonymous
             basement: "Underground Town",
             bar: "Bar",
-            school_st: "School Crossing",
+            school_st: "School Crossing", // School street
             bar_st: "Bar Street",
-            admin_st: "Kanrinin Street",
-            admin: "Developer's Lounge",
-            admin_bar: "Admin's Bar",
-            cafe_st: "Cafe Vista",
+            admin_st: "Kanrinin Street", // Development Bureau/Department Street
+            admin: "Developer's Lounge", // Development Bureau/Department
+            admin_bar: "Admin's Bar", // Secret bar
+            cafe_st: "Cafe Vista", // Cafe street
             enkai: "Banqueting Hall",
             idoA: "Well A",
             idoB: "Well B",
             busstop: "Bus Stop",
             school: "School: Classroom",
             school_rouka: "School: Hallway",
-            school_international: "School: Cultural Room",
+            school_international: "School: Cultural Room", // Internation classroom
             school_pc: "School Computer Lab",
             seashore: "Seashore",
-            radio: "Radio Studio",
-            radio_room1: "Radio Studio 1",
-            radio_room2: "Radio Studio 2: BEAT GIKO",
+            radio: "Radio Studio", // Radio station
+            radio_room1: "Radio Studio 1", // Radio station studio 1
+            radio_room2: "Radio Studio 2: BEAT GIKO", // Radio station studio 2 BEAT GIKO
             radio_room3: "Radio Studio 3: G-SQUID",
             radio_gakuya: "Radio Studio: Dressing Room",
-            radio_backstage: "Radio Studio: Greenroom",
-            yatai: "Sushi Vendor",
+            radio_backstage: "Radio Studio: Greenroom", // Backstage/Behind the scenes/offstage
+            yatai: "Sushi Vendor", // (Ramen) vendor/stand/stall/food cart
             kaidan: "Hilltop Stairway",
-            takadai: "Hilltop",
+            takadai: "Hilltop", // High ground/elevation
             yoshinoya: "Yoshinoya",
             silo: "Silo",
             badend: "You fell to your death!",
