@@ -135,6 +135,7 @@ video {
 .highlighted-stream-title
 {
     color: red;
+    text-shadow: #939393 0px 0px 1px;
 }
 
 .active-stream-title
