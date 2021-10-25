@@ -898,7 +898,7 @@ export const messages =
             preferences_low_quality: "Baja calidad",
             preferences_crisp_mode: "Nítido",
             preferences_timestamps_in_copied_log: "Incluir fecha y hora en logs copiados",
-            preferences_ignore_indicator_in_log: "Mostrar indicadores de mensajes de usuario ignorados en logs",
+            preferences_ignore_indicator_in_log: "Mostrar en logs un indicador para mensajes de usuarios ignorados",
             preferences_language: "Idioma",
             
 
