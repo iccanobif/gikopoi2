@@ -506,7 +506,7 @@ export const messages =
             preferences_low_quality: "Geringe Qualität",
             preferences_crisp_mode: "Knackig",
             preferences_timestamps_in_copied_log: "Zeitstempel in den kopierten Logs aufnehmen",
-            preferences_ignore_indicator_in_log: "Indikatoren für Nachrichten von ignorierten Benutzern im log anzeigen",
+            preferences_ignore_indicator_in_log: "Einen Indikator anstelle der Nachrichten ignorierter Benutzer im log anzeigen",
             preferences_language: "Sprache",
             
 
