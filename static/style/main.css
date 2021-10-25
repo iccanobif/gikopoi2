@@ -734,6 +734,11 @@ button.checked {
     font-weight: bold;
 }
 
+.ignored-message
+{
+    display: none;
+}
+
 .message-author
 {
     cursor: pointer;
