@@ -115,7 +115,7 @@ export const messages =
             preferences_low_quality: "低画質",
             preferences_crisp_mode: "シャープ",
             preferences_timestamps_in_copied_log: "コピーしたログに時刻を含む",
-            preferences_ignore_indicator_in_log: "ログに、一方あぼーんされたユーザーによるメッセージのインジケーターを表示",
+            preferences_ignore_indicator_in_log: "一方あぼーんされたユーザーからのログの代わりにインジケーターを表示",
             preferences_language: "言語",
 
             back_to_homepage: "トップへ戻る",
@@ -701,8 +701,8 @@ export const messages =
             preferences_underlined_usernames: "Sottolinea nomi utente",
             preferences_low_quality: "Bassa qualità",
             preferences_crisp_mode: "Niente",
-            preferences_timestamps_in_copied_log: "Includi timestamp nei registri copiati",
-            preferences_ignore_indicator_in_log: "Mostra indicatori per i messaggi di utenti ignorati nei registri",
+            preferences_timestamps_in_copied_log: "Includi timestamp nei log copiati",
+            preferences_ignore_indicator_in_log: "Mostra nel log un indicatore per i messaggi di utenti ignorati",
             preferences_language: "Lingua",
             
 
