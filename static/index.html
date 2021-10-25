@@ -86,27 +86,27 @@
                         ></canvas>
                     <div id="infobox-container">
                         <div id="infobox" v-show="isInfoboxVisible">
-                            <div id="infobox-area" class="infobox-line">
-                                <div class="infobox-title">{{ $t("ui.infobox_label_area") }}</div>
-                                <div class="infobox-value">{{ $t("ui.infobox_value_area") }}</div>
-                            </div>
-                            <div id="infobox-roomname" class="infobox-line">
-                                <div class="infobox-title">{{ $t("ui.infobox_label_room") }}</div>
-                                <div class="infobox-value">{{ currentRoom.id && $t("room."+currentRoom.id) }}</div>
-                            </div>
-                            <div id="infobox-username" class="infobox-line">
-                                <div class="infobox-title">{{ $t("ui.infobox_label_user_name") }}</div>
-                                <div class="infobox-value">{{ myUserID && users && users[myUserID] ? toDisplayName(users[myUserID].name) :
-                                    '-' }}</div>
-                            </div>
-                            <div id="infobox-usercount" class="infobox-line">
-                                <div class="infobox-title">{{ $t("ui.infobox_label_user_count") }}</div>
-                                <div class="infobox-value">{{ serverStats.userCount }}</div>
-                            </div>
-                            <div id="infobox-streamcount" class="infobox-line">
-                                <div class="infobox-title">{{ $t("ui.infobox_label_stream_count") }}</div>
-                                <div class="infobox-value">{{ serverStats.streamCount }}</div>
-                            </div>
+                            <table>
+                                <tr>
+                                    <td>{{ $t("ui.infobox_label_area") }}</td>
+                                    <td>{{ $t("ui.infobox_value_area") }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{{ $t("ui.infobox_label_room") }}</td>
+                                    <td>{{ currentRoom.id && $t("room."+currentRoom.id) }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{{ $t("ui.infobox_label_user_name") }}</td>
+                                    <td>{{ myUserID && users && users[myUserID] ? toDisplayName(users[myUserID].name) : '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{{ $t("ui.infobox_label_user_count") }}</td>
+                                    <td>{{ serverStats.userCount }}</td>
+                                </tr>
+                            </table>
+                            <span id="infobox-streamcount">
+                                {{ $t("ui.infobox_label_stream_count") }} {{ serverStats.streamCount }}
+                            </span>
                         </div>
                         <button id="infobox-button" class="canvas-button-top-right" v-on:click="toggleInfobox"
                             tabindex="-1"></button>

@@ -210,36 +210,17 @@ video {
     text-shadow: #000 0 0 1px;
 }
 
-.infobox-line
+#infobox td
 {
-    margin: 3px;
     white-space: nowrap;
-    overflow: hidden;
-}
-
-.infobox-title,
-.infobox-value
-{
-    display: inline-block;
-}
-
-.infobox-title
-{
-    width: 44px;
-}
-
-#infobox-usercount
-{
-    float: left;
-    margin-top: 0px;
 }
 
 #infobox-streamcount
 {
-    float: right;
-    margin-top: 0px;
-    margin-right: 8px;
-}
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+} 
 
 .big-red-alert
 {
