@@ -310,7 +310,7 @@ export const messages =
             preferences_low_quality: "Low Quality",
             preferences_crisp_mode: "Crisp",
             preferences_timestamps_in_copied_log: "Include timestamps in copied logs",
-            preferences_ignore_indicator_in_log: "Show indicators for messages by ignored users in the log",
+            preferences_ignore_indicator_in_log: "Show in the log an indicator in place of the messages by ignored users",
             preferences_language: "Language",
             
 
@@ -580,7 +580,7 @@ export const messages =
             radio_room3: "Radiostation: Studio 3 G-SQUID",
             radio_gakuya: "Radiostation: Umkleideraum",
             radio_backstage: "Radiostation: Hinter den Kulissen",
-            yatai: "Ramen-Stand",
+            yatai: "Ramenbude",
             kaidan: "Bergtreppe",
             takadai: "Bergkuppe",
             yoshinoya: "Yoshinoya",
@@ -898,7 +898,7 @@ export const messages =
             preferences_low_quality: "Baja calidad",
             preferences_crisp_mode: "Nítido",
             preferences_timestamps_in_copied_log: "Incluir fecha y hora en logs copiados",
-            preferences_ignore_indicator_in_log: "Mostrar indicadores de mensajes de usuario ignorados en logs",
+            preferences_ignore_indicator_in_log: "Mostrar en logs un indicador para mensajes de usuarios ignorados",
             preferences_language: "Idioma",
             
 
