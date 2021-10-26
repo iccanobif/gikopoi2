@@ -461,7 +461,7 @@
                         <div class='popup-item' v-if="areaId != 'gen'">
                             <label for="preferences-language">{{ $t("ui.preferences_language") }}</label>
                             <select id="preferences-language" v-model="language" v-on:change="handleLanguageChange">
-                                <option v-for="langCode in getLangCodes()" :value="langCode" v-t="{path: 'lang_name', locale: langCode}"></option>
+                                <option v-for="langCode in getLangCodes()" :value="langCode">{{ $t("lang_name", langCode) }}</option>
                             </select>
                         </div>
                     </div>
