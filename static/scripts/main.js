@@ -418,6 +418,10 @@ window.vueApp = new Vue({
         {
             i18n.locale = code;
         },
+        getLangCodes: function()
+        {
+            return Object.keys(i18n.messages);
+        },
         showWarningToast: function (text)
         {
             this.warningToastMessage = text;
