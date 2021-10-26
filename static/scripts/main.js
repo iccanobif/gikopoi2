@@ -19,7 +19,7 @@ import {
     getFormattedCurrentDate,
     requestNotificationPermission
 } from "./utils.js";
-import { messages } from "./lang.js";
+import messages from "./lang.js";
 import { speak } from "./tts.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";

@@ -1,4 +1,4 @@
-export const ja =
+export default
 {
     default_user_name: "名無しさん",
     message_colon: "：",

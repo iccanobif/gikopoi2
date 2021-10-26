@@ -1,4 +1,4 @@
-export const de =
+export default
 {
     default_user_name: "Anonym",
     message_colon: ": ",
