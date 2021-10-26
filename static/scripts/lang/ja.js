@@ -111,6 +111,7 @@ export default
         preferences_ignore_indicator_in_log: "一方あぼーんされたユーザーからのログの代わりにインジケーターを表示",
         preferences_language: "言語",
 
+
         back_to_homepage: "トップへ戻る",
 
         chess_slot_title: "チェス",
