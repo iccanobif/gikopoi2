@@ -164,7 +164,7 @@ export default
         school_st: "學校街道",
         bar_st: "酒吧街",
         admin_st: "開發局街道",
-        cafe_st: "咖啡街",
+        cafe_st: "餐飲街",
         busstop: "公車站",
         idoA: "井Ａ",
         idoB: "井Ｂ",
