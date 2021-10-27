@@ -4,6 +4,7 @@ import de from "./lang/de.js";
 import it from "./lang/it.js";
 import es from "./lang/es.js";
 import zh_TW from "./lang/zh-TW.js";
+import id from "./lang/id.js";
 
 export default
 {
@@ -13,4 +14,5 @@ export default
     it,
     es,
     'zh-TW': zh_TW,
+    id,
 }
