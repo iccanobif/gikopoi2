@@ -30,7 +30,7 @@ export default
         button_stream_take: "收訊",
         button_stream_drop: "結束收訊",
         button_rula: "#rula",
-        button_list: "#列表",
+        button_list: "#list",
         button_preferences: "設置",
         button_logout: "登出",
         volume: "音量：",
