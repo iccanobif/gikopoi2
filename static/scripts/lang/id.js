@@ -1,6 +1,6 @@
 export default
 {
-        lang_name: "Bahasa Indonesia"
+        lang_name: "Bahasa Indonesia",
         default_user_name: "Anonim",
         message_colon: ": ",
         test: "tes",
@@ -94,7 +94,7 @@ export default
             preferences_tts_voice: "Suara",
             preferences_tts_voice_automatic: "Otomatis",
             preferences_tts_voice_animalese: "Suara Hewan",
-            notifications_are_denied: "Situs ini saat ini tidak diizinkan untuk menampilkan pemberitahuan.Silahkan periksa izin browser Anda.",
+            notifications_are_denied: "Situs ini saat ini tidak diizinkan untuk menampilkan pemberitahuan. Silahkan periksa izin browser Anda.",
             preferences_title_general: "Umum",
             preferences_title_game: "Permainan",
             preferences_title_toolbar: "Toolbar",
@@ -109,7 +109,7 @@ export default
             preferences_low_quality: "Kualitas Rendah",
             preferences_crisp_mode: "Tajam",
             preferences_timestamps_in_copied_log: "sertakan cap waktu dalam log yang disalin",
-            preferences_ignore_indicator_in_log: "Ketika pengguna diabaikan. Menampilkan placeholder untuk pesan tersembunyi di log."
+            preferences_ignore_indicator_in_log: "Ketika pengguna diabaikan. Menampilkan placeholder untuk pesan tersembunyi di log.",
             preferences_language: "Bahasa",        
             
 
@@ -128,7 +128,7 @@ export default
         msg:
         {
             no_other_users_in_this_room: "Anda sendirian di sini!",
-            connection_lost: "Menghubungkan kembali....",
+            connection_lost: "Menghubungkan kembali...",
             connection_refused: "Koneksi Anda rusak. Harap segarkan halaman web.",
             page_refresh_required: "Perangkat lunak yang diperbarui. Harap refresh halaman web.",
             
@@ -166,7 +166,7 @@ export default
             bar_st: "Jalan Bar",
             admin_st: "Jalan Kanrinin",
             admin: "Rumah Programmer",
-            admin_bar: "Bar Komunis",
+            admin_bar: "Bar Rahasia",
             cafe_st: "Kafe Vista",
             enkai: "Ruang Perjamuan",
             idoA: "Sumur A",
