@@ -2356,7 +2356,7 @@ window.vueApp = new Vue({
             {
                 let sort;
                 if (key == "sortName")
-                    sort = a[key].localeCompare(b[key]);
+                    sort = a[key].localeCompare(b[key], i18n.locale);
                 else if(key == "streamers")
                     sort = b[key].length - a[key].length;
                 else
