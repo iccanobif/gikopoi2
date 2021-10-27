@@ -22,7 +22,7 @@
 </head>
 
 <body>
-    <div id="vue-app" v-cloak v-bind:class="{'dark-mode': isDarkMode}">
+    <div id="vue-app" v-cloak v-bind:class="{'dark-mode': isDarkMode}" v-bind:lang="$i18n.locale">
         <div id="login-page" v-if="!loggedIn && !loggedOut && !isPoop">
             <header>
                 <div>
