@@ -97,7 +97,7 @@ export default
             notifications_are_denied: "Situs ini saat ini tidak diizinkan untuk menampilkan pemberitahuan.Silahkan periksa izin browser Anda.",
             preferences_title_general: "Umum",
             preferences_title_game: "Permainan",
-            preferences_title_toolbar: "Toolbar ",
+            preferences_title_toolbar: "Toolbar",
             preferences_title_tts: "ketik untuk bicara",
             preferences_title_notifications: "Pemberitahuan",
             preferences_message_sound_enabled: "Suara Pesan",
@@ -109,7 +109,8 @@ export default
             preferences_low_quality: "Kualitas Rendah",
             preferences_crisp_mode: "Tajam",
             preferences_timestamps_in_copied_log: "sertakan cap waktu dalam log yang disalin",
-            preferences_language: "Bahasa",
+            preferences_ignore_indicator_in_log: "Ketika pengguna diabaikan. Menampilkan placeholder untuk pesan tersembunyi di log."
+            preferences_language: "Bahasa",        
             
 
             back_to_homepage: "Melarikan Diri Dara Permainan",
@@ -131,9 +132,9 @@ export default
             connection_refused: "Koneksi Anda rusak. Harap segarkan halaman web.",
             page_refresh_required: "Perangkat lunak yang diperbarui. Harap refresh halaman web.",
             
-            error_obtaining_media: "Unable to obtain media. Please check the browser permissions.",
-            error_obtaining_video: "Unable to obtain video. Please check the browser permissions.",
-            error_obtaining_audio: "Unable to obtain audio. Please check the browser permissions.",
+            error_obtaining_media: "Tidak dapat mengunduh media. Silakan periksa izin browser.",
+            error_obtaining_video: "Tidak dapat mengunduh video. Silakan periksa izin browser.",
+            error_obtaining_audio: "Tidak dapat mengunduh audio. Silakan periksa izin browser.",
             no_webrtc: "Maaf, browser Anda tidak mendukung WebRTC. ",
             
             unknown_error: "Tidak bisa masuk.",
@@ -189,8 +190,8 @@ export default
             silo: "Silo",
             badend: "Anda jatuh dan mati!",
             bar_giko: "Bar Giko",
-            bar_giko2: "Bar Giko Ruang bawah tanah",
-            bar_giko_square: "Air mancur Plaza",
+            bar_giko2: "Bar Giko Ruang Bawah Tanah",
+            bar_giko_square: "Air Mancur Plaza",
             densha: "Kereta",
         }
 }
