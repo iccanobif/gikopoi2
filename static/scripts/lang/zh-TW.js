@@ -1,6 +1,6 @@
 export default
 {
-    lang_name: "漢文 (臺灣)",
+    lang_name: "繁體中文（臺灣）",
     default_user_name: "無名氏",
     message_colon: "：",
     test: "測試",
