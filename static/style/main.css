@@ -199,7 +199,7 @@ video {
     position: absolute;
     top: 0;
     right: 0;
-    width: 170px;
+    min-width: 170px;
     
     background-color: rgba(120, 120, 120, 0.1);
     color: #ffffff;
