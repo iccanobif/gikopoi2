@@ -11,11 +11,11 @@
    height="182"
    width="160"
    version="1.1"
-   id="svg1731"
+   id="svg873"
    sodipodi:docname="back-walking-2.svg"
    inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)">
   <metadata
-     id="metadata1735">
+     id="metadata877">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -35,19 +35,19 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1811"
-     inkscape:window-height="1019"
-     id="namedview1733"
+     inkscape:window-width="1624"
+     inkscape:window-height="1228"
+     id="namedview875"
      showgrid="false"
-     inkscape:zoom="5.6373626"
+     inkscape:zoom="7.2747253"
      inkscape:cx="80"
-     inkscape:cy="83.904483"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:cy="91"
+     inkscape:window-x="419"
+     inkscape:window-y="236"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg1731" />
+     inkscape:current-layer="svg873" />
   <defs
-     id="defs1723">
+     id="defs865">
     <path
        d="M1.35 0h.2l.55.1.45.35q.45.45.45 1L2.55 2.6q-.45.4-1 .4l-.8-.2-.25-.2-.45-.7v-.15L0 1.45v-.1q.05-.5.5-.9l.25-.2Q1 .05 1.3 0h.05m.45.85L1.55.8Q1.2.75 1 1q-.2.15-.2.45v.15l.15.45H1l.05.05.2.1.3.05.55-.2.15-.6-.05-.3L2.1 1 2.05.95 1.9.85h-.1"
        fill-rule="evenodd"
@@ -65,12 +65,12 @@
          fill="#fff"
          fill-rule="evenodd"
          transform="translate(21.65 71)"
-         id="path1716" />
+         id="path858" />
       <path
          d="M.25-60l-1.25.55-3.85-8.6-3.85 8.6-.65-.3-.55-.25 5.05-11 5.1 11m-10.1 4.2l.75.75q-2.05 1.95-2.4 4.25l-.1 1q0 2.25 1.5 4.15l1 1.1-.75.7-.4-.35-.6-.7q-1.8-2.2-1.8-4.9l.1-1q.3-2.8 2.7-5m-2.55 35.35q.3-.3.7-.95l1.25 1q-.6.95-1.35 1.55l-.45.4q-.7.45-1.6.45-.95 0-2.65-1.1-1.15-.65-1.9-.65-.85 0-1.3.55l-.6.95-1.35-.75 1.2-1.65q.85-.8 1.95-.8t2.25.8q1.65.85 2.55.85.65 0 1.3-.65m3.6 10.9h1.55V-3q0 .7.4 1.15.55.55 1.65.55 1.05 0 1.6-.55.45-.45.45-1.15v-6.55h1.5v6.6q0 1.25-.8 2.05-.9.9-2.75.9Q-7.1 0-8-.9q-.8-.8-.8-2.05v-6.6m13.3 0h1.55V-3q0 .7.4 1.15.55.55 1.65.55 1.05 0 1.6-.55.45-.45.45-1.15v-6.55h1.5v6.6q0 1.25-.8 2.05-.9.9-2.75.9-1.9 0-2.8-.9-.8-.8-.8-2.05v-6.6m9.55-20.85l-1.5.05-.35-1.5 1.3-.05q3-.2 4.05-1.25.75-.75.75-1.85 0-1.2-.8-2-.6-.6-2.15-.6l-3 .6-3.3 1.25-.65-1.6 3.1-.9 3.25-.7.75-.05q2.2 0 3.25 1.05 1.1 1.05 1.1 2.85 0 1.85-1 2.85l-.4.35q-1.55 1.2-4.4 1.5m4.25-14.45l-.1-.1 1.4-1.7.25-.45q.8-1.45.8-3.1v-.6q-.25-2.5-2.35-4.55l-.1-.1.4-.4.3-.35q2.55 2.35 2.8 5.4v.6q0 1.9-.9 3.55-.7 1.25-1.9 2.4l-.6-.6M14.3-60l-1.25.55-3.85-8.6-3.85 8.6-1.2-.55L9.2-71l5.1 11m-4.1 16.4h-.75l.55-1.45h-.55v-1.45h1.5v1.35l-.75 1.55m2.9 0h-.75l.55-1.45h-.55v-1.45h1.5v1.35l-.75 1.55"
          fill-rule="evenodd"
          transform="translate(21.65 71)"
-         id="path1718" />
+         id="path860" />
       <path
          d="M4.15-60H.25M12.5-14.15V-26.4m6.1-29.45l-1.15-1.1"
          fill="none"
@@ -78,82 +78,101 @@
          stroke-linecap="round"
          stroke-linejoin="round"
          transform="translate(21.65 71)"
-         id="path1720" />
+         id="path862" />
     </g>
   </defs>
   <g
      style="clip-rule:evenodd;fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5"
-     id="g2461"
-     transform="translate(9.6184737,-0.733)">
+     id="g1030"
+     transform="translate(2.0523637,4.332966)">
     <g
-       transform="translate(-1,2)"
-       id="g2410">
-        <path
-   d="m 84.826,78.591 c 0,0 -7.106,-5.409 -19.94,-4.773 0,0 -20.363,8.591 -11.772,43.061 l 1.4,13.025 1.01,8.333 5.544,0.172 c 0,0 1.05,0.749 2.64,0.558 1.371,-0.164 3.161,-1.289 4.834,-1.098 3.462,0.395 -3.236,-8.507 -0.382,-9.545 l 10.335,3.378 11.248,2.664 c 0,0 9.049,-10.772 0.104,-14.444 0,0 -1.898,2.891 -5.06,3.152 0,0 -5.795,-1.635 -1.234,-3.438 0,0 5.195,-3.015 17.667,-7.318 7.8,-2.691 22.082,-9.819 7.4,-28.584 0,0 -4.48,-2.204 -8.752,-2.023 -5.211,0.221 -10.163,1.334 -10.163,1.334 z"
-   style="fill:#ffffff"
-   id="path2408" />
+       id="g2345"
+       transform="translate(9.61811,-0.732966)">
+        <g
+   id="g2300"
+   transform="translate(-1,2)">
+            <path
+   id="path2298"
+   d="m 84.826,78.591 c 0,0 -7.106,-5.409 -19.94,-4.773 0,0 -20.363,8.591 -11.772,43.061 l 0.478,11.899 1.266,5.977 5.954,1.606 c 0,0 2.279,-0.838 3.869,-1.029 1.371,-0.164 2.764,-2.658 1.096,-2.89 -1.364,-0.19 -3.701,-0.103 -3.938,-1.526 -0.496,-2.981 -1.945,-7.512 0.049,-8.237 l 7.417,0.204 5.577,4.302 c 0,0 7.223,5.885 11.199,5.801 1.708,-0.036 6.701,-6.922 6.053,-9.168 -0.257,-0.891 -4.291,2.702 -5.372,2.03 0,0 -0.72,-2.011 -4.138,-2.62 0,0 -1.686,-0.867 0.929,-3.592 0,0 5.195,-3.015 17.667,-7.318 7.8,-2.691 22.082,-9.819 7.4,-28.584 0,0 -4.48,-2.204 -8.752,-2.023 -5.211,0.221 -10.163,1.334 -10.163,1.334 z"
+   style="fill:#ffffff" />
 
-    </g>
-    <g
-       transform="translate(13,2)"
-       id="g2414">
-        <path
+        </g>
+
+        <g
+   id="g2304"
+   transform="translate(13,2)">
+            <path
+   id="path2302"
    d="m 57.674,92.167 c 0,0 -3.288,17.394 5.091,19.303 0,0 8.697,0.848 5.621,-20.046"
-   style="fill:none;stroke:#000000;stroke-width:2.5px"
-   id="path2412" />
+   style="fill:none;stroke:#000000;stroke-width:2.5px" />
 
-    </g>
-    <g
-       transform="matrix(0.824324,0,0,0.824324,23.6473,16.9804)"
-       id="g2418">
-        <circle
+        </g>
+
+        <g
+   id="g2308"
+   transform="matrix(0.824324,0,0,0.824324,23.6473,16.9804)">
+            <circle
+   id="circle2306"
    cx="73.955002"
    cy="87.235001"
    r="1.962"
-   style="stroke:#000000;stroke-width:1.66px"
-   id="circle2416" />
+   style="stroke:#000000;stroke-width:1.66px" />
 
-    </g>
-    <g
-       transform="translate(-1,2)"
-       id="g2422">
-        <path
+        </g>
+
+        <g
+   id="g2312"
+   transform="translate(-1,2)">
+            <path
+   id="path2310"
    d="m 54.386,84.212 c 0,0 4.455,-11.136 16.546,-11.773 0,0 8.166,0 15.485,7.319"
-   style="fill:none;stroke:#000000;stroke-width:2.5px"
-   id="path2420" />
+   style="fill:none;stroke:#000000;stroke-width:2.5px" />
 
-    </g>
-    <path
-       d="m 85.417,81.758 c 0,0 6.786,4.913 6.402,16.881"
-       style="fill:none;stroke:#000000;stroke-width:2.5px"
-       id="path2424" />
-    <g
-       transform="translate(1,1)"
-       id="g2428">
-        <ellipse
+        </g>
+
+        <path
+   id="path2314"
+   d="m 85.417,81.758 c 0,0 6.786,4.913 6.402,16.881"
+   style="fill:none;stroke:#000000;stroke-width:2.5px" />
+
+        <g
+   id="g2318"
+   transform="translate(1,1)">
+            <ellipse
+   id="ellipse2316"
    cx="106.187"
    cy="86.063004"
    rx="1.952"
    ry="1.824"
-   style="stroke:#000000;stroke-width:2.5px"
-   id="ellipse2426" />
+   style="stroke:#000000;stroke-width:2.5px" />
+
+        </g>
+
+        <g
+   transform="translate(-3.99964,1.99997)"
+   id="g1002">
+            <g
+   transform="translate(-29.6185,-1.267)"
+   id="g996">
+                <path
+   d="m 85.712,124.937 c 0,0 -0.384,11.52 3.2,12.608 6.567,1.994 10.048,-1.6 10.048,-1.6 0,0 0.32,-2.624 -5.312,-3.584 l 0.256,-7.424"
+   style="fill:none;stroke:#000000;stroke-width:2.5px"
+   id="path994" />
+
+            </g>
+
+            <g
+   transform="matrix(0.658901,-0.752229,0.752229,0.658901,-72.0743,109.057)"
+   id="g1000">
+                <path
+   d="m 85.712,124.937 c 0,0 -0.384,11.52 3.2,12.608 6.567,1.994 10.048,-1.6 10.048,-1.6 0,0 0.32,-2.624 -5.312,-3.584 l 0.256,-7.424"
+   style="fill:none;stroke:#000000;stroke-width:2.5px"
+   id="path998" />
+
+            </g>
+
+        </g>
 
     </g>
-    <path
-       d="m 53.355,121.615 0.64,18.688 c 0,0 6.272,2.752 12.928,-0.896"
-       style="fill:none;stroke:#000000;stroke-width:2.5px"
-       id="path2430" />
-    <path
-       d="m 80.811,123.215 5.696,3.008"
-       style="fill:none;stroke:#000000;stroke-width:2.5px"
-       id="path2432" />
-    <path
-       d="m 84.907,124.303 c 0,0 2.752,-2.112 4.16,-2.624 0,0 6.4,1.28 0.384,14.72 l -16.256,-4.736"
-       style="fill:none;stroke:#000000;stroke-width:2.5px"
-       id="path2434" />
-    <path
-       d="m 67.435,139.215 c 0,0 2.944,-5.12 -1.408,-5.312 l -0.192,-5.952"
-       style="fill:none;stroke:#000000;stroke-width:2.5px"
-       id="path2436" />
   </g>
 </svg>
