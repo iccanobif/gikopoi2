@@ -12,7 +12,7 @@ class AnnualEvent
 	{
 		return [
 			new Date(y, this.monthFrom-1, this.dayFrom),
-			new Date(y, this.monthTo-1, this.dayTo)]
+			new Date(y, this.monthTo-1, this.dayTo, 23, 59, 59, 999)]
 	}
 	
 	isBetween(date)
