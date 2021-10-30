@@ -3103,7 +3103,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             right: { x: 8, y: 9, direction: "left", target: { roomId: "busstop", doorId: "left" } },
         },
-        streamSlotCount: 0,
+        streamSlotCount: 2,
     },
     densha: {
         id: "densha",
