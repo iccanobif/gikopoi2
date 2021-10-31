@@ -12,15 +12,21 @@ export interface Coordinates
     y: number;
 }
 
+export interface Participant
+{
+    user: Player;
+    janusHandle: any;
+}
+
 export interface StreamSlot
 {
     isActive: boolean,
     isReady: boolean,
     withSound: boolean | null,
     withVideo: boolean | null,
-    userId: string | null,
-    publisherId: number | null,
     isPrivateStream: boolean | null,
+    publisher: Participant | null,
+    listeners: Participant[],
 }
 
 export interface Door
