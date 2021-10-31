@@ -45,7 +45,7 @@
                 </div>
                 <div>
                     <label>{{ $t("ui.label_username") }}</label>
-                    <input id="username-textbox" type="text" v-model="username" maxlength="20" :disabled="isLoggingIn" />
+                    <input id="username-textbox" type="text" v-model="username" maxlength="20" v-bind:placeholder="$t('default_user_name')" :disabled="isLoggingIn" />
                 </div>
                 <div id="character-selection">
                     <label v-for="character in allCharacters" :for="character.characterName + '-selection'"
