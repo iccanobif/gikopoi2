@@ -572,7 +572,7 @@ io.on("connection", function (socket: Socket)
 
             if (type == "offer")
             {
-                if (stream.publisher!.user !== user) return;
+                if (stream.publisher && stream.publisher.user !== user) return;
 
                 if (roomState.janusRoomServer === null)
                 {
