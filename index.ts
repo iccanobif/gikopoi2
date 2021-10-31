@@ -490,9 +490,9 @@ io.on("connection", function (socket: Socket)
 
     socket.on("user-want-to-take-stream", async function (streamSlotId: number)
     {
-        log.info("user-want-to-take-stream", user.id, streamSlotId)
         try
         {
+            log.info("user-want-to-take-stream", user.id, streamSlotId)
             if (streamSlotId === undefined) return;
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId];
