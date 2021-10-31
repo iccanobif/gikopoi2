@@ -2265,6 +2265,7 @@ window.vueApp = new Vue({
             if(!this.rtcPeerSlots[streamSlotId]) return;
             this.rtcPeerSlots[streamSlotId].rtcPeer.close()
             this.rtcPeerSlots[streamSlotId] = null;
+            this.socket.emit("user-want-to-drop-stream", streamSlotId);
         },
         wantToDropStream: function (streamSlotId)
         {
