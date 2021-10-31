@@ -473,7 +473,7 @@ io.on("connection", function (socket: Socket)
             socket.emit("server-not-ok-to-stream", "start_stream_unknown_error")
         }
     })
-    socket.on("user-want-to-stop-stream", function () //TODO
+    socket.on("user-want-to-stop-stream", function ()
     {
         try
         {
@@ -528,6 +528,27 @@ io.on("connection", function (socket: Socket)
         {
             logException(e)
             socket.emit("server-not-ok-to-take-stream", streamSlotId);
+        }
+    })
+    
+    socket.on("user-want-to-drop-stream", function (streamSlotId: number)
+    {
+        try
+        {
+            log.info(user.id, "user-want-to-drop-stream")
+            if (streamSlotId === undefined) return;
+            const roomState = roomStates[user.areaId][user.roomId];
+            const stream = roomState.streams[streamSlotId];
+            const listenerIndex = stream.listeners.findIndex(p => p.user == user);
+            if (listenerIndex !== -1)
+            {
+                const listener = stream.listeners.splice(listenerIndex, 1)[0];
+                listener.janusHandle.detach();
+            }
+        }
+        catch (e)
+        {
+            logException(e)
         }
     })
 
