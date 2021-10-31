@@ -955,7 +955,7 @@ function roomEmit(areaId: string, roomId: string, ...msg: any[])
         .forEach((u) => u.socketId && io.to(u.socketId).emit(...msg));
 }
 
-function toStreamSlotDtoArray(user: Player | null, streamSlots: StreamSlot[]): StreamSlotDto[]
+function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSlotDto[]
 {
     return streamSlots.map((s) =>
     {
@@ -1133,13 +1133,10 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
         const roomId = req.params.roomId
         const areaId = req.params.areaId
 
-        const connectedUsers: PlayerDto[] = getConnectedUserList(roomId, areaId)
-            .map(p => toPlayerDto(p))
-
         const dto: RoomStateDto = {
             currentRoom: rooms[roomId],
-            connectedUsers,
-            streams: toStreamSlotDtoArray(null, roomStates[areaId][roomId].streams), // FIX: ignoring/banning ignored...
+            connectedUsers: [],
+            streams: [],
             chessboardState: buildChessboardStateDto(roomStates, areaId, roomId)
         }
 
