@@ -454,7 +454,8 @@ io.on("connection", function (socket: Socket)
 
             setTimeout(() =>
             {
-                if (stream.publisher!.janusHandle == null)
+                if (stream.publisher != null &&
+                    stream.publisher.janusHandle == null)
                 {
                     log.info(user.id, "janusHandle is null")
                     clearStream(user)
@@ -1534,25 +1535,19 @@ async function annihilateJanusRoom(roomState: RoomState)
         if (roomState.janusRoomServer == null) return;
         
         const janusServer = roomState.janusRoomServer;
-        roomState.janusRoomServer = null;
-
+        
         const client = janusServer.client;
         await janusClientConnect(client);
         const session = await client.createSession()
         
         const videoRoomHandle = await session.videoRoom().createVideoRoomHandle();
         
-        log.info("video room handle list");
-        
-        const roomList = await videoRoomHandle.list();
-        log.info(roomList.list);
-        
-        log.info("video room handle list participants");
-        
         const participantList = await videoRoomHandle.listParticipants({ room: roomState.janusRoomIntName });
-        log.info(participantList.participants);
+        log.info("video room remaining participants", participantList.participants);
         
         if (roomState.streams.filter(s => s.isActive).length) return;
+        
+        roomState.janusRoomServer = null;
         
         videoRoomHandle.destroy({ room: roomState.janusRoomIntName })
         log.info("Janus room " + roomState.janusRoomIntName
@@ -1584,6 +1579,12 @@ function clearStream(user: Player)
                 stream.publisher!.janusHandle.detach();
             stream.publisher = null
             
+            let listener;
+            while((listener = stream.listeners.splice(0, 1)).length)
+            {
+                listener[0].janusHandle.detach();
+            }
+                        
             sendUpdatedStreamSlotState(user)
             emitServerStats(user.areaId)
             annihilateJanusRoom(roomState);
