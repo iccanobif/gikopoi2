@@ -186,6 +186,7 @@ io.on("connection", function (socket: Socket)
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-user-left-room", user.id);
             clearStream(user)
+            clearRoomListener(user)
             emitServerStats(user.areaId)
         }
         catch (exc)
@@ -667,6 +668,7 @@ io.on("connection", function (socket: Socket)
             currentRoom = rooms[targetRoomId]
 
             clearStream(user)
+            clearRoomListener(user)
             stopChessGame(roomStates, user)
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-user-left-room", user.id)
@@ -1596,6 +1598,30 @@ function clearStream(user: Player)
     }
 }
 
+function clearRoomListener(user: Player)
+{
+    try
+    {
+        if (!user) return
+        
+        log.info(user.id, "trying to clear room of listener:", user.areaId, user.roomId)
+        
+        roomStates[user.areaId][user.roomId].streams.forEach(s =>
+        {
+            let li;
+            while((li = s.listeners.findIndex(l => l.user == user)) != -1)
+            {
+                const listener = s.listeners.splice(li, 1);
+                listener[0].janusHandle.detach();
+            }
+        });
+    }
+    catch (error)
+    {
+        logException(error)
+    }
+}
+
 function buildChessboardStateDto(roomStates: RoomStateCollection, areaId: string, roomId: string): ChessboardStateDto
 {
     const state = roomStates[areaId][roomId].chess
@@ -1642,6 +1668,7 @@ function disconnectUser(user: Player)
 {
     log.info("Removing user ", user.id, "<" + user.name + ">", user.areaId)
     clearStream(user)
+    clearRoomListener(user)
     removeUser(user)
 
     userRoomEmit(user, user.areaId, user.roomId,
