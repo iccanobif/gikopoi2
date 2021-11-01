@@ -1,6 +1,6 @@
 import express, { Request } from "express"
 import { rooms } from "./rooms";
-import { Direction, RoomState, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
+import { Direction, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
 import { sleep } from "./utils";
 import got from "got";
@@ -68,9 +68,6 @@ function initializeRoomStates()
         {
             roomStates[areaId][roomId] = {
                 streams: [],
-                janusRoomServer: null,
-                janusRoomName: settings.janusRoomNamePrefix + ":" + areaId + ":" + roomId,
-                janusRoomIntName: (settings.janusRoomNameIntPrefix * 10000000) + (areaNumberId * 10000) + roomNumberId,
                 chess: {
                     instance: null,
                     blackUserID: null,
@@ -82,6 +79,9 @@ function initializeRoomStates()
             for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
             {
                 roomStates[areaId][roomId].streams.push({
+                    janusServer: null,
+                    janusRoomName: settings.janusRoomNamePrefix + ":" + areaId + ":" + roomId + ":" + i,
+                    janusRoomIntName: (settings.janusRoomNameIntPrefix * 1000000000) + (areaNumberId * 1000000) + (roomNumberId * 100) + i,
                     isActive: false,
                     isReady: false,
                     withSound: null,
@@ -500,14 +500,14 @@ io.on("connection", function (socket: Socket)
             if (stream.publisher === null
                 || stream.publisher.user.blockedIps.includes(user.ip)
                 || stream.publisher.janusHandle === null
-                || roomState.janusRoomServer === null)
+                || stream.janusServer === null)
             {
                 log.info("server-not-ok-to-take-stream", user.id, streamSlotId)
                 socket.emit("server-not-ok-to-take-stream", streamSlotId);
                 return;
             };
 
-            const client = roomState.janusRoomServer.client;
+            const client = stream.janusServer.client;
 
             await janusClientConnect(client);
             const session = await client.createSession()
@@ -516,7 +516,7 @@ io.on("connection", function (socket: Socket)
             
             if (!stream.isActive) return;
             const janusHandle = await session.videoRoom().listenFeed(
-                roomState.janusRoomIntName, publisherId)
+                stream.janusRoomIntName, publisherId)
             
             if (!stream.isActive)
             {
@@ -583,11 +583,8 @@ io.on("connection", function (socket: Socket)
             {
                 if (stream.publisher && stream.publisher.user !== user) return;
 
-                if (roomState.janusRoomServer === null)
-                {
-                    roomState.janusRoomServer = getLeastUsedJanusServer()
-                }
-                const client = roomState.janusRoomServer.client;
+                stream.janusServer = getLeastUsedJanusServer()
+                const client = stream.janusServer.client;
 
                 await janusClientConnect(client);
                 const session = await client.createSession()
@@ -599,12 +596,12 @@ io.on("connection", function (socket: Socket)
                 try
                 {
                     await videoRoomHandle.create({
-                        room: roomState.janusRoomIntName,
+                        room: stream.janusRoomIntName,
                         publishers: 20
                     })
-                    log.info("user-rtc-message", user.id, "Janus room " + roomState.janusRoomIntName
-                        + "(" + roomState.janusRoomName + ") created on server "
-                        + roomState.janusRoomServer.id)
+                    log.info("user-rtc-message", user.id, "Janus room " + stream.janusRoomIntName
+                        + "(" + stream.janusRoomName + ") created on server "
+                        + stream.janusServer.id)
                 }
                 catch (e: any)
                 {
@@ -614,16 +611,18 @@ io.on("connection", function (socket: Socket)
                 
                 if (!stream.isActive)
                 {
-                    annihilateJanusRoom(roomState)
+                    videoRoomHandle.destroy({ room: stream.janusRoomIntName })
+                    videoRoomHandle.detach()
                     return;
                 }
+                videoRoomHandle.detach()
 
                 const janusHandle = await session.videoRoom().publishFeed(
-                    roomState.janusRoomIntName, msg)
+                    stream.janusRoomIntName, msg)
                 
                 if (!stream.isActive)
                 {
-                    janusHandle.detach()
+                    detachPublisher(janusHandle, stream)
                     return
                 }
                 participantObject.janusHandle = janusHandle
@@ -1550,55 +1549,40 @@ async function janusClientConnect(client: typeof JanusClient): Promise<void>
     })
 }
 
-// Can probably be improved with number of users, though it might be difficult to determine without asking the janus server.
+// Next step is to determine the load of the stream: video+audio, video only, audio only, video/audio quality, etc
 function getLeastUsedJanusServer()
 {
-    const roomCounts = Object.fromEntries(janusServers.map(o => [o.id, 0]));
+    const serverUserCounts = Object.fromEntries(janusServers.map(o => [o.id, 0]));
     for (const areaId in roomStates)
         for (const roomId in roomStates[areaId])
         {
-            const roomState = roomStates[areaId][roomId];
-            if (roomState.janusRoomServer === null) continue;
-            roomCounts[roomState.janusRoomServer.id]++;
+            const streams = roomStates[areaId][roomId].streams;
+            for (const streamSlotId in streams)
+            {
+                const streamSlot = streams[streamSlotId]
+                if(streamSlot.publisher !== null && streamSlot.janusServer !== null)
+                    serverUserCounts[streamSlot.janusServer.id] = Math.min(streamSlot.listeners.length, 5) + 1
+                    // + 1 for publisher and a min of listeners to allow streams to expand
+            }
         }
-    const serverId = Object.keys(roomCounts).reduce((acc, cur) =>
-        roomCounts[acc] < roomCounts[cur] ? acc : cur);
+    
+    const serverId = Object.keys(serverUserCounts).reduce((acc, cur) =>
+        serverUserCounts[acc] < serverUserCounts[cur] ? acc : cur);
     return janusServersObject[serverId];
 }
 
-async function annihilateJanusRoom(roomState: RoomState)
+async function detachPublisher(janusHandle: any, streamSlot: StreamSlot)
 {
-    try
-    {
-        if (roomState.janusRoomServer == null) return;
-        
-        const janusServer = roomState.janusRoomServer;
-        
-        const client = janusServer.client;
-        await janusClientConnect(client);
-        const session = await client.createSession()
-        
-        const videoRoomHandle = await session.videoRoom().createVideoRoomHandle();
-        
-        const participantList = await videoRoomHandle.listParticipants({ room: roomState.janusRoomIntName });
-        log.info("video room remaining participants", participantList.participants);
-        
-        if (roomState.streams.filter(s => s.isActive).length) return;
-        
-        roomState.janusRoomServer = null;
-        
-        videoRoomHandle.destroy({ room: roomState.janusRoomIntName })
-        log.info("Janus room " + roomState.janusRoomIntName
-            + "(" + roomState.janusRoomName + ") destroyed on server "
-            + janusServer.id)
-    }
-    catch (error)
-    {
-        logException(error)
-    }
+    if (janusHandle === null) return;
+    await janusHandle.destroy({ room: streamSlot.janusRoomIntName })
+    log.info("Janus room " + streamSlot.janusRoomIntName
+        + "(" + streamSlot.janusRoomName + ") destroyed on server "
+        + streamSlot.janusServer!.id)
+    streamSlot.janusServer = null;
+    janusHandle.detach();
 }
 
-function clearStream(user: Player)
+async function clearStream(user: Player)
 {
     try
     {
@@ -1614,7 +1598,7 @@ function clearStream(user: Player)
             stream.isReady = false
             
             if (stream.publisher!.janusHandle !== null)
-                stream.publisher!.janusHandle.detach();
+                detachPublisher(stream.publisher!.janusHandle, stream)
             stream.publisher = null
             
             let listener;
@@ -1625,7 +1609,6 @@ function clearStream(user: Player)
                         
             sendUpdatedStreamSlotState(user)
             emitServerStats(user.areaId)
-            annihilateJanusRoom(roomState);
         }
     }
     catch (error)

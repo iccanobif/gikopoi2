@@ -20,6 +20,9 @@ export interface Participant
 
 export interface StreamSlot
 {
+    janusServer: JanusServer | null,
+    janusRoomIntName: number | null,
+    janusRoomName: string | null,
     isActive: boolean,
     isReady: boolean,
     withSound: boolean | null,
@@ -90,9 +93,6 @@ export type RoomStateCollection = {
 export interface RoomState
 {
     streams: StreamSlot[],
-    janusRoomServer: JanusServer | null,
-    janusRoomIntName: number | null,
-    janusRoomName: string | null,
     chess: ChessboardState
 }
 
