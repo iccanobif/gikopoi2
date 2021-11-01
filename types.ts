@@ -20,7 +20,9 @@ export interface Participant
 
 export interface StreamSlot
 {
+    streamId: number,
     janusServer: JanusServer | null,
+    janusSession: any,
     janusRoomIntName: number | null,
     janusRoomName: string | null,
     isActive: boolean,
