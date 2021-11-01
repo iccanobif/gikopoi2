@@ -2186,6 +2186,7 @@ window.vueApp = new Vue({
         },
         stopStreaming: function ()
         {
+            this.socket.emit("user-want-to-stop-stream");
             for (const track of this.mediaStream.getTracks()) track.stop();
             
             const streamSlotId = this.streamSlotIdInWhichIWantToStream;
@@ -2202,7 +2203,6 @@ window.vueApp = new Vue({
                 this.rtcPeerSlots[streamSlotId] = null;
             }
             
-            this.socket.emit("user-want-to-stop-stream");
 
             // On small screens, displaying the <video> element seems to cause a reflow in a way that
             // makes the canvas completely gray, so i force a redraw

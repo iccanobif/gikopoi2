@@ -512,9 +512,17 @@ io.on("connection", function (socket: Socket)
             const session = await client.createSession()
             
             const publisherId = stream.publisher.janusHandle.getPublisherId();
+            
+            if (!stream.isActive) return;
             const janusHandle = await session.videoRoom().listenFeed(
                 roomState.janusRoomIntName, publisherId)
-                
+            
+            if (!stream.isActive)
+            {
+                janusHandle.detach()
+                return
+            }
+            
             stream.listeners.push({ user: user, janusHandle: janusHandle });
 
             janusHandle.onTrickle((candidate: any) =>
@@ -599,10 +607,19 @@ io.on("connection", function (socket: Socket)
                     // Check if error isn't just that the room already exists, code 427
                     if (!e.getCode || e.getCode() !== 427) throw e;
                 }
+                
+                if (!stream.isActive) return;
 
                 const janusHandle = await session.videoRoom().publishFeed(
                     roomState.janusRoomIntName, msg)
-
+                
+                if (!stream.isActive)
+                {
+                    janusHandle.detach()
+                    return
+                }
+                participantObject.janusHandle = janusHandle
+                
                 janusHandle.onTrickle((candidate: any) =>
                 {
                     socket.emit("server-rtc-message", streamSlotId, "candidate", candidate);
@@ -611,7 +628,6 @@ io.on("connection", function (socket: Socket)
                 const answer = janusHandle.getAnswer();
 
                 stream.isReady = true
-                participantObject.janusHandle = janusHandle
 
                 sendUpdatedStreamSlotState(user)
 
