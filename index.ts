@@ -1582,7 +1582,7 @@ async function detachPublisher(janusHandle: any, streamSlot: StreamSlot)
     janusHandle.detach();
 }
 
-async function clearStream(user: Player)
+function clearStream(user: Player)
 {
     try
     {
