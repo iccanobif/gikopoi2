@@ -12,6 +12,7 @@ import { existsSync, readFileSync } from "fs";
 import { readdir, readFile, writeFile } from "fs/promises";
 import { Chess } from "chess.js";
 import { Socket } from "socket.io";
+import { intersectionBy } from "lodash"
 
 const app: express.Application = express()
 const http = require('http').Server(app);
@@ -1133,9 +1134,24 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
         const roomId = req.params.roomId
         const areaId = req.params.areaId
 
+        // The IP this request is coming from could be linked to more than ones user, and
+        // each of those users could be blocking/blocked by a different set of other users.
+        // So i get the filtered user list for each of those users and return its intersection
+        // to make sure I don't leak info about someone who is blocking this IP. This 
+        // API is used only to initialize the room and the user list will be replaced with an updated
+        // one when the socket is opened, so in theory it'd be okay to just send an empty user list here,
+        // and the only side effect would be that the open bubbles in the spawn room would not be shown to the log
+
+        const usersForThisIP = getUsersByIp(getRealIp(req), areaId)
+        
+        const filteredLists: Player[][] = usersForThisIP
+            .map(u => getFilteredConnectedUserList(u, roomId, areaId))
+
+        const filteredListsIntersection = intersectionBy(...filteredLists, u => u.id)
+
         const dto: RoomStateDto = {
             currentRoom: rooms[roomId],
-            connectedUsers: [],
+            connectedUsers: filteredListsIntersection.map(toPlayerDto),
             streams: [],
             chessboardState: buildChessboardStateDto(roomStates, areaId, roomId)
         }
