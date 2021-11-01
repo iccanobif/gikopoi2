@@ -593,6 +593,9 @@ io.on("connection", function (socket: Socket)
                 const session = await client.createSession()
 
                 const videoRoomHandle = await session.videoRoom().createVideoRoomHandle();
+                
+                if (!stream.isActive) return;
+                
                 try
                 {
                     await videoRoomHandle.create({
@@ -609,7 +612,11 @@ io.on("connection", function (socket: Socket)
                     if (!e.getCode || e.getCode() !== 427) throw e;
                 }
                 
-                if (!stream.isActive) return;
+                if (!stream.isActive)
+                {
+                    annihilateJanusRoom(roomState)
+                    return;
+                }
 
                 const janusHandle = await session.videoRoom().publishFeed(
                     roomState.janusRoomIntName, msg)
