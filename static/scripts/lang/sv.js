@@ -171,7 +171,7 @@ export default
         enkai: "Festsalen",
         idoA: "Brunn A",
         idoB: "Brunn B",
-        busstop: "Bushållplatsen",
+        busstop: "Busshållplatsen",
         school: "Skolan: Klassrum",
         school_rouka: "Skolan: Korridor",
         school_international: "Skolan: Kulturrum",
