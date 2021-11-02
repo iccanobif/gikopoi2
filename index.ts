@@ -1639,9 +1639,10 @@ function clearRoomListener(user: Player)
         
         log.info(user.id, "trying to clear room of listener:", user.areaId, user.roomId)
         
-        roomStates[user.areaId][user.roomId].streams.forEach(s =>
+        roomStates[user.areaId][user.roomId].streams
+            .filter(s => s.janusSession !== null)
+            .forEach(s =>
         {
-            if (s.janusSession === null) continue;
             let li;
             while((li = s.listeners.findIndex(l => l.user == user)) != -1)
             {
