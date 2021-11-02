@@ -74,7 +74,7 @@ function getDefaultAreaId()
 
 const i18n = new VueI18n({
     locale: "ja",
-    fallbackLocale: "ja",
+    fallbackLocale: "en",
     messages,
 });
 
