@@ -1579,17 +1579,27 @@ function getLeastUsedJanusServer()
 
 async function destroySession(janusHandle: any, stream: StreamSlot)
 {
-    if (janusHandle === null || stream.janusSession === null) return;
-    await janusHandle.destroy({ room: stream.janusRoomIntName })
-    log.info("Janus room " + stream.janusRoomIntName
-        + "(" + stream.janusRoomName + ") destroyed on server "
-        + stream.janusServer!.id)
-    
-    stream.janusSession.destroy()
-    log.info("Session destroyed on server " + stream.janusServer!.id)
-    
-    stream.janusSession = null
-    stream.janusServer = null;
+    try
+    {
+        if (janusHandle === null || stream.janusSession === null) return;
+        await janusHandle.destroy({ room: stream.janusRoomIntName })
+        log.info("Janus room " + stream.janusRoomIntName
+            + "(" + stream.janusRoomName + ") destroyed on server "
+            + stream.janusServer!.id)
+        
+        if (stream.janusSession !== null)
+        {
+            stream.janusSession.destroy()
+            log.info("Session destroyed on server " + stream.janusServer!.id)
+            stream.janusSession = null
+        }
+        
+        stream.janusServer = null;
+    }
+    catch (error)
+    {
+        logException(error)
+    }
 }
 
 function clearStream(user: Player)
