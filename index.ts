@@ -1619,6 +1619,7 @@ function clearStream(user: Player)
             
             destroySession(stream.publisher!.janusHandle, stream)
             stream.publisher = null;
+            stream.listeners = [];
             
             sendUpdatedStreamSlotState(user)
             emitServerStats(user.areaId)
@@ -1640,6 +1641,7 @@ function clearRoomListener(user: Player)
         
         roomStates[user.areaId][user.roomId].streams.forEach(s =>
         {
+            if (s.janusSession === null) continue;
             let li;
             while((li = s.listeners.findIndex(l => l.user == user)) != -1)
             {
