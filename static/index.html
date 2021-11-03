@@ -149,28 +149,28 @@
                                 <div>{{ $t("ui.label_move") }}</div>
                             </div>
                             <div class="non-wrappable-buttons">
-                                <button id="btn-move-left" class="grid-button"
+                                <button id="btn-move-left" class="arrow-button arrow-button-left"
                                         v-on:mousedown="setMovementDirection('left')"
                                         v-on:mouseup="setMovementDirection(null)"
                                         v-on:touchstart="setMovementDirection('left')"
-                                        v-on:touchend="setMovementDirection(null)">↖</button
-                                ><button id="btn-move-up" class="grid-button"
+                                        v-on:touchend="setMovementDirection(null)">&nbsp;</button
+                                ><button id="btn-move-up" class="arrow-button arrow-button-up"
                                         v-on:mousedown="setMovementDirection('up')"
                                         v-on:mouseup="setMovementDirection(null)"
                                         v-on:touchstart="setMovementDirection('up')"
-                                        v-on:touchend="setMovementDirection(null)">↗</button>
+                                        v-on:touchend="setMovementDirection(null)">&nbsp;</button>
                             </div>
                             <div class="non-wrappable-buttons">
-                                <button id="btn-move-down" class="grid-button"
+                                <button id="btn-move-down" class="arrow-button arrow-button-down"
                                         v-on:mousedown="setMovementDirection('down')"
                                         v-on:mouseup="setMovementDirection(null)"
                                         v-on:touchstart="setMovementDirection('down')"
-                                        v-on:touchend="setMovementDirection(null)">↙</button
-                                ><button id="btn-move-right" class="grid-button"
+                                        v-on:touchend="setMovementDirection(null)">&nbsp;</button
+                                ><button id="btn-move-right" class="arrow-button arrow-button-right"
                                         v-on:mousedown="setMovementDirection('right')"
                                         v-on:mouseup="setMovementDirection(null)"
                                         v-on:touchstart="setMovementDirection('right')"
-                                        v-on:touchend="setMovementDirection(null)">↘</button>
+                                        v-on:touchend="setMovementDirection(null)">&nbsp;</button>
                             </div>
                         </div>
                         <div class="tooltip-section" v-if="isBubbleSectionVisible">
@@ -178,12 +178,12 @@
                                 <div>{{ $t("ui.label_bubble") }}</div>
                             </div>
                             <div class="non-wrappable-buttons">
-                                <button class="grid-button" v-on:click="sendNewBubblePositionToServer('left')">↖</button
-                                ><button class="grid-button" v-on:click="sendNewBubblePositionToServer('up')">↗</button>
+                                <button class="arrow-button arrow-button-left" v-on:click="sendNewBubblePositionToServer('left')">&nbsp;</button
+                                ><button class="arrow-button arrow-button-up" v-on:click="sendNewBubblePositionToServer('up')">&nbsp;</button>
                             </div>
                             <div class="non-wrappable-buttons">
-                                <button class="grid-button" v-on:click="sendNewBubblePositionToServer('down')">↙</button
-                                ><button class="grid-button" v-on:click="sendNewBubblePositionToServer('right')">↘</button>
+                                <button class="arrow-button arrow-button-down" v-on:click="sendNewBubblePositionToServer('down')">&nbsp;</button
+                                ><button class="arrow-button arrow-button-right" v-on:click="sendNewBubblePositionToServer('right')">&nbsp;</button>
                             </div>
                         </div>
                         <div class="tooltip-section">

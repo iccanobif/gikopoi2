@@ -395,12 +395,34 @@ video {
     align-items: center;
 }
 
-#toolbar button.grid-button
+#toolbar button.arrow-button
 {
     font-weight: bold;
     font-size: 20px;
     padding: 3px 8px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 15px;
+    width: 34px;
+    height: 34px;
 }
+.arrow-button-left
+{
+    background-image: url("../north_west_black_24dp.svg");
+}
+.arrow-button-up
+{
+    background-image: url("../north_east_black_24dp.svg");
+}
+.arrow-button-down
+{
+    background-image: url("../south_west_black_24dp.svg");
+}
+.arrow-button-right
+{
+    background-image: url("../south_east_black_24dp.svg");
+}
+
 
 #rula-popup {
     max-width: 600px;
@@ -770,3 +792,4 @@ button
 {
     background-color: gray;
 }
+
