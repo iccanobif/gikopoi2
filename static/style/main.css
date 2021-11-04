@@ -125,11 +125,19 @@ input[type='range']
 {
     z-index: 150;
     width: 219px;
-    height: auto !important;
+    /* height: auto !important; */
+    background-color: #7e7e7e;
+    background-image: url("../spinner.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50px;
+    margin: 4px 0px;
 }
 
 video {
     width: 100%;
+    /* not sure why, video-container seems to be always 4px taller than it should be to neatly contain the <video>  */
+    margin-bottom: -4px;
 }
 
 .highlighted-stream-title
