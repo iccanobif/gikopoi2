@@ -62,6 +62,9 @@ export default class User
     {
         if (!this.isWalking)
             return
+
+        if (delta == 0)
+            return
             
         const blockWidth = room.blockWidth ? room.blockWidth : BLOCK_WIDTH;
         const blockHeight = room.blockHeight ? room.blockHeight : BLOCK_HEIGHT;
