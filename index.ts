@@ -147,11 +147,9 @@ io.use(async (socket: Socket, next: () => void) => {
 
 io.on("connection", function (socket: Socket)
 {
-    log.info("Connection attempt", getRealIpWebSocket(socket), getAllUsers().filter(u => u.ip == getRealIpWebSocket(socket)).map(u => u.id).join(" "));
-
     let user: Player;
     let currentRoom = rooms.admin_st;
-
+    
     const sendCurrentRoomState = () =>
     {
         const connectedUsers: PlayerDto[] = getFilteredConnectedUserList(user, user.roomId, user.areaId)
@@ -198,45 +196,73 @@ io.on("connection", function (socket: Socket)
         }
     })
 
-    socket.on("user-connect", function (privateUserId: string)
+
+    // Authenticate connection and initialize user and currentRoom (might be better to
+    // do this in a middleware?)
+    try
     {
-        try
+        const privateUserId = socket.handshake.headers["private-user-id"]
+
+        log.info("Connection attempt",
+                getRealIpWebSocket(socket),
+                getAllUsers().filter(u => u.ip == getRealIpWebSocket(socket)).map(u => u.id).join(" "),
+                "private-user-id:", privateUserId
+                );
+
+        const rejectConnection = () => {
+            log.info("server-cant-log-you-in", privateUserId)
+            socket.emit("server-cant-log-you-in")
+            socket.disconnect(true)
+        }
+
+        if (!privateUserId || Array.isArray(privateUserId))
         {
-            log.info("user-connect private id:", privateUserId)
-            const loginUser = getLoginUser(privateUserId);
-            if (!loginUser)
-            {
-                log.info("server-cant-log-you-in", privateUserId)
-                socket.emit("server-cant-log-you-in")
-                socket.disconnect(true)
-                return;
-            }
-            user = loginUser;
-            user.socketId = socket.id;
+            // Array.isArray(privateUserId) is needed only to make typescript happy
+            // and make it understand that I expect privateUserId to be just a string
+            rejectConnection()
+            return;
+        }
 
-            log.info("user-connect userId:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
+        log.info("user-connect private id:", privateUserId)
+        const loginUser = getLoginUser(privateUserId);
+        if (!loginUser)
+        {
+            rejectConnection()
+            return;
+        }
+        user = loginUser;
+        user.socketId = socket.id;
 
-            currentRoom = rooms[user.roomId]
+        log.info("user-connect userId:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
 
-            socket.join(user.areaId)
-            socket.join(user.areaId + currentRoom.id)
+        currentRoom = rooms[user.roomId]
 
-            user.isGhost = false
-            user.disconnectionTime = null
+        socket.join(user.areaId)
+        socket.join(user.areaId + currentRoom.id)
 
-            currentRoom = rooms[user.roomId]
+        user.isGhost = false
+        user.disconnectionTime = null
 
-            sendCurrentRoomState()
+        currentRoom = rooms[user.roomId]
 
-            sendNewUserInfo()
+        sendCurrentRoomState()
 
-            emitServerStats(user.areaId)
+        sendNewUserInfo()
+
+        emitServerStats(user.areaId)
+    }
+    catch (e)
+    {
+        logException(e)
+        try {
+            socket.emit("server-cant-log-you-in")
+            socket.disconnect(true)
         }
         catch (e)
         {
             logException(e)
         }
-    });
+    }
     socket.on("user-msg", function (msg: string)
     {
         try

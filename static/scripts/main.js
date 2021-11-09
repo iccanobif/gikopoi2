@@ -551,7 +551,9 @@ window.vueApp = new Vue({
         },
         initializeSocket: function()
         {
-            this.socket = io();
+            this.socket = io({
+                extraHeaders: {"private-user-id": this.myPrivateUserID}
+            });
 
             const immanentizeConnection = async () =>
             {
@@ -562,7 +564,6 @@ window.vueApp = new Vue({
                 this.isWaitingForServerResponseOnMovement = false
 
                 this.connectionLost = false;
-                this.socket.emit("user-connect", this.myPrivateUserID);
 
                 // Check if there's a new version
                 const response = await fetch("/version");
