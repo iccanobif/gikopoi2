@@ -1630,7 +1630,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             stairs: { x: 0, y: 15, direction: "right", target: { roomId: "bar_giko", doorId: "right" } },
         },
-        streamSlotCount: 1,
+        streamSlotCount: 8,
     },
     radio_room1: {
         id: "radio_room1",
