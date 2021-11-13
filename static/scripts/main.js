@@ -2565,6 +2565,12 @@ window.vueApp = new Vue({
                         // else
                         //     setTimeout(() => this.slotIsVtuberCharacterJumping[this.streamSlotIdInWhichIWantToStream] = false, 100)
                         // this.$forceUpdate()
+
+                        // if (level > 0.2)
+                        //     this.streams[this.streamSlotIdInWhichIWantToStream].isJumping = true
+                        // else
+                        //     setTimeout(() => this.streams[this.streamSlotIdInWhichIWantToStream].isJumping = false, 100)
+                        // this.$forceUpdate()
                     });
                 }
 
