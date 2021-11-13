@@ -323,13 +323,16 @@ window.vueApp = new Vue({
                 this.loggedIn = true;
                 this.selectedCharacter = characters[this.characterId];
 
-                await this.connectToServer(this.username);
-
-                this.registerKeybindings();
+                // wait next tick so that canvas-container gets rendered in the DOM
+                await Vue.nextTick()
 
                 const canvasHeight = localStorage.getItem("canvasHeight")
                 if (canvasHeight)
                     document.getElementById("canvas-container").style.height = canvasHeight;
+
+                await this.connectToServer(this.username);
+
+                this.registerKeybindings();
 
                 this.isLoggingIn = false;
 
