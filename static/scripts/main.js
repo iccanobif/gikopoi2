@@ -2037,9 +2037,15 @@ window.vueApp = new Vue({
                 if (promiseResults.find(r => r.status == "rejected"))
                 {
                     // Close the devices that were successfully opened
-                    for (const mediaStream of promiseResults.filter(r => r.status == "fulfilled"))
-                        for (const track of mediaStream.value.getTracks()) 
-                            track.stop();
+                    for (const mediaStream of promiseResults)
+                    {
+                        // I don't know why, but sometimes mediaStream.value is null even if the promise is fulfilled
+                        if (mediaStream.status == "fulfilled" && mediaStream.value)
+                        {
+                            for (const track of mediaStream.value.getTracks())
+                                track.stop();
+                        }
+                    }
                     
                     throw new Error(promiseResults.find(r => r.status == "rejected").reason)
                 }
