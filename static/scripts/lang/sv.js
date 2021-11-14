@@ -10,7 +10,7 @@ export default
         subtitle: "Inofficiell återskapelse",
         
         login_user_count: "Användare: ",
-        login_streamer_count: "Strömare: ",
+        login_streamer_count: "Strömmare: ",
         
         infobox_label_area: "Område:",
         infobox_value_area: "Sjöstaden",
@@ -167,7 +167,7 @@ export default
         admin_st: "Utvecklargatan",
         admin: "Utvecklarstugan",
         admin_bar: "Administratörsbaren",
-        cafe_st: "Cafégatan",
+        cafe_st: "Kafégatan",
         enkai: "Festsalen",
         idoA: "Brunn A",
         idoB: "Brunn B",
