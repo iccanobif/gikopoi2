@@ -325,12 +325,22 @@ video {
     color: black;
 }
 
-#login-page button:hover,
-#toolbar button:hover,
-.stream-buttons button:hover,
-.popup button:hover
+#login-page button:hover:enabled,
+#toolbar button:hover:enabled,
+.stream-buttons button:hover:enabled,
+.chessboard-slot-wrapper button:hover:enabled,
+.popup button:hover:enabled
 {
     border-color: black;
+}
+
+#login-page button:disabled,
+#toolbar button:disabled,
+.stream-buttons button:disabled,
+.chessboard-slot-wrapper button:disabled,
+.popup button:disabled
+{
+    color :rgb(109, 109, 109);
 }
 
 .preferences-percentage
