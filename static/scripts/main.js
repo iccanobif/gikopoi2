@@ -32,9 +32,22 @@ const originalConsoleError = console.error
 console.error = function() {
     let allArgs = myUserID + " ERROR " + new Date()
     for (let i = 0; i < arguments.length; i++)
-        allArgs += " " + arguments[i]
+    {
+        const arg = arguments[i]
+
+        // If this argument is an exception, stringify it
+        const msg = arg.message ? arg.message + " " + arg.stack : arg
+
+        allArgs += " " + msg
+    }
     originalConsoleError(new Date(), ...arguments)
     logToServer(allArgs)
+}
+
+window.onerror = function(message, source, lineno, colno, error) {
+    console.error(error || (message + " " + source + ":" + lineno + ":" + colno))
+    // When the function returns true, this prevents the firing of the default event handler.
+    return true
 }
 
 function UserException(message) {
