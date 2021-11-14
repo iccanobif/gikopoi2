@@ -453,10 +453,24 @@ io.on("connection", function (socket: Socket)
         {
             const { streamSlotId, withVideo, withSound, info, isPrivateStream } = data
 
-            log.info("user-want-to-stream", user.id, "private: ", isPrivateStream, JSON.stringify(info))
+            log.info("user-want-to-stream", user.id,
+                     "private:", isPrivateStream,
+                     "streamSlotId:", streamSlotId,
+                     "room:", user.roomId,
+                     JSON.stringify(info))
 
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId]
+
+            if (!stream)
+            {
+                // I'm not sure why the log is full of errors about the stream object being undefined... Maybe
+                // there are some race conditions with users quickly starting a stream after changing room? Sounds unlikely,
+                // so for now I'll just add some more detailed logging and let the client also know something wrong happened.
+                log.info("ERROR server-not-ok-to-stream", user.id, "start_stream_stream_slot_does_not_exist")
+                socket.emit("server-not-ok-to-stream", "start_stream_stream_slot_does_not_exist")
+                return
+            }
 
             if (stream.publisher !== null && stream.publisher.user == user)
             {
