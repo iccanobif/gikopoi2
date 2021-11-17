@@ -563,9 +563,16 @@ io.on("connection", function (socket: Socket)
             if (!stream.isActive) return;
             const janusHandle = await stream.janusSession.videoRoom().listenFeed(
                 stream.janusRoomIntName, publisherId)
+                
+            log.info("user-want-to-take-stream", user.id,
+                "Janus listener handle", janusHandle.getId(),
+                "created on server", stream.janusServer.id)
             
             if (!stream.isActive)
             {
+                log.info("user-want-to-take-stream", user.id,
+                    "Janus listener handle", janusHandle.getId(),
+                    "detached before full connection on server", stream.janusServer.id)
                 janusHandle.detach()
                 return
             }
@@ -601,6 +608,9 @@ io.on("connection", function (socket: Socket)
             if (listenerIndex !== -1)
             {
                 const listener = stream.listeners.splice(listenerIndex, 1)[0];
+                log.info("user-want-to-drop-stream", listener.user.id,
+                    "Janus listener handle", listener.janusHandle.getId(),
+                    "detached on server", stream.janusServer!.id)
                 listener.janusHandle.detach();
             }
         }
@@ -635,8 +645,14 @@ io.on("connection", function (socket: Socket)
 
                 await janusClientConnect(client);
                 stream.janusSession = await client.createSession()
+                log.info("user-rtc-message", user.id,
+                    "Janus session", stream.janusSession.getId(),
+                    "created on server", stream.janusServer.id)
 
                 const videoRoomHandle = await stream.janusSession.videoRoom().createVideoRoomHandle();
+                log.info("user-rtc-message", user.id,
+                    "Janus video room handle", videoRoomHandle.getId(),
+                    "created on server", stream.janusServer.id)
                 
                 if (!stream.isActive) return;
                 
@@ -646,9 +662,9 @@ io.on("connection", function (socket: Socket)
                         room: stream.janusRoomIntName,
                         publishers: 20
                     })
-                    log.info("user-rtc-message", user.id, "Janus room " + stream.janusRoomIntName
-                        + "(" + stream.janusRoomName + ") created on server "
-                        + stream.janusServer.id)
+                    log.info("user-rtc-message", user.id,
+                        "Janus room", stream.janusRoomIntName, "(" + stream.janusRoomName + ")",
+                        "created on server", stream.janusServer.id)
                 }
                 catch (e: any)
                 {
@@ -661,10 +677,16 @@ io.on("connection", function (socket: Socket)
                     destroySession(videoRoomHandle, stream)
                     return;
                 }
+                log.info("user-rtc-message", user.id,
+                    "Janus video room handle", videoRoomHandle.getId(),
+                    "detached on server", stream.janusServer.id)
                 videoRoomHandle.detach()
-
+                
                 const janusHandle = await stream.janusSession.videoRoom().publishFeed(
                     stream.janusRoomIntName, msg)
+                log.info("user-rtc-message", user.id,
+                    "Janus publisher handle", janusHandle.getId(),
+                    "created on server", stream.janusServer.id)
                 
                 if (!stream.isActive)
                 {
@@ -1623,14 +1645,25 @@ async function destroySession(janusHandle: any, stream: StreamSlot)
     {
         if (janusHandle === null || stream.janusSession === null) return;
         await janusHandle.destroy({ room: stream.janusRoomIntName })
-        log.info("Janus room " + stream.janusRoomIntName
+        log.info("destroySession", "Janus room " + stream.janusRoomIntName
             + "(" + stream.janusRoomName + ") destroyed on server "
             + stream.janusServer!.id)
+        log.info("destroySession", "Handle", janusHandle.getId(), "detached on server", stream.janusServer!.id)
+        await janusHandle.detach()
+        stream.publisher = null;
+        
+        while(stream.listeners.length > 0)
+        {
+            const listener = stream.listeners.pop();
+            if(listener === undefined || listener === null) continue
+            log.info("destroySession", "Listener handle", listener.janusHandle.getId(), "detached on server", stream.janusServer!.id)
+            await listener.janusHandle.detach()
+        }
         
         if (stream.janusSession !== null)
         {
-            stream.janusSession.destroy()
-            log.info("Session destroyed on server " + stream.janusServer!.id)
+            log.info("destroySession", "Session", stream.janusSession.getId(), "destroyed on server", stream.janusServer!.id)
+            await stream.janusSession.destroy()
             stream.janusSession = null
         }
         
@@ -1642,7 +1675,7 @@ async function destroySession(janusHandle: any, stream: StreamSlot)
     }
 }
 
-function clearStream(user: Player)
+async function clearStream(user: Player)
 {
     try
     {
@@ -1657,9 +1690,7 @@ function clearStream(user: Player)
             stream.isActive = false
             stream.isReady = false
             
-            destroySession(stream.publisher!.janusHandle, stream)
-            stream.publisher = null;
-            stream.listeners = [];
+            await destroySession(stream.publisher!.janusHandle, stream)
             
             sendUpdatedStreamSlotState(user)
             emitServerStats(user.areaId)
@@ -1687,6 +1718,11 @@ function clearRoomListener(user: Player)
             while((li = s.listeners.findIndex(l => l.user == user)) != -1)
             {
                 const listener = s.listeners.splice(li, 1);
+                const userId = listener[0].user === null ? "Unknown" : listener[0].user.id;
+                    
+                log.info("clearRoomListener", userId,
+                    "Janus listener handle", listener[0].janusHandle.getId(),
+                    "detached on server", s.janusServer!.id)
                 listener[0].janusHandle.detach();
             }
         });
