@@ -36,7 +36,9 @@ console.error = function() {
         const arg = arguments[i]
 
         // If this argument is an exception, stringify it
-        const msg = arg.message ? arg.message + " " + arg.stack : arg
+        const msg = arg && arg.message
+            ? arg.message + " " + arg.stack
+            : arg
 
         allArgs += " " + msg
     }
