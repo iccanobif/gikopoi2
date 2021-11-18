@@ -2494,6 +2494,7 @@ window.vueApp = new Vue({
         {
             if (confirm(i18n.t("msg.are_you_sure_you_want_to_logout")))
             {
+                logToServer(new Date() + " " + this.myUserID + " Logging out")
                 if (this.canvasContainerResizeObserver)
                     this.canvasContainerResizeObserver.disconnect()
 

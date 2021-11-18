@@ -54,7 +54,7 @@ export function postJson(url, data)
 
 export function logToServer(msg)
 {
-    return fetch("/error", {
+    return fetch("/client-log", {
         method: "POST",
         headers: { 'Content-Type': "text/plain"},
         body: msg

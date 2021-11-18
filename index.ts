@@ -1365,79 +1365,103 @@ app.get("/version", (req, res) =>
 })
 
 app.get("/admin", (req, res) => {
-    const output = "<form action='user-list' method='post'><input type='text' name='pwd'><input type='submit' value='user-list'></form>"
-                 + "<form action='banned-ip-list' method='post'><input type='text' name='pwd'><input type='submit' value='unban'></form>"
+    try 
+    {
+        const output = "<form action='user-list' method='post'><input type='text' name='pwd'><input type='submit' value='user-list'></form>"
+                    + "<form action='banned-ip-list' method='post'><input type='text' name='pwd'><input type='submit' value='unban'></form>"
 
-    res.set({
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-store'
-    })
+        res.set({
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-store'
+        })
 
-    res.end(output)
+        res.end(output)
+    }
+    catch (exc)
+    {
+        logException(exc)
+        res.end("error")
+    }
 })
 
 app.post("/user-list", (req, res) => {
-    const pwd = req.body.pwd
-
-    if (pwd != settings.adminKey)
+    try 
     {
-        res.end("nope")
-        return
+        const pwd = req.body.pwd
+
+        if (pwd != settings.adminKey)
+        {
+            res.end("nope")
+            return
+        }
+
+        const users = getAllUsers()
+                        .filter(u => !u.isGhost)
+                        .sort((a, b) => (a.areaId + a.roomId + a.name + a.lastRoomMessage).localeCompare(b.areaId + b.roomId + b.name + b.lastRoomMessage))
+
+        const streamSlots = Object.values(roomStates).map(x => Object.values(x))
+                                .flat()
+                                .map(x => x.streams)
+                                .flat()
+
+        const userList: string = users.map(user => "<input type='checkbox' name='" + user.id + "' id='" + user.id + "'><label for='" + user.id + "'>"
+                                                    + user.areaId + " "
+                                                    + user.roomId + " "
+                                                    + " &lt;" + user.name +  "&gt;"
+                                                    + user.lastRoomMessage
+                                                    + " streaming: " + (streamSlots.find(s=> s.publisher !== null && s.publisher.user == user) ? "Y" : "N")
+                                                    + " " + user.ip
+                                                    + "</label>").join("</br>")
+
+        const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
+        const banButton = "<br/><input type='submit'>"
+
+        const output = "<form action='ban' method='post'>" + pwdInput + userList + banButton + "</form>"
+
+        res.set({
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-store'
+        })
+
+        res.end(output)
     }
-
-    const users = getAllUsers()
-                    .filter(u => !u.isGhost)
-                    .sort((a, b) => (a.areaId + a.roomId + a.name + a.lastRoomMessage).localeCompare(b.areaId + b.roomId + b.name + b.lastRoomMessage))
-
-    const streamSlots = Object.values(roomStates).map(x => Object.values(x))
-                            .flat()
-                            .map(x => x.streams)
-                            .flat()
-
-    const userList: string = users.map(user => "<input type='checkbox' name='" + user.id + "' id='" + user.id + "'><label for='" + user.id + "'>"
-                                                + user.areaId + " "
-                                                + user.roomId + " "
-                                                + " &lt;" + user.name +  "&gt;"
-                                                + user.lastRoomMessage
-                                                + " streaming: " + (streamSlots.find(s=> s.publisher !== null && s.publisher.user == user) ? "Y" : "N")
-                                                + " " + user.ip
-                                                + "</label>").join("</br>")
-
-    const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
-    const banButton = "<br/><input type='submit'>"
-
-    const output = "<form action='ban' method='post'>" + pwdInput + userList + banButton + "</form>"
-
-    res.set({
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-store'
-    })
-
-    res.end(output)
+    catch (exc)
+    {
+        logException(exc)
+        res.end("error")
+    }
 })
 
 app.post("/banned-ip-list", (req, res) => {
-    const pwd = req.body.pwd
-
-    if (pwd != settings.adminKey)
+    try 
     {
-        res.end("nope")
-        return
+        const pwd = req.body.pwd
+
+        if (pwd != settings.adminKey)
+        {
+            res.end("nope")
+            return
+        }
+
+        const userList: string = Array.from(bannedIPs).map(ip => "<input type='checkbox' name='" + ip + "' id='" + ip + "'><label for='" + ip + "'>" + ip + "</label>").join("</br>")
+
+        const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
+        const banButton = "<br/><input type='submit'>"
+
+        const output = "<form action='unban' method='post'>" + pwdInput + userList + banButton + "</form>"
+
+        res.set({
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-store'
+        })
+
+        res.end(output)
     }
-
-    const userList: string = Array.from(bannedIPs).map(ip => "<input type='checkbox' name='" + ip + "' id='" + ip + "'><label for='" + ip + "'>" + ip + "</label>").join("</br>")
-
-    const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
-    const banButton = "<br/><input type='submit'>"
-
-    const output = "<form action='unban' method='post'>" + pwdInput + userList + banButton + "</form>"
-
-    res.set({
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-store'
-    })
-
-    res.end(output)
+    catch (exc)
+    {
+        logException(exc)
+        res.end("error")
+    }
 })
 
 app.post("/ban", (req, res) => {
@@ -1492,10 +1516,18 @@ app.post("/unban", (req, res) => {
     }
 })
 
-app.post("/error", (req, res) =>
+app.post("/client-log", (req, res) =>
 {
-    log.error("Client log:", req.body.replace(/[\n\r]/g, ""))
-    res.end()
+    try
+    {
+        log.error("Client log:", req.body.replace(/[\n\r]/g, ""))
+        res.end()
+    }
+    catch (exc)
+    {
+        logException(exc)
+        res.end()
+    }
 })
 
 app.post("/login", (req, res) =>
