@@ -172,7 +172,7 @@ io.on("connection", function (socket: Socket)
             "server-user-joined-room", toPlayerDto(user));
     }
 
-    socket.on("disconnect", function ()
+    socket.on("disconnect", async function ()
     {
         try
         {
@@ -183,12 +183,11 @@ io.on("connection", function (socket: Socket)
             user.isGhost = true
             user.disconnectionTime = Date.now()
 
-            stopChessGame(roomStates, user)
+            await clearStream(user) // This also calls emitServerStats()
+            clearRoomListener(user)
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-user-left-room", user.id);
-            clearStream(user)
-            clearRoomListener(user)
-            emitServerStats(user.areaId)
+            stopChessGame(roomStates, user)
         }
         catch (exc)
         {
@@ -441,7 +440,7 @@ io.on("connection", function (socket: Socket)
             logException(e)
         }
     });
-    socket.on("user-want-to-stream", function (data: {
+    socket.on("user-want-to-stream", async function (data: {
         streamSlotId: number,
         withVideo: boolean,
         withSound: boolean,
@@ -474,7 +473,7 @@ io.on("connection", function (socket: Socket)
 
             if (stream.publisher !== null && stream.publisher.user == user)
             {
-                clearStream(user);
+                await clearStream(user);
             }
 
             if (stream.isActive && stream.publisher !== null)
@@ -500,14 +499,14 @@ io.on("connection", function (socket: Socket)
             stream.isPrivateStream = isPrivateStream
             stream.publisher = { user: user, janusHandle: null };
 
-            setTimeout(() =>
+            setTimeout(async () =>
             {
                 if (stream.streamId == streamId &&
                     stream.isActive &&
                     stream.janusServer == null)
                 {
                     log.info(user.id, "No RTC message received")
-                    clearStream(user)
+                    await clearStream(user)
                 }
             }, 10000);
 
@@ -523,12 +522,12 @@ io.on("connection", function (socket: Socket)
             socket.emit("server-not-ok-to-stream", "start_stream_unknown_error")
         }
     })
-    socket.on("user-want-to-stop-stream", function ()
+    socket.on("user-want-to-stop-stream", async function ()
     {
         try
         {
             log.info(user.id, "user-want-to-stop-stream")
-            clearStream(user)
+            await clearStream(user)
         }
         catch (e)
         {
@@ -738,7 +737,7 @@ io.on("connection", function (socket: Socket)
             {
                 if (data.type === "offer")
                 {
-                    clearStream(user)
+                    await clearStream(user)
                     socket.emit("server-not-ok-to-stream", "start_stream_unknown_error")
                 }
             }
@@ -758,7 +757,7 @@ io.on("connection", function (socket: Socket)
 
             currentRoom = rooms[targetRoomId]
 
-            clearStream(user)
+            await clearStream(user)
             clearRoomListener(user)
             stopChessGame(roomStates, user)
             userRoomEmit(user, user.areaId, user.roomId,
@@ -1036,8 +1035,9 @@ function changeCharacter(user: Player, characterId: string, isAlternateCharacter
 // TODO remove areaId and roomId parameters, we can get them from user.areaId and user.roomId
 function userRoomEmit(user: Player, areaId: string, roomId: string | null, ...msg: any[])
 {
-    getFilteredConnectedUserList(user, roomId, areaId)
-        .forEach((u) => u.socketId && io.to(u.socketId).emit(...msg));
+    for (const u of getFilteredConnectedUserList(user, roomId, areaId))
+        if (u.socketId)
+            io.to(u.socketId).emit(...msg)
 }
 
 function roomEmit(areaId: string, roomId: string, ...msg: any[])
@@ -1464,7 +1464,7 @@ app.post("/banned-ip-list", (req, res) => {
     }
 })
 
-app.post("/ban", (req, res) => {
+app.post("/ban", async (req, res) => {
     try 
     {
         const pwd = req.body.pwd
@@ -1480,7 +1480,7 @@ app.post("/ban", (req, res) => {
         for (const id of userIdsToBan)
         {
             const user = getUser(id)
-            banIP(user.ip)
+            await banIP(user.ip)
         }
         res.end("done")
     }
@@ -1530,7 +1530,7 @@ app.post("/client-log", (req, res) =>
     }
 })
 
-app.post("/login", (req, res) =>
+app.post("/login", async (req, res) =>
 {
     try
     {
@@ -1580,7 +1580,7 @@ app.post("/login", (req, res) =>
             {
                 // Don't count ghosts and also remove them, while we're at it
                 if (u.isGhost)
-                    disconnectUser(u);
+                    await disconnectUser(u);
                 else
                     sameIpUserCount++
 
@@ -1807,10 +1807,10 @@ function stopChessGame(roomStates: RoomStateCollection, user: Player)
 }
 
 
-function disconnectUser(user: Player)
+async function disconnectUser(user: Player)
 {
     log.info("Removing user ", user.id, "<" + user.name + ">", user.areaId)
-    clearStream(user)
+    await clearStream(user)
     clearRoomListener(user)
     removeUser(user)
 
@@ -1819,7 +1819,7 @@ function disconnectUser(user: Player)
     emitServerStats(user.areaId)
 }
 
-function banIP(ip: string)
+async function banIP(ip: string)
 {
     log.info("BANNING " + ip)
 
@@ -1834,19 +1834,16 @@ function banIP(ip: string)
                 socket.disconnect();
         }
 
-        disconnectUser(user)
+        await disconnectUser(user)
     }
 }
 
 function sendUpdatedStreamSlotState(user: Player)
 {
-    const roomState = roomStates[user.areaId][user.roomId] 
-    getFilteredConnectedUserList(user, user.roomId, user.areaId)
-        .forEach((u) => 
-        {
-            if (u.socketId)
-                io.to(u.socketId).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, roomState.streams))
-        });
+    const roomState = roomStates[user.areaId][user.roomId]
+    for (const u of getFilteredConnectedUserList(user, user.roomId, user.areaId))
+        if (u.socketId)
+            io.to(u.socketId).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, roomState.streams))
 }
 
 function stringifyException(exception: any)
@@ -1870,8 +1867,12 @@ export function logException(exception: any)
     }
 }
 
-setInterval(() =>
+let isBackgroundTaskRunning = false
+setInterval(async () =>
 {
+    if (isBackgroundTaskRunning)
+        return
+    isBackgroundTaskRunning = true
     try
     {
         for (const user of getAllUsers())
@@ -1882,13 +1883,13 @@ setInterval(() =>
                 if (Date.now() - user.disconnectionTime > maxGhostRetention)
                 {
                     log.info(user.id, Date.now(), user.disconnectionTime, Date.now() - user.disconnectionTime)
-                    disconnectUser(user)
+                    await disconnectUser(user)
                 }
             }
             else if (!user.connectionTime && user.isGhost)
             {
                 log.info(user.id, "is a ghost without connection time")
-                disconnectUser(user)
+                await disconnectUser(user)
             }
             else
             {
@@ -1907,6 +1908,7 @@ setInterval(() =>
     {
         logException(e)
     }
+    isBackgroundTaskRunning = false
 }, 1 * 1000)
 
 // Persist state every few seconds, so that people can seamless reconnect on a server restart
