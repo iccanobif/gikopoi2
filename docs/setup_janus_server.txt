@@ -109,3 +109,8 @@ TasksMax=500000
 
 #Info on adding ionos agent monitoring which can be viewed from the ionos server dashboard thing:
 #https://www.ionos.co.uk/help/index.php?id=2107
+
+# Tools installed by iccanobif:
+htop
+iftop
+tmux

@@ -1587,15 +1587,14 @@ window.vueApp = new Vue({
                 this.canvasContainerResizeObserver = new ResizeObserver((mutationsList, observer) =>
                 {
                     this.isRedrawRequired = true
-                    // I thought a delta of 0 would be appropriate that for some reason it doesn't quite work (all avatars
-                    // snap to their final position instantly while resizing), so for now i'll just use 1. Good luck to anyone
-                    // who wants to figure this out.
 
                     const canvasContainer = document.getElementById("canvas-container")
+                    if (!canvasContainer)
+                        return
                     const height = canvasContainer.style.height
 
                     localStorage.setItem("canvasHeight", height);
-                    this.paint(1)
+                    this.paint(0)
                 });
                 this.canvasContainerResizeObserver.observe(document.getElementById("canvas-container"));
             }
