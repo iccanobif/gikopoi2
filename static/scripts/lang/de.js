@@ -51,7 +51,7 @@ export default
         rula_menu_column_streamers: "Streamer",
         rula_menu_button_rula: "Rula",
 
-        user_list_popup_title: "Benutzerliste (Zählung: @USER_COUNT@)",
+        user_list_popup_title: "Benutzerliste (Gesamt: @USER_COUNT@)",
         user_list_popup_column_user_name: "Benutzername",
         user_not_in_room: "Dieser Benutzer ist nicht in diesem Raum.",
         user_inactive: "Dieser Benutzer ist inaktiv.",
