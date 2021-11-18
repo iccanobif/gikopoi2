@@ -467,7 +467,7 @@ io.on("connection", function (socket: Socket)
                 // I'm not sure why the log is full of errors about the stream object being undefined... Maybe
                 // there are some race conditions with users quickly starting a stream after changing room? Sounds unlikely,
                 // so for now I'll just add some more detailed logging and let the client also know something wrong happened.
-                log.info("ERROR server-not-ok-to-stream", user.id, "start_stream_stream_slot_does_not_exist")
+                log.info("ERROR server-not-ok-to-stream", "start_stream_stream_slot_does_not_exist", user.id, user.roomId, streamSlotId)
                 socket.emit("server-not-ok-to-stream", "start_stream_stream_slot_does_not_exist")
                 return
             }
