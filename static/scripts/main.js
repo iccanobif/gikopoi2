@@ -36,7 +36,9 @@ console.error = function() {
         const arg = arguments[i]
 
         // If this argument is an exception, stringify it
-        const msg = arg.message ? arg.message + " " + arg.stack : arg
+        const msg = arg && arg.message
+            ? arg.message + " " + arg.stack
+            : arg
 
         allArgs += " " + msg
     }
@@ -224,6 +226,8 @@ window.vueApp = new Vue({
         canUseAudioContext: canUseAudioContext,
         lastFrameTimestamp: null,
         chessboardState: {},
+
+        canvasContainerResizeObserver: null,
     },
     mounted: function ()
     {
@@ -406,7 +410,7 @@ window.vueApp = new Vue({
             }
             catch (e)
             {
-                console.error(e, e.stack)
+                console.error(e)
                 if (e instanceof UserException)
                 {
                     alert(i18n.t("msg." + e.message))
@@ -1582,19 +1586,19 @@ window.vueApp = new Vue({
 
             if (window.ResizeObserver)
             {
-                const observer = new ResizeObserver((mutationsList, observer) =>
+                this.canvasContainerResizeObserver = new ResizeObserver((mutationsList, observer) =>
                 {
                     this.isRedrawRequired = true
-                    // I thought a delta of 0 would be appropriate that for some reason it doesn't quite work (all avatars
-                    // snap to their final position instantly while resizing), so for now i'll just use 1. Good luck to anyone
-                    // who wants to figure this out.
 
-                    const height = document.getElementById("canvas-container").style.height
+                    const canvasContainer = document.getElementById("canvas-container")
+                    if (!canvasContainer)
+                        return
+                    const height = canvasContainer.style.height
 
                     localStorage.setItem("canvasHeight", height);
-                    this.paint(1)
+                    this.paint(0)
                 });
-                observer.observe(document.getElementById("canvas-container"));
+                this.canvasContainerResizeObserver.observe(document.getElementById("canvas-container"));
             }
         },
         toggleInfobox: function ()
@@ -2171,7 +2175,7 @@ window.vueApp = new Vue({
                 this.isRedrawRequired = true; 
             } catch (e)
             {
-                console.error(e, e.stack)
+                console.error(e)
                 if (e instanceof UserException)
                 {
                     this.showWarningToast(i18n.t("msg." + e.message));
@@ -2492,6 +2496,10 @@ window.vueApp = new Vue({
         {
             if (confirm(i18n.t("msg.are_you_sure_you_want_to_logout")))
             {
+                logToServer(new Date() + " " + this.myUserID + " Logging out")
+                if (this.canvasContainerResizeObserver)
+                    this.canvasContainerResizeObserver.disconnect()
+
                 if (this.streamSlotIdInWhichIWantToStream != null)
                     this.stopStreaming()
 
