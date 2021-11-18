@@ -555,7 +555,7 @@ window.vueApp = new Vue({
                 // i have to start it again here, in case the user
                 // decides that he doesn't want to close the window.
                 this.initializeSocket();
-                this.stopStreaming();
+                if (this.mediaStream) this.stopStreaming();
 
                 return "Are you sure?";
             }
