@@ -410,7 +410,7 @@ window.vueApp = new Vue({
             }
             catch (e)
             {
-                console.error(e, e.stack)
+                console.error(e)
                 if (e instanceof UserException)
                 {
                     alert(i18n.t("msg." + e.message))
@@ -2175,7 +2175,7 @@ window.vueApp = new Vue({
                 this.isRedrawRequired = true; 
             } catch (e)
             {
-                console.error(e, e.stack)
+                console.error(e)
                 if (e instanceof UserException)
                 {
                     this.showWarningToast(i18n.t("msg." + e.message));
