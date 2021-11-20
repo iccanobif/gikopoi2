@@ -2461,7 +2461,10 @@ window.vueApp = new Vue({
         },
         requestRoomList: function ()
         {
-            this.socket.emit("user-room-list");
+            // Socket could be null if the user clicks on the #list button
+            // very quickly after login and before initializing the socket
+            if (this.socket)
+                this.socket.emit("user-room-list");
         },
         selectRoomForRula: function (roomId)
         {
