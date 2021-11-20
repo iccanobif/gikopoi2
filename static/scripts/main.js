@@ -2279,7 +2279,7 @@ window.vueApp = new Vue({
                         if (audioProcessors[streamSlotId])
                         {
                             audioProcessors[streamSlotId].dispose()
-                            delete audioProcessors[i]
+                            delete audioProcessors[streamSlotId]
                         }
                         
                         if (this.streams[streamSlotId].withSound)
