@@ -133,8 +133,7 @@ export class AudioProcessor
     {
         if (canUseAudioContext)
         {
-            if (this.context.state != "closed")
-                this.context.close().catch(console.error)
+            this.context.close().catch(console.error)
         }
     }
 

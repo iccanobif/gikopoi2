@@ -2277,7 +2277,10 @@ window.vueApp = new Vue({
                         $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
 
                         if (audioProcessors[streamSlotId])
+                        {
                             audioProcessors[streamSlotId].dispose()
+                            delete audioProcessors[i]
+                        }
                         
                         if (this.streams[streamSlotId].withSound)
                         {
