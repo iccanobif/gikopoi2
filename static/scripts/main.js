@@ -551,6 +551,10 @@ window.vueApp = new Vue({
             
             // prevent accidental page closing
             window.onbeforeunload = () => {
+
+                if (this.loggedOut)
+                    return null
+
                 // Before onbeforeunload the socket has already died, so
                 // i have to start it again here, in case the user
                 // decides that he doesn't want to close the window.
