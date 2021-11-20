@@ -606,8 +606,11 @@ window.vueApp = new Vue({
 
             this.socket.on("disconnect", (reason) =>
             {
-                console.error("Socket disconnected:", reason)
-                this.connectionLost = true;
+                if (!this.loggedOut)
+                {
+                    console.error("Socket disconnected:", reason)
+                    this.connectionLost = true;
+                }
             });
             this.socket.on("server-cant-log-you-in", () =>
             {
@@ -2494,7 +2497,7 @@ window.vueApp = new Vue({
             this.storeSet("bubbleOpacity");
             this.resetBubbleImages();
         },
-        logout: function () 
+        logout: async function () 
         {
             if (confirm(i18n.t("msg.are_you_sure_you_want_to_logout")))
             {
@@ -2505,9 +2508,10 @@ window.vueApp = new Vue({
                 if (this.streamSlotIdInWhichIWantToStream != null)
                     this.stopStreaming()
 
-                this.socket.close()
                 this.loggedIn = false
                 this.loggedOut = true
+
+                this.socket.close()
 
                 for (let i = 0; i < this.takenStreams.length; i++)
                     if (this.takenStreams[i])
