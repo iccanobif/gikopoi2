@@ -132,7 +132,10 @@ export class AudioProcessor
     dispose()
     {
         if (canUseAudioContext)
-            this.context.close().catch(console.error)
+        {
+            if (this.context.state != "closed")
+                this.context.close().catch(console.error)
+        }
     }
 
     setVolume(volume)
