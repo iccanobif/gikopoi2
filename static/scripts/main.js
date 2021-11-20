@@ -1935,7 +1935,8 @@ window.vueApp = new Vue({
                     if (this.rtcPeerSlots[slotId])
                         this.rtcPeerSlots[slotId].attempts = 0;
                 }
-                else if (["failed", "disconnected", "closed"].includes(state))
+                // else if (["failed", "disconnected", "closed"].includes(state))
+                else if (["failed", "closed"].includes(state))
                 {
                     rtcPeer.close();
                     if (!this.rtcPeerSlots[slotId]) return;
