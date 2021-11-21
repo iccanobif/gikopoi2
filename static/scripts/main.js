@@ -1895,18 +1895,18 @@ window.vueApp = new Vue({
             {
                 if (slotId == this.streamSlotIdInWhichIWantToStream)
                 {
-                    console.log("Attempting to restart stream")
+                    logToServer(new Date() + " " + this.myUserID + "Attempting to restart stream")
                     this.startStreaming()
                 }
                 else if (this.takenStreams[slotId])
                 {
-                    console.log("Attempting to retake stream")
+                    logToServer(new Date() + " " + this.myUserID + "Attempting to retake stream")
                     this.dropStream(slotId)
                     this.takeStream(slotId)
                 }
                 else
                 {
-                    console.log("Stream connection closed")
+                    logToServer(new Date() + " " + this.myUserID + "Stream connection closed")
                 } 
             };
             
