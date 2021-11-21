@@ -125,7 +125,11 @@ input[type='range']
 {
     z-index: 150;
     width: 219px;
-    /* height: auto !important; */
+    /* "height: auto" is needed because resizing the the video container with the mouse (with jquery.ui) defines
+       both height and width via javascript, but since the video's aspect ratio isn't always constant (example, when sharing
+       a window that gets resized) we need at least one between height and width to stay "auto", so that the container's size stays
+       flexible in respect to the contained video's size */ 
+    height: auto !important;
     background-color: #7e7e7e;
     background-image: url("../spinner.svg");
     background-position: center;
