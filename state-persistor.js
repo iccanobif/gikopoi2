@@ -7,8 +7,8 @@ const fs = require("fs").promises
 const port = 8086
 
 // to test POST with CURL:
-// curl -X POST http://localhost:8086 -H "Content-Type: text/plain" -d "content of the state"
-// curl http://localhost:8086 -H "persistor-secret: xxxxxxxxxx" -o state.json
+// curl -X POST http://localhost:8086 -H "Content-Type: text/plain" -H "persistor-secret: hello" -d "content of the state"
+// curl http://localhost:8086 -H "persistor-secret: hello" -o state.json
 
 // to test persistor:
 // npx cross-env PERSISTOR_SECRET=xxx nodemon state-persistor.js
@@ -41,7 +41,7 @@ app.get("/", async (req, res) =>
     }
 })
 
-app.use(express.text());
+app.use(express.text({ limit: "5mb" }));
 
 app.post("/", async (req, res) =>
 {
