@@ -109,6 +109,7 @@ export const characters = {
     himawari: new Character("himawari", "svg", true),
     zonu: new Character("zonu", "svg", false),
     george: new Character("george", "svg", false),
+    chotto_toorimasu_yo: new Character("chotto_toorimasu_yo", "svg", false),
     tokita_naito: new Character("tokita_naito", "svg", !annualEvents.spooktober.isNow()),
     pumpkinhead: new Character("pumpkinhead", "svg", !annualEvents.spooktober.isNow()),
     naito_yurei: new Character("naito_yurei", "svg", !annualEvents.spooktober.isNow()),
