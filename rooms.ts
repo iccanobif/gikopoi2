@@ -3205,8 +3205,8 @@ export const rooms: { [roomId: string]: Room } = {
         spawnPoint: "door",
         backgroundImageUrl: "rooms/monachat/background.svg",
         objects: [
-            { x:  1, y:  0, offset: { x:  0, y:  0 }, url: "torikomi.svg" },
-            { x:  2, y:  5, offset: { x:  0, y:  0 }, url: "matari.svg" },
+            { x:  1, y:  0, offset: { x: 40, y: 250 }, url: "torikomi.svg" },
+            { x:  2, y:  5, offset: { x: 290, y: 150 }, url: "matari.svg" },
         ],
         sit: [
             { x:  4, y:  1 },
@@ -3217,8 +3217,8 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  4, y:  6 },
         ],
         blocked: [
-            // { x:  1, y:  0 },
-            // { x:  2, y:  5 },
+            { x:  1, y:  0 },
+            { x:  2, y:  5 },
             { x:  3, y:  1 },
             { x:  3, y:  2 },
             { x:  3, y:  3 },
