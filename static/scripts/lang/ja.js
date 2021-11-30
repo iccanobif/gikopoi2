@@ -193,6 +193,7 @@ export default
         bar_giko2: r("ＢＡＲギコ 下階", "バーギコ かかい"),
         bar_giko_square: r("噴水広場", "ふんすいひろば"),
         densha: r("電車", "でんしゃ"),
+        monachat: r("もなちゃと", "もなちゃと"),
     }
 }
 

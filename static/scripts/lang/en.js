@@ -193,5 +193,6 @@ export default
         bar_giko2: "Bar Giko Lower Floor",
         bar_giko_square: "Fountain Plaza",
         densha: "Train",
+        monachat: "Monachat",
     }
 }
