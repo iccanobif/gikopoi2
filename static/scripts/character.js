@@ -71,6 +71,7 @@ export class Character
 }
 
 export const characters = {
+    youkanman: new Character("youkanman", "svg", false),
     giko: new Character("giko", "svg", false),
     naito: new Character("naito", "svg", false),
     shii: new Character("shii", "svg", false),
