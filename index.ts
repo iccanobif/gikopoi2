@@ -1124,8 +1124,11 @@ app.get("/", async (req, res) =>
         let data = await readFile("static/index.html", 'utf8')
 
         try {
-            const { statusCode: loginFooterStatusCode, body: loginFooterBody } = await got(
-                'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
+            // const { statusCode: loginFooterStatusCode, body: loginFooterBody } = await got(
+            //     'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
+
+            const loginFooterStatusCode = 200
+            const loginFooterBody = ""
 
             data = data.replace("@LOGIN_FOOTER@", loginFooterStatusCode === 200 ? loginFooterBody : "")
         }
