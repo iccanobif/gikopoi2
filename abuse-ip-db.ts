@@ -6,6 +6,10 @@ const abuseIpDBabuseConfidenceScoreCache: { [ip: string]: number } = {};
 
 export async function getAbuseConfidenceScore(ip: string): Promise<number>
 {
+    // temporarily disable abuse ip db
+    return 0
+
+
     if (!settings.abuseIpDBApiKey)
         return 0
 
