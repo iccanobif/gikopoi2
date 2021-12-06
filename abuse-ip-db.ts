@@ -6,10 +6,6 @@ const abuseIpDBabuseConfidenceScoreCache: { [ip: string]: number } = {};
 
 export async function getAbuseConfidenceScore(ip: string): Promise<number>
 {
-    // temporarily disable abuse ip db
-    return 0
-
-
     if (!settings.abuseIpDBApiKey)
         return 0
 
@@ -28,6 +24,7 @@ export async function getAbuseConfidenceScore(ip: string): Promise<number>
                     "Key": settings.abuseIpDBApiKey,
                     "Accept": "application/json",
                 },
+                timeout: 1000 * 10,
             })
 
         if (abuseIpStatusCode != 200)
