@@ -1009,6 +1009,7 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 7, y: 311 },
         spawnPoint: "steps",
         backgroundImageUrl: "rooms/jinja/background.svg",
+        coinCounter: 0,
         objects: [
             { x: 15, y:  0, offset: { x: 499, y: 369 }, url: "bamboo_left.svg" },
             { x: 14, y:  4, offset: { x: 735, y: 206 }, url: "bamboo_right.svg" },
@@ -1085,6 +1086,12 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             steps: { x: 14, y: 4, direction: "left", target: { roomId: "jinja_st", doorId: "torii" } },
         },
+        specialObjects: [
+            { objectName: 'coinCounter', x: 2, y: 5, color: '#00cc00', type: 'draw'}
+        ],
+        callbacks: [
+            { eventName: 'coinAdd', eventType: 'click', x: 15, y: 0 },
+        ],
         streamSlotCount: 4,
         hasChessboard: true,
     },

@@ -80,6 +80,26 @@ export interface Room
     blockWidth?: number;
     blockHeight?: number;
     hasChessboard?: boolean;
+    callbacks?: CallbackEvent[];
+    specialObjects?: SpecialObjects[];
+    coinCounter?: number;
+}
+
+export interface SpecialObjects
+{
+    objectName: string;
+    x: number;
+    y: number;
+    color: string;
+    type: string;
+}
+
+export interface CallbackEvent
+{
+    eventName: string;
+    eventType: string;
+    x: number;
+    y: number;
 }
 
 export interface JanusServer
@@ -103,7 +123,7 @@ export interface RoomStateDto
     currentRoom: Room,
     connectedUsers: PlayerDto[],
     streams: StreamSlotDto[],
-    chessboardState: ChessboardStateDto
+    chessboardState: ChessboardStateDto,
 }
 
 export interface LoginResponseDto

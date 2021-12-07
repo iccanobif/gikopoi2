@@ -105,6 +105,7 @@ window.vueApp = new Vue({
             id: null,
             objects: [],
             hasChessboard: false,
+            specialObjects: [],
         },
         myUserID: null,
         myPrivateUserID: null,
@@ -1214,9 +1215,9 @@ window.vueApp = new Vue({
                 this.users[id].calculatePhysicalPosition(this.currentRoom, delta);
             }
         },
-        
         updateCanvasObjects: function ()
         {
+            console.log(this.currentRoom);
             this.canvasObjects = [].concat(
                 this.currentRoom.objects
                     .map(o => ({
@@ -1384,7 +1385,31 @@ window.vueApp = new Vue({
             context.lineTo(cc_x, cc_y);
             context.stroke();
         },
-        
+        drawSpecialObjects: function ()
+        {
+            const context = this.canvasContext;
+            context.font = "bold 13px Arial, Helvetica, sans-serif";
+            context.textBaseline = "bottom";
+            context.textAlign = "center";
+            //jinja room special objects: for now coin counter
+            if (this.currentRoom.id === 'jinja') {
+                console.log("JINJA");
+                console.log(this.currentRoom);
+                this.currentRoom.specialObjects.forEach((specialObject, i) => {
+                    console.log(specialObject);
+                    if ( specialObject.type === 'draw') {
+                    
+                        context.fillStyle = specialObject.color;
+                        let realCoord = calculateRealCoordinates(this.currentRoom, specialObject.x, specialObject.y)
+                        context.fillText(
+                            specialObject.objectName + ' ' + this.currentRoom.coinCounter + ' Yen',
+                            (realCoord.x + this.blockWidth/2) + this.canvasGlobalOffset.x,
+                            (realCoord.y - this.blockHeight/3) + this.canvasGlobalOffset.y
+                        );
+                }
+                });
+            }
+        },
         drawGridNumbers: function ()
         {
             const context = this.canvasContext;
@@ -1438,6 +1463,7 @@ window.vueApp = new Vue({
                 this.drawObjects();
                 this.drawUsernames();
                 this.drawBubbles();
+                this.drawSpecialObjects();
                 if (this.enableGridNumbers)
                 {
                     this.drawOriginLines();
