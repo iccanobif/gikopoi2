@@ -1726,8 +1726,13 @@ window.vueApp = new Vue({
                 }
             }
         },
-        setMovementDirection: function(direction)
+        setMovementDirection: function(ev, direction)
         {
+            // this preventDefault() is a workaround needed for iOS: longpress on a button selects it as text (and the "user-select: none" css
+            // doesn't work since it just prevents the button from being selected and selects the next selectable element instead...)
+            if (ev)
+                ev.preventDefault();
+
             this.movementDirection = direction
 
             // Debounce needed because sometimes this function is called by by the event mousedown, sometimes
