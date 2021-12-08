@@ -568,6 +568,7 @@
                 </div>
             </div>
 
+            <div class="popup-overlay" v-if="isWarningToastOpen" v-on:click="closeWarningToast"></div>
             <div class="popup" v-if="isWarningToastOpen">
                 <div class="popup-title">{{ $t("ui.warning_toast_title") }}</div>
                 <div class="popup-content">
