@@ -1355,7 +1355,7 @@ window.vueApp = new Vue({
             const context = this.canvasContext;
             
             context.strokeStyle = "#ff0000";
-                
+
             const co = this.canvasGlobalOffset;
             
             context.beginPath();
@@ -1366,15 +1366,18 @@ window.vueApp = new Vue({
             
             const origin = calculateRealCoordinates(this.currentRoom, 0, 0)
             
-            const cr_x = co.x+origin.x;
-            const cr_y = co.y+origin.y;
+            const cr_x = co.x + origin.x * this.getCanvasScale();
+            const cr_y = co.y + origin.y * this.getCanvasScale();
             
             context.beginPath();
-            context.rect(cr_x-1, cr_y+1, this.blockWidth+2, -this.blockHeight-2);
+            context.rect(cr_x - 1,
+                         cr_y + 1,
+                         (this.blockWidth + 2) * this.getCanvasScale(),
+                         (-this.blockHeight - 2) * this.getCanvasScale());
             context.stroke();
             
-            const cc_x = co.x+this.currentRoom.originCoordinates.x;
-            const cc_y = co.y+this.currentRoom.originCoordinates.y;
+            const cc_x = co.x + this.currentRoom.originCoordinates.x * this.getCanvasScale();
+            const cc_y = co.y + this.currentRoom.originCoordinates.y * this.getCanvasScale();
             
             context.strokeStyle = "#0000ff";
             
@@ -1410,8 +1413,8 @@ window.vueApp = new Vue({
                     );
                     context.fillText(
                         x + "," + y,
-                        (realCoord.x + this.blockWidth/2) + this.canvasGlobalOffset.x,
-                        (realCoord.y - this.blockHeight/3) + this.canvasGlobalOffset.y
+                        this.getCanvasScale() * (realCoord.x + this.blockWidth/2) + this.canvasGlobalOffset.x,
+                        this.getCanvasScale() * (realCoord.y - this.blockHeight/3) + this.canvasGlobalOffset.y
                     );
                 }
         },
