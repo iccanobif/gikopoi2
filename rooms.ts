@@ -3236,4 +3236,27 @@ export const rooms: { [roomId: string]: Room } = {
         },
         streamSlotCount: 3,
     },
+    konbini: {
+        id: "konbini",
+        scale: 1,
+        size: { x: 7, y: 8 },
+        originCoordinates: { x: 4, y: 332 },
+        spawnPoint: "door",
+        backgroundImageUrl: "rooms/konbini/background.svg",
+        objects: [
+            // { x:  1, y:  0, offset: { x: 40, y: 250 }, url: "torikomi.svg" },
+            // { x:  2, y:  5, offset: { x: 290, y: 150 }, url: "matari.svg" },
+        ],
+        sit: [
+            // { x:  4, y:  1 },
+        ],
+        blocked: [
+            // { x:  1, y:  0 },
+        ],
+        forbiddenMovements: [],
+        doors: {
+            door: { x: 6, y: 6, direction: "left", target: { roomId: "bar_giko_square", doorId: "right" } },
+        },
+        streamSlotCount: 1,
+    }
 };
