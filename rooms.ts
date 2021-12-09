@@ -573,48 +573,48 @@ export const rooms: { [roomId: string]: Room } = {
         backgroundImageUrl: "rooms/yoshinoya/yoshinoya.svg",
         backgroundColor: "#222",
         objects: [
-            { x: 3, y: 11, url: "wall-with-squid.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 570, y: 39 } },
+            { x: 3, y: 11, url: "wall-with-squid.svg", scale: 1, offset: { x: 570, y: 39 } },
 
             // left table
-            { x: 0 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294, y: 304 } },
-            { x: 1 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294 + 1 * 40, y: 304 + 1 * 20 } },
-            { x: 2 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294 + 2 * 40, y: 304 + 2 * 20 } },
-            { x: 3 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294 + 3 * 40, y: 304 + 3 * 20 } },
-            { x: 4 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294 + 4 * 40, y: 304 + 4 * 20 } },
+            { x: 0 + 4, y: 3, url: "counter-left.svg", scale: 1, offset: { x: 294, y: 304 } },
+            { x: 1 + 4, y: 3, url: "counter-left.svg", scale: 1, offset: { x: 294 + 1 * 40, y: 304 + 1 * 20 } },
+            { x: 2 + 4, y: 3, url: "counter-left.svg", scale: 1, offset: { x: 294 + 2 * 40, y: 304 + 2 * 20 } },
+            { x: 3 + 4, y: 3, url: "counter-left.svg", scale: 1, offset: { x: 294 + 3 * 40, y: 304 + 3 * 20 } },
+            { x: 4 + 4, y: 3, url: "counter-left.svg", scale: 1, offset: { x: 294 + 4 * 40, y: 304 + 4 * 20 } },
 
-            { x: 0 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373, y: 265 } },
-            { x: 1 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373 + 1 * 40, y: 265 + 1 * 20 } },
-            { x: 2 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373 + 2 * 40, y: 265 + 2 * 20 } },
-            { x: 3 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373 + 3 * 40, y: 265 + 3 * 20 } },
-            { x: 4 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373 + 4 * 40, y: 265 + 4 * 20 } },
+            { x: 0 + 4, y: 5, url: "counter-right.svg", scale: 1, offset: { x: 373, y: 265 } },
+            { x: 1 + 4, y: 5, url: "counter-right.svg", scale: 1, offset: { x: 373 + 1 * 40, y: 265 + 1 * 20 } },
+            { x: 2 + 4, y: 5, url: "counter-right.svg", scale: 1, offset: { x: 373 + 2 * 40, y: 265 + 2 * 20 } },
+            { x: 3 + 4, y: 5, url: "counter-right.svg", scale: 1, offset: { x: 373 + 3 * 40, y: 265 + 3 * 20 } },
+            { x: 4 + 4, y: 5, url: "counter-right.svg", scale: 1, offset: { x: 373 + 4 * 40, y: 265 + 4 * 20 } },
 
-            { x: 5 + 4, y: 4, url: "counter-middle.svg", scale: 1, xOffset: 1, yOffset: -1, offset: { x: 531, y: 383 } },
-            { x: 5 + 4, y: 3, url: "counter-left-corner.svg", scale: 1, xOffset: 1, yOffset: -1, offset: { x: 492, y: 403 } },
-            { x: 5 + 4, y: 5, url: "counter-right-corner.svg", scale: 1, xOffset: 2, yOffset: -1, offset: { x: 570, y: 363 } },
+            { x: 5 + 4, y: 4, url: "counter-middle.svg", scale: 1, offset: { x: 531, y: 383 } },
+            { x: 5 + 4, y: 3, url: "counter-left-corner.svg", scale: 1, offset: { x: 492, y: 403 } },
+            { x: 5 + 4, y: 5, url: "counter-right-corner.svg", scale: 1, offset: { x: 570, y: 363 } },
 
             // right table
-            { x: 5 + 4, y: 3 + 6, url: "counter-left-corner.svg", scale: 1, xOffset: 1, yOffset: -1, offset: { x: 728, y: 285 } },
-            { x: 5 + 4, y: 4 + 6, url: "counter-middle.svg", scale: 1, xOffset: 1, yOffset: -1, offset: { x: 768, y: 265 } },
-            { x: 5 + 4, y: 5 + 6, url: "counter-right-corner.svg", scale: 1, xOffset: 2, yOffset: -1, offset: { x: 807, y: 245 } },
-            { x: 0 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531, y: 186 } },
-            { x: 1 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531 + 1 * 40, y: 186 + 1 * 20 } },
-            { x: 2 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531 + 2 * 40, y: 186 + 2 * 20 } },
-            { x: 3 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531 + 3 * 40, y: 186 + 3 * 20 } },
-            { x: 4 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531 + 4 * 40, y: 186 + 4 * 20 } },
-            { x: 0 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610, y: 146 } },
-            { x: 1 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610 + 1 * 40, y: 146 + 1 * 20 } },
-            { x: 2 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610 + 2 * 40, y: 146 + 2 * 20 } },
-            { x: 3 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610 + 3 * 40, y: 146 + 3 * 20 } },
-            { x: 4 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610 + 4 * 40, y: 146 + 4 * 20 } },
+            { x: 5 + 4, y: 3 + 6, url: "counter-left-corner.svg", scale: 1, offset: { x: 728, y: 285 } },
+            { x: 5 + 4, y: 4 + 6, url: "counter-middle.svg", scale: 1, offset: { x: 768, y: 265 } },
+            { x: 5 + 4, y: 5 + 6, url: "counter-right-corner.svg", scale: 1, offset: { x: 807, y: 245 } },
+            { x: 0 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, offset: { x: 531, y: 186 } },
+            { x: 1 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, offset: { x: 531 + 1 * 40, y: 186 + 1 * 20 } },
+            { x: 2 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, offset: { x: 531 + 2 * 40, y: 186 + 2 * 20 } },
+            { x: 3 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, offset: { x: 531 + 3 * 40, y: 186 + 3 * 20 } },
+            { x: 4 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, offset: { x: 531 + 4 * 40, y: 186 + 4 * 20 } },
+            { x: 0 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, offset: { x: 610, y: 146 } },
+            { x: 1 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, offset: { x: 610 + 1 * 40, y: 146 + 1 * 20 } },
+            { x: 2 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, offset: { x: 610 + 2 * 40, y: 146 + 2 * 20 } },
+            { x: 3 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, offset: { x: 610 + 3 * 40, y: 146 + 3 * 20 } },
+            { x: 4 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, offset: { x: 610 + 4 * 40, y: 146 + 4 * 20 } },
 
             // cooking table
-            { x: 3, y: 5, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 0 * 40, y: 241 - 0 * 20 } },
-            { x: 3, y: 6, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 1 * 40, y: 241 - 1 * 20 } },
-            { x: 3, y: 7, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 2 * 40, y: 241 - 2 * 20 } },
-            { x: 3, y: 8, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 3 * 40, y: 241 - 3 * 20 } },
-            { x: 3, y: 9, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 4 * 40, y: 241 - 4 * 20 } },
+            { x: 3, y: 5, url: "small-wallish-thing.svg", scale: 1, offset: { x: 334 + 0 * 40, y: 241 - 0 * 20 } },
+            { x: 3, y: 6, url: "small-wallish-thing.svg", scale: 1, offset: { x: 334 + 1 * 40, y: 241 - 1 * 20 } },
+            { x: 3, y: 7, url: "small-wallish-thing.svg", scale: 1, offset: { x: 334 + 2 * 40, y: 241 - 2 * 20 } },
+            { x: 3, y: 8, url: "small-wallish-thing.svg", scale: 1, offset: { x: 334 + 3 * 40, y: 241 - 3 * 20 } },
+            { x: 3, y: 9, url: "small-wallish-thing.svg", scale: 1, offset: { x: 334 + 4 * 40, y: 241 - 4 * 20 } },
 
-            { x: 0, y: 0, url: "left-wall.svg", scale: 1, xOffset: 2, yOffset: -3, offset: { x: 176, y: 197 } },
+            { x: 0, y: 0, url: "left-wall.svg", scale: 1, offset: { x: 176, y: 197 } },
         ],
         sit: [
             // left table
@@ -3239,23 +3239,44 @@ export const rooms: { [roomId: string]: Room } = {
     konbini: {
         id: "konbini",
         scale: 1,
-        size: { x: 7, y: 8 },
+        size: { x: 9, y: 8 },
         originCoordinates: { x: 4, y: 332 },
         spawnPoint: "door",
         backgroundImageUrl: "rooms/konbini/background.svg",
         objects: [
-            // { x:  1, y:  0, offset: { x: 40, y: 250 }, url: "torikomi.svg" },
-            // { x:  2, y:  5, offset: { x: 290, y: 150 }, url: "matari.svg" },
+            // { x:  0, y: 4, offset: { x: 200, y: 145 }, url: "wall.svg" },
+            { x:  2, y:  5, offset: { x: 0, y: 0 }, url: "register.svg", },
+            // { x:  1, y:  1, offset: { x: 0, y: 0 }, url: "freezer.svg" },
+            // { x:  1, y:  1, offset: { x: 80, y: 201 }, url: "refrigerator.svg", scale: 1 }, // drinks
+            // { x:  4, y:  1, offset: { x: 160, y: 240 }, url: "foods.svg" }, // snacks
         ],
         sit: [
             // { x:  4, y:  1 },
         ],
         blocked: [
-            // { x:  1, y:  0 },
+            // bathroom
+            { x:  0, y:  0 },
+            { x:  0, y:  1 },
+            { x:  0, y:  2 },
+            { x:  0, y:  4 },
+            // coffee machine
+            { x:  0, y:  7 },
+            { x:  1, y:  7 },
+            { x:  1, y:  7 },
+            // refrigerator
+            { x:  1, y:  0 },
+            { x:  1, y:  1 },
+            // foods
+            { x:  3, y:  1 }, { x:  4, y:  1 },
+            { x:  3, y:  2 }, { x:  4, y:  2 },
+            { x:  3, y:  3 }, { x:  4, y:  3 },
+            // freezer
+            { x:  6, y:  1 }, { x:  7, y:  1 },
+            { x:  6, y:  2 }, { x:  7, y:  2 },
         ],
         forbiddenMovements: [],
         doors: {
-            door: { x: 6, y: 6, direction: "left", target: { roomId: "bar_giko_square", doorId: "right" } },
+            door: { x: 0, y: 6, direction: "left", target: { roomId: "bar_giko_square", doorId: "right" } },
         },
         streamSlotCount: 1,
     }
