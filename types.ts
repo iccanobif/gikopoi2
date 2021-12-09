@@ -66,8 +66,6 @@ export interface Room
             x: number;
             y: number;
         }
-        xOffset?: number;
-        yOffset?: number;
     }[];
     sit: Coordinates[];
     blocked: Coordinates[];
