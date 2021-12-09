@@ -3245,10 +3245,10 @@ export const rooms: { [roomId: string]: Room } = {
         backgroundImageUrl: "rooms/konbini/background.svg",
         objects: [
             // { x:  0, y: 4, offset: { x: 200, y: 145 }, url: "wall.svg" },
-            { x:  2, y:  5, offset: { x: 400, y: 180 }, url: "register.svg", },
-            { x:  1, y:  1, offset: { x: 300, y: 360 }, url: "freezer.svg" },
-            { x:  1, y:  1, offset: { x: 80, y: 201 }, url: "refrigerator.svg", scale: 1 }, // drinks
-            { x:  4, y:  1, offset: { x: 160, y: 240 }, url: "foods.svg" }, // snacks
+            { x:  4, y:  6, offset: { x: 400, y: 156 }, url: "register.svg", },
+            { x:  7, y:  1, offset: { x: 280, y: 340 }, url: "freezer.svg" },
+            { x:  1, y:  1, offset: { x: 40, y: 184 }, url: "refrigerator.svg", scale: 1 }, // drinks
+            { x:  4, y:  2, offset: { x: 160, y: 203 }, url: "foods.svg" }, // snacks
         ],
         sit: [
             // { x:  4, y:  1 },
@@ -3262,7 +3262,7 @@ export const rooms: { [roomId: string]: Room } = {
             // coffee machine
             { x:  0, y:  7 },
             { x:  1, y:  7 },
-            { x:  1, y:  7 },
+            { x:  2, y:  7 },
             // refrigerator
             { x:  1, y:  0 },
             { x:  1, y:  1 },
@@ -3273,6 +3273,12 @@ export const rooms: { [roomId: string]: Room } = {
             // freezer
             { x:  6, y:  1 }, { x:  7, y:  1 },
             { x:  6, y:  2 }, { x:  7, y:  2 },
+            // register
+            { x:  4, y:  6 },
+            { x:  5, y:  6 },
+            { x:  6, y:  6 },
+            { x:  7, y:  6 },
+            { x:  8, y:  6 },
         ],
         forbiddenMovements: [],
         doors: {
