@@ -3245,10 +3245,10 @@ export const rooms: { [roomId: string]: Room } = {
         backgroundImageUrl: "rooms/konbini/background.svg",
         objects: [
             // { x:  0, y: 4, offset: { x: 200, y: 145 }, url: "wall.svg" },
-            { x:  2, y:  5, offset: { x: 0, y: 0 }, url: "register.svg", },
-            // { x:  1, y:  1, offset: { x: 0, y: 0 }, url: "freezer.svg" },
-            // { x:  1, y:  1, offset: { x: 80, y: 201 }, url: "refrigerator.svg", scale: 1 }, // drinks
-            // { x:  4, y:  1, offset: { x: 160, y: 240 }, url: "foods.svg" }, // snacks
+            { x:  2, y:  5, offset: { x: 400, y: 180 }, url: "register.svg", },
+            { x:  1, y:  1, offset: { x: 300, y: 360 }, url: "freezer.svg" },
+            { x:  1, y:  1, offset: { x: 80, y: 201 }, url: "refrigerator.svg", scale: 1 }, // drinks
+            { x:  4, y:  1, offset: { x: 160, y: 240 }, url: "foods.svg" }, // snacks
         ],
         sit: [
             // { x:  4, y:  1 },

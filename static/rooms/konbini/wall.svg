@@ -1,9 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="31" height="106" viewBox="0 0 31 106" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <g transform="matrix(0.75,0,0,0.75,0,0)">
-        <g transform="matrix(1,0,0,1,-320.515,-369.846)">
-            <path d="M320.563,510.509L320.515,390.233L360.604,369.846L360.633,490.474L320.563,510.509Z" style="fill:rgb(181,151,119);"/>
+<svg
+   width="40.118"
+   height="140.66299"
+   viewBox="0 0 40.118 140.66299"
+   version="1.1"
+   xml:space="preserve"
+   style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2"
+   id="svg8"
+   sodipodi:docname="wall.svg"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs12" /><sodipodi:namedview
+   id="namedview10"
+   pagecolor="#505050"
+   bordercolor="#ffffff"
+   borderopacity="1"
+   inkscape:pageshadow="0"
+   inkscape:pageopacity="0"
+   inkscape:pagecheckerboard="1"
+   showgrid="false"
+   inkscape:zoom="3.9716981"
+   inkscape:cx="18.505938"
+   inkscape:cy="85.731591"
+   inkscape:window-width="1920"
+   inkscape:window-height="1027"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg8" />
+    <g
+   id="g6">
+        <g
+   transform="translate(-320.515,-369.846)"
+   id="g4">
+            <path
+   d="m 320.563,510.509 -0.048,-120.276 40.089,-20.387 0.029,120.628 z"
+   style="fill:#b59777"
+   id="path2" />
         </g>
     </g>
 </svg>
