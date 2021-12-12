@@ -3249,16 +3249,16 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  0, y: 4, offset: { x: 166, y: 109 }, url: "toilet-wall-right.svg" },
             { x:  4, y:  6, offset: { x: 400, y: 156 }, url: "register.svg", },
             { x:  7, y:  1, offset: { x: 280, y: 340 }, url: "freezer.svg" },
-            { x:  1, y:  1, offset: { x: 40, y: 184 }, url: "refrigerator.svg", scale: 1 }, // drinks
+            { x:  1, y:  0, offset: { x: 40, y: 184 }, url: "refrigerator.svg", scale: 1 }, // drinks
             { x:  4, y:  2, offset: { x: 160, y: 203 }, url: "foods.svg" }, // snacks
         ],
         sit: [
-            // { x:  4, y:  1 },
+            { x:  0, y:  0 },
         ],
         blocked: [
             // bathroom
-            { x:  0, y:  0 },
-            { x:  0, y:  1 },
+            // { x:  0, y:  0 },
+            // { x:  0, y:  1 },
             { x:  0, y:  4 },
             // coffee machine
             { x:  0, y:  7 },
