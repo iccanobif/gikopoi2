@@ -194,5 +194,6 @@ export default
         bar_giko_square: "Fountain Plaza",
         densha: "Train",
         monachat: "Monachat",
+        konbini: "Convenience Store",
     }
 }

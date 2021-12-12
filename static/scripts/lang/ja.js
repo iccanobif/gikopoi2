@@ -194,6 +194,7 @@ export default
         bar_giko_square: r("噴水広場", "ふんすいひろば"),
         densha: r("電車", "でんしゃ"),
         monachat: r("もなちゃと", "もなちゃと"),
+        monachat: r("コンビニ", "こんびに"),
     }
 }
 
