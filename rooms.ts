@@ -3244,7 +3244,8 @@ export const rooms: { [roomId: string]: Room } = {
         spawnPoint: "door",
         backgroundImageUrl: "rooms/konbini/background.svg",
         objects: [
-            // { x:  0, y: 4, offset: { x: 200, y: 145 }, url: "wall.svg" },
+            { x:  0, y: 2, offset: { x: 40, y: 124 }, url: "toilet-wall-left.svg" },
+            { x:  0, y: 4, offset: { x: 166, y: 109 }, url: "toilet-wall-right.svg" },
             { x:  4, y:  6, offset: { x: 400, y: 156 }, url: "register.svg", },
             { x:  7, y:  1, offset: { x: 280, y: 340 }, url: "freezer.svg" },
             { x:  1, y:  1, offset: { x: 40, y: 184 }, url: "refrigerator.svg", scale: 1 }, // drinks
@@ -3279,6 +3280,10 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  6, y:  6 },
             { x:  7, y:  6 },
             { x:  8, y:  6 },
+            // blocking access to the back of the register
+            { x:  3, y:  7 },
+
+
         ],
         forbiddenMovements: [],
         doors: {
