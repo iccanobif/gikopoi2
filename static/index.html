@@ -150,27 +150,27 @@
                             </div>
                             <div class="non-wrappable-buttons">
                                 <button id="btn-move-left" class="arrow-button arrow-button-left"
-                                        v-on:mousedown="setMovementDirection('left')"
-                                        v-on:mouseup="setMovementDirection(null)"
-                                        v-on:touchstart="setMovementDirection('left')"
-                                        v-on:touchend="setMovementDirection(null)">&nbsp;</button
+                                        v-on:mousedown="setMovementDirection($event, 'left')"
+                                        v-on:mouseup="setMovementDirection($event, null)"
+                                        v-on:touchstart="setMovementDirection($event, 'left')"
+                                        v-on:touchend="setMovementDirection($event, null)">&nbsp;</button
                                 ><button id="btn-move-up" class="arrow-button arrow-button-up"
-                                        v-on:mousedown="setMovementDirection('up')"
-                                        v-on:mouseup="setMovementDirection(null)"
-                                        v-on:touchstart="setMovementDirection('up')"
-                                        v-on:touchend="setMovementDirection(null)">&nbsp;</button>
+                                        v-on:mousedown="setMovementDirection($event, 'up')"
+                                        v-on:mouseup="setMovementDirection($event, null)"
+                                        v-on:touchstart="setMovementDirection($event, 'up')"
+                                        v-on:touchend="setMovementDirection($event, null)">&nbsp;</button>
                             </div>
                             <div class="non-wrappable-buttons">
                                 <button id="btn-move-down" class="arrow-button arrow-button-down"
-                                        v-on:mousedown="setMovementDirection('down')"
-                                        v-on:mouseup="setMovementDirection(null)"
-                                        v-on:touchstart="setMovementDirection('down')"
-                                        v-on:touchend="setMovementDirection(null)">&nbsp;</button
+                                        v-on:mousedown="setMovementDirection($event, 'down')"
+                                        v-on:mouseup="setMovementDirection($event, null)"
+                                        v-on:touchstart="setMovementDirection($event, 'down')"
+                                        v-on:touchend="setMovementDirection($event, null)">&nbsp;</button
                                 ><button id="btn-move-right" class="arrow-button arrow-button-right"
-                                        v-on:mousedown="setMovementDirection('right')"
-                                        v-on:mouseup="setMovementDirection(null)"
-                                        v-on:touchstart="setMovementDirection('right')"
-                                        v-on:touchend="setMovementDirection(null)">&nbsp;</button>
+                                        v-on:mousedown="setMovementDirection($event, 'right')"
+                                        v-on:mouseup="setMovementDirection($event, null)"
+                                        v-on:touchstart="setMovementDirection($event, 'right')"
+                                        v-on:touchend="setMovementDirection($event, null)">&nbsp;</button>
                             </div>
                         </div>
                         <div class="tooltip-section" v-if="isBubbleSectionVisible">
@@ -568,6 +568,7 @@
                 </div>
             </div>
 
+            <div class="popup-overlay" v-if="isWarningToastOpen" v-on:click="closeWarningToast"></div>
             <div class="popup" v-if="isWarningToastOpen">
                 <div class="popup-title">{{ $t("ui.warning_toast_title") }}</div>
                 <div class="popup-content">

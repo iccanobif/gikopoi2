@@ -1127,6 +1127,9 @@ app.get("/", async (req, res) =>
             const { statusCode: loginFooterStatusCode, body: loginFooterBody } = await got(
                 'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
 
+            // const loginFooterStatusCode = 200
+            // const loginFooterBody = ""
+
             data = data.replace("@LOGIN_FOOTER@", loginFooterStatusCode === 200 ? loginFooterBody : "")
         }
         catch (e)

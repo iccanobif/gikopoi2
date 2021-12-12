@@ -17,13 +17,16 @@ export async function getAbuseConfidenceScore(ip: string): Promise<number>
 
     try
     {
-        const { statusCode: abuseIpStatusCode, body: abuseIpBody } = await got('https://api.abuseipdb.com/api/v2/check',
+        const baseUrl = 'https://api.abuseipdb.com/api/v2/check'
+
+        const { statusCode: abuseIpStatusCode, body: abuseIpBody } = await got(baseUrl,
             {
                 searchParams: { ipAddress: ip },
                 headers: {
                     "Key": settings.abuseIpDBApiKey,
                     "Accept": "application/json",
                 },
+                timeout: 1000 * 10,
             })
 
         if (abuseIpStatusCode != 200)
@@ -37,6 +40,9 @@ export async function getAbuseConfidenceScore(ip: string): Promise<number>
     catch (exc)
     {
         log.error(exc)
+        // caching the result because if for some reason the api is slow, ALL http requests to poipoi will
+        // become slow. If the API is broken, abuse checking is also broken anyway.
+        abuseIpDBabuseConfidenceScoreCache[ip] = 0
         return 0
     }
 }
