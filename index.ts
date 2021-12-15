@@ -1655,7 +1655,7 @@ async function janusClientConnect(client: typeof JanusClient): Promise<void>
 // Next step is to determine the load of the stream: video+audio, video only, audio only, video/audio quality, etc
 function getLeastUsedJanusServer()
 {
-    const serverUserCounts = Object.fromEntries(janusServers.map(o => [o.id, 0]));
+    const serverUsageWeights = Object.fromEntries(janusServers.map(o => [o.id, 0]));
     for (const areaId in roomStates)
         for (const roomId in roomStates[areaId])
         {
@@ -1664,13 +1664,13 @@ function getLeastUsedJanusServer()
             {
                 const streamSlot = streams[streamSlotId]
                 if(streamSlot.publisher !== null && streamSlot.janusServer !== null)
-                    serverUserCounts[streamSlot.janusServer.id] = Math.min(streamSlot.listeners.length, 5) + 1
-                    // + 1 for publisher and a min of listeners to allow streams to expand
+                    serverUsageWeights[streamSlot.janusServer.id] += Math.max(streamSlot.listeners.length, 5)
+                    // the number of listeners or, if larger, 5 to give streams space to expand into
             }
         }
     
-    const serverId = Object.keys(serverUserCounts).reduce((acc, cur) =>
-        serverUserCounts[acc] < serverUserCounts[cur] ? acc : cur);
+    const serverId = Object.keys(serverUsageWeights).reduce((acc, cur) =>
+        serverUsageWeights[acc] < serverUsageWeights[cur] ? acc : cur);
     return janusServersObject[serverId];
 }
 
