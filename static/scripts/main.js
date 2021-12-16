@@ -1561,7 +1561,10 @@ window.vueApp = new Vue({
             // Ping so that if my avatar was transparent, it turns back to normal.
             // Use debounce so that we never send more than one ping every 10 minutes
             const debouncedPing = debounceWithImmediateExecution(() => {
-                this.socket.emit("user-ping"); 
+                if (!this.connectionLost && !this.connectionRefused && !this.loggedOut)
+                {
+                    this.socket.emit("user-ping"); 
+                }
             }, 10 * 60 * 1000)
 
             window.addEventListener("focus", () => {

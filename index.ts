@@ -202,35 +202,26 @@ io.on("connection", function (socket: Socket)
     {
         const privateUserId = socket.handshake.headers["private-user-id"]
 
-        const publicIds = getAllUsers().filter(u => u.ip == getRealIpWebSocket(socket)).map(u => u.id).join(" ")
+        // Array.isArray(privateUserId) is needed only to make typescript happy
+        // and make it understand that I expect privateUserId to be just a string
+        const loginUser = (privateUserId && !Array.isArray(privateUserId)) 
+                            ? getLoginUser(privateUserId) 
+                            : null;
 
         log.info("Connection attempt",
                 getRealIpWebSocket(socket),
-                publicIds,
+                loginUser?.id,
                 "private-user-id:", privateUserId
                 );
 
-        const rejectConnection = () => {
-            log.info("server-cant-log-you-in", privateUserId, publicIds)
-            socket.emit("server-cant-log-you-in")
-            socket.disconnect(true)
-        }
-
-        if (!privateUserId || Array.isArray(privateUserId))
-        {
-            // Array.isArray(privateUserId) is needed only to make typescript happy
-            // and make it understand that I expect privateUserId to be just a string
-            rejectConnection()
-            return;
-        }
-
-        log.info("user-connect private id:", privateUserId)
-        const loginUser = getLoginUser(privateUserId);
         if (!loginUser)
         {
-            rejectConnection()
+            log.info("server-cant-log-you-in", privateUserId)
+            socket.emit("server-cant-log-you-in")
+            socket.disconnect(true)
             return;
         }
+
         user = loginUser;
         user.socketId = socket.id;
 
@@ -852,6 +843,7 @@ io.on("connection", function (socket: Socket)
         try
         {
             if (!user) return
+            if (user.disconnectionTime) return
 
             log.info("user-ping", user.id)
             setUserAsActive(user)
