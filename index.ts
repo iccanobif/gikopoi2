@@ -202,14 +202,16 @@ io.on("connection", function (socket: Socket)
     {
         const privateUserId = socket.handshake.headers["private-user-id"]
 
+        const publicIds = getAllUsers().filter(u => u.ip == getRealIpWebSocket(socket)).map(u => u.id).join(" ")
+
         log.info("Connection attempt",
                 getRealIpWebSocket(socket),
-                getAllUsers().filter(u => u.ip == getRealIpWebSocket(socket)).map(u => u.id).join(" "),
+                publicIds,
                 "private-user-id:", privateUserId
                 );
 
         const rejectConnection = () => {
-            log.info("server-cant-log-you-in", privateUserId)
+            log.info("server-cant-log-you-in", privateUserId, publicIds)
             socket.emit("server-cant-log-you-in")
             socket.disconnect(true)
         }
