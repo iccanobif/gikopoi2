@@ -112,7 +112,7 @@
                             tabindex="-1"></button>
                     </div>
                 </div>
-                <div id="toolbar">
+                <div id="toolbar" v-if="!connectionRefused">
                     <div id="toolbar-text-input">
                         {{ $t("ui.label_input") }} <textarea id="input-textbox"
                             v-on:keypress="handleMessageInputKeypress($event)"
@@ -195,7 +195,7 @@
                 <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames, 'timestamps-in-copied-log': timestampsInCopiedLog, 'ignore-indicators-in-log': showIgnoreIndicatorInLog}" v-on:keydown="handlechatLogKeydown($event)">
                 </div>
             </div>
-            <div id="video-streams">
+            <div id="video-streams" v-if="!connectionRefused">
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
                     <hr v-if="index != 0" />
                     <div>
