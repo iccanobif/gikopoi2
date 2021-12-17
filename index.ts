@@ -1883,7 +1883,7 @@ setInterval(async () =>
                     await disconnectUser(user)
                 }
             }
-            else if (!user.connectionTime && user.isGhost)
+            else if (user.isGhost)
             {
                 log.info(user.id, "is a ghost without connection time")
                 await disconnectUser(user)

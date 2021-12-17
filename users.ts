@@ -23,7 +23,6 @@ export class Player
     public isGhost: boolean = true;
     public roomId: string;
     public lastAction = Date.now();
-    public connectionTime = Date.now();
     public disconnectionTime: number | null = null;
     public characterId: string;
     public areaId: Area;
