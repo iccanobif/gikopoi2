@@ -1087,7 +1087,7 @@ export const rooms: { [roomId: string]: Room } = {
             steps: { x: 14, y: 4, direction: "left", target: { roomId: "jinja_st", doorId: "torii" } },
         },
         specialObjects: [
-            { objectName: 'coinCounter', x: 2, y: 5, color: '#00cc00', type: 'draw'}
+            { objectName: 'coinCounter', x: 2, y: 5, color: '#00cc00', type: 'draw', value: 0} 
         ],
         callbacks: [
             { eventName: 'coinAdd', eventType: 'click', x: 15, y: 0 },

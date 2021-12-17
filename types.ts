@@ -92,6 +92,7 @@ export interface SpecialObjects
     y: number;
     color: string;
     type: string;
+    value: number;
 }
 
 export interface CallbackEvent

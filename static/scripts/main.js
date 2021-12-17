@@ -1393,21 +1393,46 @@ window.vueApp = new Vue({
             context.textAlign = "center";
             //jinja room special objects: for now coin counter
             if (this.currentRoom.id === 'jinja') {
+                let mouseCursor = { x: 0, y:0 };
                 console.log("JINJA");
                 console.log(this.currentRoom);
-                this.currentRoom.specialObjects.forEach((specialObject, i) => {
+                let specialObject = this.currentRoom.specialObjects[0];
                     console.log(specialObject);
                     if ( specialObject.type === 'draw') {
                     
                         context.fillStyle = specialObject.color;
-                        let realCoord = calculateRealCoordinates(this.currentRoom, specialObject.x, specialObject.y)
+                        let realCoord = calculateRealCoordinates(this.currentRoom, specialObject.x, specialObject.y);
                         context.fillText(
                             specialObject.objectName + ' ' + this.currentRoom.coinCounter + ' Yen',
                             (realCoord.x + this.blockWidth/2) + this.canvasGlobalOffset.x,
                             (realCoord.y - this.blockHeight/3) + this.canvasGlobalOffset.y
                         );
+                        console.log("REAL COORD");
+                        console.log(realCoord);
+                        let offsetX = this.canvasGlobalOffset.x;
+                        let offsetY = this.canvasGlobalOffset.y;
+                        let currentRoom = this.currentRoom;
+                        document.addEventListener('mousemove', function (e) {
+                            let mouseCoords = calculateRealCoordinates(currentRoom, e.clientX, e.clientY);
+                            mouseCursor.x = mouseCoords.x + offsetX;
+                            mouseCursor.y = mouseCoords.y + offsetY;
+                        });
+                        // console.log(mouseCursor);
+                        if (typeof coinEvent === 'undefined') {
+                        let coinEvent = document.addEventListener('click', function(e) {
+                            console.log("CLICK!");
+                            console.log(mouseCursor);
+                            if (
+                                mouseCursor.x >= realCoord.x + offsetX && 
+                                mouseCursor.x <= realCoord.x + offsetX + this.blockWidth &&
+                                mouseCursor.y >= realCoord.y + offsetY &&
+                                mouseCursor.y <= realCoord.y + offsetY + this.blockHeight
+                            ) {
+                                alert("x: " + mouseCursor.x + " " + "y: " + mouseCursor.y);
+                            }
+                        });
+                    }
                 }
-                });
             }
         },
         drawGridNumbers: function ()
