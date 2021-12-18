@@ -334,6 +334,12 @@ io.on("connection", function (socket: Socket)
 
         try
         {
+            if (user.disconnectionTime)
+            {
+                log.error("user-move called for disconnected user!", user.id)
+                return
+            }
+
             log.debug("user-move", user.id, direction)
             setUserAsActive(user)
 
