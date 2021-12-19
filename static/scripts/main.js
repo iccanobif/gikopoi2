@@ -1242,32 +1242,16 @@ window.vueApp = new Vue({
                 )
                 .sort((a, b) =>
                 {
-                    // If there's an object for which all "unwalkable" blocks are specified, use those
-                    // to calculate which object goes on top and which doesn't
-                    if (a.o.occupiedBlocks)
-                    {
-                        // a is the object, b is the character. -1: character on top, 1: object on top
-                        
+                    const calculatePriority = (o) => o.type == "room-object"
+                                                        ? o.o.x + 1 + (this.currentRoom.size.y - o.o.y)
+                                                        : o.o.logicalPositionX + 1 + (this.currentRoom.size.y - o.o.logicalPositionY)
 
-                        
-                    }
-                    if (b.o.occupiedBlocks)
-                    {
+                    const aPriority = calculatePriority(a)
+                    const bPriority = calculatePriority(b)
 
-                    }
-                    else
-                    {
-                        const calculatePriority = (o) => o.type == "room-object"
-                                                            ? o.o.x + 1 + (this.currentRoom.size.y - o.o.y)
-                                                            : o.o.logicalPositionX + 1 + (this.currentRoom.size.y - o.o.logicalPositionY)
-
-                        const aPriority = calculatePriority(a)
-                        const bPriority = calculatePriority(b)
-
-                        if (aPriority < bPriority) return -1;
-                        if (aPriority > bPriority) return 1;
-                        return 0;
-                    }
+                    if (aPriority < bPriority) return -1;
+                    if (aPriority > bPriority) return 1;
+                    return 0;
                 });
         },
 
