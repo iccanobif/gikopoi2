@@ -1411,9 +1411,6 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 19, y:  4 },
             
             // Fountain
-
-
-            
             { x: 12, y: 12 },
             { x: 12, y: 11 },
             { x: 12, y: 10 },
@@ -3233,7 +3230,7 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [],
         doors: {
-            door: { x: 6, y: 6, direction: "left", target: { roomId: "bar_giko_square", doorId: "right" } },
+            door: { x: 6, y: 6, direction: "left", target: { roomId: "bar_giko_square", doorId: "left" } },
         },
         streamSlotCount: 3,
     },
