@@ -65,7 +65,11 @@ export interface Room
         offset?: {
             x: number;
             y: number;
-        }
+        },
+        occupiedBlocks?: {
+            x: number;
+            y: number;
+        }[]
     }[];
     sit: Coordinates[];
     blocked: Coordinates[];
