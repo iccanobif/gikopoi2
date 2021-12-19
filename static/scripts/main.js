@@ -707,12 +707,24 @@ window.vueApp = new Vue({
 
             this.socket.on("server-user-inactive", (userId) =>
             {
+                if (!this.users[userId])
+                {
+                    logToServer(this.myUserID + " Received server-user-inactive for non-existing user " + userId)
+                    return
+                }
+
                 this.users[userId].isInactive = true;
                 this.isRedrawRequired = true;
             });
 
             this.socket.on("server-user-active", (userId) =>
             {
+                if (!this.users[userId])
+                {
+                    logToServer(this.myUserID + " Received server-user-active for non-existing user " + userId)
+                    return
+                }
+
                 this.users[userId].isInactive = false;
                 this.isRedrawRequired = true;
             });
@@ -1222,19 +1234,40 @@ window.vueApp = new Vue({
                     .map(o => ({
                         o,
                         type: "room-object",
-                        priority: o.x + 1 + (this.currentRoom.size.y - o.y),
                     })),
                 Object.values(this.users).map(o => ({
                     o,
                     type: "user",
-                    priority: o.logicalPositionX + 1 + (this.currentRoom.size.y - o.logicalPositionY),
-                }))
+                })),
                 )
                 .sort((a, b) =>
                 {
-                    if (a.priority < b.priority) return -1;
-                    if (a.priority > b.priority) return 1;
-                    return 0;
+                    // If there's an object for which all "unwalkable" blocks are specified, use those
+                    // to calculate which object goes on top and which doesn't
+                    if (a.o.occupiedBlocks)
+                    {
+                        // a is the object, b is the character. -1: character on top, 1: object on top
+                        
+
+                        
+                    }
+                    if (b.o.occupiedBlocks)
+                    {
+
+                    }
+                    else
+                    {
+                        const calculatePriority = (o) => o.type == "room-object"
+                                                            ? o.o.x + 1 + (this.currentRoom.size.y - o.o.y)
+                                                            : o.o.logicalPositionX + 1 + (this.currentRoom.size.y - o.o.logicalPositionY)
+
+                        const aPriority = calculatePriority(a)
+                        const bPriority = calculatePriority(b)
+
+                        if (aPriority < bPriority) return -1;
+                        if (aPriority > bPriority) return 1;
+                        return 0;
+                    }
                 });
         },
 
