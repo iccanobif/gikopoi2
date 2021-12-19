@@ -328,12 +328,15 @@ io.on("connection", function (socket: Socket)
             logException(e)
         }
     });
-    socket.on("user-move", async function (direction: Direction)
+    socket.on("user-move", async function (direction: string)
     {
         await sleep(delay)
-
+        
         try
         {
+            if (direction != "up" && direction != "down" && direction != "left" && direction != "right")
+                return
+
             if (user.disconnectionTime)
             {
                 log.error("user-move called for disconnected user!", user.id)
