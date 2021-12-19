@@ -546,7 +546,7 @@ export const rooms: { [roomId: string]: Room } = {
     badend: {
         id: "badend",
         scale: 0.59,
-        size: { x: 0, y: 0 },
+        size: { x: 50, y: 50 },
         originCoordinates: { x: 0, y: 0 },
         spawnPoint: "spawn",
         backgroundImageUrl: "rooms/badend/badend.jpg",
