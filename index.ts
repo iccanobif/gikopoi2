@@ -756,10 +756,9 @@ io.on("connection", function (socket: Socket)
 
             // Validation
             if (!rooms.hasOwnProperty(targetRoomId)) return;
-            if (!rooms[targetRoomId].doors.hasOwnProperty(targetDoorId)) return;
+            if (targetDoorId && !rooms[targetRoomId].doors.hasOwnProperty(targetDoorId)) return;
 
             currentRoom = rooms[targetRoomId]
-            const door = rooms[targetRoomId].doors[targetDoorId]
             
             await clearStream(user)
             clearRoomListener(user)
@@ -776,6 +775,8 @@ io.on("connection", function (socket: Socket)
                 log.error(user.id, "Could not find door " + targetDoorId + " in room " + targetRoomId);
                 return;
             }
+
+            const door = rooms[targetRoomId].doors[targetDoorId]
 
             user.position = { x: door.x, y: door.y }
             if (door.direction !== null) user.direction = door.direction
