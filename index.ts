@@ -1,8 +1,7 @@
 import express, { Request } from "express"
 import { rooms } from "./rooms";
-import { Direction, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
+import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
-import { sleep } from "./utils";
 import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
@@ -24,7 +23,6 @@ const tripcode = require('tripcode');
 const enforce = require('express-sslify');
 const JanusClient = require('janus-videoroom-client').Janus;
 
-const delay = 0
 const persistInterval = 5 * 1000
 const maxGhostRetention = 30 * 60 * 1000
 const inactivityTimeout = 30 * 60 * 1000
@@ -330,8 +328,6 @@ io.on("connection", function (socket: Socket)
     });
     socket.on("user-move", async function (direction: string)
     {
-        await sleep(delay)
-        
         try
         {
             if (direction != "up" && direction != "down" && direction != "left" && direction != "right")
@@ -428,10 +424,13 @@ io.on("connection", function (socket: Socket)
             logException(e)
         }
     });
-    socket.on("user-bubble-position", function (position: Direction)
+    socket.on("user-bubble-position", function (position: string)
     {
         try
         {
+            if (position != "up" && position != "down" && position != "left" && position != "right")
+                return
+
             user.bubblePosition = position;
 
             userRoomEmit(user, user.areaId, user.roomId,
@@ -751,13 +750,16 @@ io.on("connection", function (socket: Socket)
     {
         try
         {
-            await sleep(delay)
-
             let { targetRoomId, targetDoorId } = data
 
             log.info("user-change-room", user.id, targetRoomId, targetDoorId)
 
             currentRoom = rooms[targetRoomId]
+            const door = rooms[targetRoomId].doors[targetDoorId]
+
+            // Validation
+            if (currentRoom.backgroundImageUrl == undefined) return
+            if (door.x == undefined) return
 
             await clearStream(user)
             clearRoomListener(user)
@@ -774,8 +776,6 @@ io.on("connection", function (socket: Socket)
                 log.error(user.id, "Could not find door " + targetDoorId + " in room " + targetRoomId);
                 return;
             }
-
-            const door = rooms[targetRoomId].doors[targetDoorId]
 
             user.position = { x: door.x, y: door.y }
             if (door.direction !== null) user.direction = door.direction
