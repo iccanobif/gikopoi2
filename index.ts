@@ -754,13 +754,13 @@ io.on("connection", function (socket: Socket)
 
             log.info("user-change-room", user.id, targetRoomId, targetDoorId)
 
+            // Validation
+            if (!rooms.hasOwnProperty(targetDoorId)) return
+            if (!rooms[targetRoomId].doors.hasOwnProperty(targetDoorId)) return
+
             currentRoom = rooms[targetRoomId]
             const door = rooms[targetRoomId].doors[targetDoorId]
-
-            // Validation
-            if (currentRoom.backgroundImageUrl == undefined) return
-            if (door.x == undefined) return
-
+            
             await clearStream(user)
             clearRoomListener(user)
             stopChessGame(roomStates, user)
