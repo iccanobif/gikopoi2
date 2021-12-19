@@ -43,13 +43,13 @@ if (settings.isBehindProxy)
     app.set('trust proxy', true)
 
 const janusServers: JanusServer[] =
-    [{
-        id: "maf",
+    settings.janusServers.map(s => ({
+        id: s.id,
         client: new JanusClient({
-            url: settings.janusServerUrl,
+            url: s.url,
             apiSecret: settings.janusApiSecret,
         })
-    }]
+    }))
 const janusServersObject = Object.fromEntries(janusServers.map(o => [o.id, o]));
 
 // Initialize room states:
