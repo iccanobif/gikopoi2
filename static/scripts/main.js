@@ -1227,32 +1227,65 @@ window.vueApp = new Vue({
             }
         },
         
+		scanObjects: function (toY, fromX, toX)
+		{
+			if(this.currentRoom.size.y-1<toY) return;
+			for(let x=fromX; x<toX; x++)
+			{
+				for (let y=this.currentRoom.size.y-1; y>=toY; y--)
+				{
+					if (!(y in this.objectsByPosition &&
+						x in this.objectsByPosition[y])) continue;
+					const cell = this.objectsByPosition[y][x];
+					if(cell.isDone) continue;
+					cell.objects.forEach(o =>
+					{
+						if (o.type != "room-object" &&
+							(o.o.width === undefined || o.o.width < 2))
+						{
+							this.canvasObjects.push(o);
+							return;
+						}
+						
+						this.scanObjects(o.y+1, o.x+1, o.x+1+(o.o.width-1))
+						
+						this.canvasObjects.push(o);
+					});
+					cell.isDone = true;
+				}
+			}
+		},
+        
         updateCanvasObjects: function ()
         {
-            this.canvasObjects = [].concat(
-                this.currentRoom.objects
-                    .map(o => ({
-                        o,
-                        type: "room-object",
-                    })),
-                Object.values(this.users).map(o => ({
-                    o,
-                    type: "user",
-                })),
-                )
-                .sort((a, b) =>
-                {
-                    const calculatePriority = (o) => o.type == "room-object"
-                                                        ? o.o.x + 1 + (this.currentRoom.size.y - o.o.y)
-                                                        : o.o.logicalPositionX + 1 + (this.currentRoom.size.y - o.o.logicalPositionY)
-
-                    const aPriority = calculatePriority(a)
-                    const bPriority = calculatePriority(b)
-
-                    if (aPriority < bPriority) return -1;
-                    if (aPriority > bPriority) return 1;
-                    return 0;
-                });
+			this.canvasObjects = [];
+			this.objectsByPosition = {};
+			
+			[].concat(
+				this.currentRoom.objects.map(o => ({
+					o,
+					type: "room-object",
+					x: o.x,
+					y: o.y
+				})),
+				Object.values(this.users).map(o => ({
+					o,
+					type: "user",
+					x: o.logicalPositionX,
+					y: o.logicalPositionY
+				})))
+			.forEach(o =>
+			{
+				const key = o.x + o.y * this.currentRoom.size.y
+				if (!(o.y in this.objectsByPosition)) this.objectsByPosition[o.y] = {};
+				if (!(o.x in this.objectsByPosition[o.y])) this.objectsByPosition[o.y][o.x] = {
+					objects: [],
+					isDone: false
+				};
+				this.objectsByPosition[o.y][o.x].objects.push(o);
+			});
+			
+			this.scanObjects(-1, 0, this.currentRoom.size.x+1);
         },
 
         paintBackground: function ()

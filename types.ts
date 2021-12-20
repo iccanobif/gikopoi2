@@ -60,6 +60,7 @@ export interface Room
     objects: {
         x: number;
         y: number;
+        width?: number;
         url: string;
         scale?: number;
         offset?: {
