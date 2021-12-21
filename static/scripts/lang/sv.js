@@ -193,6 +193,7 @@ export default
         bar_giko2: "Gikobarens källare",
         bar_giko_square: "Fontäntorget",
         densha: "Pendeltåget",
+        monachat: "Monachat",
         konbini: "Närbutiken",
     }
 }

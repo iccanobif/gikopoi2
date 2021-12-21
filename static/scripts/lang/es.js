@@ -193,5 +193,7 @@ export default
         bar_giko2: "Bar Giko Piso Inferior",
         bar_giko_square: "Plaza de la Fuente",
         densha: "Tren",
+        monachat: "Monachat",
+        konbini: "Tienda de conveniencia",
     }
 }
