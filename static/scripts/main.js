@@ -1230,7 +1230,7 @@ window.vueApp = new Vue({
 		scanCanvasObjects: function (objectsByPosition, toY, fromX, toX)
 		{
 			if(this.currentRoom.size.y-1<toY) return;
-			for(let x=fromX; x<toX; x++)
+			for(let x=fromX; x<=toX; x++)
 			{
 				for (let y=this.currentRoom.size.y-1; y>=toY; y--)
 				{
@@ -1248,7 +1248,7 @@ window.vueApp = new Vue({
 						}
 						
 						//scan for background objects to push before pushing the current object
-						this.scanCanvasObjects(objectsByPosition, o.y+1, o.x+1, o.x+1+(o.o.width-1))
+						this.scanCanvasObjects(objectsByPosition, o.y+1, o.x+1, o.x+1+(o.o.width-2))
 						
 						this.canvasObjects.push(o);
 					});
@@ -1286,8 +1286,8 @@ window.vueApp = new Vue({
 				objectsByPosition[o.y][o.x].objects.push(o);
 			});
 			
-			this.scanCanvasObjects(objectsByPosition, -1, 0, this.currentRoom.size.x+1);
-			// y to -1 and x to room size.x+1 to allow for foreground objects
+			this.scanCanvasObjects(objectsByPosition, -1, 0, this.currentRoom.size.x);
+			// y to -1 and x to room size.x to allow for foreground objects
         },
 
         paintBackground: function ()
