@@ -1239,11 +1239,13 @@ window.vueApp = new Vue({
 					const cell = objectsByPosition[y][x];
 					if(cell.isDone) continue;
 					
-					//scan for background objects to push before pushing the current objects
+					// scan for background objects to push
+					// before pushing the current objects
 					const widthOfObjects = cell.objects.reduce((w, o) =>
 						(o.o.width > 1 ? Math.max(w, o.o.width) : w), 1);
 					if (widthOfObjects > 1)
-						this.scanCanvasObjects(objectsByPosition, y+1, x+1, (x+1)+(widthOfObjects-2))
+						this.scanCanvasObjects(objectsByPosition,
+							y+1, x+1, (x+1)+(widthOfObjects-2));
 					
 					this.canvasObjects.push(...cell.objects);
 					
@@ -1272,16 +1274,19 @@ window.vueApp = new Vue({
 				})))
 			.forEach(o =>
 			{
-				const key = o.x + o.y * this.currentRoom.size.y
-				if (!(o.y in objectsByPosition)) objectsByPosition[o.y] = {};
-				if (!(o.x in objectsByPosition[o.y])) objectsByPosition[o.y][o.x] = {
+				if (!(o.y in objectsByPosition))
+					objectsByPosition[o.y] = {};
+				if (!(o.x in objectsByPosition[o.y]))
+					objectsByPosition[o.y][o.x] =
+				{
 					objects: [],
 					isDone: false
 				};
 				objectsByPosition[o.y][o.x].objects.push(o);
 			});
 			
-			this.scanCanvasObjects(objectsByPosition, -1, 0, this.currentRoom.size.x);
+			this.scanCanvasObjects(objectsByPosition,
+				-1, 0, this.currentRoom.size.x);
 			// y to -1 and x to room size.x to allow for foreground objects
         },
 
