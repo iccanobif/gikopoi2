@@ -108,5 +108,7 @@ export default
         bar_giko2: "Bar Giko contignatio inferior",
         bar_giko_square: "Platea fontis",
         densha: "Tramen",
+        monachat: "Monachat",
+        konbini: "Emporium",
     }
 }

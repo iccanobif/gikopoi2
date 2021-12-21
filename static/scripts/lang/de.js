@@ -193,5 +193,7 @@ export default
         bar_giko2: "Bar Giko Untergeschoss",
         bar_giko_square: "Brunnenplatz",
         densha: "Bahn",
+        monachat: "Monachat",
+        konbini: "Gemischtwarenladen",
     }
 }
