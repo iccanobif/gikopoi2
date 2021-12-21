@@ -1227,16 +1227,16 @@ window.vueApp = new Vue({
             }
         },
         
-		scanObjects: function (toY, fromX, toX)
+		scanObjects: function (objectsByPosition, toY, fromX, toX)
 		{
 			if(this.currentRoom.size.y-1<toY) return;
 			for(let x=fromX; x<toX; x++)
 			{
 				for (let y=this.currentRoom.size.y-1; y>=toY; y--)
 				{
-					if (!(y in this.objectsByPosition &&
-						x in this.objectsByPosition[y])) continue;
-					const cell = this.objectsByPosition[y][x];
+					if (!(y in objectsByPosition &&
+						x in objectsByPosition[y])) continue;
+					const cell = objectsByPosition[y][x];
 					if(cell.isDone) continue;
 					cell.objects.forEach(o =>
 					{
@@ -1247,7 +1247,8 @@ window.vueApp = new Vue({
 							return;
 						}
 						
-						this.scanObjects(o.y+1, o.x+1, o.x+1+(o.o.width-1))
+						//scan for background objects to push before pushing the current object
+						this.scanObjects(objectsByPosition, o.y+1, o.x+1, o.x+1+(o.o.width-1))
 						
 						this.canvasObjects.push(o);
 					});
@@ -1259,7 +1260,7 @@ window.vueApp = new Vue({
         updateCanvasObjects: function ()
         {
 			this.canvasObjects = [];
-			this.objectsByPosition = {};
+			const objectsByPosition = {};
 			
 			[].concat(
 				this.currentRoom.objects.map(o => ({
@@ -1277,15 +1278,16 @@ window.vueApp = new Vue({
 			.forEach(o =>
 			{
 				const key = o.x + o.y * this.currentRoom.size.y
-				if (!(o.y in this.objectsByPosition)) this.objectsByPosition[o.y] = {};
-				if (!(o.x in this.objectsByPosition[o.y])) this.objectsByPosition[o.y][o.x] = {
+				if (!(o.y in objectsByPosition)) objectsByPosition[o.y] = {};
+				if (!(o.x in objectsByPosition[o.y])) objectsByPosition[o.y][o.x] = {
 					objects: [],
 					isDone: false
 				};
-				this.objectsByPosition[o.y][o.x].objects.push(o);
+				objectsByPosition[o.y][o.x].objects.push(o);
 			});
 			
 			this.scanObjects(-1, 0, this.currentRoom.size.x+1);
+			// y to -1 and x to room size.x+1 to allow for foreground objects
         },
 
         paintBackground: function ()
