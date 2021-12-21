@@ -89,8 +89,8 @@ export const rooms: { [roomId: string]: Room } = {
         spawnPoint: "admin",
         backgroundImageUrl: "rooms/admin_st/background.svg",
         objects: [
-            { x: 1, y: 8, width: 4, url: "house1.svg", offset: { x: 241, y: -28 } },
-            { x: 1, y: 8, width: 4, url: "house2.svg", offset: { x: 241, y: 2 } },
+            { x: 1, y: 8, width: 4, height: 4, url: "house1.svg", offset: { x: 241, y: -28 } },
+            { x: 1, y: 8, width: 4, height: 4, url: "house2.svg", offset: { x: 241, y: 2 } },
             { x: 5, y: 4, url: "trash-bin1.svg", offset: { x: 365, y: 169 } },
             { x: 6, y: 4, url: "trash-bin2.svg", offset: { x: 375, y: 152 } },
             { x: 5, y: 7, url: "go-table.svg", offset: { x: 492, y: 140 } },
@@ -204,9 +204,9 @@ export const rooms: { [roomId: string]: Room } = {
         spawnPoint: "down",
         backgroundImageUrl: "rooms/admin/background.svg",
         objects: [
-            { x: 2, y: 4, width: 2, url: "long_table_left.svg", offset: { x: 164, y: 194 } },
-            { x: 2, y: 4, width: 2, url: "long_table_right.svg", offset: { x: 237, y: 164 } },
-            { x: 8, y: 3, width: 2, url: "round_table.svg", offset: { x: 473, y: 313 } },
+            { x: 2, y: 4, width: 2, height: 4, url: "long_table_left.svg", offset: { x: 164, y: 194 } },
+            { x: 2, y: 4, width: 2, height: 4, url: "long_table_right.svg", offset: { x: 237, y: 164 } },
+            { x: 8, y: 3, width: 2, height: 2, url: "round_table.svg", offset: { x: 473, y: 313 } },
         ],
         sit: [
             { x: 10, y: 2 },
@@ -3243,11 +3243,11 @@ export const rooms: { [roomId: string]: Room } = {
         backgroundImageUrl: "rooms/konbini/background.svg",
         objects: [
             { x:  1, y: 2, offset: { x: 40, y: 124 }, url: "toilet-wall-left.svg" },
-            { x:  0, y: 4, offset: { x: 166, y: 109 }, url: "toilet-wall-right.svg" },
+            { x:  1, y: 4, offset: { x: 166, y: 109 }, url: "toilet-wall-right.svg" },
             { x:  4, y:  6, width: 5, offset: { x: 400, y: 156 }, url: "register.svg"},
-            { x:  6, y:  2, width: 2, offset: { x: 280, y: 340 }, url: "freezer.svg" },
-            { x:  1, y:  1, offset: { x: 40, y: 184 }, url: "refrigerator.svg", scale: 1 }, // drinks
-            { x:  3, y:  3, width: 2, offset: { x: 160, y: 203 }, url: "foods.svg" }, // snacks
+            { x:  6, y:  2, width: 2, height: 2, offset: { x: 280, y: 340 }, url: "freezer.svg" },
+            { x:  1, y:  1, height: 2, offset: { x: 40, y: 184 }, url: "refrigerator.svg", scale: 1 }, // drinks
+            { x:  3, y:  3, width: 2, height: 3, offset: { x: 160, y: 203 }, url: "foods.svg" }, // snacks
         ],
         sit: [
             { x:  0, y:  0 },

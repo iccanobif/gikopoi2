@@ -1227,13 +1227,21 @@ window.vueApp = new Vue({
             }
         },
         
-		scanCanvasObjects: function (objectsByPosition, toY, fromX, toX)
+		scanCanvasObjects: function (objectsByPosition, fromX, toX, fromY, toY)
 		{
-			if(this.currentRoom.size.y-1<toY) return;
-			for(let x=fromX; x<=toX; x++)
+			const width = (toX-fromX)+1;
+			const height = (toY-fromY)+1;
+			
+			for (let i=0; i<=(width+height-2); i++)
 			{
-				for (let y=this.currentRoom.size.y-1; y>=toY; y--)
+				for (let vy=0; vy<=i; vy++)
 				{
+					const x = (i-vy) + fromX;
+					const y = toY-vy;
+					
+					if (!(fromX <= x && x <= toX
+						&& fromY <= y && y <= toY)) continue;
+					
 					if (!(y in objectsByPosition &&
 						x in objectsByPosition[y])) continue;
 					const cell = objectsByPosition[y][x];
@@ -1245,7 +1253,13 @@ window.vueApp = new Vue({
 						(o.o.width > 1 ? Math.max(w, o.o.width) : w), 1);
 					if (widthOfObjects > 1)
 						this.scanCanvasObjects(objectsByPosition,
-							y+1, x+1, (x+1)+(widthOfObjects-2));
+							x+1, (x+1)+(widthOfObjects-2), y+1, toY);
+					
+					const heightOfObjects = cell.objects.reduce((w, o) =>
+						(o.o.height > 1 ? Math.max(w, o.o.height) : w), 1);
+					if (heightOfObjects > 1)
+						this.scanCanvasObjects(objectsByPosition,
+							fromX, x-1, (y-1)-(heightOfObjects-2), y-1);
 					
 					this.canvasObjects.push(...cell.objects);
 					
@@ -1286,8 +1300,8 @@ window.vueApp = new Vue({
 			});
 			
 			this.scanCanvasObjects(objectsByPosition,
-				-1, 0, this.currentRoom.size.x);
-			// y to -1 and x to room size.x to allow for foreground objects
+				0, this.currentRoom.size.x, -1, this.currentRoom.size.y-1);
+			// x to room size.x and y from -1 to allow for foreground objects
         },
 
         paintBackground: function ()
