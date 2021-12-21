@@ -1241,12 +1241,7 @@ window.vueApp = new Vue({
 					
 					//scan for background objects to push before pushing the current objects
 					const widthOfObjects = cell.objects.reduce((w, o) =>
-					{
-						if(o.type == "room-object" && o.o.width !== undefined && o.o.width > 1)
-							return Math.max(w, o.o.width);
-						else
-							return w;
-					}, 1);
+						(o.o.width > 1 ? Math.max(w, o.o.width) : w), 1);
 					if (widthOfObjects > 1)
 						this.scanCanvasObjects(objectsByPosition, y+1, x+1, (x+1)+(widthOfObjects-2))
 					
