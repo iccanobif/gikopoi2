@@ -1238,17 +1238,18 @@ window.vueApp = new Vue({
 						x in objectsByPosition[y])) continue;
 					const cell = objectsByPosition[y][x];
 					if(cell.isDone) continue;
+					let bgObjectsScanned = false;
 					cell.objects.forEach(o =>
 					{
-						if (o.type != "room-object" &&
-							(o.o.width === undefined || o.o.width < 2))
+						if (!bgObjectsScanned
+							&& o.type == "room-object"
+							&& o.o.width !== undefined
+							&& o.o.width > 1)
 						{
-							this.canvasObjects.push(o);
-							return;
+							//scan for background objects to push before pushing the current object
+							this.scanCanvasObjects(objectsByPosition, o.y+1, o.x+1, o.x+1+(o.o.width-2))
+							bgObjectsScanned = true;
 						}
-						
-						//scan for background objects to push before pushing the current object
-						this.scanCanvasObjects(objectsByPosition, o.y+1, o.x+1, o.x+1+(o.o.width-2))
 						
 						this.canvasObjects.push(o);
 					});
