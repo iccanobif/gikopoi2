@@ -1227,82 +1227,96 @@ window.vueApp = new Vue({
             }
         },
         
-		scanCanvasObjects: function (objectsByPosition, fromX, toX, fromY, toY)
-		{
-			const width = (toX-fromX)+1;
-			const height = (toY-fromY)+1;
-			
-			for (let i=0; i<=(width+height-2); i++)
-			{
-				for (let vy=0; vy<=i; vy++)
-				{
-					const x = (i-vy) + fromX;
-					const y = toY-vy;
-					
-					if (!(fromX <= x && x <= toX
-						&& fromY <= y && y <= toY)) continue;
-					
-					if (!(y in objectsByPosition &&
-						x in objectsByPosition[y])) continue;
-					const cell = objectsByPosition[y][x];
-					if(cell.isDone) continue;
-					
-					// scan for background objects to push
-					// before pushing the current objects
-					const widthOfObjects = cell.objects.reduce((w, o) =>
-						(o.o.width > 1 ? Math.max(w, o.o.width) : w), 1);
-					if (widthOfObjects > 1)
-						this.scanCanvasObjects(objectsByPosition,
-							x+1, (x+1)+(widthOfObjects-2), y+1, toY);
-					
-					const heightOfObjects = cell.objects.reduce((w, o) =>
-						(o.o.height > 1 ? Math.max(w, o.o.height) : w), 1);
-					if (heightOfObjects > 1)
-						this.scanCanvasObjects(objectsByPosition,
-							fromX, x-1, (y-1)-(heightOfObjects-2), y-1);
-					
-					this.canvasObjects.push(...cell.objects);
-					
-					cell.isDone = true;
-				}
-			}
-		},
-        
-        updateCanvasObjects: function ()
+        updateCanvasObjects: (() =>
         {
-			this.canvasObjects = [];
-			const objectsByPosition = {};
-			
-			[].concat(
-				this.currentRoom.objects.map(o => ({
-					o,
-					type: "room-object",
-					x: o.x,
-					y: o.y
-				})),
-				Object.values(this.users).map(o => ({
-					o,
-					type: "user",
-					x: o.logicalPositionX,
-					y: o.logicalPositionY
-				})))
-			.forEach(o =>
-			{
-				if (!(o.y in objectsByPosition))
-					objectsByPosition[o.y] = {};
-				if (!(o.x in objectsByPosition[o.y]))
-					objectsByPosition[o.y][o.x] =
-				{
-					objects: [],
-					isDone: false
-				};
-				objectsByPosition[o.y][o.x].objects.push(o);
-			});
-			
-			this.scanCanvasObjects(objectsByPosition,
-				0, this.currentRoom.size.x, -1, this.currentRoom.size.y-1);
-			// x to room size.x and y from -1 to allow for foreground objects
-        },
+            let self;
+            
+            function scanCanvasObjects (objectsByPosition, fromX, toX, fromY, toY)
+            {
+                const width = (toX-fromX)+1;
+                const height = (toY-fromY)+1;
+                
+                const diagonals = width+height-1;
+                
+                for (let d=0; d<=diagonals; d++)
+                {
+                    let vx = d<width ? d : width-1;
+                    let vy = d<width ? 0 : d-width;
+                    while(vx >= 0 && vy < height)
+                    {
+                        const x = vx + fromX;
+                        const y = toY - vy;
+                        
+                        vx--;
+                        vy++;
+                        
+                        const cell = objectsByPosition[x+","+y];
+                        if(cell === undefined || cell.isDone) continue;
+                        
+                        // scan for background objects to push
+                        // before pushing the current objects
+                        const widthOfObjects = cell.objects.reduce((w, o) =>
+                            (o.o.width > 1 ? Math.max(w, o.o.width) : w), 1);
+                        if (widthOfObjects > 1)
+                            scanCanvasObjects(objectsByPosition,
+                                x+1, (x+1)+(widthOfObjects-2), y+1, toY);
+                        
+                        const heightOfObjects = cell.objects.reduce((w, o) =>
+                            (o.o.height > 1 ? Math.max(w, o.o.height) : w), 1);
+                        if (heightOfObjects > 1)
+                            scanCanvasObjects(objectsByPosition,
+                                fromX, x-1, (y-1)-(heightOfObjects-2), y-1);
+                        
+                        self.canvasObjects.push(...cell.objects);
+                        
+                        cell.isDone = true;
+                    }
+                }
+            }
+            
+            function addObject (o, objectsByPosition)
+            {
+                const key = o.x + "," + o.y;
+                const cell = objectsByPosition[key];
+                if (cell !== undefined)
+                {
+                    cell.objects.push(o);
+                }
+                else
+                {
+                    objectsByPosition[key] =
+                    {
+                        objects: [o],
+                        isDone: false
+                    };
+                }
+            }
+            
+            return function ()
+            {
+                self = this;
+                this.canvasObjects = [];
+                const objectsByPosition = {};
+                
+                this.currentRoom.objects.forEach(o => addObject({
+                    o,
+                    type: "room-object",
+                    x: o.x,
+                    y: o.y
+                }, objectsByPosition));
+                
+                Object.values(this.users).forEach(o => addObject({
+                    o,
+                    type: "user",
+                    x: o.logicalPositionX,
+                    y: o.logicalPositionY
+                }, objectsByPosition));
+                
+                scanCanvasObjects(objectsByPosition,
+                    0, this.currentRoom.size.x, -1, this.currentRoom.size.y-1);
+                // x to room size.x and y from -1 to allow for foreground objects
+            };
+        })(),
 
         paintBackground: function ()
         {
