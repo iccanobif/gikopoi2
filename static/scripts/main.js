@@ -1251,7 +1251,7 @@ window.vueApp = new Vue({
                         vy++;
                         
                         const key = x + "," + y;
-                        if (!objectsByPosition.hasOwnProperty(key)) continue;
+                        if (!(key in objectsByPosition)) continue;
                         
                         const cell = objectsByPosition[key];
                         if (cell.isDone) continue;
@@ -1280,7 +1280,7 @@ window.vueApp = new Vue({
             function addObject (o, objectsByPosition)
             {
                 const key = o.x + "," + o.y;
-                if (objectsByPosition.hasOwnProperty(key))
+                if (key in objectsByPosition)
                 {
                     objectsByPosition[key].objects.push(o);
                 }
