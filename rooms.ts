@@ -3240,11 +3240,11 @@ export const rooms: { [roomId: string]: Room } = {
         size: { x: 9, y: 8 },
         originCoordinates: { x: 4, y: 332 },
         spawnPoint: "door",
-        backgroundImageUrl: "rooms/konbini/background.svg",
+        backgroundImageUrl: "rooms/konbini/background.christmas.svg",
         objects: [
             { x:  0, y: 2, offset: { x: 40, y: 124 }, url: "toilet-wall-left.svg" },
             { x:  0, y: 4, offset: { x: 166, y: 109 }, url: "toilet-wall-right.svg" },
-            { x:  4, y:  6, offset: { x: 400, y: 156 }, url: "register.svg", 
+            { x:  4, y:  6, offset: { x: 400, y: 156 }, url: "register.christmas.svg", 
                 occupiedBlocks: [
                     { x: 4, y: 6 },
                     { x: 5, y: 6 },
