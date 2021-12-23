@@ -3201,7 +3201,7 @@ export const rooms: { [roomId: string]: Room } = {
         size: { x: 7, y: 8 },
         originCoordinates: { x: 4, y: 332 },
         spawnPoint: "door",
-        backgroundImageUrl: "rooms/monachat/background.svg",
+        backgroundImageUrl: "rooms/monachat/background.christmas.svg",
         objects: [
             { x:  1, y:  0, offset: { x: 40, y: 250 }, url: "torikomi.svg" },
             { x:  2, y:  5, offset: { x: 290, y: 150 }, url: "matari.svg" },
