@@ -1250,8 +1250,11 @@ window.vueApp = new Vue({
                         vx--;
                         vy++;
                         
-                        const cell = objectsByPosition[x+","+y];
-                        if(cell === undefined || cell.isDone) continue;
+                        const key = x + "," + y;
+                        if (!(key in objectsByPosition)) continue;
+                        
+                        const cell = objectsByPosition[key];
+                        if (cell.isDone) continue;
                         
                         // scan for background objects to push
                         // before pushing the current objects
@@ -1277,10 +1280,9 @@ window.vueApp = new Vue({
             function addObject (o, objectsByPosition)
             {
                 const key = o.x + "," + o.y;
-                const cell = objectsByPosition[key];
-                if (cell !== undefined)
+                if (key in objectsByPosition)
                 {
-                    cell.objects.push(o);
+                    objectsByPosition[key].objects.push(o);
                 }
                 else
                 {
