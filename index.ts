@@ -1714,6 +1714,8 @@ async function destroySession(janusHandle: any, stream: StreamSlot)
     }
 }
 
+const instanceStartTime = Date.now();
+
 async function clearStream(user: Player)
 {
     try
@@ -1733,6 +1735,28 @@ async function clearStream(user: Player)
             
             sendUpdatedStreamSlotState(user)
             emitServerStats(user.areaId)
+
+            // If no streams active in all server and this instance has been up
+            // for more than 20 hours, restart. This is an attempt to minimize heroku's daily restarts
+            // disrupting streams
+            const allRooms = Object.values(roomStates).map(state => Object.values(state)).flat()
+
+            const totalStreamCount = allRooms
+                            .map(s => s.streams)
+                            .flat()
+                            .filter(s => s.isActive)
+                            .length
+
+            const utcHours = (new Date()).getUTCHours()
+
+            if (totalStreamCount == 0 
+                && Date.now() - instanceStartTime > 20 * 60 * 60 * 1000 // 20 hours
+                && (utcHours > 22 || utcHours <= 3)) 
+            {
+                log.warn("Restarting after " + (Date.now() - instanceStartTime) / 1000 + " seconds")
+                await persistState()
+                process.exit()
+            }
         }
     }
     catch (error)
