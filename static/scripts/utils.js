@@ -198,3 +198,21 @@ export function requestNotificationPermission()
             promise.then(resolve)
     })
 }
+
+export async function getDeviceList(includeAudioDevices, includeVideoDevices)
+{
+    // In order to get the labels, we need to get permission first 
+    const mediaStream = await navigator.mediaDevices.getUserMedia({ video: includeVideoDevices, audio: includeAudioDevices })
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+
+    const output = devices.map(d => ({
+        id: d.deviceId,
+        name: d.label,
+        type: d.kind
+    }))
+
+    for (const track of mediaStream.getTracks()) track.stop();
+
+    return output
+}

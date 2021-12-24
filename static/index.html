@@ -422,7 +422,7 @@
                     </div>
                 </div>
                 <div class="popup-buttons">
-                    <button v-on:click="wantToStartStreaming">{{ $t("ui.stream_form_button_stream") }}</button><button
+                    <button v-on:click="showDeviceSelectionPopup">{{ $t("ui.stream_form_button_stream") }}</button><button
                         v-on:click="closeStreamPopup">{{ $t("ui.popup_button_cancel") }}</button>
                 </div>
             </div>
@@ -568,8 +568,8 @@
                 </div>
             </div>
 
-            <div class="popup-overlay" v-if="isWarningToastOpen" v-on:click="closeWarningToast"></div>
-            <div class="popup" v-if="isWarningToastOpen">
+            <div class="popup-overlay" id="warning-toast-overlay" v-if="isWarningToastOpen" v-on:click="closeWarningToast"></div>
+            <div class="popup" id="warning-toast" v-if="isWarningToastOpen">
                 <div class="popup-title">{{ $t("ui.warning_toast_title") }}</div>
                 <div class="popup-content">
                     <div class="popup-item">
@@ -578,6 +578,34 @@
                 </div>
                 <div class="popup-buttons">
                     <button v-on:click="closeWarningToast">{{ $t("ui.popup_button_ok") }}</button>
+                </div>
+            </div>
+
+
+            <div class="popup-overlay" v-if="isDeviceSelectionOpen" v-on:click="cancelDeviceSelection"></div>
+            <div class="popup" v-if="isDeviceSelectionOpen">
+                <div class="popup-title">{{ $t("ui.device_selection_title") }}</div>
+                <div class="popup-content">
+                    <!-- AUDIO -->
+                    <div class='popup-section' v-if="deviceList.filter(d => d.type == 'audioinput').length">
+                        <div class='popup-header'>{{ $t("ui.device_selection_audio_devices") }}</div>
+                        <div class='popup-item' v-for="device in deviceList.filter(d => d.type == 'audioinput')">
+                            <input type="radio" :id="device.id" :value="device.id" v-model="selectedAudioDeviceId"><label
+                                :for="device.id">{{ device.name }}</label>
+                        </div>
+                    </div>
+                    <!-- VIDEO -->
+                    <div class='popup-section' v-if="deviceList.filter(d => d.type == 'videoinput').length">
+                        <div class='popup-header'>{{ $t("ui.device_selection_video_devices") }}</div>
+                        <div class='popup-item' v-for="device in deviceList.filter(d => d.type == 'videoinput')">
+                            <input type="radio" :id="device.id" :value="device.id" v-model="selectedVideoDeviceId"><label
+                                :for="device.id">{{ device.name }}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup-buttons">
+                    <button v-on:click="wantToStartStreaming">{{ $t("ui.stream_form_button_stream") }}</button>
+                    <button v-on:click="cancelDeviceSelection">{{ $t("ui.popup_button_cancel") }}</button>
                 </div>
             </div>
         </div>

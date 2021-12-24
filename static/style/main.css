@@ -464,6 +464,11 @@ video {
     z-index: 201;
 }
 
+#warning-toast
+{
+    z-index: 204;
+}
+
 @media (max-width: 600px) {
     .popup {
         width: 90%;
@@ -480,6 +485,11 @@ video {
     width: 100%;
     height: 100%;
     background:rgba(77,77,77,.4);
+}
+
+#warning-toast-overlay
+{
+    z-index: 203
 }
 
 .popup-title

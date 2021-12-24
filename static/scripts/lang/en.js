@@ -79,6 +79,10 @@ export default
         stream_form_camera_facing: "Phone Camera:",
         stream_form_camera_facing_user: "Front",
         stream_form_camera_facing_environment: "Back",
+
+        device_selection_title: "Select device",
+        device_selection_audio_devices: "Audio devices",
+        device_selection_video_devices: "Video devices",
         
         preferences_title: "Preferences",
         preferences_name_bg: "Show Username Background",
