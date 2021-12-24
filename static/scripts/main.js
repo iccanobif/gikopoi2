@@ -1227,33 +1227,142 @@ window.vueApp = new Vue({
             }
         },
         
-        updateCanvasObjects: function ()
+        updateCanvasObjects: (() =>
         {
-            this.canvasObjects = [].concat(
-                this.currentRoom.objects
-                    .map(o => ({
-                        o,
-                        type: "room-object",
-                    })),
-                Object.values(this.users).map(o => ({
+            let self;
+            
+            function scanCanvasObjects (canvasObjects, objectsByPosition,
+                fromX, toX, fromY, toY)
+            {
+                const width = (toX-fromX)+1;
+                const height = (toY-fromY)+1;
+                
+                const diagonals = width+height-1;
+                
+                for (let d=0; d<=diagonals; d++)
+                {
+                    let vx = d<width ? d : width-1;
+                    let vy = d<width ? 0 : d-width;
+                    while (vx >= 0 && vy < height)
+                    {
+                        const x = vx + fromX;
+                        const y = toY - vy;
+                        
+                        vx--;
+                        vy++;
+                        
+                        const key = x + "," + y;
+                        if (!(key in objectsByPosition)) continue;
+                        
+                        const cell = objectsByPosition[key];
+                        if (cell.isDone) continue;
+                        
+                        // scan for background objects to push
+                        // before pushing the current objects
+                        const widthOfObjects = cell.objects.reduce((w, o) =>
+                            (o.o.width > 1 ? Math.max(w, o.o.width) : w), 1);
+                        if (widthOfObjects > 1)
+                            scanCanvasObjects(canvasObjects, objectsByPosition,
+                                x+1, (x+1)+(widthOfObjects-2), y+1, toY);
+                        
+                        const heightOfObjects = cell.objects.reduce((w, o) =>
+                            (o.o.height > 1 ? Math.max(w, o.o.height) : w), 1);
+                        if (heightOfObjects > 1)
+                            scanCanvasObjects(canvasObjects, objectsByPosition,
+                                fromX, x-1, (y-1)-(heightOfObjects-2), y-1);
+                        
+                        canvasObjects.push(...cell.objects);
+                        
+                        cell.isDone = true;
+                    }
+                }
+            }
+            
+            function addObject (o, objectsByPosition)
+            {
+                const key = o.x + "," + o.y;
+                if (key in objectsByPosition)
+                {
+                    objectsByPosition[key].objects.push(o);
+                }
+                else
+                {
+                    objectsByPosition[key] =
+                    {
+                        objects: [o],
+                        isDone: false
+                    };
+                }
+            }
+            
+            function getObjectsByDiagonalScanSort()
+            {
+                const objectsByPosition = {};
+                
+                self.currentRoom.objects.forEach(o => addObject({
+                    o,
+                    type: "room-object",
+                    x: o.x,
+                    y: o.y
+                }, objectsByPosition));
+                
+                Object.values(self.users).forEach(o => addObject({
                     o,
                     type: "user",
-                })),
-                )
-                .sort((a, b) =>
+                    x: o.logicalPositionX,
+                    y: o.logicalPositionY
+                }, objectsByPosition));
+                
+                const canvasObjects = [];
+                scanCanvasObjects(canvasObjects, objectsByPosition,
+                    0, self.currentRoom.size.x, -1, self.currentRoom.size.y-1);
+                // x to room size.x and y from -1 to allow for foreground objects
+                
+                return canvasObjects;
+            }
+            
+            function getObjectsByPrioritySort()
+            {
+                return [].concat(
+                    self.currentRoom.objects
+                        .map(o => ({
+                            o,
+                            type: "room-object",
+                        })),
+                    Object.values(self.users).map(o => ({
+                        o,
+                        type: "user",
+                    })),
+                    )
+                    .sort((a, b) =>
+                    {
+                        const calculatePriority = (o) => o.type == "room-object"
+                                                            ? o.o.x + 1 + (self.currentRoom.size.y - o.o.y)
+                                                            : o.o.logicalPositionX + 1 + (self.currentRoom.size.y - o.o.logicalPositionY)
+
+                        const aPriority = calculatePriority(a)
+                        const bPriority = calculatePriority(b)
+
+                        if (aPriority < bPriority) return -1;
+                        if (aPriority > bPriority) return 1;
+                        return 0;
+                    });
+            }
+            
+            return function ()
+            {
+                self = this;
+                
+                if (this.currentRoom.objectRenderSortMethod == "diagonal_scan")
                 {
-                    const calculatePriority = (o) => o.type == "room-object"
-                                                        ? o.o.x + 1 + (this.currentRoom.size.y - o.o.y)
-                                                        : o.o.logicalPositionX + 1 + (this.currentRoom.size.y - o.o.logicalPositionY)
-
-                    const aPriority = calculatePriority(a)
-                    const bPriority = calculatePriority(b)
-
-                    if (aPriority < bPriority) return -1;
-                    if (aPriority > bPriority) return 1;
-                    return 0;
-                });
-        },
+                    this.canvasObjects = getObjectsByDiagonalScanSort();
+                }
+                else
+                {
+                    this.canvasObjects = getObjectsByPrioritySort();
+                }
+            };
+        })(),
 
         paintBackground: function ()
         {

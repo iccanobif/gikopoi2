@@ -60,6 +60,8 @@ export interface Room
     objects: {
         x: number;
         y: number;
+        width?: number;
+        height?: number;
         url: string;
         scale?: number;
         offset?: {
@@ -71,6 +73,7 @@ export interface Room
             y: number;
         }[]
     }[];
+    objectRenderSortMethod?: string;
     sit: Coordinates[];
     blocked: Coordinates[];
     forbiddenMovements: { xFrom: number, yFrom: number, xTo: number, yTo: number }[],

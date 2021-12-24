@@ -3242,21 +3242,14 @@ export const rooms: { [roomId: string]: Room } = {
         spawnPoint: "door",
         backgroundImageUrl: "rooms/konbini/background.christmas.svg",
         objects: [
-            { x:  0, y: 2, offset: { x: 40, y: 124 }, url: "toilet-wall-left.svg" },
-            { x:  0, y: 4, offset: { x: 166, y: 109 }, url: "toilet-wall-right.svg" },
-            { x:  4, y:  6, offset: { x: 400, y: 156 }, url: "register.christmas.svg", 
-                occupiedBlocks: [
-                    { x: 4, y: 6 },
-                    { x: 5, y: 6 },
-                    { x: 6, y: 6 },
-                    { x: 7, y: 6 },
-                    { x: 8, y: 6 },
-                ]
-            },
-            { x:  7, y:  1, offset: { x: 280, y: 340 }, url: "freezer.svg" },
-            { x:  1, y:  0, offset: { x: 40, y: 184 }, url: "refrigerator.svg", scale: 1 }, // drinks
-            { x:  4, y:  2, offset: { x: 160, y: 203 }, url: "foods.svg" }, // snacks
+            { x:  1, y: 2, offset: { x: 40, y: 124 }, url: "toilet-wall-left.svg" },
+            { x:  1, y: 4, offset: { x: 166, y: 109 }, url: "toilet-wall-right.svg" },
+            { x:  4, y:  6, width: 5, offset: { x: 400, y: 156 }, url: "register.svg"},
+            { x:  6, y:  2, width: 2, height: 2, offset: { x: 280, y: 340 }, url: "freezer.svg" },
+            { x:  1, y:  1, height: 2, offset: { x: 40, y: 184 }, url: "refrigerator.svg", scale: 1 }, // drinks
+            { x:  3, y:  3, width: 2, height: 3, offset: { x: 160, y: 203 }, url: "foods.svg" }, // snacks
         ],
+        objectRenderSortMethod: "diagonal_scan",
         sit: [
             { x:  0, y:  0 },
         ],
@@ -3285,8 +3278,6 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  6, y:  6 },
             { x:  7, y:  6 },
             { x:  8, y:  6 },
-            // blocking access to the back of the register
-            { x:  3, y:  7 },
         ],
         forbiddenMovements: [
             { xFrom: 0, yFrom: 2, xTo: 1, yTo: 2 },
