@@ -2639,9 +2639,9 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  6, y:  3, offset: { x:  348, y:  225 }, url: 'panel.svg' },
             { x:  1, y:  2, offset: { x:  133, y:  310 }, url: 'yatai-counter.svg' },
             { x:  2, y:  2, offset: { x:  174, y:  325 }, url: 'counter_bowl.svg' },
-            { x:  3, y:  2, offset: { x:  207, y:  342 }, url: 'counter_drinks.svg' },
-            { x:  4, y:  2, offset: { x:  247, y:  365 }, url: 'counter_squid.svg' },
-            { x:  5, y:  2, offset: { x:  289, y:  385 }, url: 'counter_drink.svg' },
+            { x:  3, y:  2, offset: { x:  206, y:  341 }, url: 'counter_drinks.svg' },
+            { x:  4, y:  2, offset: { x:  246, y:  365 }, url: 'counter_squid.svg' },
+            { x:  5, y:  2, offset: { x:  288, y:  385 }, url: 'counter_chopsticks.svg' },
             { x:  1, y:  0, offset: { x:   49, y:  201 }, url: 'sign.svg' },
         ],
         sit: [
