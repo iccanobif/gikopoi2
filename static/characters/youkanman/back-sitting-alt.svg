@@ -3,9 +3,7 @@
 <svg width="160" height="182" viewBox="0 0 160 182" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
     <g>
         <g transform="matrix(-0.36096,0,0,0.36096,318.047,-181.088)">
-            <g opacity="0.95">
-                <path d="M542.173,844.83L543.15,705.205L688.709,632.426L734.246,655.253L735.467,792.673L586.728,868.712L542.173,844.83Z" style="fill:rgb(108,68,68);fill-opacity:0.95;stroke:black;stroke-opacity:0.95;stroke-width:2.77px;"/>
-            </g>
+            <path d="M542.173,844.83L543.15,705.205L688.709,632.426L734.246,655.253L735.467,792.673L586.728,868.712L542.173,844.83Z" style="fill:rgb(108,68,68);fill-opacity:0.95;stroke:black;stroke-opacity:0.95;stroke-width:2.77px;"/>
         </g>
         <g transform="matrix(-0.04835,-0.02418,0,0.04835,155.771,58.66)">
             <rect x="1566" y="856.517" width="86.762" height="86.762" style="fill:rgb(94,59,59);"/>
