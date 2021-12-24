@@ -1231,7 +1231,8 @@ window.vueApp = new Vue({
         {
             let self;
             
-            function scanCanvasObjects (objectsByPosition, fromX, toX, fromY, toY)
+            function scanCanvasObjects (canvasObjects, objectsByPosition,
+                fromX, toX, fromY, toY)
             {
                 const width = (toX-fromX)+1;
                 const height = (toY-fromY)+1;
@@ -1242,7 +1243,7 @@ window.vueApp = new Vue({
                 {
                     let vx = d<width ? d : width-1;
                     let vy = d<width ? 0 : d-width;
-                    while(vx >= 0 && vy < height)
+                    while (vx >= 0 && vy < height)
                     {
                         const x = vx + fromX;
                         const y = toY - vy;
@@ -1261,16 +1262,16 @@ window.vueApp = new Vue({
                         const widthOfObjects = cell.objects.reduce((w, o) =>
                             (o.o.width > 1 ? Math.max(w, o.o.width) : w), 1);
                         if (widthOfObjects > 1)
-                            scanCanvasObjects(objectsByPosition,
+                            scanCanvasObjects(canvasObjects, objectsByPosition,
                                 x+1, (x+1)+(widthOfObjects-2), y+1, toY);
                         
                         const heightOfObjects = cell.objects.reduce((w, o) =>
                             (o.o.height > 1 ? Math.max(w, o.o.height) : w), 1);
                         if (heightOfObjects > 1)
-                            scanCanvasObjects(objectsByPosition,
+                            scanCanvasObjects(canvasObjects, objectsByPosition,
                                 fromX, x-1, (y-1)-(heightOfObjects-2), y-1);
                         
-                        self.canvasObjects.push(...cell.objects);
+                        canvasObjects.push(...cell.objects);
                         
                         cell.isDone = true;
                     }
@@ -1294,29 +1295,72 @@ window.vueApp = new Vue({
                 }
             }
             
-            return function ()
+            function getObjectsByDiagonalScanSort()
             {
-                self = this;
-                this.canvasObjects = [];
                 const objectsByPosition = {};
                 
-                this.currentRoom.objects.forEach(o => addObject({
+                self.currentRoom.objects.forEach(o => addObject({
                     o,
                     type: "room-object",
                     x: o.x,
                     y: o.y
                 }, objectsByPosition));
                 
-                Object.values(this.users).forEach(o => addObject({
+                Object.values(self.users).forEach(o => addObject({
                     o,
                     type: "user",
                     x: o.logicalPositionX,
                     y: o.logicalPositionY
                 }, objectsByPosition));
                 
-                scanCanvasObjects(objectsByPosition,
-                    0, this.currentRoom.size.x, -1, this.currentRoom.size.y-1);
+                const canvasObjects = [];
+                scanCanvasObjects(canvasObjects, objectsByPosition,
+                    0, self.currentRoom.size.x, -1, self.currentRoom.size.y-1);
                 // x to room size.x and y from -1 to allow for foreground objects
+                
+                return canvasObjects;
+            }
+            
+            function getObjectsByPrioritySort()
+            {
+                return [].concat(
+                    self.currentRoom.objects
+                        .map(o => ({
+                            o,
+                            type: "room-object",
+                        })),
+                    Object.values(self.users).map(o => ({
+                        o,
+                        type: "user",
+                    })),
+                    )
+                    .sort((a, b) =>
+                    {
+                        const calculatePriority = (o) => o.type == "room-object"
+                                                            ? o.o.x + 1 + (self.currentRoom.size.y - o.o.y)
+                                                            : o.o.logicalPositionX + 1 + (self.currentRoom.size.y - o.o.logicalPositionY)
+
+                        const aPriority = calculatePriority(a)
+                        const bPriority = calculatePriority(b)
+
+                        if (aPriority < bPriority) return -1;
+                        if (aPriority > bPriority) return 1;
+                        return 0;
+                    });
+            }
+            
+            return function ()
+            {
+                self = this;
+                
+                if (this.currentRoom.objectRenderSortMethod == "diagonal_scan")
+                {
+                    this.canvasObjects = getObjectsByDiagonalScanSort();
+                }
+                else
+                {
+                    this.canvasObjects = getObjectsByPrioritySort();
+                }
             };
         })(),
 

@@ -73,6 +73,7 @@ export interface Room
             y: number;
         }[]
     }[];
+    objectRenderSortMethod?: string;
     sit: Coordinates[];
     blocked: Coordinates[];
     forbiddenMovements: { xFrom: number, yFrom: number, xTo: number, yTo: number }[],
