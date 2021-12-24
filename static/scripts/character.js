@@ -71,6 +71,7 @@ export class Character
 }
 
 export const characters = {
+    youkanman: new Character("youkanman", "svg", false),
     giko: new Character("giko", "svg", false),
     naito: new Character("naito", "svg", false),
     shii: new Character("shii", "svg", false),
@@ -114,7 +115,6 @@ export const characters = {
     pumpkinhead: new Character("pumpkinhead", "svg", !annualEvents.spooktober.isNow()),
     naito_yurei: new Character("naito_yurei", "svg", !annualEvents.spooktober.isNow()),
     shiinigami: new Character("shiinigami", "svg", !annualEvents.spooktober.isNow()),
-    youkanman: new Character("youkanman", "svg", true),
 }
 
 export const loadCharacters = async (crispMode) => {
