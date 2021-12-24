@@ -2637,7 +2637,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  1, y:  3, offset: { x:  151, y:  194 }, url: 'bucket_squid.svg' },
             { x:  6, y:  5, offset: { x:  460, y:  218 }, url: 'pole.svg' },
             { x:  6, y:  3, offset: { x:  348, y:  225 }, url: 'panel.svg' },
-            { x:  1, y:  2, offset: { x:  133, y:  310 }, url: 'counter.svg' },
+            { x:  1, y:  2, offset: { x:  133, y:  310 }, url: 'yatai-counter.svg' },
             { x:  2, y:  2, offset: { x:  174, y:  325 }, url: 'counter_bowl.svg' },
             { x:  3, y:  2, offset: { x:  207, y:  342 }, url: 'counter_drinks.svg' },
             { x:  4, y:  2, offset: { x:  247, y:  365 }, url: 'counter_squid.svg' },
