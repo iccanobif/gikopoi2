@@ -2399,7 +2399,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  2, y:  5 },
             { x:  2, y:  4 },
             
-            { x:  6, y:  6 },
+            // { x:  6, y:  6 },
         ],
         forbiddenMovements: [],
         doors: {
