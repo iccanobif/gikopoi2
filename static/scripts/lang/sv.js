@@ -50,7 +50,7 @@ export default
         rula_menu_column_streamers: "Strömmare",
         rula_menu_button_rula: "Rula",
         rula_menu_label_group: "Område:",
-        rula_menu_group_option_all: "Allt",
+        rula_menu_group_option_all: "Alla",
 
         user_list_popup_title: "Användarlista (totalt: @USER_COUNT@)",
         user_list_popup_column_user_name: "Användarnamn",
