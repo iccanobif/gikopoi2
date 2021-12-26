@@ -196,6 +196,7 @@ window.vueApp = new Vue({
         deviceList: [],
         selectedAudioDeviceId: null,
         selectedVideoDeviceId: null,
+        waitingForDevicePermission: false,
 
         // Warning Toast
         isWarningToastOpen: false,
@@ -2154,8 +2155,8 @@ window.vueApp = new Vue({
 
         showDeviceSelectionPopup: async function ()
         {
-            const withVideo = this.streamMode != "sound" && !this.streamScreenCaptureAudio;
-            const withSound = this.streamMode != "video" && !this.streamScreenCapture;
+            const withVideo = this.streamMode != "sound" && !this.streamScreenCapture;
+            const withSound = this.streamMode != "video" && !this.streamScreenCaptureAudio;
 
             this.deviceList = await getDeviceList(withSound, withVideo)
 
@@ -2191,6 +2192,11 @@ window.vueApp = new Vue({
             if (!this.isDeviceSelectionOpen)
                 return
 
+            // If there's a native device selection popup open, let's keep the poipoi device selection
+            // open and disabled, so that the user is forced to either give permissions or deny them.
+            if (this.waitingForDevicePermission)
+                return
+
             this.isDeviceSelectionOpen = false
 
             this.wantToStream = false;
@@ -2205,13 +2211,12 @@ window.vueApp = new Vue({
                 const withSound = this.streamMode != "video";
 
                 // Validate device selection
-                if ((withVideo && !this.selectedVideoDeviceId) || (withSound && !this.selectedAudioDeviceId))
+                if ((withVideo && !this.selectedVideoDeviceId && !this.streamScreenCapture) 
+                    || (withSound && !this.selectedAudioDeviceId && !this.streamScreenCaptureAudio))
                 {
                     this.showWarningToast(i18n.t("msg.error_didnt_select_device"));
                     return;
                 }
-
-                this.isDeviceSelectionOpen = false
 
                 const withScreenCapture = this.streamScreenCapture && withVideo
                 const withScreenCaptureAudio = this.streamScreenCaptureAudio && withScreenCapture && withSound
@@ -2221,15 +2226,15 @@ window.vueApp = new Vue({
                     echoCancellation: this.streamEchoCancellation,
                     noiseSuppression: this.streamNoiseSuppression,
                     autoGainControl: this.streamAutoGain,
-                    deviceId: this.selectedAudioDeviceId,
+                    deviceId: { exact: this.selectedAudioDeviceId },
                 }
 
                 let userMediaPromise = null
                 if ((withSound && !withScreenCaptureAudio) || !withScreenCapture)
                     userMediaPromise = navigator.mediaDevices.getUserMedia(
                         {
-                            video: !withVideo || withScreenCapture ? undefined : {
-                                deviceId: this.selectedVideoDeviceId,
+                            video: (!withVideo || withScreenCapture) ? undefined : {
+                                deviceId: { exact: this.selectedVideoDeviceId },
                                 width: 320,
                                 height: 240,
                                 frameRate: {
@@ -2250,13 +2255,17 @@ window.vueApp = new Vue({
                         audio: !withScreenCaptureAudio ? undefined : audioConstraints
                     });
 
+                this.waitingForDevicePermission = true
+
                 // I need to use Promise.allSettled() because the browser needs to be convinced that both getDisplayMedia()
                 // and getUserMedia() were initiated by a user action.
                 const promiseResults = await Promise.allSettled([userMediaPromise, screenMediaPromise])
 
-                const kek = await navigator.mediaDevices.enumerateDevices()
+                this.waitingForDevicePermission = false
 
-                console.log(kek)
+                // Gotta make sure both popups are closed (the device selection popup might be skipped if there's only one device to select)
+                this.isDeviceSelectionOpen = false;
+                this.isStreamPopupOpen = false;
 
                 if (promiseResults.find(r => r.status == "rejected"))
                 {
@@ -2394,6 +2403,7 @@ window.vueApp = new Vue({
                 this.wantToStream = false;
                 this.mediaStream = false;
                 this.streamSlotIdInWhichIWantToStream = null;
+                this.waitingForDevicePermission = false;
             }
         },
         setupRtcPeerSlot: function(slotId)
@@ -2628,6 +2638,11 @@ window.vueApp = new Vue({
         closeStreamPopup: function ()
         {
             if (!this.isStreamPopupOpen)
+                return
+
+            // If there's a native device selection popup open, let's keep the poipoi device selection
+            // open and disabled, so that the user is forced to either give permissions or deny them.
+            if (this.waitingForDevicePermission)
                 return
 
             this.isStreamPopupOpen = false;

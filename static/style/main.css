@@ -462,6 +462,10 @@ video {
     outline: 2px solid #afb1b1;
     background-color: #ffffff;
     z-index: 201;
+    /* Need to clear padding, margin and border esplicitly for popups that are <fieldset>s */
+    padding: 0;
+    margin: 0;
+    border: 0;
 }
 
 #warning-toast

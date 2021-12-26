@@ -357,7 +357,7 @@
 
 
             <div class="popup-overlay" v-if="isStreamPopupOpen" v-on:click="closeStreamPopup"></div>
-            <div id="stream-popup" class="popup" v-if="isStreamPopupOpen">
+            <fieldset id="stream-popup" class="popup" v-if="isStreamPopupOpen" :disabled="waitingForDevicePermission">
                 <div class="popup-title">{{ $t("ui.stream_form_title") }}</div>
                 <div class="popup-content">
                     <div class='popup-item'>
@@ -425,7 +425,7 @@
                     <button v-on:click="showDeviceSelectionPopup">{{ $t("ui.stream_form_button_stream") }}</button><button
                         v-on:click="closeStreamPopup">{{ $t("ui.popup_button_cancel") }}</button>
                 </div>
-            </div>
+            </fieldset>
 
             <div class="popup-overlay" v-if="isPreferencesPopupOpen" v-on:click="closePreferencesPopup"></div>
             <div class="popup" v-if="isPreferencesPopupOpen">
@@ -583,7 +583,7 @@
 
 
             <div class="popup-overlay" v-if="isDeviceSelectionOpen" v-on:click="cancelDeviceSelection"></div>
-            <div class="popup" v-if="isDeviceSelectionOpen">
+            <fieldset class="popup" v-if="isDeviceSelectionOpen" :disabled="waitingForDevicePermission">
                 <div class="popup-title">{{ $t("ui.device_selection_title") }}</div>
                 <div class="popup-content">
                     <!-- AUDIO -->
@@ -607,7 +607,7 @@
                     <button v-on:click="wantToStartStreaming">{{ $t("ui.stream_form_button_stream") }}</button>
                     <button v-on:click="cancelDeviceSelection">{{ $t("ui.popup_button_cancel") }}</button>
                 </div>
-            </div>
+            </fieldset>
         </div>
         <div id="logged-out-page" v-if="loggedOut" class="full-screen-page">
             {{ $t("msg.goodbye") }}
