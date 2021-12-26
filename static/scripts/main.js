@@ -2181,17 +2181,8 @@ window.vueApp = new Vue({
             else
                 this.selectedVideoDeviceId = null
 
-            // If there's no need to select a device, directly start stream
-            // else, open device selection popup
-            if ((withVideo && !this.selectedVideoDeviceId) || (withSound && !this.selectedAudioDeviceId))
-            {
-                this.isDeviceSelectionOpen = true
-                this.isStreamPopupOpen = false;
-            }
-            else
-            {
-                this.wantToStartStreaming()
-            }
+            this.isDeviceSelectionOpen = true
+            this.isStreamPopupOpen = false;
         },
 
         cancelDeviceSelection: function()
