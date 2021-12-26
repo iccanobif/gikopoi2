@@ -13,7 +13,6 @@ export default
         login_streamer_count: "Streamer: ",
         
         infobox_label_area: "Ort:",
-        infobox_value_area: "Seestadt",
         infobox_label_room: "Stage:",
         infobox_label_user_name: "Name:",
         infobox_label_user_count: "Benutzer:",
@@ -50,6 +49,8 @@ export default
         rula_menu_column_user_count: "Benutzer",
         rula_menu_column_streamers: "Streamer",
         rula_menu_button_rula: "Rula",
+        rula_menu_label_group: "Ort:",
+        rula_menu_group_option_all: "Alle",
 
         user_list_popup_title: "Benutzerliste (Gesamt: @USER_COUNT@)",
         user_list_popup_column_user_name: "Benutzername",
@@ -76,9 +77,10 @@ export default
         stream_form_screen_capture: "Bildschirmaufnahme",
         stream_form_screen_capture_audio: "Bildschirmaufnahme-Audio",
         stream_form_screen_capture_audio_notice: "Diese Funktion ist experimentell. Nur Chrome und Edge. \nUnter Windows kann nur das Bildschirm- oder Tab-Audio aufgenommen werden .",
-        stream_form_camera_facing: "Handy-Kamera:",
-        stream_form_camera_facing_user: "Vorne",
-        stream_form_camera_facing_environment: "Hinten",
+        
+        // device_selection_title: "",
+        // device_selection_audio_devices: "",
+        // device_selection_video_devices: "",
         
         preferences_title: "Einstellungen",
         preferences_name_bg: "Hintergrund des Benutzernamens anzeigen",
@@ -136,6 +138,7 @@ export default
         error_obtaining_video: "Es ist nicht möglich das Video zu erhalten. Bitte überprüfen Sie die Browserberechtigungen.",
         error_obtaining_audio: "Es ist nicht möglich das Audio zu erhalten. Bitte überprüfen Sie die Browserberechtigungen.",
         no_webrtc: "Ihr Browser unterstützt leider kein WebRTC.",
+        // error_didnt_select_device: "",
         
         unknown_error: "Die Verbindung ist aufgrund eines unbekannten Fehlers fehlgeschlagen.",
         invalid_username: "Der angegebene Benutzername ist ungültig.",
@@ -193,5 +196,13 @@ export default
         bar_giko2: "Bar Giko Untergeschoss",
         bar_giko_square: "Brunnenplatz",
         densha: "Bahn",
+        monachat: "Monachat",
+        konbini: "Gemischtwarenladen",
+    },
+    area:
+    {
+        gikopoipoi: "Gikopoipoi",
+        gikopoi: "Seestadt",
+        bar_giko: "Bar Giko",
     }
 }

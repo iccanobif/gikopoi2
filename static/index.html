@@ -12,7 +12,7 @@
     <link rel='stylesheet' href='chess/css/chessboard-1.0.0.min.css' />
     <link href="font-awesome/css/all.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="libraries/jquery-ui.css">
+    <link rel="stylesheet" href="libraries/jquery-ui/jquery-ui.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <title>ギコっぽいぽい</title>
@@ -89,7 +89,7 @@
                             <table>
                                 <tr>
                                     <td>{{ $t("ui.infobox_label_area") }}</td>
-                                    <td>{{ $t("ui.infobox_value_area") }}</td>
+                                    <td>{{ $t("area." + currentRoom.group) }}</td>
                                 </tr>
                                 <tr>
                                     <td>{{ $t("ui.infobox_label_room") }}</td>
@@ -274,6 +274,15 @@
             <div id="rula-popup" class="popup" v-if="isRulaPopupOpen" v-on:keydown="handleRulaPopupKeydown($event)" tabindex="-1">
                 <div class="popup-title">{{ $t("ui.rula_menu_title") }}</div>
                 <div class="popup-content">
+                    <div class='popup-item'>
+                        <label for="rula-room-group">{{ $t("ui.rula_menu_label_group") }}</label>
+                        <select id="rula-room-group" v-model="rulaRoomGroup" v-on:change="prepareRulaRoomList()">
+                            <option value="all">{{ $t("ui.rula_menu_group_option_all") }}</option>
+                            <option value="gikopoipoi">{{ $t("area.gikopoipoi") }}</option>
+                            <option value="gikopoi">{{ $t("area.gikopoi") }}</option>
+                            <option value="bar_giko">{{ $t("area.bar_giko") }}</option>
+                        </select>
+                    </div>
                     <table class="popup-table popup-selectable-table popup-sortable-table">
                         <colgroup>
                             <col id="rula-menu-column-room-name" />
@@ -282,19 +291,19 @@
                         </colgroup>
                         <thead>
                             <tr>
-                                <th v-on:click="sortRoomList('sortName')">
+                                <th v-on:click="setRulaRoomListSortKey('sortName')">
                                     {{ $t("ui.rula_menu_column_room_name") }}
                                 </th>
-                                <th v-on:click="sortRoomList('userCount')">
+                                <th v-on:click="setRulaRoomListSortKey('userCount')">
                                     {{ $t("ui.rula_menu_column_user_count") }}
                                 </th>
-                                <th v-on:click="sortRoomList('streamerCount')">
+                                <th v-on:click="setRulaRoomListSortKey('streamerCount')">
                                     {{ $t("ui.rula_menu_column_streamers") }}
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="room in roomList"
+                            <tr v-for="room in preparedRoomList"
                                 :id="'room-tr-' + room.id"
                                 v-bind:class="{'popup-row-is-selected': rulaRoomSelection == room.id}"
                                 v-on:click="selectRoomForRula(room.id)">
@@ -357,7 +366,7 @@
 
 
             <div class="popup-overlay" v-if="isStreamPopupOpen" v-on:click="closeStreamPopup"></div>
-            <div id="stream-popup" class="popup" v-if="isStreamPopupOpen">
+            <fieldset id="stream-popup" class="popup" v-if="isStreamPopupOpen" :disabled="waitingForDevicePermission">
                 <div class="popup-title">{{ $t("ui.stream_form_title") }}</div>
                 <div class="popup-content">
                     <div class='popup-item'>
@@ -378,14 +387,6 @@
                     <div class='popup-item' v-if="streamMode != 'sound'">
                         <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label
                             for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
-                    </div>
-                    <div class='popup-item' v-if="streamMode != 'sound' && !streamScreenCapture">
-                        <span>{{ $t("ui.stream_form_camera_facing") }}</span><input type="radio"
-                            id="stream-form-camera-facing-user" value="user" v-model="streamCameraFacing"><label
-                            for="stream-form-camera-facing-user">{{ $t("ui.stream_form_camera_facing_user") }}</label>
-
-                        <input type="radio" id="stream-form-camera-facing-environment" value="environment" v-model="streamCameraFacing"><label
-                            for="stream-form-camera-facing-environment">{{ $t("ui.stream_form_camera_facing_environment") }}</label>
                     </div>
                     <div v-if="streamMode != 'video'">
                         <div class='popup-item'>
@@ -422,10 +423,10 @@
                     </div>
                 </div>
                 <div class="popup-buttons">
-                    <button v-on:click="wantToStartStreaming">{{ $t("ui.stream_form_button_stream") }}</button><button
+                    <button v-on:click="showDeviceSelectionPopup">{{ $t("ui.stream_form_button_stream") }}</button><button
                         v-on:click="closeStreamPopup">{{ $t("ui.popup_button_cancel") }}</button>
                 </div>
-            </div>
+            </fieldset>
 
             <div class="popup-overlay" v-if="isPreferencesPopupOpen" v-on:click="closePreferencesPopup"></div>
             <div class="popup" v-if="isPreferencesPopupOpen">
@@ -568,7 +569,8 @@
                 </div>
             </div>
 
-            <div class="popup" v-if="isWarningToastOpen">
+            <div class="popup-overlay" id="warning-toast-overlay" v-if="isWarningToastOpen" v-on:click="closeWarningToast"></div>
+            <div class="popup" id="warning-toast" v-if="isWarningToastOpen">
                 <div class="popup-title">{{ $t("ui.warning_toast_title") }}</div>
                 <div class="popup-content">
                     <div class="popup-item">
@@ -579,6 +581,34 @@
                     <button v-on:click="closeWarningToast">{{ $t("ui.popup_button_ok") }}</button>
                 </div>
             </div>
+
+
+            <div class="popup-overlay" v-if="isDeviceSelectionOpen" v-on:click="cancelDeviceSelection"></div>
+            <fieldset class="popup" v-if="isDeviceSelectionOpen" :disabled="waitingForDevicePermission">
+                <div class="popup-title">{{ $t("ui.device_selection_title") }}</div>
+                <div class="popup-content">
+                    <!-- AUDIO -->
+                    <div class='popup-section' v-if="deviceList.filter(d => d.type == 'audioinput').length">
+                        <div class='popup-header'>{{ $t("ui.device_selection_audio_devices") }}</div>
+                        <div class='popup-item' v-for="device in deviceList.filter(d => d.type == 'audioinput')">
+                            <input type="radio" :id="device.id" :value="device.id" v-model="selectedAudioDeviceId"><label
+                                :for="device.id">{{ device.name }}</label>
+                        </div>
+                    </div>
+                    <!-- VIDEO -->
+                    <div class='popup-section' v-if="deviceList.filter(d => d.type == 'videoinput').length">
+                        <div class='popup-header'>{{ $t("ui.device_selection_video_devices") }}</div>
+                        <div class='popup-item' v-for="device in deviceList.filter(d => d.type == 'videoinput')">
+                            <input type="radio" :id="device.id" :value="device.id" v-model="selectedVideoDeviceId"><label
+                                :for="device.id">{{ device.name }}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup-buttons">
+                    <button v-on:click="wantToStartStreaming">{{ $t("ui.stream_form_button_stream") }}</button>
+                    <button v-on:click="cancelDeviceSelection">{{ $t("ui.popup_button_cancel") }}</button>
+                </div>
+            </fieldset>
         </div>
         <div id="logged-out-page" v-if="loggedOut" class="full-screen-page">
             {{ $t("msg.goodbye") }}
@@ -638,7 +668,7 @@
     <script src="libraries/vue.js"></script>
     <script src="libraries/vue-i18n.js"></script>
     <script src="libraries/jquery-1.12.4.js"></script>
-    <script src="libraries/jquery-ui.min.js"></script>
+    <script src="libraries/jquery-ui/jquery-ui.min.js"></script>
     <script src='scripts/jquery.ui.touch-punch.min.js'></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src='scripts/webrtc-codec-support.min.js'></script>

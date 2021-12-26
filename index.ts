@@ -1,8 +1,7 @@
 import express, { Request } from "express"
 import { rooms } from "./rooms";
-import { Direction, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
+import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
-import { sleep } from "./utils";
 import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
@@ -24,7 +23,6 @@ const tripcode = require('tripcode');
 const enforce = require('express-sslify');
 const JanusClient = require('janus-videoroom-client').Janus;
 
-const delay = 0
 const persistInterval = 5 * 1000
 const maxGhostRetention = 30 * 60 * 1000
 const inactivityTimeout = 30 * 60 * 1000
@@ -43,13 +41,13 @@ if (settings.isBehindProxy)
     app.set('trust proxy', true)
 
 const janusServers: JanusServer[] =
-    [{
-        id: "maf",
+    settings.janusServers.map(s => ({
+        id: s.id,
         client: new JanusClient({
-            url: settings.janusServerUrl,
+            url: s.url,
             apiSecret: settings.janusApiSecret,
         })
-    }]
+    }))
 const janusServersObject = Object.fromEntries(janusServers.map(o => [o.id, o]));
 
 // Initialize room states:
@@ -205,33 +203,26 @@ io.on("connection", function (socket: Socket)
     {
         const privateUserId = socket.handshake.headers["private-user-id"]
 
+        // Array.isArray(privateUserId) is needed only to make typescript happy
+        // and make it understand that I expect privateUserId to be just a string
+        const loginUser = (privateUserId && !Array.isArray(privateUserId)) 
+                            ? getLoginUser(privateUserId) 
+                            : null;
+
         log.info("Connection attempt",
                 getRealIpWebSocket(socket),
-                getAllUsers().filter(u => u.ip == getRealIpWebSocket(socket)).map(u => u.id).join(" "),
+                loginUser?.id,
                 "private-user-id:", privateUserId
                 );
 
-        const rejectConnection = () => {
+        if (!loginUser)
+        {
             log.info("server-cant-log-you-in", privateUserId)
             socket.emit("server-cant-log-you-in")
             socket.disconnect(true)
-        }
-
-        if (!privateUserId || Array.isArray(privateUserId))
-        {
-            // Array.isArray(privateUserId) is needed only to make typescript happy
-            // and make it understand that I expect privateUserId to be just a string
-            rejectConnection()
             return;
         }
 
-        log.info("user-connect private id:", privateUserId)
-        const loginUser = getLoginUser(privateUserId);
-        if (!loginUser)
-        {
-            rejectConnection()
-            return;
-        }
         user = loginUser;
         user.socketId = socket.id;
 
@@ -338,12 +329,19 @@ io.on("connection", function (socket: Socket)
             logException(e)
         }
     });
-    socket.on("user-move", async function (direction: Direction)
+    socket.on("user-move", async function (direction: string)
     {
-        await sleep(delay)
-
         try
         {
+            if (direction != "up" && direction != "down" && direction != "left" && direction != "right")
+                return
+
+            if (user.disconnectionTime)
+            {
+                log.error("user-move called for disconnected user!", user.id)
+                return
+            }
+
             log.debug("user-move", user.id, direction)
             setUserAsActive(user)
 
@@ -411,6 +409,18 @@ io.on("connection", function (socket: Socket)
 
                 user.position.x = newX
                 user.position.y = newY
+                
+                if (currentRoom.id == "idoA" && user.position.x == 6 && user.position.y == 6)
+                {
+                    setTimeout(() => {
+                        if (user.position.x == 6 && user.position.y == 6)
+                        {
+                            log.info(user.id, "changing to takenoko")
+                            changeCharacter(user, "takenoko", false)
+                        }
+                    }, 10000)
+                }
+
             }
 
             userRoomEmit(user, user.areaId, user.roomId,
@@ -429,10 +439,13 @@ io.on("connection", function (socket: Socket)
             logException(e)
         }
     });
-    socket.on("user-bubble-position", function (position: Direction)
+    socket.on("user-bubble-position", function (position: string)
     {
         try
         {
+            if (position != "up" && position != "down" && position != "left" && position != "right")
+                return
+
             user.bubblePosition = position;
 
             userRoomEmit(user, user.areaId, user.roomId,
@@ -752,14 +765,16 @@ io.on("connection", function (socket: Socket)
     {
         try
         {
-            await sleep(delay)
-
             let { targetRoomId, targetDoorId } = data
 
             log.info("user-change-room", user.id, targetRoomId, targetDoorId)
 
-            currentRoom = rooms[targetRoomId]
+            // Validation
+            if (!rooms.hasOwnProperty(targetRoomId)) return;
+            if (targetDoorId && !rooms[targetRoomId].doors.hasOwnProperty(targetDoorId)) return;
 
+            currentRoom = rooms[targetRoomId]
+            
             await clearStream(user)
             clearRoomListener(user)
             stopChessGame(roomStates, user)
@@ -799,11 +814,12 @@ io.on("connection", function (socket: Socket)
     {
         try
         {
-            const roomList: { id: string, userCount: number, streamers: string[] }[] =
+            const roomList: { id: string, group: string, userCount: number, streamers: string[] }[] =
                 Object.values(rooms)
                 .filter(room => !room.secret)
                 .map(room => ({
                     id: room.id,
+                    group: room.group,
                     userCount: getFilteredConnectedUserList(user, room.id, user.areaId).length,
                     streamers: toStreamSlotDtoArray(user, roomStates[user.areaId][room.id].streams)
                         .filter(stream => stream.isActive && stream.userId != null)
@@ -853,6 +869,7 @@ io.on("connection", function (socket: Socket)
         try
         {
             if (!user) return
+            if (user.disconnectionTime) return
 
             log.info("user-ping", user.id)
             setUserAsActive(user)
@@ -1658,7 +1675,7 @@ async function janusClientConnect(client: typeof JanusClient): Promise<void>
 // Next step is to determine the load of the stream: video+audio, video only, audio only, video/audio quality, etc
 function getLeastUsedJanusServer()
 {
-    const serverUserCounts = Object.fromEntries(janusServers.map(o => [o.id, 0]));
+    const serverUsageWeights = Object.fromEntries(janusServers.map(o => [o.id, 0]));
     for (const areaId in roomStates)
         for (const roomId in roomStates[areaId])
         {
@@ -1667,13 +1684,13 @@ function getLeastUsedJanusServer()
             {
                 const streamSlot = streams[streamSlotId]
                 if(streamSlot.publisher !== null && streamSlot.janusServer !== null)
-                    serverUserCounts[streamSlot.janusServer.id] = Math.min(streamSlot.listeners.length, 5) + 1
-                    // + 1 for publisher and a min of listeners to allow streams to expand
+                    serverUsageWeights[streamSlot.janusServer.id] += Math.max(streamSlot.listeners.length, 5)
+                    // the number of listeners or, if larger, 5 to give streams space to expand into
             }
         }
     
-    const serverId = Object.keys(serverUserCounts).reduce((acc, cur) =>
-        serverUserCounts[acc] < serverUserCounts[cur] ? acc : cur);
+    const serverId = Object.keys(serverUsageWeights).reduce((acc, cur) =>
+        serverUsageWeights[acc] < serverUsageWeights[cur] ? acc : cur);
     return janusServersObject[serverId];
 }
 

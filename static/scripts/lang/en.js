@@ -13,7 +13,6 @@ export default
         login_streamer_count: "Streamers: ",
         
         infobox_label_area: "Area:",
-        infobox_value_area: "Sea City",
         infobox_label_room: "Stage:",
         infobox_label_user_name: "Name:",
         infobox_label_user_count: "Users:",
@@ -50,6 +49,8 @@ export default
         rula_menu_column_user_count: "Users",
         rula_menu_column_streamers: "Streamers",
         rula_menu_button_rula: "Rula",
+        rula_menu_label_group: "Area:",
+        rula_menu_group_option_all: "All",
 
         user_list_popup_title: "User List (total: @USER_COUNT@)",
         user_list_popup_column_user_name: "User name",
@@ -76,9 +77,10 @@ export default
         stream_form_screen_capture: "Screen Capture",
         stream_form_screen_capture_audio: "Screen Capture Audio",
         stream_form_screen_capture_audio_notice: "This feature is experimental. Chrome and Edge only. \nOn Windows, only the screen audio or tab audio can be captured.",
-        stream_form_camera_facing: "Phone Camera:",
-        stream_form_camera_facing_user: "Front",
-        stream_form_camera_facing_environment: "Back",
+
+        device_selection_title: "Select device",
+        device_selection_audio_devices: "Audio devices",
+        device_selection_video_devices: "Video devices",
         
         preferences_title: "Preferences",
         preferences_name_bg: "Show Username Background",
@@ -136,6 +138,7 @@ export default
         error_obtaining_video: "Unable to obtain video. Please check the browser permissions.",
         error_obtaining_audio: "Unable to obtain audio. Please check the browser permissions.",
         no_webrtc: "Sorry, your browser doesn't support WebRTC.",
+        error_didnt_select_device: "Please select a device.",
         
         unknown_error: "The connection failed due to an unknown error.",
         invalid_username: "The provided username is invalid.",
@@ -194,5 +197,12 @@ export default
         bar_giko_square: "Fountain Plaza",
         densha: "Train",
         monachat: "Monachat",
+        konbini: "Convenience Store",
+    },
+    area:
+    {
+        gikopoipoi: "Gikopoipoi",
+        gikopoi: "Sea City",
+        bar_giko: "Bar Giko",
     }
 }

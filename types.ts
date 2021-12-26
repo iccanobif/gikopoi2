@@ -48,6 +48,7 @@ export interface Door
 export interface Room
 {
     id: string;
+    group: string;
     scale: number;
     size: Coordinates;
     originCoordinates: Coordinates;
@@ -60,15 +61,20 @@ export interface Room
     objects: {
         x: number;
         y: number;
+        width?: number;
+        height?: number;
         url: string;
         scale?: number;
         offset?: {
             x: number;
             y: number;
-        }
-        xOffset?: number;
-        yOffset?: number;
+        },
+        occupiedBlocks?: {
+            x: number;
+            y: number;
+        }[]
     }[];
+    objectRenderSortMethod?: "diagonal_scan" | "priority";
     sit: Coordinates[];
     blocked: Coordinates[];
     forbiddenMovements: { xFrom: number, yFrom: number, xTo: number, yTo: number }[],

@@ -3,3 +3,5 @@ build
 persisted-state
 local-settings.json
 .idea/
+static/rooms/konbini/original-files
+

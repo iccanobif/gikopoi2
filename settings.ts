@@ -13,7 +13,7 @@ catch {
 }
 
 export const settings = {
-    janusServerUrl: (fileJsonContents?.janusServerUrl || process.env.GIKO2_JANUS_SERVER_URL) as string,
+    janusServers: (fileJsonContents?.janusServers || JSON.parse(process.env.GIKO2_JANUS_SERVERS as string)) as { url: string, id: string }[],
     janusApiSecret: (fileJsonContents?.janusApiSecret || process.env.GIKO2_JANUS_API_SECRET) as string,
     janusRoomNamePrefix: (fileJsonContents?.janusRoomNamePrefix || process.env.GIKO2_JANUS_ROOM_NAME_PREFIX) as string,
     janusRoomNameIntPrefix: (fileJsonContents?.janusRoomNameIntPrefix || Number.parseInt(process.env.GIKO2_JANUS_ROOM_NAME_INT_PREFIX!)) as number,
