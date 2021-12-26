@@ -2233,7 +2233,6 @@ window.vueApp = new Vue({
                 const withScreenCaptureAudio = this.streamScreenCaptureAudio && withScreenCapture && withSound
 
                 const audioConstraints = {
-                    channelCount: 2,
                     echoCancellation: this.streamEchoCancellation,
                     noiseSuppression: this.streamNoiseSuppression,
                     autoGainControl: this.streamAutoGain,
@@ -2246,12 +2245,6 @@ window.vueApp = new Vue({
                         {
                             video: (!withVideo || withScreenCapture) ? undefined : {
                                 deviceId: { exact: this.selectedVideoDeviceId },
-                                // width: 320,
-                                // height: 240,
-                                // frameRate: {
-                                //     ideal: 24,
-                                //     min: 10,
-                                // },
                             },
                             audio: !withSound ? undefined : audioConstraints
                         }
