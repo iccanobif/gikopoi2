@@ -77,9 +77,10 @@ export default
         stream_form_screen_capture: "Siaran Desktop",
         stream_form_screen_capture_audio: "Siaran Computer Audio",
         stream_form_screen_capture_audio_notice: "Fitur ini bersifat eksperimental. Chrome dan Edge saja. \nDi Windows, hanya audio layar atau audio tab yang dapat direkam.",
-        stream_form_camera_facing: "Kamera Telepon:",
-        stream_form_camera_facing_user: "Kamera Depan",
-        stream_form_camera_facing_environment: "Kamera Belakang",
+
+        // device_selection_title: "",
+        // device_selection_audio_devices: "",
+        // device_selection_video_devices: "",
         
         preferences_title: "Konfigurasi",
         preferences_name_bg: "Nama pengguna dengan background ",
@@ -137,6 +138,7 @@ export default
         error_obtaining_video: "Tidak dapat mengunduh video. Silakan periksa izin browser.",
         error_obtaining_audio: "Tidak dapat mengunduh audio. Silakan periksa izin browser.",
         no_webrtc: "Maaf, browser Anda tidak mendukung WebRTC. ",
+        // error_didnt_select_device: "",
         
         unknown_error: "Tidak bisa masuk.",
         invalid_username: "Nama pengguna salah.",

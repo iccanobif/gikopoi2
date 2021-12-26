@@ -77,9 +77,10 @@ export default
         stream_form_screen_capture: "Skärmfångst",
         stream_form_screen_capture_audio: "Ljudupptagning vid skärmfångst",
         stream_form_screen_capture_audio_notice: "Denna funktion är experimentell. Enbart Chrome och Edge. \nI Windows kan endast skärmens eller tabbens ljud upptas.",
-        stream_form_camera_facing: "Kamera:",
-        stream_form_camera_facing_user: "Fram",
-        stream_form_camera_facing_environment: "Bak",
+
+        // device_selection_title: "",
+        // device_selection_audio_devices: "",
+        // device_selection_video_devices: "",
         
         preferences_title: "Inställningar",
         preferences_name_bg: "Visa Användarnamnsbakgrund",
@@ -137,6 +138,7 @@ export default
         error_obtaining_video: "Kommer inte åt bild. Vänligen kontrollera webbläsarens rättigheter.",
         error_obtaining_audio: "Kommer inte åt ljud. Vänligen kontrollera webbläsarens rättigheter.",
         no_webrtc: "Ledsen, men din webbläsare stöder inte WebRTC.",
+        // error_didnt_select_device: "",
         
         unknown_error: "Anslutningen bröts av ett okänt fel.",
         invalid_username: "Användarnamnet är felakigt.",

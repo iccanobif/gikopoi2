@@ -74,7 +74,7 @@ export interface Room
             y: number;
         }[]
     }[];
-    objectRenderSortMethod?: string;
+    objectRenderSortMethod?: "diagonal_scan" | "priority";
     sit: Coordinates[];
     blocked: Coordinates[];
     forbiddenMovements: { xFrom: number, yFrom: number, xTo: number, yTo: number }[],

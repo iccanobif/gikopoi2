@@ -80,6 +80,10 @@ export default
         stream_form_camera_facing: "Fotocamera telefono:",
         stream_form_camera_facing_user: "Anteriore",
         stream_form_camera_facing_environment: "Posteriore",
+
+        // device_selection_title: "",
+        // device_selection_audio_devices: "",
+        // device_selection_video_devices: "",
         
         preferences_title: "Preferenze",
         preferences_name_bg: "Mostra sfondo nome utente",
@@ -137,6 +141,7 @@ export default
         error_obtaining_video: "Impossibile accedere al video. Controlla i permessi del browser.",
         error_obtaining_audio: "Impossibile accedere all'audio. Controlla i permessi del browser.",
         no_webrtc: "Il tuo browser non supporta WebRTC.",
+        error_didnt_select_device: "Selezionare un device.",
         
         unknown_error: "La connessione è fallita a causa di un errore sconosciuto.",
         invalid_username: "Il nome utente fornito non è valido.",

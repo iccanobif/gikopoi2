@@ -77,9 +77,10 @@ export default
         stream_form_screen_capture: "Screen Capture",
         stream_form_screen_capture_audio: "Screen Capture Audio",
         stream_form_screen_capture_audio_notice: "This feature is experimental. Chrome and Edge only. \nOn Windows, only the screen audio or tab audio can be captured.",
-        stream_form_camera_facing: "Phone Camera:",
-        stream_form_camera_facing_user: "Front",
-        stream_form_camera_facing_environment: "Back",
+
+        device_selection_title: "Select device",
+        device_selection_audio_devices: "Audio devices",
+        device_selection_video_devices: "Video devices",
         
         preferences_title: "Preferences",
         preferences_name_bg: "Show Username Background",
@@ -137,6 +138,7 @@ export default
         error_obtaining_video: "Unable to obtain video. Please check the browser permissions.",
         error_obtaining_audio: "Unable to obtain audio. Please check the browser permissions.",
         no_webrtc: "Sorry, your browser doesn't support WebRTC.",
+        error_didnt_select_device: "Please select a device.",
         
         unknown_error: "The connection failed due to an unknown error.",
         invalid_username: "The provided username is invalid.",

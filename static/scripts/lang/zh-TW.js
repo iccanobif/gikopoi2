@@ -77,9 +77,10 @@ export default
         stream_form_screen_capture: "視窗擷取",
         stream_form_screen_capture_audio: "擷取螢幕的聲音",
         stream_form_screen_capture_audio_notice: "這是個實驗性的功能。僅對Chrome與Edge有效。\n在Windows上，只能擷取螢幕聲音與分頁聲音。",
-        stream_form_camera_facing: "手機鏡頭：",
-        stream_form_camera_facing_user: "正面",
-        stream_form_camera_facing_environment: "背面",
+
+        // device_selection_title: "",
+        // device_selection_audio_devices: "",
+        // device_selection_video_devices: "",
         
         preferences_title: "設定",
         preferences_name_bg: "用戶名稱之文字背景顏色",
@@ -136,6 +137,7 @@ export default
         error_obtaining_video: "無法取得影像。請確認瀏覽器的允許權限。",
         error_obtaining_audio: "無法取得音訊。請確認瀏覽器的允許權限。",
         no_webrtc: "這個瀏覽器不支援WebRTC。",
+        // error_didnt_select_device: "",
 
         unknown_error: "由於未知的錯誤連接失敗。",
         invalid_username: "指定的用戶名無效。",
