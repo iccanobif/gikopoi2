@@ -1236,8 +1236,10 @@ window.vueApp = new Vue({
             }
         },
 
-        updateCanvasObjects: function()
+        updateCanvasObjects: (() =>
         {
+            let self;
+
             function scanCanvasObjects (canvasObjects, objectsByPosition,
                 fromX, toX, fromY, toY)
             {
@@ -1285,35 +1287,35 @@ window.vueApp = new Vue({
                 }
             }
 
-            function getObjectsByDiagonalScanSort(currentRoom, users)
+            function addObject (o, objectsByPosition)
+            {
+                const key = o.x + "," + o.y;
+                if (key in objectsByPosition)
+                {
+                    objectsByPosition[key].objects.push(o);
+                }
+                else
+                {
+                    objectsByPosition[key] =
+                    {
+                        objects: [o],
+                        isDone: false
+                    };
+                }
+            }
+
+            function getObjectsByDiagonalScanSort()
             {
                 const objectsByPosition = {};
 
-                function addObject(o, objectsByPosition)
-                {
-                    const key = o.x + "," + o.y;
-                    if (key in objectsByPosition)
-                    {
-                        objectsByPosition[key].objects.push(o);
-                    }
-                    else
-                    {
-                        objectsByPosition[key] =
-                        {
-                            objects: [o],
-                            isDone: false
-                        };
-                    }
-                }
-
-                currentRoom.objects.forEach(o => addObject({
+                self.currentRoom.objects.forEach(o => addObject({
                     o,
                     type: "room-object",
                     x: o.x,
                     y: o.y
                 }, objectsByPosition));
 
-                Object.values(users).forEach(o => addObject({
+                Object.values(self.users).forEach(o => addObject({
                     o,
                     type: "user",
                     x: o.logicalPositionX,
@@ -1328,7 +1330,7 @@ window.vueApp = new Vue({
                 return canvasObjects;
             }
 
-            function getObjectsByPrioritySort(currentRoom, users)
+            function getObjectsByPrioritySort()
             {
                 return [].concat(
                     currentRoom.objects
@@ -1356,15 +1358,20 @@ window.vueApp = new Vue({
                     });
             }
 
-            if (this.currentRoom.objectRenderSortMethod == "diagonal_scan")
+            return function ()
             {
-                this.canvasObjects = getObjectsByDiagonalScanSort(this.currentRoom, this.users);
-            }
-            else
-            {
-                this.canvasObjects = getObjectsByPrioritySort(this.currentRoom, this.users);
-            }
-        },
+                self = this;
+
+                if (this.currentRoom.objectRenderSortMethod == "diagonal_scan")
+                {
+                    this.canvasObjects = getObjectsByDiagonalScanSort();
+                }
+                else
+                {
+                    this.canvasObjects = getObjectsByPrioritySort();
+                }
+            };
+        })(),
 
         paintBackground: function ()
         {

@@ -406,6 +406,18 @@ io.on("connection", function (socket: Socket)
 
                 user.position.x = newX
                 user.position.y = newY
+                
+                if (currentRoom.id == "idoA" && user.position.x == 6 && user.position.y == 6)
+                {
+                    setTimeout(() => {
+                        if (user.position.x == 6 && user.position.y == 6)
+                        {
+                            log.info(user.id, "changing to takenoko")
+                            changeCharacter(user, "takenoko", false)
+                        }
+                    }, 10000)
+                }
+
             }
 
             userRoomEmit(user, user.areaId, user.roomId,
