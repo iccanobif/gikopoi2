@@ -811,11 +811,12 @@ io.on("connection", function (socket: Socket)
     {
         try
         {
-            const roomList: { id: string, userCount: number, streamers: string[] }[] =
+            const roomList: { id: string, group: string, userCount: number, streamers: string[] }[] =
                 Object.values(rooms)
                 .filter(room => !room.secret)
                 .map(room => ({
                     id: room.id,
+                    group: room.group,
                     userCount: getFilteredConnectedUserList(user, room.id, user.areaId).length,
                     streamers: toStreamSlotDtoArray(user, roomStates[user.areaId][room.id].streams)
                         .filter(stream => stream.isActive && stream.userId != null)

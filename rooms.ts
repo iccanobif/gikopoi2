@@ -3,6 +3,7 @@ import { Room } from "./types";
 export const rooms: { [roomId: string]: Room } = {
     bar: {
         id: "bar",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 9 },
         originCoordinates: { x: 0, y: 352 },
@@ -83,6 +84,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     admin_st: {
         id: "admin_st",
+        group: "gikopoi",
         scale: 1,
         size: { x: 10, y: 9 },
         originCoordinates: { x: 0, y: 235 },
@@ -165,6 +167,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     basement: {
         id: "basement",
+        group: "gikopoi",
         scale: 1,
         size: { x: 10, y: 4 },
         originCoordinates: { x: 0, y: 217 },
@@ -198,6 +201,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     admin: {
         id: "admin",
+        group: "gikopoi",
         scale: 1,
         size: { x: 12, y: 6 },
         originCoordinates: { x: 43, y: 268 },
@@ -250,6 +254,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     radio_backstage: {
         id: "radio_backstage",
+        group: "gikopoi",
         scale: 1,
         size: { x: 3, y: 9 },
         originCoordinates: { x: 0, y: 432 },
@@ -277,6 +282,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     school_st: {
         id: "school_st",
+        group: "gikopoi",
         scale: 1,
         size: { x: 6, y: 8 },
         originCoordinates: { x: -1, y: 273 },
@@ -308,6 +314,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     bar_st: {
         id: "bar_st",
+        group: "gikopoi",
         scale: 1,
         size: { x: 10, y: 9 },
         originCoordinates: { x: -1, y: 323 },
@@ -372,6 +379,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     takadai: {
         id: "takadai",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 14 },
         originCoordinates: { x: 870-320, y: 1165-300 },
@@ -496,6 +504,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     silo: {
         id: "silo",
+        group: "gikopoipoi",
         scale: 0.6,
         size: { x: 12, y: 12 },
         originCoordinates: { x: 740-345, y: 1310-393 },
@@ -545,6 +554,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     badend: {
         id: "badend",
+        group: "gikopoipoi",
         scale: 0.59,
         size: { x: 50, y: 50 },
         originCoordinates: { x: 0, y: 0 },
@@ -566,6 +576,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     yoshinoya: {
         id: "yoshinoya",
+        group: "bar_giko",
         scale: 1,
         size: { x: 12, y: 14 },
         originCoordinates: { x: 13, y: 355 },
@@ -713,6 +724,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     long_st: {
         id: "long_st",
+        group: "gikopoi",
         scale: 1,
         size: { x: 3, y: 33 },
         originCoordinates: { x: 14, y: 864 },
@@ -735,6 +747,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     bar_giko: {
         id: "bar_giko",
+        group: "bar_giko",
         scale: 1,
         size: { x: 14, y: 20 },
         originCoordinates: { x: 1, y: 382 },
@@ -1004,6 +1017,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     jinja: {
         id: "jinja",
+        group: "gikopoi",
         scale: 1,
         size: { x: 15, y: 11 },
         originCoordinates: { x: 7, y: 311 },
@@ -1090,6 +1104,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     cafe_st: {
         id: "cafe_st",
+        group: "gikopoi",
         scale: 1,
         size: { x: 11, y: 12 },
         originCoordinates: { x: 0, y: 267 },
@@ -1232,6 +1247,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     busstop: {
         id: "busstop",
+        group: "gikopoi",
         scale: 1,
         size: { x: 8, y: 5 },
         originCoordinates: { x: 6, y: 215 },
@@ -1272,6 +1288,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     izakaya774: {
         id: "izakaya774",
+        group: "gikopoi",
         scale: 1,
         size: { x: 6, y: 6 },
         originCoordinates: { x: 2, y: 269 },
@@ -1307,6 +1324,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     bar_giko_square: {
         id: "bar_giko_square",
+        group: "bar_giko",
         scale: 1,
         size: { x: 24, y: 22 },
         originCoordinates: { x: -160, y: 505 },
@@ -1431,6 +1449,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     bar_giko2: {
         id: "bar_giko2",
+        group: "bar_giko",
         scale: 1,
         size: { x: 16, y: 16 },
         originCoordinates: { x: 1, y: 443 },
@@ -1633,6 +1652,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     radio_room1: {
         id: "radio_room1",
+        group: "gikopoi",
         scale: 1,
         size: { x: 7, y: 8 },
         originCoordinates: { x: 2, y: 332 },
@@ -1683,6 +1703,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     radio_room2: {
         id: "radio_room2",
+        group: "gikopoi",
         scale: 1,
         size: { x: 11, y: 9 },
         originCoordinates: { x: 1, y: 452 },
@@ -1774,6 +1795,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     radio_room3: {
         id: "radio_room3",
+        group: "gikopoi",
         scale: 1,
         size: { x: 12, y: 9 },
         originCoordinates: { x: -1, y: 439 },
@@ -1859,6 +1881,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     radio: {
         id: "radio",
+        group: "gikopoi",
         scale: 1,
         size: { x: 7, y: 10 },
         originCoordinates: { x: 0, y: 371 },
@@ -1901,6 +1924,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     radio_gakuya: {
         id: "radio_gakuya",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 8 },
         originCoordinates: { x: 0, y: 358 },
@@ -1966,6 +1990,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     jinja_st: {
         id: "jinja_st",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 5 },
         originCoordinates: { x: 41, y: 268 },
@@ -2000,6 +2025,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     enkai: {
         id: "enkai",
+        group: "gikopoi",
         scale: 1,
         size: { x: 21, y: 19 },
         originCoordinates: { x: 0, y: 575 },
@@ -2345,6 +2371,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     idoA: {
         id: "idoA",
+        group: "gikopoi",
         scale: 1,
         size: { x: 8, y: 8 },
         originCoordinates: { x: 18, y: 264 },
@@ -2409,6 +2436,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     idoB: {
         id: "idoB",
+        group: "gikopoi",
         scale: 1,
         size: { x: 8, y: 8 },
         originCoordinates: { x: 18, y: 264 },
@@ -2469,6 +2497,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     admin_bar: {
         id: "admin_bar",
+        group: "gikopoi",
         scale: 1,
         size: { x: 12, y: 10 },
         originCoordinates: { x: 0, y: 371 },
@@ -2562,6 +2591,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     bar774: {
         id: "bar774",
+        group: "gikopoi",
         scale: 1,
         size: { x: 6, y: 8 },
         originCoordinates: { x: -1, y: 298 },
@@ -2626,6 +2656,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     yatai: {
         id: "yatai",
+        group: "gikopoi",
         scale: 1,
         size: { x: 8, y: 8 },
         originCoordinates: { x: -1, y: 417 },
@@ -2673,6 +2704,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     school_rouka: {
         id: "school_rouka",
+        group: "gikopoi",
         scale: 1,
         size: { x: 5, y: 8 },
         originCoordinates: { x: 0, y: 335 },
@@ -2703,6 +2735,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     school: {
         id: "school",
+        group: "gikopoi",
         scale: 1,
         size: { x: 8, y: 7 },
         originCoordinates: { x: 0, y: 312 },
@@ -2771,6 +2804,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     school_international: {
         id: "school_international",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 12 },
         originCoordinates: { x: 0, y: 412 },
@@ -2867,6 +2901,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     school_pc: {
         id: "school_pc",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 12 },
         originCoordinates: { x: 1, y: 412 },
@@ -2934,6 +2969,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     school_ground: {
         id: "school_ground",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 9 },
         originCoordinates: { x: 111, y: 391 },
@@ -3015,6 +3051,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     kaidan: {
         id: "kaidan",
+        group: "gikopoi",
         scale: 1,
         size: { x: 6, y: 11 },
         originCoordinates: { x: 725, y: 1153 },
@@ -3059,6 +3096,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     seashore: {
         id: "seashore",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 14 },
         originCoordinates: { x: 507, y: 556 },
@@ -3106,6 +3144,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     densha: {
         id: "densha",
+        group: "gikopoipoi",
         scale: 1,
         size: { x: 3, y: 15 },
         originCoordinates: { x: 3, y: 451 },
@@ -3197,6 +3236,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     monachat: {
         id: "monachat",
+        group: "gikopoipoi",
         scale: 1,
         size: { x: 7, y: 8 },
         originCoordinates: { x: 4, y: 332 },
@@ -3236,6 +3276,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     konbini: {
         id: "konbini",
+        group: "gikopoipoi",
         scale: 1,
         size: { x: 9, y: 8 },
         originCoordinates: { x: 4, y: 332 },
@@ -3290,6 +3331,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     labyrinth: {
         id: "labyrinth",
+        group: "gikopoipoi",
         scale: 1,
         size: { x: 27, y: 27 },
         originCoordinates: { x: 0, y: 352 },

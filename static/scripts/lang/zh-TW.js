@@ -13,7 +13,6 @@ export default
         login_streamer_count: "直播人數：",
 
         infobox_label_area: "區域：",
-        infobox_value_area: "海邊的小鎮",
         infobox_label_room: "地點：",
         infobox_label_user_name: "用戶名：",
         infobox_label_user_count: "在線人數：",
@@ -50,6 +49,8 @@ export default
         rula_menu_column_user_count: "人數",
         rula_menu_column_streamers: "直播中",
         rula_menu_button_rula: "嚕啦！",
+        rula_menu_label_group: "區域：",
+        //rula_menu_group_option_all: "",
 
         user_list_popup_title: "用戶訊息過濾（@USER_COUNT@名）",
         user_list_popup_column_user_name: "用戶名",
@@ -192,5 +193,13 @@ export default
         bar_giko2: "ＢＡＲ GIKO 下層",
         bar_giko_square: "噴水廣場",
         densha: "電車",
+        //monachat: "",
+        //konbini: "",
+    },
+    area:
+    {
+        gikopoipoi: "GIKOpoipoi",
+        gikopoi: "海邊的小鎮",
+        bar_giko: "ＢＡＲ GIKO",
     }
 }

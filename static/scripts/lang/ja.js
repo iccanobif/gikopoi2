@@ -13,7 +13,6 @@ export default
         login_streamer_count: "配信者：",
         
         infobox_label_area: "ｴﾘｱ：",
-        infobox_value_area: "海辺の町",
         infobox_label_room: "ｽﾃｰｼﾞ：",
         infobox_label_user_name: "名前：",
         infobox_label_user_count: "人数：",
@@ -50,6 +49,8 @@ export default
         rula_menu_column_user_count: "人数",
         rula_menu_column_streamers: "配信者",
         rula_menu_button_rula: "ルーラ",
+        rula_menu_label_group: "エリア：",
+        rula_menu_group_option_all: "すべて",
 
         user_list_popup_title: "ユーザーリスト（@USER_COUNT@名）",
         user_list_popup_column_user_name: "ユーザー名",
@@ -195,6 +196,12 @@ export default
         densha: r("電車", "でんしゃ"),
         monachat: r("もなちゃと", "もなちゃと"),
         konbini: r("コンビニ", "こんびに"),
+    },
+    area:
+    {
+        gikopoipoi: "ギコっぽいぽい",
+        gikopoi: r("海辺の町", "うみべのまち"),
+        bar_giko: r("ＢＡＲギコ", "バーギコ"),
     }
 }
 

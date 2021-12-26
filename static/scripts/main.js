@@ -103,6 +103,7 @@ window.vueApp = new Vue({
         roomLoadId: 0,
         currentRoom: {
             id: null,
+            group: "gikopoi",
             objects: [],
             hasChessboard: false,
         },
@@ -140,8 +141,10 @@ window.vueApp = new Vue({
         // rula stuff
         isRulaPopupOpen: false,
         roomList: [],
-        lastRoomListSortKey: localStorage.getItem("lastRoomListSortKey") || "sortName",
-        lastRoomListSortDirection: localStorage.getItem("lastRoomListSortDirection") || 1,
+        preparedRoomList: [],
+        rulaRoomGroup: "all",
+        rulaRoomListSortKey: localStorage.getItem("rulaRoomListSortKey") || "sortName",
+        rulaRoomListSortDirection: localStorage.getItem("rulaRoomListSortDirection") || 1,
         rulaRoomSelection: null,
 
         // user list stuff
@@ -757,7 +760,8 @@ window.vueApp = new Vue({
                     r.streamerDisplayNames = r.streamers.map(s => this.toDisplayName(s))
                 })
                 this.roomList = roomList;
-                this.sortRoomList(this.lastRoomListSortKey, this.lastRoomListSortDirection)
+                this.rulaRoomGroup = "all";
+                this.prepareRulaRoomList()
                 this.isRulaPopupOpen = true;
 
                 await Vue.nextTick()
@@ -2525,12 +2529,31 @@ window.vueApp = new Vue({
                 this.socket.emit("user-block", userId);
             }
         },
-        sortRoomList: function (key, direction)
+        setRulaRoomListSortKey(key)
         {
-            if (!direction)
-                direction = this.lastRoomListSortDirection == 1 ? -1 : 1
-
-            this.roomList.sort((a, b) =>
+            if (this.rulaRoomListSortKey != key)
+                this.rulaRoomListSortDirection = 1;
+            else
+                this.rulaRoomListSortDirection *= -1;
+                
+            this.rulaRoomListSortKey = key
+            
+            localStorage.setItem("lastRoomListSortKey", this.rulaRoomListSortKey)
+            localStorage.setItem("rulaRoomListSortDirection", this.rulaRoomListSortDirection)
+            
+            this.prepareRulaRoomList();
+        },
+        prepareRulaRoomList: function ()
+        {
+            const key = this.rulaRoomListSortKey;
+            const direction = this.rulaRoomListSortDirection;
+            
+            if (this.rulaRoomGroup === "all")
+                this.preparedRoomList = [...this.roomList];
+            else
+                this.preparedRoomList = this.roomList.filter(r => r.group == this.rulaRoomGroup);
+            
+            this.preparedRoomList.sort((a, b) =>
             {
                 let sort;
                 if (key == "sortName")
@@ -2542,8 +2565,7 @@ window.vueApp = new Vue({
                 return sort * direction;
             })
 
-            localStorage.setItem("lastRoomListSortKey", this.lastRoomListSortKey = key)
-            localStorage.setItem("lastRoomListSortDirection", this.lastRoomListSortDirection = direction)
+            
         },
         openStreamPopup: function (streamSlotId)
         {
@@ -2816,21 +2838,21 @@ window.vueApp = new Vue({
         },
         handleRulaPopupKeydown: function(event)
         {
-            const previousIndex = this.roomList.findIndex(r => r.id == this.rulaRoomSelection)
+            const previousIndex = this.preparedRoomList.findIndex(r => r.id == this.rulaRoomSelection)
 
             switch (event.code)
             {
                 case "ArrowDown":
                 case "KeyJ":
-                    this.rulaRoomSelection = this.roomList[(previousIndex + 1) % this.roomList.length].id
+                    this.rulaRoomSelection = this.preparedRoomList[(previousIndex + 1) % this.preparedRoomList.length].id
                     document.getElementById("room-tr-" + this.rulaRoomSelection).scrollIntoView({ block: "nearest"})
                     break;
                 case "ArrowUp":
                 case "KeyK":
                     if (previousIndex <= 0)
-                        this.rulaRoomSelection = this.roomList[this.roomList.length - 1].id
+                        this.rulaRoomSelection = this.preparedRoomList[this.preparedRoomList.length - 1].id
                     else
-                        this.rulaRoomSelection = this.roomList[previousIndex - 1].id
+                        this.rulaRoomSelection = this.preparedRoomList[previousIndex - 1].id
                     document.getElementById("room-tr-" + this.rulaRoomSelection).scrollIntoView({ block: "nearest"})
                     break;
                 case "Enter":

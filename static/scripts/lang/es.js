@@ -13,7 +13,6 @@ export default
         login_streamer_count: "Streamers: ",
         
         infobox_label_area: "Area:",
-        infobox_value_area: "Ciudad Marítima",
         infobox_label_room: "Sala:",
         infobox_label_user_name: "Nombre:",
         infobox_label_user_count: "Usuarios:",
@@ -50,6 +49,8 @@ export default
         rula_menu_column_user_count: "Usuarios",
         rula_menu_column_streamers: "Streamers",
         rula_menu_button_rula: "Rula",
+        rula_menu_label_group: "Area:",
+        rula_menu_group_option_all: "Todas",
 
         user_list_popup_title: "Lista de usuarios (total: @USER_COUNT@)",
         user_list_popup_column_user_name: "Nombre de usuario",
@@ -195,5 +196,11 @@ export default
         densha: "Tren",
         monachat: "Monachat",
         konbini: "Tienda de conveniencia",
+    },
+    area:
+    {
+        gikopoipoi: "Gikopoipoi",
+        gikopoi: "Ciudad Marítima",
+        bar_giko: "Bar Giko",
     }
 }
