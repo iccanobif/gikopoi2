@@ -80,9 +80,7 @@ export interface Room
     blockWidth?: number;
     blockHeight?: number;
     hasChessboard?: boolean;
-    callbacks?: CallbackEvent[];
     specialObjects?: SpecialObjects[];
-    coinCounter?: number;
 }
 
 export interface SpecialObjects
@@ -90,9 +88,9 @@ export interface SpecialObjects
     objectName: string;
     x: number;
     y: number;
-    color: string;
-    type: string;
-    value: number;
+    color?: string;
+    type?: string;
+    value?: number;
 }
 
 export interface CallbackEvent

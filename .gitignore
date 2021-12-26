@@ -2,3 +2,4 @@ node_modules
 build
 persisted-state
 local-settings.json
+.idea/
