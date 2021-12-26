@@ -140,6 +140,7 @@ export default
         error_obtaining_video: "Unable to obtain video. Please check the browser permissions.",
         error_obtaining_audio: "Unable to obtain audio. Please check the browser permissions.",
         no_webrtc: "Sorry, your browser doesn't support WebRTC.",
+        error_didnt_select_device: "Please select a device.",
         
         unknown_error: "The connection failed due to an unknown error.",
         invalid_username: "The provided username is invalid.",
