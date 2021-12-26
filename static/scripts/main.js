@@ -2246,12 +2246,12 @@ window.vueApp = new Vue({
                         {
                             video: (!withVideo || withScreenCapture) ? undefined : {
                                 deviceId: { exact: this.selectedVideoDeviceId },
-                                width: 320,
-                                height: 240,
-                                frameRate: {
-                                    ideal: 24,
-                                    min: 10,
-                                },
+                                // width: 320,
+                                // height: 240,
+                                // frameRate: {
+                                //     ideal: 24,
+                                //     min: 10,
+                                // },
                             },
                             audio: !withSound ? undefined : audioConstraints
                         }
