@@ -494,7 +494,7 @@ video {
 {
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: 300px;
+    max-height: 400px;
     margin: 5px;
     border: 2px solid #afb1b1;
 }

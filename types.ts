@@ -48,6 +48,7 @@ export interface Door
 export interface Room
 {
     id: string;
+    group: string;
     scale: number;
     size: Coordinates;
     originCoordinates: Coordinates;

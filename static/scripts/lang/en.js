@@ -13,7 +13,6 @@ export default
         login_streamer_count: "Streamers: ",
         
         infobox_label_area: "Area:",
-        infobox_value_area: "Sea City",
         infobox_label_room: "Stage:",
         infobox_label_user_name: "Name:",
         infobox_label_user_count: "Users:",
@@ -50,6 +49,8 @@ export default
         rula_menu_column_user_count: "Users",
         rula_menu_column_streamers: "Streamers",
         rula_menu_button_rula: "Rula",
+        rula_menu_label_group: "Area:",
+        rula_menu_group_option_all: "All",
 
         user_list_popup_title: "User List (total: @USER_COUNT@)",
         user_list_popup_column_user_name: "User name",
@@ -195,5 +196,11 @@ export default
         densha: "Train",
         monachat: "Monachat",
         konbini: "Convenience Store",
+    },
+    area:
+    {
+        gikopoipoi: "Gikopoipoi",
+        gikopoi: "Sea City",
+        bar_giko: "Bar Giko",
     }
 }

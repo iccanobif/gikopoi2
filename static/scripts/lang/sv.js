@@ -13,7 +13,6 @@ export default
         login_streamer_count: "Strömmare: ",
         
         infobox_label_area: "Område:",
-        infobox_value_area: "Sjöstaden",
         infobox_label_room: "Scen:",
         infobox_label_user_name: "Namn:",
         infobox_label_user_count: "Användare:",
@@ -50,6 +49,8 @@ export default
         rula_menu_column_user_count: "Användare",
         rula_menu_column_streamers: "Strömmare",
         rula_menu_button_rula: "Rula",
+        rula_menu_label_group: "Område:",
+        rula_menu_group_option_all: "Allt",
 
         user_list_popup_title: "Användarlista (totalt: @USER_COUNT@)",
         user_list_popup_column_user_name: "Användarnamn",
@@ -195,5 +196,11 @@ export default
         densha: "Pendeltåget",
         monachat: "Monachat",
         konbini: "Närbutiken",
+    },
+    area:
+    {
+        gikopoipoi: "Gikopoipoi",
+        gikopoi: "Sjöstaden",
+        bar_giko: "Gikobaren",
     }
 }
