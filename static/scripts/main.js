@@ -61,13 +61,6 @@ let loadCharacterImagesPromise = null
 // the key is the slot ID
 const audioProcessors = {}
 
-<<<<<<< HEAD
-function getSpawnRoomId() {
-    try {
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        return urlSearchParams.get("roomid") || "admin_st"
-    } catch {
-=======
 function getSpawnRoomId()
 {
     try
@@ -77,18 +70,10 @@ function getSpawnRoomId()
     }
     catch
     {
->>>>>>> master
         return "admin_st"
     }
 }
 
-<<<<<<< HEAD
-function getDefaultAreaId() {
-    try {
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        return urlSearchParams.get("areaid") || localStorage.getItem("areaId") || "gen"
-    } catch {
-=======
 function getDefaultAreaId()
 {
     try
@@ -98,7 +83,6 @@ function getDefaultAreaId()
     }
     catch
     {
->>>>>>> master
         return localStorage.getItem("areaId") || "gen"
     }
 }
@@ -255,13 +239,6 @@ window.vueApp = new Vue({
 
         canvasContainerResizeObserver: null,
     },
-<<<<<<< HEAD
-    mounted: function () {
-        console.log("%c(,,ﾟДﾟ)",
-            "background-color: white; color: black; font-weight: bold; padding: 4px 6px; font-size: 50px",);
-
-        window.addEventListener("keydown", (ev) => {
-=======
     mounted: function ()
     {
         console.log("%c(,,ﾟДﾟ)",
@@ -269,7 +246,6 @@ window.vueApp = new Vue({
 
         window.addEventListener("keydown", (ev) =>
         {
->>>>>>> master
             if (ev.shiftKey && ev.ctrlKey && ev.code == "Digit9")
                 this.passwordInputVisible = true
             if (ev.shiftKey && ev.ctrlKey && ev.code == "Digit8") {
@@ -388,12 +364,8 @@ window.vueApp = new Vue({
 
                 this.updateAudioElementsVolume()
 
-<<<<<<< HEAD
-                if (window.Notification) {
-=======
                 if (window.Notification)
                 {
->>>>>>> master
                     if (Notification.permission == "granted")
                         this.notificationPermissionsGranted = true
                     else if (this.showNotifications) {
