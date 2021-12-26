@@ -1324,7 +1324,7 @@ window.vueApp = new Vue({
 
                 const canvasObjects = [];
                 scanCanvasObjects(canvasObjects, objectsByPosition,
-                    0, currentRoom.size.x, -1, currentRoom.size.y-1);
+                    0, self.currentRoom.size.x, -1, self.currentRoom.size.y-1);
                 // x to room size.x and y from -1 to allow for foreground objects
 
                 return canvasObjects;
@@ -1333,12 +1333,12 @@ window.vueApp = new Vue({
             function getObjectsByPrioritySort()
             {
                 return [].concat(
-                    currentRoom.objects
+                    self.currentRoom.objects
                         .map(o => ({
                             o,
                             type: "room-object",
                         })),
-                    Object.values(users).map(o => ({
+                    Object.values(self.users).map(o => ({
                         o,
                         type: "user",
                     })),
@@ -1346,8 +1346,8 @@ window.vueApp = new Vue({
                     .sort((a, b) =>
                     {
                         const calculatePriority = (o) => o.type == "room-object"
-                                                            ? o.o.x + 1 + (currentRoom.size.y - o.o.y)
-                                                            : o.o.logicalPositionX + 1 + (currentRoom.size.y - o.o.logicalPositionY)
+                                                            ? o.o.x + 1 + (self.currentRoom.size.y - o.o.y)
+                                                            : o.o.logicalPositionX + 1 + (self.currentRoom.size.y - o.o.logicalPositionY)
 
                         const aPriority = calculatePriority(a)
                         const bPriority = calculatePriority(b)
