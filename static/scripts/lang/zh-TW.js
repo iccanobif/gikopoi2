@@ -76,9 +76,6 @@ export default
         stream_form_screen_capture: "視窗擷取",
         stream_form_screen_capture_audio: "擷取螢幕的聲音",
         stream_form_screen_capture_audio_notice: "這是個實驗性的功能。僅對Chrome與Edge有效。\n在Windows上，只能擷取螢幕聲音與分頁聲音。",
-        stream_form_camera_facing: "手機鏡頭：",
-        stream_form_camera_facing_user: "正面",
-        stream_form_camera_facing_environment: "背面",
 
         // device_selection_title: "",
         // device_selection_audio_devices: "",

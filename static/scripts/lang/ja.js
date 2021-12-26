@@ -76,9 +76,6 @@ export default
         stream_form_screen_capture: "画面共有",
         stream_form_screen_capture_audio: "画面の音声を共有",
         stream_form_screen_capture_audio_notice: "この機能は実験中です。ChromeとEdgeでのみ有効です。\nWindowsでは、画面の音声とタブの音声しか取得できません。",
-        stream_form_camera_facing: "スマホのカメラ：",
-        stream_form_camera_facing_user: "フロント",
-        stream_form_camera_facing_environment: "バック",
 
         device_selection_title: "デバイスを選択",
         device_selection_audio_devices: "音声デバイス",

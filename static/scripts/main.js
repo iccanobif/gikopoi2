@@ -189,7 +189,6 @@ window.vueApp = new Vue({
         streamIsPrivateStream: false,
         streamScreenCapture: false,
         streamScreenCaptureAudio: false,
-        streamCameraFacing: "user",
 
         // Device selection popup
         isDeviceSelectionOpen: false,
@@ -2253,7 +2252,6 @@ window.vueApp = new Vue({
                                     ideal: 24,
                                     min: 10,
                                 },
-                                facingMode: this.streamCameraFacing,
                             },
                             audio: !withSound ? undefined : audioConstraints
                         }
@@ -2645,7 +2643,6 @@ window.vueApp = new Vue({
             this.streamAutoGain = false;
             this.streamScreenCapture = false;
             this.streamScreenCaptureAudio = false;
-            this.streamCameraFacing = "user";
         },
         closeStreamPopup: function ()
         {
