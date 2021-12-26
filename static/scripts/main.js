@@ -2162,27 +2162,41 @@ window.vueApp = new Vue({
 
         showDeviceSelectionPopup: async function ()
         {
-            const withVideo = this.streamMode != "sound" && !this.streamScreenCapture;
-            const withSound = this.streamMode != "video" && !this.streamScreenCaptureAudio;
+            try
+            {
+                const withVideo = this.streamMode != "sound" && !this.streamScreenCapture;
+                const withSound = this.streamMode != "video" && !this.streamScreenCaptureAudio;
 
-            this.deviceList = await getDeviceList(withSound, withVideo)
+                this.waitingForDevicePermission = true
+                this.deviceList = await getDeviceList(withSound, withVideo)
+                this.waitingForDevicePermission = false
 
-            // Automatically select device if there is only one of its kind
-            const audioDevices = this.deviceList.filter(d => d.type == "audioinput")
-            const videoDevices = this.deviceList.filter(d => d.type == "videoinput")
+                // Automatically select device if there is only one of its kind
+                const audioDevices = this.deviceList.filter(d => d.type == "audioinput")
+                const videoDevices = this.deviceList.filter(d => d.type == "videoinput")
 
-            if (audioDevices.length == 1)
-                this.selectedAudioDeviceId = audioDevices[0].id
-            else
-                this.selectedAudioDeviceId = null
+                if (audioDevices.length == 1)
+                    this.selectedAudioDeviceId = audioDevices[0].id
+                else
+                    this.selectedAudioDeviceId = null
 
-            if (videoDevices.length == 1)
-                this.selectedVideoDeviceId = videoDevices[0].id
-            else
-                this.selectedVideoDeviceId = null
+                if (videoDevices.length == 1)
+                    this.selectedVideoDeviceId = videoDevices[0].id
+                else
+                    this.selectedVideoDeviceId = null
 
-            this.isDeviceSelectionOpen = true
-            this.isStreamPopupOpen = false;
+                this.isDeviceSelectionOpen = true
+                this.isStreamPopupOpen = false;
+            }
+            catch (err)
+            {
+                console.error(err)
+                this.showWarningToast(i18n.t("msg.error_obtaining_media"));
+                this.wantToStream = false;
+                this.mediaStream = false;
+                this.streamSlotIdInWhichIWantToStream = null;
+                this.waitingForDevicePermission = false;
+            }
         },
 
         cancelDeviceSelection: function()
