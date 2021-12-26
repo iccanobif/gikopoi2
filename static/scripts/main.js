@@ -2188,8 +2188,15 @@ window.vueApp = new Vue({
                 else
                     this.selectedVideoDeviceId = null
 
-                this.isDeviceSelectionOpen = true
-                this.isStreamPopupOpen = false;
+                if (this.deviceList.length)
+                {
+                    this.isDeviceSelectionOpen = true
+                    this.isStreamPopupOpen = false;
+                }
+                else
+                {
+                    this.wantToStartStreaming()
+                }
             }
             catch (err)
             {
@@ -2240,7 +2247,7 @@ window.vueApp = new Vue({
                     echoCancellation: this.streamEchoCancellation,
                     noiseSuppression: this.streamNoiseSuppression,
                     autoGainControl: this.streamAutoGain,
-                    deviceId: { exact: this.selectedAudioDeviceId },
+                    deviceId: withScreenCaptureAudio ? undefined : { exact: this.selectedAudioDeviceId },
                 }
 
                 let userMediaPromise = null
