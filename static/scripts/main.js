@@ -107,6 +107,7 @@ window.vueApp = new Vue({
             group: "gikopoi",
             objects: [],
             hasChessboard: false,
+            specialObjects: [],
         },
         myUserID: null,
         myPrivateUserID: null,
