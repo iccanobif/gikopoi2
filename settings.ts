@@ -9,7 +9,7 @@ try
     fileJsonContents = JSON.parse(fileStringContents)
 }
 catch {
-    log.warn("No settings.json file found")
+    log.warn("No local-settings.json file found")
 }
 
 export const settings = {
