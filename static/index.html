@@ -272,10 +272,10 @@
 
             <div class="popup-overlay" v-if="isRulaPopupOpen" v-on:click="closeRulaPopup"></div>
             <div id="rula-popup" class="popup" v-if="isRulaPopupOpen" v-on:keydown="handleRulaPopupKeydown($event)" tabindex="-1">
-                <div class="popup-title">{{ $t("ui.rula_menu_title") }}</div>
-                <div class="popup-content">
-                    <div class='popup-item'>
-                        <label for="rula-room-group">{{ $t("ui.rula_menu_label_group") }}</label>
+                <div class="popup-titlebar">
+                    <div class="popup-title">{{ $t("ui.rula_menu_title") }}</div>
+                    <div class="popup-titlebar-item">
+                        <label for="rula-room-group">{{ $t("ui.rula_menu_label_group") }} </label>
                         <select id="rula-room-group" v-model="rulaRoomGroup" v-on:change="prepareRulaRoomList()">
                             <option value="all">{{ $t("ui.rula_menu_group_option_all") }}</option>
                             <option value="gikopoipoi">{{ $t("area.gikopoipoi") }}</option>
@@ -283,6 +283,8 @@
                             <option value="bar_giko">{{ $t("area.bar_giko") }}</option>
                         </select>
                     </div>
+                </div>
+                <div class="popup-content">
                     <table class="popup-table popup-selectable-table popup-sortable-table">
                         <colgroup>
                             <col id="rula-menu-column-room-name" />
@@ -322,7 +324,9 @@
 
             <div class="popup-overlay" v-if="isUserListPopupOpen" v-on:click="closeUserListPopup"></div>
             <div id="user-list-popup" class="popup" v-if="isUserListPopupOpen">
-                <div class="popup-title">{{ $t("ui.user_list_popup_title").replace("@USER_COUNT@", getUserListForListPopup().length) }}</div>
+                <div class="popup-titlebar">
+                    <div class="popup-title">{{ $t("ui.user_list_popup_title").replace("@USER_COUNT@", getUserListForListPopup().length) }}</div>
+                </div>
                 <div class="popup-item" v-html="$t('ui.user_list_popup_blurb')"></div>
                 <div class="popup-content">
                     <table class="popup-table">
@@ -367,7 +371,9 @@
 
             <div class="popup-overlay" v-if="isStreamPopupOpen" v-on:click="closeStreamPopup"></div>
             <fieldset id="stream-popup" class="popup" v-if="isStreamPopupOpen" :disabled="waitingForDevicePermission">
-                <div class="popup-title">{{ $t("ui.stream_form_title") }}</div>
+                <div class="popup-titlebar">
+                    <div class="popup-title">{{ $t("ui.stream_form_title") }}</div>
+                </div>
                 <div class="popup-content">
                     <div class='popup-item'>
                         <span>{{ $t("ui.stream_form_mode") }}</span><input type="radio"
@@ -430,7 +436,9 @@
 
             <div class="popup-overlay" v-if="isPreferencesPopupOpen" v-on:click="closePreferencesPopup"></div>
             <div class="popup" v-if="isPreferencesPopupOpen">
-                <div class="popup-title">{{ $t("ui.preferences_title") }}</div>
+                <div class="popup-titlebar">
+                    <div class="popup-title">{{ $t("ui.preferences_title") }}</div>
+                </div>
                 <div class="popup-content">
                     <div class='popup-section'>
                         <div class='popup-header'>{{ $t("ui.preferences_title_general") }}</div>
@@ -571,7 +579,9 @@
 
             <div class="popup-overlay" id="warning-toast-overlay" v-if="isWarningToastOpen" v-on:click="closeWarningToast"></div>
             <div class="popup" id="warning-toast" v-if="isWarningToastOpen">
-                <div class="popup-title">{{ $t("ui.warning_toast_title") }}</div>
+                <div class="popup-titlebar">
+                    <div class="popup-title">{{ $t("ui.warning_toast_title") }}</div>
+                </div>
                 <div class="popup-content">
                     <div class="popup-item">
                         {{ warningToastMessage }}
@@ -585,7 +595,9 @@
 
             <div class="popup-overlay" v-if="isDeviceSelectionOpen" v-on:click="cancelDeviceSelection"></div>
             <fieldset class="popup" v-if="isDeviceSelectionOpen" :disabled="waitingForDevicePermission">
-                <div class="popup-title">{{ $t("ui.device_selection_title") }}</div>
+                <div class="popup-titlebar">
+                    <div class="popup-title">{{ $t("ui.device_selection_title") }}</div>
+                </div>
                 <div class="popup-content">
                     <!-- AUDIO -->
                     <div class='popup-section' v-if="deviceList.filter(d => d.type == 'audioinput').length">

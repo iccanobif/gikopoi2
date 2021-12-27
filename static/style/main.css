@@ -496,12 +496,32 @@ video {
     z-index: 203
 }
 
-.popup-title
+.popup-titlebar
 {
-    font-size: 20px;
-    padding: 10px;
     background-color: #fafafa;
     border-bottom: 2px solid #afb1b1;
+    display: flex;
+    flex-direction: row;
+}
+
+.popup-title
+{
+    display: flex;
+    flex: auto;
+    font-size: 20px;
+    margin: 10px;
+}
+
+.popup-titlebar-item
+{
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.popup-titlebar-item label
+{
+    white-space: pre-wrap;
 }
 
 .popup-content
