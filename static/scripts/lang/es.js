@@ -115,6 +115,7 @@ export default
         preferences_language: "Idioma",
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
+        // preferences_title_chat: "",
 
         back_to_homepage: "Volver a la página de inicio",
 

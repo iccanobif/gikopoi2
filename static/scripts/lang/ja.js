@@ -115,6 +115,7 @@ export default
         preferences_language: "言語",
         preferences_title_streams: "配信",
         preferences_streams_auto_resume: "自動再開",
+        preferences_title_chat: "チャット",
 
         back_to_homepage: "トップへ戻る",
 

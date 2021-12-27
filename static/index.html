@@ -443,6 +443,36 @@
                     <div class='popup-section'>
                         <div class='popup-header'>{{ $t("ui.preferences_title_general") }}</div>
                         <div class='popup-item'>
+                            <input type="checkbox" id="preferences-dark-mode"
+                                v-model="isDarkMode" v-on:change="handleDarkMode"><label
+                                for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
+                        </div>
+                        <div class='popup-item' v-if="areaId != 'gen'">
+                            <label for="preferences-language">{{ $t("ui.preferences_language") }}</label>
+                            <select id="preferences-language" v-model="language" v-on:change="handleLanguageChange">
+                                <option v-for="langCode in getLangCodes()" :value="langCode">{{ $t("lang_name", langCode) }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class='popup-section'>
+                        <div class='popup-header'>{{ $t("ui.preferences_title_tts") }}</div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-text-to-speech"
+                                v-model="enableTextToSpeech" v-on:change="handleEnableTextToSpeech"><label
+                                for="preferences-text-to-speech">{{ $t("ui.preferences_enable_text_to_speech") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <label for="preferences-tts-voice">{{ $t("ui.preferences_tts_voice") }}</label>
+                            <select id="preferences-tts-voice" v-model="ttsVoiceURI" v-on:change="changeVoice">
+                                <option value="automatic">{{ $t("ui.preferences_tts_voice_automatic") }}</option>
+                                <option value="animalese">{{ $t("ui.preferences_tts_voice_animalese") }}</option>
+                                <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class='popup-section'>
+                        <div class='popup-header'>{{ $t("ui.preferences_title_chat") }}</div>
+                        <div class='popup-item'>
                             <input type="checkbox" id="preferences-shift-enter"
                                 v-model="isNewlineOnShiftEnter" v-on:change="storeSet('isNewlineOnShiftEnter')"><label
                                 for="preferences-shift-enter">{{ $t("ui.preferences_shift_enter") }}</label>
@@ -461,17 +491,6 @@
                             <input type="checkbox" id="preferences-ignore-indicator-in-log"
                                 v-model="showIgnoreIndicatorInLog" v-on:change="storeSet('showIgnoreIndicatorInLog')"><label
                                 for="preferences-ignore-indicator-in-log">{{ $t("ui.preferences_ignore_indicator_in_log") }}</label>
-                        </div>
-                        <div class='popup-item'>
-                            <input type="checkbox" id="preferences-dark-mode"
-                                v-model="isDarkMode" v-on:change="handleDarkMode"><label
-                                for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
-                        </div>
-                        <div class='popup-item' v-if="areaId != 'gen'">
-                            <label for="preferences-language">{{ $t("ui.preferences_language") }}</label>
-                            <select id="preferences-language" v-model="language" v-on:change="handleLanguageChange">
-                                <option v-for="langCode in getLangCodes()" :value="langCode">{{ $t("lang_name", langCode) }}</option>
-                            </select>
                         </div>
                     </div>
                     <div class='popup-section'>
@@ -561,22 +580,6 @@
                             <input type="checkbox" id="preferences-logout-button-visible"
                                 v-model="isLogoutButtonVisible" v-on:change="storeSet('isLogoutButtonVisible')"><label
                                 for="preferences-logout-button-visible">{{ $t("ui.preferences_logout_button_visible") }}</label>
-                        </div>
-                    </div>
-                    <div class='popup-section'>
-                        <div class='popup-header'>{{ $t("ui.preferences_title_tts") }}</div>
-                        <div class='popup-item'>
-                            <input type="checkbox" id="preferences-text-to-speech"
-                                v-model="enableTextToSpeech" v-on:change="handleEnableTextToSpeech"><label
-                                for="preferences-text-to-speech">{{ $t("ui.preferences_enable_text_to_speech") }}</label>
-                        </div>
-                        <div class='popup-item'>
-                            <label for="preferences-tts-voice">{{ $t("ui.preferences_tts_voice") }}</label>
-                            <select id="preferences-tts-voice" v-model="ttsVoiceURI" v-on:change="changeVoice">
-                                <option value="automatic">{{ $t("ui.preferences_tts_voice_automatic") }}</option>
-                                <option value="animalese">{{ $t("ui.preferences_tts_voice_animalese") }}</option>
-                                <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}</option>
-                            </select>
                         </div>
                     </div>
                 </div>

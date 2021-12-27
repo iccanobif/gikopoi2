@@ -115,6 +115,7 @@ export default
         preferences_language: "Language",
         preferences_title_streams: "Streams",
         preferences_streams_auto_resume: "Auto resume",
+        preferences_title_chat: "Chat",
 
         back_to_homepage: "Go back to home page",
 

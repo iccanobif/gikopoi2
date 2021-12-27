@@ -118,6 +118,7 @@ export default
         preferences_language: "Lingua",
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
+        // preferences_title_chat: "",
 
         back_to_homepage: "Torna all'home page",
 
