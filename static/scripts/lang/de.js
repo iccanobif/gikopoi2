@@ -113,7 +113,8 @@ export default
         preferences_timestamps_in_copied_log: "Zeitstempel in den kopierten Logs aufnehmen",
         preferences_ignore_indicator_in_log: "Einen Indikator anstelle der Nachrichten ignorierter Benutzer im log anzeigen",
         preferences_language: "Sprache",
-        
+        preferences_title_streams: "Streams",
+        preferences_streams_auto_resume: "Automatische Fortsetzung",
 
         back_to_homepage: "Zurück zur Startseite",
 

@@ -113,7 +113,8 @@ export default
         preferences_timestamps_in_copied_log: "Incluir fecha y hora en logs copiados",
         preferences_ignore_indicator_in_log: "Mostrar en logs un indicador para mensajes de usuarios ignorados",
         preferences_language: "Idioma",
-        
+        // preferences_title_streams: "",
+        // preferences_streams_auto_resume: "",
 
         back_to_homepage: "Volver a la página de inicio",
 

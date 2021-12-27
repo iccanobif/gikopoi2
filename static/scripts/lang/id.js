@@ -112,8 +112,9 @@ export default
         preferences_crisp_mode: "Tajam",
         preferences_timestamps_in_copied_log: "Sertakan cap waktu dalam log yang disalin",
         preferences_ignore_indicator_in_log: "Ketika pengguna diabaikan. Menampilkan placeholder untuk pesan tersembunyi di log.",
-        preferences_language: "Bahasa",        
-        
+        preferences_language: "Bahasa",
+        // preferences_title_streams: "",
+        // preferences_streams_auto_resume: "",
 
         back_to_homepage: "Keluar Dari Permainan",
 

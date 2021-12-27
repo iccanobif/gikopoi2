@@ -172,6 +172,7 @@ window.vueApp = new Vue({
         isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
         customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
         mentionSoundFunction: null,
+        isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
 
         // streaming
         streams: [],
@@ -2473,7 +2474,6 @@ window.vueApp = new Vue({
                 this.showWarningToast(i18n.t("msg.no_webrtc"));
                 return;
             }
-
             Vue.set(this.takenStreams, streamSlotId, true);
 
             if (streamSlotId in this.streams && this.streams[streamSlotId].isReady)
@@ -2526,6 +2526,10 @@ window.vueApp = new Vue({
             if(!this.rtcPeerSlots[streamSlotId]) return;
             this.rtcPeerSlots[streamSlotId].rtcPeer.close()
             this.rtcPeerSlots[streamSlotId] = null;
+            
+            if (!this.isStreamAutoResumeEnabled)
+                Vue.set(this.takenStreams, streamSlotId, false);
+            
             this.socket.emit("user-want-to-drop-stream", streamSlotId);
         },
         wantToDropStream: function (streamSlotId)

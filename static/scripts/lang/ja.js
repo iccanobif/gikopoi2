@@ -113,7 +113,8 @@ export default
         preferences_timestamps_in_copied_log: "コピーしたログに時刻を含む",
         preferences_ignore_indicator_in_log: "一方あぼーんされたユーザーからのログの代わりにインジケーターを表示",
         preferences_language: "言語",
-
+        preferences_title_streams: "配信",
+        preferences_streams_auto_resume: "自動再開",
 
         back_to_homepage: "トップへ戻る",
 

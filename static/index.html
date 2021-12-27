@@ -240,7 +240,7 @@
                     <div class="stream-buttons">
                         <button :id="'take-stream-button-' + index"
                             v-bind:class="{'red-button': streamSlot.isReady}"
-                            v-if="!takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
+                            v-if="!takenStreams[index] && streamSlot.userId != myUserID && !wantToStream && (isStreamAutoResumeEnabled || streamSlot.isReady)"
                             v-on:click="wantToTakeStream(index)">
                             {{ $t("ui.button_stream_take") }}
                         </button>
@@ -530,6 +530,14 @@
                             <input type="checkbox" id="preferences-crisp-mode"
                                 v-model="isCrispModeEnabled" v-on:change="handleCrispModeEnabled"><label
                                 for="preferences-crisp-mode">{{ $t("ui.preferences_crisp_mode") }}</label>
+                        </div>
+                    </div>
+                    <div class='popup-section'>
+                        <div class='popup-header'>{{ $t("ui.preferences_title_streams") }}</div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-streams-auto-resume"
+                                v-model="isStreamAutoResumeEnabled" v-on:click="storeSet('isStreamAutoResumeEnabled')"><label
+                                for="preferences-streams-auto-resume">{{ $t("ui.preferences_streams_auto_resume") }}</label>
                         </div>
                     </div>
                     <div class='popup-section'>

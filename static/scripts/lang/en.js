@@ -113,7 +113,8 @@ export default
         preferences_timestamps_in_copied_log: "Include timestamps in copied logs",
         preferences_ignore_indicator_in_log: "Show in the log an indicator in place of the messages by ignored users",
         preferences_language: "Language",
-        
+        preferences_title_streams: "Streams",
+        preferences_streams_auto_resume: "Auto resume",
 
         back_to_homepage: "Go back to home page",
 
