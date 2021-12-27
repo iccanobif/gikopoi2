@@ -74,7 +74,8 @@ function initializeRoomStates()
                     timer: null,
                 }
             }
-            for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
+            if (janusServers.length)
+                for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
             {
                 roomStates[areaId][roomId].streams.push({
                     streamId: 0,
