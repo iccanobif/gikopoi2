@@ -2618,7 +2618,7 @@ window.vueApp = new Vue({
                 
             this.rulaRoomListSortKey = key
             
-            localStorage.setItem("lastRoomListSortKey", this.rulaRoomListSortKey)
+            localStorage.setItem("rulaRoomListSortKey", this.rulaRoomListSortKey)
             localStorage.setItem("rulaRoomListSortDirection", this.rulaRoomListSortDirection)
             
             this.prepareRulaRoomList();
