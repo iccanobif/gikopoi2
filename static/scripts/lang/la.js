@@ -116,6 +116,6 @@ export default
     {
         gikopoipoi: "Gikopoipoi",
         gikopoi: "Urbs maris",
-        bar_giko: "Bar Giko",
+        bar_giko: "Urbs Bar Giko",
     }
 }

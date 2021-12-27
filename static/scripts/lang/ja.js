@@ -203,7 +203,7 @@ export default
     {
         gikopoipoi: "ギコっぽいぽい",
         gikopoi: r("海辺の町", "うみべのまち"),
-        bar_giko: r("ＢＡＲギコ", "バーギコ"),
+        bar_giko: r("ＢＡＲギコの町", "バーギコのまち"),
     }
 }
 

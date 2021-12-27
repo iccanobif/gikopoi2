@@ -202,6 +202,6 @@ export default
     {
         gikopoipoi: "GIKOpoipoi",
         gikopoi: "海邊的小鎮",
-        bar_giko: "ＢＡＲ GIKO",
+        // bar_giko: "",
     }
 }

@@ -203,6 +203,6 @@ export default
     {
         gikopoipoi: "Gikopoipoi",
         gikopoi: "Sea City",
-        bar_giko: "Bar Giko",
+        bar_giko: "Bar Giko Town",
     }
 }
