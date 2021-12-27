@@ -49,7 +49,7 @@ export default
         rula_menu_column_user_count: "Usuarios",
         rula_menu_column_streamers: "Streamers",
         rula_menu_button_rula: "Rula",
-        rula_menu_label_group: "Area:",
+        rula_menu_label_group: "Area",
         rula_menu_group_option_all: "Todas",
 
         user_list_popup_title: "Lista de usuarios (total: @USER_COUNT@)",

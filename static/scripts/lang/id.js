@@ -49,7 +49,7 @@ export default
         rula_menu_column_user_count: "Pengguna",
         rula_menu_column_streamers: "Siaran",
         rula_menu_button_rula: "Rula",
-        rula_menu_label_group: "Daerah:",
+        rula_menu_label_group: "Daerah",
         //rula_menu_group_option_all: "",
 
         user_list_popup_title: "Daftar Pengguna (total: @USER_COUNT@)",

@@ -49,7 +49,7 @@ export default
         rula_menu_column_user_count: "人数",
         rula_menu_column_streamers: "配信者",
         rula_menu_button_rula: "ルーラ",
-        rula_menu_label_group: "エリア：",
+        rula_menu_label_group: "エリア",
         rula_menu_group_option_all: "すべて",
 
         user_list_popup_title: "ユーザーリスト（@USER_COUNT@名）",

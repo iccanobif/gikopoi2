@@ -49,7 +49,7 @@ export default
         rula_menu_column_user_count: "人數",
         rula_menu_column_streamers: "直播中",
         rula_menu_button_rula: "嚕啦！",
-        rula_menu_label_group: "區域：",
+        rula_menu_label_group: "區域",
         //rula_menu_group_option_all: "",
 
         user_list_popup_title: "用戶訊息過濾（@USER_COUNT@名）",
