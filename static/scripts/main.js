@@ -501,6 +501,8 @@ window.vueApp = new Vue({
             const usersDto = dto.connectedUsers
             const streamsDto = dto.streams
 
+            console.log(dto);
+
             this.chessboardState = dto.chessboardState
 
             this.isLoadingRoom = true;
@@ -511,6 +513,10 @@ window.vueApp = new Vue({
 
             const previousRoomId = this.currentRoom && this.currentRoom.id
             this.currentRoom = roomDto;
+
+            if (this.currentRoom.id === 'jinja') {
+                this.currentRoom.specialObjects[1].value = dto.coinCounter;
+            }
 
             this.users = {};
 
@@ -818,6 +824,12 @@ window.vueApp = new Vue({
                 const winnerUserName = this.toDisplayName(this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A")
 
                 this.writeMessageToLog("SYSTEM", i18n.t("msg.chess_quit").replace("@USER_NAME@", winnerUserName), null)
+            })
+            this.socket.on("special-events:server-add-shrine-coin", donationBoxValue => {
+                console.log("special-events:server-add-shrine-coin triggered");
+                //i think this is where you play sounds
+                this.currentRoom.specialObjects[1].value = donationBoxValue;
+                this.isRedrawRequired = true;
             })
         },
         addUser: function (userDTO)
@@ -1530,6 +1542,7 @@ window.vueApp = new Vue({
         drawSpecialObjects: function () {
 
             //jinja room special objects: for now coin counter
+            console.log(this.currentRoom);
             if (this.currentRoom.id === 'jinja') {
                 const context = this.canvasContext;
                 context.font = "bold 13px Arial, Helvetica, sans-serif";
@@ -1567,9 +1580,10 @@ window.vueApp = new Vue({
                         mouseCursor.y >= realDonationBoxCoordinates.y - 100 - this.blockWidth &&
                         mouseCursor.y <= realDonationBoxCoordinates.y + 100 + this.blockWidth
                     ) {
-                        specialObjectDonationBox.value += 10;
-                        this.isRedrawRequired = true;
-                        //maybe trigger an event?
+                        // specialObjectDonationBox.value += 10;
+                        this.socket.emit("special-events:client-add-shrine-coin");
+                        // this.isRedrawRequired = true;
+                        //maybe trigger an event? this duplicates like crazy though
                         // document.getElementsByTagName("canvas")[0].dispatchEvent(
                         //     new CustomEvent('special-events:shrine-area-click',
                         //         {

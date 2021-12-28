@@ -99,14 +99,6 @@ export interface SpecialObjects
     value?: number;
 }
 
-export interface CallbackEvent
-{
-    eventName: string;
-    eventType: string;
-    x: number;
-    y: number;
-}
-
 export interface JanusServer
 {
     id: string;
@@ -120,7 +112,8 @@ export type RoomStateCollection = {
 export interface RoomState
 {
     streams: StreamSlot[],
-    chess: ChessboardState
+    chess: ChessboardState,
+    coinCounter: number
 }
 
 export interface RoomStateDto
@@ -129,6 +122,7 @@ export interface RoomStateDto
     connectedUsers: PlayerDto[],
     streams: StreamSlotDto[],
     chessboardState: ChessboardStateDto,
+    coinCounter: number
 }
 
 export interface LoginResponseDto
