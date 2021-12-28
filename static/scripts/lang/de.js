@@ -150,15 +150,15 @@ export default
         start_stream_stream_slot_already_taken_by_blocked_streamer: "Jemand, den Sie blockieren, streamt bereits in diesem Slot.",
         start_stream_stream_slot_already_taken_by_blocking_streamer: "Jemand, der Sie blockiert hat, streamt bereits in diesem Slot.",
         start_stream_unknown_error: "Stream kann nicht gestarted werden.",
-        are_you_sure_you_want_to_logout: "Möchten Sie sich wirklich abmelden?",
-        are_you_sure_you_want_to_block: "Möchten Sie diesen Benutzer wirklich blockieren?",
+        are_you_sure_you_want_to_logout: "Sind sie sicher, dass Sie sich abmelden möchten?",
+        are_you_sure_you_want_to_block: "Sind sie sicher, dass Sie diesen Benutzer blockieren möchten?",
         goodbye: "Auf Wiedersehen!",
         flood_warning: "Hey, sprechen Sie nicht eine bisschen zu schnell? Nicht zugestellte Nachricht: ",
         chess_timeout_reached: "Das Schachspiel ist vorbei: Bedenkzeit überschreitet.",
         chess_win: "Das Schachspiel ist vorbei: Der Gewinner ist @USER_NAME@.",
         chess_quit: "Das Schachspiel ist vorbei: @USER_NAME@ hat das Spiel verlassen.",
         
-        are_you_sure_you_want_to_clear_log: "Sind sie sicher, dass Sie das chat log löschen möchten?",
+        are_you_sure_you_want_to_clear_log: "Sind sie sicher, dass Sie das Chat-Log löschen möchten?",
         chat_log_cleared: "Das Chat-Log wurde gelöscht.",
     },
     room:
