@@ -152,7 +152,7 @@ export default
         are_you_sure_you_want_to_logout: "又要拋下我們，自己先離開了嗎？",
         are_you_sure_you_want_to_block: "確定要封鎖該用戶嗎？(雙方(你與封鎖用戶)將無法看到彼此的訊息與角色)",
         goodbye: "路上小心！約定好了還要再回來呦！",
-        flood_warning: "欸，你會不會講太快了！",
+        flood_warning: "欸，你會不會講太快了！ Undelivered message: ", // Partial
         chess_timeout_reached: "對弈結束：時間到",
         chess_win: "對弈結束：@USER_NAME@贏了。",
         chess_quit: "對弈結束：@USER_NAME@投降了。",

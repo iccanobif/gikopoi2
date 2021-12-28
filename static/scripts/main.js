@@ -656,9 +656,7 @@ window.vueApp = new Vue({
             {
                 let message = i18n.t("msg." + messageCode);
                 if (messageCode == "flood_warning")
-                {
-                    message += " Undelivered message: " + extra;
-                }
+                    message += extra;
                 
                 this.writeMessageToLog("SYSTEM", message, null)
             });

@@ -152,7 +152,7 @@ export default
         are_you_sure_you_want_to_logout: "Möchten Sie sich wirklich abmelden?",
         are_you_sure_you_want_to_block: "Möchten Sie diesen Benutzer wirklich blockieren?",
         goodbye: "Auf Wiedersehen!",
-        flood_warning: "Hey, sprechen Sie nicht eine bisschen zu schnell?",
+        flood_warning: "Hey, sprechen Sie nicht eine bisschen zu schnell? Nicht zugestellte Nachricht: ",
         chess_timeout_reached: "Das Schachspiel ist vorbei: Bedenkzeit überschreitet.",
         chess_win: "Das Schachspiel ist vorbei: Der Gewinner ist @USER_NAME@.",
         chess_quit: "Das Schachspiel ist vorbei: @USER_NAME@ hat das Spiel verlassen.",

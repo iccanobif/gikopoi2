@@ -152,7 +152,7 @@ export default
         are_you_sure_you_want_to_logout: "¿Estás seguro de que deseas desconectarte?",
         are_you_sure_you_want_to_block: "¿Estás seguro de que deseas bloquear a este usuario?",
         goodbye: "¡Nos vemos pronto!",
-        flood_warning: "Oye, ¿no te parece que estás hablando demasiado rápido?",
+        flood_warning: "Oye, ¿no te parece que estás hablando demasiado rápido? Mensaje no entregado: ",
         chess_timeout_reached: "Finalizó la partida de ajedrez: timeout alcanzado.",
         chess_win: "Finalizó la partida de ajedrez: el ganador es @USER_NAME@.",
         chess_quit: "Finalizó la partida de ajedrez: @USER_NAME@ abandonó la partida.",

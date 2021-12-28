@@ -152,7 +152,7 @@ export default
         are_you_sure_you_want_to_logout: "Are you sure you want to logout?",
         are_you_sure_you_want_to_block: "Are you sure you want to block this user?",
         goodbye: "See you soon!",
-        flood_warning: "Hey, aren't you talking a bit too fast?",
+        flood_warning: "Hey, aren't you talking a bit too fast? Undelivered message: ",
         chess_timeout_reached: "The chess game is over: timeout reached.",
         chess_win: "The chess game is over: the winner is @USER_NAME@.",
         chess_quit: "The chess game is over: @USER_NAME@ quit the game.",

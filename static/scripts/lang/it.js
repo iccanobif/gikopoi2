@@ -155,7 +155,7 @@ export default
         are_you_sure_you_want_to_logout: "Sei sicuro di voler uscire?",
         are_you_sure_you_want_to_block: "Sei sicuro di voler bloccare questo utente?",
         goodbye: "Ci si vede!",
-        flood_warning: "Ehi, non stai parlando un po' troppo velocemente?",
+        flood_warning: "Ehi, non stai parlando un po' troppo velocemente? Messaggio non recapitato: ",
         chess_timeout_reached: "La partita a scacchi è finita: timeout raggiunto.",
         chess_win: "La partita a scacchi è terminata: il vincitore è @USER_NAME@.",
         chess_quit: "La partita a scacchi è terminata: @USER_NAME@ ha abbandonato la partita.",

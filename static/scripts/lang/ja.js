@@ -152,7 +152,7 @@ export default
         are_you_sure_you_want_to_logout: "本当にログアウトしますか？",
         are_you_sure_you_want_to_block: "このユーザーを相互あぼーんしますか？",
         goodbye: "　またね！",
-        flood_warning: "おい、早口すぎるじゃないか！",
+        flood_warning: "おい、早口すぎるじゃないか！未配信のメッセージ：",
         chess_timeout_reached: "チェス対局が終わりました：時間切れ",
         chess_win: "チェス対局が終わりました：@USER_NAME@の勝利。",
         chess_quit: "チェス対局が終わりました：@USER_NAME@が投了した。",

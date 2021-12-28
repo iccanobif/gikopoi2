@@ -152,7 +152,7 @@ export default
         are_you_sure_you_want_to_logout: "Apakah Anda ingin keluar?",
         are_you_sure_you_want_to_block: "Kamu yakin untuk memblokirnya?",
         goodbye: "Sampai nanti!",
-        flood_warning: "Anda berbicara terlalu banyak!",
+        flood_warning: "Anda berbicara terlalu banyak! Pesan yang tidak terkirim: ",
         chess_timeout_reached: "Game catur sudah berakhir : tidak ada waktu lagi.",
         chess_win: "Game catur sudah berakhir: Pemenangnya @USER_NAME@.",
         chess_quit: "Game catur berakhir: @USER_NAME@ berhenti main.",

@@ -152,7 +152,7 @@ export default
         are_you_sure_you_want_to_logout: "Är du säker på att du vill logga ut?",
         are_you_sure_you_want_to_block: "Är du säker på att du vill blockera den här användaren?",
         goodbye: "På återseende!",
-        flood_warning: "Hörru, snackar du inte lite fort nu?",
+        flood_warning: "Hörru, snackar du inte lite fort nu? Olevererat meddelande: ",
         chess_timeout_reached: "Schackspelet är över: timeout uppnådd.",
         chess_win: "Schackspelet är över: segraren är @USER_NAME@.",
         chess_quit: "Schackspelet är över: @USER_NAME@ lämnade spelet.",
