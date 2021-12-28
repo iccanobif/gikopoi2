@@ -158,6 +158,7 @@ export default
         chess_win: "Das Schachspiel ist vorbei: Der Gewinner ist @USER_NAME@.",
         chess_quit: "Das Schachspiel ist vorbei: @USER_NAME@ hat das Spiel verlassen.",
         
+        are_you_sure_you_want_to_clear_log: "Sind sie sicher, dass Sie das chat log löschen möchten?",
         chat_log_cleared: "Das Chat-Log wurde gelöscht.",
     },
     room:

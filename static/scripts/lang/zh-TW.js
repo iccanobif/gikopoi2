@@ -158,6 +158,7 @@ export default
         chess_win: "對弈結束：@USER_NAME@贏了。",
         chess_quit: "對弈結束：@USER_NAME@投降了。",
         
+        // are_you_sure_you_want_to_clear_log: "",
         // chat_log_cleared: "",
     },
     room:

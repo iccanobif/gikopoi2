@@ -972,6 +972,7 @@ window.vueApp = new Vue({
         },
         clearLog: function ()
         {
+            if (!confirm(i18n.t("msg.are_you_sure_you_want_to_clear_log"))) return;
             document.getElementById("chatLog").innerHTML = '';
             this.showWarningToast(i18n.t("msg.chat_log_cleared"));
         },

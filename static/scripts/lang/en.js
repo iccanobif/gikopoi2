@@ -158,6 +158,7 @@ export default
         chess_win: "The chess game is over: the winner is @USER_NAME@.",
         chess_quit: "The chess game is over: @USER_NAME@ quit the game.",
         
+        are_you_sure_you_want_to_clear_log: "Are you sure you want to clear the chat log?",
         chat_log_cleared: "The chat log has been cleared.",
     },
     room:

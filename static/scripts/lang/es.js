@@ -158,6 +158,7 @@ export default
         chess_win: "Finalizó la partida de ajedrez: el ganador es @USER_NAME@.",
         chess_quit: "Finalizó la partida de ajedrez: @USER_NAME@ abandonó la partida.",
         
+        // are_you_sure_you_want_to_clear_log: "",
         // chat_log_cleared: "",
     },
     room:

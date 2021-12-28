@@ -161,6 +161,7 @@ export default
         chess_win: "La partita a scacchi è terminata: il vincitore è @USER_NAME@.",
         chess_quit: "La partita a scacchi è terminata: @USER_NAME@ ha abbandonato la partita.",
         
+        // are_you_sure_you_want_to_clear_log: "",
         // chat_log_cleared: "",
     },
     room:

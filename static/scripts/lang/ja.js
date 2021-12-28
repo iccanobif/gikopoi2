@@ -158,6 +158,7 @@ export default
         chess_win: "チェス対局が終わりました：@USER_NAME@の勝利。",
         chess_quit: "チェス対局が終わりました：@USER_NAME@が投了した。",
         
+        are_you_sure_you_want_to_clear_log: "チャットログをクリアしますか？",
         chat_log_cleared: "チャットログがクリアされました。",
     },
     room:

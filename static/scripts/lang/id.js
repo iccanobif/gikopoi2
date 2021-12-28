@@ -158,6 +158,7 @@ export default
         chess_win: "Game catur sudah berakhir: Pemenangnya @USER_NAME@.",
         chess_quit: "Game catur berakhir: @USER_NAME@ berhenti main.",
         
+        // are_you_sure_you_want_to_clear_log: "",
         // chat_log_cleared: "",
     },
     room:

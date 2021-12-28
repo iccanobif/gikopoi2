@@ -158,6 +158,7 @@ export default
         chess_win: "Schackspelet är över: segraren är @USER_NAME@.",
         chess_quit: "Schackspelet är över: @USER_NAME@ lämnade spelet.",
         
+        // are_you_sure_you_want_to_clear_log: "",
         // chat_log_cleared: "",
     },
     room:
