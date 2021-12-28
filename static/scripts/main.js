@@ -652,9 +652,15 @@ window.vueApp = new Vue({
                 }
             });
 
-            this.socket.on("server-system-message", (messageCode) =>
+            this.socket.on("server-system-message", (messageCode, extra) =>
             {
-                this.writeMessageToLog("SYSTEM", i18n.t(messageCode), null)
+                let message = i18n.t("msg." + messageCode);
+                if (messageCode == "flood_warning")
+                {
+                    message += " Undelivered message: " + extra;
+                }
+                
+                this.writeMessageToLog("SYSTEM", message, null)
             });
 
             this.socket.on("server-stats", (serverStats) =>

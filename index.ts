@@ -274,7 +274,7 @@ io.on("connection", function (socket: Socket)
                 const firstMessageTime = user.lastMessageDates.shift()!
                 if (Date.now() - firstMessageTime < 5000)
                 {
-                    socket.emit("server-system-message", "msg.flood_warning")
+                    socket.emit("server-system-message", "flood_warning", msg)
                     return
                 }
             }
@@ -884,9 +884,9 @@ io.on("connection", function (socket: Socket)
             const chessState = roomStates[user.areaId][user.roomId].chess
 
             if (chessState?.blackUserID)
-                io.to(getUser(chessState?.blackUserID).socketId).emit("server-system-message", "msg.chess_timeout_reached")
+                io.to(getUser(chessState?.blackUserID).socketId).emit("server-system-message", "chess_timeout_reached")
             if (chessState?.whiteUserID)
-                io.to(getUser(chessState?.whiteUserID).socketId).emit("server-system-message", "msg.chess_timeout_reached")
+                io.to(getUser(chessState?.whiteUserID).socketId).emit("server-system-message", "chess_timeout_reached")
 
             stopChessGame(roomStates, user)
         }, maxWaitForChessMove)
