@@ -116,6 +116,7 @@ export default
         preferences_title_streams: "Streams",
         preferences_streams_auto_resume: "Automatische Fortsetzung",
         preferences_title_chat: "Chat",
+        preferences_clear_log: "Chat-Log löschen",
 
         back_to_homepage: "Zurück zur Startseite",
 
@@ -156,6 +157,8 @@ export default
         chess_timeout_reached: "Das Schachspiel ist vorbei: Bedenkzeit überschreitet.",
         chess_win: "Das Schachspiel ist vorbei: Der Gewinner ist @USER_NAME@.",
         chess_quit: "Das Schachspiel ist vorbei: @USER_NAME@ hat das Spiel verlassen.",
+        
+        chat_log_cleared: "Das Chat-Log wurde gelöscht.",
     },
     room:
     {

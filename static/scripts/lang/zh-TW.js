@@ -116,6 +116,7 @@ export default
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
         // preferences_title_chat: "",
+        // preferences_clear_log: "",
 
         back_to_homepage: "回首頁",
 
@@ -156,6 +157,8 @@ export default
         chess_timeout_reached: "對弈結束：時間到",
         chess_win: "對弈結束：@USER_NAME@贏了。",
         chess_quit: "對弈結束：@USER_NAME@投降了。",
+        
+        // chat_log_cleared: "",
     },
     room:
     {

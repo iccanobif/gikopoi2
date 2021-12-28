@@ -116,6 +116,7 @@ export default
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
         // preferences_title_chat: "",
+        // preferences_clear_log: "",
 
         back_to_homepage: "Gå tillbaka till hemsidan.",
 
@@ -156,6 +157,8 @@ export default
         chess_timeout_reached: "Schackspelet är över: timeout uppnådd.",
         chess_win: "Schackspelet är över: segraren är @USER_NAME@.",
         chess_quit: "Schackspelet är över: @USER_NAME@ lämnade spelet.",
+        
+        // chat_log_cleared: "",
     },
     room:
     {

@@ -116,6 +116,7 @@ export default
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
         // preferences_title_chat: "",
+        // preferences_clear_log: "",
 
         back_to_homepage: "Volver a la página de inicio",
 
@@ -156,6 +157,8 @@ export default
         chess_timeout_reached: "Finalizó la partida de ajedrez: timeout alcanzado.",
         chess_win: "Finalizó la partida de ajedrez: el ganador es @USER_NAME@.",
         chess_quit: "Finalizó la partida de ajedrez: @USER_NAME@ abandonó la partida.",
+        
+        // chat_log_cleared: "",
     },
     room:
     {

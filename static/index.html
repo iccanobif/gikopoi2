@@ -492,6 +492,9 @@
                                 v-model="showIgnoreIndicatorInLog" v-on:change="storeSet('showIgnoreIndicatorInLog')"><label
                                 for="preferences-ignore-indicator-in-log">{{ $t("ui.preferences_ignore_indicator_in_log") }}</label>
                         </div>
+                        <div class='popup-item'>
+                            <button v-on:click="clearLog">{{ $t("ui.preferences_clear_log") }}</button>
+                        </div>
                     </div>
                     <div class='popup-section'>
                         <div class='popup-header'>{{ $t("ui.preferences_title_notifications") }}</div>
@@ -602,7 +605,6 @@
                     <button v-on:click="closeWarningToast">{{ $t("ui.popup_button_ok") }}</button>
                 </div>
             </div>
-
 
             <div class="popup-overlay" v-if="isDeviceSelectionOpen" v-on:click="cancelDeviceSelection"></div>
             <fieldset class="popup" v-if="isDeviceSelectionOpen" :disabled="waitingForDevicePermission">

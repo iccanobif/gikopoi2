@@ -116,6 +116,7 @@ export default
         preferences_title_streams: "Streams",
         preferences_streams_auto_resume: "Auto resume",
         preferences_title_chat: "Chat",
+        preferences_clear_log: "Clear chat log",
 
         back_to_homepage: "Go back to home page",
 
@@ -156,6 +157,8 @@ export default
         chess_timeout_reached: "The chess game is over: timeout reached.",
         chess_win: "The chess game is over: the winner is @USER_NAME@.",
         chess_quit: "The chess game is over: @USER_NAME@ quit the game.",
+        
+        chat_log_cleared: "The chat log has been cleared.",
     },
     room:
     {

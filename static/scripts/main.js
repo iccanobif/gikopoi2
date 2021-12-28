@@ -970,6 +970,11 @@ window.vueApp = new Vue({
                 return i18n.t("default_user_name");
             return name;
         },
+        clearLog: function ()
+        {
+            document.getElementById("chatLog").innerHTML = '';
+            this.showWarningToast(i18n.t("msg.chat_log_cleared"));
+        },
         drawImage: function (context, image, x, y)
         {
             if (!x) x = 0;

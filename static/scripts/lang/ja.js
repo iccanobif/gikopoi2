@@ -116,6 +116,7 @@ export default
         preferences_title_streams: "配信",
         preferences_streams_auto_resume: "配信再開後に自動受信",
         preferences_title_chat: "チャット",
+        preferences_clear_log: "チャットログをクリア",
 
         back_to_homepage: "トップへ戻る",
 
@@ -156,6 +157,8 @@ export default
         chess_timeout_reached: "チェス対局が終わりました：時間切れ",
         chess_win: "チェス対局が終わりました：@USER_NAME@の勝利。",
         chess_quit: "チェス対局が終わりました：@USER_NAME@が投了した。",
+        
+        chat_log_cleared: "チャットログがクリアされました。",
     },
     room:
     {
