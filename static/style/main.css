@@ -468,7 +468,7 @@ video {
     border: 0;
 }
 
-#warning-toast
+#dialog-popup
 {
     z-index: 204;
 }
@@ -491,7 +491,7 @@ video {
     background:rgba(77,77,77,.4);
 }
 
-#warning-toast-overlay
+#dialog-popup-overlay
 {
     z-index: 203
 }

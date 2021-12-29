@@ -202,10 +202,14 @@ window.vueApp = new Vue({
         selectedAudioDeviceId: null,
         selectedVideoDeviceId: null,
         waitingForDevicePermission: false,
-
-        // Warning Toast
-        isWarningToastOpen: false,
-        warningToastMessage: "",
+        
+        // Dialog Popup
+        dialogPopupMessage: '',
+        dialogPopupTitle: '',
+        dialogPopupButtons: [],
+        dialogPopupCallback: null,
+        isDialogPopupOpen: false,
+        
         loggedIn: false,
         loggedOut: false,
         isPoop: false,
@@ -456,14 +460,57 @@ window.vueApp = new Vue({
         {
             return Object.keys(i18n.messages);
         },
+        openDialog: function (text, title, buttons, callback)
+        {
+            this.dialogPopupMessage = text;
+            this.dialogPopupTitle = title;
+            this.dialogPopupButtons = buttons;
+            this.dialogPopupCallback = callback;
+            this.isDialogPopupOpen = true;
+        },
+        closeDialog: function (buttonIndex)
+        {
+            if (!(buttonIndex >= 0)) // for when overlay clicked
+            {
+                if (this.dialogPopupButtons.length > 1)
+                    return false;
+                else
+                    buttonIndex = 0;
+            }
+            
+            this.isDialogPopupOpen = false;
+            if (this.dialogPopupCallback)
+            {
+                this.dialogPopupCallback(buttonIndex);
+                this.dialogPopupCallback = null;
+            }
+        },
         showWarningToast: function (text)
         {
-            this.warningToastMessage = text;
-            this.isWarningToastOpen = true;
+            this.openDialog(text,
+                i18n.t("ui.warning_toast_title"),
+                [i18n.t("ui.popup_button_ok")]);
         },
-        closeWarningToast: function ()
+        confirm: function (text, okCallback, cancelCallback, button)
         {
-            this.isWarningToastOpen = false;
+            // button param can be an array of two strings for confirm and cancel,
+            // or one string to be used for confirm
+            if (button == undefined)
+            {
+                button = [i18n.t("ui.popup_button_ok"),
+                    i18n.t("ui.popup_button_cancel")];
+            }
+            else if (!Array.isArray(button))
+            {
+                button = [button, i18n.t("ui.popup_button_cancel")];
+            }
+            this.openDialog(text, null, button, buttonIndex =>
+            {
+                if(buttonIndex == 0)
+                    okCallback();
+                else if (cancelCallback)
+                    cancelCallback();
+            });
         },
         loadRoomBackground: async function ()
         {
@@ -986,9 +1033,11 @@ window.vueApp = new Vue({
         },
         clearLog: function ()
         {
-            if (!confirm(i18n.t("msg.are_you_sure_you_want_to_clear_log"))) return;
-            document.getElementById("chatLog").innerHTML = '';
-            this.showWarningToast(i18n.t("msg.chat_log_cleared"));
+            this.confirm(i18n.t("msg.are_you_sure_you_want_to_clear_log"), () =>
+            {
+                document.getElementById("chatLog").innerHTML = '';
+                this.showWarningToast(i18n.t("msg.chat_log_cleared"));
+            });
         },
         drawImage: function (context, image, x, y)
         {
@@ -2676,10 +2725,10 @@ window.vueApp = new Vue({
         },
         blockUser: function(userId)
         {
-            if (confirm(i18n.t("msg.are_you_sure_you_want_to_block")))
+            this.confirm(i18n.t("msg.are_you_sure_you_want_to_block"), () =>
             {
                 this.socket.emit("user-block", userId);
-            }
+            });
         },
         setRulaRoomListSortKey(key)
         {
@@ -2830,7 +2879,7 @@ window.vueApp = new Vue({
         },
         logout: async function ()
         {
-            if (confirm(i18n.t("msg.are_you_sure_you_want_to_logout")))
+            this.confirm(i18n.t("msg.are_you_sure_you_want_to_logout"), () =>
             {
                 logToServer(new Date() + " " + this.myUserID + " Logging out")
                 if (this.canvasContainerResizeObserver)
@@ -2849,7 +2898,7 @@ window.vueApp = new Vue({
                         this.wantToDropStream(i)
 
                 window.onbeforeunload = null
-            }
+            });
         },
         handleShowNotifications: async function ()
         {
