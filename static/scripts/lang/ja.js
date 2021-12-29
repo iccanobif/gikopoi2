@@ -49,7 +49,7 @@ export default
         rula_menu_column_user_count: "人数",
         rula_menu_column_streamers: "配信者",
         rula_menu_button_rula: "ルーラ",
-        rula_menu_label_group: "エリア：",
+        rula_menu_label_group: "エリア",
         rula_menu_group_option_all: "すべて",
 
         user_list_popup_title: "ユーザーリスト（@USER_COUNT@名）",
@@ -113,7 +113,10 @@ export default
         preferences_timestamps_in_copied_log: "コピーしたログに時刻を含む",
         preferences_ignore_indicator_in_log: "一方あぼーんされたユーザーからのログの代わりにインジケーターを表示",
         preferences_language: "言語",
-
+        preferences_title_streams: "配信",
+        preferences_streams_auto_resume: "配信再開後に自動受信",
+        preferences_title_chat: "チャット",
+        preferences_clear_log: "チャットログをクリア",
 
         back_to_homepage: "トップへ戻る",
 
@@ -150,10 +153,13 @@ export default
         are_you_sure_you_want_to_logout: "本当にログアウトしますか？",
         are_you_sure_you_want_to_block: "このユーザーを相互あぼーんしますか？",
         goodbye: "　またね！",
-        flood_warning: "おい、早口すぎるじゃないか！",
+        flood_warning: "おい、早口すぎるじゃないか！未配信のメッセージ：",
         chess_timeout_reached: "チェス対局が終わりました：時間切れ",
         chess_win: "チェス対局が終わりました：@USER_NAME@の勝利。",
         chess_quit: "チェス対局が終わりました：@USER_NAME@が投了した。",
+        
+        are_you_sure_you_want_to_clear_log: "チャットログをクリアしますか？",
+        chat_log_cleared: "チャットログがクリアされました。",
     },
     room:
     {
@@ -203,7 +209,7 @@ export default
     {
         gikopoipoi: "ギコっぽいぽい",
         gikopoi: r("海辺の町", "うみべのまち"),
-        bar_giko: r("ＢＡＲギコ", "バーギコ"),
+        bar_giko: r("ＢＡＲギコの町", "バーギコのまち"),
     }
 }
 

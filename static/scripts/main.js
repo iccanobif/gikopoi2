@@ -174,6 +174,7 @@ window.vueApp = new Vue({
         customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
         isCoinSoundEnabled: localStorage.getItem("isCoinSoundEnabled") != "false",
         mentionSoundFunction: null,
+        isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
 
         // streaming
         streams: [],
@@ -657,9 +658,13 @@ window.vueApp = new Vue({
                 }
             });
 
-            this.socket.on("server-system-message", (messageCode) =>
+            this.socket.on("server-system-message", (messageCode, extra) =>
             {
-                this.writeMessageToLog("SYSTEM", i18n.t(messageCode), null)
+                let message = i18n.t("msg." + messageCode);
+                if (messageCode == "flood_warning")
+                    message += extra;
+                
+                this.writeMessageToLog("SYSTEM", message, null)
             });
 
             this.socket.on("server-stats", (serverStats) =>
@@ -978,6 +983,12 @@ window.vueApp = new Vue({
             if (name == "")
                 return i18n.t("default_user_name");
             return name;
+        },
+        clearLog: function ()
+        {
+            if (!confirm(i18n.t("msg.are_you_sure_you_want_to_clear_log"))) return;
+            document.getElementById("chatLog").innerHTML = '';
+            this.showWarningToast(i18n.t("msg.chat_log_cleared"));
         },
         drawImage: function (context, image, x, y)
         {
@@ -2531,7 +2542,6 @@ window.vueApp = new Vue({
                 this.showWarningToast(i18n.t("msg.no_webrtc"));
                 return;
             }
-
             Vue.set(this.takenStreams, streamSlotId, true);
 
             if (streamSlotId in this.streams && this.streams[streamSlotId].isReady)
@@ -2584,6 +2594,10 @@ window.vueApp = new Vue({
             if(!this.rtcPeerSlots[streamSlotId]) return;
             this.rtcPeerSlots[streamSlotId].rtcPeer.close()
             this.rtcPeerSlots[streamSlotId] = null;
+            
+            if (!this.isStreamAutoResumeEnabled)
+                Vue.set(this.takenStreams, streamSlotId, false);
+            
             this.socket.emit("user-want-to-drop-stream", streamSlotId);
         },
         wantToDropStream: function (streamSlotId)
@@ -2675,8 +2689,9 @@ window.vueApp = new Vue({
                 this.rulaRoomListSortDirection *= -1;
 
             this.rulaRoomListSortKey = key
+            
+            localStorage.setItem("rulaRoomListSortKey", this.rulaRoomListSortKey)
 
-            localStorage.setItem("lastRoomListSortKey", this.rulaRoomListSortKey)
             localStorage.setItem("rulaRoomListSortDirection", this.rulaRoomListSortDirection)
 
             this.prepareRulaRoomList();

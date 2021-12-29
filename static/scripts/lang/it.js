@@ -49,7 +49,7 @@ export default
         rula_menu_column_user_count: "Utenti",
         rula_menu_column_streamers: "Streamer",
         rula_menu_button_rula: "Rula",
-        rula_menu_label_group: "Area:",
+        rula_menu_label_group: "Area",
         rula_menu_group_option_all: "Tutte",
 
         user_list_popup_title: "Lista Utenti (totale: @USER_COUNT@)",
@@ -116,7 +116,10 @@ export default
         preferences_timestamps_in_copied_log: "Includi timestamp nei log copiati",
         preferences_ignore_indicator_in_log: "Mostra nel log un indicatore per i messaggi di utenti ignorati",
         preferences_language: "Lingua",
-        
+        // preferences_title_streams: "",
+        // preferences_streams_auto_resume: "",
+        // preferences_title_chat: "",
+        // preferences_clear_log: "",
 
         back_to_homepage: "Torna all'home page",
 
@@ -153,10 +156,13 @@ export default
         are_you_sure_you_want_to_logout: "Sei sicuro di voler uscire?",
         are_you_sure_you_want_to_block: "Sei sicuro di voler bloccare questo utente?",
         goodbye: "Ci si vede!",
-        flood_warning: "Ehi, non stai parlando un po' troppo velocemente?",
+        flood_warning: "Ehi, non stai parlando un po' troppo velocemente? Messaggio non recapitato: ",
         chess_timeout_reached: "La partita a scacchi è finita: timeout raggiunto.",
         chess_win: "La partita a scacchi è terminata: il vincitore è @USER_NAME@.",
         chess_quit: "La partita a scacchi è terminata: @USER_NAME@ ha abbandonato la partita.",
+        
+        // are_you_sure_you_want_to_clear_log: "",
+        // chat_log_cleared: "",
     },
     room:
     {
@@ -206,6 +212,6 @@ export default
     {
         gikopoipoi: "Gikopoipoi",
         gikopoi: "Città del mare",
-        bar_giko: "Bar Giko",
+        // bar_giko: "",
     }
 }

@@ -44,7 +44,7 @@ export default
         rula_menu_column_user_count: "Usores",
         rula_menu_column_streamers: "Transmittatores",
         rula_menu_button_rula: "Rula",
-        rula_menu_label_group: "Area:",
+        rula_menu_label_group: "Area",
         rula_menu_group_option_all: "Omnes",
 
         user_list_popup_title: "Tabula usoris (totum: @USER_COUNT@)",
@@ -116,6 +116,6 @@ export default
     {
         gikopoipoi: "Gikopoipoi",
         gikopoi: "Urbs maris",
-        bar_giko: "Bar Giko",
+        bar_giko: "Urbs Bar Giko",
     }
 }

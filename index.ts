@@ -78,7 +78,8 @@ function initializeRoomStates()
                 },
                 coinCounter: 0,
             }
-            for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
+            if (janusServers.length)
+                for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
             {
                 roomStates[areaId][roomId].streams.push({
                     streamId: 0,
@@ -130,21 +131,54 @@ app.use(async function (req, res, next) {
 
 // Reject websocket connections from bad IPs
 io.use(async (socket: Socket, next: () => void) => {
-    const ip = getRealIpWebSocket(socket)
 
-    if (!ip) {
-        next();
-        return;
+    let user: Player | null = null
+    try
+    {
+        const privateUserId = socket.handshake.headers["private-user-id"]
+
+        // Array.isArray(privateUserId) is needed only to make typescript happy
+        // and make it understand that I expect privateUserId to be just a string
+        user = (privateUserId && !Array.isArray(privateUserId)) 
+                            ? getLoginUser(privateUserId) 
+                            : null;
+
+        const ip = getRealIpWebSocket(socket)
+
+        log.info("Connection attempt",
+                ip,
+                user?.id,
+                "private-user-id:", privateUserId
+                );
+        
+        if (!user)
+        {
+            log.info("server-cant-log-you-in", privateUserId)
+            socket.emit("server-cant-log-you-in")
+            socket.disconnect(true)
+            return;
+        }
+
+        socket.data = { user: user }
+
+        if (!ip) {
+            next();
+            return;
+        }
+
+        if (bannedIPs.has(ip))
+            socket.disconnect()
+
+        const confidenceScore = await getAbuseConfidenceScore(ip)
+        if (confidenceScore > maximumAbuseConfidenceScore)
+            socket.disconnect()
+        else
+            next()
     }
-
-    if (bannedIPs.has(ip))
-        socket.disconnect()
-
-    const confidenceScore = await getAbuseConfidenceScore(ip)
-    if (confidenceScore > maximumAbuseConfidenceScore)
-        socket.disconnect()
-    else
-        next()
+    catch (exc)
+    {
+        logException(exc, user)
+    }
 })
 
 io.on("connection", function (socket: Socket)
@@ -194,38 +228,15 @@ io.on("connection", function (socket: Socket)
         }
         catch (exc)
         {
-            logException(exc)
+            logException(exc, user)
         }
     })
 
 
-    // Authenticate connection and initialize user and currentRoom (might be better to
-    // do this in a middleware?)
+    // Initialize user and currentRoom
     try
     {
-        const privateUserId = socket.handshake.headers["private-user-id"]
-
-        // Array.isArray(privateUserId) is needed only to make typescript happy
-        // and make it understand that I expect privateUserId to be just a string
-        const loginUser = (privateUserId && !Array.isArray(privateUserId)) 
-                            ? getLoginUser(privateUserId) 
-                            : null;
-
-        log.info("Connection attempt",
-                getRealIpWebSocket(socket),
-                loginUser?.id,
-                "private-user-id:", privateUserId
-                );
-
-        if (!loginUser)
-        {
-            log.info("server-cant-log-you-in", privateUserId)
-            socket.emit("server-cant-log-you-in")
-            socket.disconnect(true)
-            return;
-        }
-
-        user = loginUser;
+        user = socket.data.user;
         user.socketId = socket.id;
 
         log.info("user-connect userId:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
@@ -248,14 +259,15 @@ io.on("connection", function (socket: Socket)
     }
     catch (e)
     {
-        logException(e)
-        try {
+        logException(e, socket?.data?.user)
+        try
+        {
             socket.emit("server-cant-log-you-in")
             socket.disconnect(true)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, socket?.data?.user)
         }
     }
     socket.on("user-msg", function (msg: string)
@@ -278,7 +290,7 @@ io.on("connection", function (socket: Socket)
                 const firstMessageTime = user.lastMessageDates.shift()!
                 if (Date.now() - firstMessageTime < 5000)
                 {
-                    socket.emit("server-system-message", "msg.flood_warning")
+                    socket.emit("server-system-message", "flood_warning", msg)
                     return
                 }
             }
@@ -328,7 +340,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     });
     socket.on("user-move", async function (direction: string)
@@ -438,7 +450,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     });
     socket.on("user-bubble-position", function (position: string)
@@ -455,7 +467,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     });
     socket.on("user-want-to-stream", async function (data: {
@@ -536,7 +548,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
             socket.emit("server-not-ok-to-stream", "start_stream_unknown_error")
         }
     })
@@ -549,7 +561,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -607,7 +619,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
             socket.emit("server-not-ok-to-take-stream", streamSlotId);
         }
     })
@@ -633,7 +645,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -691,7 +703,7 @@ io.on("connection", function (socket: Socket)
                 
                 if (!stream.isActive)
                 {
-                    destroySession(videoRoomHandle, stream)
+                    destroySession(videoRoomHandle, stream, user)
                     return;
                 }
                 log.info("user-rtc-message", user.id,
@@ -707,7 +719,7 @@ io.on("connection", function (socket: Socket)
                 
                 if (!stream.isActive)
                 {
-                    destroySession(janusHandle, stream)
+                    destroySession(janusHandle, stream, user)
                     return
                 }
                 participantObject.janusHandle = janusHandle
@@ -749,7 +761,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e: any)
         {
-            logException(e)
+            logException(e, user)
 
             try
             {
@@ -808,7 +820,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -832,7 +844,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -863,7 +875,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -879,7 +891,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -888,9 +900,9 @@ io.on("connection", function (socket: Socket)
             const chessState = roomStates[user.areaId][user.roomId].chess
 
             if (chessState?.blackUserID)
-                io.to(getUser(chessState?.blackUserID).socketId).emit("server-system-message", "msg.chess_timeout_reached")
+                io.to(getUser(chessState?.blackUserID).socketId).emit("server-system-message", "chess_timeout_reached")
             if (chessState?.whiteUserID)
-                io.to(getUser(chessState?.whiteUserID).socketId).emit("server-system-message", "msg.chess_timeout_reached")
+                io.to(getUser(chessState?.whiteUserID).socketId).emit("server-system-message", "chess_timeout_reached")
 
             stopChessGame(roomStates, user)
         }, maxWaitForChessMove)
@@ -943,7 +955,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -965,7 +977,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -1027,7 +1039,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -1164,7 +1176,7 @@ app.get("/", async (req, res) =>
         }
         catch (e)
         {
-            logException(e)
+            logException(e, null)
         }
 
         data = data.replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
@@ -1385,7 +1397,7 @@ app.get("/areas/:areaId/streamers", (req, res) =>
     }
     catch (e)
     {
-        logException(e)
+        logException(e, null)
     }
 })
 
@@ -1413,7 +1425,7 @@ app.get("/admin", (req, res) => {
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
         res.end("error")
     }
 })
@@ -1461,7 +1473,7 @@ app.post("/user-list", (req, res) => {
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
         res.end("error")
     }
 })
@@ -1493,7 +1505,7 @@ app.post("/banned-ip-list", (req, res) => {
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
         res.end("error")
     }
 })
@@ -1520,7 +1532,7 @@ app.post("/ban", async (req, res) => {
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
         res.end("error")
     }
 })
@@ -1545,7 +1557,7 @@ app.post("/unban", (req, res) => {
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
         res.end("error")
     }
 })
@@ -1559,7 +1571,7 @@ app.post("/client-log", (req, res) =>
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
         res.end()
     }
 })
@@ -1705,7 +1717,7 @@ function getLeastUsedJanusServer()
     return janusServersObject[serverId];
 }
 
-async function destroySession(janusHandle: any, stream: StreamSlot)
+async function destroySession(janusHandle: any, stream: StreamSlot, user: Player)
 {
     try
     {
@@ -1737,7 +1749,7 @@ async function destroySession(janusHandle: any, stream: StreamSlot)
     }
     catch (error)
     {
-        logException(error)
+        logException(error, user)
     }
 }
 
@@ -1756,7 +1768,7 @@ async function clearStream(user: Player)
             stream.isActive = false
             stream.isReady = false
             
-            await destroySession(stream.publisher!.janusHandle, stream)
+            await destroySession(stream.publisher!.janusHandle, stream, user)
             
             sendUpdatedStreamSlotState(user)
             emitServerStats(user.areaId)
@@ -1764,7 +1776,7 @@ async function clearStream(user: Player)
     }
     catch (error)
     {
-        logException(error)
+        logException(error, user)
     }
 }
 
@@ -1795,7 +1807,7 @@ function clearRoomListener(user: Player)
     }
     catch (error)
     {
-        logException(error)
+        logException(error, user)
     }
 }
 
@@ -1882,15 +1894,21 @@ function sendUpdatedStreamSlotState(user: Player)
 
 function stringifyException(exception: any)
 {
-    const logMessage = exception.message + " " + exception.stack
+    // Handle the case when exception isn't an Exception object
+    const logMessage = exception.message
+                        ? (exception.message + " " + exception.stack)
+                        : (exception + "")
     return logMessage.replace(/\n/g, "")
 }
 
-export function logException(exception: any)
+export function logException(exception: any, user: Player | null)
 {
-    log.error(stringifyException(exception));
+    if (user)
+        log.error("Server error:", user.id, stringifyException(exception));
+    else
+        log.error("Server error:", stringifyException(exception));
 
-    if (exception.message.match(/Couldn't attach to plugin: error '-1'/))
+    if (exception?.message?.match(/Couldn't attach to plugin: error '-1'/))
     {
         // When this exception is raised, usually it means that the janus server has broken
         // and so far the only thing that will fix it is to restart the server, so that all streams
@@ -1940,7 +1958,7 @@ setInterval(async () =>
     }
     catch (e)
     {
-        logException(e)
+        logException(e, null)
     }
     isBackgroundTaskRunning = false
 }, 1 * 1000)
@@ -1977,7 +1995,7 @@ async function persistState()
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
     }
 }
 
@@ -2029,13 +2047,13 @@ async function restoreState()
             }
             catch (exc)
             {
-                logException(exc)
+                logException(exc, null)
             }
         }
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
     }
 }
 

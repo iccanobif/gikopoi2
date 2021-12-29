@@ -49,7 +49,7 @@ export default
         rula_menu_column_user_count: "人數",
         rula_menu_column_streamers: "直播中",
         rula_menu_button_rula: "嚕啦！",
-        rula_menu_label_group: "區域：",
+        rula_menu_label_group: "區域",
         //rula_menu_group_option_all: "",
 
         user_list_popup_title: "用戶訊息過濾（@USER_COUNT@名）",
@@ -113,6 +113,10 @@ export default
         preferences_timestamps_in_copied_log: "在複製的聊天紀錄中包含時間標記",
         preferences_ignore_indicator_in_log: "在聊天紀錄中以紅點標記隱藏用戶之訊息位置",
         preferences_language: "語言",
+        // preferences_title_streams: "",
+        // preferences_streams_auto_resume: "",
+        // preferences_title_chat: "",
+        // preferences_clear_log: "",
 
         back_to_homepage: "回首頁",
 
@@ -149,10 +153,13 @@ export default
         are_you_sure_you_want_to_logout: "又要拋下我們，自己先離開了嗎？",
         are_you_sure_you_want_to_block: "確定要封鎖該用戶嗎？(雙方(你與封鎖用戶)將無法看到彼此的訊息與角色)",
         goodbye: "路上小心！約定好了還要再回來呦！",
-        flood_warning: "欸，你會不會講太快了！",
+        flood_warning: "欸，你會不會講太快了！ Undelivered message: ", // Partial
         chess_timeout_reached: "對弈結束：時間到",
         chess_win: "對弈結束：@USER_NAME@贏了。",
         chess_quit: "對弈結束：@USER_NAME@投降了。",
+        
+        // are_you_sure_you_want_to_clear_log: "",
+        // chat_log_cleared: "",
     },
     room:
     {
@@ -202,6 +209,6 @@ export default
     {
         gikopoipoi: "GIKOpoipoi",
         gikopoi: "海邊的小鎮",
-        bar_giko: "ＢＡＲ GIKO",
+        // bar_giko: "",
     }
 }

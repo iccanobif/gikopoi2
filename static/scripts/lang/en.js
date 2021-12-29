@@ -49,7 +49,7 @@ export default
         rula_menu_column_user_count: "Users",
         rula_menu_column_streamers: "Streamers",
         rula_menu_button_rula: "Rula",
-        rula_menu_label_group: "Area:",
+        rula_menu_label_group: "Area",
         rula_menu_group_option_all: "All",
 
         user_list_popup_title: "User List (total: @USER_COUNT@)",
@@ -114,7 +114,11 @@ export default
         preferences_ignore_indicator_in_log: "Show in the log an indicator in place of the messages by ignored users",
         preferences_language: "Language",
         preferences_enable_coin_sound: "Enable coin sound",
-        
+
+        preferences_title_streams: "Streams",
+        preferences_streams_auto_resume: "Auto resume",
+        preferences_title_chat: "Chat",
+        preferences_clear_log: "Clear chat log",
 
         back_to_homepage: "Go back to home page",
 
@@ -151,10 +155,13 @@ export default
         are_you_sure_you_want_to_logout: "Are you sure you want to logout?",
         are_you_sure_you_want_to_block: "Are you sure you want to block this user?",
         goodbye: "See you soon!",
-        flood_warning: "Hey, aren't you talking a bit too fast?",
+        flood_warning: "Hey, aren't you talking a bit too fast? Undelivered message: ",
         chess_timeout_reached: "The chess game is over: timeout reached.",
         chess_win: "The chess game is over: the winner is @USER_NAME@.",
         chess_quit: "The chess game is over: @USER_NAME@ quit the game.",
+        
+        are_you_sure_you_want_to_clear_log: "Are you sure you want to clear the chat log?",
+        chat_log_cleared: "The chat log has been cleared.",
     },
     room:
     {
@@ -204,6 +211,6 @@ export default
     {
         gikopoipoi: "Gikopoipoi",
         gikopoi: "Sea City",
-        bar_giko: "Bar Giko",
+        bar_giko: "Bar Giko Town",
     }
 }

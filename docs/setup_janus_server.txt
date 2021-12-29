@@ -6,7 +6,9 @@ SystemMaxUse=1G
 apt update
 apt upgrade
 
-apt install vnstat vnstati snapd nginx
+apt install snapd nginx
+# Useful:
+apt install vnstat vnstati htop iftop tmux
 
 # Create self signed ssl cert initially which will be replaced by certbot's
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
@@ -106,11 +108,3 @@ TasksMax=500000
 --- /etc/cron.d/increase_threads ---
 @reboot root echo 100000 > /proc/sys/kernel/threads-max
 ---
-
-#Info on adding ionos agent monitoring which can be viewed from the ionos server dashboard thing:
-#https://www.ionos.co.uk/help/index.php?id=2107
-
-# Tools installed by iccanobif:
-htop
-iftop
-tmux

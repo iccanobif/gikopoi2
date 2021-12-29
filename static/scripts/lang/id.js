@@ -49,7 +49,7 @@ export default
         rula_menu_column_user_count: "Pengguna",
         rula_menu_column_streamers: "Siaran",
         rula_menu_button_rula: "Rula",
-        rula_menu_label_group: "Daerah:",
+        rula_menu_label_group: "Daerah",
         //rula_menu_group_option_all: "",
 
         user_list_popup_title: "Daftar Pengguna (total: @USER_COUNT@)",
@@ -112,8 +112,11 @@ export default
         preferences_crisp_mode: "Tajam",
         preferences_timestamps_in_copied_log: "Sertakan cap waktu dalam log yang disalin",
         preferences_ignore_indicator_in_log: "Ketika pengguna diabaikan. Menampilkan placeholder untuk pesan tersembunyi di log.",
-        preferences_language: "Bahasa",        
-        
+        preferences_language: "Bahasa",
+        // preferences_title_streams: "",
+        // preferences_streams_auto_resume: "",
+        // preferences_title_chat: "",
+        // preferences_clear_log: "",
 
         back_to_homepage: "Keluar Dari Permainan",
 
@@ -150,10 +153,13 @@ export default
         are_you_sure_you_want_to_logout: "Apakah Anda ingin keluar?",
         are_you_sure_you_want_to_block: "Kamu yakin untuk memblokirnya?",
         goodbye: "Sampai nanti!",
-        flood_warning: "Anda berbicara terlalu banyak!",
+        flood_warning: "Anda berbicara terlalu banyak! Pesan yang tidak terkirim: ",
         chess_timeout_reached: "Game catur sudah berakhir : tidak ada waktu lagi.",
         chess_win: "Game catur sudah berakhir: Pemenangnya @USER_NAME@.",
         chess_quit: "Game catur berakhir: @USER_NAME@ berhenti main.",
+        
+        // are_you_sure_you_want_to_clear_log: "",
+        // chat_log_cleared: "",
     },
     room:
     {
@@ -203,6 +209,6 @@ export default
     {
         gikopoipoi: "Gikopoipoi",
         gikopoi: "Kota Lautan",
-        bar_giko: "Bar Giko",
+        // bar_giko: "",
     }
 }

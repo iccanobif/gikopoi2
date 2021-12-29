@@ -49,7 +49,7 @@ export default
         rula_menu_column_user_count: "Användare",
         rula_menu_column_streamers: "Strömmare",
         rula_menu_button_rula: "Rula",
-        rula_menu_label_group: "Område:",
+        rula_menu_label_group: "Område",
         rula_menu_group_option_all: "Alla",
 
         user_list_popup_title: "Användarlista (totalt: @USER_COUNT@)",
@@ -113,7 +113,10 @@ export default
         preferences_timestamps_in_copied_log: "Inkludera tidsstämplar i kopierad logg",
         preferences_ignore_indicator_in_log: "Ersätt meddelanden från ignorerade användare med en indikator i loggen.",
         preferences_language: "Språk",
-        
+        // preferences_title_streams: "",
+        // preferences_streams_auto_resume: "",
+        // preferences_title_chat: "",
+        // preferences_clear_log: "",
 
         back_to_homepage: "Gå tillbaka till hemsidan.",
 
@@ -150,10 +153,13 @@ export default
         are_you_sure_you_want_to_logout: "Är du säker på att du vill logga ut?",
         are_you_sure_you_want_to_block: "Är du säker på att du vill blockera den här användaren?",
         goodbye: "På återseende!",
-        flood_warning: "Hörru, snackar du inte lite fort nu?",
+        flood_warning: "Hörru, snackar du inte lite fort nu? Olevererat meddelande: ",
         chess_timeout_reached: "Schackspelet är över: timeout uppnådd.",
         chess_win: "Schackspelet är över: segraren är @USER_NAME@.",
         chess_quit: "Schackspelet är över: @USER_NAME@ lämnade spelet.",
+        
+        // are_you_sure_you_want_to_clear_log: "",
+        // chat_log_cleared: "",
     },
     room:
     {
@@ -203,6 +209,6 @@ export default
     {
         gikopoipoi: "Gikopoipoi",
         gikopoi: "Sjöstaden",
-        bar_giko: "Gikobaren",
+        // bar_giko: "",
     }
 }
