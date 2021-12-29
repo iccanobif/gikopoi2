@@ -1100,7 +1100,7 @@ export const rooms: { [roomId: string]: Room } = {
             steps: { x: 14, y: 4, direction: "left", target: { roomId: "jinja_st", doorId: "torii" } },
         },
         specialObjects: [
-            { objectName: 'Donations', x: 2, y: 7, color: '#00cc00', type: 'draw'},
+            { objectName: 'Donation Text', label: '', suffix: '¥', x: 2, y: 7, color: 'yellow', type: 'draw'},
             { objectName: 'Donation Box', x: 2, y: 6, type: 'invisible', value: 0}
         ],
         streamSlotCount: 4,

@@ -459,6 +459,11 @@
                                 v-model="isDarkMode" v-on:change="handleDarkMode"><label
                                 for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
                         </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="enable-coin-sound"
+                                   v-model="isCoinSoundEnabled" v-on:change="toggleCoinSound"><label
+                            for="enable-coin-sound">{{ $t("ui.preferences_enable_coin_sound")}}</label>
+                        </div>
                         <div class='popup-item' v-if="areaId != 'gen'">
                             <label for="preferences-language">{{ $t("ui.preferences_language") }}</label>
                             <select id="preferences-language" v-model="language" v-on:change="handleLanguageChange">
@@ -664,6 +669,7 @@
     <audio id="message-sound" src="message.mp3"></audio>
     <audio id="mention-sound" src="mention.mp3"></audio>
     <audio id="login-sound" src="login.mp3"></audio>
+    <audio id="ka-ching-sound" src="ka-ching.mp3"></audio>
 
     <script src="libraries/vue.js"></script>
     <script src="libraries/vue-i18n.js"></script>

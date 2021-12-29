@@ -972,9 +972,6 @@ io.on("connection", function (socket: Socket)
     socket.on("special-events:client-add-shrine-coin", function () {
         //this only triggers in the jinja room so, technically speaking, I don't have to check for state
         //get donation box
-        console.log("special-events:client-add-shrine-coin triggered");
-        // let donationBoxState = roomStates[user.areaId][user.roomId].specialObjects![1] || [];
-        // donationBoxState.value! += 10;
         roomStates[user.areaId][user.roomId].coinCounter += 10;
         //send the value to users
         userRoomEmit(user, user.areaId, user.roomId, "special-events:server-add-shrine-coin" ,roomStates[user.areaId][user.roomId].coinCounter);

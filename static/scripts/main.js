@@ -172,6 +172,7 @@ window.vueApp = new Vue({
         isLoginSoundEnabled: localStorage.getItem("isLoginSoundEnabled") != "false",
         isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
         customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
+        isCoinSoundEnabled: localStorage.getItem("isCoinSoundEnabled") != "false",
         mentionSoundFunction: null,
 
         // streaming
@@ -501,8 +502,6 @@ window.vueApp = new Vue({
             const usersDto = dto.connectedUsers
             const streamsDto = dto.streams
 
-            console.log(dto);
-
             this.chessboardState = dto.chessboardState
 
             this.isLoadingRoom = true;
@@ -826,10 +825,12 @@ window.vueApp = new Vue({
                 this.writeMessageToLog("SYSTEM", i18n.t("msg.chess_quit").replace("@USER_NAME@", winnerUserName), null)
             })
             this.socket.on("special-events:server-add-shrine-coin", donationBoxValue => {
-                console.log("special-events:server-add-shrine-coin triggered");
                 //i think this is where you play sounds
                 this.currentRoom.specialObjects[1].value = donationBoxValue;
                 this.isRedrawRequired = true;
+                if (this.soundEffectVolume > 0 && this.isCoinSoundEnabled) {
+                    document.getElementById("ka-ching-sound").play();
+                }
             })
         },
         addUser: function (userDTO)
@@ -1542,12 +1543,11 @@ window.vueApp = new Vue({
         drawSpecialObjects: function () {
 
             //jinja room special objects: for now coin counter
-            console.log(this.currentRoom);
             if (this.currentRoom.id === 'jinja') {
                 const context = this.canvasContext;
-                context.font = "bold 13px Arial, Helvetica, sans-serif";
+                context.font = "bold 16px Arial, Helvetica, sans-serif";
                 context.textBaseline = "bottom";
-                context.textAlign = "center";
+                context.textAlign = "right";
 
                 //hold a click event position
                 let mouseCursor = {x: 0, y: 0};
@@ -1558,7 +1558,7 @@ window.vueApp = new Vue({
                 let realTextCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectShrineText.x, specialObjectShrineText.y);
                 let realDonationBoxCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectDonationBox.x, specialObjectDonationBox.y)
                 context.fillText(
-                    specialObjectShrineText.objectName + ' ' + specialObjectDonationBox.value + ' Yen',
+                    specialObjectShrineText.label + ' ' + specialObjectDonationBox.value + ' ' + specialObjectShrineText.suffix,
                     (realTextCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x,
                     (realTextCoordinates.y * this.getCanvasScale()) + this.canvasGlobalOffset.y
                 );
@@ -1569,10 +1569,7 @@ window.vueApp = new Vue({
                 document.getElementsByTagName("canvas")[0].onclick = (clickEvent) => {
                     mouseCursor.x = clickEvent.clientX - document.getElementsByTagName("canvas")[0].getBoundingClientRect().x * this.getCanvasScale();
                     mouseCursor.y = clickEvent.clientY - document.getElementsByTagName("canvas")[0].getBoundingClientRect().y * this.getCanvasScale();
-                    // console.log({
-                    //     x: clickEvent.clientX - document.getElementsByTagName("canvas")[0].getBoundingClientRect().x * this.getCanvasScale(),
-                    //     y: clickEvent.clientY - document.getElementsByTagName("canvas")[0].getBoundingClientRect().y * this.getCanvasScale()
-                    // });
+
                     //add some margin of error for the event area
                     if (
                         mouseCursor.x >= realDonationBoxCoordinates.x - 50 - this.blockHeight &&
@@ -1580,27 +1577,9 @@ window.vueApp = new Vue({
                         mouseCursor.y >= realDonationBoxCoordinates.y - 100 - this.blockWidth &&
                         mouseCursor.y <= realDonationBoxCoordinates.y + 100 + this.blockWidth
                     ) {
-                        // specialObjectDonationBox.value += 10;
                         this.socket.emit("special-events:client-add-shrine-coin");
-                        // this.isRedrawRequired = true;
-                        //maybe trigger an event? this duplicates like crazy though
-                        // document.getElementsByTagName("canvas")[0].dispatchEvent(
-                        //     new CustomEvent('special-events:shrine-area-click',
-                        //         {
-                        //             bubbles: true,
-                        //             detail: {mouseCursor: mouseCursor}
-                        //         }
-                        //     )
-                        // );
                     }
                 };
-
-                // document.getElementsByTagName("canvas")[0].addEventListener('special-events:shrine-area-click', e => {
-                //     console.log("EVENT TRIGGERED");
-                //     console.log(e);
-                //
-                //
-                // });
             }
         },
 
@@ -2815,6 +2794,10 @@ window.vueApp = new Vue({
             }
 
             this.storeSet("isDarkMode");
+        },
+        toggleCoinSound: function ()
+        {
+            this.storeSet('isCoinSoundEnabled');
         },
         handleLanguageChange: function ()
         {

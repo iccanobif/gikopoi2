@@ -97,6 +97,8 @@ export interface SpecialObjects
     color?: string;
     type?: string;
     value?: number;
+    label?: string;
+    suffix?: string;
 }
 
 export interface JanusServer
