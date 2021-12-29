@@ -1601,22 +1601,21 @@ window.vueApp = new Vue({
         },
 
         drawSpecialObjects: function () {
-
-            //jinja room special objects: for now coin counter
             if (this.currentRoom.id === 'jinja') {
                 const context = this.canvasContext;
                 context.font = "bold 16px Arial, Helvetica, sans-serif";
                 context.textBaseline = "bottom";
                 context.textAlign = "right";
+                context.fillStyle = "yellow";
 
                 //draw and redraw the coin donation box
-                let specialObjectShrineText = this.currentRoom.specialObjects.find(o => o.name == "donation-text");
-                let specialObjectDonationBox = this.currentRoom.specialObjects.find(o => o.name == "donation-box");
-                context.fillStyle = specialObjectShrineText.color;
-                let realTextCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectShrineText.x, specialObjectShrineText.y);
+                const specialObjectShrineText = this.currentRoom.specialObjects.find(o => o.name == "donation-text");
+                const specialObjectDonationBox = this.currentRoom.specialObjects.find(o => o.name == "donation-box");
+                
+                const realTextCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectShrineText.x, specialObjectShrineText.y);
                 
                 context.fillText(
-                    specialObjectShrineText.label + ' ' + specialObjectDonationBox.value + ' ¥',
+                    specialObjectDonationBox.value + ' ¥',
                     (realTextCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x,
                     (realTextCoordinates.y * this.getCanvasScale()) + this.canvasGlobalOffset.y
                 );
@@ -1626,7 +1625,7 @@ window.vueApp = new Vue({
         canvasClick: function(clickEvent)
         {
             if (this.currentRoom.id === 'jinja') {
-                const specialObjectDonationBox = this.currentRoom.specialObjects[1];
+                const specialObjectDonationBox = this.currentRoom.specialObjects.find(o => o.name == "donation-box");
                 const realDonationBoxCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectDonationBox.x, specialObjectDonationBox.y)
 
                 realDonationBoxCoordinates.x = (realDonationBoxCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x;

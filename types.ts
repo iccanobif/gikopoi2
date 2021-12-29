@@ -94,10 +94,7 @@ export interface SpecialObjects
     name: string;
     x: number;
     y: number;
-    color?: string;
-    type?: string;
     value?: number;
-    label?: string;
 }
 
 export interface JanusServer
