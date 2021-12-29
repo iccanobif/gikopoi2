@@ -591,18 +591,18 @@
                 </div>
             </div>
 
-            <div class="popup-overlay" id="warning-toast-overlay" v-if="isWarningToastOpen" v-on:click="closeWarningToast"></div>
-            <div class="popup" id="warning-toast" v-if="isWarningToastOpen">
-                <div class="popup-titlebar">
-                    <div class="popup-title">{{ $t("ui.warning_toast_title") }}</div>
+            <div class="popup-overlay" id="dialog-popup-overlay" v-if="isDialogPopupOpen" v-on:click="closeDialog"></div>
+            <div class="popup" id="dialog-popup" v-if="isDialogPopupOpen">
+                <div class="popup-titlebar" v-if="dialogPopupTitle">
+                    <div class="popup-title">{{ dialogPopupTitle }}</div>
                 </div>
                 <div class="popup-content">
                     <div class="popup-item">
-                        {{ warningToastMessage }}
+                        {{ dialogPopupMessage }}
                     </div>
                 </div>
                 <div class="popup-buttons">
-                    <button v-on:click="closeWarningToast">{{ $t("ui.popup_button_ok") }}</button>
+                    <button v-for="(buttonText, buttonIndex) in dialogPopupButtons" v-on:click="closeDialog(buttonIndex)">{{ buttonText }}</button>
                 </div>
             </div>
 
