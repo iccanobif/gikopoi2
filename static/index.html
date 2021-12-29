@@ -558,7 +558,7 @@
                         <div class='popup-header'>{{ $t("ui.preferences_title_streams") }}</div>
                         <div class='popup-item'>
                             <input type="checkbox" id="preferences-streams-auto-resume"
-                                v-model="isStreamAutoResumeEnabled" v-on:click="storeSet('isStreamAutoResumeEnabled')"><label
+                                v-model="isStreamAutoResumeEnabled" v-on:change="storeSet('isStreamAutoResumeEnabled')"><label
                                 for="preferences-streams-auto-resume">{{ $t("ui.preferences_streams_auto_resume") }}</label>
                         </div>
                     </div>
