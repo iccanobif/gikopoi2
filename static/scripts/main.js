@@ -489,7 +489,7 @@ window.vueApp = new Vue({
                 i18n.t("ui.warning_toast_title"),
                 [i18n.t("ui.popup_button_ok")]);
         },
-        confirm: function (text, callback, button)
+        confirm: function (text, okCallback, cancelCallback, button)
         {
             // button param can be an array of two strings for confirm and cancel,
             // or one string to be used for confirm
@@ -502,7 +502,13 @@ window.vueApp = new Vue({
             {
                 button = [button, i18n.t("ui.popup_button_cancel")];
             }
-            this.openDialog(text, null, button, buttonIndex => callback(buttonIndex == 0));
+            this.openDialog(text, null, button, buttonIndex =>
+            {
+                if(buttonIndex == 0)
+                    okCallback();
+                else if (cancelCallback)
+                    cancelCallback();
+            });
         },
         loadRoomBackground: async function ()
         {
@@ -1013,9 +1019,8 @@ window.vueApp = new Vue({
         },
         clearLog: function ()
         {
-            this.confirm(i18n.t("msg.are_you_sure_you_want_to_clear_log"), reply =>
+            this.confirm(i18n.t("msg.are_you_sure_you_want_to_clear_log"), () =>
             {
-                if (!reply) return;
                 document.getElementById("chatLog").innerHTML = '';
                 this.showWarningToast(i18n.t("msg.chat_log_cleared"));
             });
@@ -2662,9 +2667,8 @@ window.vueApp = new Vue({
         },
         blockUser: function(userId)
         {
-            this.confirm(i18n.t("msg.are_you_sure_you_want_to_block"), reply =>
+            this.confirm(i18n.t("msg.are_you_sure_you_want_to_block"), () =>
             {
-                if (!reply) return;
                 this.socket.emit("user-block", userId);
             });
         },
@@ -2812,9 +2816,8 @@ window.vueApp = new Vue({
         },
         logout: async function ()
         {
-            this.confirm(i18n.t("msg.are_you_sure_you_want_to_logout"), reply =>
+            this.confirm(i18n.t("msg.are_you_sure_you_want_to_logout"), () =>
             {
-                if (!reply) return;
                 logToServer(new Date() + " " + this.myUserID + " Logging out")
                 if (this.canvasContainerResizeObserver)
                     this.canvasContainerResizeObserver.disconnect()
