@@ -58,9 +58,7 @@ function initializeRoomStates()
 {
     let areaNumberId = 0;
     roomStates = {}
-    //console.log(rooms);
-    //console.log(forCoin);
-    //console.log(jpCoin);
+
     for (const areaId of ["for", "gen"])
     {
         let roomNumberId = 0;
