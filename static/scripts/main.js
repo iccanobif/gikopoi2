@@ -2787,8 +2787,9 @@ window.vueApp = new Vue({
         handleDarkMode: function ()
         {
             this.isRedrawRequired = true
-
-            if(chatLog.lastChild && window.ResizeObserver)
+            
+            const chatLog = document.getElementById("chatLog");
+            if (chatLog.lastChild)
             {
                 const observer = new ResizeObserver((mutationsList, observer) =>
                 {
