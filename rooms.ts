@@ -1100,8 +1100,8 @@ export const rooms: { [roomId: string]: Room } = {
             steps: { x: 14, y: 4, direction: "left", target: { roomId: "jinja_st", doorId: "torii" } },
         },
         specialObjects: [
-            { objectName: 'Donation Text', label: '', suffix: '¥', x: 2, y: 7, color: 'yellow', type: 'draw'},
-            { objectName: 'Donation Box', x: 2, y: 6, type: 'invisible', value: 0}
+            { name: 'donation-text', label: '', x: 2, y: 7, color: 'yellow', type: 'draw'},
+            { name: 'donation-box', x: 2, y: 6, type: 'invisible', value: 0 },
         ],
         streamSlotCount: 4,
         hasChessboard: true,

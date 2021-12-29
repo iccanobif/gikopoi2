@@ -77,12 +77,14 @@
             </h2>
             <div id="main-section">
                 <div id="canvas-container" v-if="!connectionRefused">
-                    <canvas id="room-canvas" tabindex="1" v-on:keydown="handleCanvasKeydown($event)"
+                    <canvas id="room-canvas" tabindex="1" 
+                        v-on:keydown="handleCanvasKeydown($event)"
                         v-on:mousedown="handleCanvasPointerDown($event)"
                         v-on:mousemove="handleCanvasPointerMove($event)"
                         v-on:touchstart="handleCanvasPointerDown($event)"
                         v-on:touchmove="handleCanvasPointerMove($event)"
                         v-on:wheel="handleCanvasWheel($event)"
+                        v-on:click="canvasClick"
                         ></canvas>
                     <div id="infobox-container">
                         <div id="infobox" v-show="isInfoboxVisible">

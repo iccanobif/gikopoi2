@@ -91,14 +91,13 @@ export interface Room
 
 export interface SpecialObjects
 {
-    objectName: string;
+    name: string;
     x: number;
     y: number;
     color?: string;
     type?: string;
     value?: number;
     label?: string;
-    suffix?: string;
 }
 
 export interface JanusServer

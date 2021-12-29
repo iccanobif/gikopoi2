@@ -1609,37 +1609,43 @@ window.vueApp = new Vue({
                 context.textBaseline = "bottom";
                 context.textAlign = "right";
 
-                //hold a click event position
-                let mouseCursor = {x: 0, y: 0};
                 //draw and redraw the coin donation box
-                let specialObjectShrineText = this.currentRoom.specialObjects[0];
-                let specialObjectDonationBox = this.currentRoom.specialObjects[1];
+                let specialObjectShrineText = this.currentRoom.specialObjects.find(o => o.name == "donation-text");
+                let specialObjectDonationBox = this.currentRoom.specialObjects.find(o => o.name == "donation-box");
                 context.fillStyle = specialObjectShrineText.color;
                 let realTextCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectShrineText.x, specialObjectShrineText.y);
-                let realDonationBoxCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectDonationBox.x, specialObjectDonationBox.y)
+                
                 context.fillText(
-                    specialObjectShrineText.label + ' ' + specialObjectDonationBox.value + ' ' + specialObjectShrineText.suffix,
+                    specialObjectShrineText.label + ' ' + specialObjectDonationBox.value + ' ¥',
                     (realTextCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x,
                     (realTextCoordinates.y * this.getCanvasScale()) + this.canvasGlobalOffset.y
                 );
+            }
+        },
+
+        canvasClick: function(clickEvent)
+        {
+            if (this.currentRoom.id === 'jinja') {
+                const specialObjectDonationBox = this.currentRoom.specialObjects[1];
+                const realDonationBoxCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectDonationBox.x, specialObjectDonationBox.y)
+
                 realDonationBoxCoordinates.x = (realDonationBoxCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x;
                 realDonationBoxCoordinates.y = (realDonationBoxCoordinates.y * this.getCanvasScale()) + this.canvasGlobalOffset.y;
 
-                //special thanks to my senpai Iccanobif for this code
-                document.getElementsByTagName("canvas")[0].onclick = (clickEvent) => {
-                    mouseCursor.x = clickEvent.clientX - document.getElementsByTagName("canvas")[0].getBoundingClientRect().x * this.getCanvasScale();
-                    mouseCursor.y = clickEvent.clientY - document.getElementsByTagName("canvas")[0].getBoundingClientRect().y * this.getCanvasScale();
+                const mouseCursor = {x: 0, y: 0};
+                const canvasBoundingClientRect = document.getElementById("room-canvas").getBoundingClientRect()
+                mouseCursor.x = clickEvent.clientX - canvasBoundingClientRect.x * this.getCanvasScale();
+                mouseCursor.y = clickEvent.clientY - canvasBoundingClientRect.y * this.getCanvasScale();
 
-                    //add some margin of error for the event area
-                    if (
-                        mouseCursor.x >= realDonationBoxCoordinates.x - 50 - this.blockHeight &&
-                        mouseCursor.x <= realDonationBoxCoordinates.x + this.blockHeight + 50 &&
-                        mouseCursor.y >= realDonationBoxCoordinates.y - 100 - this.blockWidth &&
-                        mouseCursor.y <= realDonationBoxCoordinates.y + 100 + this.blockWidth
-                    ) {
-                        this.socket.emit("special-events:client-add-shrine-coin");
-                    }
-                };
+                //add some margin of error for the event area
+                if (
+                    mouseCursor.x >= realDonationBoxCoordinates.x - 50 - this.blockHeight &&
+                    mouseCursor.x <= realDonationBoxCoordinates.x + this.blockHeight + 50 &&
+                    mouseCursor.y >= realDonationBoxCoordinates.y - 100 - this.blockWidth &&
+                    mouseCursor.y <= realDonationBoxCoordinates.y + 100 + this.blockWidth
+                ) {
+                    this.socket.emit("special-events:client-add-shrine-coin");
+                }
             }
         },
 
