@@ -86,6 +86,19 @@ export interface Room
     blockWidth?: number;
     blockHeight?: number;
     hasChessboard?: boolean;
+    specialObjects?: SpecialObjects[];
+}
+
+export interface SpecialObjects
+{
+    objectName: string;
+    x: number;
+    y: number;
+    color?: string;
+    type?: string;
+    value?: number;
+    label?: string;
+    suffix?: string;
 }
 
 export interface JanusServer
@@ -101,7 +114,8 @@ export type RoomStateCollection = {
 export interface RoomState
 {
     streams: StreamSlot[],
-    chess: ChessboardState
+    chess: ChessboardState,
+    coinCounter: number
 }
 
 export interface RoomStateDto
@@ -109,7 +123,8 @@ export interface RoomStateDto
     currentRoom: Room,
     connectedUsers: PlayerDto[],
     streams: StreamSlotDto[],
-    chessboardState: ChessboardStateDto
+    chessboardState: ChessboardStateDto,
+    coinCounter: number
 }
 
 export interface LoginResponseDto

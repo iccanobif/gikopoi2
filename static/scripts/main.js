@@ -107,6 +107,7 @@ window.vueApp = new Vue({
             group: "gikopoi",
             objects: [],
             hasChessboard: false,
+            specialObjects: [],
         },
         myUserID: null,
         myPrivateUserID: null,
@@ -171,6 +172,7 @@ window.vueApp = new Vue({
         isLoginSoundEnabled: localStorage.getItem("isLoginSoundEnabled") != "false",
         isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
         customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
+        isCoinSoundEnabled: localStorage.getItem("isCoinSoundEnabled") != "false",
         mentionSoundFunction: null,
         isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
 
@@ -247,7 +249,7 @@ window.vueApp = new Vue({
     mounted: function ()
     {
         console.log("%c(,,ﾟДﾟ)",
-                    "background-color: white; color: black; font-weight: bold; padding: 4px 6px; font-size: 50px",);
+            "background-color: white; color: black; font-weight: bold; padding: 4px 6px; font-size: 50px",);
 
         window.addEventListener("keydown", (ev) =>
         {
@@ -296,8 +298,8 @@ window.vueApp = new Vue({
         // Enable dark mode stylesheet (gotta do it here in the "mounted" event because otherwise
         // the screen will flash dark for a bit while loading the page)
         for (let i = 0; i < document.styleSheets.length; i++)
-                if (document.styleSheets[i].title == "dark-mode-sheet")
-                    document.styleSheets[i].disabled = false
+            if (document.styleSheets[i].title == "dark-mode-sheet")
+                document.styleSheets[i].disabled = false
 
         const charSelect = document.getElementById("character-selection")
         const charactersSelected = charSelect.getElementsByClassName("character-selected")
@@ -531,15 +533,15 @@ window.vueApp = new Vue({
             await Promise.all(Object.values(this.currentRoom.objects).map(o =>
                 loadImage("rooms/" + this.currentRoom.id + "/" + o.url.replace(".svg", urlMode + ".svg"))
                     .then((image) =>
-                {
-                    const scale = o.scale ? o.scale : 1;
-                    if (this.roomLoadId != roomLoadId) return;
-                    o.image = RenderCache.Image(image, scale);
+                    {
+                        const scale = o.scale ? o.scale : 1;
+                        if (this.roomLoadId != roomLoadId) return;
+                        o.image = RenderCache.Image(image, scale);
 
-                    o.physicalPositionX = o.offset ? o.offset.x * scale : 0
-                    o.physicalPositionY = o.offset ? o.offset.y * scale : 0
-                    this.isRedrawRequired = true;
-                })
+                        o.physicalPositionX = o.offset ? o.offset.x * scale : 0
+                        o.physicalPositionY = o.offset ? o.offset.y * scale : 0
+                        this.isRedrawRequired = true;
+                    })
             ))
         },
         updateRoomState: async function (dto)
@@ -558,6 +560,10 @@ window.vueApp = new Vue({
 
             const previousRoomId = this.currentRoom && this.currentRoom.id
             this.currentRoom = roomDto;
+
+            if (this.currentRoom.id === 'jinja') {
+                this.currentRoom.specialObjects[1].value = dto.coinCounter;
+            }
 
             this.users = {};
 
@@ -602,9 +608,9 @@ window.vueApp = new Vue({
             this.myPrivateUserID = loginMessage.privateUserId;
 
             logToServer(new Date() + " " + this.myUserID
-                        + " window.EXPECTED_SERVER_VERSION: "+ window.EXPECTED_SERVER_VERSION
-                        + " loginMessage.appVersion: " + loginMessage.appVersion
-                        + " DIFFERENT: " + (window.EXPECTED_SERVER_VERSION != loginMessage.appVersion))
+                + " window.EXPECTED_SERVER_VERSION: "+ window.EXPECTED_SERVER_VERSION
+                + " loginMessage.appVersion: " + loginMessage.appVersion
+                + " DIFFERENT: " + (window.EXPECTED_SERVER_VERSION != loginMessage.appVersion))
             if (window.EXPECTED_SERVER_VERSION != loginMessage.appVersion)
                 this.pageRefreshRequired = true
 
@@ -870,6 +876,14 @@ window.vueApp = new Vue({
 
                 this.writeMessageToLog("SYSTEM", i18n.t("msg.chess_quit").replace("@USER_NAME@", winnerUserName), null)
             })
+            this.socket.on("special-events:server-add-shrine-coin", donationBoxValue => {
+                //i think this is where you play sounds
+                this.currentRoom.specialObjects[1].value = donationBoxValue;
+                this.isRedrawRequired = true;
+                if (this.soundEffectVolume > 0 && this.isCoinSoundEnabled) {
+                    document.getElementById("ka-ching-sound").play();
+                }
+            })
         },
         addUser: function (userDTO)
         {
@@ -1006,9 +1020,9 @@ window.vueApp = new Vue({
 
                 const character = user.character
                 new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
-                {
-                    icon: "characters/" + character.characterName + "/front-standing." + character.format
-                })
+                    {
+                        icon: "characters/" + character.characterName + "/front-standing." + character.format
+                    })
             }
         },
         toDisplayName: function (name)
@@ -1244,7 +1258,7 @@ window.vueApp = new Vue({
                 const user = this.users[this.myUserID]
 
                 userOffset.x -= this.getCanvasScale() * (user.currentPhysicalPositionX + this.blockWidth/2) - this.canvasDimensions.w / 2,
-                userOffset.y -= this.getCanvasScale() * (user.currentPhysicalPositionY - 60) - this.canvasDimensions.h / 2
+                    userOffset.y -= this.getCanvasScale() * (user.currentPhysicalPositionY - 60) - this.canvasDimensions.h / 2
             }
 
             const manualOffset = {
@@ -1260,10 +1274,10 @@ window.vueApp = new Vue({
             const backgroundImage = this.currentRoom.backgroundImage.getImage(this.getCanvasScale())
 
             const bcDiff =
-            {
-                w: backgroundImage.width - this.canvasDimensions.w,
-                h: backgroundImage.height - this.canvasDimensions.h
-            }
+                {
+                    w: backgroundImage.width - this.canvasDimensions.w,
+                    h: backgroundImage.height - this.canvasDimensions.h
+                }
 
             const margin = (this.currentRoom.isBackgroundImageOffsetEdge ?
                 {w: 0, h: 0} : this.canvasDimensions);
@@ -1271,14 +1285,14 @@ window.vueApp = new Vue({
             let isAtEdge = false;
 
             if (canvasOffset.x > margin.w)
-                {isAtEdge = true; manualOffset.x = margin.w - userOffset.x}
+            {isAtEdge = true; manualOffset.x = margin.w - userOffset.x}
             else if(canvasOffset.x < -margin.w - bcDiff.w)
-                {isAtEdge = true; manualOffset.x = -margin.w - (bcDiff.w + userOffset.x)}
+            {isAtEdge = true; manualOffset.x = -margin.w - (bcDiff.w + userOffset.x)}
 
             if (canvasOffset.y > margin.h)
-                {isAtEdge = true; manualOffset.y = margin.h - userOffset.y}
+            {isAtEdge = true; manualOffset.y = margin.h - userOffset.y}
             else if(canvasOffset.y < -margin.h - bcDiff.h)
-                {isAtEdge = true; manualOffset.y = -margin.h - (bcDiff.h + userOffset.y)}
+            {isAtEdge = true; manualOffset.y = -margin.h - (bcDiff.h + userOffset.y)}
 
             if (isAtEdge)
             {
@@ -1304,7 +1318,7 @@ window.vueApp = new Vue({
             let self;
 
             function scanCanvasObjects (canvasObjects, objectsByPosition,
-                fromX, toX, fromY, toY)
+                                        fromX, toX, fromY, toY)
             {
                 const width = (toX-fromX)+1;
                 const height = (toY-fromY)+1;
@@ -1360,10 +1374,10 @@ window.vueApp = new Vue({
                 else
                 {
                     objectsByPosition[key] =
-                    {
-                        objects: [o],
-                        isDone: false
-                    };
+                        {
+                            objects: [o],
+                            isDone: false
+                        };
                 }
             }
 
@@ -1405,12 +1419,12 @@ window.vueApp = new Vue({
                         o,
                         type: "user",
                     })),
-                    )
+                )
                     .sort((a, b) =>
                     {
                         const calculatePriority = (o) => o.type == "room-object"
-                                                            ? o.o.x + 1 + (self.currentRoom.size.y - o.o.y)
-                                                            : o.o.logicalPositionX + 1 + (self.currentRoom.size.y - o.o.logicalPositionY)
+                            ? o.o.x + 1 + (self.currentRoom.size.y - o.o.y)
+                            : o.o.logicalPositionX + 1 + (self.currentRoom.size.y - o.o.logicalPositionY)
 
                         const aPriority = calculatePriority(a)
                         const bPriority = calculatePriority(b)
@@ -1541,9 +1555,9 @@ window.vueApp = new Vue({
                     this.canvasContext,
                     image,
                     user.currentPhysicalPositionX + this.blockWidth/2
-                        + (pos[0] ? 21 : -21 - user.bubbleImage.width),
+                    + (pos[0] ? 21 : -21 - user.bubbleImage.width),
                     user.currentPhysicalPositionY
-                        - (pos[1] ? 62 : 70 + user.bubbleImage.height)
+                    - (pos[1] ? 62 : 70 + user.bubbleImage.height)
                 );
             }
         },
@@ -1569,9 +1583,9 @@ window.vueApp = new Vue({
 
             context.beginPath();
             context.rect(cr_x - 1,
-                         cr_y + 1,
-                         (this.blockWidth + 2) * this.getCanvasScale(),
-                         (-this.blockHeight - 2) * this.getCanvasScale());
+                cr_y + 1,
+                (this.blockWidth + 2) * this.getCanvasScale(),
+                (-this.blockHeight - 2) * this.getCanvasScale());
             context.stroke();
 
             const cc_x = co.x + this.currentRoom.originCoordinates.x * this.getCanvasScale();
@@ -1584,6 +1598,49 @@ window.vueApp = new Vue({
             context.lineTo(cc_x, co.y);
             context.lineTo(cc_x, cc_y);
             context.stroke();
+        },
+
+        drawSpecialObjects: function () {
+
+            //jinja room special objects: for now coin counter
+            if (this.currentRoom.id === 'jinja') {
+                const context = this.canvasContext;
+                context.font = "bold 16px Arial, Helvetica, sans-serif";
+                context.textBaseline = "bottom";
+                context.textAlign = "right";
+
+                //hold a click event position
+                let mouseCursor = {x: 0, y: 0};
+                //draw and redraw the coin donation box
+                let specialObjectShrineText = this.currentRoom.specialObjects[0];
+                let specialObjectDonationBox = this.currentRoom.specialObjects[1];
+                context.fillStyle = specialObjectShrineText.color;
+                let realTextCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectShrineText.x, specialObjectShrineText.y);
+                let realDonationBoxCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectDonationBox.x, specialObjectDonationBox.y)
+                context.fillText(
+                    specialObjectShrineText.label + ' ' + specialObjectDonationBox.value + ' ' + specialObjectShrineText.suffix,
+                    (realTextCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x,
+                    (realTextCoordinates.y * this.getCanvasScale()) + this.canvasGlobalOffset.y
+                );
+                realDonationBoxCoordinates.x = (realDonationBoxCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x;
+                realDonationBoxCoordinates.y = (realDonationBoxCoordinates.y * this.getCanvasScale()) + this.canvasGlobalOffset.y;
+
+                //special thanks to my senpai Iccanobif for this code
+                document.getElementsByTagName("canvas")[0].onclick = (clickEvent) => {
+                    mouseCursor.x = clickEvent.clientX - document.getElementsByTagName("canvas")[0].getBoundingClientRect().x * this.getCanvasScale();
+                    mouseCursor.y = clickEvent.clientY - document.getElementsByTagName("canvas")[0].getBoundingClientRect().y * this.getCanvasScale();
+
+                    //add some margin of error for the event area
+                    if (
+                        mouseCursor.x >= realDonationBoxCoordinates.x - 50 - this.blockHeight &&
+                        mouseCursor.x <= realDonationBoxCoordinates.x + this.blockHeight + 50 &&
+                        mouseCursor.y >= realDonationBoxCoordinates.y - 100 - this.blockWidth &&
+                        mouseCursor.y <= realDonationBoxCoordinates.y + 100 + this.blockWidth
+                    ) {
+                        this.socket.emit("special-events:client-add-shrine-coin");
+                    }
+                };
+            }
         },
 
         drawGridNumbers: function ()
@@ -1639,6 +1696,7 @@ window.vueApp = new Vue({
                 this.drawObjects();
                 this.drawUsernames();
                 this.drawBubbles();
+                this.drawSpecialObjects();
                 if (this.enableGridNumbers)
                 {
                     this.drawOriginLines();
@@ -1945,7 +2003,7 @@ window.vueApp = new Vue({
             {
                 this.lastSetMovementDirectionTime = Date.now()
                 if (this.movementDirection)
-                   this.sendNewPositionToServer(this.movementDirection)
+                    this.sendNewPositionToServer(this.movementDirection)
             }
         },
         getPointerState: function (event)
@@ -2293,7 +2351,7 @@ window.vueApp = new Vue({
                 const withSound = this.streamMode != "video";
 
                 // Validate device selection
-                if ((withVideo && !this.selectedVideoDeviceId && !this.streamScreenCapture) 
+                if ((withVideo && !this.selectedVideoDeviceId && !this.streamScreenCapture)
                     || (withSound && !this.selectedAudioDeviceId && !this.streamScreenCaptureAudio))
                 {
                     this.showWarningToast(i18n.t("msg.error_didnt_select_device"));
@@ -2324,10 +2382,10 @@ window.vueApp = new Vue({
                 let screenMediaPromise = null
                 if (withScreenCapture)
                     screenMediaPromise = navigator.mediaDevices.getDisplayMedia(
-                    {
-                        video: true,
-                        audio: !withScreenCaptureAudio ? undefined : audioConstraints
-                    });
+                        {
+                            video: true,
+                            audio: !withScreenCaptureAudio ? undefined : audioConstraints
+                        });
 
                 this.waitingForDevicePermission = true
 
@@ -2382,7 +2440,7 @@ window.vueApp = new Vue({
                     const ISAC = await isWebrtcPublishCodecSupported(this.mediaStream, WebrtcCodec.ISAC);
 
                     if (withVideo)
-                       logToServer(this.myUserID + " PUBLISH VIDEO CODECS: VP8: " + VP8 + " VP9: " + VP9 + " H264: " + H264)
+                        logToServer(this.myUserID + " PUBLISH VIDEO CODECS: VP8: " + VP8 + " VP9: " + VP9 + " H264: " + H264)
                     if (withSound)
                         logToServer(this.myUserID + " PUBLISH SOUND CODECS: OPUS: " + OPUS + " ISAC: " + ISAC)
                 }
@@ -2568,7 +2626,7 @@ window.vueApp = new Vue({
                             audioProcessors[streamSlotId] = new AudioProcessor(stream, videoElement, this.slotVolume[streamSlotId])
 
                             if (this.slotCompression[streamSlotId])
-                               audioProcessors[streamSlotId].enableCompression()
+                                audioProcessors[streamSlotId].enableCompression()
                         }
                     }
                     catch (exc)
@@ -2678,24 +2736,25 @@ window.vueApp = new Vue({
                 this.rulaRoomListSortDirection = 1;
             else
                 this.rulaRoomListSortDirection *= -1;
-                
+
             this.rulaRoomListSortKey = key
             
             localStorage.setItem("rulaRoomListSortKey", this.rulaRoomListSortKey)
+
             localStorage.setItem("rulaRoomListSortDirection", this.rulaRoomListSortDirection)
-            
+
             this.prepareRulaRoomList();
         },
         prepareRulaRoomList: function ()
         {
             const key = this.rulaRoomListSortKey;
             const direction = this.rulaRoomListSortDirection;
-            
+
             if (this.rulaRoomGroup === "all")
                 this.preparedRoomList = [...this.roomList];
             else
                 this.preparedRoomList = this.roomList.filter(r => r.group == this.rulaRoomGroup);
-            
+
             this.preparedRoomList.sort((a, b) =>
             {
                 let sort;
@@ -2708,7 +2767,7 @@ window.vueApp = new Vue({
                 return sort * direction;
             })
 
-            
+
         },
         openStreamPopup: function (streamSlotId)
         {
@@ -2799,6 +2858,10 @@ window.vueApp = new Vue({
             }
 
             this.storeSet("isDarkMode");
+        },
+        toggleCoinSound: function ()
+        {
+            this.storeSet('isCoinSoundEnabled');
         },
         handleLanguageChange: function ()
         {
@@ -2965,13 +3028,13 @@ window.vueApp = new Vue({
         getUserListForListPopup: function ()
         {
             const output = Object.values(this.users)
-                                 .filter(u => u.id != this.myUserID)
-                                 .map(u => ({
-                                     id: u.id,
-                                     name: u.name,
-                                     isInRoom: true,
-                                     isInactive: u.isInactive,
-                                    }))
+                .filter(u => u.id != this.myUserID)
+                .map(u => ({
+                    id: u.id,
+                    name: u.name,
+                    isInRoom: true,
+                    isInactive: u.isInactive,
+                }))
             // Add highlighted users that are not in the room anymore
             if (this.highlightedUserId && !this.users[this.highlightedUserId])
                 output.unshift({
@@ -2979,7 +3042,7 @@ window.vueApp = new Vue({
                     name: this.highlightedUserName,
                     isInRoom: false,
                     isInactive: false,
-                 })
+                })
 
             return output
         },
@@ -3041,5 +3104,4 @@ const debouncedSpeakTest = debounceWithDelayedExecution((ttsVoiceURI, voiceVolum
 const debouncedLogSoundVolume = debounceWithDelayedExecution((myUserID, volume) => {
     logToServer(myUserID + " SFX volume: " + volume)
 }, 150)
-
 
