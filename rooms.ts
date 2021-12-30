@@ -1101,7 +1101,7 @@ export const rooms: { [roomId: string]: Room } = {
         },
         specialObjects: [
             { name: 'donation-text', x: 2, y: 7 },
-            { name: 'donation-box', x: 2, y: 6, value: 0 },
+            { name: 'donation-box', x: 3, y: 5, value: 0 },
         ],
         streamSlotCount: 4,
         hasChessboard: true,

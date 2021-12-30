@@ -18,7 +18,8 @@ import {
     canUseAudioContext,
     getFormattedCurrentDate,
     requestNotificationPermission,
-    getDeviceList
+    getDeviceList,
+    getClickCoordinatesWithinCanvas,
 } from "./utils.js";
 import messages from "./lang.js";
 import { speak } from "./tts.js";
@@ -1637,18 +1638,15 @@ window.vueApp = new Vue({
 
                 realDonationBoxCoordinates.x = (realDonationBoxCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x;
                 realDonationBoxCoordinates.y = (realDonationBoxCoordinates.y * this.getCanvasScale()) + this.canvasGlobalOffset.y;
-
-                const mouseCursor = {x: 0, y: 0};
-                const canvasBoundingClientRect = document.getElementById("room-canvas").getBoundingClientRect()
-                mouseCursor.x = clickEvent.clientX - canvasBoundingClientRect.x * this.getCanvasScale();
-                mouseCursor.y = clickEvent.clientY - canvasBoundingClientRect.y * this.getCanvasScale();
+                
+                const mouseCursor = getClickCoordinatesWithinCanvas(document.getElementById("room-canvas"), clickEvent, this.devicePixelRatio)
 
                 //add some margin of error for the event area
                 if (
-                    mouseCursor.x >= realDonationBoxCoordinates.x - 50 - this.blockHeight &&
-                    mouseCursor.x <= realDonationBoxCoordinates.x + this.blockHeight + 50 &&
-                    mouseCursor.y >= realDonationBoxCoordinates.y - 100 - this.blockWidth &&
-                    mouseCursor.y <= realDonationBoxCoordinates.y + 100 + this.blockWidth
+                    mouseCursor.x >= realDonationBoxCoordinates.x - 20 * this.getCanvasScale() &&
+                    mouseCursor.x <= realDonationBoxCoordinates.x + this.blockWidth * this.getCanvasScale() &&
+                    mouseCursor.y >= realDonationBoxCoordinates.y - this.blockHeight * this.getCanvasScale() - 20 * this.getCanvasScale() &&
+                    mouseCursor.y <= realDonationBoxCoordinates.y
                 ) {
                     this.socket.emit("special-events:client-add-shrine-coin");
                 }
