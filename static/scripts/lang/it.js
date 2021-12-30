@@ -116,6 +116,7 @@ export default
         preferences_timestamps_in_copied_log: "Includi timestamp nei log copiati",
         preferences_ignore_indicator_in_log: "Mostra nel log un indicatore per i messaggi di utenti ignorati",
         preferences_language: "Lingua",
+        // preferences_enable_coin_sound: "Enable coin sound",
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
         // preferences_title_chat: "",
