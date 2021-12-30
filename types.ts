@@ -176,6 +176,8 @@ export interface PersistedState
 {
     users: Player[],
     bannedIPs: string[],
+    forCoinCount: number,
+    genCoinCount: number,
 }
 
 export interface CharacterSvgDto

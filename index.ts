@@ -1969,7 +1969,9 @@ async function persistState()
     {
         const state: PersistedState = {
             users: getAllUsers(),
-            bannedIPs: Array.from(bannedIPs)
+            bannedIPs: Array.from(bannedIPs),
+            forCoinCount: roomStates["for"]["jinja"].coinCounter,
+            genCoinCount: roomStates["gen"]["jinja"].coinCounter,
         }
 
         if (process.env.PERSISTOR_URL)
@@ -2009,6 +2011,9 @@ function applyState(state: PersistedState)
     }
 
     bannedIPs = new Set(state.bannedIPs)
+
+    roomStates["for"]["jinja"].coinCounter = state.forCoinCount || 0;
+    roomStates["gen"]["jinja"].coinCounter = state.genCoinCount || 0;
 }
 
 async function restoreState()
