@@ -22,7 +22,11 @@
 </head>
 
 <body>
-    <div id="vue-app" v-cloak v-bind:class="{'dark-mode': isDarkMode}" v-bind:lang="$i18n.locale">
+    <div id="vue-app" v-cloak v-bind:lang="$i18n.locale" v-bind:class="{
+            'dark-mode': isDarkMode,
+            'underlined-usernames': underlinedUsernames,
+            'timestamps-in-copied-log': timestampsInCopiedLog,
+            'ignore-indicators-in-log': showIgnoreIndicatorInLog}">
         <div id="login-page" v-if="!loggedIn && !loggedOut && !isPoop">
             <header>
                 <div>
@@ -111,6 +115,9 @@
                         <button id="infobox-button" class="canvas-button-top-right" v-on:click="toggleInfobox"
                             tabindex="-1"></button>
                     </div>
+                    <div id='original-chat-log-outer'>
+                        <div id='canvas-chat-log-container' v-show='isCanvasChatLogEnabled'></div>
+                    </div>
                 </div>
                 <div id="toolbar">
                     <div id="toolbar-text-input">
@@ -191,8 +198,9 @@
                         </div>
                     </div>
                 </div>
-                {{ $t("ui.label_log") }}
-                <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames, 'timestamps-in-copied-log': timestampsInCopiedLog, 'ignore-indicators-in-log': showIgnoreIndicatorInLog}" v-on:keydown="handlechatLogKeydown($event)">
+                <div v-show='!isCanvasChatLogEnabled'>
+                    {{ $t("ui.label_log") }}
+                    <div id='original-chat-log-container'></div>
                 </div>
             </div>
             <div id="video-streams">
@@ -491,6 +499,11 @@
                             <input type="checkbox" id="preferences-ignore-indicator-in-log"
                                 v-model="showIgnoreIndicatorInLog" v-on:change="storeSet('showIgnoreIndicatorInLog')"><label
                                 for="preferences-ignore-indicator-in-log">{{ $t("ui.preferences_ignore_indicator_in_log") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-canvas-chat-log"
+                                v-model="isCanvasChatLogEnabled" v-on:change="storeSet('isCanvasChatLogEnabled')"><label
+                                for="preferences-canvas-chat-log">{{ $t("ui.preferences_canvas_chat_log") }}</label>
                         </div>
                         <div class='popup-item'>
                             <button v-on:click="clearLog">{{ $t("ui.preferences_clear_log") }}</button>

@@ -120,6 +120,7 @@ window.vueApp = new Vue({
         isLoggingIn: false,
         areaId: getDefaultAreaId(), // 'gen' or 'for'
         language: localStorage.getItem("language") || "en",
+        chatLog: null,
 
         // canvas
         canvasContext: null,
@@ -173,6 +174,7 @@ window.vueApp = new Vue({
         customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
         mentionSoundFunction: null,
         isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
+        isCanvasChatLogEnabled: localStorage.getItem("isCanvasChatLogEnabled") == "true",
 
         // streaming
         streams: [],
@@ -248,7 +250,12 @@ window.vueApp = new Vue({
     {
         console.log("%c(,,ﾟДﾟ)",
                     "background-color: white; color: black; font-weight: bold; padding: 4px 6px; font-size: 50px",);
-
+        
+        this.chatLog = document.createElement("div");
+        this.chatLog.id = "chatLog";
+        this.chatLog.tabindex = -1
+        this.chatLog.addEventListener('keydown', (e) => this.handlechatLogKeydown(e));
+        
         window.addEventListener("keydown", (ev) =>
         {
             if (ev.shiftKey && ev.ctrlKey && ev.code == "Digit9")
@@ -276,7 +283,7 @@ window.vueApp = new Vue({
             if (ev.code == "KeyL" && ev.ctrlKey)
             {
                 ev.preventDefault()
-                document.getElementById("chatLog").focus()
+                this.chatLog.focus()
                 return
             }
         })
@@ -316,7 +323,7 @@ window.vueApp = new Vue({
                 })
             }
         }
-
+        
         this.setMentionSoundFunction()
 
         this.devicePixelRatio = this.getDevicePixelRatio();
@@ -358,7 +365,9 @@ window.vueApp = new Vue({
 
                 // wait next tick so that canvas-container gets rendered in the DOM
                 await Vue.nextTick()
-
+                
+                this.prepareChatLog();
+                
                 const canvasHeight = localStorage.getItem("canvasHeight")
                 if (canvasHeight)
                     document.getElementById("canvas-container").style.height = canvasHeight;
@@ -889,12 +898,22 @@ window.vueApp = new Vue({
 
             this.users[userDTO.id] = newUser;
         },
+        prepareChatLog: function()
+        {
+            if (this.isCanvasChatLogEnabled)
+            {
+                document.getElementById("canvas-chat-log-container").appendChild(this.chatLog);
+            }
+            else
+            {
+                document.getElementById("original-chat-log-container").appendChild(this.chatLog);
+            }
+        },
         writeMessageToLog: function(userName, msg, userId)
         {
-            const chatLog = document.getElementById("chatLog");
-            const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
+            const isAtBottom = (this.chatLog.scrollHeight - this.chatLog.clientHeight) - this.chatLog.scrollTop < 5;
 
-            const messageDiv = document.createElement("div");
+            const messageDiv = document.createElement("span");
             messageDiv.classList.add("message");
 
             messageDiv.dataset.userId = userId
@@ -953,12 +972,14 @@ window.vueApp = new Vue({
             messageDiv.append(tripcodeSpan);
             messageDiv.append(document.createTextNode(i18n.t("message_colon")));
             messageDiv.append(bodySpan);
-
-            chatLog.appendChild(messageDiv);
+            
+            if (this.chatLog.children.length > 0)
+                this.chatLog.appendChild(document.createElement("br"));
+            this.chatLog.appendChild(messageDiv);
 
             if (isAtBottom)
-                chatLog.scrollTop = chatLog.scrollHeight -
-                    chatLog.clientHeight;
+                this.chatLog.scrollTop = this.chatLog.scrollHeight -
+                    this.chatLog.clientHeight;
         },
         displayUserMessage: async function (user, msg)
         {
@@ -1021,7 +1042,7 @@ window.vueApp = new Vue({
         {
             this.confirm(i18n.t("msg.are_you_sure_you_want_to_clear_log"), () =>
             {
-                document.getElementById("chatLog").innerHTML = '';
+                this.chatLog.innerHTML = '';
                 this.showWarningToast(i18n.t("msg.chat_log_cleared"));
             });
         },
@@ -2788,15 +2809,14 @@ window.vueApp = new Vue({
         {
             this.isRedrawRequired = true
             
-            const chatLog = document.getElementById("chatLog");
-            if (chatLog.lastChild)
+            if (this.chatLog.lastChild)
             {
                 const observer = new ResizeObserver((mutationsList, observer) =>
                 {
-                    chatLog.lastChild.scrollIntoView({ block: "end" })
-                    observer.unobserve(chatLog.lastChild);
+                    this.chatLog.lastChild.scrollIntoView({ block: "end" })
+                    observer.unobserve(this.chatLog.lastChild);
                 });
-                observer.observe(chatLog.lastChild);
+                observer.observe(this.chatLog.lastChild);
             }
 
             this.storeSet("isDarkMode");
@@ -3013,8 +3033,7 @@ window.vueApp = new Vue({
             if (ev.code == "KeyA" && ev.ctrlKey)
             {
                 ev.preventDefault()
-                const chatLog = document.getElementById("chatLog")
-                document.getSelection().setBaseAndExtent(chatLog, 0, chatLog.nextSibling, 0);
+                document.getSelection().setBaseAndExtent(this.chatLog, 0, this.chatLog.nextSibling, 0);
             }
         },
         toggleDesktopNotifications: function() {

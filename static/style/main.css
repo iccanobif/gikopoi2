@@ -81,13 +81,51 @@ input[type='range']
     position: relative;
 }
 
-#chatLog
+#original-chat-log-container #chatLog
 {
     background-color: white;
     height: 150px;
-    overflow-y: auto;
     padding-left: 5px;
     resize: vertical;
+    overflow-y: auto;
+}
+
+#original-chat-log-outer
+{
+    position: absolute;
+    top: 7px;
+    bottom: 7px;
+    left: 7px;
+    right: 50%;
+    pointer-events: none;
+}
+
+#canvas-chat-log-container
+{
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    pointer-events: none;
+}
+
+#canvas-chat-log-container #chatLog
+{
+    color: #ffffff;
+    overflow-y: auto;
+    pointer-events: none;
+}
+
+#canvas-chat-log-container #chatLog::-webkit-scrollbar
+{
+    pointer-events: auto;
+}
+
+#canvas-chat-log-button
+{
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
 }
 
 .underlined-usernames .message-author
@@ -105,6 +143,15 @@ input[type='range']
 .message span
 {
     unicode-bidi: isolate;
+}
+
+#canvas-chat-log-container .message
+{
+    background-color: rgba(0, 0, 0, 0.6);
+    box-decoration-break: clone;
+    padding: 3px 6px 3px 5px;
+    line-height: 25px;
+    pointer-events: auto;
 }
 
 .timestamps-in-copied-log .message .message-timestamp
