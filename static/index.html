@@ -77,12 +77,14 @@
             </h2>
             <div id="main-section">
                 <div id="canvas-container" v-if="!connectionRefused">
-                    <canvas id="room-canvas" tabindex="1" v-on:keydown="handleCanvasKeydown($event)"
+                    <canvas id="room-canvas" tabindex="1" 
+                        v-on:keydown="handleCanvasKeydown($event)"
                         v-on:mousedown="handleCanvasPointerDown($event)"
                         v-on:mousemove="handleCanvasPointerMove($event)"
                         v-on:touchstart="handleCanvasPointerDown($event)"
                         v-on:touchmove="handleCanvasPointerMove($event)"
                         v-on:wheel="handleCanvasWheel($event)"
+                        v-on:click="canvasClick"
                         ></canvas>
                     <div id="infobox-container">
                         <div id="infobox" v-show="isInfoboxVisible">
@@ -516,6 +518,11 @@
                                 v-model="isMessageSoundEnabled" v-on:change="storeSet('isMessageSoundEnabled')"><label
                                 for="preferences-message-sound-enabled">{{ $t("ui.preferences_message_sound_enabled") }}</label>
                         </div>
+			<div class='popup-item'>
+			    <input type="checkbox" id="enable-coin-sound"
+                               v-model="isCoinSoundEnabled" v-on:change="toggleCoinSound"><label
+			       for="enable-coin-sound">{{ $t("ui.preferences_enable_coin_sound")}}</label>
+			</div>
                         <div class='popup-item'>
                             <input type="checkbox" id="preferences-name-mention-sound-enabled"
                                 v-model="isNameMentionSoundEnabled" v-on:change="handleNameMentionSoundEnabled"><label
@@ -689,6 +696,7 @@
     <audio id="message-sound" src="message.mp3"></audio>
     <audio id="mention-sound" src="mention.mp3"></audio>
     <audio id="login-sound" src="login.mp3"></audio>
+    <audio id="ka-ching-sound" src="ka-ching.mp3"></audio>
 
     <script src="libraries/vue.js"></script>
     <script src="libraries/vue-i18n.js"></script>

@@ -113,6 +113,7 @@ export default
         preferences_timestamps_in_copied_log: "Sertakan cap waktu dalam log yang disalin",
         preferences_ignore_indicator_in_log: "Ketika pengguna diabaikan. Menampilkan placeholder untuk pesan tersembunyi di log.",
         preferences_language: "Bahasa",
+        // preferences_enable_coin_sound: "Enable coin sound",
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
         // preferences_title_chat: "",

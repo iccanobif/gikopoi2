@@ -113,6 +113,7 @@ export default
         preferences_timestamps_in_copied_log: "在複製的聊天紀錄中包含時間標記",
         preferences_ignore_indicator_in_log: "在聊天紀錄中以紅點標記隱藏用戶之訊息位置",
         preferences_language: "語言",
+        // preferences_enable_coin_sound: "Enable coin sound",
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
         // preferences_title_chat: "",

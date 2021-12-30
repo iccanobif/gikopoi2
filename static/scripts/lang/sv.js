@@ -113,6 +113,7 @@ export default
         preferences_timestamps_in_copied_log: "Inkludera tidsstämplar i kopierad logg",
         preferences_ignore_indicator_in_log: "Ersätt meddelanden från ignorerade användare med en indikator i loggen.",
         preferences_language: "Språk",
+        // preferences_enable_coin_sound: "Enable coin sound",
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
         // preferences_title_chat: "",
