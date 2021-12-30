@@ -1613,7 +1613,7 @@ window.vueApp = new Vue({
                     context.font = "bold 16px Arial, Helvetica, sans-serif";
                     context.textBaseline = "bottom";
                     context.textAlign = "right";
-                    context.fillStyle = "#00FF00";
+                    context.fillStyle = "yellow";
                     
                     //draw and redraw the coin donation box
                     const specialObjectShrineText = this.currentRoom.specialObjects.find(o => o.name == "donation-text");
