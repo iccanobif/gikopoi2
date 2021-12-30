@@ -245,6 +245,8 @@ window.vueApp = new Vue({
         chessboardState: {},
 
         canvasContainerResizeObserver: null,
+
+        lastCoinTossTime: 0, // unix timestamp
     },
     mounted: function ()
     {
@@ -371,8 +373,7 @@ window.vueApp = new Vue({
 
                 this.isLoggingIn = false;
 
-                this.canvasContext = document.getElementById("room-canvas")
-                    .getContext("2d");
+                this.canvasContext = document.getElementById("room-canvas").getContext("2d");
                 this.paintLoop();
 
                 this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
@@ -877,12 +878,15 @@ window.vueApp = new Vue({
                 this.writeMessageToLog("SYSTEM", i18n.t("msg.chess_quit").replace("@USER_NAME@", winnerUserName), null)
             })
             this.socket.on("special-events:server-add-shrine-coin", donationBoxValue => {
-                //i think this is where you play sounds
                 this.currentRoom.specialObjects[1].value = donationBoxValue;
+                this.lastCoinTossTime = Date.now();
                 this.isRedrawRequired = true;
                 if (this.soundEffectVolume > 0 && this.isCoinSoundEnabled) {
                     document.getElementById("ka-ching-sound").play();
                 }
+                setTimeout(() => {
+                    this.isRedrawRequired = true;
+                }, 1200)
             })
         },
         addUser: function (userDTO)
@@ -1602,23 +1606,26 @@ window.vueApp = new Vue({
 
         drawSpecialObjects: function () {
             if (this.currentRoom.id === 'jinja') {
-                const context = this.canvasContext;
-                context.font = "bold 16px Arial, Helvetica, sans-serif";
-                context.textBaseline = "bottom";
-                context.textAlign = "right";
-                context.fillStyle = "yellow";
-
-                //draw and redraw the coin donation box
-                const specialObjectShrineText = this.currentRoom.specialObjects.find(o => o.name == "donation-text");
-                const specialObjectDonationBox = this.currentRoom.specialObjects.find(o => o.name == "donation-box");
-                
-                const realTextCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectShrineText.x, specialObjectShrineText.y);
-                
-                context.fillText(
-                    specialObjectDonationBox.value + ' ¥',
-                    (realTextCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x,
-                    (realTextCoordinates.y * this.getCanvasScale()) + this.canvasGlobalOffset.y
-                );
+                if (Date.now() - this.lastCoinTossTime < 1000)
+                {
+                    const context = this.canvasContext;
+                    context.font = "bold 16px Arial, Helvetica, sans-serif";
+                    context.textBaseline = "bottom";
+                    context.textAlign = "right";
+                    context.fillStyle = "#00FF00";
+                    
+                    //draw and redraw the coin donation box
+                    const specialObjectShrineText = this.currentRoom.specialObjects.find(o => o.name == "donation-text");
+                    const specialObjectDonationBox = this.currentRoom.specialObjects.find(o => o.name == "donation-box");
+                    
+                    const realTextCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectShrineText.x, specialObjectShrineText.y);
+                    
+                    context.fillText(
+                        "¥" + specialObjectDonationBox.value,
+                        (realTextCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x,
+                        (realTextCoordinates.y * this.getCanvasScale()) + this.canvasGlobalOffset.y
+                    );
+                }
             }
         },
 
