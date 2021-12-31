@@ -1099,6 +1099,10 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             steps: { x: 14, y: 4, direction: "left", target: { roomId: "jinja_st", doorId: "torii" } },
         },
+        specialObjects: [
+            { name: 'donation-text', x: 2, y: 7 },
+            { name: 'donation-box', x: 3, y: 5, value: 0 },
+        ],
         streamSlotCount: 4,
         hasChessboard: true,
     },

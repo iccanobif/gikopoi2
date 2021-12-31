@@ -58,6 +58,7 @@ function initializeRoomStates()
 {
     let areaNumberId = 0;
     roomStates = {}
+
     for (const areaId of ["for", "gen"])
     {
         let roomNumberId = 0;
@@ -72,7 +73,8 @@ function initializeRoomStates()
                     whiteUserID: null,
                     lastMoveTime: null,
                     timer: null,
-                }
+                },
+                coinCounter: 0,
             }
             if (janusServers.length)
                 for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
@@ -191,7 +193,8 @@ io.on("connection", function (socket: Socket)
             currentRoom,
             connectedUsers,
             streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams),
-            chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId)
+            chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId),
+            coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
         }
 
         socket.emit("server-update-current-room-state",
@@ -976,6 +979,14 @@ io.on("connection", function (socket: Socket)
         }
     })
 
+    socket.on("special-events:client-add-shrine-coin", function () {
+        //this only triggers in the jinja room so, technically speaking, I don't have to check for state
+        //get donation box
+        roomStates[user.areaId][user.roomId].coinCounter += 10;
+        //send the value to users
+        userRoomEmit(user, user.areaId, user.roomId, "special-events:server-add-shrine-coin" ,roomStates[user.areaId][user.roomId].coinCounter);
+    })
+
     socket.on("user-chess-move", function(source: any, target: any) {
         try {
             log.info("user-chess-move", user.id, source, target)
@@ -1275,7 +1286,8 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
             currentRoom: rooms[roomId],
             connectedUsers: filteredListsIntersection.map(toPlayerDto),
             streams: [],
-            chessboardState: buildChessboardStateDto(roomStates, areaId, roomId)
+            chessboardState: buildChessboardStateDto(roomStates, areaId, roomId),
+            coinCounter: roomStates[areaId][roomId].coinCounter,
         }
 
         res.json(dto)
@@ -1957,7 +1969,9 @@ async function persistState()
     {
         const state: PersistedState = {
             users: getAllUsers(),
-            bannedIPs: Array.from(bannedIPs)
+            bannedIPs: Array.from(bannedIPs),
+            forCoinCount: roomStates["for"]["jinja"].coinCounter,
+            genCoinCount: roomStates["gen"]["jinja"].coinCounter,
         }
 
         if (process.env.PERSISTOR_URL)
@@ -1997,6 +2011,9 @@ function applyState(state: PersistedState)
     }
 
     bannedIPs = new Set(state.bannedIPs)
+
+    roomStates["for"]["jinja"].coinCounter = state.forCoinCount || 0;
+    roomStates["gen"]["jinja"].coinCounter = state.genCoinCount || 0;
 }
 
 async function restoreState()

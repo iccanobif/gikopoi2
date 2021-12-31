@@ -221,3 +221,13 @@ export async function getDeviceList(includeAudioDevices, includeVideoDevices)
 
     return output
 }
+
+export function getClickCoordinatesWithinCanvas(canvas, clickEvent, devicePixelRatio)
+{
+    const canvasBoundingClientRect = canvas.getBoundingClientRect()
+    
+    return {
+        x: (clickEvent.clientX - canvasBoundingClientRect.x) * devicePixelRatio,
+        y: (clickEvent.clientY - canvasBoundingClientRect.y) * devicePixelRatio,
+    }
+}
