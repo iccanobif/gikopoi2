@@ -206,6 +206,7 @@ window.vueApp = new Vue({
         dialogPopupTitle: '',
         dialogPopupButtons: [],
         dialogPopupCallback: null,
+        dialogPopupButtonIndex: null,
         isDialogPopupOpen: false,
         
         loggedIn: false,
@@ -260,12 +261,16 @@ window.vueApp = new Vue({
             }
             if (ev.code == "Escape")
             {
-                this.closeRulaPopup()
-                this.closeUserListPopup()
-                this.closeStreamPopup()
-                this.closePreferencesPopup()
-                this.closeWarningToast()
-                this.cancelDeviceSelection()
+                // Only close the listed popups if there is no dialog popup open in front of it.
+                // So the dialog popup and other popup behind don't all disappear at the same time.
+                if (this.closeDialog() === null)
+                {
+                    this.closeRulaPopup()
+                    this.closeUserListPopup()
+                    this.closeStreamPopup()
+                    this.closePreferencesPopup()
+                    this.cancelDeviceSelection()
+                }
             }
             if (ev.code == "KeyG" && ev.ctrlKey)
             {
@@ -458,22 +463,24 @@ window.vueApp = new Vue({
         {
             return Object.keys(i18n.messages);
         },
-        openDialog: function (text, title, buttons, callback)
+        openDialog: function (text, title, buttons, cancelButtonIndex, callback)
         {
             this.dialogPopupMessage = text;
             this.dialogPopupTitle = title;
             this.dialogPopupButtons = buttons;
+            this.dialogPopupButtonIndex = cancelButtonIndex;
             this.dialogPopupCallback = callback;
             this.isDialogPopupOpen = true;
         },
         closeDialog: function (buttonIndex)
         {
-            if (!(buttonIndex >= 0)) // for when overlay clicked
+            if (!this.isDialogPopupOpen) return null;
+            if (!(buttonIndex >= 0))
             {
-                if (this.dialogPopupButtons.length > 1)
-                    return false;
+                if (this.dialogPopupButtonIndex >= 0)
+                    buttonIndex = this.dialogPopupButtonIndex;
                 else
-                    buttonIndex = 0;
+                    return false;
             }
             
             this.isDialogPopupOpen = false;
@@ -482,12 +489,14 @@ window.vueApp = new Vue({
                 this.dialogPopupCallback(buttonIndex);
                 this.dialogPopupCallback = null;
             }
+            return true;
         },
         showWarningToast: function (text)
         {
             this.openDialog(text,
                 i18n.t("ui.warning_toast_title"),
-                [i18n.t("ui.popup_button_ok")]);
+                [i18n.t("ui.popup_button_ok")],
+                0);
         },
         confirm: function (text, okCallback, cancelCallback, button)
         {
@@ -502,7 +511,7 @@ window.vueApp = new Vue({
             {
                 button = [button, i18n.t("ui.popup_button_cancel")];
             }
-            this.openDialog(text, null, button, buttonIndex =>
+            this.openDialog(text, null, button, 1, buttonIndex =>
             {
                 if(buttonIndex == 0)
                     okCallback();
