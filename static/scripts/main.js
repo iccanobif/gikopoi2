@@ -1063,15 +1063,17 @@ window.vueApp = new Vue({
                 Math.round(this.getCanvasScale() * y + this.canvasGlobalOffset.y)
             );
         },
-        getNameImage: function(name, withBackground)
+        getNameImage: function(user, withBackground)
         {
-            const [displayName, tripcode] = name.split("◆")
+            const [displayName, tripcode] = this.toDisplayName(user.name).split("◆")
 
             const lineHeight = 13
             const height = lineHeight * (tripcode && displayName ? 2 : 1) + 3;
 
             const fontPrefix = "bold ";
             const fontSuffix = "px Arial, Helvetica, sans-serif";
+
+            const highlightedUserId = this.highlightedUserId;
 
             return new RenderCache(function(canvas, scale)
             {
@@ -1100,7 +1102,7 @@ window.vueApp = new Vue({
                 context.font = fontPrefix + scaledLineHeight + fontSuffix;
                 context.textBaseline = "middle";
                 context.textAlign = "center"
-                context.fillStyle = "blue";
+                context.fillStyle = user.id == highlightedUserId ? "red" : "blue";
 
                 if (tripcode && displayName)
                 {
@@ -1525,7 +1527,7 @@ window.vueApp = new Vue({
             for (const o of this.canvasObjects.filter(o => o.type == "user" && !this.ignoredUserIds.has(o.o.id)))
             {
                 if (o.o.nameImage == null || this.isUsernameRedrawRequired)
-                    o.o.nameImage = this.getNameImage(this.toDisplayName(o.o.name), this.showUsernameBackground);
+                    o.o.nameImage = this.getNameImage(o.o, this.showUsernameBackground);
 
                 const image = o.o.nameImage.getImage(this.getCanvasScale())
 
@@ -3036,6 +3038,9 @@ window.vueApp = new Vue({
                 this.highlightedUserId = userId
                 this.highlightedUserName = userName
             }
+
+            this.isUsernameRedrawRequired = true;
+            this.isRedrawRequired = true;
 
             for (const messageElement of document.getElementsByClassName("message"))
             {
