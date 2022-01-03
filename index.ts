@@ -198,8 +198,7 @@ io.on("connection", function (socket: Socket)
             coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
         }
 
-        socket.emit("server-update-current-room-state",
-            state)
+        socket.emit("server-update-current-room-state", state)
     }
 
     const sendNewUserInfo = () =>
@@ -270,6 +269,21 @@ io.on("connection", function (socket: Socket)
             logException(e, socket?.data?.user)
         }
     }
+
+    // Flood detection (no more than 100 events in the span of one second)
+    const lastEventDates: number[] = []
+    socket.onAny(() => {
+        lastEventDates.push(Date.now())
+        if (lastEventDates.length > 100)
+        {
+            const firstEventTime = lastEventDates.shift()!
+            if (Date.now() - firstEventTime < 1000)
+            {
+                socket.disconnect()
+            }
+        }
+    })
+
     socket.on("user-msg", function (msg: string)
     {
         try
