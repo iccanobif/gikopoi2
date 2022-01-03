@@ -153,8 +153,9 @@ io.use(async (socket: Socket, next: () => void) => {
         {
             log.info("server-cant-log-you-in", privateUserId)
             socket.emit("server-cant-log-you-in")
-            socket.disconnect(true)
-            return;
+            // socket.disconnect(true)
+            // return;
+            next()
         }
 
         socket.data = { user: user }
@@ -261,6 +262,7 @@ io.on("connection", function (socket: Socket)
         try
         {
             socket.emit("server-cant-log-you-in")
+            log.info("DISCONNECTING WEBSOCKET")
             socket.disconnect(true)
         }
         catch (e)
