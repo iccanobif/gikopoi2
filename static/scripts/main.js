@@ -2963,7 +2963,7 @@ window.vueApp = new Vue({
                 if (this.isNameMentionSoundEnabled && this.users[this.myUserID])
                 {
                     const name = this.toDisplayName(this.users[this.myUserID].name).trim().toLowerCase();
-                    if (name.split("◆").some(word => lmsg.includes(word))) return true;
+                    if (name.split("◆").some(word => word && lmsg.includes(word))) return true;
                 }
 
                 return words.some(word => lmsg.includes(word));
