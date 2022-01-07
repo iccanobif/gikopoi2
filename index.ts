@@ -857,8 +857,11 @@ io.on("connection", function (socket: Socket)
 
                             const user = getUser(stream.userId!)
                             if (!user)
+                            {
+                                log.error("ERROR: Can't find user", stream.userId, "when doing #rula")
                                 return "N/A"
-                                
+                            }
+
                             return user.name
                         }),
                 }))
