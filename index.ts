@@ -851,7 +851,16 @@ io.on("connection", function (socket: Socket)
                     userCount: getFilteredConnectedUserList(user, room.id, user.areaId).length,
                     streamers: toStreamSlotDtoArray(user, roomStates[user.areaId][room.id].streams)
                         .filter(stream => stream.isActive && stream.userId != null)
-                        .map(stream => room.forcedAnonymous ? "" : getUser(stream.userId!).name),
+                        .map(stream => {
+                            if (room.forcedAnonymous)
+                                return ""
+
+                            const user = getUser(stream.userId!)
+                            if (!user)
+                                return "N/A"
+                                
+                            return user.name
+                        }),
                 }))
 
             socket.emit("server-room-list", roomList)
