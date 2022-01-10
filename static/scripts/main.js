@@ -563,11 +563,11 @@ window.vueApp = new Vue({
             const usersDto = dto.connectedUsers
             const streamsDto = dto.streams
 
-            if (dto.hideStreams)
-            {
-                localStorage.setItem("hideStreams", "true")
-            }
+            if (!this.hideStreams && (dto.hideStreams || localStorage.getItem("hideStreams")))
+                logToServer(this.myUserID + " setting hideStreams to true")
 
+            if (dto.hideStreams)
+                localStorage.setItem("hideStreams", "true")
             this.hideStreams = localStorage.getItem("hideStreams") == "true";
 
             this.chessboardState = dto.chessboardState
