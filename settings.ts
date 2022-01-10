@@ -27,7 +27,7 @@ try
 catch {
     log.warn("No local-settings.json file found")
 
-    jsonContents = JSON.parse(process.env.GIKO2_SETTINGS as string)
+    jsonContents = JSON.parse(process.env.GIKO2_SETTINGS || "{}" as string)
 }
 
 export const settings: PoiPoiSettings = {
