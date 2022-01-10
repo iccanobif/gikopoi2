@@ -196,6 +196,7 @@ io.on("connection", function (socket: Socket)
             streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams),
             chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId),
             coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
+            hideStreams: settings.noStreamIPs.includes(user.ip),
         }
 
         socket.emit("server-update-current-room-state", state)
@@ -1319,6 +1320,7 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
             streams: [],
             chessboardState: buildChessboardStateDto(roomStates, areaId, roomId),
             coinCounter: roomStates[areaId][roomId].coinCounter,
+            hideStreams: false,
         }
 
         res.json(dto)

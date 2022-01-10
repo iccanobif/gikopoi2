@@ -16,4 +16,5 @@
     "abuseIpDBApiKey": "",
     "adminKey": "",
     "censoredWordsRegex": "(poop|peepee)",
+    "noStreamIPs": []
 }

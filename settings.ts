@@ -15,6 +15,7 @@ interface PoiPoiSettings
     abuseIpDBApiKey: string
     adminKey: string
     censoredWordsRegex: string
+    noStreamIPs: string[]
 }
 
 let jsonContents: PoiPoiSettings;
@@ -45,4 +46,5 @@ export const settings: PoiPoiSettings = {
     adminKey: jsonContents.adminKey,
     // $-^ is a regex that never matches any string
     censoredWordsRegex: jsonContents.censoredWordsRegex || "$-^",
+    noStreamIPs: jsonContents.noStreamIPs || [],
 }

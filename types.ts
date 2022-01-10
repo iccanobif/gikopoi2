@@ -120,7 +120,8 @@ export interface RoomStateDto
     connectedUsers: PlayerDto[],
     streams: StreamSlotDto[],
     chessboardState: ChessboardStateDto,
-    coinCounter: number
+    coinCounter: number,
+    hideStreams: boolean,
 }
 
 export interface LoginResponseDto

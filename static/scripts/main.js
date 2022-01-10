@@ -249,6 +249,8 @@ window.vueApp = new Vue({
         canvasContainerResizeObserver: null,
 
         lastCoinTossTime: 0, // unix timestamp
+
+        hideStreams: false,
     },
     mounted: function ()
     {
@@ -560,6 +562,13 @@ window.vueApp = new Vue({
             const roomDto = dto.currentRoom
             const usersDto = dto.connectedUsers
             const streamsDto = dto.streams
+
+            if (dto.hideStreams)
+            {
+                localStorage.setItem("hideStreams", "true")
+            }
+
+            this.hideStreams = localStorage.getItem("hideStreams") == "true";
 
             this.chessboardState = dto.chessboardState
 
@@ -2631,6 +2640,9 @@ window.vueApp = new Vue({
                 {
                     try
                     {
+                        if (this.hideStreams)
+                            return;
+
                         const stream = event.streams[0]
                         videoElement.srcObject = stream;
 
