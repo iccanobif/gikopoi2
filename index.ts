@@ -349,8 +349,11 @@ io.on("connection", function (socket: Socket)
 
             user.lastAction = Date.now()
 
-            userRoomEmit(user, user.areaId, user.roomId,
-                "server-msg", user.id, msg);
+            if (msg.toLowerCase().match(settings.censoredWordsRegex))
+                socket.emit("server-msg", user.id, msg) // if there's a bad word, show the message only to the guy who wrote it
+            else
+                userRoomEmit(user, user.areaId, user.roomId,
+                    "server-msg", user.id, msg);
         }
         catch (e)
         {

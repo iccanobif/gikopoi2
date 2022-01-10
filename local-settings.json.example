@@ -10,5 +10,6 @@
     "janusRoomNameIntPrefix": 1,
     "isBehindProxy": true,
     "restrictLoginByIp": true,
-    "abuseIpDBApiKey": ""
+    "abuseIpDBApiKey": "",
+    "censoredWordsRegex": "(poop|peepee)",
 }

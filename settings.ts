@@ -23,4 +23,6 @@ export const settings = {
     restrictLoginByIp: fileJsonContents.restrictLoginByIp == undefined ? true : fileJsonContents.restrictLoginByIp,
     abuseIpDBApiKey: (fileJsonContents.abuseIpDBApiKey || process.env.ABUSE_IPDB_API_KEY) as string,
     adminKey: (fileJsonContents.adminKey || process.env.ADMIN_KEY) as string,
+    // $-^ is a regex that never matches any string
+    censoredWordsRegex: (fileJsonContents.censoredWordsRegex || process.env.GIKO2_CENSORED_WORDS_REGEX || "$-^") as string,
 }

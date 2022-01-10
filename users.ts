@@ -1,5 +1,6 @@
 import { v4 } from "uuid";
 import { rooms } from "./rooms";
+import { settings } from "./settings";
 import { Area, Direction, PlayerDto } from "./types";
 
 function generateId()
@@ -153,7 +154,7 @@ export function createPlayerDto(player: Player): PlayerDto
         isInactive: player.isInactive,
         bubblePosition: player.bubblePosition,
         voicePitch: player.voicePitch,
-        lastRoomMessage: player.lastRoomMessage,
+        lastRoomMessage: player.lastRoomMessage?.toLocaleLowerCase().match(settings.censoredWordsRegex) ? "" : player.lastRoomMessage,
         isAlternateCharacter: player.isAlternateCharacter,
     }
 }
