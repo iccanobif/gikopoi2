@@ -1,4 +1,7 @@
 {
+    "enableSSL": false,
+    "persistorUrl": "",
+    "persistorSecret": "",
     "janusServers": [
         {
             "url": "",
@@ -11,5 +14,6 @@
     "isBehindProxy": true,
     "restrictLoginByIp": true,
     "abuseIpDBApiKey": "",
+    "adminKey": "",
     "censoredWordsRegex": "(poop|peepee)",
 }

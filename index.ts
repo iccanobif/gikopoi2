@@ -1146,7 +1146,7 @@ function toPlayerDto(player: Player): PlayerDto
     return playerDto;
 }
 
-if (process.env.GIKO2_ENABLE_SSL == "true")
+if (settings.enableSSL)
     app.use(enforce.HTTPS({ trustProtoHeader: true }))
 
 app.use(compression({
@@ -2005,11 +2005,11 @@ async function persistState()
             genCoinCount: roomStates["gen"]["jinja"].coinCounter,
         }
 
-        if (process.env.PERSISTOR_URL)
+        if (settings.persistorUrl)
         {
-            await got.post(process.env.PERSISTOR_URL, {
+            await got.post(settings.persistorUrl, {
                 headers: {
-                    "persistor-secret": process.env.PERSISTOR_SECRET,
+                    "persistor-secret": settings.persistorSecret,
                     "Content-Type": "text/plain"
                 },
                 body: JSON.stringify(state)
@@ -2056,13 +2056,13 @@ async function restoreState()
         // and start with a fresh state
 
         log.info("Restoring state...")
-        if (process.env.PERSISTOR_URL)
+        if (settings.persistorUrl)
         {
             // remember to do it as defensive as possible
 
-                const response = await got.get(process.env.PERSISTOR_URL, {
+                const response = await got.get(settings.persistorUrl, {
                     headers: {
-                        "persistor-secret": process.env.PERSISTOR_SECRET
+                        "persistor-secret": settings.persistorSecret
                     }
                 })
                 if (response.statusCode == 200)
