@@ -8,7 +8,7 @@ function generateId()
     return v4()
 }
 
-const possibleVoicePitches = [0, 0.5, 1, 1.5, 2]
+const possibleVoicePitches = [0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
 let lastUsedVoicePitchIndex = 0
 let lastUsedSpawnPointIndex = 0
 
