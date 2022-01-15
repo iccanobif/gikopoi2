@@ -92,7 +92,7 @@ export function speak(message, voiceURI, volume, pitch)
 
     if (voiceURI == "automatic")
     {
-        utterance.lang = isJapanese(message) ? "ja" : "en"
+        utterance.lang = isJapanese(cleanMsgForSpeech) ? "ja" : "en"
     }
     else
     {
