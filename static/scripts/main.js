@@ -1417,12 +1417,20 @@ window.vueApp = new Vue({
                     y: o.y
                 }, objectsByPosition));
 
-                Object.values(self.users).forEach(o => addObject({
-                    o,
-                    type: "user",
-                    x: o.logicalPositionX,
-                    y: o.logicalPositionY
-                }, objectsByPosition));
+                Object.values(self.users)
+                    .sort((a, b) => {
+                        if (a.id == self.highlightedUserId)
+                            return 1
+                        if (b.id == self.highlightedUserId)
+                            return -1
+                        return a.id.localeCompare(b.id);
+                    })
+                    .forEach(o => addObject({
+                        o,
+                        type: "user",
+                        x: o.logicalPositionX,
+                        y: o.logicalPositionY
+                    }, objectsByPosition));
 
                 const canvasObjects = [];
                 scanCanvasObjects(canvasObjects, objectsByPosition,
@@ -1456,7 +1464,18 @@ window.vueApp = new Vue({
 
                         if (aPriority < bPriority) return -1;
                         if (aPriority > bPriority) return 1;
-                        return 0;
+
+                        // If it's two users in the same spot, put the highlighted one on top.
+                        if (a.type == "user" && b.type == "user")
+                        {
+                            if (a.o.id == self.highlightedUserId)
+                                return 1
+                            if (b.o.id == self.highlightedUserId)
+                                return -1
+                            return a.o.id.localeCompare(b.o.id);
+                        }
+                        
+                        return 0
                     });
             }
 
@@ -3066,6 +3085,10 @@ window.vueApp = new Vue({
                 else
                     messageElement.classList.remove("highlighted-message")
             }
+
+            // Update the canvas objects list so that highlighted users are always displayed on top
+            // relative to the other users in the same tile.
+            this.updateCanvasObjects();
         },
         getUserListForListPopup: function ()
         {
