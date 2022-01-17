@@ -68,6 +68,9 @@ export function speak(message, voiceURI, volume, pitch) {
         .replace(/88+/gi, "ぱちぱち")
         .replace(/８８+/gi, "ぱちぱち")
         .replace(/^w$/i, "わら")
+        .replace(/[Ａ-Ｚａ-ｚ０-９]/g, function (s) {
+            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0)
+        })
 
     if (voiceURI == "animalese") {
         speakAnimalese(cleanMsgForSpeech, pitch, volume)
