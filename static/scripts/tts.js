@@ -91,10 +91,6 @@ export function speak(message, voiceURI, volume, pitch) {
 
     if (voiceURI == "automatic") {
         utterance.lang = isJapanese(cleanMsgForSpeech) ? "ja" : "en"
-        if (utterance.lang == "en") {
-            utterance.voice = allVoices.find(v => v.name == 'Albert')
-            console.log(allVoices)
-        }
     }
     else {
         const voice = allVoices.find(v => v.voiceURI == voiceURI)
