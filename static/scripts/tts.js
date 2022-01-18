@@ -47,6 +47,9 @@ function isJapaneseCharacter(character) {
     // hiragana + katakana
     if (charCode >= 0x3040 && charCode <= 0x30FF)
         return true
+    // hankaku katakana
+    if (charCode >= 0xFF66 && charCode <= 0xFF9F)
+        return true
 }
 
 function isJapanese(text) {
