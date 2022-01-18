@@ -643,8 +643,10 @@ window.vueApp = new Vue({
                 // Before onbeforeunload the socket has already died, so
                 // i have to start it again here, in case the user
                 // decides that he doesn't want to close the window.
-                this.initializeSocket();
-                if (this.mediaStream) this.stopStreaming();
+                // UPDATE: might not be needed anymore now that we open the socket closeOnBeforeunload: false
+
+                // this.initializeSocket();
+                // if (this.mediaStream) this.stopStreaming();
 
                 return "Are you sure?";
             }
@@ -663,7 +665,8 @@ window.vueApp = new Vue({
         initializeSocket: function()
         {
             this.socket = io({
-                extraHeaders: {"private-user-id": this.myPrivateUserID}
+                extraHeaders: {"private-user-id": this.myPrivateUserID},
+                closeOnBeforeunload: false,
             });
 
             const immanentizeConnection = async () =>

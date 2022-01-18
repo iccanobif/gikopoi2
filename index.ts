@@ -346,7 +346,7 @@ io.on("connection", function (socket: Socket)
 
             // Log only if non empty message
             if (msg)
-                log.info("MSG:", user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg.replace(/[\n\r]+/g, "<br>"));
+                log.info("MSG:", user.ip, user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg.replace(/[\n\r]+/g, "<br>"));
 
             user.lastAction = Date.now()
 
