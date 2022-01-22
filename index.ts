@@ -236,6 +236,11 @@ io.on("connection", function (socket: Socket)
     try
     {
         user = socket.data.user;
+        if (!user)
+        {
+            log.info(getRealIpWebSocket(socket), "tried to connect to websocket but failed authentication")
+            return
+        }
         user.socketId = socket.id;
 
         log.info("user-connect userId:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
