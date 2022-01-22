@@ -219,7 +219,8 @@ io.on("connection", function (socket: Socket)
             user.isGhost = true
             user.disconnectionTime = Date.now()
 
-            await clearStream(user) // This also calls emitServerStats()
+            await clearStream(user) // This also calls emitServerStats(), but only if the user was streaming...
+            emitServerStats(user.areaId)
             clearRoomListener(user)
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-user-left-room", user.id);
@@ -1082,6 +1083,15 @@ io.on("connection", function (socket: Socket)
 
 function emitServerStats(areaId: string)
 {
+    const allConnectedUsers = getAllUsers().filter(u => !u.isGhost)
+    const allForUsers = allConnectedUsers.filter(u => u.areaId == "for")
+    const allGenUsers = allConnectedUsers.filter(u => u.areaId == "gen")
+    const allIps = new Set(allConnectedUsers.map(u => u.ip))
+    const forStreamCount = Object.values(roomStates[areaId]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
+    const genStreamCount = Object.values(roomStates[areaId]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
+
+    log.info("Server stats: gen users:", allGenUsers.length, "gen streams:", genStreamCount, "for users:", allForUsers.length, "for streams:", forStreamCount, "total IPs:", allIps.size)
+
     getConnectedUserList(null, areaId).forEach((u) =>
     {
         const connectedUserIds: Set<string> = getFilteredConnectedUserList(u, null, areaId)
