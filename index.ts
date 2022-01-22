@@ -1279,18 +1279,19 @@ app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
     }
 })
 
-app.use(express.static('static',
-    {
-        setHeaders: (res, path) => {
-            // Cache images for one week. I made the frontend append ?v=version to image URLs,
-            // so that it won't try to use the cached images when it's opening a new version of the website.
-            if (path.match(/\.(svg|png)$/i))
-                res.set("Cache-Control", "public, max-age=604800, immutable")
-            else
-                res.set("Cache-Control", "no-cache")
-        }
+const static_properties = {
+    setHeaders: (res: any, path: any) => {
+        // Cache images for one week. I made the frontend append ?v=version to image URLs,
+        // so that it won't try to use the cached images when it's opening a new version of the website.
+        if (path.match(/\.(svg|png)$/i))
+            res.set("Cache-Control", "public, max-age=604800, immutable")
+        else
+            res.set("Cache-Control", "no-cache")
     }
-));
+};
+
+app.use(express.static('static', static_properties));
+app.use(express.static('static/favicons', static_properties));
 
 app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
 {
