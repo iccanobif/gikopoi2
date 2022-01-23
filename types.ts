@@ -48,7 +48,7 @@ export interface Door
 export interface Room
 {
     id: string;
-    group: string;
+    group: "bar_giko" | "gikopoi" | "gikopoipoi";
     scale: number;
     size: Coordinates;
     originCoordinates: Coordinates;
