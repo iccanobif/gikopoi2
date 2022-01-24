@@ -1,7 +1,6 @@
 import { v4 } from "uuid";
 import { rooms } from "./rooms";
-import { settings } from "./settings";
-import { Area, Direction, PlayerDto } from "./types";
+import { Area, Direction } from "./types";
 
 function generateId()
 {
@@ -140,23 +139,6 @@ export function restoreUserState(persistedUsers: Player[])
         user.lastRoomMessage = user.lastRoomMessage?.replace(/bread/g, "cocaine")
     }
     console.info("Restored user state (" + Object.values(users).length + " users)")
-}
-
-export function createPlayerDto(player: Player): PlayerDto
-{
-    return {
-        id: player.id,
-        name: player.name,
-        position: player.position,
-        direction: player.direction,
-        roomId: player.roomId,
-        characterId: player.characterId,
-        isInactive: player.isInactive,
-        bubblePosition: player.bubblePosition,
-        voicePitch: player.voicePitch,
-        lastRoomMessage: player.lastRoomMessage?.toLocaleLowerCase().match(settings.censoredWordsRegex) ? "" : player.lastRoomMessage,
-        isAlternateCharacter: player.isAlternateCharacter,
-    }
 }
 
 export function getFilteredConnectedUserList(user: Player, roomId: string | null, areaId: string)

@@ -1,7 +1,7 @@
 import express, { Request } from "express"
 import { rooms } from "./rooms";
 import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
-import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
+import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
 import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
@@ -1154,7 +1154,19 @@ function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSl
 
 function toPlayerDto(player: Player): PlayerDto
 {
-    const playerDto = createPlayerDto(player);
+    const playerDto: PlayerDto = {
+        id: player.id,
+        name: player.name,
+        position: player.position,
+        direction: player.direction,
+        roomId: player.roomId,
+        characterId: player.characterId,
+        isInactive: player.isInactive,
+        bubblePosition: player.bubblePosition,
+        voicePitch: player.voicePitch,
+        lastRoomMessage: player.lastRoomMessage?.toLocaleLowerCase().match(settings.censoredWordsRegex) ? "" : player.lastRoomMessage,
+        isAlternateCharacter: player.isAlternateCharacter,
+    };
     if (rooms[player.roomId].forcedAnonymous)
     {
         playerDto.name = "";
