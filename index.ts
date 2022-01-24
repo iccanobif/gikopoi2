@@ -1087,8 +1087,8 @@ function emitServerStats(areaId: string)
     const allForUsers = allConnectedUsers.filter(u => u.areaId == "for")
     const allGenUsers = allConnectedUsers.filter(u => u.areaId == "gen")
     const allIps = new Set(allConnectedUsers.map(u => u.ip))
-    const forStreamCount = Object.values(roomStates[areaId]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
-    const genStreamCount = Object.values(roomStates[areaId]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
+    const forStreamCount = Object.values(roomStates["for"]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
+    const genStreamCount = Object.values(roomStates["gen"]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
 
     log.info("Server stats: gen users:", allGenUsers.length, "gen streams:", genStreamCount, "for users:", allForUsers.length, "for streams:", forStreamCount, "total IPs:", allIps.size)
 
