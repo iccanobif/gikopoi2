@@ -13,7 +13,6 @@ export default
         login_streamer_count: "直播人數：",
 
         infobox_label_area: "區域：",
-        infobox_value_area: "海邊的小鎮",
         infobox_label_room: "地點：",
         infobox_label_user_name: "用戶名：",
         infobox_label_user_count: "在線人數：",
@@ -50,6 +49,8 @@ export default
         rula_menu_column_user_count: "人數",
         rula_menu_column_streamers: "直播中",
         rula_menu_button_rula: "嚕啦！",
+        rula_menu_label_group: "區域",
+        //rula_menu_group_option_all: "",
 
         user_list_popup_title: "用戶訊息過濾（@USER_COUNT@名）",
         user_list_popup_column_user_name: "用戶名",
@@ -76,9 +77,10 @@ export default
         stream_form_screen_capture: "視窗擷取",
         stream_form_screen_capture_audio: "擷取螢幕的聲音",
         stream_form_screen_capture_audio_notice: "這是個實驗性的功能。僅對Chrome與Edge有效。\n在Windows上，只能擷取螢幕聲音與分頁聲音。",
-        stream_form_camera_facing: "手機鏡頭：",
-        stream_form_camera_facing_user: "正面",
-        stream_form_camera_facing_environment: "背面",
+
+        // device_selection_title: "",
+        // device_selection_audio_devices: "",
+        // device_selection_video_devices: "",
         
         preferences_title: "設定",
         preferences_name_bg: "用戶名稱之文字背景顏色",
@@ -111,6 +113,11 @@ export default
         preferences_timestamps_in_copied_log: "在複製的聊天紀錄中包含時間標記",
         preferences_ignore_indicator_in_log: "在聊天紀錄中以紅點標記隱藏用戶之訊息位置",
         preferences_language: "語言",
+        // preferences_enable_coin_sound: "Enable coin sound",
+        // preferences_title_streams: "",
+        // preferences_streams_auto_resume: "",
+        // preferences_title_chat: "",
+        // preferences_clear_log: "",
 
         back_to_homepage: "回首頁",
 
@@ -135,6 +142,7 @@ export default
         error_obtaining_video: "無法取得影像。請確認瀏覽器的允許權限。",
         error_obtaining_audio: "無法取得音訊。請確認瀏覽器的允許權限。",
         no_webrtc: "這個瀏覽器不支援WebRTC。",
+        // error_didnt_select_device: "",
 
         unknown_error: "由於未知的錯誤連接失敗。",
         invalid_username: "指定的用戶名無效。",
@@ -146,10 +154,13 @@ export default
         are_you_sure_you_want_to_logout: "又要拋下我們，自己先離開了嗎？",
         are_you_sure_you_want_to_block: "確定要封鎖該用戶嗎？(雙方(你與封鎖用戶)將無法看到彼此的訊息與角色)",
         goodbye: "路上小心！約定好了還要再回來呦！",
-        flood_warning: "欸，你會不會講太快了！",
+        flood_warning: "欸，你會不會講太快了！ Undelivered message: ", // Partial
         chess_timeout_reached: "對弈結束：時間到",
         chess_win: "對弈結束：@USER_NAME@贏了。",
         chess_quit: "對弈結束：@USER_NAME@投降了。",
+        
+        // are_you_sure_you_want_to_clear_log: "",
+        // chat_log_cleared: "",
     },
     room:
     {
@@ -192,5 +203,13 @@ export default
         bar_giko2: "ＢＡＲ GIKO 下層",
         bar_giko_square: "噴水廣場",
         densha: "電車",
+        //monachat: "",
+        //konbini: "",
+    },
+    area:
+    {
+        gikopoipoi: "GIKOpoipoi",
+        gikopoi: "海邊的小鎮",
+        // bar_giko: "",
     }
 }

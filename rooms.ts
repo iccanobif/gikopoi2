@@ -3,6 +3,7 @@ import { Room } from "./types";
 export const rooms: { [roomId: string]: Room } = {
     bar: {
         id: "bar",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 9 },
         originCoordinates: { x: 0, y: 352 },
@@ -83,6 +84,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     admin_st: {
         id: "admin_st",
+        group: "gikopoi",
         scale: 1,
         size: { x: 10, y: 9 },
         originCoordinates: { x: 0, y: 235 },
@@ -165,6 +167,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     basement: {
         id: "basement",
+        group: "gikopoi",
         scale: 1,
         size: { x: 10, y: 4 },
         originCoordinates: { x: 0, y: 217 },
@@ -198,6 +201,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     admin: {
         id: "admin",
+        group: "gikopoi",
         scale: 1,
         size: { x: 12, y: 6 },
         originCoordinates: { x: 43, y: 268 },
@@ -250,6 +254,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     radio_backstage: {
         id: "radio_backstage",
+        group: "gikopoi",
         scale: 1,
         size: { x: 3, y: 9 },
         originCoordinates: { x: 0, y: 432 },
@@ -277,6 +282,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     school_st: {
         id: "school_st",
+        group: "gikopoi",
         scale: 1,
         size: { x: 6, y: 8 },
         originCoordinates: { x: -1, y: 273 },
@@ -308,6 +314,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     bar_st: {
         id: "bar_st",
+        group: "gikopoi",
         scale: 1,
         size: { x: 10, y: 9 },
         originCoordinates: { x: -1, y: 323 },
@@ -372,6 +379,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     takadai: {
         id: "takadai",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 14 },
         originCoordinates: { x: 870-320, y: 1165-300 },
@@ -496,6 +504,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     silo: {
         id: "silo",
+        group: "gikopoipoi",
         scale: 0.6,
         size: { x: 12, y: 12 },
         originCoordinates: { x: 740-345, y: 1310-393 },
@@ -545,8 +554,9 @@ export const rooms: { [roomId: string]: Room } = {
     },
     badend: {
         id: "badend",
+        group: "gikopoipoi",
         scale: 0.59,
-        size: { x: 0, y: 0 },
+        size: { x: 50, y: 50 },
         originCoordinates: { x: 0, y: 0 },
         spawnPoint: "spawn",
         backgroundImageUrl: "rooms/badend/badend.jpg",
@@ -566,6 +576,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     yoshinoya: {
         id: "yoshinoya",
+        group: "bar_giko",
         scale: 1,
         size: { x: 12, y: 14 },
         originCoordinates: { x: 13, y: 355 },
@@ -573,48 +584,48 @@ export const rooms: { [roomId: string]: Room } = {
         backgroundImageUrl: "rooms/yoshinoya/yoshinoya.svg",
         backgroundColor: "#222",
         objects: [
-            { x: 3, y: 11, url: "wall-with-squid.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 570, y: 39 } },
+            { x: 3, y: 11, url: "wall-with-squid.svg", scale: 1, offset: { x: 570, y: 39 } },
 
             // left table
-            { x: 0 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294, y: 304 } },
-            { x: 1 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294 + 1 * 40, y: 304 + 1 * 20 } },
-            { x: 2 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294 + 2 * 40, y: 304 + 2 * 20 } },
-            { x: 3 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294 + 3 * 40, y: 304 + 3 * 20 } },
-            { x: 4 + 4, y: 3, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 294 + 4 * 40, y: 304 + 4 * 20 } },
+            { x: 0 + 4, y: 3, url: "counter-left.svg", scale: 1, offset: { x: 294, y: 304 } },
+            { x: 1 + 4, y: 3, url: "counter-left.svg", scale: 1, offset: { x: 294 + 1 * 40, y: 304 + 1 * 20 } },
+            { x: 2 + 4, y: 3, url: "counter-left.svg", scale: 1, offset: { x: 294 + 2 * 40, y: 304 + 2 * 20 } },
+            { x: 3 + 4, y: 3, url: "counter-left.svg", scale: 1, offset: { x: 294 + 3 * 40, y: 304 + 3 * 20 } },
+            { x: 4 + 4, y: 3, url: "counter-left.svg", scale: 1, offset: { x: 294 + 4 * 40, y: 304 + 4 * 20 } },
 
-            { x: 0 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373, y: 265 } },
-            { x: 1 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373 + 1 * 40, y: 265 + 1 * 20 } },
-            { x: 2 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373 + 2 * 40, y: 265 + 2 * 20 } },
-            { x: 3 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373 + 3 * 40, y: 265 + 3 * 20 } },
-            { x: 4 + 4, y: 5, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 373 + 4 * 40, y: 265 + 4 * 20 } },
+            { x: 0 + 4, y: 5, url: "counter-right.svg", scale: 1, offset: { x: 373, y: 265 } },
+            { x: 1 + 4, y: 5, url: "counter-right.svg", scale: 1, offset: { x: 373 + 1 * 40, y: 265 + 1 * 20 } },
+            { x: 2 + 4, y: 5, url: "counter-right.svg", scale: 1, offset: { x: 373 + 2 * 40, y: 265 + 2 * 20 } },
+            { x: 3 + 4, y: 5, url: "counter-right.svg", scale: 1, offset: { x: 373 + 3 * 40, y: 265 + 3 * 20 } },
+            { x: 4 + 4, y: 5, url: "counter-right.svg", scale: 1, offset: { x: 373 + 4 * 40, y: 265 + 4 * 20 } },
 
-            { x: 5 + 4, y: 4, url: "counter-middle.svg", scale: 1, xOffset: 1, yOffset: -1, offset: { x: 531, y: 383 } },
-            { x: 5 + 4, y: 3, url: "counter-left-corner.svg", scale: 1, xOffset: 1, yOffset: -1, offset: { x: 492, y: 403 } },
-            { x: 5 + 4, y: 5, url: "counter-right-corner.svg", scale: 1, xOffset: 2, yOffset: -1, offset: { x: 570, y: 363 } },
+            { x: 5 + 4, y: 4, url: "counter-middle.svg", scale: 1, offset: { x: 531, y: 383 } },
+            { x: 5 + 4, y: 3, url: "counter-left-corner.svg", scale: 1, offset: { x: 492, y: 403 } },
+            { x: 5 + 4, y: 5, url: "counter-right-corner.svg", scale: 1, offset: { x: 570, y: 363 } },
 
             // right table
-            { x: 5 + 4, y: 3 + 6, url: "counter-left-corner.svg", scale: 1, xOffset: 1, yOffset: -1, offset: { x: 728, y: 285 } },
-            { x: 5 + 4, y: 4 + 6, url: "counter-middle.svg", scale: 1, xOffset: 1, yOffset: -1, offset: { x: 768, y: 265 } },
-            { x: 5 + 4, y: 5 + 6, url: "counter-right-corner.svg", scale: 1, xOffset: 2, yOffset: -1, offset: { x: 807, y: 245 } },
-            { x: 0 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531, y: 186 } },
-            { x: 1 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531 + 1 * 40, y: 186 + 1 * 20 } },
-            { x: 2 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531 + 2 * 40, y: 186 + 2 * 20 } },
-            { x: 3 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531 + 3 * 40, y: 186 + 3 * 20 } },
-            { x: 4 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, xOffset: 0, yOffset: -2, offset: { x: 531 + 4 * 40, y: 186 + 4 * 20 } },
-            { x: 0 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610, y: 146 } },
-            { x: 1 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610 + 1 * 40, y: 146 + 1 * 20 } },
-            { x: 2 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610 + 2 * 40, y: 146 + 2 * 20 } },
-            { x: 3 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610 + 3 * 40, y: 146 + 3 * 20 } },
-            { x: 4 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, xOffset: 0, yOffset: -1, offset: { x: 610 + 4 * 40, y: 146 + 4 * 20 } },
+            { x: 5 + 4, y: 3 + 6, url: "counter-left-corner.svg", scale: 1, offset: { x: 728, y: 285 } },
+            { x: 5 + 4, y: 4 + 6, url: "counter-middle.svg", scale: 1, offset: { x: 768, y: 265 } },
+            { x: 5 + 4, y: 5 + 6, url: "counter-right-corner.svg", scale: 1, offset: { x: 807, y: 245 } },
+            { x: 0 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, offset: { x: 531, y: 186 } },
+            { x: 1 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, offset: { x: 531 + 1 * 40, y: 186 + 1 * 20 } },
+            { x: 2 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, offset: { x: 531 + 2 * 40, y: 186 + 2 * 20 } },
+            { x: 3 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, offset: { x: 531 + 3 * 40, y: 186 + 3 * 20 } },
+            { x: 4 + 4, y: 3 + 6, url: "counter-left.svg", scale: 1, offset: { x: 531 + 4 * 40, y: 186 + 4 * 20 } },
+            { x: 0 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, offset: { x: 610, y: 146 } },
+            { x: 1 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, offset: { x: 610 + 1 * 40, y: 146 + 1 * 20 } },
+            { x: 2 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, offset: { x: 610 + 2 * 40, y: 146 + 2 * 20 } },
+            { x: 3 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, offset: { x: 610 + 3 * 40, y: 146 + 3 * 20 } },
+            { x: 4 + 4, y: 5 + 6, url: "counter-right.svg", scale: 1, offset: { x: 610 + 4 * 40, y: 146 + 4 * 20 } },
 
             // cooking table
-            { x: 3, y: 5, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 0 * 40, y: 241 - 0 * 20 } },
-            { x: 3, y: 6, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 1 * 40, y: 241 - 1 * 20 } },
-            { x: 3, y: 7, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 2 * 40, y: 241 - 2 * 20 } },
-            { x: 3, y: 8, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 3 * 40, y: 241 - 3 * 20 } },
-            { x: 3, y: 9, url: "small-wallish-thing.svg", scale: 1, xOffset: 3, yOffset: -4, offset: { x: 334 + 4 * 40, y: 241 - 4 * 20 } },
+            { x: 3, y: 5, url: "small-wallish-thing.svg", scale: 1, offset: { x: 334 + 0 * 40, y: 241 - 0 * 20 } },
+            { x: 3, y: 6, url: "small-wallish-thing.svg", scale: 1, offset: { x: 334 + 1 * 40, y: 241 - 1 * 20 } },
+            { x: 3, y: 7, url: "small-wallish-thing.svg", scale: 1, offset: { x: 334 + 2 * 40, y: 241 - 2 * 20 } },
+            { x: 3, y: 8, url: "small-wallish-thing.svg", scale: 1, offset: { x: 334 + 3 * 40, y: 241 - 3 * 20 } },
+            { x: 3, y: 9, url: "small-wallish-thing.svg", scale: 1, offset: { x: 334 + 4 * 40, y: 241 - 4 * 20 } },
 
-            { x: 0, y: 0, url: "left-wall.svg", scale: 1, xOffset: 2, yOffset: -3, offset: { x: 176, y: 197 } },
+            { x: 0, y: 0, url: "left-wall.svg", scale: 1, offset: { x: 176, y: 197 } },
         ],
         sit: [
             // left table
@@ -713,6 +724,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     long_st: {
         id: "long_st",
+        group: "gikopoi",
         scale: 1,
         size: { x: 3, y: 33 },
         originCoordinates: { x: 14, y: 864 },
@@ -735,6 +747,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     bar_giko: {
         id: "bar_giko",
+        group: "bar_giko",
         scale: 1,
         size: { x: 14, y: 20 },
         originCoordinates: { x: 1, y: 382 },
@@ -1004,6 +1017,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     jinja: {
         id: "jinja",
+        group: "gikopoi",
         scale: 1,
         size: { x: 15, y: 11 },
         originCoordinates: { x: 7, y: 311 },
@@ -1085,11 +1099,16 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             steps: { x: 14, y: 4, direction: "left", target: { roomId: "jinja_st", doorId: "torii" } },
         },
+        specialObjects: [
+            { name: 'donation-text', x: 2, y: 7 },
+            { name: 'donation-box', x: 3, y: 5, value: 0 },
+        ],
         streamSlotCount: 4,
         hasChessboard: true,
     },
     cafe_st: {
         id: "cafe_st",
+        group: "gikopoi",
         scale: 1,
         size: { x: 11, y: 12 },
         originCoordinates: { x: 0, y: 267 },
@@ -1232,6 +1251,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     busstop: {
         id: "busstop",
+        group: "gikopoi",
         scale: 1,
         size: { x: 8, y: 5 },
         originCoordinates: { x: 6, y: 215 },
@@ -1272,6 +1292,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     izakaya774: {
         id: "izakaya774",
+        group: "gikopoi",
         scale: 1,
         size: { x: 6, y: 6 },
         originCoordinates: { x: 2, y: 269 },
@@ -1307,6 +1328,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     bar_giko_square: {
         id: "bar_giko_square",
+        group: "bar_giko",
         scale: 1,
         size: { x: 24, y: 22 },
         originCoordinates: { x: -160, y: 505 },
@@ -1411,9 +1433,6 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 19, y:  4 },
             
             // Fountain
-
-
-            
             { x: 12, y: 12 },
             { x: 12, y: 11 },
             { x: 12, y: 10 },
@@ -1427,12 +1446,14 @@ export const rooms: { [roomId: string]: Room } = {
             up: { x: 11, y: 21, direction: "down", target: { roomId: "densha", doorId: "left_middle" } },
             bar_giko: { x: 17, y: 17, direction: "down", target: { roomId: "bar_giko", doorId: "stairs" } },
             yoshinoya: { x: 4, y: 15, direction: "right", target: { roomId: "yoshinoya", doorId: "door" } },
-            right: { x: 0, y: 12, direction: "right", target: { roomId: "monachat", doorId: "door" } },
+            left: { x: 0, y: 12, direction: "right", target: { roomId: "monachat", doorId: "door" } },
+            right: { x: 23, y: 11, direction: "left", target: { roomId: "konbini", doorId: "door" } },
         },
         streamSlotCount: 3,
     },
     bar_giko2: {
         id: "bar_giko2",
+        group: "bar_giko",
         scale: 1,
         size: { x: 16, y: 16 },
         originCoordinates: { x: 1, y: 443 },
@@ -1635,6 +1656,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     radio_room1: {
         id: "radio_room1",
+        group: "gikopoi",
         scale: 1,
         size: { x: 7, y: 8 },
         originCoordinates: { x: 2, y: 332 },
@@ -1685,6 +1707,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     radio_room2: {
         id: "radio_room2",
+        group: "gikopoi",
         scale: 1,
         size: { x: 11, y: 9 },
         originCoordinates: { x: 1, y: 452 },
@@ -1776,6 +1799,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     radio_room3: {
         id: "radio_room3",
+        group: "gikopoi",
         scale: 1,
         size: { x: 12, y: 9 },
         originCoordinates: { x: -1, y: 439 },
@@ -1861,6 +1885,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     radio: {
         id: "radio",
+        group: "gikopoi",
         scale: 1,
         size: { x: 7, y: 10 },
         originCoordinates: { x: 0, y: 371 },
@@ -1903,6 +1928,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     radio_gakuya: {
         id: "radio_gakuya",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 8 },
         originCoordinates: { x: 0, y: 358 },
@@ -1968,6 +1994,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     jinja_st: {
         id: "jinja_st",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 5 },
         originCoordinates: { x: 41, y: 268 },
@@ -2002,6 +2029,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     enkai: {
         id: "enkai",
+        group: "gikopoi",
         scale: 1,
         size: { x: 21, y: 19 },
         originCoordinates: { x: 0, y: 575 },
@@ -2347,6 +2375,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     idoA: {
         id: "idoA",
+        group: "gikopoi",
         scale: 1,
         size: { x: 8, y: 8 },
         originCoordinates: { x: 18, y: 264 },
@@ -2401,7 +2430,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  2, y:  5 },
             { x:  2, y:  4 },
             
-            { x:  6, y:  6 },
+            // { x:  6, y:  6 },
         ],
         forbiddenMovements: [],
         doors: {
@@ -2411,6 +2440,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     idoB: {
         id: "idoB",
+        group: "gikopoi",
         scale: 1,
         size: { x: 8, y: 8 },
         originCoordinates: { x: 18, y: 264 },
@@ -2471,6 +2501,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     admin_bar: {
         id: "admin_bar",
+        group: "gikopoi",
         scale: 1,
         size: { x: 12, y: 10 },
         originCoordinates: { x: 0, y: 371 },
@@ -2564,6 +2595,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     bar774: {
         id: "bar774",
+        group: "gikopoi",
         scale: 1,
         size: { x: 6, y: 8 },
         originCoordinates: { x: -1, y: 298 },
@@ -2628,6 +2660,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     yatai: {
         id: "yatai",
+        group: "gikopoi",
         scale: 1,
         size: { x: 8, y: 8 },
         originCoordinates: { x: -1, y: 417 },
@@ -2639,11 +2672,11 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  1, y:  3, offset: { x:  151, y:  194 }, url: 'bucket_squid.svg' },
             { x:  6, y:  5, offset: { x:  460, y:  218 }, url: 'pole.svg' },
             { x:  6, y:  3, offset: { x:  348, y:  225 }, url: 'panel.svg' },
-            { x:  1, y:  2, offset: { x:  133, y:  310 }, url: 'counter.svg' },
+            { x:  1, y:  2, offset: { x:  133, y:  310 }, url: 'yatai-counter.svg' },
             { x:  2, y:  2, offset: { x:  174, y:  325 }, url: 'counter_bowl.svg' },
-            { x:  3, y:  2, offset: { x:  207, y:  342 }, url: 'counter_drinks.svg' },
-            { x:  4, y:  2, offset: { x:  247, y:  365 }, url: 'counter_squid.svg' },
-            { x:  5, y:  2, offset: { x:  289, y:  385 }, url: 'counter_drink.svg' },
+            { x:  3, y:  2, offset: { x:  206, y:  341 }, url: 'counter_drinks.svg' },
+            { x:  4, y:  2, offset: { x:  246, y:  365 }, url: 'counter_squid.svg' },
+            { x:  5, y:  2, offset: { x:  288, y:  385 }, url: 'counter_chopsticks.svg' },
             { x:  1, y:  0, offset: { x:   49, y:  201 }, url: 'sign.svg' },
         ],
         sit: [
@@ -2675,6 +2708,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     school_rouka: {
         id: "school_rouka",
+        group: "gikopoi",
         scale: 1,
         size: { x: 5, y: 8 },
         originCoordinates: { x: 0, y: 335 },
@@ -2705,6 +2739,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     school: {
         id: "school",
+        group: "gikopoi",
         scale: 1,
         size: { x: 8, y: 7 },
         originCoordinates: { x: 0, y: 312 },
@@ -2773,6 +2808,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     school_international: {
         id: "school_international",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 12 },
         originCoordinates: { x: 0, y: 412 },
@@ -2869,6 +2905,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     school_pc: {
         id: "school_pc",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 12 },
         originCoordinates: { x: 1, y: 412 },
@@ -2936,6 +2973,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     school_ground: {
         id: "school_ground",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 9 },
         originCoordinates: { x: 111, y: 391 },
@@ -3017,6 +3055,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     kaidan: {
         id: "kaidan",
+        group: "gikopoi",
         scale: 1,
         size: { x: 6, y: 11 },
         originCoordinates: { x: 725, y: 1153 },
@@ -3061,6 +3100,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     seashore: {
         id: "seashore",
+        group: "gikopoi",
         scale: 1,
         size: { x: 9, y: 14 },
         originCoordinates: { x: 507, y: 556 },
@@ -3108,6 +3148,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     densha: {
         id: "densha",
+        group: "gikopoipoi",
         scale: 1,
         size: { x: 3, y: 15 },
         originCoordinates: { x: 3, y: 451 },
@@ -3199,6 +3240,7 @@ export const rooms: { [roomId: string]: Room } = {
     },
     monachat: {
         id: "monachat",
+        group: "gikopoipoi",
         scale: 1,
         size: { x: 7, y: 8 },
         originCoordinates: { x: 4, y: 332 },
@@ -3232,12 +3274,68 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [],
         doors: {
-            door: { x: 6, y: 6, direction: "left", target: { roomId: "bar_giko_square", doorId: "right" } },
+            door: { x: 6, y: 6, direction: "left", target: { roomId: "bar_giko_square", doorId: "left" } },
         },
         streamSlotCount: 3,
     },
+    konbini: {
+        id: "konbini",
+        group: "gikopoipoi",
+        scale: 1,
+        size: { x: 9, y: 8 },
+        originCoordinates: { x: 4, y: 332 },
+        spawnPoint: "door",
+        backgroundImageUrl: "rooms/konbini/background.svg",
+        objects: [
+            { x:  1, y: 2, offset: { x: 40, y: 124 }, url: "toilet-wall-left.svg" },
+            { x:  1, y: 4, offset: { x: 166, y: 109 }, url: "toilet-wall-right.svg" },
+            { x:  4, y:  6, width: 5, offset: { x: 400, y: 156 }, url: "register.svg"},
+            { x:  6, y:  2, width: 2, height: 2, offset: { x: 280, y: 340 }, url: "freezer.svg" },
+            { x:  1, y:  1, height: 2, offset: { x: 40, y: 184 }, url: "refrigerator.svg", scale: 1 }, // drinks
+            { x:  3, y:  3, width: 2, height: 3, offset: { x: 160, y: 203 }, url: "foods.svg" }, // snacks
+        ],
+        objectRenderSortMethod: "diagonal_scan",
+        sit: [
+            { x:  0, y:  0 },
+        ],
+        blocked: [
+            // bathroom
+            // { x:  0, y:  0 },
+            // { x:  0, y:  1 },
+            { x:  0, y:  4 },
+            // coffee machine
+            { x:  0, y:  7 },
+            { x:  1, y:  7 },
+            { x:  2, y:  7 },
+            // refrigerator
+            { x:  1, y:  0 },
+            { x:  1, y:  1 },
+            // foods
+            { x:  3, y:  1 }, { x:  4, y:  1 },
+            { x:  3, y:  2 }, { x:  4, y:  2 },
+            { x:  3, y:  3 }, { x:  4, y:  3 },
+            // freezer
+            { x:  6, y:  1 }, { x:  7, y:  1 },
+            { x:  6, y:  2 }, { x:  7, y:  2 },
+            // register
+            { x:  4, y:  6 },
+            { x:  5, y:  6 },
+            { x:  6, y:  6 },
+            { x:  7, y:  6 },
+            { x:  8, y:  6 },
+        ],
+        forbiddenMovements: [
+            { xFrom: 0, yFrom: 2, xTo: 1, yTo: 2 },
+            { xFrom: 1, yFrom: 2, xTo: 0, yTo: 2 },
+        ],
+        doors: {
+            door: { x: 0, y: 6, direction: "right", target: { roomId: "bar_giko_square", doorId: "right" } },
+        },
+        streamSlotCount: 1,
+    },
     labyrinth: {
         id: "labyrinth",
+        group: "gikopoipoi",
         scale: 1,
         size: { x: 27, y: 27 },
         originCoordinates: { x: 0, y: 352 },

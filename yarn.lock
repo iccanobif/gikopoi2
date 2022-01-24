@@ -1196,10 +1196,9 @@ isomorphic-ws@4.0.1:
   resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-4.0.1.tgz#55fd4cd6c5e6491e76dc125938dd863f5cd4f2dc"
   integrity sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==
 
-janus-videoroom-client@^4.1.10:
+"janus-videoroom-client@https://github.com/iccanobif/janus-client":
   version "4.2.1"
-  resolved "https://registry.yarnpkg.com/janus-videoroom-client/-/janus-videoroom-client-4.2.1.tgz#30410bf037fc2cc01d187c80585fc3ebf5a6c9dc"
-  integrity sha512-gYUj9rCaXsexMm0O1kZWbhx8iSN7o9HxSX41lN5tYnVaUxuMuUsNl1n5D+G22CkeeXCGrKhofUez+i8KUA+d+Q==
+  resolved "https://github.com/iccanobif/janus-client#0507dd30bb24ed1b92a8b1340795f9d49591b893"
   dependencies:
     chai "4.2.0"
     debug-logger "0.4.1"

@@ -13,7 +13,6 @@ export default
         login_streamer_count: "配信者：",
         
         infobox_label_area: "ｴﾘｱ：",
-        infobox_value_area: "海辺の町",
         infobox_label_room: "ｽﾃｰｼﾞ：",
         infobox_label_user_name: "名前：",
         infobox_label_user_count: "人数：",
@@ -50,6 +49,8 @@ export default
         rula_menu_column_user_count: "人数",
         rula_menu_column_streamers: "配信者",
         rula_menu_button_rula: "ルーラ",
+        rula_menu_label_group: "エリア",
+        rula_menu_group_option_all: "すべて",
 
         user_list_popup_title: "ユーザーリスト（@USER_COUNT@名）",
         user_list_popup_column_user_name: "ユーザー名",
@@ -76,9 +77,10 @@ export default
         stream_form_screen_capture: "画面共有",
         stream_form_screen_capture_audio: "画面の音声を共有",
         stream_form_screen_capture_audio_notice: "この機能は実験中です。ChromeとEdgeでのみ有効です。\nWindowsでは、画面の音声とタブの音声しか取得できません。",
-        stream_form_camera_facing: "スマホのカメラ：",
-        stream_form_camera_facing_user: "フロント",
-        stream_form_camera_facing_environment: "バック",
+
+        device_selection_title: "デバイスを選択",
+        device_selection_audio_devices: "音声デバイス",
+        device_selection_video_devices: "映像デバイス",
         
         preferences_title: "設定",
         preferences_name_bg: "名前の背景を表示",
@@ -111,7 +113,12 @@ export default
         preferences_timestamps_in_copied_log: "コピーしたログに時刻を含む",
         preferences_ignore_indicator_in_log: "一方あぼーんされたユーザーからのログの代わりにインジケーターを表示",
         preferences_language: "言語",
+        preferences_enable_coin_sound: "効果音",
 
+        preferences_title_streams: "配信",
+        preferences_streams_auto_resume: "配信再開後に自動受信",
+        preferences_title_chat: "チャット",
+        preferences_clear_log: "チャットログをクリア",
 
         back_to_homepage: "トップへ戻る",
 
@@ -136,6 +143,7 @@ export default
         error_obtaining_video: "動画を取得できませんでした。ブラウザの許可を確認してください。",
         error_obtaining_audio: "音声を取得できませんでした。ブラウザの許可を確認してください。",
         no_webrtc: "このブラウザはWebRTCをサポートしていません。",
+        error_didnt_select_device: "デバイスを選択してください。",
 
         unknown_error: "不明なエラーで接続に失敗しました。",
         invalid_username: "指定されたユーザー名は無効です。",
@@ -147,10 +155,13 @@ export default
         are_you_sure_you_want_to_logout: "本当にログアウトしますか？",
         are_you_sure_you_want_to_block: "このユーザーを相互あぼーんしますか？",
         goodbye: "　またね！",
-        flood_warning: "おい、早口すぎるじゃないか！",
+        flood_warning: "おい、早口すぎるじゃないか！未配信のメッセージ：",
         chess_timeout_reached: "チェス対局が終わりました：時間切れ",
         chess_win: "チェス対局が終わりました：@USER_NAME@の勝利。",
         chess_quit: "チェス対局が終わりました：@USER_NAME@が投了した。",
+        
+        are_you_sure_you_want_to_clear_log: "チャットログをクリアしますか？",
+        chat_log_cleared: "チャットログがクリアされました。",
     },
     room:
     {
@@ -194,6 +205,13 @@ export default
         bar_giko_square: r("噴水広場", "ふんすいひろば"),
         densha: r("電車", "でんしゃ"),
         monachat: r("もなちゃと", "もなちゃと"),
+        konbini: r("コンビニ", "こんびに"),
+    },
+    area:
+    {
+        gikopoipoi: "ギコっぽいぽい",
+        gikopoi: r("海辺の町", "うみべのまち"),
+        bar_giko: r("ＢＡＲギコの町", "バーギコのまち"),
     }
 }
 

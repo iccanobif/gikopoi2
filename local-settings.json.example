@@ -1,9 +1,20 @@
 {
-    "janusServerUrl": "",
+    "enableSSL": false,
+    "persistorUrl": "",
+    "persistorSecret": "",
+    "janusServers": [
+        {
+            "url": "",
+            "id": ""
+        }
+    ],
     "janusApiSecret": "",
     "janusRoomNamePrefix": "prod",
     "janusRoomNameIntPrefix": 1,
     "isBehindProxy": true,
     "restrictLoginByIp": true,
-    "abuseIpDBApiKey": ""
+    "abuseIpDBApiKey": "",
+    "adminKey": "",
+    "censoredWordsRegex": "(poop|peepee)",
+    "noStreamIPs": []
 }

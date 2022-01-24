@@ -1,8 +1,7 @@
 import express, { Request } from "express"
 import { rooms } from "./rooms";
-import { Direction, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
+import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
-import { sleep } from "./utils";
 import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
@@ -24,7 +23,6 @@ const tripcode = require('tripcode');
 const enforce = require('express-sslify');
 const JanusClient = require('janus-videoroom-client').Janus;
 
-const delay = 0
 const persistInterval = 5 * 1000
 const maxGhostRetention = 30 * 60 * 1000
 const inactivityTimeout = 30 * 60 * 1000
@@ -43,13 +41,13 @@ if (settings.isBehindProxy)
     app.set('trust proxy', true)
 
 const janusServers: JanusServer[] =
-    [{
-        id: "maf",
+    settings.janusServers.map(s => ({
+        id: s.id,
         client: new JanusClient({
-            url: settings.janusServerUrl,
+            url: s.url,
             apiSecret: settings.janusApiSecret,
         })
-    }]
+    }))
 const janusServersObject = Object.fromEntries(janusServers.map(o => [o.id, o]));
 
 // Initialize room states:
@@ -60,6 +58,7 @@ function initializeRoomStates()
 {
     let areaNumberId = 0;
     roomStates = {}
+
     for (const areaId of ["for", "gen"])
     {
         let roomNumberId = 0;
@@ -74,9 +73,11 @@ function initializeRoomStates()
                     whiteUserID: null,
                     lastMoveTime: null,
                     timer: null,
-                }
+                },
+                coinCounter: 0,
             }
-            for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
+            if (janusServers.length)
+                for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
             {
                 roomStates[areaId][roomId].streams.push({
                     streamId: 0,
@@ -128,21 +129,55 @@ app.use(async function (req, res, next) {
 
 // Reject websocket connections from bad IPs
 io.use(async (socket: Socket, next: () => void) => {
-    const ip = getRealIpWebSocket(socket)
 
-    if (!ip) {
-        next();
-        return;
+    let user: Player | null = null
+    try
+    {
+        const privateUserId = socket.handshake.headers["private-user-id"]
+
+        // Array.isArray(privateUserId) is needed only to make typescript happy
+        // and make it understand that I expect privateUserId to be just a string
+        user = (privateUserId && !Array.isArray(privateUserId)) 
+                            ? getLoginUser(privateUserId) 
+                            : null;
+
+        const ip = getRealIpWebSocket(socket)
+
+        log.info("Connection attempt",
+                ip,
+                user?.id,
+                "private-user-id:", privateUserId
+                );
+        
+        if (!user)
+        {
+            log.info("server-cant-log-you-in", privateUserId)
+            socket.emit("server-cant-log-you-in")
+            // socket.disconnect(true)
+            // return;
+            next()
+        }
+
+        socket.data = { user: user }
+
+        if (!ip) {
+            next();
+            return;
+        }
+
+        if (bannedIPs.has(ip))
+            socket.disconnect()
+
+        const confidenceScore = await getAbuseConfidenceScore(ip)
+        if (confidenceScore > maximumAbuseConfidenceScore)
+            socket.disconnect()
+        else
+            next()
     }
-
-    if (bannedIPs.has(ip))
-        socket.disconnect()
-
-    const confidenceScore = await getAbuseConfidenceScore(ip)
-    if (confidenceScore > maximumAbuseConfidenceScore)
-        socket.disconnect()
-    else
-        next()
+    catch (exc)
+    {
+        logException(exc, user)
+    }
 })
 
 io.on("connection", function (socket: Socket)
@@ -159,11 +194,12 @@ io.on("connection", function (socket: Socket)
             currentRoom,
             connectedUsers,
             streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams),
-            chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId)
+            chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId),
+            coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
+            hideStreams: settings.noStreamIPs.includes(user.ip),
         }
 
-        socket.emit("server-update-current-room-state",
-            state)
+        socket.emit("server-update-current-room-state", state)
     }
 
     const sendNewUserInfo = () =>
@@ -183,7 +219,8 @@ io.on("connection", function (socket: Socket)
             user.isGhost = true
             user.disconnectionTime = Date.now()
 
-            await clearStream(user) // This also calls emitServerStats()
+            await clearStream(user) // This also calls emitServerStats(), but only if the user was streaming...
+            emitServerStats(user.areaId)
             clearRoomListener(user)
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-user-left-room", user.id);
@@ -191,38 +228,20 @@ io.on("connection", function (socket: Socket)
         }
         catch (exc)
         {
-            logException(exc)
+            logException(exc, user)
         }
     })
 
 
-    // Authenticate connection and initialize user and currentRoom (might be better to
-    // do this in a middleware?)
+    // Initialize user and currentRoom
     try
     {
-        const privateUserId = socket.handshake.headers["private-user-id"]
-
-        // Array.isArray(privateUserId) is needed only to make typescript happy
-        // and make it understand that I expect privateUserId to be just a string
-        const loginUser = (privateUserId && !Array.isArray(privateUserId)) 
-                            ? getLoginUser(privateUserId) 
-                            : null;
-
-        log.info("Connection attempt",
-                getRealIpWebSocket(socket),
-                loginUser?.id,
-                "private-user-id:", privateUserId
-                );
-
-        if (!loginUser)
+        user = socket.data.user;
+        if (!user)
         {
-            log.info("server-cant-log-you-in", privateUserId)
-            socket.emit("server-cant-log-you-in")
-            socket.disconnect(true)
-            return;
+            log.info(getRealIpWebSocket(socket), "tried to connect to websocket but failed authentication")
+            return
         }
-
-        user = loginUser;
         user.socketId = socket.id;
 
         log.info("user-connect userId:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
@@ -245,16 +264,33 @@ io.on("connection", function (socket: Socket)
     }
     catch (e)
     {
-        logException(e)
-        try {
+        logException(e, socket?.data?.user)
+        try
+        {
             socket.emit("server-cant-log-you-in")
+            log.info("DISCONNECTING WEBSOCKET")
             socket.disconnect(true)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, socket?.data?.user)
         }
     }
+
+    // Flood detection (no more than 100 events in the span of one second)
+    const lastEventDates: number[] = []
+    socket.onAny(() => {
+        lastEventDates.push(Date.now())
+        if (lastEventDates.length > 100)
+        {
+            const firstEventTime = lastEventDates.shift()!
+            if (Date.now() - firstEventTime < 1000)
+            {
+                socket.disconnect()
+            }
+        }
+    })
+
     socket.on("user-msg", function (msg: string)
     {
         try
@@ -275,7 +311,7 @@ io.on("connection", function (socket: Socket)
                 const firstMessageTime = user.lastMessageDates.shift()!
                 if (Date.now() - firstMessageTime < 5000)
                 {
-                    socket.emit("server-system-message", "msg.flood_warning")
+                    socket.emit("server-system-message", "flood_warning", msg)
                     return
                 }
             }
@@ -316,24 +352,34 @@ io.on("connection", function (socket: Socket)
 
             // Log only if non empty message
             if (msg)
-                log.info("MSG:", user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg.replace(/[\n\r]+/g, "<br>"));
+                log.info("MSG:", user.ip, user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg.replace(/[\n\r]+/g, "<br>"));
 
             user.lastAction = Date.now()
 
-            userRoomEmit(user, user.areaId, user.roomId,
-                "server-msg", user.id, msg);
+            if (msg.toLowerCase().match(settings.censoredWordsRegex))
+                socket.emit("server-msg", user.id, msg) // if there's a bad word, show the message only to the guy who wrote it
+            else
+                userRoomEmit(user, user.areaId, user.roomId,
+                    "server-msg", user.id, msg);
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     });
-    socket.on("user-move", async function (direction: Direction)
+    socket.on("user-move", async function (direction: string)
     {
-        await sleep(delay)
-
         try
         {
+            if (direction != "up" && direction != "down" && direction != "left" && direction != "right")
+                return
+
+            if (user.disconnectionTime)
+            {
+                log.error("user-move called for disconnected user!", user.id)
+                return
+            }
+
             log.debug("user-move", user.id, direction)
             setUserAsActive(user)
 
@@ -401,6 +447,18 @@ io.on("connection", function (socket: Socket)
 
                 user.position.x = newX
                 user.position.y = newY
+                
+                if (currentRoom.id == "idoA" && user.position.x == 6 && user.position.y == 6)
+                {
+                    setTimeout(() => {
+                        if (user.position.x == 6 && user.position.y == 6)
+                        {
+                            log.info(user.id, "changing to takenoko")
+                            changeCharacter(user, "takenoko", false)
+                        }
+                    }, 10000)
+                }
+
             }
 
             userRoomEmit(user, user.areaId, user.roomId,
@@ -416,13 +474,16 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     });
-    socket.on("user-bubble-position", function (position: Direction)
+    socket.on("user-bubble-position", function (position: string)
     {
         try
         {
+            if (position != "up" && position != "down" && position != "left" && position != "right")
+                return
+
             user.bubblePosition = position;
 
             userRoomEmit(user, user.areaId, user.roomId,
@@ -430,7 +491,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     });
     socket.on("user-want-to-stream", async function (data: {
@@ -511,7 +572,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
             socket.emit("server-not-ok-to-stream", "start_stream_unknown_error")
         }
     })
@@ -524,7 +585,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -582,7 +643,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
             socket.emit("server-not-ok-to-take-stream", streamSlotId);
         }
     })
@@ -608,7 +669,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -666,7 +727,7 @@ io.on("connection", function (socket: Socket)
                 
                 if (!stream.isActive)
                 {
-                    destroySession(videoRoomHandle, stream)
+                    destroySession(videoRoomHandle, stream, user)
                     return;
                 }
                 log.info("user-rtc-message", user.id,
@@ -682,7 +743,7 @@ io.on("connection", function (socket: Socket)
                 
                 if (!stream.isActive)
                 {
-                    destroySession(janusHandle, stream)
+                    destroySession(janusHandle, stream, user)
                     return
                 }
                 participantObject.janusHandle = janusHandle
@@ -724,7 +785,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e: any)
         {
-            logException(e)
+            logException(e, user)
 
             try
             {
@@ -742,14 +803,16 @@ io.on("connection", function (socket: Socket)
     {
         try
         {
-            await sleep(delay)
-
             let { targetRoomId, targetDoorId } = data
 
             log.info("user-change-room", user.id, targetRoomId, targetDoorId)
 
-            currentRoom = rooms[targetRoomId]
+            // Validation
+            if (!rooms.hasOwnProperty(targetRoomId)) return;
+            if (targetDoorId && !rooms[targetRoomId].doors.hasOwnProperty(targetDoorId)) return;
 
+            currentRoom = rooms[targetRoomId]
+            
             await clearStream(user)
             clearRoomListener(user)
             stopChessGame(roomStates, user)
@@ -781,7 +844,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -789,22 +852,35 @@ io.on("connection", function (socket: Socket)
     {
         try
         {
-            const roomList: { id: string, userCount: number, streamers: string[] }[] =
+            const roomList: { id: string, group: string, userCount: number, streamers: string[] }[] =
                 Object.values(rooms)
                 .filter(room => !room.secret)
                 .map(room => ({
                     id: room.id,
+                    group: room.group,
                     userCount: getFilteredConnectedUserList(user, room.id, user.areaId).length,
                     streamers: toStreamSlotDtoArray(user, roomStates[user.areaId][room.id].streams)
                         .filter(stream => stream.isActive && stream.userId != null)
-                        .map(stream => room.forcedAnonymous ? "" : getUser(stream.userId!).name),
+                        .map(stream => {
+                            if (room.forcedAnonymous)
+                                return ""
+
+                            const user = getUser(stream.userId!)
+                            if (!user)
+                            {
+                                log.error("ERROR: Can't find user", stream.userId, "when doing #rula")
+                                return "N/A"
+                            }
+
+                            return user.name
+                        }),
                 }))
 
             socket.emit("server-room-list", roomList)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -835,7 +911,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -851,7 +927,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -860,9 +936,9 @@ io.on("connection", function (socket: Socket)
             const chessState = roomStates[user.areaId][user.roomId].chess
 
             if (chessState?.blackUserID)
-                io.to(getUser(chessState?.blackUserID).socketId).emit("server-system-message", "msg.chess_timeout_reached")
+                io.to(getUser(chessState?.blackUserID).socketId).emit("server-system-message", "chess_timeout_reached")
             if (chessState?.whiteUserID)
-                io.to(getUser(chessState?.whiteUserID).socketId).emit("server-system-message", "msg.chess_timeout_reached")
+                io.to(getUser(chessState?.whiteUserID).socketId).emit("server-system-message", "chess_timeout_reached")
 
             stopChessGame(roomStates, user)
         }, maxWaitForChessMove)
@@ -915,7 +991,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -937,8 +1013,16 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
+    })
+
+    socket.on("special-events:client-add-shrine-coin", function () {
+        //this only triggers in the jinja room so, technically speaking, I don't have to check for state
+        //get donation box
+        roomStates[user.areaId][user.roomId].coinCounter += 10;
+        //send the value to users
+        userRoomEmit(user, user.areaId, user.roomId, "special-events:server-add-shrine-coin" ,roomStates[user.areaId][user.roomId].coinCounter);
     })
 
     socket.on("user-chess-move", function(source: any, target: any) {
@@ -991,7 +1075,7 @@ io.on("connection", function (socket: Socket)
         }
         catch (e)
         {
-            logException(e)
+            logException(e, user)
         }
     })
 
@@ -999,6 +1083,15 @@ io.on("connection", function (socket: Socket)
 
 function emitServerStats(areaId: string)
 {
+    const allConnectedUsers = getAllUsers().filter(u => !u.isGhost)
+    const allForUsers = allConnectedUsers.filter(u => u.areaId == "for")
+    const allGenUsers = allConnectedUsers.filter(u => u.areaId == "gen")
+    const allIps = new Set(allConnectedUsers.map(u => u.ip))
+    const forStreamCount = Object.values(roomStates[areaId]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
+    const genStreamCount = Object.values(roomStates[areaId]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
+
+    log.info("Server stats: gen users:", allGenUsers.length, "gen streams:", genStreamCount, "for users:", allForUsers.length, "for streams:", forStreamCount, "total IPs:", allIps.size)
+
     getConnectedUserList(null, areaId).forEach((u) =>
     {
         const connectedUserIds: Set<string> = getFilteredConnectedUserList(u, null, areaId)
@@ -1069,7 +1162,7 @@ function toPlayerDto(player: Player): PlayerDto
     return playerDto;
 }
 
-if (process.env.GIKO2_ENABLE_SSL == "true")
+if (settings.enableSSL)
     app.use(enforce.HTTPS({ trustProtoHeader: true }))
 
 app.use(compression({
@@ -1128,7 +1221,7 @@ app.get("/", async (req, res) =>
         }
         catch (e)
         {
-            logException(e)
+            logException(e, null)
         }
 
         data = data.replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
@@ -1201,18 +1294,19 @@ app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
     }
 })
 
-app.use(express.static('static',
-    {
-        setHeaders: (res, path) => {
-            // Cache images for one week. I made the frontend append ?v=version to image URLs,
-            // so that it won't try to use the cached images when it's opening a new version of the website.
-            if (path.match(/\.(svg|png)$/i))
-                res.set("Cache-Control", "public, max-age=604800, immutable")
-            else
-                res.set("Cache-Control", "no-cache")
-        }
+const static_properties = {
+    setHeaders: (res: any, path: any) => {
+        // Cache images for one week. I made the frontend append ?v=version to image URLs,
+        // so that it won't try to use the cached images when it's opening a new version of the website.
+        if (path.match(/\.(svg|png)$/i))
+            res.set("Cache-Control", "public, max-age=604800, immutable")
+        else
+            res.set("Cache-Control", "no-cache")
     }
-));
+};
+
+app.use(express.static('static', static_properties));
+app.use(express.static('static/favicons', static_properties));
 
 app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
 {
@@ -1240,7 +1334,9 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
             currentRoom: rooms[roomId],
             connectedUsers: filteredListsIntersection.map(toPlayerDto),
             streams: [],
-            chessboardState: buildChessboardStateDto(roomStates, areaId, roomId)
+            chessboardState: buildChessboardStateDto(roomStates, areaId, roomId),
+            coinCounter: roomStates[areaId][roomId].coinCounter,
+            hideStreams: false,
         }
 
         res.json(dto)
@@ -1348,7 +1444,7 @@ app.get("/areas/:areaId/streamers", (req, res) =>
     }
     catch (e)
     {
-        logException(e)
+        logException(e, null)
     }
 })
 
@@ -1376,7 +1472,7 @@ app.get("/admin", (req, res) => {
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
         res.end("error")
     }
 })
@@ -1424,7 +1520,7 @@ app.post("/user-list", (req, res) => {
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
         res.end("error")
     }
 })
@@ -1456,7 +1552,7 @@ app.post("/banned-ip-list", (req, res) => {
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
         res.end("error")
     }
 })
@@ -1483,7 +1579,7 @@ app.post("/ban", async (req, res) => {
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
         res.end("error")
     }
 })
@@ -1508,7 +1604,7 @@ app.post("/unban", (req, res) => {
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
         res.end("error")
     }
 })
@@ -1522,7 +1618,7 @@ app.post("/client-log", (req, res) =>
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
         res.end()
     }
 })
@@ -1668,7 +1764,7 @@ function getLeastUsedJanusServer()
     return janusServersObject[serverId];
 }
 
-async function destroySession(janusHandle: any, stream: StreamSlot)
+async function destroySession(janusHandle: any, stream: StreamSlot, user: Player)
 {
     try
     {
@@ -1700,7 +1796,7 @@ async function destroySession(janusHandle: any, stream: StreamSlot)
     }
     catch (error)
     {
-        logException(error)
+        logException(error, user)
     }
 }
 
@@ -1719,7 +1815,7 @@ async function clearStream(user: Player)
             stream.isActive = false
             stream.isReady = false
             
-            await destroySession(stream.publisher!.janusHandle, stream)
+            await destroySession(stream.publisher!.janusHandle, stream, user)
             
             sendUpdatedStreamSlotState(user)
             emitServerStats(user.areaId)
@@ -1727,7 +1823,7 @@ async function clearStream(user: Player)
     }
     catch (error)
     {
-        logException(error)
+        logException(error, user)
     }
 }
 
@@ -1758,7 +1854,7 @@ function clearRoomListener(user: Player)
     }
     catch (error)
     {
-        logException(error)
+        logException(error, user)
     }
 }
 
@@ -1845,15 +1941,21 @@ function sendUpdatedStreamSlotState(user: Player)
 
 function stringifyException(exception: any)
 {
-    const logMessage = exception.message + " " + exception.stack
+    // Handle the case when exception isn't an Exception object
+    const logMessage = exception.message
+                        ? (exception.message + " " + exception.stack)
+                        : (exception + "")
     return logMessage.replace(/\n/g, "")
 }
 
-export function logException(exception: any)
+export function logException(exception: any, user: Player | null)
 {
-    log.error(stringifyException(exception));
+    if (user)
+        log.error("Server error:", user.id, stringifyException(exception));
+    else
+        log.error("Server error:", stringifyException(exception));
 
-    if (exception.message.match(/Couldn't attach to plugin: error '-1'/))
+    if (exception?.message?.match(/Couldn't attach to plugin: error '-1'/))
     {
         // When this exception is raised, usually it means that the janus server has broken
         // and so far the only thing that will fix it is to restart the server, so that all streams
@@ -1903,7 +2005,7 @@ setInterval(async () =>
     }
     catch (e)
     {
-        logException(e)
+        logException(e, null)
     }
     isBackgroundTaskRunning = false
 }, 1 * 1000)
@@ -1916,14 +2018,16 @@ async function persistState()
     {
         const state: PersistedState = {
             users: getAllUsers(),
-            bannedIPs: Array.from(bannedIPs)
+            bannedIPs: Array.from(bannedIPs),
+            forCoinCount: roomStates["for"]["jinja"].coinCounter,
+            genCoinCount: roomStates["gen"]["jinja"].coinCounter,
         }
 
-        if (process.env.PERSISTOR_URL)
+        if (settings.persistorUrl)
         {
-            await got.post(process.env.PERSISTOR_URL, {
+            await got.post(settings.persistorUrl, {
                 headers: {
-                    "persistor-secret": process.env.PERSISTOR_SECRET,
+                    "persistor-secret": settings.persistorSecret,
                     "Content-Type": "text/plain"
                 },
                 body: JSON.stringify(state)
@@ -1940,7 +2044,7 @@ async function persistState()
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
     }
 }
 
@@ -1956,6 +2060,9 @@ function applyState(state: PersistedState)
     }
 
     bannedIPs = new Set(state.bannedIPs)
+
+    roomStates["for"]["jinja"].coinCounter = state.forCoinCount || 0;
+    roomStates["gen"]["jinja"].coinCounter = state.genCoinCount || 0;
 }
 
 async function restoreState()
@@ -1967,13 +2074,13 @@ async function restoreState()
         // and start with a fresh state
 
         log.info("Restoring state...")
-        if (process.env.PERSISTOR_URL)
+        if (settings.persistorUrl)
         {
             // remember to do it as defensive as possible
 
-                const response = await got.get(process.env.PERSISTOR_URL, {
+                const response = await got.get(settings.persistorUrl, {
                     headers: {
-                        "persistor-secret": process.env.PERSISTOR_SECRET
+                        "persistor-secret": settings.persistorSecret
                     }
                 })
                 if (response.statusCode == 200)
@@ -1992,13 +2099,13 @@ async function restoreState()
             }
             catch (exc)
             {
-                logException(exc)
+                logException(exc, null)
             }
         }
     }
     catch (exc)
     {
-        logException(exc)
+        logException(exc, null)
     }
 }
 

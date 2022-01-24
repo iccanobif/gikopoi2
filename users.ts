@@ -1,5 +1,6 @@
 import { v4 } from "uuid";
 import { rooms } from "./rooms";
+import { settings } from "./settings";
 import { Area, Direction, PlayerDto } from "./types";
 
 function generateId()
@@ -7,7 +8,7 @@ function generateId()
     return v4()
 }
 
-const possibleVoicePitches = [0, 0.5, 1, 1.5, 2]
+const possibleVoicePitches = [0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
 let lastUsedVoicePitchIndex = 0
 let lastUsedSpawnPointIndex = 0
 
@@ -101,10 +102,10 @@ export function getAllUsers(): Player[]
     return Object.values(users)
 }
 
-export function getLoginUser(privateId: string)
+export function getLoginUser(privateId: string): Player | null
 {
     return Object.values(users)
-        .find(u => u.privateId == privateId)
+        .find(u => u.privateId == privateId) || null
 };
 
 export function getUser(userId: string)
@@ -152,7 +153,7 @@ export function createPlayerDto(player: Player): PlayerDto
         isInactive: player.isInactive,
         bubblePosition: player.bubblePosition,
         voicePitch: player.voicePitch,
-        lastRoomMessage: player.lastRoomMessage,
+        lastRoomMessage: player.lastRoomMessage?.toLocaleLowerCase().match(settings.censoredWordsRegex) ? "" : player.lastRoomMessage,
         isAlternateCharacter: player.isAlternateCharacter,
     }
 }

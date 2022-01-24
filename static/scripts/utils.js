@@ -198,3 +198,36 @@ export function requestNotificationPermission()
             promise.then(resolve)
     })
 }
+
+export async function getDeviceList(includeAudioDevices, includeVideoDevices)
+{
+    if (!includeVideoDevices && !includeAudioDevices)
+        return []
+
+    // In order to get the labels, we need to get permission first 
+    const mediaStream = await navigator.mediaDevices.getUserMedia({ video: includeVideoDevices, audio: includeAudioDevices })
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+
+    const output = devices
+        .filter(d => (includeAudioDevices && d.kind == "audioinput") || (includeVideoDevices && d.kind == "videoinput"))
+        .map(d => ({
+            id: d.deviceId,
+            name: d.label,
+            type: d.kind
+        }))
+
+    for (const track of mediaStream.getTracks()) track.stop();
+
+    return output
+}
+
+export function getClickCoordinatesWithinCanvas(canvas, clickEvent, devicePixelRatio)
+{
+    const canvasBoundingClientRect = canvas.getBoundingClientRect()
+    
+    return {
+        x: (clickEvent.clientX - canvasBoundingClientRect.x) * devicePixelRatio,
+        y: (clickEvent.clientY - canvasBoundingClientRect.y) * devicePixelRatio,
+    }
+}

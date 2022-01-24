@@ -13,7 +13,6 @@ export default
         login_streamer_count: "Streamer: ",
         
         infobox_label_area: "Ort:",
-        infobox_value_area: "Seestadt",
         infobox_label_room: "Stage:",
         infobox_label_user_name: "Name:",
         infobox_label_user_count: "Benutzer:",
@@ -50,6 +49,8 @@ export default
         rula_menu_column_user_count: "Benutzer",
         rula_menu_column_streamers: "Streamer",
         rula_menu_button_rula: "Rula",
+        rula_menu_label_group: "Ort",
+        rula_menu_group_option_all: "Alle",
 
         user_list_popup_title: "Benutzerliste (Gesamt: @USER_COUNT@)",
         user_list_popup_column_user_name: "Benutzername",
@@ -76,9 +77,10 @@ export default
         stream_form_screen_capture: "Bildschirmaufnahme",
         stream_form_screen_capture_audio: "Bildschirmaufnahme-Audio",
         stream_form_screen_capture_audio_notice: "Diese Funktion ist experimentell. Nur Chrome und Edge. \nUnter Windows kann nur das Bildschirm- oder Tab-Audio aufgenommen werden .",
-        stream_form_camera_facing: "Handy-Kamera:",
-        stream_form_camera_facing_user: "Vorne",
-        stream_form_camera_facing_environment: "Hinten",
+        
+        device_selection_title: "Geräteauswahl",
+        device_selection_audio_devices: "Audiogeräte",
+        device_selection_video_devices: "Videogeräte",
         
         preferences_title: "Einstellungen",
         preferences_name_bg: "Hintergrund des Benutzernamens anzeigen",
@@ -111,7 +113,12 @@ export default
         preferences_timestamps_in_copied_log: "Zeitstempel in den kopierten Logs aufnehmen",
         preferences_ignore_indicator_in_log: "Einen Indikator anstelle der Nachrichten ignorierter Benutzer im log anzeigen",
         preferences_language: "Sprache",
-        
+        // preferences_enable_coin_sound: "Enable coin sound",
+
+        preferences_title_streams: "Streams",
+        preferences_streams_auto_resume: "Automatische Fortsetzung",
+        preferences_title_chat: "Chat",
+        preferences_clear_log: "Chat-Log löschen",
 
         back_to_homepage: "Zurück zur Startseite",
 
@@ -136,6 +143,7 @@ export default
         error_obtaining_video: "Es ist nicht möglich das Video zu erhalten. Bitte überprüfen Sie die Browserberechtigungen.",
         error_obtaining_audio: "Es ist nicht möglich das Audio zu erhalten. Bitte überprüfen Sie die Browserberechtigungen.",
         no_webrtc: "Ihr Browser unterstützt leider kein WebRTC.",
+        error_didnt_select_device: "Bitte wählen Sie ein Gerät aus.",
         
         unknown_error: "Die Verbindung ist aufgrund eines unbekannten Fehlers fehlgeschlagen.",
         invalid_username: "Der angegebene Benutzername ist ungültig.",
@@ -144,13 +152,16 @@ export default
         start_stream_stream_slot_already_taken_by_blocked_streamer: "Jemand, den Sie blockieren, streamt bereits in diesem Slot.",
         start_stream_stream_slot_already_taken_by_blocking_streamer: "Jemand, der Sie blockiert hat, streamt bereits in diesem Slot.",
         start_stream_unknown_error: "Stream kann nicht gestarted werden.",
-        are_you_sure_you_want_to_logout: "Möchten Sie sich wirklich abmelden?",
-        are_you_sure_you_want_to_block: "Möchten Sie diesen Benutzer wirklich blockieren?",
+        are_you_sure_you_want_to_logout: "Sind sie sicher, dass Sie sich abmelden möchten?",
+        are_you_sure_you_want_to_block: "Sind sie sicher, dass Sie diesen Benutzer blockieren möchten?",
         goodbye: "Auf Wiedersehen!",
-        flood_warning: "Hey, sprechen Sie nicht eine bisschen zu schnell?",
+        flood_warning: "Hey, sprechen Sie nicht eine bisschen zu schnell? Nicht zugestellte Nachricht: ",
         chess_timeout_reached: "Das Schachspiel ist vorbei: Bedenkzeit überschreitet.",
         chess_win: "Das Schachspiel ist vorbei: Der Gewinner ist @USER_NAME@.",
         chess_quit: "Das Schachspiel ist vorbei: @USER_NAME@ hat das Spiel verlassen.",
+        
+        are_you_sure_you_want_to_clear_log: "Sind sie sicher, dass Sie das Chat-Log löschen möchten?",
+        chat_log_cleared: "Das Chat-Log wurde gelöscht.",
     },
     room:
     {
@@ -193,5 +204,13 @@ export default
         bar_giko2: "Bar Giko Untergeschoss",
         bar_giko_square: "Brunnenplatz",
         densha: "Bahn",
+        monachat: "Monachat",
+        konbini: "Gemischtwarenladen",
+    },
+    area:
+    {
+        gikopoipoi: "Gikopoipoi",
+        gikopoi: "Seestadt",
+        bar_giko: "Bar-Giko-Stadt",
     }
 }

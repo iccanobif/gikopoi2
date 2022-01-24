@@ -13,7 +13,6 @@ export default
         login_streamer_count: "Streamers: ",
         
         infobox_label_area: "Area:",
-        infobox_value_area: "Ciudad Marítima",
         infobox_label_room: "Sala:",
         infobox_label_user_name: "Nombre:",
         infobox_label_user_count: "Usuarios:",
@@ -50,6 +49,8 @@ export default
         rula_menu_column_user_count: "Usuarios",
         rula_menu_column_streamers: "Streamers",
         rula_menu_button_rula: "Rula",
+        rula_menu_label_group: "Area",
+        rula_menu_group_option_all: "Todas",
 
         user_list_popup_title: "Lista de usuarios (total: @USER_COUNT@)",
         user_list_popup_column_user_name: "Nombre de usuario",
@@ -76,9 +77,10 @@ export default
         stream_form_screen_capture: "Capturar pantalla",
         stream_form_screen_capture_audio: "Capturar audio de pantalla",
         stream_form_screen_capture_audio_notice: "Esta funcionalidad es experimental. Sólo Chrome y Edge. \nEn Windows, sólo el audio de la pantalla o de la pestaña puede ser capturado.",
-        stream_form_camera_facing: "Cámara de teléfono:",
-        stream_form_camera_facing_user: "Frontal",
-        stream_form_camera_facing_environment: "Trasera",
+
+        // device_selection_title: "",
+        // device_selection_audio_devices: "",
+        // device_selection_video_devices: "",
         
         preferences_title: "Preferencias",
         preferences_name_bg: "Mostrar fondo en el nombre de usuario",
@@ -111,7 +113,11 @@ export default
         preferences_timestamps_in_copied_log: "Incluir fecha y hora en logs copiados",
         preferences_ignore_indicator_in_log: "Mostrar en logs un indicador para mensajes de usuarios ignorados",
         preferences_language: "Idioma",
-        
+        // preferences_enable_coin_sound: "Enable coin sound",
+        // preferences_title_streams: "",
+        // preferences_streams_auto_resume: "",
+        // preferences_title_chat: "",
+        // preferences_clear_log: "",
 
         back_to_homepage: "Volver a la página de inicio",
 
@@ -136,6 +142,7 @@ export default
         error_obtaining_video: "No se pudo obtener video. Por favor comprueba los permisos del navegador.",
         error_obtaining_audio: "No se pudo obtener audio. Por favor comprueba los permisos del navegador.",
         no_webrtc: "Lo siento, tu navegador no soporta WebRTC.",
+        // error_didnt_select_device: "",
         
         unknown_error: "La conexión falló debido a un error desconocido.",
         invalid_username: "El nombre de usuario provisto es inválido.",
@@ -147,10 +154,13 @@ export default
         are_you_sure_you_want_to_logout: "¿Estás seguro de que deseas desconectarte?",
         are_you_sure_you_want_to_block: "¿Estás seguro de que deseas bloquear a este usuario?",
         goodbye: "¡Nos vemos pronto!",
-        flood_warning: "Oye, ¿no te parece que estás hablando demasiado rápido?",
+        flood_warning: "Oye, ¿no te parece que estás hablando demasiado rápido? Mensaje no entregado: ",
         chess_timeout_reached: "Finalizó la partida de ajedrez: timeout alcanzado.",
         chess_win: "Finalizó la partida de ajedrez: el ganador es @USER_NAME@.",
         chess_quit: "Finalizó la partida de ajedrez: @USER_NAME@ abandonó la partida.",
+        
+        // are_you_sure_you_want_to_clear_log: "",
+        // chat_log_cleared: "",
     },
     room:
     {
@@ -193,5 +203,13 @@ export default
         bar_giko2: "Bar Giko Piso Inferior",
         bar_giko_square: "Plaza de la Fuente",
         densha: "Tren",
+        monachat: "Monachat",
+        konbini: "Tienda de conveniencia",
+    },
+    area:
+    {
+        gikopoipoi: "Gikopoipoi",
+        gikopoi: "Ciudad Marítima",
+        // bar_giko: "",
     }
 }

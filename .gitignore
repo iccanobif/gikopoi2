@@ -2,3 +2,8 @@ node_modules
 build
 persisted-state
 local-settings.json
+local-settings.prod.json
+local-settings.test.json
+.idea/
+static/rooms/konbini/original-files
+
