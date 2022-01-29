@@ -624,6 +624,9 @@ window.vueApp = new Vue({
 
             if (!loginMessage.isLoginSuccessful) throw new UserException(loginMessage.error);
 
+            if (loginMessage.removeStreamsBan)
+                localStorage.setItem("hideStreams", "false")
+
             myUserID = this.myUserID = loginMessage.userId;
             this.myPrivateUserID = loginMessage.privateUserId;
 
