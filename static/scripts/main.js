@@ -1850,7 +1850,14 @@ window.vueApp = new Vue({
         {
             const inputTextbox = document.getElementById("input-textbox");
 
-            const message = inputTextbox.value.substr(0, 500);
+            let message = inputTextbox.value.substr(0, 500);
+            
+            // Whitespace becomes an empty string (to clear bubbles)
+            if (!message.match(/[^\s]/g))
+            {
+                message = ""
+            }
+            
             if (message.match(/sageru/gi))
             {
                 this.isPoop = true
