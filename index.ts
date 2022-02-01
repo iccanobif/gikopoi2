@@ -349,9 +349,9 @@ io.on("connection", function (socket: Socket)
                     msg = "(^Д^)"
 
                 msg = msg.replace(/◆/g, "◇")
+                
+                msg = msg.substr(0, 500)
             }
-
-            msg = msg.substr(0, 500)
 
             user.lastRoomMessage = msg;
 
