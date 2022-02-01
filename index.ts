@@ -310,8 +310,12 @@ io.on("connection", function (socket: Socket)
                 msg = ""
             }
             
-            // don't flood check if the current message is empty and the previous one wasn't
-            if (msg != "" || user.lastRoomMessage == "")
+            if (msg == "" && user.lastRoomMessage == "")
+            {
+                return;
+            }
+            
+            if (msg != "")
             {
                 // No more than 5 messages in the last 5 seconds
                 user.lastMessageDates.push(Date.now())
@@ -324,10 +328,7 @@ io.on("connection", function (socket: Socket)
                         return
                     }
                 }
-            }
-            
-            if (msg != "")
-            {
+                
                 if (msg == "#ika")
                 {
                     changeCharacter(user, "ika", false)
