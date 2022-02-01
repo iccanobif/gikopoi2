@@ -303,26 +303,37 @@ io.on("connection", function (socket: Socket)
                 changeCharacter(user, user.characterId, !user.isAlternateCharacter)
                 return;
             }
-
-            // No more than 5 messages in the last 5 seconds
-            user.lastMessageDates.push(Date.now())
-            if (user.lastMessageDates.length > 5)
-            {
-                const firstMessageTime = user.lastMessageDates.shift()!
-                if (Date.now() - firstMessageTime < 5000)
-                {
-                    socket.emit("server-system-message", "flood_warning", msg)
-                    return
-                }
-            }
-
+            
             // Whitespace becomes an empty string (to clear bubbles)
             if (!msg.match(/[^\s]/g))
             {
                 msg = ""
             }
-            else
+            
+            // don't flood check if the current message is empty and the previous one wasn't
+            if (msg != "" || user.lastRoomMessage == "")
             {
+                // No more than 5 messages in the last 5 seconds
+                user.lastMessageDates.push(Date.now())
+                if (user.lastMessageDates.length > 5)
+                {
+                    const firstMessageTime = user.lastMessageDates.shift()!
+                    if (Date.now() - firstMessageTime < 5000)
+                    {
+                        socket.emit("server-system-message", "flood_warning", msg)
+                        return
+                    }
+                }
+            }
+            
+            if (msg != "")
+            {
+                if (msg == "#ika")
+                {
+                    changeCharacter(user, "ika", false)
+                    return;
+                }
+                
                 // no TIGER TIGER pls
                 if (msg.length > "TIGER".length && "TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
@@ -338,12 +349,6 @@ io.on("connection", function (socket: Socket)
                     msg = "(^Д^)"
 
                 msg = msg.replace(/◆/g, "◇")
-            }
-
-            if (msg == "#ika")
-            {
-                changeCharacter(user, "ika", false)
-                return;
             }
 
             msg = msg.substr(0, 500)
