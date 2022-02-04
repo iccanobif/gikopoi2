@@ -16,7 +16,6 @@ interface PoiPoiSettings
     adminKey: string
     censoredWordsRegex: string
     noStreamIPs: string[]
-    removeStreamBanIPs: string[]
 }
 
 let jsonContents: PoiPoiSettings;
@@ -48,5 +47,4 @@ export const settings: PoiPoiSettings = {
     // $-^ is a regex that never matches any string
     censoredWordsRegex: jsonContents.censoredWordsRegex || "$-^",
     noStreamIPs: jsonContents.noStreamIPs || [],
-    removeStreamBanIPs: jsonContents.removeStreamBanIPs || [],
 }

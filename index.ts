@@ -1141,6 +1141,9 @@ function roomEmit(areaId: string, roomId: string, ...msg: any[])
 
 function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSlotDto[]
 {
+    if (settings.noStreamIPs.includes(user.ip))
+        return []
+
     return streamSlots.map((s) =>
     {
         const u = (s.publisher !== null ? s.publisher.user : null);
@@ -1659,7 +1662,6 @@ app.post("/login", async (req, res) =>
                 appVersion,
                 isLoginSuccessful: false,
                 error: "ip_restricted",
-                removeStreamsBan: settings.removeStreamBanIPs.includes(ip),
             })
             return
         }
@@ -1678,7 +1680,6 @@ app.post("/login", async (req, res) =>
                 appVersion,
                 isLoginSuccessful: false,
                 error: "invalid_username",
-                removeStreamsBan: settings.removeStreamBanIPs.includes(ip),
             })
             return;
         }
@@ -1707,7 +1708,6 @@ app.post("/login", async (req, res) =>
                     appVersion,
                     isLoginSuccessful: false,
                     error: "ip_restricted",
-                    removeStreamsBan: settings.removeStreamBanIPs.includes(ip),
                 })
                 return;
             }
@@ -1730,7 +1730,6 @@ app.post("/login", async (req, res) =>
             isLoginSuccessful: true,
             userId: user.id,
             privateUserId: user.privateId,
-            removeStreamsBan: settings.removeStreamBanIPs.includes(ip),
         })
 
     }
