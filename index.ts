@@ -1,7 +1,7 @@
 import express, { Request } from "express"
 import { rooms } from "./rooms";
 import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
-import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
+import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
 import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
@@ -303,26 +303,38 @@ io.on("connection", function (socket: Socket)
                 changeCharacter(user, user.characterId, !user.isAlternateCharacter)
                 return;
             }
-
-            // No more than 5 messages in the last 5 seconds
-            user.lastMessageDates.push(Date.now())
-            if (user.lastMessageDates.length > 5)
-            {
-                const firstMessageTime = user.lastMessageDates.shift()!
-                if (Date.now() - firstMessageTime < 5000)
-                {
-                    socket.emit("server-system-message", "flood_warning", msg)
-                    return
-                }
-            }
-
+            
             // Whitespace becomes an empty string (to clear bubbles)
             if (!msg.match(/[^\s]/g))
             {
                 msg = ""
             }
-            else
+            
+            if (msg == "" && user.lastRoomMessage == "")
             {
+                return;
+            }
+            
+            if (msg != "")
+            {
+                // No more than 5 messages in the last 5 seconds
+                user.lastMessageDates.push(Date.now())
+                if (user.lastMessageDates.length > 5)
+                {
+                    const firstMessageTime = user.lastMessageDates.shift()!
+                    if (Date.now() - firstMessageTime < 5000)
+                    {
+                        socket.emit("server-system-message", "flood_warning", msg)
+                        return
+                    }
+                }
+                
+                if (msg == "#ika")
+                {
+                    changeCharacter(user, "ika", false)
+                    return;
+                }
+                
                 // no TIGER TIGER pls
                 if (msg.length > "TIGER".length && "TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
@@ -338,15 +350,9 @@ io.on("connection", function (socket: Socket)
                     msg = "(^Д^)"
 
                 msg = msg.replace(/◆/g, "◇")
+                
+                msg = msg.substr(0, 500)
             }
-
-            if (msg == "#ika")
-            {
-                changeCharacter(user, "ika", false)
-                return;
-            }
-
-            msg = msg.substr(0, 500)
 
             user.lastRoomMessage = msg;
 
@@ -1087,8 +1093,8 @@ function emitServerStats(areaId: string)
     const allForUsers = allConnectedUsers.filter(u => u.areaId == "for")
     const allGenUsers = allConnectedUsers.filter(u => u.areaId == "gen")
     const allIps = new Set(allConnectedUsers.map(u => u.ip))
-    const forStreamCount = Object.values(roomStates[areaId]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
-    const genStreamCount = Object.values(roomStates[areaId]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
+    const forStreamCount = Object.values(roomStates["for"]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
+    const genStreamCount = Object.values(roomStates["gen"]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
 
     log.info("Server stats: gen users:", allGenUsers.length, "gen streams:", genStreamCount, "for users:", allForUsers.length, "for streams:", forStreamCount, "total IPs:", allIps.size)
 
@@ -1154,7 +1160,19 @@ function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSl
 
 function toPlayerDto(player: Player): PlayerDto
 {
-    const playerDto = createPlayerDto(player);
+    const playerDto: PlayerDto = {
+        id: player.id,
+        name: player.name,
+        position: player.position,
+        direction: player.direction,
+        roomId: player.roomId,
+        characterId: player.characterId,
+        isInactive: player.isInactive,
+        bubblePosition: player.bubblePosition,
+        voicePitch: player.voicePitch,
+        lastRoomMessage: player.lastRoomMessage?.toLocaleLowerCase().match(settings.censoredWordsRegex) ? "" : player.lastRoomMessage,
+        isAlternateCharacter: player.isAlternateCharacter,
+    };
     if (rooms[player.roomId].forcedAnonymous)
     {
         playerDto.name = "";
@@ -1640,7 +1658,8 @@ app.post("/login", async (req, res) =>
             sendResponse({
                 appVersion,
                 isLoginSuccessful: false,
-                error: "ip_restricted"
+                error: "ip_restricted",
+                removeStreamsBan: settings.removeStreamBanIPs.includes(ip),
             })
             return
         }
@@ -1659,6 +1678,7 @@ app.post("/login", async (req, res) =>
                 appVersion,
                 isLoginSuccessful: false,
                 error: "invalid_username",
+                removeStreamsBan: settings.removeStreamBanIPs.includes(ip),
             })
             return;
         }
@@ -1687,6 +1707,7 @@ app.post("/login", async (req, res) =>
                     appVersion,
                     isLoginSuccessful: false,
                     error: "ip_restricted",
+                    removeStreamsBan: settings.removeStreamBanIPs.includes(ip),
                 })
                 return;
             }
@@ -1709,6 +1730,7 @@ app.post("/login", async (req, res) =>
             isLoginSuccessful: true,
             userId: user.id,
             privateUserId: user.privateId,
+            removeStreamsBan: settings.removeStreamBanIPs.includes(ip),
         })
 
     }

@@ -131,6 +131,7 @@ export interface LoginResponseDto
     error?: "invalid_username" | "ip_restricted",
     userId?: string,
     privateUserId?: string,
+    removeStreamsBan: boolean,
 }
 
 export interface PlayerDto
