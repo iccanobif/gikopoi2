@@ -2285,6 +2285,9 @@ window.vueApp = new Vue({
 
         updateCurrentRoomStreams: function (streams)
         {
+            if (this.hideStreams)
+                streams = []
+
             // If I'm a streamer and the server just forcefully killed my stream (for example, because of a server restart), stop streaming
             if (this.mediaStream && !streams.find(s => s.userId == this.myUserID))
                 this.stopStreaming();
