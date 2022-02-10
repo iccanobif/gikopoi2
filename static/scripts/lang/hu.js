@@ -29,7 +29,7 @@ export default
         button_stream_take: "Közvetítés betöltése",
         button_stream_drop: "Közvetítés leállítása",
         button_rula: "#rula",
-        button_list: "#list",
+        button_list: "#lista",
         button_preferences: "Beállítások",
         button_logout: "Kijelentkezés",
         volume: "Hangerő: ",
