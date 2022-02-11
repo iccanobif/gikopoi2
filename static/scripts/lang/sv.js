@@ -78,9 +78,9 @@ export default
         stream_form_screen_capture_audio: "Ljudupptagning vid skärmfångst",
         stream_form_screen_capture_audio_notice: "Denna funktion är experimentell. Enbart Chrome och Edge. \nI Windows kan endast skärmens eller tabbens ljud upptas.",
 
-        // device_selection_title: "",
-        // device_selection_audio_devices: "",
-        // device_selection_video_devices: "",
+        device_selection_title: "Välj enhet",
+        device_selection_audio_devices: "Ljudenheter",
+        device_selection_video_devices: "Bildenheter",
         
         preferences_title: "Inställningar",
         preferences_name_bg: "Visa Användarnamnsbakgrund",
@@ -113,11 +113,12 @@ export default
         preferences_timestamps_in_copied_log: "Inkludera tidsstämplar i kopierad logg",
         preferences_ignore_indicator_in_log: "Ersätt meddelanden från ignorerade användare med en indikator i loggen.",
         preferences_language: "Språk",
-        // preferences_enable_coin_sound: "Enable coin sound",
-        // preferences_title_streams: "",
-        // preferences_streams_auto_resume: "",
-        // preferences_title_chat: "",
-        // preferences_clear_log: "",
+        preferences_enable_coin_sound: "Ljudeffekter",
+
+        preferences_title_streams: "Strömmor",
+        preferences_streams_auto_resume: "Automatisk återupptagning",
+        preferences_title_chat: "Chatt",
+        preferences_clear_log: "Rensa chattlogg",
 
         back_to_homepage: "Gå tillbaka till hemsidan.",
 
@@ -142,7 +143,7 @@ export default
         error_obtaining_video: "Kommer inte åt bild. Vänligen kontrollera webbläsarens rättigheter.",
         error_obtaining_audio: "Kommer inte åt ljud. Vänligen kontrollera webbläsarens rättigheter.",
         no_webrtc: "Ledsen, men din webbläsare stöder inte WebRTC.",
-        // error_didnt_select_device: "",
+        error_didnt_select_device: "Välj en enhet.",
         
         unknown_error: "Anslutningen bröts av ett okänt fel.",
         invalid_username: "Användarnamnet är felakigt.",
@@ -159,8 +160,8 @@ export default
         chess_win: "Schackspelet är över: segraren är @USER_NAME@.",
         chess_quit: "Schackspelet är över: @USER_NAME@ lämnade spelet.",
         
-        // are_you_sure_you_want_to_clear_log: "",
-        // chat_log_cleared: "",
+        are_you_sure_you_want_to_clear_log: "Vill du verkligen rensa chattloggen",
+        chat_log_cleared: "Chattloggen har rensats.",
     },
     room:
     {
@@ -210,6 +211,6 @@ export default
     {
         gikopoipoi: "Gikopoipoi",
         gikopoi: "Sjöstaden",
-        // bar_giko: "",
+        bar_giko: "Gikobaren",
     }
 }
