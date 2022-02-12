@@ -221,7 +221,7 @@ io.on("connection", function (socket: Socket)
 
             await clearStream(user) // This also calls emitServerStats(), but only if the user was streaming...
             emitServerStats(user.areaId)
-            clearRoomListener(user)
+            await clearRoomListener(user)
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-user-left-room", user.id);
             stopChessGame(roomStates, user)
@@ -632,7 +632,7 @@ io.on("connection", function (socket: Socket)
                 log.info("user-want-to-take-stream", user.id,
                     "Janus listener handle", janusHandle.getId(),
                     "detached before full connection on server", stream.janusServer.id)
-                janusHandle.detach()
+                await janusHandle.detach()
                 return
             }
             
@@ -654,7 +654,7 @@ io.on("connection", function (socket: Socket)
         }
     })
     
-    socket.on("user-want-to-drop-stream", function (streamSlotId: number)
+    socket.on("user-want-to-drop-stream", async function (streamSlotId: number)
     {
         try
         {
@@ -670,7 +670,7 @@ io.on("connection", function (socket: Socket)
                 log.info("user-want-to-drop-stream", listener.user.id,
                     "Janus listener handle", listener.janusHandle.getId(),
                     "detached on server", stream.janusServer!.id)
-                listener.janusHandle.detach();
+                await listener.janusHandle.detach();
             }
         }
         catch (e)
@@ -733,13 +733,13 @@ io.on("connection", function (socket: Socket)
                 
                 if (!stream.isActive)
                 {
-                    destroySession(videoRoomHandle, stream, user)
+                    await destroySession(videoRoomHandle, stream, user)
                     return;
                 }
                 log.info("user-rtc-message", user.id,
                     "Janus video room handle", videoRoomHandle.getId(),
                     "detached on server", stream.janusServer.id)
-                videoRoomHandle.detach()
+                await videoRoomHandle.detach()
                 
                 const janusHandle = await stream.janusSession.videoRoom().publishFeed(
                     stream.janusRoomIntName, msg)
@@ -749,7 +749,7 @@ io.on("connection", function (socket: Socket)
                 
                 if (!stream.isActive)
                 {
-                    destroySession(janusHandle, stream, user)
+                    await destroySession(janusHandle, stream, user)
                     return
                 }
                 participantObject.janusHandle = janusHandle
@@ -820,7 +820,7 @@ io.on("connection", function (socket: Socket)
             currentRoom = rooms[targetRoomId]
             
             await clearStream(user)
-            clearRoomListener(user)
+            await clearRoomListener(user)
             stopChessGame(roomStates, user)
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-user-left-room", user.id)
@@ -1790,25 +1790,28 @@ async function destroySession(janusHandle: any, stream: StreamSlot, user: Player
     try
     {
         if (janusHandle === null || stream.janusSession === null) return;
-        await janusHandle.destroy({ room: stream.janusRoomIntName })
+
         log.info("destroySession", "Janus room " + stream.janusRoomIntName
-            + "(" + stream.janusRoomName + ") destroyed on server "
+            + "(" + stream.janusRoomName + ") destroying on server "
             + stream.janusServer!.id)
-        log.info("destroySession", "Handle", janusHandle.getId(), "detached on server", stream.janusServer!.id)
+        await janusHandle.destroy({ room: stream.janusRoomIntName })
+        
+        log.info("destroySession", "Handle", janusHandle.getId(), "detaching on server", stream.janusServer!.id)
         await janusHandle.detach()
+
         stream.publisher = null;
         
         while(stream.listeners.length > 0)
         {
             const listener = stream.listeners.pop();
             if(listener === undefined || listener === null) continue
-            log.info("destroySession", "Listener handle", listener.janusHandle.getId(), "detached on server", stream.janusServer!.id)
+            log.info("destroySession", "Listener handle", listener.janusHandle.getId(), "detaching on server", stream.janusServer!.id)
             await listener.janusHandle.detach()
         }
         
         if (stream.janusSession !== null)
         {
-            log.info("destroySession", "Session", stream.janusSession.getId(), "destroyed on server", stream.janusServer!.id)
+            log.info("destroySession", "Session", stream.janusSession.getId(), "destroying on server", stream.janusServer!.id)
             await stream.janusSession.destroy()
             stream.janusSession = null
         }
@@ -1848,7 +1851,7 @@ async function clearStream(user: Player)
     }
 }
 
-function clearRoomListener(user: Player)
+async function clearRoomListener(user: Player)
 {
     try
     {
@@ -1856,9 +1859,8 @@ function clearRoomListener(user: Player)
         
         log.info(user.id, "trying to clear room of listener:", user.areaId, user.roomId)
         
-        roomStates[user.areaId][user.roomId].streams
-            .filter(s => s.janusSession !== null)
-            .forEach(s =>
+        for (const s of roomStates[user.areaId][user.roomId].streams
+                .filter(s => s.janusSession !== null))
         {
             let li;
             while((li = s.listeners.findIndex(l => l.user == user)) != -1)
@@ -1869,9 +1871,9 @@ function clearRoomListener(user: Player)
                 log.info("clearRoomListener", userId,
                     "Janus listener handle", listener[0].janusHandle.getId(),
                     "detached on server", s.janusServer!.id)
-                listener[0].janusHandle.detach();
+                await listener[0].janusHandle.detach();
             }
-        });
+        }
     }
     catch (error)
     {
@@ -1925,7 +1927,7 @@ async function disconnectUser(user: Player)
 {
     log.info("Removing user ", user.id, "<" + user.name + ">", user.areaId)
     await clearStream(user)
-    clearRoomListener(user)
+    await clearRoomListener(user)
     removeUser(user)
 
     userRoomEmit(user, user.areaId, user.roomId,
