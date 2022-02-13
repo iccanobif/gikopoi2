@@ -1834,15 +1834,18 @@ async function clearStream(user: Player)
 
         const roomState = roomStates[user.areaId][user.roomId];
         const stream = roomState.streams.find(s => s.publisher !== null && s.publisher.user == user);
-        if (stream)
+
+        if (stream && stream.isActive)
         {
             stream.isActive = false
             stream.isReady = false
             
-            await destroySession(stream.publisher!.janusHandle, stream, user)
-            
             sendUpdatedStreamSlotState(user)
             emitServerStats(user.areaId)
+
+            // For some reason if this line is executed before sendUpdatedStreamSlotState(user),
+            // the listeners sometimes don't receive the updated slots message... Still don't know why.
+            await destroySession(stream.publisher!.janusHandle, stream, user)
         }
     }
     catch (error)
