@@ -6,6 +6,7 @@ import es from "./lang/es.js";
 import zh_TW from "./lang/zh-TW.js";
 import id from "./lang/id.js";
 import sv from "./lang/sv.js";
+import hu from "./lang/hu.js";
 import la from "./lang/la.js";
 
 export default
@@ -18,5 +19,6 @@ export default
     'zh-TW': zh_TW,
     id,
     sv,
+    hu,
     la,
 }
