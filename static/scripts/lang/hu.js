@@ -165,38 +165,38 @@ export default
     },
     room:
     {
-        long_st: "Angolna sikátor", // Eel road/way/alley
+        long_st: "Angolna sikátor",
         jinja: "Szentély",
         jinja_st: "Szentély bejárat",
         school_ground: "Iskola: Iskolaudvar",
         bar774: "Földalatti város: 774-es Bár",
-        izakaya774: "Földalatti város: Részeges Ivó", // Izakaya Anonymous
+        izakaya774: "Földalatti város: Részeges Ivó",
         basement: "Földalatti város",
         bar: "Kocsma",
-        school_st: "Iskolai kereszteződés", // School street
+        school_st: "Iskolai kereszteződés",
         bar_st: "Kocsma utca",
-        admin_st: "Kanrinin utca", // Development Bureau/Department Street
-        admin: "Fejlesztők Teázója", // Development Bureau/Department
-        admin_bar: "Titkos kocsma", // Secret bar
-        cafe_st: "Kávézó tér", // Cafe street
+        admin_st: "Kanrinin utca",
+        admin: "Fejlesztők Teázója",
+        admin_bar: "Titkos kocsma",
+        cafe_st: "Kávézó tér",
         enkai: "Díszterem",
         idoA: "Kút 1",
         idoB: "Kút 2",
         busstop: "Buszmegálló",
         school: "Iskola: Tanterem",
         school_rouka: "Iskola: Folyosó",
-        school_international: "Iskola: Művelődési terem", // International classroom
+        school_international: "Iskola: Művelődési terem",
         school_pc: "Iskolai számitógép terem",
         seashore: "Tengerpart",
-        radio: "Rádió Stúdió", // Radio station
-        radio_room1: "Rádió Stúdió 1", // Radio station studio 1
-        radio_room2: "Rádió Stúdió 2: BEAT GIKO", // Radio station studio 2 BEAT GIKO
+        radio: "Rádió Stúdió",
+        radio_room1: "Rádió Stúdió 1",
+        radio_room2: "Rádió Stúdió 2: BEAT GIKO",
         radio_room3: "Rádió Stúdió 3: G-SQUID",
         radio_gakuya: "Rádió Stúdió: Öltöző",
-        radio_backstage: "Rádió Stúdió: Hátsó szoba", // Backstage/Behind the scenes/offstage
-        yatai: "Ramen bódé", // (Ramen) vendor/stand/stall/food cart
+        radio_backstage: "Rádió Stúdió: Hátsó szoba",
+        yatai: "Ramen bódé",
         kaidan: "Hegyvidéki lépcső",
-        takadai: "Hegyvidék", // High ground/elevation
+        takadai: "Hegyvidék",
         yoshinoya: "Yoshinoya",
         silo: "Gabonatároló",
         badend: "Szétzúztad magad esés közben!",
