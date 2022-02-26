@@ -100,8 +100,6 @@ export const debounceWithImmediateExecution = (func, wait) => {
     };
   };
 
-export const canUseAudioContext = !!window.AudioContext
-// export const canUseAudioContext = false
 const maxGain = 1.3
 
 export class AudioProcessor
@@ -114,27 +112,21 @@ export class AudioProcessor
         this.volume = volume
         videoElement.volume = volume
 
-        if (canUseAudioContext)
-        {
-            this.context = new AudioContext()
-            this.source = this.context.createMediaStreamSource(stream);
-            this.compressor = this.context.createDynamicsCompressor();
-            this.compressor.threshold.value = -50;
-            this.compressor.knee.value = 40;
-            this.compressor.ratio.value = 12;
-            this.compressor.attack.value = 0;
-            this.compressor.release.value = 0.25;
-            this.gain = this.context.createGain()
-            this.gain.gain.value = maxGain
-        }
+        this.context = new AudioContext()
+        this.source = this.context.createMediaStreamSource(stream);
+        this.compressor = this.context.createDynamicsCompressor();
+        this.compressor.threshold.value = -50;
+        this.compressor.knee.value = 40;
+        this.compressor.ratio.value = 12;
+        this.compressor.attack.value = 0;
+        this.compressor.release.value = 0.25;
+        this.gain = this.context.createGain()
+        this.gain.gain.value = maxGain
     }
 
     dispose()
     {
-        if (canUseAudioContext)
-        {
-            this.context.close().catch(console.error)
-        }
+        this.context.close().catch(console.error)
     }
 
     setVolume(volume)
@@ -143,14 +135,11 @@ export class AudioProcessor
         if (!this.isBoostEnabled)
             this.videoElement.volume = volume
 
-        if (canUseAudioContext)
-            this.gain.gain.value = volume * maxGain
+        this.gain.gain.value = volume * maxGain
     }
 
     enableCompression()
     {
-        if (!canUseAudioContext) return 
-
         this.source.connect(this.compressor)
         this.compressor.connect(this.gain)
         this.gain.connect(this.context.destination)
@@ -161,8 +150,6 @@ export class AudioProcessor
     
     disableCompression()
     {
-        if (!canUseAudioContext) return 
-
         this.source.disconnect()
         this.compressor.disconnect()
         this.gain.disconnect()

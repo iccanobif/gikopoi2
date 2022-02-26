@@ -15,7 +15,6 @@ import {
     debounceWithImmediateExecution,
     urlRegex,
     AudioProcessor,
-    canUseAudioContext,
     getFormattedCurrentDate,
     requestNotificationPermission,
     getDeviceList,
@@ -242,7 +241,6 @@ window.vueApp = new Vue({
         timestampsInCopiedLog: localStorage.getItem("timestampsInCopiedLog") != "false",
         showIgnoreIndicatorInLog: localStorage.getItem("showIgnoreIndicatorInLog") == "true",
         notificationPermissionsGranted: false,
-        canUseAudioContext: canUseAudioContext,
         lastFrameTimestamp: null,
         chessboardState: {},
 
@@ -1793,7 +1791,7 @@ window.vueApp = new Vue({
 
             this.changeRoom(roomId, doorId);
         },
-        changeRoom: function (targetRoomId, targetDoorId)
+        changeRoom: async function (targetRoomId, targetDoorId)
         {
             if (this.mediaStream) this.stopStreaming();
             for (let i = 0; i < this.takenStreams.length; i++)
@@ -1802,12 +1800,6 @@ window.vueApp = new Vue({
                 // when going to a new room, all streams must be off by default
                 this.takenStreams[i] = false
                 this.slotCompression[i] = false
-
-                if (audioProcessors[i])
-                {
-                    audioProcessors[i].dispose()
-                    delete audioProcessors[i]
-                }
             }
 
             if (window.speechSynthesis)
@@ -2673,7 +2665,7 @@ window.vueApp = new Vue({
 
             rtcPeer.conn.addEventListener(
                 "track",
-                (event) =>
+                async (event) =>
                 {
                     try
                     {
@@ -2687,7 +2679,7 @@ window.vueApp = new Vue({
 
                         if (audioProcessors[streamSlotId])
                         {
-                            audioProcessors[streamSlotId].dispose()
+                            await audioProcessors[streamSlotId].dispose()
                             delete audioProcessors[streamSlotId]
                         }
 
@@ -2708,7 +2700,7 @@ window.vueApp = new Vue({
             );
             this.socket.emit("user-want-to-take-stream", streamSlotId);
         },
-        dropStream: function (streamSlotId)
+        dropStream: async function (streamSlotId)
         {
             if(!this.rtcPeerSlots[streamSlotId]) return;
             this.rtcPeerSlots[streamSlotId].rtcPeer.close()
@@ -2718,6 +2710,12 @@ window.vueApp = new Vue({
                 Vue.set(this.takenStreams, streamSlotId, false);
             
             this.socket.emit("user-want-to-drop-stream", streamSlotId);
+
+            if (audioProcessors[streamSlotId])
+            {
+                await audioProcessors[streamSlotId].dispose()
+                delete audioProcessors[streamSlotId]
+            }
         },
         wantToDropStream: function (streamSlotId)
         {
