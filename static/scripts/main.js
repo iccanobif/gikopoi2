@@ -59,9 +59,6 @@ function UserException(message) {
 
 let loadCharacterImagesPromise = null
 
-// the key is the slot ID
-const audioProcessors = {}
-
 function getSpawnRoomId()
 {
     try
@@ -183,7 +180,6 @@ window.vueApp = new Vue({
         rtcPeerSlots: [],
         takenStreams: [], // streams taken by me
         slotVolume: JSON.parse(localStorage.getItem("slotVolume")) || {}, // key: slot Id / value: volume
-        slotCompression: [],
 
         // stream settings
         isStreamPopupOpen: false,
@@ -249,6 +245,8 @@ window.vueApp = new Vue({
         lastCoinTossTime: 0, // unix timestamp
 
         hideStreams: false,
+        // the key is the slot ID
+        audioProcessors: {}
     },
     mounted: function ()
     {
@@ -1799,7 +1797,6 @@ window.vueApp = new Vue({
                 this.dropStream(i)
                 // when going to a new room, all streams must be off by default
                 this.takenStreams[i] = false
-                this.slotCompression[i] = false
             }
 
             if (window.speechSynthesis)
@@ -2328,8 +2325,6 @@ window.vueApp = new Vue({
 
                 if (this.slotVolume[slotId] === undefined)
                     this.slotVolume[slotId] = 1
-                if (this.slotCompression[slotId] === undefined)
-                    this.slotCompression[slotId] = false
 
                 // Sadly it looks like there's no other way to set a default volume for the video,
                 // since apparently <video> elements have no "volume" attribute and it must be set via javascript.
@@ -2677,18 +2672,18 @@ window.vueApp = new Vue({
 
                         $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
 
-                        if (audioProcessors[streamSlotId])
+                        if (this.audioProcessors[streamSlotId])
                         {
-                            await audioProcessors[streamSlotId].dispose()
-                            delete audioProcessors[streamSlotId]
+                            await this.audioProcessors[streamSlotId].dispose()
+                            delete this.audioProcessors[streamSlotId]
                         }
 
                         if (this.streams[streamSlotId].withSound)
                         {
-                            audioProcessors[streamSlotId] = new AudioProcessor(stream, videoElement, this.slotVolume[streamSlotId])
-
-                            if (this.slotCompression[streamSlotId])
-                                audioProcessors[streamSlotId].enableCompression()
+                            // Disable sound from the video element so that we let sound be handled
+                            // only by the AudioProcessor
+                            videoElement.volume = 0
+                            this.audioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId])
                         }
                     }
                     catch (exc)
@@ -2711,10 +2706,10 @@ window.vueApp = new Vue({
             
             this.socket.emit("user-want-to-drop-stream", streamSlotId);
 
-            if (audioProcessors[streamSlotId])
+            if (this.audioProcessors[streamSlotId])
             {
-                await audioProcessors[streamSlotId].dispose()
-                delete audioProcessors[streamSlotId]
+                await this.audioProcessors[streamSlotId].dispose()
+                delete this.audioProcessors[streamSlotId]
             }
         },
         wantToDropStream: function (streamSlotId)
@@ -2874,7 +2869,7 @@ window.vueApp = new Vue({
         {
             const volumeSlider = document.getElementById("volume-" + streamSlotId);
 
-            audioProcessors[streamSlotId].setVolume(volumeSlider.value)
+            this.audioProcessors[streamSlotId].setVolume(volumeSlider.value)
 
             this.slotVolume[streamSlotId] = volumeSlider.value;
             localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
@@ -3161,10 +3156,7 @@ window.vueApp = new Vue({
         },
         onCompressionChanged: function(streamSlotID)
         {
-            if (this.slotCompression[streamSlotID])
-                audioProcessors[streamSlotID].enableCompression()
-            else
-                audioProcessors[streamSlotID].disableCompression()
+            this.audioProcessors[streamSlotID].onCompressionChanged()
         }
     },
 });

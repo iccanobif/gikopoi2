@@ -104,13 +104,12 @@ const maxGain = 1.3
 
 export class AudioProcessor
 {
-    constructor(stream, videoElement, volume)
+    constructor(stream, volume, vuMeterCallback)
     {
         this.stream = stream
         this.isBoostEnabled = false
-        this.videoElement = videoElement
-        this.volume = volume
-        videoElement.volume = volume
+
+        this.vuMeterCallback = vuMeterCallback
 
         this.context = new AudioContext()
         this.source = this.context.createMediaStreamSource(stream);
@@ -121,7 +120,10 @@ export class AudioProcessor
         this.compressor.attack.value = 0;
         this.compressor.release.value = 0.25;
         this.gain = this.context.createGain()
-        this.gain.gain.value = maxGain
+
+        this.setVolume(volume)
+
+        this.connectNodes()
     }
 
     dispose()
@@ -129,33 +131,37 @@ export class AudioProcessor
         this.context.close().catch(console.error)
     }
 
-    setVolume(volume)
-    {
-        this.volume = volume
-        if (!this.isBoostEnabled)
-            this.videoElement.volume = volume
-
-        this.gain.gain.value = volume * maxGain
-    }
-
-    enableCompression()
-    {
-        this.source.connect(this.compressor)
-        this.compressor.connect(this.gain)
-        this.gain.connect(this.context.destination)
-
-        this.videoElement.volume = 0
-        this.isBoostEnabled = true
-    }
-    
-    disableCompression()
+    connectNodes()
     {
         this.source.disconnect()
         this.compressor.disconnect()
         this.gain.disconnect()
 
-        this.videoElement.volume = this.volume
-        this.isBoostEnabled = false
+        if (this.isBoostEnabled)
+        {
+            this.source.connect(this.compressor)
+            this.compressor.connect(this.gain)
+            this.gain.connect(this.context.destination)
+        }
+        else
+        {
+            this.source.connect(this.gain)
+            this.gain.connect(this.context.destination)
+        }
+    }
+
+    setVolume(volume)
+    {
+        this.volume = volume
+
+        this.gain.gain.value = this.isBoostEnabled
+            ? volume * maxGain
+            : volume
+    }
+
+    onCompressionChanged()
+    {
+        this.connectNodes()
     }
 }
 
