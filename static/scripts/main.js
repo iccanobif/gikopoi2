@@ -2326,13 +2326,6 @@ window.vueApp = new Vue({
 
                 if (this.slotVolume[slotId] === undefined)
                     this.slotVolume[slotId] = 1
-
-                // Sadly it looks like there's no other way to set a default volume for the video,
-                // since apparently <video> elements have no "volume" attribute and it must be set via javascript.
-                // So, i use Vue.nextTick() to execute this piece of code only after the element has been added to the DOM.
-                Vue.nextTick(() => {
-                    document.getElementById("received-video-" + slotId).volume = this.slotVolume[slotId]
-                })
             }
         },
 
@@ -2610,7 +2603,6 @@ window.vueApp = new Vue({
                 this.rtcPeerSlots[streamSlotId].rtcPeer.close()
                 this.rtcPeerSlots[streamSlotId] = null;
             }
-
 
             // On small screens, displaying the <video> element seems to cause a reflow in a way that
             // makes the canvas completely gray, so i force a redraw
