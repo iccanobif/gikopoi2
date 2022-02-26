@@ -666,25 +666,44 @@ div[id^="vu-meter-container"]
     background-color: black;
     height: 10px;
     width: 219px;
+    margin: 4px 0px;
 }
 
 div[id^="vu-meter-bar-primary-"]
 {
-    background-color: red;
     height: 10px;
     width: 100%;
     position: relative;
     z-index: 2;
 }
 
+div[id^="vu-meter-bar-primary-"].outbound-vu-meter-bar
+{
+    background-color: red;
+}
+
+div[id^="vu-meter-bar-primary-"].inbound-vu-meter-bar
+{
+    background-color: green;
+}
+
 div[id^="vu-meter-bar-secondary-"]
 {
-    background-color: darkred;
     height: 10px;
     width: 100%;
     position: relative;
     z-index: 1;
     top: -10px;
+}
+
+div[id^="vu-meter-bar-secondary-"].outbound-vu-meter-bar
+{
+    background-color: darkred;
+}
+
+div[id^="vu-meter-bar-secondary-"].inbound-vu-meter-bar
+{
+    background-color: darkgreen;
 }
 
 button.checked {

@@ -246,7 +246,8 @@ window.vueApp = new Vue({
 
         hideStreams: false,
         // the key is the slot ID
-        audioProcessors: {}
+        inboundAudioProcessors: {},
+        outboundAudioProcessor: null,
     },
     mounted: function ()
     {
@@ -2514,44 +2515,13 @@ window.vueApp = new Vue({
                     if (!this.mediaStream.getAudioTracks().length)
                         throw new UserException("error_obtaining_audio");
 
-                    // VU Meter
-                    if (window.AudioContext)
-                    {
-                        const context = new AudioContext();
-                        const microphone = context.createMediaStreamSource(this.mediaStream);
-                        const analyser = context.createAnalyser()
-                        analyser.minDecibels = -60;
-                        analyser.maxDecibels = 0;
-                        analyser.smoothingTimeConstant = 0.01;
-                        analyser.fftSize = 32
-                        const bufferLengthAlt = analyser.frequencyBinCount;
-                        const dataArrayAlt = new Uint8Array(bufferLengthAlt);
-                        microphone.connect(analyser);
+                    this.outboundAudioProcessor = new AudioProcessor(this.mediaStream, 0, (level) => {
+                        const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream)
+                        const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream)
 
-                        this.vuMeterTimer = setInterval(() => {
-                            try {
-                                if (this.streamSlotIdInWhichIWantToStream == null)
-                                {
-                                    clearInterval(this.vuMeterTimer)
-                                    return
-                                }
-                                analyser.getByteFrequencyData(dataArrayAlt)
-
-                                const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
-                                const level = max / 255
-                                const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream)
-                                const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream)
-
-                                vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
-                                vuMeterBarPrimary.style.width = level * 100 + "%"
-                            }
-                            catch (exc)
-                            {
-                                console.error(exc)
-                                clearInterval(this.vuMeterTimer)
-                            }
-                        }, 100)
-                    }
+                        vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
+                        vuMeterBarPrimary.style.width = level * 100 + "%"
+                    });
                 }
 
                 this.socket.emit("user-want-to-stream", {
@@ -2614,14 +2584,22 @@ window.vueApp = new Vue({
 
             document.getElementById("local-video-" + slotId).srcObject = this.mediaStream;
         },
-        stopStreaming: function ()
+        stopStreaming: async function ()
         {
-            this.socket.emit("user-want-to-stop-stream");
             for (const track of this.mediaStream.getTracks()) track.stop();
 
             const streamSlotId = this.streamSlotIdInWhichIWantToStream;
 
             document.getElementById("local-video-" + streamSlotId).srcObject = this.mediaStream = null;
+
+            this.socket.emit("user-want-to-stop-stream");
+
+            if (this.outboundAudioProcessor)
+            {
+                await this.outboundAudioProcessor.dispose()
+                this.outboundAudioProcessor = null
+            }
+
             if (this.vuMeterTimer)
                 clearInterval(this.vuMeterTimer)
 
@@ -2672,10 +2650,10 @@ window.vueApp = new Vue({
 
                         $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
 
-                        if (this.audioProcessors[streamSlotId])
+                        if (this.inboundAudioProcessors[streamSlotId])
                         {
-                            await this.audioProcessors[streamSlotId].dispose()
-                            delete this.audioProcessors[streamSlotId]
+                            await this.inboundAudioProcessors[streamSlotId].dispose()
+                            delete this.inboundAudioProcessors[streamSlotId]
                         }
 
                         if (this.streams[streamSlotId].withSound)
@@ -2683,7 +2661,13 @@ window.vueApp = new Vue({
                             // Disable sound from the video element so that we let sound be handled
                             // only by the AudioProcessor
                             videoElement.volume = 0
-                            this.audioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId])
+                            this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId], (level) => {
+                                const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + streamSlotId)
+                                const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + streamSlotId)
+        
+                                vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
+                                vuMeterBarPrimary.style.width = level * 100 + "%"
+                            })
                         }
                     }
                     catch (exc)
@@ -2706,10 +2690,10 @@ window.vueApp = new Vue({
             
             this.socket.emit("user-want-to-drop-stream", streamSlotId);
 
-            if (this.audioProcessors[streamSlotId])
+            if (this.inboundAudioProcessors[streamSlotId])
             {
-                await this.audioProcessors[streamSlotId].dispose()
-                delete this.audioProcessors[streamSlotId]
+                await this.inboundAudioProcessors[streamSlotId].dispose()
+                delete this.inboundAudioProcessors[streamSlotId]
             }
         },
         wantToDropStream: function (streamSlotId)
@@ -2869,7 +2853,7 @@ window.vueApp = new Vue({
         {
             const volumeSlider = document.getElementById("volume-" + streamSlotId);
 
-            this.audioProcessors[streamSlotId].setVolume(volumeSlider.value)
+            this.inboundAudioProcessors[streamSlotId].setVolume(volumeSlider.value)
 
             this.slotVolume[streamSlotId] = volumeSlider.value;
             localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
@@ -3156,7 +3140,7 @@ window.vueApp = new Vue({
         },
         onCompressionChanged: function(streamSlotID)
         {
-            this.audioProcessors[streamSlotID].onCompressionChanged()
+            this.inboundAudioProcessors[streamSlotID].onCompressionChanged()
         }
     },
 });

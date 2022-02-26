@@ -124,11 +124,38 @@ export class AudioProcessor
         this.setVolume(volume)
 
         this.connectNodes()
+
+        // Vu meter
+        const vuMeterSource = this.context.createMediaStreamSource(stream);
+        const analyser = this.context.createAnalyser()
+        analyser.minDecibels = -60;
+        analyser.maxDecibels = 0;
+        analyser.smoothingTimeConstant = 0.01;
+        analyser.fftSize = 32
+        const bufferLengthAlt = analyser.frequencyBinCount;
+        const dataArrayAlt = new Uint8Array(bufferLengthAlt);
+        vuMeterSource.connect(analyser);
+
+        this.vuMeterTimer = setInterval(() => {
+            try {
+                analyser.getByteFrequencyData(dataArrayAlt)
+
+                const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
+                const level = max / 255
+                vuMeterCallback(level)
+            }
+            catch (exc)
+            {
+                console.error(exc)
+                clearInterval(this.vuMeterTimer)
+            }
+        }, 100)
     }
 
     dispose()
     {
-        this.context.close().catch(console.error)
+        clearInterval(this.vuMeterTimer)
+        return this.context.close().catch(console.error)
     }
 
     connectNodes()
