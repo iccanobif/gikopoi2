@@ -141,8 +141,15 @@ export class AudioProcessor
                 analyser.getByteFrequencyData(dataArrayAlt)
 
                 const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
-                const level = max / 255
-                vuMeterCallback(level)
+
+                // Convert level to a linear scale between 0 and 1
+                const linearLevel = max / 255
+
+                // Convert level to a logarithmic scale between 0 and 1
+                const sensitivity = 50
+                const logarithmicLevel = Math.log(linearLevel * sensitivity + 1) / Math.log(sensitivity + 1)
+
+                vuMeterCallback(logarithmicLevel)
             }
             catch (exc)
             {
