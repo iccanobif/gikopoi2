@@ -116,6 +116,7 @@ export default
         // preferences_enable_coin_sound: "Enable coin sound",
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
+        // preferences_streams_inbound_vu_meter_enabled: "",
         // preferences_title_chat: "",
         // preferences_clear_log: "",
 

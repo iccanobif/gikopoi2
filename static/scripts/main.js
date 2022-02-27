@@ -172,6 +172,7 @@ window.vueApp = new Vue({
         isCoinSoundEnabled: localStorage.getItem("isCoinSoundEnabled") != "false",
         mentionSoundFunction: null,
         isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
+        isStreamInboundVuMeterEnabled: localStorage.getItem("isStreamInboundVuMeterEnabled") != "false",
 
         // streaming
         streams: [],

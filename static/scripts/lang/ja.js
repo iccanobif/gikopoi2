@@ -117,6 +117,7 @@ export default
 
         preferences_title_streams: "配信",
         preferences_streams_auto_resume: "配信再開後に自動受信",
+        preferences_streams_inbound_vu_meter_enabled: "受信側音量ゲージを表示",
         preferences_title_chat: "チャット",
         preferences_clear_log: "チャットログをクリア",
 

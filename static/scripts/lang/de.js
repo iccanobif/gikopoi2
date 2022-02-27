@@ -117,6 +117,7 @@ export default
 
         preferences_title_streams: "Streams",
         preferences_streams_auto_resume: "Automatische Fortsetzung",
+        // preferences_streams_inbound_vu_meter_enabled: "",
         preferences_title_chat: "Chat",
         preferences_clear_log: "Chat-Log löschen",
 

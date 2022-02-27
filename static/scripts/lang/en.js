@@ -117,6 +117,7 @@ export default
 
         preferences_title_streams: "Streams",
         preferences_streams_auto_resume: "Auto resume",
+        preferences_streams_inbound_vu_meter_enabled: "Display VU meter for received streams",
         preferences_title_chat: "Chat",
         preferences_clear_log: "Clear chat log",
 

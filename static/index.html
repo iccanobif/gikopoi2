@@ -234,7 +234,7 @@
                             autoplay playsinline></video>
                     </div>
                     <div :id="'vu-meter-container-' + index"
-                    v-show="streamSlot.isActive && streamSlot.withSound && (index == streamSlotIdInWhichIWantToStream || takenStreams[index])">
+                    v-show="streamSlot.isActive && streamSlot.withSound && (index == streamSlotIdInWhichIWantToStream || (takenStreams[index] && isStreamInboundVuMeterEnabled))">
                         <div 
                             :id="'vu-meter-bar-primary-' + index" 
                             v-bind:class="{'inbound-vu-meter-bar': takenStreams[index], 'outbound-vu-meter-bar': index == streamSlotIdInWhichIWantToStream}"></div>
@@ -583,6 +583,11 @@
                             <input type="checkbox" id="preferences-streams-auto-resume"
                                 v-model="isStreamAutoResumeEnabled" v-on:change="storeSet('isStreamAutoResumeEnabled')"><label
                                 for="preferences-streams-auto-resume">{{ $t("ui.preferences_streams_auto_resume") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-streams-inbound-vu-meter-enabled"
+                                v-model="isStreamInboundVuMeterEnabled" v-on:change="storeSet('isStreamInboundVuMeterEnabled')"><label
+                                for="preferences-streams-inbound-vu-meter-enabled">{{ $t("ui.preferences_streams_inbound_vu_meter_enabled") }}</label>
                         </div>
                     </div>
                     <div class='popup-section'>

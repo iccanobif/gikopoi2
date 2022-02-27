@@ -117,6 +117,7 @@ export default
 
         preferences_title_streams: "Strömmor",
         preferences_streams_auto_resume: "Automatisk återupptagning",
+        // preferences_streams_inbound_vu_meter_enabled: "",
         preferences_title_chat: "Chatt",
         preferences_clear_log: "Rensa chattlogg",
 
