@@ -111,7 +111,7 @@ export class AudioProcessor
 
         this.vuMeterCallback = vuMeterCallback
 
-        this.context = new AudioContext()
+        this.context = new AudioContext();
         this.source = this.context.createMediaStreamSource(stream);
         this.compressor = this.context.createDynamicsCompressor();
         this.compressor.threshold.value = -50;
@@ -119,7 +119,9 @@ export class AudioProcessor
         this.compressor.ratio.value = 12;
         this.compressor.attack.value = 0;
         this.compressor.release.value = 0.25;
-        this.gain = this.context.createGain()
+        this.gain = this.context.createGain();
+        this.pan = this.context.createStereoPanner();
+        this.pan.value = 0;
 
         this.setVolume(volume)
 
@@ -170,17 +172,20 @@ export class AudioProcessor
         this.source.disconnect()
         this.compressor.disconnect()
         this.gain.disconnect()
+        this.pan.disconnect()
 
         if (this.isBoostEnabled)
         {
             this.source.connect(this.compressor)
             this.compressor.connect(this.gain)
-            this.gain.connect(this.context.destination)
+            this.gain.connect(this.pan)
+            this.pan.connect(this.context.destination)
         }
         else
         {
             this.source.connect(this.gain)
-            this.gain.connect(this.context.destination)
+            this.gain.connect(this.pan)
+            this.pan.connect(this.context.destination)
         }
     }
 
@@ -191,6 +196,11 @@ export class AudioProcessor
         this.gain.gain.value = this.isBoostEnabled
             ? volume * maxGain
             : volume
+    }
+
+    setPan(value)
+    {
+        this.pan.pan.value = value
     }
 
     onCompressionChanged()

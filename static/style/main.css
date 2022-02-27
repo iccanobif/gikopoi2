@@ -869,3 +869,8 @@ button
     background-color: gray;
 }
 
+.audio-stream-controls
+{
+    display: flex;
+    align-items: center;
+}

@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
     <meta name="abuseipdb-verification" content="DmbG28jg" />
-    
+
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
@@ -18,7 +18,7 @@
     <meta name="msapplication-TileImage" content="/mstile-144x144.png">
     <meta name="theme-color" content="#c0c0c0">
     <meta name="description" content="ギコっぽいぽい">
-    
+
     <link rel='stylesheet' href='style/main.css' />
     <link rel='stylesheet' href='style/dark-mode.css' />
     <link rel='stylesheet' href='chess/css/chessboard-1.0.0.min.css' />
@@ -89,7 +89,7 @@
             </h2>
             <div id="main-section">
                 <div id="canvas-container" v-if="!connectionRefused">
-                    <canvas id="room-canvas" tabindex="1" 
+                    <canvas id="room-canvas" tabindex="1"
                         v-on:keydown="handleCanvasKeydown($event)"
                         v-on:mousedown="handleCanvasPointerDown($event)"
                         v-on:mousemove="handleCanvasPointerMove($event)"
@@ -213,7 +213,7 @@
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
                     <hr v-if="index != 0" />
                     <div>
-                        {{ $t("ui.label_stream", {index: index+1}) }}<span 
+                        {{ $t("ui.label_stream", {index: index+1}) }}<span
                             v-if="streamSlot.isActive"
                             class="stream-title active-stream-title"
                             v-bind:class="{'highlighted-stream-title': streamSlot.userId && streamSlot.userId == highlightedUserId}"
@@ -235,18 +235,31 @@
                     </div>
                     <div :id="'vu-meter-container-' + index"
                     v-show="streamSlot.isActive && streamSlot.withSound && (index == streamSlotIdInWhichIWantToStream || (takenStreams[index] && isStreamInboundVuMeterEnabled))">
-                        <div 
-                            :id="'vu-meter-bar-primary-' + index" 
+                        <div
+                            :id="'vu-meter-bar-primary-' + index"
                             v-bind:class="{'inbound-vu-meter-bar': takenStreams[index], 'outbound-vu-meter-bar': index == streamSlotIdInWhichIWantToStream}"></div>
-                        <div 
-                            :id="'vu-meter-bar-secondary-' + index" 
+                        <div
+                            :id="'vu-meter-bar-secondary-' + index"
                             v-bind:class="{'inbound-vu-meter-bar': takenStreams[index], 'outbound-vu-meter-bar': index == streamSlotIdInWhichIWantToStream}"></div>
                     </div>
                     <div
                         v-if="takenStreams[index] && streamSlot.isReady && streamSlot.withSound && index != streamSlotIdInWhichIWantToStream">
-                        <label for="stream-volume">{{ $t("ui.volume") }}</label>
-                        <input type="range" :id="'volume-' + index" v-on:change="changeStreamVolume(index)"
-                            name="stream-volume" min="0" max="1" step="0.01" :value="slotVolume[index]">
+                        <div class="audio-stream-controls">
+                            <label for="stream-volume">{{ $t("ui.volume") }}</label>
+                            <input type="range" :id="'volume-' + index" v-on:change="changeStreamVolume(index)"
+                                name="stream-volume" min="0" max="1" step="0.01" :value="slotVolume[index]">
+                            <input
+                                :id="'pan-knob-' + index"
+                                type="range"
+                                class="input-knob"
+                                data-diameter="16"
+                                min="-1"
+                                max="1"
+                                step="0.01"
+                                value="0"
+                                v-on:input="onPanChanged(index, $event)"
+                                v-on:dblclick="resetPan(index)" />
+                        </div>
                         <div>
                             <label :for="'enable-compression-' + index">{{ $t("ui.enable_compression") }}</label>
                             <input type="checkbox"
@@ -704,9 +717,9 @@
                 <span v-if="chessboardState.blackUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'b'}">
                     {{ $t("ui.chess_black") }}{{ users[chessboardState.blackUserID]
                                                  ? (users[chessboardState.blackUserID].name || $t("default_user_name"))
-                                                 : "N/A" }} 
+                                                 : "N/A" }}
                 </span>
-                <div 
+                <div
                     id="chessboard"
                     v-show="chessboardState.fenString"
                     style="width: 300px"></div>
@@ -733,6 +746,7 @@
     <script src="scripts/Blob.js"></script>
     <script src="scripts/animalese.js"></script>
     <script src="chess/js/chessboard-1.0.0.min.js"></script>
+    <script src="scripts/input-knobs.js"></script>
 
     <script type="module" src='scripts/polyfills.js'></script>
     <script type="module" src='scripts/main.js'></script>

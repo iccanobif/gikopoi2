@@ -3134,7 +3134,18 @@ window.vueApp = new Vue({
         onCompressionChanged: function(streamSlotID)
         {
             this.inboundAudioProcessors[streamSlotID].onCompressionChanged()
-        }
+        },
+        onPanChanged: function(streamSlotID, event)
+        {
+            const value = event.target.value
+            this.inboundAudioProcessors[streamSlotID].setPan(value)
+        },
+        resetPan: function(streamSlotID)
+        {
+            const panKnobElement = document.getElementById("pan-knob-" + streamSlotID);
+            panKnobElement.value = 0;
+            this.inboundAudioProcessors[streamSlotID].setPan(0);
+        },
     },
 });
 
