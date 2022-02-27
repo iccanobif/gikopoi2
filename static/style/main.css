@@ -664,16 +664,20 @@ video {
 div[id^="vu-meter-container"]
 {
     background-color: black;
-    height: 10px;
+    height: 5px;
     width: 219px;
     margin: 4px 0px;
 }
 
+div[id^="vu-meter-bar-"]
+{
+    height: 5px;
+    width: 0;
+    position: relative;
+}
+
 div[id^="vu-meter-bar-primary-"]
 {
-    height: 10px;
-    width: 100%;
-    position: relative;
     z-index: 2;
 }
 
@@ -689,11 +693,8 @@ div[id^="vu-meter-bar-primary-"].inbound-vu-meter-bar
 
 div[id^="vu-meter-bar-secondary-"]
 {
-    height: 10px;
-    width: 100%;
-    position: relative;
     z-index: 1;
-    top: -10px;
+    top: -5px;
 }
 
 div[id^="vu-meter-bar-secondary-"].outbound-vu-meter-bar
