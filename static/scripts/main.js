@@ -2883,7 +2883,7 @@ window.vueApp = new Vue({
         {
             this.passwordInputVisible = true;
         },
-        handleDarkMode: function ()
+        handleDarkMode: async function ()
         {
             this.isRedrawRequired = true
             
@@ -2899,6 +2899,14 @@ window.vueApp = new Vue({
             }
 
             this.storeSet("isDarkMode");
+
+            // Need to wait for the next tick so that knobElement.refresh() is called
+            // with isDarkMode already updated to its new value.
+            await Vue.nextTick()
+            for (const knobElement of document.getElementsByClassName("input-knob"))
+            {
+                knobElement.refresh()
+            }
         },
         toggleCoinSound: function ()
         {
