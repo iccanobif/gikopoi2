@@ -83,6 +83,7 @@ export default
         stream_form_camera_facing: "Fotocamera telefono:",
         stream_form_camera_facing_user: "Anteriore",
         stream_form_camera_facing_environment: "Posteriore",
+        stream_form_vtuber_mode: "Modalità VTuber",
 
         // device_selection_title: "",
         // device_selection_audio_devices: "",

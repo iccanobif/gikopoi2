@@ -79,6 +79,7 @@ export default
         stream_form_stream_target: "Stream-Ziel",
         stream_form_visible_to_all_room : "Alle Benutzer im Raum",
         stream_form_visible_only_to_specific_users: "Nur bestimmte Benutzer",
+        // stream_form_vtuber_mode: "",
         
         device_selection_title: "Geräteauswahl",
         device_selection_audio_devices: "Audiogeräte",

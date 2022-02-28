@@ -79,6 +79,7 @@ export default
         stream_form_stream_target: "Siarkan ke...",
         stream_form_visible_to_all_room : "Semua orang di ruangan ini",
         stream_form_visible_only_to_specific_users: "Hanya beberapa orang",
+        // stream_form_vtuber_mode: "",
 
         device_selection_title: "Silakan pilih perangkat",
         device_selection_audio_devices: "Pilih perangkat audio",
