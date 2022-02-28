@@ -249,7 +249,7 @@
                             autoplay playsinline></video>
                         <img class="vtuber-character" 
                             v-if="streamSlot.streamIsVtuberMode"
-                            :src="'characters/giko/front-standing.svg'"
+                            :src="getAvatarSpriteForUser(streamSlot.userId)"
                             v-bind:class="{'jumping': streamSlot.isJumping}" />
                     </div>
                     <div :id="'vu-meter-container-' + index"

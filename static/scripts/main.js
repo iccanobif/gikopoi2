@@ -2560,17 +2560,11 @@ window.vueApp = new Vue({
                         vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
                         vuMeterBarPrimary.style.width = level * 100 + "%"
 
-                        // if (level > 0.2)
-                        //     this.slotIsVtuberCharacterJumping[this.streamSlotIdInWhichIWantToStream] = true
-                        // else
-                        //     setTimeout(() => this.slotIsVtuberCharacterJumping[this.streamSlotIdInWhichIWantToStream] = false, 100)
-                        // this.$forceUpdate()
-
-                        // if (level > 0.2)
-                        //     this.streams[this.streamSlotIdInWhichIWantToStream].isJumping = true
-                        // else
-                        //     setTimeout(() => this.streams[this.streamSlotIdInWhichIWantToStream].isJumping = false, 100)
-                        // this.$forceUpdate()
+                        if (level > 0.2)
+                            this.streams[this.streamSlotIdInWhichIWantToStream].isJumping = true
+                        else
+                            setTimeout(() => this.streams[this.streamSlotIdInWhichIWantToStream].isJumping = false, 100)
+                        this.$forceUpdate()
                     });
                 }
 
@@ -2728,6 +2722,12 @@ window.vueApp = new Vue({
         
                                 vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
                                 vuMeterBarPrimary.style.width = level * 100 + "%"
+                                
+                                if (level > 0.2)
+                                    this.streams[streamSlotId].isJumping = true
+                                else
+                                    setTimeout(() => this.streams[streamSlotId].isJumping = false, 100)
+                                this.$forceUpdate()
                             })
                         }
                     }
@@ -3304,7 +3304,12 @@ window.vueApp = new Vue({
                 this.detachedStreamTabs[streamSlotId].close();
                 this.detachedStreamTabs[streamSlotId] = null;
             }
-        }
+        },
+        getAvatarSpriteForUser: function(userId)
+        {
+            const characterName = this.users[userId].character.characterName
+            return "characters/" + characterName + "/front-standing.svg"
+        },
     },
 });
 
