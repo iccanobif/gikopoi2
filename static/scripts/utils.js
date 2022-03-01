@@ -102,6 +102,9 @@ export const debounceWithImmediateExecution = (func, wait) => {
 
 const maxGain = 1.3
 
+var AudioContext = window.AudioContext          // Default
+                 || window.webkitAudioContext;  // Safari and old versions of Chrome
+
 export class AudioProcessor
 {
     constructor(stream, volume, vuMeterCallback)
