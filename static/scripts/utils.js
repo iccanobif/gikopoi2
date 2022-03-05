@@ -123,8 +123,18 @@ export class AudioProcessor
         this.compressor.attack.value = 0;
         this.compressor.release.value = 0.25;
         this.gain = this.context.createGain();
-        this.pan = this.context.createStereoPanner();
-        this.pan.value = 0;
+
+        // To support old safari versions that people still seem to use, check that createStereoPanner
+        // is available, and if not, use a dummy gain node instead.
+        if (this.context.createStereoPanner)
+        {
+            this.pan = this.context.createStereoPanner();
+            this.pan.value = 0;
+        }
+        else
+        {
+            this.pan = this.context.createGain();
+        }
 
         this.setVolume(volume)
 
@@ -203,7 +213,9 @@ export class AudioProcessor
 
     setPan(value)
     {
-        this.pan.pan.value = value
+        // Check that this is actually a pan node and not a dummy gain node (see comments in constructor)
+        if (this.pan.pan)
+            this.pan.pan.value = value
     }
 
     onCompressionChanged()
