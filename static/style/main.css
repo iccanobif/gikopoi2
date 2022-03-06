@@ -869,8 +869,45 @@ button
     background-color: gray;
 }
 
+.audio-stream-controls-container
+{
+    /* position: relative to make it so that the width: 100% and height: 100%;
+       in the spinner container div cover only the parent element and not the
+       entire page. */
+    position: relative;
+    width: fit-content;
+}
+
 .audio-stream-controls
+{
+    visibility: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.audio-stream-controls-container.listener-connected > .audio-stream-controls
+{
+    visibility: visible;
+}
+
+.audio-stream-controls-container.listener-connected > .audio-stream-controls-spinner
+{
+    visibility: hidden;
+}
+
+.audio-stream-controls-spinner
 {
     display: flex;
     align-items: center;
+    visibility: visible;
+    position: absolute;
+    z-index: 9999999999;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+}
+
+.audio-stream-controls-spinner img
+{
+    height: 18px;
 }

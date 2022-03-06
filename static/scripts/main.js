@@ -176,6 +176,7 @@ window.vueApp = new Vue({
 
         // streaming
         streams: [],
+        clientSideStreamData: [],
         mediaStream: null,
         streamSlotIdInWhichIWantToStream: null,
         rtcPeerSlots: [],
@@ -2300,6 +2301,12 @@ window.vueApp = new Vue({
                 return null
             });
 
+            this.clientSideStreamData = streams.map((s, slotId) => {
+                if (this.clientSideStreamData[slotId])
+                    return this.clientSideStreamData[slotId];
+                else
+                    return { isListenerConnected: false };
+            })
 
             this.streams = streams;
 
@@ -2626,8 +2633,6 @@ window.vueApp = new Vue({
             if (this.rtcPeerSlots[streamSlotId]) return // no need to attempt again to take this stream
 
             const rtcPeer = this.setupRtcPeerSlot(streamSlotId).rtcPeer;
-            const videoElement = document.getElementById("received-video-" + streamSlotId)
-            videoElement.play(); // Needed for iphone
 
             rtcPeer.conn.addEventListener(
                 "track",
@@ -2635,8 +2640,13 @@ window.vueApp = new Vue({
                 {
                     try
                     {
+                        const videoElement = document.getElementById("received-video-" + streamSlotId)
+                        videoElement.play(); // Needed for iphone
+            
                         if (this.hideStreams)
                             return;
+
+                        this.clientSideStreamData[streamSlotId].isListenerConnected = true
 
                         const stream = event.streams[0]
                         videoElement.srcObject = stream;
@@ -2680,6 +2690,8 @@ window.vueApp = new Vue({
             
             if (!this.isStreamAutoResumeEnabled)
                 Vue.set(this.takenStreams, streamSlotId, false);
+
+            this.clientSideStreamData[streamSlotId].isListenerConnected = false
             
             this.socket.emit("user-want-to-drop-stream", streamSlotId);
 

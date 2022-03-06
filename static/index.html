@@ -234,7 +234,7 @@
                             autoplay playsinline></video>
                     </div>
                     <div :id="'vu-meter-container-' + index"
-                    v-show="streamSlot.isActive && streamSlot.withSound && (index == streamSlotIdInWhichIWantToStream || (takenStreams[index] && isStreamInboundVuMeterEnabled))">
+                         v-show="streamSlot.isActive && streamSlot.withSound && (index == streamSlotIdInWhichIWantToStream || (takenStreams[index] && isStreamInboundVuMeterEnabled))">
                         <div
                             :id="'vu-meter-bar-primary-' + index"
                             v-bind:class="{'inbound-vu-meter-bar': takenStreams[index], 'outbound-vu-meter-bar': index == streamSlotIdInWhichIWantToStream}"></div>
@@ -243,7 +243,15 @@
                             v-bind:class="{'inbound-vu-meter-bar': takenStreams[index], 'outbound-vu-meter-bar': index == streamSlotIdInWhichIWantToStream}"></div>
                     </div>
                     <div
-                        v-if="takenStreams[index] && streamSlot.isReady && streamSlot.withSound && index != streamSlotIdInWhichIWantToStream">
+                        v-if="takenStreams[index]
+                              && streamSlot.isReady
+                              && streamSlot.withSound
+                              && index != streamSlotIdInWhichIWantToStream"
+                        class="audio-stream-controls-container"
+                        v-bind:class="{'listener-connected': clientSideStreamData[index].isListenerConnected}">
+                        <div class="audio-stream-controls-spinner">
+                            <img src="spinner.svg" />
+                        </div>
                         <div class="audio-stream-controls">
                             <label for="stream-volume">{{ $t("ui.volume") }}</label>
                             <input type="range" :id="'volume-' + index" v-on:change="changeStreamVolume(index)"
@@ -262,7 +270,7 @@
                                 v-on:input="onPanChanged(index, $event)"
                                 v-on:dblclick="resetPan(index)" />
                         </div>
-                        <div>
+                        <div class="audio-stream-controls">
                             <label :for="'enable-compression-' + index">{{ $t("ui.enable_compression") }}</label>
                             <input type="checkbox"
                                 :id="'enable-compression-' + index"
