@@ -281,23 +281,30 @@
                     <div class="stream-buttons">
                         <button :id="'take-stream-button-' + index"
                             v-bind:class="{'red-button': streamSlot.isReady}"
-                            v-if="!takenStreams[index] && streamSlot.userId != myUserID && !wantToStream && (isStreamAutoResumeEnabled || streamSlot.isReady)"
+                            v-if="!takenStreams[index] 
+                                  && streamSlot.userId != myUserID
+                                  && !wantToStream
+                                  && (isStreamAutoResumeEnabled || streamSlot.isReady)"
                             v-on:click="wantToTakeStream(index)">
                             {{ $t("ui.button_stream_take") }}
                         </button>
                         <button :id="'drop-stream-button-' + index"
-                            v-if="takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
+                            v-if="takenStreams[index]
+                                  && streamSlot.userId != myUserID
+                                  && !wantToStream"
                             v-on:click="wantToDropStream(index)">
                             {{ $t("ui.button_stream_drop") }}
                         </button>
 
                         <button :id="'start-video-streaming-button-' + index"
-                            v-if="!streamSlot.isActive && !wantToStream && streamSlotIdInWhichIWantToStream == null"
+                            v-if="!streamSlot.isActive && !wantToStream 
+                                  && streamSlotIdInWhichIWantToStream == null"
                             v-on:click="openStreamPopup(index)">
                             {{ $t("ui.button_stream_start") }}
                         </button>
                         <button :id="'stop-streaming-button-' + index"
-                            v-if="streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
+                            v-if="streamSlotIdInWhichIWantToStream == index" 
+                            v-on:click="stopStreaming">
                             {{ $t("ui.button_stream_stop") }}
                         </button>
                     </div>

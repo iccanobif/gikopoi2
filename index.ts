@@ -1837,15 +1837,21 @@ async function clearStream(user: Player)
 
         if (stream && stream.isActive)
         {
+            const janusHandleToDestroy = stream.publisher!.janusHandle
+
             stream.isActive = false
             stream.isReady = false
+            // Need to clear stream.publisher before calling sendUpdatedStreamSlotState(),
+            // otherwise the DTO sent to the clients will erroneously have a userId despite
+            // not being active.
+            stream.publisher = null
             
             sendUpdatedStreamSlotState(user)
             emitServerStats(user.areaId)
 
             // For some reason if this line is executed before sendUpdatedStreamSlotState(user),
             // the listeners sometimes don't receive the updated slots message... Still don't know why.
-            await destroySession(stream.publisher!.janusHandle, stream, user)
+            await destroySession(janusHandleToDestroy, stream, user)
         }
     }
     catch (error)
