@@ -250,7 +250,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             down: { x: 10, y: 0, direction: "up", target: { roomId: "admin_st", doorId: "admin" } }
         },
-        streamSlotCount: 2,
+        streamSlotCount: 3,
     },
     radio_backstage: {
         id: "radio_backstage",
