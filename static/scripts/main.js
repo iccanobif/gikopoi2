@@ -2634,15 +2634,20 @@ window.vueApp = new Vue({
 
             const rtcPeer = this.setupRtcPeerSlot(streamSlotId).rtcPeer;
 
+            // Iphones should just fucking disappear from the face of the earth.
+            // It's important that this "videoElement.play()" is executed in the same tick as a user
+            // interaction event, otherwise iphones will refuse to play the media.
+            // This is why videoElement.play() is ran before the "track" event of the rtcPeer's connection.
+            const videoElement = document.getElementById("received-video-" + streamSlotId)
+            videoElement.play();
+
             rtcPeer.conn.addEventListener(
                 "track",
                 async (event) =>
                 {
                     try
                     {
-                        const videoElement = document.getElementById("received-video-" + streamSlotId)
-                        videoElement.play(); // Needed for iphone
-            
+           
                         if (this.hideStreams)
                             return;
 
