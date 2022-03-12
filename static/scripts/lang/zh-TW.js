@@ -206,6 +206,7 @@ export default
         densha: "電車",
         //monachat: "",
         //konbini: "",
+        nerd_office: "黑客基地",
     },
     area:
     {

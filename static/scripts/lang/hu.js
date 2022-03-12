@@ -207,6 +207,7 @@ export default
         densha: "Vonat",
         monachat: "Monachat",
         konbini: "Közért",
+        // nerd_office: "hacker office",
     },
     area:
     {

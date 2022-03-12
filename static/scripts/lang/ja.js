@@ -207,6 +207,7 @@ export default
         densha: r("電車", "でんしゃ"),
         monachat: r("もなちゃと", "もなちゃと"),
         konbini: r("コンビニ", "こんびに"),
+        nerd_office: r("ハッカーのアジト", "はっかーのあじと"),
     },
     area:
     {

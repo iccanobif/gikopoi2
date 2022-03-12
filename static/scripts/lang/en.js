@@ -207,6 +207,7 @@ export default
         densha: "Train",
         monachat: "Monachat",
         konbini: "Convenience Store",
+        nerd_office: "Hacker Office",
     },
     area:
     {
