@@ -1448,6 +1448,7 @@ export const rooms: { [roomId: string]: Room } = {
             yoshinoya: { x: 4, y: 15, direction: "right", target: { roomId: "yoshinoya", doorId: "door" } },
             left: { x: 0, y: 12, direction: "right", target: { roomId: "monachat", doorId: "door" } },
             right: { x: 23, y: 11, direction: "left", target: { roomId: "konbini", doorId: "door" } },
+            office: { x: 5, y: 17, direction: "down", target: { roomId: "nerd_office", doorId: "door"} },
         },
         streamSlotCount: 3,
     },
@@ -3836,7 +3837,7 @@ export const rooms: { [roomId: string]: Room } = {
         ],
         forbiddenMovements: [],
         doors: {
-            door: { x: 9, y: 0, direction: "up", target: { roomId: "bar_giko_square", doorId: "left" } },
+            door: { x: 9, y: 0, direction: "up", target: { roomId: "bar_giko_square", doorId: "office" } },
         },
         streamSlotCount: 1,
     }
