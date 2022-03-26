@@ -2031,10 +2031,16 @@ window.vueApp = new Vue({
                         this.sendNewBubblePositionToServer('right')
                         break;
                     case "Equal":
+                    case "NumpadAdd":
                         this.zoomIn()
                         break;
                     case "Minus":
+                    case "NumpadSubtract":
                         this.zoomOut()
+                        break;
+                    case "Digit0":
+                    case "Numpad0":
+                        this.resetZoom()
                         break;
                 }
             }
@@ -2157,6 +2163,10 @@ window.vueApp = new Vue({
             this.sendMessageToServer();
             event.preventDefault();
             return false;
+        },
+        resetZoom: function ()
+        {
+            this.setCanvasScale(1);
         },
         zoomIn: function ()
         {
