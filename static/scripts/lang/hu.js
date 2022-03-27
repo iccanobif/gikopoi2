@@ -73,7 +73,6 @@ export default
         stream_form_noise_suppression: "Zajszűrés",
         stream_form_auto_gain: "Automatikus hangerőszabályzás",
         stream_form_button_stream: "Közvetítés indítása",
-        stream_form_private_stream: "Privát közvetítés (nem látható más weboldalakról a gikopoipoi-n kívül).",
         stream_form_screen_capture: "Képernyő megosztása",
         stream_form_screen_capture_audio: "Képernyő-hang megosztása",
         stream_form_screen_capture_audio_notice: "Ez a funkció még kísérleti. Kizárólag Chrome és Edge böngészőkre. \nWindowson csak a képernyő hangja vagy a böngészőlap hangja osztható meg.",

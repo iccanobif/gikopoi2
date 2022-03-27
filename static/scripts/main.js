@@ -190,7 +190,6 @@ window.vueApp = new Vue({
         streamEchoCancellation: false,
         streamNoiseSuppression: false,
         streamAutoGain: false,
-        streamIsPrivateStream: false,
         streamScreenCapture: false,
         streamScreenCaptureAudio: false,
 
@@ -2539,7 +2538,6 @@ window.vueApp = new Vue({
                     streamSlotId: this.streamSlotIdInWhichIWantToStream,
                     withVideo: withVideo,
                     withSound: withSound,
-                    isPrivateStream: this.streamIsPrivateStream,
                     info: []
                         .concat(this.mediaStream.getAudioTracks().map(t => ({
                             constraints: t.getConstraints && t.getConstraints(),

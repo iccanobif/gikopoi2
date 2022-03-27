@@ -73,7 +73,6 @@ export default
         stream_form_noise_suppression: "Riduzione del rumore",
         stream_form_auto_gain: "Controllo automatico guadagno",
         stream_form_button_stream: "Avvia stream",
-        stream_form_private_stream: "Stream privato (non visibile su siti web al di fuori di gikopoipoi).",
         stream_form_screen_capture: "Cattura schermo",
         stream_form_screen_capture_audio: "Cattura audio dello schermo",
         stream_form_screen_capture_audio_notice: "Questa funzione è sperimentale. Solo Chrome e Edge.\nSu Windows, è possibile acquisire solo l'audio dello schermo o l'audio della tab.",

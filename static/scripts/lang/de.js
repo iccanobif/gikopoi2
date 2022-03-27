@@ -73,7 +73,6 @@ export default
         stream_form_noise_suppression: "Lärmminderung",
         stream_form_auto_gain: "Automatische Verstärkungsregelung",
         stream_form_button_stream: "Streamen starten",
-        stream_form_private_stream: "Privater Stream (nicht sichtbar auf Webseiten außerhalb von gikopoipoi).",
         stream_form_screen_capture: "Bildschirmaufnahme",
         stream_form_screen_capture_audio: "Bildschirmaufnahme-Audio",
         stream_form_screen_capture_audio_notice: "Diese Funktion ist experimentell. Nur Chrome und Edge. \nUnter Windows kann nur das Bildschirm- oder Tab-Audio aufgenommen werden .",

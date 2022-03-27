@@ -73,7 +73,6 @@ export default
         stream_form_noise_suppression: "雜訊抑制",
         stream_form_auto_gain: "音量自動增益",
         stream_form_button_stream: "開始直播",
-        stream_form_private_stream: "非公開直播（GIKOpoipoi以外的網站看不見）",
         stream_form_screen_capture: "視窗擷取",
         stream_form_screen_capture_audio: "擷取螢幕的聲音",
         stream_form_screen_capture_audio_notice: "這是個實驗性的功能。僅對Chrome與Edge有效。\n在Windows上，只能擷取螢幕聲音與分頁聲音。",

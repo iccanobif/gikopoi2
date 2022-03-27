@@ -73,7 +73,6 @@ export default
         stream_form_noise_suppression: "Brusreduktion",
         stream_form_auto_gain: "Automatisk förstärkning",
         stream_form_button_stream: "Starta ström",
-        stream_form_private_stream: "Privat Strömma (syns inte på webbsidor utanför gikopoipoi).",
         stream_form_screen_capture: "Skärmfångst",
         stream_form_screen_capture_audio: "Ljudupptagning vid skärmfångst",
         stream_form_screen_capture_audio_notice: "Denna funktion är experimentell. Enbart Chrome och Edge. \nI Windows kan endast skärmens eller tabbens ljud upptas.",

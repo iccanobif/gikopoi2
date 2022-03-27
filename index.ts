@@ -89,7 +89,6 @@ function initializeRoomStates()
                     isReady: false,
                     withSound: null,
                     withVideo: null,
-                    isPrivateStream: null,
                     publisher: null,
                     listeners: [],
                 })
@@ -504,16 +503,14 @@ io.on("connection", function (socket: Socket)
         streamSlotId: number,
         withVideo: boolean,
         withSound: boolean,
-        isPrivateStream: boolean,
         info: any
     })
     {
         try
         {
-            const { streamSlotId, withVideo, withSound, info, isPrivateStream } = data
+            const { streamSlotId, withVideo, withSound, info } = data
 
             log.info("user-want-to-stream", user.id,
-                     "private:", isPrivateStream,
                      "streamSlotId:", streamSlotId,
                      "room:", user.roomId,
                      JSON.stringify(info))
@@ -556,7 +553,6 @@ io.on("connection", function (socket: Socket)
             stream.janusSession = null
             stream.withVideo = withVideo
             stream.withSound = withSound
-            stream.isPrivateStream = isPrivateStream
             stream.publisher = { user: user, janusHandle: null };
 
             setTimeout(async () =>
@@ -1422,51 +1418,6 @@ app.get("/characters/regular", async (req, res) =>
 app.get("/characters/crisp", async (req, res) =>
 {
     try { res.json(await getCharacterImages(true)) } catch (e) { res.end(stringifyException(e)) }
-})
-
-app.get("/areas/:areaId/streamers", (req, res) =>
-{
-    try
-    {
-        const areaId = req.params.areaId;
-        const streamerList: any[] = [];
-
-        for (const roomId in rooms)
-        {
-            if (rooms[roomId].secret ||
-                rooms[roomId].streamSlotCount === 0) continue;
-
-            const listRoom: { id: string, streamers: string[] } =
-            {
-                id: roomId,
-                streamers: []
-            }
-
-            roomStates[areaId][roomId].streams.forEach(stream =>
-            {
-                if (!stream.isActive) return;
-                if (stream.publisher == null) return;
-                if (stream.isPrivateStream) return;
-
-                try
-                {
-                    listRoom.streamers.push(stream.publisher.user.name);
-                }
-                catch (e) { }
-            })
-
-            if (listRoom.streamers.length > 0)
-            {
-                streamerList.push(listRoom)
-            }
-        }
-
-        res.json(streamerList)
-    }
-    catch (e)
-    {
-        logException(e, null)
-    }
 })
 
 app.use(express.urlencoded({ extended: false }))

@@ -73,7 +73,6 @@ export default
         stream_form_noise_suppression: "ノイズ除去",
         stream_form_auto_gain: "オートゲイン",
         stream_form_button_stream: "配信開始",
-        stream_form_private_stream: "非公開配信（ぽいぽい以外のサイトでは見えない）",
         stream_form_screen_capture: "画面共有",
         stream_form_screen_capture_audio: "画面の音声を共有",
         stream_form_screen_capture_audio_notice: "この機能は実験中です。ChromeとEdgeでのみ有効です。\nWindowsでは、画面の音声とタブの音声しか取得できません。",

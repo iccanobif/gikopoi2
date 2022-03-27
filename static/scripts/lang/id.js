@@ -73,7 +73,6 @@ export default
         stream_form_noise_suppression: "Pengurangan Kebisingan",
         stream_form_auto_gain: "Auto Gain Control",
         stream_form_button_stream: "Mulai Siaran",
-        stream_form_private_stream: "Siaran Pribadi (hanya melihat di sini) .",
         stream_form_screen_capture: "Siaran Desktop",
         stream_form_screen_capture_audio: "Siaran Computer Audio",
         stream_form_screen_capture_audio_notice: "Fitur ini bersifat eksperimental. Chrome dan Edge saja. \nDi Windows, hanya audio layar atau audio tab yang dapat direkam.",

@@ -29,7 +29,6 @@ export interface StreamSlot
     isReady: boolean,
     withSound: boolean | null,
     withVideo: boolean | null,
-    isPrivateStream: boolean | null,
     publisher: Participant | null,
     listeners: Participant[],
 }
