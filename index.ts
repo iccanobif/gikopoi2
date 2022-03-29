@@ -91,6 +91,8 @@ function initializeRoomStates()
                     withVideo: null,
                     publisher: null,
                     listeners: [],
+                    isVisibleOnlyToSpecificUsers: null,
+                    allowedListenerIDs: [],
                 })
             }
             roomNumberId++;
@@ -503,12 +505,13 @@ io.on("connection", function (socket: Socket)
         streamSlotId: number,
         withVideo: boolean,
         withSound: boolean,
+        isVisibleOnlyToSpecificUsers: boolean,
         info: any
     })
     {
         try
         {
-            const { streamSlotId, withVideo, withSound, info } = data
+            const { streamSlotId, withVideo, withSound, info, isVisibleOnlyToSpecificUsers } = data
 
             log.info("user-want-to-stream", user.id,
                      "streamSlotId:", streamSlotId,
@@ -553,6 +556,7 @@ io.on("connection", function (socket: Socket)
             stream.janusSession = null
             stream.withVideo = withVideo
             stream.withSound = withSound
+            stream.isVisibleOnlyToSpecificUsers = isVisibleOnlyToSpecificUsers
             stream.publisher = { user: user, janusHandle: null };
 
             setTimeout(async () =>
@@ -596,6 +600,10 @@ io.on("connection", function (socket: Socket)
         try
         {
             log.info("user-want-to-take-stream", user.id, streamSlotId)
+
+            // TODO Reject request for private streams that didn't enable this
+            // particular user
+
             if (streamSlotId === undefined) return;
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId];
@@ -1020,11 +1028,19 @@ io.on("connection", function (socket: Socket)
     })
 
     socket.on("special-events:client-add-shrine-coin", function () {
-        //this only triggers in the jinja room so, technically speaking, I don't have to check for state
-        //get donation box
-        roomStates[user.areaId][user.roomId].coinCounter += 10;
-        //send the value to users
-        userRoomEmit(user, user.areaId, user.roomId, "special-events:server-add-shrine-coin" ,roomStates[user.areaId][user.roomId].coinCounter);
+        try
+        {
+
+            //this only triggers in the jinja room so, technically speaking, I don't have to check for state
+            //get donation box
+            roomStates[user.areaId][user.roomId].coinCounter += 10;
+            //send the value to users
+            userRoomEmit(user, user.areaId, user.roomId, "special-events:server-add-shrine-coin" ,roomStates[user.areaId][user.roomId].coinCounter);
+        }
+        catch (e)
+        {
+            logException(e, user)
+        }
     })
 
     socket.on("user-chess-move", function(source: any, target: any) {
@@ -1074,6 +1090,19 @@ io.on("connection", function (socket: Socket)
             }
 
             sendUpdatedChessboardState(roomStates, user.areaId, user.roomId)
+        }
+        catch (e)
+        {
+            logException(e, user)
+        }
+    })
+
+    socket.on("user-update-allowed-listener-ids", function (allowedListenerIDs: string[]) {
+        try
+        {
+            console.log(allowedListenerIDs)
+
+            // TODO
         }
         catch (e)
         {
@@ -1153,6 +1182,8 @@ function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSl
             withSound: isInactive ? null : s.withSound,
             withVideo: isInactive ? null : s.withVideo,
             userId: isInactive ? null : u!.id,
+            isAllowed: s.isVisibleOnlyToSpecificUsers
+                       && !s.allowedListenerIDs.find(id => id == user.id)
         }
     })
 }
@@ -1796,6 +1827,8 @@ async function clearStream(user: Player)
             // otherwise the DTO sent to the clients will erroneously have a userId despite
             // not being active.
             stream.publisher = null
+            stream.isVisibleOnlyToSpecificUsers = null
+            stream.allowedListenerIDs = []
             
             sendUpdatedStreamSlotState(user)
             emitServerStats(user.areaId)

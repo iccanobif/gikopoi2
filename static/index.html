@@ -284,7 +284,8 @@
                             v-if="!takenStreams[index] 
                                   && streamSlot.userId != myUserID
                                   && !wantToStream
-                                  && (isStreamAutoResumeEnabled || streamSlot.isReady)"
+                                  && (isStreamAutoResumeEnabled || streamSlot.isReady)
+                                  && !streamSlot.isAllowed"
                             v-on:click="wantToTakeStream(index)">
                             {{ $t("ui.button_stream_take") }}
                         </button>
@@ -403,8 +404,18 @@
                                               ></img>
                                         {{ u.name || $t("default_user_name") }}
                                     </div>
+                                    <button v-if="isStreaming()
+                                                  && streamTarget == 'specific_users'
+                                                  && !allowedListenerIDs.has(u.id)"
+                                            v-on:click="giveStreamToUser(u.id)">{{ $t("ui.user_list_popup_give_stream") }}</button>
+                                    <button v-if="isStreaming()
+                                                  && streamTarget == 'specific_users'
+                                                  && allowedListenerIDs.has(u.id)"
+                                            v-on:click="revokeStreamToUser(u.id)">{{ $t("ui.user_list_popup_refuse_stream") }}</button>
+
                                     <button v-if="ignoredUserIds.has(u.id)" v-on:click="unignoreUser(u.id)">{{ $t("ui.user_list_popup_unignore") }}</button>
                                     <button v-if="!ignoredUserIds.has(u.id)" v-on:click="ignoreUser(u.id)">{{ $t("ui.user_list_popup_ignore") }}</button>
+
                                     <button v-on:click="blockUser(u.id)">{{ $t("ui.user_list_popup_block") }}</button>
                                 </td>
                             </tr>
@@ -437,6 +448,16 @@
                     <div class='popup-item' v-if="streamMode != 'sound'">
                         <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label
                             for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
+                    </div>
+                    <div class='popup-item' v-if="streamMode != 'sound'">
+                        <span>{{ $t("ui.stream_form_stream_target") }}</span>
+
+                        <input type="radio" id="stream-form-visible-to-all-room" value="all_room" v-model="streamTarget"><label
+                            for="stream-form-visible-to-all-room">{{ $t("ui.stream_form_visible_to_all_room") }}</label>
+
+                        <input type="radio" id="stream-form-visible-only-to-specific-users" value="specific_users" v-model="streamTarget"><label
+                            for="stream-form-visible-only-to-specific-users">{{ $t("ui.stream_form_visible_only_to_specific_users") }}</label>
+
                     </div>
                     <div v-if="streamMode != 'video'">
                         <div class='popup-item'>

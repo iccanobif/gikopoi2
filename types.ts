@@ -31,6 +31,8 @@ export interface StreamSlot
     withVideo: boolean | null,
     publisher: Participant | null,
     listeners: Participant[],
+    isVisibleOnlyToSpecificUsers: boolean | null,
+    allowedListenerIDs: string[],
 }
 
 export interface Door
@@ -154,6 +156,7 @@ export interface StreamSlotDto
     withSound: boolean | null,
     withVideo: boolean | null,
     userId: string | null,
+    isAllowed: boolean | null,
 }
 
 export interface ChessboardState {

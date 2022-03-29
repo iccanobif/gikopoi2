@@ -192,6 +192,8 @@ window.vueApp = new Vue({
         streamAutoGain: false,
         streamScreenCapture: false,
         streamScreenCaptureAudio: false,
+        streamTarget: "all_room",
+        allowedListenerIDs: new Set(),
 
         // Device selection popup
         isDeviceSelectionOpen: false,
@@ -2538,6 +2540,7 @@ window.vueApp = new Vue({
                     streamSlotId: this.streamSlotIdInWhichIWantToStream,
                     withVideo: withVideo,
                     withSound: withSound,
+                    isVisibleOnlyToSpecificUsers: this.streamTarget == "specific_users",
                     info: []
                         .concat(this.mediaStream.getAudioTracks().map(t => ({
                             constraints: t.getConstraints && t.getConstraints(),
@@ -3178,6 +3181,22 @@ window.vueApp = new Vue({
             const panKnobElement = document.getElementById("pan-knob-" + streamSlotID);
             panKnobElement.value = 0;
             this.inboundAudioProcessors[streamSlotID].setPan(0);
+        },
+        isStreaming: function()
+        {
+            return this.streamSlotIdInWhichIWantToStream != null
+        },
+        giveStreamToUser: function(userID)
+        {
+            this.allowedListenerIDs.add(userID)
+            this.$forceUpdate()
+            this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
+        },
+        revokeStreamToUser: function(userID)
+        {
+            this.allowedListenerIDs.delete(userID)
+            this.$forceUpdate()
+            this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
         },
     },
 });
