@@ -76,6 +76,9 @@ export default
         stream_form_screen_capture: "Bildschirmaufnahme",
         stream_form_screen_capture_audio: "Bildschirmaufnahme-Audio",
         stream_form_screen_capture_audio_notice: "Diese Funktion ist experimentell. Nur Chrome und Edge. \nUnter Windows kann nur das Bildschirm- oder Tab-Audio aufgenommen werden .",
+        // stream_form_stream_target: "",
+        // stream_form_visible_to_all_room : "",
+        // stream_form_visible_only_to_specific_users: "",
         
         device_selection_title: "Geräteauswahl",
         device_selection_audio_devices: "Audiogeräte",

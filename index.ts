@@ -601,16 +601,16 @@ io.on("connection", function (socket: Socket)
         {
             log.info("user-want-to-take-stream", user.id, streamSlotId)
 
-            // TODO Reject request for private streams that didn't enable this
-            // particular user
-
             if (streamSlotId === undefined) return;
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId];
+
             if (stream.publisher === null
                 || stream.publisher.user.blockedIps.includes(user.ip)
                 || stream.publisher.janusHandle === null
-                || stream.janusServer === null)
+                || stream.janusServer === null
+                || (stream.isVisibleOnlyToSpecificUsers && !stream.allowedListenerIDs.find(id => id == user.id))
+                )
             {
                 log.info("server-not-ok-to-take-stream", user.id, streamSlotId)
                 socket.emit("server-not-ok-to-take-stream", streamSlotId);
@@ -1100,9 +1100,12 @@ io.on("connection", function (socket: Socket)
     socket.on("user-update-allowed-listener-ids", function (allowedListenerIDs: string[]) {
         try
         {
-            console.log(allowedListenerIDs)
+            log.info("user-update-allowed-listener-ids", user.id, allowedListenerIDs)
+            const stream = roomStates[user.areaId][user.roomId].streams.find(s => s.publisher?.user.id == user.id)
 
-            // TODO
+            stream!.allowedListenerIDs = allowedListenerIDs
+
+            sendUpdatedStreamSlotState(user)
         }
         catch (e)
         {
@@ -1171,19 +1174,20 @@ function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSl
 
     return streamSlots.map((s) =>
     {
-        const u = (s.publisher !== null ? s.publisher.user : null);
-        const isInactive = !u
-            || (user && u.id != user.id
-                && (user.blockedIps.includes(u.ip)
-                || u.blockedIps.includes(user.ip)));
+        const publisherUser = (s.publisher !== null ? s.publisher.user : null);
+        const isInactive = !publisherUser
+            || (user && publisherUser.id != user.id
+                && (user.blockedIps.includes(publisherUser.ip)
+                || publisherUser.blockedIps.includes(user.ip)));
         return {
             isActive: isInactive ? false : s.isActive,
             isReady: isInactive ? false : s.isReady,
             withSound: isInactive ? null : s.withSound,
             withVideo: isInactive ? null : s.withVideo,
-            userId: isInactive ? null : u!.id,
-            isAllowed: s.isVisibleOnlyToSpecificUsers
-                       && !s.allowedListenerIDs.find(id => id == user.id)
+            userId: isInactive ? null : publisherUser!.id,
+            isAllowed: !s.isVisibleOnlyToSpecificUsers
+                       || !!s.allowedListenerIDs.find(id => id == user.id)
+                       || s.publisher?.user.id == user.id,
         }
     })
 }
@@ -1947,12 +1951,16 @@ async function banIP(ip: string)
     }
 }
 
+// TODO rename "user" parameter (what does it mean? it's not immediately clear)
 function sendUpdatedStreamSlotState(user: Player)
 {
     const roomState = roomStates[user.areaId][user.roomId]
     for (const u of getFilteredConnectedUserList(user, user.roomId, user.areaId))
         if (u.socketId)
-            io.to(u.socketId).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, roomState.streams))
+        {
+            const dtoArray = toStreamSlotDtoArray(u, roomState.streams)
+            io.to(u.socketId).emit("server-update-current-room-streams", dtoArray)
+        }
 }
 
 function stringifyException(exception: any)

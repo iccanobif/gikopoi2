@@ -2299,6 +2299,7 @@ window.vueApp = new Vue({
                 return !!this.takenStreams[slotId]
             });
 
+            // WARNING! THIS .map() HAS SIDE EFFECTS (it calls dropStream())!
             this.rtcPeerSlots = streams.map((s, slotId) => {
                 if (!this.rtcPeerSlots[slotId])
                     return null
@@ -2335,7 +2336,7 @@ window.vueApp = new Vue({
                 }
                 if (this.takenStreams[slotId])
                 {
-                    if (!stream.isActive || !stream.isReady)
+                    if (!stream.isActive || !stream.isReady || !stream.isAllowed)
                         this.dropStream(slotId);
                     else
                         this.takeStream(slotId);
@@ -2611,6 +2612,8 @@ window.vueApp = new Vue({
                 await this.outboundAudioProcessor.dispose()
                 this.outboundAudioProcessor = null
             }
+
+            this.allowedListenerIDs = new Set()
 
             if (this.vuMeterTimer)
                 clearInterval(this.vuMeterTimer)

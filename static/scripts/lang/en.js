@@ -76,6 +76,9 @@ export default
         stream_form_screen_capture: "Screen Capture",
         stream_form_screen_capture_audio: "Screen Capture Audio",
         stream_form_screen_capture_audio_notice: "This feature is experimental. Chrome and Edge only. \nOn Windows, only the screen audio or tab audio can be captured.",
+        stream_form_stream_target: "Stream target",
+        stream_form_visible_to_all_room : "All users in the room",
+        stream_form_visible_only_to_specific_users: "Only specific users",
 
         device_selection_title: "Select device",
         device_selection_audio_devices: "Audio devices",

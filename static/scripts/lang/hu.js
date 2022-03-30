@@ -76,6 +76,9 @@ export default
         stream_form_screen_capture: "Képernyő megosztása",
         stream_form_screen_capture_audio: "Képernyő-hang megosztása",
         stream_form_screen_capture_audio_notice: "Ez a funkció még kísérleti. Kizárólag Chrome és Edge böngészőkre. \nWindowson csak a képernyő hangja vagy a böngészőlap hangja osztható meg.",
+        // stream_form_stream_target: "",
+        // stream_form_visible_to_all_room : "",
+        // stream_form_visible_only_to_specific_users: "",
 
         device_selection_title: "Eszköz kiválasztása",
         device_selection_audio_devices: "Hang eszközök",

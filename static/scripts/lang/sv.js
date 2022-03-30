@@ -76,6 +76,9 @@ export default
         stream_form_screen_capture: "Skärmfångst",
         stream_form_screen_capture_audio: "Ljudupptagning vid skärmfångst",
         stream_form_screen_capture_audio_notice: "Denna funktion är experimentell. Enbart Chrome och Edge. \nI Windows kan endast skärmens eller tabbens ljud upptas.",
+        // stream_form_stream_target: "",
+        // stream_form_visible_to_all_room : "",
+        // stream_form_visible_only_to_specific_users: "",
 
         device_selection_title: "Välj enhet",
         device_selection_audio_devices: "Ljudenheter",

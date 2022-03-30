@@ -76,6 +76,9 @@ export default
         stream_form_screen_capture: "Capturar pantalla",
         stream_form_screen_capture_audio: "Capturar audio de pantalla",
         stream_form_screen_capture_audio_notice: "Esta funcionalidad es experimental. Sólo Chrome y Edge. \nEn Windows, sólo el audio de la pantalla o de la pestaña puede ser capturado.",
+        // stream_form_stream_target: "",
+        // stream_form_visible_to_all_room : "",
+        // stream_form_visible_only_to_specific_users: "",
 
         // device_selection_title: "",
         // device_selection_audio_devices: "",

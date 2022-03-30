@@ -76,6 +76,10 @@ export default
         stream_form_screen_capture: "Cattura schermo",
         stream_form_screen_capture_audio: "Cattura audio dello schermo",
         stream_form_screen_capture_audio_notice: "Questa funzione è sperimentale. Solo Chrome e Edge.\nSu Windows, è possibile acquisire solo l'audio dello schermo o l'audio della tab.",
+        // stream_form_stream_target: "",
+        // stream_form_visible_to_all_room : "",
+        // stream_form_visible_only_to_specific_users: "",
+        
         stream_form_camera_facing: "Fotocamera telefono:",
         stream_form_camera_facing_user: "Anteriore",
         stream_form_camera_facing_environment: "Posteriore",

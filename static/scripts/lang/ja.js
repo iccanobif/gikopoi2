@@ -60,7 +60,9 @@ export default
         user_list_popup_unignore: "一方あぼーん解除",
         user_list_popup_block: "相互あぼーん",
         user_list_popup_close: "閉じる",
-        user_list_popup_blurb: "注意：一方あぼーんしても相手からは見えます。<br>相互あぼーんをすると、相手が再接続してもあぼーんが解除されません。",
+        user_list_popup_blurb: "注意：一方あぼーんしても相手からは見えます。<br>相互あぼーんをすると、相手が再接続してもあぼーんが解除されません。<br>配信ターゲットを特定のユーザーだけに選択した場合「配信を見せる」を選択したひとのみ視聴可能です。",
+        user_list_popup_give_stream: "配信を見せる",
+        user_list_popup_revoke_stream: "配信を見せない",
         
         stream_form_title: "配信設定",
         stream_form_mode: "モード：",
@@ -76,6 +78,9 @@ export default
         stream_form_screen_capture: "画面共有",
         stream_form_screen_capture_audio: "画面の音声を共有",
         stream_form_screen_capture_audio_notice: "この機能は実験中です。ChromeとEdgeでのみ有効です。\nWindowsでは、画面の音声とタブの音声しか取得できません。",
+        stream_form_stream_target: "配信ターゲット",
+        stream_form_visible_to_all_room : "室内の全員",
+        stream_form_visible_only_to_specific_users: "特定のユーザーだけ",
 
         device_selection_title: "デバイスを選択",
         device_selection_audio_devices: "音声デバイス",

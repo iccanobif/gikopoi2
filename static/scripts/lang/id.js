@@ -76,6 +76,9 @@ export default
         stream_form_screen_capture: "Siaran Desktop",
         stream_form_screen_capture_audio: "Siaran Computer Audio",
         stream_form_screen_capture_audio_notice: "Fitur ini bersifat eksperimental. Chrome dan Edge saja. \nDi Windows, hanya audio layar atau audio tab yang dapat direkam.",
+        // stream_form_stream_target: "",
+        // stream_form_visible_to_all_room : "",
+        // stream_form_visible_only_to_specific_users: "",
 
         // device_selection_title: "",
         // device_selection_audio_devices: "",
