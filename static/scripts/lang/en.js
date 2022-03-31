@@ -60,7 +60,9 @@ export default
         user_list_popup_unignore: "Unignore",
         user_list_popup_block: "Block",
         user_list_popup_close: "Close",
-        user_list_popup_blurb: "Warning: When you ignore a user, you will not see them, but they will still see you.<br>When you block a user, he'll stay blocked even if he reconnects.",
+        user_list_popup_blurb: "Warning: When you ignore a user, you will not see them, but they will still see you.<br>When you block a user, he'll stay blocked even if he reconnects.<br/>When the 'stream target' is set to 'Only specific users', it's possible to choose which users can see your stream by clicking on 'Show stream'.",
+        user_list_popup_give_stream: "Show stream",
+        user_list_popup_revoke_stream: "Revoke stream",
         
         stream_form_title: "Stream Settings",
         stream_form_mode: "Mode:",
