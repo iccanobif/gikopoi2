@@ -410,6 +410,18 @@
                                              class="inactive-user-icon"
                                              src="zzz-sleep-symbol.svg"
                                               ></img>
+                                        <img v-if="isStreaming()
+                                                   && streamTarget == 'specific_users'
+                                                   && allowedListenerIDs.has(u.id)"
+                                             class="enabled-disabled-listener-icon"
+                                             src="enabled-listener.svg"
+                                              ></img>
+                                        <img v-if="isStreaming()
+                                                   && streamTarget == 'specific_users'
+                                                   && !allowedListenerIDs.has(u.id)"
+                                             class="enabled-disabled-listener-icon"
+                                             src="disabled-listener.svg"
+                                              ></img>
                                         {{ u.name || $t("default_user_name") }}
                                     </div>
                                     <button v-if="isStreaming()

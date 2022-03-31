@@ -616,6 +616,12 @@ video {
     filter: brightness(90%) invert(57%) sepia(52%) hue-rotate(152deg) saturate(275%);
 }
 
+.enabled-disabled-listener-icon
+{
+    height: 15px;
+    margin-right: 5px;
+}
+
 .popup-sortable-table th
 {
     cursor: pointer
