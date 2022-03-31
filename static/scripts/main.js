@@ -53,6 +53,9 @@ window.onerror = function(message, source, lineno, colno, error) {
     return true
 }
 
+const enabledListenerIconImage = await loadImage("enabled-listener.svg")
+const disabledListenerIconImage = await loadImage("disabled-listener.svg")
+
 function UserException(message) {
     this.message = message;
 }
@@ -1608,7 +1611,32 @@ window.vueApp = new Vue({
                 );
             }
         },
+        drawPrivateStreamIcons: function ()
+        {
+            // these icons are visible only the streamers who chose "specific_users" as stream target.
+            if (!this.isStreaming() || this.streamTarget == "all_room")
+                return
 
+            const users = this.canvasObjects
+                .filter(o => o.type == "user"
+                             && !this.ignoredUserIds.has(o.o.id)
+                             && o.o.id != myUserID)
+                .map(o => o.o)
+
+            for (const o of users)
+            {
+                const originalImage = this.allowedListenerIDs.has(o.id) ? enabledListenerIconImage : disabledListenerIconImage;
+                const renderCache = RenderCache.Image(originalImage)
+                const resizedImage = renderCache.getImage(this.getCanvasScale() * 0.8)
+
+                this.drawImage(
+                    this.canvasContext,
+                    resizedImage,
+                    o.currentPhysicalPositionX + 60,
+                    o.currentPhysicalPositionY - 100
+                );
+            }
+        },
         drawOriginLines: function ()
         {
             const context = this.canvasContext;
@@ -1747,6 +1775,7 @@ window.vueApp = new Vue({
                 this.paintBackground();
                 this.drawObjects();
                 this.drawUsernames();
+                this.drawPrivateStreamIcons();
                 this.drawBubbles();
                 this.drawSpecialObjects();
                 if (this.enableGridNumbers)
@@ -2556,7 +2585,7 @@ window.vueApp = new Vue({
                 });
 
                 // On small screens, displaying the <video> element seems to cause a reflow in a way that
-                // makes the canvas completely gray, so i force a redraw
+                // makes the canvas completely gray, so i force a redraw. Also needed to draw private stream icons.
                 this.isRedrawRequired = true;
             } catch (e)
             {
@@ -2627,7 +2656,7 @@ window.vueApp = new Vue({
             }
 
             // On small screens, displaying the <video> element seems to cause a reflow in a way that
-            // makes the canvas completely gray, so i force a redraw
+            // makes the canvas completely gray, so i force a redraw. Also needed to hide private stream icons.
             this.isRedrawRequired = true;
         },
         wantToTakeStream: function (streamSlotId)
@@ -3194,12 +3223,14 @@ window.vueApp = new Vue({
             this.allowedListenerIDs.add(userID)
             this.$forceUpdate()
             this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
+            this.isRedrawRequired = true;
         },
         revokeStreamToUser: function(userID)
         {
             this.allowedListenerIDs.delete(userID)
             this.$forceUpdate()
             this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
+            this.isRedrawRequired = true;
         },
     },
 });
