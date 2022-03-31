@@ -53,8 +53,10 @@ window.onerror = function(message, source, lineno, colno, error) {
     return true
 }
 
-const enabledListenerIconImage = await loadImage("enabled-listener.svg")
-const disabledListenerIconImage = await loadImage("disabled-listener.svg")
+const enabledListenerIconImagePromise = loadImage("enabled-listener.svg")
+const disabledListenerIconImagePromise = loadImage("disabled-listener.svg")
+let enabledListenerIconImage = null;
+let disabledListenerIconImage = null;
 
 function UserException(message) {
     this.message = message;
@@ -358,6 +360,8 @@ window.vueApp = new Vue({
                 })
 
                 await loadCharacterImagesPromise;
+                enabledListenerIconImage = await enabledListenerIconImagePromise;
+                disabledListenerIconImage = await disabledListenerIconImagePromise;
 
                 const die = Math.random()
                 if (this.characterId === "naito" && die < 0.25)
