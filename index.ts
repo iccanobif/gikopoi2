@@ -658,6 +658,19 @@ io.on("connection", function (socket: Socket)
         }
     })
     
+    async function dropListener(user: Player, stream: StreamSlot) {
+        if (stream.janusSession === null) return;
+        const listenerIndex = stream.listeners.findIndex(p => p.user == user);
+        if (listenerIndex !== -1)
+        {
+            const listener = stream.listeners.splice(listenerIndex, 1)[0];
+            log.info("dropListener", listener.user.id,
+                "Janus listener handle", listener.janusHandle.getId(),
+                "detached on server", stream.janusServer!.id)
+            await listener.janusHandle.detach();
+        }
+    }
+    
     socket.on("user-want-to-drop-stream", async function (streamSlotId: number)
     {
         try
@@ -666,16 +679,7 @@ io.on("connection", function (socket: Socket)
             if (streamSlotId === undefined) return;
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId];
-            if (stream.janusSession === null) return;
-            const listenerIndex = stream.listeners.findIndex(p => p.user == user);
-            if (listenerIndex !== -1)
-            {
-                const listener = stream.listeners.splice(listenerIndex, 1)[0];
-                log.info("user-want-to-drop-stream", listener.user.id,
-                    "Janus listener handle", listener.janusHandle.getId(),
-                    "detached on server", stream.janusServer!.id)
-                await listener.janusHandle.detach();
-            }
+            await dropListener(user, stream);
         }
         catch (e)
         {
@@ -1097,14 +1101,18 @@ io.on("connection", function (socket: Socket)
         }
     })
 
-    socket.on("user-update-allowed-listener-ids", function (allowedListenerIDs: string[]) {
+    socket.on("user-update-allowed-listener-ids", async function (allowedListenerIDs: string[]) {
         try
         {
             log.info("user-update-allowed-listener-ids", user.id, allowedListenerIDs)
             const stream = roomStates[user.areaId][user.roomId].streams.find(s => s.publisher?.user.id == user.id)
-
-            stream!.allowedListenerIDs = allowedListenerIDs
-
+            if(!stream) return;
+            stream.allowedListenerIDs = allowedListenerIDs
+            const revokedListeners = stream.listeners.filter(l => !allowedListenerIDs.includes(l.user.id));
+            for (const listener of revokedListeners) {
+                await dropListener(listener.user, stream);
+            }
+            
             sendUpdatedStreamSlotState(user)
         }
         catch (e)
