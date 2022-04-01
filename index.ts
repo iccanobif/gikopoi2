@@ -1100,7 +1100,7 @@ io.on("connection", function (socket: Socket)
     socket.on("user-update-allowed-listener-ids", function (allowedListenerIDs: string[]) {
         try
         {
-            log.info("user-update-allowed-listener-ids", user.id, allowedListenerIDs)
+            log.info("user-update-allowed-listener-ids", user.id, JSON.stringify(allowedListenerIDs))
             const stream = roomStates[user.areaId][user.roomId].streams.find(s => s.publisher?.user.id == user.id)
 
             stream!.allowedListenerIDs = allowedListenerIDs
