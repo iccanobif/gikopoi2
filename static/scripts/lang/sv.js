@@ -76,9 +76,9 @@ export default
         stream_form_screen_capture: "Skärmfångst",
         stream_form_screen_capture_audio: "Ljudupptagning vid skärmfångst",
         stream_form_screen_capture_audio_notice: "Denna funktion är experimentell. Enbart Chrome och Edge. \nI Windows kan endast skärmens eller tabbens ljud upptas.",
-        // stream_form_stream_target: "",
-        // stream_form_visible_to_all_room : "",
-        // stream_form_visible_only_to_specific_users: "",
+        stream_form_stream_target: "Strömmomål",
+        stream_form_visible_to_all_room : "Alla användare i rummet",
+        stream_form_visible_only_to_specific_users: "Enbart utvalda användare",
 
         device_selection_title: "Välj enhet",
         device_selection_audio_devices: "Ljudenheter",
@@ -119,7 +119,7 @@ export default
 
         preferences_title_streams: "Strömmor",
         preferences_streams_auto_resume: "Automatisk återupptagning",
-        // preferences_streams_inbound_vu_meter_enabled: "",
+        preferences_streams_inbound_vu_meter_enabled: "Visa VU-mätare för hämtade strömmor",
         preferences_title_chat: "Chatt",
         preferences_clear_log: "Rensa chattlogg",
 
@@ -209,7 +209,7 @@ export default
         densha: "Pendeltåget",
         monachat: "Monachat",
         konbini: "Närbutiken",
-        // nerd_office: "hacker office",,
+        nerd_office: "Hackarnästet",,
     },
     area:
     {
