@@ -209,7 +209,7 @@ export default
         densha: "Pendeltåget",
         monachat: "Monachat",
         konbini: "Närbutiken",
-        nerd_office: "Hackarnästet",,
+        nerd_office: "Hackarnästet",
     },
     area:
     {
