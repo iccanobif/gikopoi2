@@ -360,8 +360,8 @@ window.vueApp = new Vue({
                 })
 
                 await loadCharacterImagesPromise;
-                enabledListenerIconImage = await enabledListenerIconImagePromise;
-                disabledListenerIconImage = await disabledListenerIconImagePromise;
+                enabledListenerIconImage = RenderCache.Image(await enabledListenerIconImagePromise, 0.8);
+                disabledListenerIconImage = RenderCache.Image(await disabledListenerIconImagePromise, 0.8);
 
                 const die = Math.random()
                 if (this.characterId === "naito" && die < 0.25)
@@ -1629,13 +1629,12 @@ window.vueApp = new Vue({
 
             for (const o of users)
             {
-                const originalImage = this.allowedListenerIDs.has(o.id) ? enabledListenerIconImage : disabledListenerIconImage;
-                const renderCache = RenderCache.Image(originalImage)
-                const resizedImage = renderCache.getImage(this.getCanvasScale() * 0.8)
+                const image = (this.allowedListenerIDs.has(o.id) ? enabledListenerIconImage : disabledListenerIconImage)
+                    .getImage(this.getCanvasScale());
 
                 this.drawImage(
                     this.canvasContext,
-                    resizedImage,
+                    image,
                     o.currentPhysicalPositionX + 60,
                     o.currentPhysicalPositionY - 100
                 );
