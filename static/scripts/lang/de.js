@@ -76,9 +76,9 @@ export default
         stream_form_screen_capture: "Bildschirmaufnahme",
         stream_form_screen_capture_audio: "Bildschirmaufnahme-Audio",
         stream_form_screen_capture_audio_notice: "Diese Funktion ist experimentell. Nur Chrome und Edge. \nUnter Windows kann nur das Bildschirm- oder Tab-Audio aufgenommen werden .",
-        // stream_form_stream_target: "",
-        // stream_form_visible_to_all_room : "",
-        // stream_form_visible_only_to_specific_users: "",
+        stream_form_stream_target: "Stream-Ziel",
+        stream_form_visible_to_all_room : "Alle Benutzer im Raum",
+        stream_form_visible_only_to_specific_users: "Nur bestimmte Benutzer",
         
         device_selection_title: "Geräteauswahl",
         device_selection_audio_devices: "Audiogeräte",
@@ -115,11 +115,11 @@ export default
         preferences_timestamps_in_copied_log: "Zeitstempel in den kopierten Logs aufnehmen",
         preferences_ignore_indicator_in_log: "Einen Indikator anstelle der Nachrichten ignorierter Benutzer im log anzeigen",
         preferences_language: "Sprache",
-        // preferences_enable_coin_sound: "Enable coin sound",
+        preferences_enable_coin_sound: "Münzton aktivieren",
 
         preferences_title_streams: "Streams",
         preferences_streams_auto_resume: "Automatische Fortsetzung",
-        // preferences_streams_inbound_vu_meter_enabled: "",
+        preferences_streams_inbound_vu_meter_enabled: "VU-Meter für empfangene Streams anzeigen",
         preferences_title_chat: "Chat",
         preferences_clear_log: "Chat-Log löschen",
 
