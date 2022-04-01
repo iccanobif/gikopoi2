@@ -469,7 +469,7 @@
                         <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label
                             for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
                     </div>
-                    <div class='popup-item' v-if="streamMode != 'sound'">
+                    <div class='popup-item'>
                         <span>{{ $t("ui.stream_form_stream_target") }}</span>
 
                         <input type="radio" id="stream-form-visible-to-all-room" value="all_room" v-model="streamTarget"><label
