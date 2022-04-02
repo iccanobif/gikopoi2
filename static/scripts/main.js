@@ -2383,6 +2383,7 @@ window.vueApp = new Vue({
 
         showDeviceSelectionPopup: async function ()
         {
+            this.isStreamPopupOpen = false;
             try
             {
                 const withVideo = this.streamMode != "sound" && !this.streamScreenCapture;
@@ -2409,7 +2410,6 @@ window.vueApp = new Vue({
                 if (this.deviceList.length)
                 {
                     this.isDeviceSelectionOpen = true
-                    this.isStreamPopupOpen = false;
                 }
                 else
                 {
@@ -2420,10 +2420,9 @@ window.vueApp = new Vue({
             {
                 console.error(err)
                 this.showWarningToast(i18n.t("msg.error_obtaining_media"));
-                this.wantToStream = false;
                 this.mediaStream = false;
-                this.streamSlotIdInWhichIWantToStream = null;
                 this.waitingForDevicePermission = false;
+                this.isStreamPopupOpen = true;
             }
         },
 
@@ -2438,9 +2437,7 @@ window.vueApp = new Vue({
                 return
 
             this.isDeviceSelectionOpen = false
-
-            this.wantToStream = false;
-            this.streamSlotIdInWhichIWantToStream = null;
+            this.isStreamPopupOpen = true
         },
 
         wantToStartStreaming: async function ()
