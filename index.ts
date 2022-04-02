@@ -516,6 +516,7 @@ io.on("connection", function (socket: Socket)
             log.info("user-want-to-stream", user.id,
                      "streamSlotId:", streamSlotId,
                      "room:", user.roomId,
+                     "isVisibleOnlyToSpecificUsers:", isVisibleOnlyToSpecificUsers,
                      JSON.stringify(info))
 
             const roomState = roomStates[user.areaId][user.roomId];
@@ -1104,7 +1105,7 @@ io.on("connection", function (socket: Socket)
     socket.on("user-update-allowed-listener-ids", async function (allowedListenerIDs: string[]) {
         try
         {
-            log.info("user-update-allowed-listener-ids", user.id, allowedListenerIDs)
+            log.info("user-update-allowed-listener-ids", user.id, JSON.stringify(allowedListenerIDs))
             const stream = roomStates[user.areaId][user.roomId].streams.find(s => s.publisher?.user.id == user.id)
             if(!stream) return;
             stream.allowedListenerIDs = allowedListenerIDs

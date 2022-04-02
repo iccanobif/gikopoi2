@@ -3238,6 +3238,8 @@ window.vueApp = new Vue({
         },
         isStreaming: function()
         {
+            // Not correct, because streamSlotIdInWhichIWantToStream is different from null also when
+            // the stream settings popup is open but the stream hasn't started yet
             return this.streamSlotIdInWhichIWantToStream != null
         },
         giveStreamToUser: function(userID)
