@@ -73,10 +73,12 @@ export default
         stream_form_noise_suppression: "Reducción de sonido",
         stream_form_auto_gain: "Control automático de ganancia",
         stream_form_button_stream: "Comenzar a streamear",
-        stream_form_private_stream: "Stream privado (no visible en sitios web fuera de gikopoipoi).",
         stream_form_screen_capture: "Capturar pantalla",
         stream_form_screen_capture_audio: "Capturar audio de pantalla",
         stream_form_screen_capture_audio_notice: "Esta funcionalidad es experimental. Sólo Chrome y Edge. \nEn Windows, sólo el audio de la pantalla o de la pestaña puede ser capturado.",
+        // stream_form_stream_target: "",
+        // stream_form_visible_to_all_room : "",
+        // stream_form_visible_only_to_specific_users: "",
 
         // device_selection_title: "",
         // device_selection_audio_devices: "",
@@ -113,8 +115,10 @@ export default
         preferences_timestamps_in_copied_log: "Incluir fecha y hora en logs copiados",
         preferences_ignore_indicator_in_log: "Mostrar en logs un indicador para mensajes de usuarios ignorados",
         preferences_language: "Idioma",
+        // preferences_enable_coin_sound: "Enable coin sound",
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
+        // preferences_streams_inbound_vu_meter_enabled: "",
         // preferences_title_chat: "",
         // preferences_clear_log: "",
 
@@ -204,6 +208,7 @@ export default
         densha: "Tren",
         monachat: "Monachat",
         konbini: "Tienda de conveniencia",
+        // nerd_office: "hacker office",
     },
     area:
     {

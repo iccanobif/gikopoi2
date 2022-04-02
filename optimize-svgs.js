@@ -18,6 +18,9 @@ async function optimizeFile(fileFullName)
 
 async function optimizeAll()
 {
+    await optimizeFile("static/enabled-listener.svg")
+    await optimizeFile("static/disabled-listener.svg")
+
     const characterIds = await fs.readdir(charactersDirectory)
     for (const characterId of characterIds)
     {

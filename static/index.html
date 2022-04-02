@@ -6,7 +6,19 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
     <meta name="abuseipdb-verification" content="DmbG28jg" />
 
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#414141">
+    <meta name="apple-mobile-web-app-title" content="Gikopoipoi">
+    <meta name="application-name" content="Gikopoipoi">
+    <meta name="msapplication-TileColor" content="#c0c0c0">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="theme-color" content="#c0c0c0">
+    <meta name="description" content="ギコっぽいぽい">
+
     <link rel='stylesheet' href='style/main.css' />
     <link rel='stylesheet' href='style/dark-mode.css' />
     <link rel='stylesheet' href='chess/css/chessboard-1.0.0.min.css' />
@@ -81,12 +93,14 @@
             </h2>
             <div id="main-section">
                 <div id="canvas-container" v-if="!connectionRefused">
-                    <canvas id="room-canvas" tabindex="1" v-on:keydown="handleCanvasKeydown($event)"
+                    <canvas id="room-canvas" tabindex="1"
+                        v-on:keydown="handleCanvasKeydown($event)"
                         v-on:mousedown="handleCanvasPointerDown($event)"
                         v-on:mousemove="handleCanvasPointerMove($event)"
                         v-on:touchstart="handleCanvasPointerDown($event)"
                         v-on:touchmove="handleCanvasPointerMove($event)"
                         v-on:wheel="handleCanvasWheel($event)"
+                        v-on:click="canvasClick"
                         ></canvas>
                     <div id="infobox-container">
                         <div id="infobox" v-show="isInfoboxVisible">
@@ -119,7 +133,7 @@
                         <div id='canvas-chat-log-container' v-show='isCanvasChatLogEnabled'></div>
                     </div>
                 </div>
-                <div id="toolbar">
+                <div id="toolbar" v-if="!connectionRefused">
                     <div id="toolbar-text-input">
                         {{ $t("ui.label_input") }} <textarea id="input-textbox"
                             v-on:keypress="handleMessageInputKeypress($event)"
@@ -203,11 +217,11 @@
                     <div id='original-chat-log-container'></div>
                 </div>
             </div>
-            <div id="video-streams">
+            <div id="video-streams" v-if="!connectionRefused">
                 <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
                     <hr v-if="index != 0" />
                     <div>
-                        {{ $t("ui.label_stream", {index: index+1}) }}<span 
+                        {{ $t("ui.label_stream", {index: index+1}) }}<span
                             v-if="streamSlot.isActive"
                             class="stream-title active-stream-title"
                             v-bind:class="{'highlighted-stream-title': streamSlot.userId && streamSlot.userId == highlightedUserId}"
@@ -215,7 +229,12 @@
                         </span>
                         <span v-if="!streamSlot.isActive" class="stream-title">OFF</span>
                     </div>
-                    <div :id="'video-container-' + index" class='video-container pinned-video' v-show="streamSlot.withVideo && ((takenStreams[index] && streamSlot.isReady) || index == streamSlotIdInWhichIWantToStream)">
+                    <div :id="'video-container-' + index" 
+                         class='video-container pinned-video' 
+                         v-show="streamSlot.withVideo 
+                                 && ((takenStreams[index] && streamSlot.isReady) 
+                                     || index == streamSlotIdInWhichIWantToStream)
+                                 && streamSlot.isAllowed">
                         <button
                             class="fas fa-thumbtack pin-video-button"
                             v-show="takenStreams[index] || (streamSlot.isActive && index == streamSlotIdInWhichIWantToStream)"
@@ -228,43 +247,81 @@
                             autoplay playsinline></video>
                     </div>
                     <div :id="'vu-meter-container-' + index"
-                        v-show="streamSlot.isActive && streamSlot.withSound && index == streamSlotIdInWhichIWantToStream">
-                        <div :id="'vu-meter-bar-primary-' + index"></div>
-                        <div :id="'vu-meter-bar-secondary-' + index"></div>
+                         v-show="streamSlot.isActive
+                                 && streamSlot.withSound
+                                 && (index == streamSlotIdInWhichIWantToStream || (takenStreams[index] && isStreamInboundVuMeterEnabled))
+                                 && streamSlot.isAllowed">
+                        <div
+                            :id="'vu-meter-bar-primary-' + index"
+                            v-bind:class="{'inbound-vu-meter-bar': takenStreams[index], 'outbound-vu-meter-bar': index == streamSlotIdInWhichIWantToStream}"></div>
+                        <div
+                            :id="'vu-meter-bar-secondary-' + index"
+                            v-bind:class="{'inbound-vu-meter-bar': takenStreams[index], 'outbound-vu-meter-bar': index == streamSlotIdInWhichIWantToStream}"></div>
                     </div>
                     <div
-                        v-show="takenStreams[index] && streamSlot.isReady && streamSlot.withSound && index != streamSlotIdInWhichIWantToStream">
-                        <label for="stream-volume">{{ $t("ui.volume") }}</label>
-                        <input type="range" :id="'volume-' + index" v-on:change="changeStreamVolume(index)"
-                            name="stream-volume" min="0" max="1" step="0.01" :value="slotVolume[index]">
-                        <div v-if="canUseAudioContext">
+                        v-if="takenStreams[index]
+                              && streamSlot.isReady
+                              && streamSlot.withSound
+                              && index != streamSlotIdInWhichIWantToStream
+                              && streamSlot.isAllowed"
+                        class="audio-stream-controls-container"
+                        v-bind:class="{'listener-connected': clientSideStreamData[index].isListenerConnected}">
+                        <div class="audio-stream-controls-spinner">
+                            <img src="spinner.svg" />
+                        </div>
+                        <div class="audio-stream-controls">
+                            <label for="stream-volume">{{ $t("ui.volume") }}</label>
+                            <input type="range" :id="'volume-' + index" v-on:change="changeStreamVolume(index)"
+                                name="stream-volume" min="0" max="1" step="0.01" :value="slotVolume[index]">
+                            <input
+                                :id="'pan-knob-' + index"
+                                type="range"
+                                class="input-knob"
+                                data-diameter="16"
+                                min="-1"
+                                max="1"
+                                step="0.01"
+                                value="0"
+                                :data-bgcolor="isDarkMode ? 'black' : '#4d4d9f'"
+                                :data-fgcolor="isDarkMode ? '#ff0000' : '#ffffff'"
+                                v-on:input="onPanChanged(index, $event)"
+                                v-on:dblclick="resetPan(index)" />
+                        </div>
+                        <div class="audio-stream-controls">
                             <label :for="'enable-compression-' + index">{{ $t("ui.enable_compression") }}</label>
                             <input type="checkbox"
                                 :id="'enable-compression-' + index"
-                                v-model="slotCompression[index]"
+                                v-model="inboundAudioProcessors[index] && inboundAudioProcessors[index].isBoostEnabled"
                                 v-on:change="onCompressionChanged(index)">
                         </div>
                     </div>
-                    <div class="stream-buttons">
+                    <div class="stream-buttons" v-if="!streamSlot.isActive || streamSlot.isAllowed">
                         <button :id="'take-stream-button-' + index"
                             v-bind:class="{'red-button': streamSlot.isReady}"
-                            v-if="!takenStreams[index] && streamSlot.userId != myUserID && !wantToStream && (isStreamAutoResumeEnabled || streamSlot.isReady)"
+                            v-if="!takenStreams[index] 
+                                  && streamSlot.userId != myUserID
+                                  && !wantToStream
+                                  && (isStreamAutoResumeEnabled || streamSlot.isReady)"
                             v-on:click="wantToTakeStream(index)">
                             {{ $t("ui.button_stream_take") }}
                         </button>
                         <button :id="'drop-stream-button-' + index"
-                            v-if="takenStreams[index] && streamSlot.userId != myUserID && !wantToStream"
+                            v-if="takenStreams[index]
+                                  && streamSlot.userId != myUserID
+                                  && !wantToStream"
                             v-on:click="wantToDropStream(index)">
                             {{ $t("ui.button_stream_drop") }}
                         </button>
 
                         <button :id="'start-video-streaming-button-' + index"
-                            v-if="!streamSlot.isActive && !wantToStream && streamSlotIdInWhichIWantToStream == null"
+                            v-if="!streamSlot.isActive && !wantToStream 
+                                  && streamSlotIdInWhichIWantToStream == null"
                             v-on:click="openStreamPopup(index)">
                             {{ $t("ui.button_stream_start") }}
                         </button>
                         <button :id="'stop-streaming-button-' + index"
-                            v-if="streamSlotIdInWhichIWantToStream == index" v-on:click="stopStreaming">
+                            v-if="streamSlotIdInWhichIWantToStream == index" 
+                            v-on:click="stopStreaming">
                             {{ $t("ui.button_stream_stop") }}
                         </button>
                     </div>
@@ -361,10 +418,32 @@
                                              class="inactive-user-icon"
                                              src="zzz-sleep-symbol.svg"
                                               ></img>
+                                        <img v-if="isStreaming()
+                                                   && streamTarget == 'specific_users'
+                                                   && allowedListenerIDs.has(u.id)"
+                                             class="enabled-disabled-listener-icon"
+                                             src="enabled-listener.svg"
+                                              ></img>
+                                        <img v-if="isStreaming()
+                                                   && streamTarget == 'specific_users'
+                                                   && !allowedListenerIDs.has(u.id)"
+                                             class="enabled-disabled-listener-icon"
+                                             src="disabled-listener.svg"
+                                              ></img>
                                         {{ u.name || $t("default_user_name") }}
                                     </div>
+                                    <button v-if="isStreaming()
+                                                  && streamTarget == 'specific_users'
+                                                  && !allowedListenerIDs.has(u.id)"
+                                            v-on:click="giveStreamToUser(u.id)">{{ $t("ui.user_list_popup_give_stream") }}</button>
+                                    <button v-if="isStreaming()
+                                                  && streamTarget == 'specific_users'
+                                                  && allowedListenerIDs.has(u.id)"
+                                            v-on:click="revokeStreamToUser(u.id)">{{ $t("ui.user_list_popup_revoke_stream") }}</button>
+
                                     <button v-if="ignoredUserIds.has(u.id)" v-on:click="unignoreUser(u.id)">{{ $t("ui.user_list_popup_unignore") }}</button>
                                     <button v-if="!ignoredUserIds.has(u.id)" v-on:click="ignoreUser(u.id)">{{ $t("ui.user_list_popup_ignore") }}</button>
+
                                     <button v-on:click="blockUser(u.id)">{{ $t("ui.user_list_popup_block") }}</button>
                                 </td>
                             </tr>
@@ -394,13 +473,19 @@
                         <input type="radio" id="stream-form-video-only-mode" value="video" v-model="streamMode"><label
                             for="stream-form-video-only-mode">{{ $t("ui.stream_form_video_only_mode") }}</label>
                     </div>
-                    <div class='popup-item'>
-                        <input type="checkbox" id="stream-form-private-stream" v-model="streamIsPrivateStream"><label
-                            for="stream-form-private-stream">{{ $t("ui.stream_form_private_stream") }}</label>
-                    </div>
                     <div class='popup-item' v-if="streamMode != 'sound'">
                         <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label
                             for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
+                    </div>
+                    <div class='popup-item'>
+                        <span>{{ $t("ui.stream_form_stream_target") }}</span>
+
+                        <input type="radio" id="stream-form-visible-to-all-room" value="all_room" v-model="streamTarget"><label
+                            for="stream-form-visible-to-all-room">{{ $t("ui.stream_form_visible_to_all_room") }}</label>
+
+                        <input type="radio" id="stream-form-visible-only-to-specific-users" value="specific_users" v-model="streamTarget"><label
+                            for="stream-form-visible-only-to-specific-users">{{ $t("ui.stream_form_visible_only_to_specific_users") }}</label>
+
                     </div>
                     <div v-if="streamMode != 'video'">
                         <div class='popup-item'>
@@ -529,6 +614,11 @@
                                 v-model="isMessageSoundEnabled" v-on:change="storeSet('isMessageSoundEnabled')"><label
                                 for="preferences-message-sound-enabled">{{ $t("ui.preferences_message_sound_enabled") }}</label>
                         </div>
+			<div class='popup-item'>
+			    <input type="checkbox" id="enable-coin-sound"
+                               v-model="isCoinSoundEnabled" v-on:change="toggleCoinSound"><label
+			       for="enable-coin-sound">{{ $t("ui.preferences_enable_coin_sound")}}</label>
+			</div>
                         <div class='popup-item'>
                             <input type="checkbox" id="preferences-name-mention-sound-enabled"
                                 v-model="isNameMentionSoundEnabled" v-on:change="handleNameMentionSoundEnabled"><label
@@ -571,8 +661,13 @@
                         <div class='popup-header'>{{ $t("ui.preferences_title_streams") }}</div>
                         <div class='popup-item'>
                             <input type="checkbox" id="preferences-streams-auto-resume"
-                                v-model="isStreamAutoResumeEnabled" v-on:click="storeSet('isStreamAutoResumeEnabled')"><label
+                                v-model="isStreamAutoResumeEnabled" v-on:change="storeSet('isStreamAutoResumeEnabled')"><label
                                 for="preferences-streams-auto-resume">{{ $t("ui.preferences_streams_auto_resume") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-streams-inbound-vu-meter-enabled"
+                                v-model="isStreamInboundVuMeterEnabled" v-on:change="storeSet('isStreamInboundVuMeterEnabled')"><label
+                                for="preferences-streams-inbound-vu-meter-enabled">{{ $t("ui.preferences_streams_inbound_vu_meter_enabled") }}</label>
                         </div>
                     </div>
                     <div class='popup-section'>
@@ -689,9 +784,9 @@
                 <span v-if="chessboardState.blackUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'b'}">
                     {{ $t("ui.chess_black") }}{{ users[chessboardState.blackUserID]
                                                  ? (users[chessboardState.blackUserID].name || $t("default_user_name"))
-                                                 : "N/A" }} 
+                                                 : "N/A" }}
                 </span>
-                <div 
+                <div
                     id="chessboard"
                     v-show="chessboardState.fenString"
                     style="width: 300px"></div>
@@ -702,6 +797,7 @@
     <audio id="message-sound" src="message.mp3"></audio>
     <audio id="mention-sound" src="mention.mp3"></audio>
     <audio id="login-sound" src="login.mp3"></audio>
+    <audio id="ka-ching-sound" src="ka-ching.mp3"></audio>
 
     <script src="libraries/vue.js"></script>
     <script src="libraries/vue-i18n.js"></script>
@@ -717,6 +813,7 @@
     <script src="scripts/Blob.js"></script>
     <script src="scripts/animalese.js"></script>
     <script src="chess/js/chessboard-1.0.0.min.js"></script>
+    <script src="scripts/input-knobs.js"></script>
 
     <script type="module" src='scripts/polyfills.js'></script>
     <script type="module" src='scripts/main.js'></script>

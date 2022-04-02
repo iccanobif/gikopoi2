@@ -29,9 +29,10 @@ export interface StreamSlot
     isReady: boolean,
     withSound: boolean | null,
     withVideo: boolean | null,
-    isPrivateStream: boolean | null,
     publisher: Participant | null,
     listeners: Participant[],
+    isVisibleOnlyToSpecificUsers: boolean | null,
+    allowedListenerIDs: string[],
 }
 
 export interface Door
@@ -48,7 +49,7 @@ export interface Door
 export interface Room
 {
     id: string;
-    group: string;
+    group: "bar_giko" | "gikopoi" | "gikopoipoi";
     scale: number;
     size: Coordinates;
     originCoordinates: Coordinates;
@@ -86,6 +87,15 @@ export interface Room
     blockWidth?: number;
     blockHeight?: number;
     hasChessboard?: boolean;
+    specialObjects?: SpecialObjects[];
+}
+
+export interface SpecialObjects
+{
+    name: string;
+    x: number;
+    y: number;
+    value?: number;
 }
 
 export interface JanusServer
@@ -101,7 +111,8 @@ export type RoomStateCollection = {
 export interface RoomState
 {
     streams: StreamSlot[],
-    chess: ChessboardState
+    chess: ChessboardState,
+    coinCounter: number
 }
 
 export interface RoomStateDto
@@ -109,7 +120,9 @@ export interface RoomStateDto
     currentRoom: Room,
     connectedUsers: PlayerDto[],
     streams: StreamSlotDto[],
-    chessboardState: ChessboardStateDto
+    chessboardState: ChessboardStateDto,
+    coinCounter: number,
+    hideStreams: boolean,
 }
 
 export interface LoginResponseDto
@@ -143,6 +156,7 @@ export interface StreamSlotDto
     withSound: boolean | null,
     withVideo: boolean | null,
     userId: string | null,
+    isAllowed: boolean | null,
 }
 
 export interface ChessboardState {
@@ -165,6 +179,8 @@ export interface PersistedState
 {
     users: Player[],
     bannedIPs: string[],
+    forCoinCount: number,
+    genCoinCount: number,
 }
 
 export interface CharacterSvgDto

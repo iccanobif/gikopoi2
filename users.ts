@@ -1,13 +1,13 @@
 import { v4 } from "uuid";
 import { rooms } from "./rooms";
-import { Area, Direction, PlayerDto } from "./types";
+import { Area, Direction } from "./types";
 
 function generateId()
 {
     return v4()
 }
 
-const possibleVoicePitches = [0, 0.5, 1, 1.5, 2]
+const possibleVoicePitches = [0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
 let lastUsedVoicePitchIndex = 0
 let lastUsedSpawnPointIndex = 0
 
@@ -23,8 +23,8 @@ export class Player
     public isGhost: boolean = true;
     public roomId: string;
     public lastAction = Date.now();
-    public connectionTime = Date.now();
-    public disconnectionTime: number | null = null;
+    // Initializing disconnectionTime at login time to simplify the user cleanup's job code.
+    public disconnectionTime: number | null = Date.now(); // null if isGhost == false, non-null otherwise
     public characterId: string;
     public areaId: Area;
     public isInactive = false;
@@ -139,23 +139,6 @@ export function restoreUserState(persistedUsers: Player[])
         user.lastRoomMessage = user.lastRoomMessage?.replace(/bread/g, "cocaine")
     }
     console.info("Restored user state (" + Object.values(users).length + " users)")
-}
-
-export function createPlayerDto(player: Player): PlayerDto
-{
-    return {
-        id: player.id,
-        name: player.name,
-        position: player.position,
-        direction: player.direction,
-        roomId: player.roomId,
-        characterId: player.characterId,
-        isInactive: player.isInactive,
-        bubblePosition: player.bubblePosition,
-        voicePitch: player.voicePitch,
-        lastRoomMessage: player.lastRoomMessage,
-        isAlternateCharacter: player.isAlternateCharacter,
-    }
 }
 
 export function getFilteredConnectedUserList(user: Player, roomId: string | null, areaId: string)

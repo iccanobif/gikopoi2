@@ -1,10 +1,9 @@
 import { kanaToRomajiMap, kanjiToKanaMap, katakanaToHiragana } from "./japanese-tools.js";
 import { urlRegex } from "./utils.js";
 
-const synth = new Animalese('animalese.wav', function () {  });
+const synth = new Animalese('animalese.wav', function () { });
 
-function speakAnimalese(text, pitch, volume)
-{
+function speakAnimalese(text, pitch, volume) {
     // replace every japanese character with a random roman letter
     // text = text
     //     .split("")
@@ -16,8 +15,7 @@ function speakAnimalese(text, pitch, volume)
     // attempt to translate each japanese character to romaji
     text = katakanaToHiragana(text)
         .split("")
-        .map(c =>
-        {
+        .map(c => {
             const kanaizedKanji = kanjiToKanaMap[c]
             if (kanaizedKanji)
                 return katakanaToHiragana(kanaizedKanji).split("").map(x => kanaToRomajiMap[x]).join("")
@@ -41,8 +39,7 @@ function speakAnimalese(text, pitch, volume)
     audio.play();
 }
 
-function isJapaneseCharacter(character)
-{
+function isJapaneseCharacter(character) {
     const charCode = character.charCodeAt(0)
     // CJK Unified Ideographs 
     if (charCode >= 0x4E00 && charCode <= 0x9FFF)
@@ -50,10 +47,12 @@ function isJapaneseCharacter(character)
     // hiragana + katakana
     if (charCode >= 0x3040 && charCode <= 0x30FF)
         return true
+    // hankaku katakana
+    if (charCode >= 0xFF66 && charCode <= 0xFF9F)
+        return true
 }
 
-function isJapanese(text)
-{
+function isJapanese(text) {
     // very simple heuristic, we just assume that if a sentence has at least one japanese character, then it must be japanese
     for (let i = 0; i < text.length; i++)
         if (isJapaneseCharacter(text.charAt(i))) return true
@@ -61,8 +60,7 @@ function isJapanese(text)
     return false
 }
 
-export function speak(message, voiceURI, volume, pitch)
-{
+export function speak(message, voiceURI, volume, pitch) {
     if (volume == 0)
         return
 
@@ -71,9 +69,13 @@ export function speak(message, voiceURI, volume, pitch)
         .replace(/ww+/gi, "わらわら")
         .replace(/ｗｗ+/gi, "わらわら")
         .replace(/88+/gi, "ぱちぱち")
+        .replace(/８８+/gi, "ぱちぱち")
+        .replace(/^w$/i, "わら")
+        .replace(/[Ａ-Ｚａ-ｚ０-９]/g, function (s) {
+            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0)
+        })
 
-    if (voiceURI == "animalese")
-    {
+    if (voiceURI == "animalese") {
         speakAnimalese(cleanMsgForSpeech, pitch, volume)
         return
     }
@@ -90,12 +92,10 @@ export function speak(message, voiceURI, volume, pitch)
     if (pitch !== undefined && pitch !== null)
         utterance.pitch = pitch // range between 0 (lowest) and 2 (highest), with 1 being the default pitch 
 
-    if (voiceURI == "automatic")
-    {
-        utterance.lang = isJapanese(message) ? "ja" : "en"
+    if (voiceURI == "automatic") {
+        utterance.lang = isJapanese(cleanMsgForSpeech) ? "ja" : "en"
     }
-    else
-    {
+    else {
         const voice = allVoices.find(v => v.voiceURI == voiceURI)
         if (voice) utterance.voice = voice
     }

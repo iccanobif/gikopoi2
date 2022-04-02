@@ -250,7 +250,7 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             down: { x: 10, y: 0, direction: "up", target: { roomId: "admin_st", doorId: "admin" } }
         },
-        streamSlotCount: 2,
+        streamSlotCount: 3,
     },
     radio_backstage: {
         id: "radio_backstage",
@@ -1099,6 +1099,10 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             steps: { x: 14, y: 4, direction: "left", target: { roomId: "jinja_st", doorId: "torii" } },
         },
+        specialObjects: [
+            { name: 'donation-text', x: 2, y: 7 },
+            { name: 'donation-box', x: 3, y: 5, value: 0 },
+        ],
         streamSlotCount: 4,
         hasChessboard: true,
     },
@@ -1444,6 +1448,7 @@ export const rooms: { [roomId: string]: Room } = {
             yoshinoya: { x: 4, y: 15, direction: "right", target: { roomId: "yoshinoya", doorId: "door" } },
             left: { x: 0, y: 12, direction: "right", target: { roomId: "monachat", doorId: "door" } },
             right: { x: 23, y: 11, direction: "left", target: { roomId: "konbini", doorId: "door" } },
+            office: { x: 5, y: 17, direction: "down", target: { roomId: "nerd_office", doorId: "door"} },
         },
         streamSlotCount: 3,
     },
@@ -3241,7 +3246,7 @@ export const rooms: { [roomId: string]: Room } = {
         size: { x: 7, y: 8 },
         originCoordinates: { x: 4, y: 332 },
         spawnPoint: "door",
-        backgroundImageUrl: "rooms/monachat/background.christmas.svg",
+        backgroundImageUrl: "rooms/monachat/background.svg",
         objects: [
             { x:  1, y:  0, offset: { x: 40, y: 250 }, url: "torikomi.svg" },
             { x:  2, y:  5, offset: { x: 290, y: 150 }, url: "matari.svg" },
@@ -3281,11 +3286,11 @@ export const rooms: { [roomId: string]: Room } = {
         size: { x: 9, y: 8 },
         originCoordinates: { x: 4, y: 332 },
         spawnPoint: "door",
-        backgroundImageUrl: "rooms/konbini/background.christmas.svg",
+        backgroundImageUrl: "rooms/konbini/background.svg",
         objects: [
             { x:  1, y: 2, offset: { x: 40, y: 124 }, url: "toilet-wall-left.svg" },
             { x:  1, y: 4, offset: { x: 166, y: 109 }, url: "toilet-wall-right.svg" },
-            { x:  4, y:  6, width: 5, offset: { x: 400, y: 156 }, url: "register.christmas.svg"},
+            { x:  4, y:  6, width: 5, offset: { x: 400, y: 156 }, url: "register.svg"},
             { x:  6, y:  2, width: 2, height: 2, offset: { x: 280, y: 340 }, url: "freezer.svg" },
             { x:  1, y:  1, height: 2, offset: { x: 40, y: 184 }, url: "refrigerator.svg", scale: 1 }, // drinks
             { x:  3, y:  3, width: 2, height: 3, offset: { x: 160, y: 203 }, url: "foods.svg" }, // snacks
@@ -3772,4 +3777,68 @@ export const rooms: { [roomId: string]: Room } = {
             out: { x: 13, y: 13, direction: "up", target: { roomId: "labyrinth", doorId: "in" } },
         },
     },
+    nerd_office: {
+        id: "nerd_office",
+        group: "gikopoipoi",
+        scale: 1,
+        size: { x: 10, y: 6 },
+        originCoordinates: { x: 0, y: 262 },
+        spawnPoint: "door",
+        backgroundImageUrl: "rooms/nerd_office/background.svg",
+        objects: [
+            { x: 1, y: 0, offset: { x: 67, y: 242 }, url: "chair.svg" },
+            { x: 1, y: 4, offset: { x: 227, y: 162 }, url: "chair.svg" },
+            { x: 3, y: 4, offset: { x: 307, y: 202 }, url: "chair.svg" },
+            { x: 0, y: 1, offset: { x: 3.8, y: 153.5 }, url: "ham_set.svg" },
+            { x: 3, y: 2, width: 4, offset: { x: 204.5, y: 218 }, url: "meeting_table.svg" },
+            { x: 2, y: 1, width: 3, offset: { x: 177.5, y: 260.3 }, url: "cushions.svg" },
+            { x: 7, y: 2, offset: { x: 375.5, y: 317 }, url: "cushion_blue.svg" }
+        ],
+        objectRenderSortMethod: "diagonal_scan",
+        sit: [
+            { x: 1, y: 4 },
+            { x: 1, y: 0 },
+            { x: 3, y: 4 },
+            { x: 2, y: 2 },
+            { x: 3, y: 1 },
+            { x: 4, y: 1 },
+            { x: 5, y: 1 },
+            { x: 6, y: 1 },
+            { x: 7, y: 2 },
+            { x: 3, y: 3 },
+            { x: 4, y: 3 },
+            { x: 5, y: 3 },
+            { x: 6, y: 3 },
+        ],
+        blocked: [
+            //hamset
+            { x: 0, y: 0 },
+            { x: 0, y: 1 },
+            //colorbox
+            { x: 0, y: 3 },
+            { x: 0, y: 4 },
+            //dustbox
+            { x: 0, y: 5 },
+            //pcs
+            { x: 1, y: 5 },
+            { x: 2, y: 5 },
+            { x: 3, y: 5 },
+            { x: 4, y: 5 },
+            { x: 5, y: 5 },
+            { x: 6, y: 5 },
+            { x: 7, y: 5 },
+            { x: 8, y: 5 },
+            { x: 9, y: 5 },
+            //meeting_table
+            { x: 3, y: 2 },
+            { x: 4, y: 2 },
+            { x: 5, y: 2 },
+            { x: 6, y: 2 },
+        ],
+        forbiddenMovements: [],
+        doors: {
+            door: { x: 9, y: 0, direction: "up", target: { roomId: "bar_giko_square", doorId: "office" } },
+        },
+        streamSlotCount: 1,
+    }
 };

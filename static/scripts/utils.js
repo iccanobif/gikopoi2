@@ -100,75 +100,127 @@ export const debounceWithImmediateExecution = (func, wait) => {
     };
   };
 
-export const canUseAudioContext = !!window.AudioContext
-// export const canUseAudioContext = false
 const maxGain = 1.3
+
+var AudioContext = window.AudioContext          // Default
+                 || window.webkitAudioContext;  // Safari and old versions of Chrome
 
 export class AudioProcessor
 {
-    constructor(stream, videoElement, volume)
+    constructor(stream, volume, vuMeterCallback)
     {
         this.stream = stream
         this.isBoostEnabled = false
-        this.videoElement = videoElement
-        this.volume = volume
-        videoElement.volume = volume
 
-        if (canUseAudioContext)
+        this.vuMeterCallback = vuMeterCallback
+
+        this.context = new AudioContext();
+        this.source = this.context.createMediaStreamSource(stream);
+        this.compressor = this.context.createDynamicsCompressor();
+        this.compressor.threshold.value = -50;
+        this.compressor.knee.value = 40;
+        this.compressor.ratio.value = 12;
+        this.compressor.attack.value = 0;
+        this.compressor.release.value = 0.25;
+        this.gain = this.context.createGain();
+
+        // To support old safari versions that people still seem to use, check that createStereoPanner
+        // is available, and if not, use a dummy gain node instead.
+        if (this.context.createStereoPanner)
         {
-            this.context = new AudioContext()
-            this.source = this.context.createMediaStreamSource(stream);
-            this.compressor = this.context.createDynamicsCompressor();
-            this.compressor.threshold.value = -50;
-            this.compressor.knee.value = 40;
-            this.compressor.ratio.value = 12;
-            this.compressor.attack.value = 0;
-            this.compressor.release.value = 0.25;
-            this.gain = this.context.createGain()
-            this.gain.gain.value = maxGain
+            this.pan = this.context.createStereoPanner();
+            this.pan.value = 0;
         }
+        else
+        {
+            this.pan = this.context.createGain();
+        }
+
+        this.setVolume(volume)
+
+        this.connectNodes()
+
+        // Vu meter
+        const vuMeterSource = this.context.createMediaStreamSource(stream);
+        const analyser = this.context.createAnalyser()
+        analyser.minDecibels = -60;
+        analyser.maxDecibels = 0;
+        analyser.smoothingTimeConstant = 0.01;
+        analyser.fftSize = 32
+        const bufferLengthAlt = analyser.frequencyBinCount;
+        const dataArrayAlt = new Uint8Array(bufferLengthAlt);
+        vuMeterSource.connect(analyser);
+
+        this.vuMeterTimer = setInterval(() => {
+            try {
+                analyser.getByteFrequencyData(dataArrayAlt)
+
+                const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
+
+                // Convert level to a linear scale between 0 and 1
+                const linearLevel = max / 255
+
+                // Convert level to a logarithmic scale between 0 and 1
+                const sensitivity = 50
+                const logarithmicLevel = Math.log(linearLevel * sensitivity + 1) / Math.log(sensitivity + 1)
+
+                vuMeterCallback(logarithmicLevel)
+            }
+            catch (exc)
+            {
+                console.error(exc)
+                clearInterval(this.vuMeterTimer)
+            }
+        }, 100)
     }
 
     dispose()
     {
-        if (canUseAudioContext)
+        clearInterval(this.vuMeterTimer)
+        return this.context.close().catch(console.error)
+    }
+
+    connectNodes()
+    {
+        this.source.disconnect()
+        this.compressor.disconnect()
+        this.gain.disconnect()
+        this.pan.disconnect()
+
+        if (this.isBoostEnabled)
         {
-            this.context.close().catch(console.error)
+            this.source.connect(this.compressor)
+            this.compressor.connect(this.gain)
+            this.gain.connect(this.pan)
+            this.pan.connect(this.context.destination)
+        }
+        else
+        {
+            this.source.connect(this.gain)
+            this.gain.connect(this.pan)
+            this.pan.connect(this.context.destination)
         }
     }
 
     setVolume(volume)
     {
         this.volume = volume
-        if (!this.isBoostEnabled)
-            this.videoElement.volume = volume
 
-        if (canUseAudioContext)
-            this.gain.gain.value = volume * maxGain
+        this.gain.gain.value = this.isBoostEnabled
+            ? volume * maxGain
+            : volume
     }
 
-    enableCompression()
+    setPan(value)
     {
-        if (!canUseAudioContext) return 
-
-        this.source.connect(this.compressor)
-        this.compressor.connect(this.gain)
-        this.gain.connect(this.context.destination)
-
-        this.videoElement.volume = 0
-        this.isBoostEnabled = true
+        // Check that this is actually a pan node and not a dummy gain node (see comments in constructor)
+        if (this.pan.pan)
+            this.pan.pan.value = value
     }
-    
-    disableCompression()
+
+    onCompressionChanged()
     {
-        if (!canUseAudioContext) return 
-
-        this.source.disconnect()
-        this.compressor.disconnect()
-        this.gain.disconnect()
-
-        this.videoElement.volume = this.volume
-        this.isBoostEnabled = false
+        this.connectNodes()
     }
 }
 
@@ -220,4 +272,14 @@ export async function getDeviceList(includeAudioDevices, includeVideoDevices)
     for (const track of mediaStream.getTracks()) track.stop();
 
     return output
+}
+
+export function getClickCoordinatesWithinCanvas(canvas, clickEvent, devicePixelRatio)
+{
+    const canvasBoundingClientRect = canvas.getBoundingClientRect()
+    
+    return {
+        x: (clickEvent.clientX - canvasBoundingClientRect.x) * devicePixelRatio,
+        y: (clickEvent.clientY - canvasBoundingClientRect.y) * devicePixelRatio,
+    }
 }

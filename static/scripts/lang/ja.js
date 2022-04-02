@@ -60,7 +60,9 @@ export default
         user_list_popup_unignore: "一方あぼーん解除",
         user_list_popup_block: "相互あぼーん",
         user_list_popup_close: "閉じる",
-        user_list_popup_blurb: "注意：一方あぼーんしても相手からは見えます。<br>相互あぼーんをすると、相手が再接続してもあぼーんが解除されません。",
+        user_list_popup_blurb: "注意：一方あぼーんしても相手からは見えます。<br>相互あぼーんをすると、相手が再接続してもあぼーんが解除されません。<br>配信ターゲットを特定のユーザーだけに選択した場合「配信を見せる」を選択したひとのみ視聴可能です。",
+        user_list_popup_give_stream: "配信を見せる",
+        user_list_popup_revoke_stream: "配信を見せない",
         
         stream_form_title: "配信設定",
         stream_form_mode: "モード：",
@@ -73,10 +75,12 @@ export default
         stream_form_noise_suppression: "ノイズ除去",
         stream_form_auto_gain: "オートゲイン",
         stream_form_button_stream: "配信開始",
-        stream_form_private_stream: "非公開配信（ぽいぽい以外のサイトでは見えない）",
         stream_form_screen_capture: "画面共有",
         stream_form_screen_capture_audio: "画面の音声を共有",
         stream_form_screen_capture_audio_notice: "この機能は実験中です。ChromeとEdgeでのみ有効です。\nWindowsでは、画面の音声とタブの音声しか取得できません。",
+        stream_form_stream_target: "配信ターゲット",
+        stream_form_visible_to_all_room : "室内の全員",
+        stream_form_visible_only_to_specific_users: "特定のユーザーだけ",
 
         device_selection_title: "デバイスを選択",
         device_selection_audio_devices: "音声デバイス",
@@ -113,8 +117,11 @@ export default
         preferences_timestamps_in_copied_log: "コピーしたログに時刻を含む",
         preferences_ignore_indicator_in_log: "一方あぼーんされたユーザーからのログの代わりにインジケーターを表示",
         preferences_language: "言語",
+        preferences_enable_coin_sound: "効果音",
+
         preferences_title_streams: "配信",
         preferences_streams_auto_resume: "配信再開後に自動受信",
+        preferences_streams_inbound_vu_meter_enabled: "受信側音量ゲージを表示",
         preferences_title_chat: "チャット",
         preferences_clear_log: "チャットログをクリア",
 
@@ -204,6 +211,7 @@ export default
         densha: r("電車", "でんしゃ"),
         monachat: r("もなちゃと", "もなちゃと"),
         konbini: r("コンビニ", "こんびに"),
+        nerd_office: r("ハッカーのアジト", "はっかーのあじと"),
     },
     area:
     {

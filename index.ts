@@ -1,7 +1,7 @@
 import express, { Request } from "express"
 import { rooms } from "./rooms";
 import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
-import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, createPlayerDto, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
+import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
 import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
@@ -58,6 +58,7 @@ function initializeRoomStates()
 {
     let areaNumberId = 0;
     roomStates = {}
+
     for (const areaId of ["for", "gen"])
     {
         let roomNumberId = 0;
@@ -72,7 +73,8 @@ function initializeRoomStates()
                     whiteUserID: null,
                     lastMoveTime: null,
                     timer: null,
-                }
+                },
+                coinCounter: 0,
             }
             if (janusServers.length)
                 for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
@@ -87,9 +89,10 @@ function initializeRoomStates()
                     isReady: false,
                     withSound: null,
                     withVideo: null,
-                    isPrivateStream: null,
                     publisher: null,
                     listeners: [],
+                    isVisibleOnlyToSpecificUsers: null,
+                    allowedListenerIDs: [],
                 })
             }
             roomNumberId++;
@@ -151,8 +154,9 @@ io.use(async (socket: Socket, next: () => void) => {
         {
             log.info("server-cant-log-you-in", privateUserId)
             socket.emit("server-cant-log-you-in")
-            socket.disconnect(true)
-            return;
+            // socket.disconnect(true)
+            // return;
+            next()
         }
 
         socket.data = { user: user }
@@ -191,11 +195,12 @@ io.on("connection", function (socket: Socket)
             currentRoom,
             connectedUsers,
             streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams),
-            chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId)
+            chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId),
+            coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
+            hideStreams: settings.noStreamIPs.includes(user.ip),
         }
 
-        socket.emit("server-update-current-room-state",
-            state)
+        socket.emit("server-update-current-room-state", state)
     }
 
     const sendNewUserInfo = () =>
@@ -215,8 +220,9 @@ io.on("connection", function (socket: Socket)
             user.isGhost = true
             user.disconnectionTime = Date.now()
 
-            await clearStream(user) // This also calls emitServerStats()
-            clearRoomListener(user)
+            await clearStream(user) // This also calls emitServerStats(), but only if the user was streaming...
+            emitServerStats(user.areaId)
+            await clearRoomListener(user)
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-user-left-room", user.id);
             stopChessGame(roomStates, user)
@@ -232,6 +238,11 @@ io.on("connection", function (socket: Socket)
     try
     {
         user = socket.data.user;
+        if (!user)
+        {
+            log.info(getRealIpWebSocket(socket), "tried to connect to websocket but failed authentication")
+            return
+        }
         user.socketId = socket.id;
 
         log.info("user-connect userId:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
@@ -258,6 +269,7 @@ io.on("connection", function (socket: Socket)
         try
         {
             socket.emit("server-cant-log-you-in")
+            log.info("DISCONNECTING WEBSOCKET")
             socket.disconnect(true)
         }
         catch (e)
@@ -265,6 +277,21 @@ io.on("connection", function (socket: Socket)
             logException(e, socket?.data?.user)
         }
     }
+
+    // Flood detection (no more than 100 events in the span of one second)
+    const lastEventDates: number[] = []
+    socket.onAny(() => {
+        lastEventDates.push(Date.now())
+        if (lastEventDates.length > 100)
+        {
+            const firstEventTime = lastEventDates.shift()!
+            if (Date.now() - firstEventTime < 1000)
+            {
+                socket.disconnect()
+            }
+        }
+    })
+
     socket.on("user-msg", function (msg: string)
     {
         try
@@ -277,26 +304,38 @@ io.on("connection", function (socket: Socket)
                 changeCharacter(user, user.characterId, !user.isAlternateCharacter)
                 return;
             }
-
-            // No more than 5 messages in the last 5 seconds
-            user.lastMessageDates.push(Date.now())
-            if (user.lastMessageDates.length > 5)
-            {
-                const firstMessageTime = user.lastMessageDates.shift()!
-                if (Date.now() - firstMessageTime < 5000)
-                {
-                    socket.emit("server-system-message", "flood_warning", msg)
-                    return
-                }
-            }
-
+            
             // Whitespace becomes an empty string (to clear bubbles)
             if (!msg.match(/[^\s]/g))
             {
                 msg = ""
             }
-            else
+            
+            if (msg == "" && user.lastRoomMessage == "")
             {
+                return;
+            }
+            
+            if (msg != "")
+            {
+                // No more than 5 messages in the last 5 seconds
+                user.lastMessageDates.push(Date.now())
+                if (user.lastMessageDates.length > 5)
+                {
+                    const firstMessageTime = user.lastMessageDates.shift()!
+                    if (Date.now() - firstMessageTime < 5000)
+                    {
+                        socket.emit("server-system-message", "flood_warning", msg)
+                        return
+                    }
+                }
+                
+                if (msg == "#ika")
+                {
+                    changeCharacter(user, "ika", false)
+                    return;
+                }
+                
                 // no TIGER TIGER pls
                 if (msg.length > "TIGER".length && "TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
                     msg = "(´・ω・`)"
@@ -312,26 +351,23 @@ io.on("connection", function (socket: Socket)
                     msg = "(^Д^)"
 
                 msg = msg.replace(/◆/g, "◇")
+                
+                msg = msg.substr(0, 500)
             }
-
-            if (msg == "#ika")
-            {
-                changeCharacter(user, "ika", false)
-                return;
-            }
-
-            msg = msg.substr(0, 500)
 
             user.lastRoomMessage = msg;
 
             // Log only if non empty message
             if (msg)
-                log.info("MSG:", user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg.replace(/[\n\r]+/g, "<br>"));
+                log.info("MSG:", user.ip, user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg.replace(/[\n\r]+/g, "<br>"));
 
             user.lastAction = Date.now()
 
-            userRoomEmit(user, user.areaId, user.roomId,
-                "server-msg", user.id, msg);
+            if (msg.toLowerCase().match(settings.censoredWordsRegex))
+                socket.emit("server-msg", user.id, msg) // if there's a bad word, show the message only to the guy who wrote it
+            else
+                userRoomEmit(user, user.areaId, user.roomId,
+                    "server-msg", user.id, msg);
         }
         catch (e)
         {
@@ -469,16 +505,15 @@ io.on("connection", function (socket: Socket)
         streamSlotId: number,
         withVideo: boolean,
         withSound: boolean,
-        isPrivateStream: boolean,
+        isVisibleOnlyToSpecificUsers: boolean,
         info: any
     })
     {
         try
         {
-            const { streamSlotId, withVideo, withSound, info, isPrivateStream } = data
+            const { streamSlotId, withVideo, withSound, info, isVisibleOnlyToSpecificUsers } = data
 
             log.info("user-want-to-stream", user.id,
-                     "private:", isPrivateStream,
                      "streamSlotId:", streamSlotId,
                      "room:", user.roomId,
                      JSON.stringify(info))
@@ -521,7 +556,7 @@ io.on("connection", function (socket: Socket)
             stream.janusSession = null
             stream.withVideo = withVideo
             stream.withSound = withSound
-            stream.isPrivateStream = isPrivateStream
+            stream.isVisibleOnlyToSpecificUsers = isVisibleOnlyToSpecificUsers
             stream.publisher = { user: user, janusHandle: null };
 
             setTimeout(async () =>
@@ -565,13 +600,17 @@ io.on("connection", function (socket: Socket)
         try
         {
             log.info("user-want-to-take-stream", user.id, streamSlotId)
+
             if (streamSlotId === undefined) return;
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId];
+
             if (stream.publisher === null
                 || stream.publisher.user.blockedIps.includes(user.ip)
                 || stream.publisher.janusHandle === null
-                || stream.janusServer === null)
+                || stream.janusServer === null
+                || (stream.isVisibleOnlyToSpecificUsers && !stream.allowedListenerIDs.find(id => id == user.id))
+                )
             {
                 log.info("server-not-ok-to-take-stream", user.id, streamSlotId)
                 socket.emit("server-not-ok-to-take-stream", streamSlotId);
@@ -597,7 +636,7 @@ io.on("connection", function (socket: Socket)
                 log.info("user-want-to-take-stream", user.id,
                     "Janus listener handle", janusHandle.getId(),
                     "detached before full connection on server", stream.janusServer.id)
-                janusHandle.detach()
+                await janusHandle.detach()
                 return
             }
             
@@ -619,7 +658,20 @@ io.on("connection", function (socket: Socket)
         }
     })
     
-    socket.on("user-want-to-drop-stream", function (streamSlotId: number)
+    async function dropListener(user: Player, stream: StreamSlot) {
+        if (stream.janusSession === null) return;
+        const listenerIndex = stream.listeners.findIndex(p => p.user == user);
+        if (listenerIndex !== -1)
+        {
+            const listener = stream.listeners.splice(listenerIndex, 1)[0];
+            log.info("dropListener", listener.user.id,
+                "Janus listener handle", listener.janusHandle.getId(),
+                "detached on server", stream.janusServer!.id)
+            await listener.janusHandle.detach();
+        }
+    }
+    
+    socket.on("user-want-to-drop-stream", async function (streamSlotId: number)
     {
         try
         {
@@ -627,16 +679,7 @@ io.on("connection", function (socket: Socket)
             if (streamSlotId === undefined) return;
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId];
-            if (stream.janusSession === null) return;
-            const listenerIndex = stream.listeners.findIndex(p => p.user == user);
-            if (listenerIndex !== -1)
-            {
-                const listener = stream.listeners.splice(listenerIndex, 1)[0];
-                log.info("user-want-to-drop-stream", listener.user.id,
-                    "Janus listener handle", listener.janusHandle.getId(),
-                    "detached on server", stream.janusServer!.id)
-                listener.janusHandle.detach();
-            }
+            await dropListener(user, stream);
         }
         catch (e)
         {
@@ -698,13 +741,13 @@ io.on("connection", function (socket: Socket)
                 
                 if (!stream.isActive)
                 {
-                    destroySession(videoRoomHandle, stream, user)
+                    await destroySession(videoRoomHandle, stream, user)
                     return;
                 }
                 log.info("user-rtc-message", user.id,
                     "Janus video room handle", videoRoomHandle.getId(),
                     "detached on server", stream.janusServer.id)
-                videoRoomHandle.detach()
+                await videoRoomHandle.detach()
                 
                 const janusHandle = await stream.janusSession.videoRoom().publishFeed(
                     stream.janusRoomIntName, msg)
@@ -714,7 +757,7 @@ io.on("connection", function (socket: Socket)
                 
                 if (!stream.isActive)
                 {
-                    destroySession(janusHandle, stream, user)
+                    await destroySession(janusHandle, stream, user)
                     return
                 }
                 participantObject.janusHandle = janusHandle
@@ -785,7 +828,7 @@ io.on("connection", function (socket: Socket)
             currentRoom = rooms[targetRoomId]
             
             await clearStream(user)
-            clearRoomListener(user)
+            await clearRoomListener(user)
             stopChessGame(roomStates, user)
             userRoomEmit(user, user.areaId, user.roomId,
                 "server-user-left-room", user.id)
@@ -832,7 +875,19 @@ io.on("connection", function (socket: Socket)
                     userCount: getFilteredConnectedUserList(user, room.id, user.areaId).length,
                     streamers: toStreamSlotDtoArray(user, roomStates[user.areaId][room.id].streams)
                         .filter(stream => stream.isActive && stream.userId != null)
-                        .map(stream => room.forcedAnonymous ? "" : getUser(stream.userId!).name),
+                        .map(stream => {
+                            if (room.forcedAnonymous)
+                                return ""
+
+                            const user = getUser(stream.userId!)
+                            if (!user)
+                            {
+                                log.error("ERROR: Can't find user", stream.userId, "when doing #rula")
+                                return "N/A"
+                            }
+
+                            return user.name
+                        }),
                 }))
 
             socket.emit("server-room-list", roomList)
@@ -976,6 +1031,22 @@ io.on("connection", function (socket: Socket)
         }
     })
 
+    socket.on("special-events:client-add-shrine-coin", function () {
+        try
+        {
+
+            //this only triggers in the jinja room so, technically speaking, I don't have to check for state
+            //get donation box
+            roomStates[user.areaId][user.roomId].coinCounter += 10;
+            //send the value to users
+            userRoomEmit(user, user.areaId, user.roomId, "special-events:server-add-shrine-coin" ,roomStates[user.areaId][user.roomId].coinCounter);
+        }
+        catch (e)
+        {
+            logException(e, user)
+        }
+    })
+
     socket.on("user-chess-move", function(source: any, target: any) {
         try {
             log.info("user-chess-move", user.id, source, target)
@@ -1030,10 +1101,39 @@ io.on("connection", function (socket: Socket)
         }
     })
 
+    socket.on("user-update-allowed-listener-ids", async function (allowedListenerIDs: string[]) {
+        try
+        {
+            log.info("user-update-allowed-listener-ids", user.id, allowedListenerIDs)
+            const stream = roomStates[user.areaId][user.roomId].streams.find(s => s.publisher?.user.id == user.id)
+            if(!stream) return;
+            stream.allowedListenerIDs = allowedListenerIDs
+            const revokedListeners = stream.listeners.filter(l => !allowedListenerIDs.includes(l.user.id));
+            for (const listener of revokedListeners) {
+                await dropListener(listener.user, stream);
+            }
+            
+            sendUpdatedStreamSlotState(user)
+        }
+        catch (e)
+        {
+            logException(e, user)
+        }
+    })
+
 });
 
 function emitServerStats(areaId: string)
 {
+    const allConnectedUsers = getAllUsers().filter(u => !u.isGhost)
+    const allForUsers = allConnectedUsers.filter(u => u.areaId == "for")
+    const allGenUsers = allConnectedUsers.filter(u => u.areaId == "gen")
+    const allIps = new Set(allConnectedUsers.map(u => u.ip))
+    const forStreamCount = Object.values(roomStates["for"]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
+    const genStreamCount = Object.values(roomStates["gen"]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
+
+    log.info("Server stats: gen users:", allGenUsers.length, "gen streams:", genStreamCount, "for users:", allForUsers.length, "for streams:", forStreamCount, "total IPs:", allIps.size)
+
     getConnectedUserList(null, areaId).forEach((u) =>
     {
         const connectedUserIds: Set<string> = getFilteredConnectedUserList(u, null, areaId)
@@ -1077,26 +1177,44 @@ function roomEmit(areaId: string, roomId: string, ...msg: any[])
 
 function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSlotDto[]
 {
+    if (settings.noStreamIPs.includes(user.ip))
+        return []
+
     return streamSlots.map((s) =>
     {
-        const u = (s.publisher !== null ? s.publisher.user : null);
-        const isInactive = !u
-            || (user && u.id != user.id
-                && (user.blockedIps.includes(u.ip)
-                || u.blockedIps.includes(user.ip)));
+        const publisherUser = (s.publisher !== null ? s.publisher.user : null);
+        const isInactive = !publisherUser
+            || (user && publisherUser.id != user.id
+                && (user.blockedIps.includes(publisherUser.ip)
+                || publisherUser.blockedIps.includes(user.ip)));
         return {
             isActive: isInactive ? false : s.isActive,
             isReady: isInactive ? false : s.isReady,
             withSound: isInactive ? null : s.withSound,
             withVideo: isInactive ? null : s.withVideo,
-            userId: isInactive ? null : u!.id,
+            userId: isInactive ? null : publisherUser!.id,
+            isAllowed: !s.isVisibleOnlyToSpecificUsers
+                       || !!s.allowedListenerIDs.find(id => id == user.id)
+                       || s.publisher?.user.id == user.id,
         }
     })
 }
 
 function toPlayerDto(player: Player): PlayerDto
 {
-    const playerDto = createPlayerDto(player);
+    const playerDto: PlayerDto = {
+        id: player.id,
+        name: player.name,
+        position: player.position,
+        direction: player.direction,
+        roomId: player.roomId,
+        characterId: player.characterId,
+        isInactive: player.isInactive,
+        bubblePosition: player.bubblePosition,
+        voicePitch: player.voicePitch,
+        lastRoomMessage: player.lastRoomMessage?.toLocaleLowerCase().match(settings.censoredWordsRegex) ? "" : player.lastRoomMessage,
+        isAlternateCharacter: player.isAlternateCharacter,
+    };
     if (rooms[player.roomId].forcedAnonymous)
     {
         playerDto.name = "";
@@ -1104,7 +1222,7 @@ function toPlayerDto(player: Player): PlayerDto
     return playerDto;
 }
 
-if (process.env.GIKO2_ENABLE_SSL == "true")
+if (settings.enableSSL)
     app.use(enforce.HTTPS({ trustProtoHeader: true }))
 
 app.use(compression({
@@ -1236,18 +1354,19 @@ app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
     }
 })
 
-app.use(express.static('static',
-    {
-        setHeaders: (res, path) => {
-            // Cache images for one week. I made the frontend append ?v=version to image URLs,
-            // so that it won't try to use the cached images when it's opening a new version of the website.
-            if (path.match(/\.(svg|png)$/i))
-                res.set("Cache-Control", "public, max-age=604800, immutable")
-            else
-                res.set("Cache-Control", "no-cache")
-        }
+const static_properties = {
+    setHeaders: (res: any, path: any) => {
+        // Cache images for one week. I made the frontend append ?v=version to image URLs,
+        // so that it won't try to use the cached images when it's opening a new version of the website.
+        if (path.match(/\.(svg|png)$/i))
+            res.set("Cache-Control", "public, max-age=604800, immutable")
+        else
+            res.set("Cache-Control", "no-cache")
     }
-));
+};
+
+app.use(express.static('static', static_properties));
+app.use(express.static('static/favicons', static_properties));
 
 app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
 {
@@ -1275,7 +1394,9 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
             currentRoom: rooms[roomId],
             connectedUsers: filteredListsIntersection.map(toPlayerDto),
             streams: [],
-            chessboardState: buildChessboardStateDto(roomStates, areaId, roomId)
+            chessboardState: buildChessboardStateDto(roomStates, areaId, roomId),
+            coinCounter: roomStates[areaId][roomId].coinCounter,
+            hideStreams: false,
         }
 
         res.json(dto)
@@ -1340,51 +1461,6 @@ app.get("/characters/regular", async (req, res) =>
 app.get("/characters/crisp", async (req, res) =>
 {
     try { res.json(await getCharacterImages(true)) } catch (e) { res.end(stringifyException(e)) }
-})
-
-app.get("/areas/:areaId/streamers", (req, res) =>
-{
-    try
-    {
-        const areaId = req.params.areaId;
-        const streamerList: any[] = [];
-
-        for (const roomId in rooms)
-        {
-            if (rooms[roomId].secret ||
-                rooms[roomId].streamSlotCount === 0) continue;
-
-            const listRoom: { id: string, streamers: string[] } =
-            {
-                id: roomId,
-                streamers: []
-            }
-
-            roomStates[areaId][roomId].streams.forEach(stream =>
-            {
-                if (!stream.isActive) return;
-                if (stream.publisher == null) return;
-                if (stream.isPrivateStream) return;
-
-                try
-                {
-                    listRoom.streamers.push(stream.publisher.user.name);
-                }
-                catch (e) { }
-            })
-
-            if (listRoom.streamers.length > 0)
-            {
-                streamerList.push(listRoom)
-            }
-        }
-
-        res.json(streamerList)
-    }
-    catch (e)
-    {
-        logException(e, null)
-    }
 })
 
 app.use(express.urlencoded({ extended: false }))
@@ -1579,7 +1655,7 @@ app.post("/login", async (req, res) =>
             sendResponse({
                 appVersion,
                 isLoginSuccessful: false,
-                error: "ip_restricted"
+                error: "ip_restricted",
             })
             return
         }
@@ -1708,25 +1784,28 @@ async function destroySession(janusHandle: any, stream: StreamSlot, user: Player
     try
     {
         if (janusHandle === null || stream.janusSession === null) return;
-        await janusHandle.destroy({ room: stream.janusRoomIntName })
+
         log.info("destroySession", "Janus room " + stream.janusRoomIntName
-            + "(" + stream.janusRoomName + ") destroyed on server "
+            + "(" + stream.janusRoomName + ") destroying on server "
             + stream.janusServer!.id)
-        log.info("destroySession", "Handle", janusHandle.getId(), "detached on server", stream.janusServer!.id)
+        await janusHandle.destroy({ room: stream.janusRoomIntName })
+        
+        log.info("destroySession", "Handle", janusHandle.getId(), "detaching on server", stream.janusServer!.id)
         await janusHandle.detach()
+
         stream.publisher = null;
         
         while(stream.listeners.length > 0)
         {
             const listener = stream.listeners.pop();
             if(listener === undefined || listener === null) continue
-            log.info("destroySession", "Listener handle", listener.janusHandle.getId(), "detached on server", stream.janusServer!.id)
+            log.info("destroySession", "Listener handle", listener.janusHandle.getId(), "detaching on server", stream.janusServer!.id)
             await listener.janusHandle.detach()
         }
         
         if (stream.janusSession !== null)
         {
-            log.info("destroySession", "Session", stream.janusSession.getId(), "destroyed on server", stream.janusServer!.id)
+            log.info("destroySession", "Session", stream.janusSession.getId(), "destroying on server", stream.janusServer!.id)
             await stream.janusSession.destroy()
             stream.janusSession = null
         }
@@ -1749,15 +1828,26 @@ async function clearStream(user: Player)
 
         const roomState = roomStates[user.areaId][user.roomId];
         const stream = roomState.streams.find(s => s.publisher !== null && s.publisher.user == user);
-        if (stream)
+
+        if (stream && stream.isActive)
         {
+            const janusHandleToDestroy = stream.publisher!.janusHandle
+
             stream.isActive = false
             stream.isReady = false
-            
-            await destroySession(stream.publisher!.janusHandle, stream, user)
+            // Need to clear stream.publisher before calling sendUpdatedStreamSlotState(),
+            // otherwise the DTO sent to the clients will erroneously have a userId despite
+            // not being active.
+            stream.publisher = null
+            stream.isVisibleOnlyToSpecificUsers = null
+            stream.allowedListenerIDs = []
             
             sendUpdatedStreamSlotState(user)
             emitServerStats(user.areaId)
+
+            // For some reason if this line is executed before sendUpdatedStreamSlotState(user),
+            // the listeners sometimes don't receive the updated slots message... Still don't know why.
+            await destroySession(janusHandleToDestroy, stream, user)
         }
     }
     catch (error)
@@ -1766,7 +1856,7 @@ async function clearStream(user: Player)
     }
 }
 
-function clearRoomListener(user: Player)
+async function clearRoomListener(user: Player)
 {
     try
     {
@@ -1774,9 +1864,8 @@ function clearRoomListener(user: Player)
         
         log.info(user.id, "trying to clear room of listener:", user.areaId, user.roomId)
         
-        roomStates[user.areaId][user.roomId].streams
-            .filter(s => s.janusSession !== null)
-            .forEach(s =>
+        for (const s of roomStates[user.areaId][user.roomId].streams
+                .filter(s => s.janusSession !== null))
         {
             let li;
             while((li = s.listeners.findIndex(l => l.user == user)) != -1)
@@ -1787,9 +1876,9 @@ function clearRoomListener(user: Player)
                 log.info("clearRoomListener", userId,
                     "Janus listener handle", listener[0].janusHandle.getId(),
                     "detached on server", s.janusServer!.id)
-                listener[0].janusHandle.detach();
+                await listener[0].janusHandle.detach();
             }
-        });
+        }
     }
     catch (error)
     {
@@ -1843,7 +1932,7 @@ async function disconnectUser(user: Player)
 {
     log.info("Removing user ", user.id, "<" + user.name + ">", user.areaId)
     await clearStream(user)
-    clearRoomListener(user)
+    await clearRoomListener(user)
     removeUser(user)
 
     userRoomEmit(user, user.areaId, user.roomId,
@@ -1870,12 +1959,16 @@ async function banIP(ip: string)
     }
 }
 
+// TODO rename "user" parameter (what does it mean? it's not immediately clear)
 function sendUpdatedStreamSlotState(user: Player)
 {
     const roomState = roomStates[user.areaId][user.roomId]
     for (const u of getFilteredConnectedUserList(user, user.roomId, user.areaId))
         if (u.socketId)
-            io.to(u.socketId).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, roomState.streams))
+        {
+            const dtoArray = toStreamSlotDtoArray(u, roomState.streams)
+            io.to(u.socketId).emit("server-update-current-room-streams", dtoArray)
+        }
 }
 
 function stringifyException(exception: any)
@@ -1924,7 +2017,7 @@ setInterval(async () =>
                     await disconnectUser(user)
                 }
             }
-            else if (!user.connectionTime && user.isGhost)
+            else if (user.isGhost)
             {
                 log.info(user.id, "is a ghost without connection time")
                 await disconnectUser(user)
@@ -1957,14 +2050,16 @@ async function persistState()
     {
         const state: PersistedState = {
             users: getAllUsers(),
-            bannedIPs: Array.from(bannedIPs)
+            bannedIPs: Array.from(bannedIPs),
+            forCoinCount: roomStates["for"]["jinja"].coinCounter,
+            genCoinCount: roomStates["gen"]["jinja"].coinCounter,
         }
 
-        if (process.env.PERSISTOR_URL)
+        if (settings.persistorUrl)
         {
-            await got.post(process.env.PERSISTOR_URL, {
+            await got.post(settings.persistorUrl, {
                 headers: {
-                    "persistor-secret": process.env.PERSISTOR_SECRET,
+                    "persistor-secret": settings.persistorSecret,
                     "Content-Type": "text/plain"
                 },
                 body: JSON.stringify(state)
@@ -1997,6 +2092,9 @@ function applyState(state: PersistedState)
     }
 
     bannedIPs = new Set(state.bannedIPs)
+
+    roomStates["for"]["jinja"].coinCounter = state.forCoinCount || 0;
+    roomStates["gen"]["jinja"].coinCounter = state.genCoinCount || 0;
 }
 
 async function restoreState()
@@ -2008,13 +2106,13 @@ async function restoreState()
         // and start with a fresh state
 
         log.info("Restoring state...")
-        if (process.env.PERSISTOR_URL)
+        if (settings.persistorUrl)
         {
             // remember to do it as defensive as possible
 
-                const response = await got.get(process.env.PERSISTOR_URL, {
+                const response = await got.get(settings.persistorUrl, {
                     headers: {
-                        "persistor-secret": process.env.PERSISTOR_SECRET
+                        "persistor-secret": settings.persistorSecret
                     }
                 })
                 if (response.statusCode == 200)

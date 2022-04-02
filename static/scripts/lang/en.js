@@ -60,7 +60,9 @@ export default
         user_list_popup_unignore: "Unignore",
         user_list_popup_block: "Block",
         user_list_popup_close: "Close",
-        user_list_popup_blurb: "Warning: When you ignore a user, you will not see them, but they will still see you.<br>When you block a user, he'll stay blocked even if he reconnects.",
+        user_list_popup_blurb: "Warning: When you ignore a user, you will not see them, but they will still see you.<br>When you block a user, he'll stay blocked even if he reconnects.<br/>When the 'stream target' is set to 'Only specific users', it's possible to choose which users can see your stream by clicking on 'Show stream'.",
+        user_list_popup_give_stream: "Show stream",
+        user_list_popup_revoke_stream: "Revoke stream",
         
         stream_form_title: "Stream Settings",
         stream_form_mode: "Mode:",
@@ -73,10 +75,12 @@ export default
         stream_form_noise_suppression: "Noise Reduction",
         stream_form_auto_gain: "Auto Gain Control",
         stream_form_button_stream: "Start Streaming",
-        stream_form_private_stream: "Private Stream (not visible on websites outside of gikopoipoi).",
         stream_form_screen_capture: "Screen Capture",
         stream_form_screen_capture_audio: "Screen Capture Audio",
         stream_form_screen_capture_audio_notice: "This feature is experimental. Chrome and Edge only. \nOn Windows, only the screen audio or tab audio can be captured.",
+        stream_form_stream_target: "Stream target",
+        stream_form_visible_to_all_room : "All users in the room",
+        stream_form_visible_only_to_specific_users: "Only specific users",
 
         device_selection_title: "Select device",
         device_selection_audio_devices: "Audio devices",
@@ -113,8 +117,11 @@ export default
         preferences_timestamps_in_copied_log: "Include timestamps in copied logs",
         preferences_ignore_indicator_in_log: "Show in the log an indicator in place of the messages by ignored users",
         preferences_language: "Language",
+        preferences_enable_coin_sound: "SFX Sounds",
+
         preferences_title_streams: "Streams",
         preferences_streams_auto_resume: "Auto resume",
+        preferences_streams_inbound_vu_meter_enabled: "Display VU meter for received streams",
         preferences_title_chat: "Chat",
         preferences_clear_log: "Clear chat log",
 
@@ -204,6 +211,7 @@ export default
         densha: "Train",
         monachat: "Monachat",
         konbini: "Convenience Store",
+        nerd_office: "Hacker Office",
     },
     area:
     {

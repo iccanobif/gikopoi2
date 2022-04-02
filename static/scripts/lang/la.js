@@ -111,6 +111,7 @@ export default
         densha: "Tramen",
         monachat: "Monachat",
         konbini: "Emporium",
+        nerd_office: "Officium hackerorum",
     },
     area:
     {

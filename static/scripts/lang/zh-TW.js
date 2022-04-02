@@ -73,10 +73,12 @@ export default
         stream_form_noise_suppression: "雜訊抑制",
         stream_form_auto_gain: "音量自動增益",
         stream_form_button_stream: "開始直播",
-        stream_form_private_stream: "非公開直播（GIKOpoipoi以外的網站看不見）",
         stream_form_screen_capture: "視窗擷取",
         stream_form_screen_capture_audio: "擷取螢幕的聲音",
         stream_form_screen_capture_audio_notice: "這是個實驗性的功能。僅對Chrome與Edge有效。\n在Windows上，只能擷取螢幕聲音與分頁聲音。",
+        // stream_form_stream_target: "",
+        // stream_form_visible_to_all_room : "",
+        // stream_form_visible_only_to_specific_users: "",
 
         // device_selection_title: "",
         // device_selection_audio_devices: "",
@@ -113,8 +115,10 @@ export default
         preferences_timestamps_in_copied_log: "在複製的聊天紀錄中包含時間標記",
         preferences_ignore_indicator_in_log: "在聊天紀錄中以紅點標記隱藏用戶之訊息位置",
         preferences_language: "語言",
+        // preferences_enable_coin_sound: "Enable coin sound",
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
+        // preferences_streams_inbound_vu_meter_enabled: "",
         // preferences_title_chat: "",
         // preferences_clear_log: "",
 
@@ -204,6 +208,7 @@ export default
         densha: "電車",
         //monachat: "",
         //konbini: "",
+        nerd_office: "黑客基地",
     },
     area:
     {

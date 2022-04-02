@@ -663,6 +663,12 @@ video {
     filter: brightness(90%) invert(57%) sepia(52%) hue-rotate(152deg) saturate(275%);
 }
 
+.enabled-disabled-listener-icon
+{
+    height: 15px;
+    margin-right: 5px;
+}
+
 .popup-sortable-table th
 {
     cursor: pointer
@@ -711,27 +717,47 @@ video {
 div[id^="vu-meter-container"]
 {
     background-color: black;
-    height: 10px;
+    height: 5px;
     width: 219px;
+    margin: 4px 0px;
+}
+
+div[id^="vu-meter-bar-"]
+{
+    height: 5px;
+    width: 0;
+    position: relative;
 }
 
 div[id^="vu-meter-bar-primary-"]
 {
-    background-color: red;
-    height: 10px;
-    width: 100%;
-    position: relative;
     z-index: 2;
+}
+
+div[id^="vu-meter-bar-primary-"].outbound-vu-meter-bar
+{
+    background-color: red;
+}
+
+div[id^="vu-meter-bar-primary-"].inbound-vu-meter-bar
+{
+    background-color: green;
 }
 
 div[id^="vu-meter-bar-secondary-"]
 {
-    background-color: darkred;
-    height: 10px;
-    width: 100%;
-    position: relative;
     z-index: 1;
-    top: -10px;
+    top: -5px;
+}
+
+div[id^="vu-meter-bar-secondary-"].outbound-vu-meter-bar
+{
+    background-color: darkred;
+}
+
+div[id^="vu-meter-bar-secondary-"].inbound-vu-meter-bar
+{
+    background-color: darkgreen;
 }
 
 button.checked {
@@ -896,3 +922,45 @@ button
     background-color: gray;
 }
 
+.audio-stream-controls-container
+{
+    /* position: relative to make it so that the width: 100% and height: 100%;
+       in the spinner container div cover only the parent element and not the
+       entire page. */
+    position: relative;
+    width: fit-content;
+}
+
+.audio-stream-controls
+{
+    visibility: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.audio-stream-controls-container.listener-connected > .audio-stream-controls
+{
+    visibility: visible;
+}
+
+.audio-stream-controls-container.listener-connected > .audio-stream-controls-spinner
+{
+    visibility: hidden;
+}
+
+.audio-stream-controls-spinner
+{
+    display: flex;
+    align-items: center;
+    visibility: visible;
+    position: absolute;
+    z-index: 9999999999;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+}
+
+.audio-stream-controls-spinner img
+{
+    height: 18px;
+}
