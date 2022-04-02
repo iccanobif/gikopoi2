@@ -190,13 +190,13 @@ window.vueApp = new Vue({
 
         // stream settings
         isStreamPopupOpen: false,
-        streamMode: "video_sound",
-        displayAdvancedStreamSettings: false,
-        streamEchoCancellation: false,
-        streamNoiseSuppression: false,
-        streamAutoGain: false,
-        streamScreenCapture: false,
-        streamScreenCaptureAudio: false,
+        streamMode: localStorage.getItem("streamMode") || "video_sound",
+        displayAdvancedStreamSettings: localStorage.getItem("displayAdvancedStreamSettings") == "true",
+        streamEchoCancellation: localStorage.getItem("streamEchoCancellation") == "true",
+        streamNoiseSuppression: localStorage.getItem("streamNoiseSuppression") == "true",
+        streamAutoGain: localStorage.getItem("streamAutoGain") == "true",
+        streamScreenCapture: localStorage.getItem("streamScreenCapture") == "true",
+        streamScreenCaptureAudio: localStorage.getItem("streamScreenCaptureAudio") == "true",
         streamTarget: "all_room",
         allowedListenerIDs: new Set(),
 
@@ -2881,12 +2881,6 @@ window.vueApp = new Vue({
             this.wantToStream = true;
 
             this.isStreamPopupOpen = true;
-            this.streamMode = "video_sound";
-            this.streamEchoCancellation = false;
-            this.streamNoiseSuppression = false;
-            this.streamAutoGain = false;
-            this.streamScreenCapture = false;
-            this.streamScreenCaptureAudio = false;
         },
         closeStreamPopup: function ()
         {
@@ -2977,8 +2971,9 @@ window.vueApp = new Vue({
             this.storeSet('language');
             this.setLanguage(this.language);
         },
-        storeSet: function (itemName)
+        storeSet: function (itemName, value)
         {
+            if (value != undefined) this[itemName] = value;
             localStorage.setItem(itemName, this[itemName]);
         },
         handleBubbleOpacity: function ()

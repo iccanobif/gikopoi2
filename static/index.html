@@ -456,17 +456,21 @@
                 <div class="popup-content">
                     <div class='popup-item'>
                         <span>{{ $t("ui.stream_form_mode") }}</span><input type="radio"
-                            id="stream-form-video-sound-mode" value="video_sound" v-model="streamMode"><label
+                            id="stream-form-video-sound-mode" value="video_sound"
+                            v-model="streamMode" v-on:change="storeSet('streamMode')"><label
                             for="stream-form-video-sound-mode">{{ $t("ui.stream_form_video_sound_mode") }}</label>
 
-                        <input type="radio" id="stream-form-sound-only-mode" value="sound" v-model="streamMode"><label
+                        <input type="radio" id="stream-form-sound-only-mode" value="sound"
+                            v-model="streamMode" v-on:change="storeSet('streamMode')"><label
                             for="stream-form-sound-only-mode">{{ $t("ui.stream_form_sound_only_mode") }}</label>
 
-                        <input type="radio" id="stream-form-video-only-mode" value="video" v-model="streamMode"><label
+                        <input type="radio" id="stream-form-video-only-mode" value="video"
+                            v-model="streamMode" v-on:change="storeSet('streamMode')"><label
                             for="stream-form-video-only-mode">{{ $t("ui.stream_form_video_only_mode") }}</label>
                     </div>
                     <div class='popup-item' v-if="streamMode != 'sound'">
-                        <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label
+                        <input type="checkbox" id="stream-form-screen-capture"
+                            v-model="streamScreenCapture" v-on:change="storeSet('streamScreenCapture')"><label
                             for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
                     </div>
                     <div class='popup-item'>
@@ -482,14 +486,15 @@
                     <div v-if="streamMode != 'video'">
                         <div class='popup-item'>
                             <button v-if="!displayAdvancedStreamSettings"
-                                v-on:click="displayAdvancedStreamSettings = true">{{ $t("ui.stream_form_show_advanced") }}</button>
+                                v-on:click="storeSet('displayAdvancedStreamSettings', true)">{{ $t("ui.stream_form_show_advanced") }}</button>
                             <button v-if="displayAdvancedStreamSettings"
-                                v-on:click="displayAdvancedStreamSettings = false">{{ $t("ui.stream_form_hide_advanced") }}</button>
+                                v-on:click="storeSet('displayAdvancedStreamSettings', false)">{{ $t("ui.stream_form_hide_advanced") }}</button>
                         </div>
                         <div v-if="displayAdvancedStreamSettings">
                             <div class='popup-item' v-if="streamMode != 'sound' && streamScreenCapture">
                                 <div>
-                                    <input type="checkbox" id="stream-form-screen-capture-audio" v-model="streamScreenCaptureAudio"><label
+                                    <input type="checkbox" id="stream-form-screen-capture-audio"
+                                        v-model="streamScreenCaptureAudio" v-on:change="storeSet('streamScreenCaptureAudio')"><label
                                         for="stream-form-screen-capture-audio">{{ $t("ui.stream_form_screen_capture_audio") }}</label>
                                 </div>
                                 <div class='popup-notice'>{{ $t("ui.stream_form_screen_capture_audio_notice") }}</div>
@@ -497,16 +502,20 @@
                             <div class='popup-item' v-if="!streamScreenCapture || !streamScreenCaptureAudio">
                                 <div>
                                     <input type="checkbox" id="stream-form-echo-cancellation"
-                                        v-model="streamEchoCancellation"><label for="stream-form-echo-cancellation">{{
+                                        v-model="streamEchoCancellation" v-on:change="storeSet('streamEchoCancellation')"
+                                        ><label for="stream-form-echo-cancellation">{{
                                         $t("ui.stream_form_echo_cancellation") }}</label>
                                 </div>
                                 <div v-if="!streamScreenCapture || !streamScreenCaptureAudio">
                                     <input type="checkbox" id="stream-form-noise-suppression"
-                                        v-model="streamNoiseSuppression"><label for="stream-form-noise-suppression">{{
+                                        v-model="streamNoiseSuppression" v-on:change="storeSet('streamNoiseSuppression')"
+                                        ><label for="stream-form-noise-suppression">{{
                                         $t("ui.stream_form_noise_suppression") }}</label>
                                 </div>
                                 <div v-if="!streamScreenCapture || !streamScreenCaptureAudio">
-                                    <input type="checkbox" id="stream-form-auto-gain" v-model="streamAutoGain"><label
+                                    <input type="checkbox" id="stream-form-auto-gain"
+                                        v-model="streamAutoGain" v-on:change="storeSet('streamAutoGain')"
+                                        ><label
                                         for="stream-form-auto-gain">{{ $t("ui.stream_form_auto_gain") }}</label>
                                 </div>
                             </div>
