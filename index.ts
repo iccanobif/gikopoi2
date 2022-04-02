@@ -516,6 +516,7 @@ io.on("connection", function (socket: Socket)
             log.info("user-want-to-stream", user.id,
                      "streamSlotId:", streamSlotId,
                      "room:", user.roomId,
+                     "isVisibleOnlyToSpecificUsers:", isVisibleOnlyToSpecificUsers,
                      JSON.stringify(info))
 
             const roomState = roomStates[user.areaId][user.roomId];
