@@ -107,6 +107,7 @@ export const characters = {
     onigiri: new Character("onigiri", "svg", false),
     tabako_dokuo: new Character("tabako_dokuo", "svg", true),
     himawari: new Character("himawari", "svg", true),
+    hijab_shii: new Character("hijab_shii", "png", true),
     zonu: new Character("zonu", "svg", false),
     george: new Character("george", "svg", false),
     chotto_toorimasu_yo: new Character("chotto_toorimasu_yo", "svg", false),
