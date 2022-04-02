@@ -50,7 +50,7 @@ export default
         rula_menu_column_streamers: "Siaran",
         rula_menu_button_rula: "Rula",
         rula_menu_label_group: "Daerah",
-        //rula_menu_group_option_all: "",
+        rula_menu_group_option_all: "Semua",
 
         user_list_popup_title: "Daftar Pengguna (total: @USER_COUNT@)",
         user_list_popup_column_user_name: "Nama Pengguna",
@@ -76,13 +76,13 @@ export default
         stream_form_screen_capture: "Siaran Desktop",
         stream_form_screen_capture_audio: "Siaran Computer Audio",
         stream_form_screen_capture_audio_notice: "Fitur ini bersifat eksperimental. Chrome dan Edge saja. \nDi Windows, hanya audio layar atau audio tab yang dapat direkam.",
-        // stream_form_stream_target: "",
-        // stream_form_visible_to_all_room : "",
-        // stream_form_visible_only_to_specific_users: "",
+        stream_form_stream_target: "Siarkan ke...",
+        stream_form_visible_to_all_room : "Semua orang di ruangan ini",
+        stream_form_visible_only_to_specific_users: "Hanya beberapa orang",
 
-        // device_selection_title: "",
-        // device_selection_audio_devices: "",
-        // device_selection_video_devices: "",
+        device_selection_title: "Silakan pilih perangkat",
+        device_selection_audio_devices: "Pilih perangkat audio",
+        device_selection_video_devices: "Pilih perangkat video",
         
         preferences_title: "Konfigurasi",
         preferences_name_bg: "Nama pengguna dengan background ",
@@ -115,12 +115,12 @@ export default
         preferences_timestamps_in_copied_log: "Sertakan cap waktu dalam log yang disalin",
         preferences_ignore_indicator_in_log: "Ketika pengguna diabaikan. Menampilkan placeholder untuk pesan tersembunyi di log.",
         preferences_language: "Bahasa",
-        // preferences_enable_coin_sound: "Enable coin sound",
-        // preferences_title_streams: "",
-        // preferences_streams_auto_resume: "",
-        // preferences_streams_inbound_vu_meter_enabled: "",
-        // preferences_title_chat: "",
-        // preferences_clear_log: "",
+        preferences_enable_coin_sound: "SFX on",
+        preferences_title_streams: "Siarkan",
+        preferences_streams_auto_resume: "Otomatis Lanjutkan",
+        preferences_streams_inbound_vu_meter_enabled: "Meter suara",
+        preferences_title_chat: "Obrolan",
+        preferences_clear_log: "Hapus log obrolan",
 
         back_to_homepage: "Keluar Dari Permainan",
 
@@ -145,7 +145,7 @@ export default
         error_obtaining_video: "Tidak dapat mengunduh video. Silakan periksa izin browser.",
         error_obtaining_audio: "Tidak dapat mengunduh audio. Silakan periksa izin browser.",
         no_webrtc: "Maaf, browser Anda tidak mendukung WebRTC. ",
-        // error_didnt_select_device: "",
+        error_didnt_select_device: "Maaf, Anda harus memilih perangkat terlebih dahulu",
         
         unknown_error: "Tidak bisa masuk.",
         invalid_username: "Nama pengguna salah.",
@@ -162,8 +162,8 @@ export default
         chess_win: "Game catur sudah berakhir: Pemenangnya @USER_NAME@.",
         chess_quit: "Game catur berakhir: @USER_NAME@ berhenti main.",
         
-        // are_you_sure_you_want_to_clear_log: "",
-        // chat_log_cleared: "",
+        are_you_sure_you_want_to_clear_log: "Apakah Anda ingin menghapus log obrolan?",
+        chat_log_cleared: "Log obrolan telah dihapus",
     },
     room:
     {
@@ -207,13 +207,13 @@ export default
         bar_giko_square: "Air Mancur Plaza",
         densha: "Kereta",
         monachat: "Monachat",
-        //konbini: "",
-        // nerd_office: "hacker office",
+        konbini: "Toserba",
+        nerd_office: "Kantor Peretas",
     },
     area:
     {
         gikopoipoi: "Gikopoipoi",
         gikopoi: "Kota Lautan",
-        // bar_giko: "",
+        bar_giko: "Bar Giko",
     }
 }
