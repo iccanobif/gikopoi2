@@ -20,7 +20,7 @@ server {
     listen [::]:443 ssl;
     server_name <DOMAIN NAME>;
 
-    # Useful the info page at http://<DOMAIN NAME>/info
+    # Useful for the info page at http://<DOMAIN NAME>/info
     # Otherwise unused by poipoi
 #    location / {
 #        proxy_pass http://localhost:8088;
