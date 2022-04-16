@@ -917,3 +917,9 @@ button
 {
     height: 18px;
 }
+
+.visible-only-to-specific-users-stream-icon
+{
+    color: #474747;
+    padding-right: 5px;
+}

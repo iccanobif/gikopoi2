@@ -157,6 +157,7 @@ export interface StreamSlotDto
     withVideo: boolean | null,
     userId: string | null,
     isAllowed: boolean | null,
+    isVisibleOnlyToSpecificUsers: boolean | null,
 }
 
 export interface ChessboardState {
