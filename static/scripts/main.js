@@ -310,12 +310,6 @@ window.vueApp = new Vue({
 
         loadCharacterImagesPromise = loadCharacters(this.isCrispModeEnabled);
 
-        // Enable dark mode stylesheet (gotta do it here in the "mounted" event because otherwise
-        // the screen will flash dark for a bit while loading the page)
-        for (let i = 0; i < document.styleSheets.length; i++)
-            if (document.styleSheets[i].title == "dark-mode-sheet")
-                document.styleSheets[i].disabled = false
-
         const charSelect = document.getElementById("character-selection")
         const charactersSelected = charSelect.getElementsByClassName("character-selected")
         if (charactersSelected.length)
