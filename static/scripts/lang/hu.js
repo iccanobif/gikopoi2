@@ -134,6 +134,8 @@ export default
         chess_hide_game: "Játék elrejtése",
         chess_join_game: "Csatlakozás játékhoz",
         chess_quit_game: "Kilépés játékból",
+
+        // visible_only_to_specific_users_stream: "",
     },
     msg:
     {

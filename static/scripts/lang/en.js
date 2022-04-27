@@ -136,6 +136,8 @@ export default
         chess_hide_game: "Hide game",
         chess_join_game: "Join game",
         chess_quit_game: "Quit game",
+
+        visible_only_to_specific_users_stream: "Private stream",
     },
     msg:
     {

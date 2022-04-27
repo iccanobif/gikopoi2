@@ -133,6 +133,8 @@ export default
         chess_hide_game: "Ocultar juego",
         chess_join_game: "Unirse al juego",
         chess_quit_game: "Salir del juego",
+
+        // visible_only_to_specific_users_stream: "",
     },
     msg:
     {

@@ -80,7 +80,7 @@ export default
         stream_form_screen_capture_audio_notice: "この機能は実験中です。ChromeとEdgeでのみ有効です。\nWindowsでは、画面の音声とタブの音声しか取得できません。",
         stream_form_stream_target: "配信ターゲット",
         stream_form_visible_to_all_room : "室内の全員",
-        stream_form_visible_only_to_specific_users: "特定のユーザーだけ",
+        stream_form_visible_only_to_specific_users: "特定のユーザーだけに見える配信",
 
         device_selection_title: "デバイスを選択",
         device_selection_audio_devices: "音声デバイス",
@@ -136,6 +136,8 @@ export default
         chess_hide_game: "非表示",
         chess_join_game: "参加",
         chess_quit_game: "投了",
+
+        visible_only_to_specific_users_stream: "特定ユーザーのみに見える配信",
     },
     msg:
     {

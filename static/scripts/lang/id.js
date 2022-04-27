@@ -133,6 +133,8 @@ export default
         chess_hide_game: "Sembunyikan permainan",
         chess_join_game: "Bergabunglah game",
         chess_quit_game: "Keluar dari permainan",
+
+        // visible_only_to_specific_users_stream: "",
     },
     msg:
     {

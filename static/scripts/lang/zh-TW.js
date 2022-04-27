@@ -133,6 +133,8 @@ export default
         chess_hide_game: "隱藏",
         chess_join_game: "參加",
         chess_quit_game: "投降",
+
+        // visible_only_to_specific_users_stream: "",
     },
     msg:
     {

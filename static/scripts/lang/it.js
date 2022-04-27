@@ -137,6 +137,8 @@ export default
         chess_hide_game: "Nascondi partita",
         chess_join_game: "Partecipa al gioco",
         chess_quit_game: "Esci dal gioco",
+
+        // visible_only_to_specific_users_stream: "",
     },
     msg:
     {

@@ -134,6 +134,8 @@ export default
         chess_hide_game: "Dölj spel",
         chess_join_game: "Börja spela",
         chess_quit_game: "Sluta spela",
+
+        // visible_only_to_specific_users_stream: "",
     },
     msg:
     {
