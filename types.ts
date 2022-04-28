@@ -26,7 +26,7 @@ export interface StreamSlot
     janusRoomIntName: number | null,
     janusRoomName: string | null,
     isActive: boolean,
-    isReady: boolean,
+    isReady: boolean, // it means it's ready to be received by listeners
     withSound: boolean | null,
     withVideo: boolean | null,
     publisher: Participant | null,

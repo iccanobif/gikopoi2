@@ -2289,6 +2289,9 @@ window.vueApp = new Vue({
                 {
                     if (this.rtcPeerSlots[slotId])
                         this.rtcPeerSlots[slotId].attempts = 0;
+
+                    if (slotId == this.streamSlotIdInWhichIWantToStream)
+                        this.socket.emit("user-stream-is-ready")
                 }
                 // else if (["failed", "disconnected", "closed"].includes(state))
                 else if (["failed", "closed"].includes(state))
@@ -2362,9 +2365,10 @@ window.vueApp = new Vue({
                 }
                 if (this.takenStreams[slotId])
                 {
-                    if (!stream.isActive || !stream.isReady || !stream.isAllowed)
+                    console.log(stream.isActive, stream.isAllowed, stream.isReady)
+                    if (!stream.isActive || !stream.isAllowed)
                         this.dropStream(slotId);
-                    else
+                    else if (stream.isReady) // If not ready, wait for the next stream slot update
                         this.takeStream(slotId);
                 }
 

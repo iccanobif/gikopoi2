@@ -583,6 +583,22 @@ io.on("connection", function (socket: Socket)
             socket.emit("server-not-ok-to-stream", "start_stream_unknown_error")
         }
     })
+    socket.on("user-stream-is-ready", async function()
+    {
+        try
+        {
+            log.info(user.id, "user-stream-is-ready")
+            const roomState = roomStates[user.areaId][user.roomId];
+            const stream = roomState.streams.find(s => s.publisher !== null && s.publisher.user == user);
+    
+            stream!.isReady = true
+            sendUpdatedStreamSlotState(user)
+        }
+        catch (e)
+        {
+            logException(e, user)
+        }
+    })
     socket.on("user-want-to-stop-stream", async function ()
     {
         try
@@ -630,6 +646,7 @@ io.on("connection", function (socket: Socket)
                 
             log.info("user-want-to-take-stream", user.id,
                 "Janus listener handle", janusHandle.getId(),
+                "for publisher id", publisherId,
                 "created on server", stream.janusServer.id)
             
             if (!stream.isActive)
@@ -754,6 +771,7 @@ io.on("connection", function (socket: Socket)
                     stream.janusRoomIntName, msg)
                 log.info("user-rtc-message", user.id,
                     "Janus publisher handle", janusHandle.getId(),
+                    "Janus publisher id", janusHandle.getPublisherId(),
                     "created on server", stream.janusServer.id)
                 
                 if (!stream.isActive)
@@ -769,10 +787,6 @@ io.on("connection", function (socket: Socket)
                 })
 
                 const answer = janusHandle.getAnswer();
-
-                stream.isReady = true
-
-                sendUpdatedStreamSlotState(user)
 
                 socket.emit("server-rtc-message", streamSlotId, "answer", answer);
             }
