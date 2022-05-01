@@ -278,11 +278,11 @@ io.on("connection", function (socket: Socket)
         }
     }
 
-    // Flood detection (no more than 100 events in the span of one second)
+    // Flood detection (no more than 50 events in the span of one second)
     const lastEventDates: number[] = []
     socket.onAny(() => {
         lastEventDates.push(Date.now())
-        if (lastEventDates.length > 100)
+        if (lastEventDates.length > 50)
         {
             const firstEventTime = lastEventDates.shift()!
             if (Date.now() - firstEventTime < 1000)
