@@ -2381,7 +2381,8 @@ window.vueApp = new Vue({
             try
             {
                 const withVideo = this.streamMode != "sound" && !this.streamScreenCapture;
-                const withSound = this.streamMode != "video" && !this.streamScreenCaptureAudio;
+                const withSound = this.streamMode == "sound"
+                    || (this.streamMode == "video_sound" && !(this.streamScreenCapture && this.streamScreenCaptureAudio));
 
                 this.waitingForDevicePermission = true
                 this.deviceList = await getDeviceList(withSound, withVideo)
@@ -2450,7 +2451,7 @@ window.vueApp = new Vue({
                 }
 
                 const withScreenCapture = this.streamScreenCapture && withVideo
-                const withScreenCaptureAudio = this.streamScreenCaptureAudio && withScreenCapture && withSound && withVideo
+                const withScreenCaptureAudio = this.streamScreenCaptureAudio && withScreenCapture && withSound
 
                 const audioConstraints = {
                     echoCancellation: this.streamEchoCancellation,
