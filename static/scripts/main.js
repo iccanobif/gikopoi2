@@ -2450,7 +2450,7 @@ window.vueApp = new Vue({
                 }
 
                 const withScreenCapture = this.streamScreenCapture && withVideo
-                const withScreenCaptureAudio = this.streamScreenCaptureAudio && withScreenCapture && withSound
+                const withScreenCaptureAudio = this.streamScreenCaptureAudio && withScreenCapture && withSound && withVideo
 
                 const audioConstraints = {
                     echoCancellation: this.streamEchoCancellation,
