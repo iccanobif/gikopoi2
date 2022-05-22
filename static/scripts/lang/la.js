@@ -64,7 +64,7 @@ export default
         chess_join_game: "Ludum participare",
         chess_quit_game: "Ludi exire",
 
-        // visible_only_to_specific_users_stream: "",
+        visible_only_to_specific_users_stream: "Transmissio privata",
     },
     msg:
     {
