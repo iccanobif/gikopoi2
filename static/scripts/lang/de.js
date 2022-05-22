@@ -135,7 +135,7 @@ export default
         chess_join_game: "Spiel beitreten",
         chess_quit_game: "Spiel verlassen",
 
-        // visible_only_to_specific_users_stream: "",
+        visible_only_to_specific_users_stream: "Privater Stream",
     },
     msg:
     {
