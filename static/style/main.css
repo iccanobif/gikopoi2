@@ -823,6 +823,7 @@ button.checked {
 .ignored-message
 {
     display: none;
+    user-select: none;
 }
 
 .ignore-indicators-in-log .ignored-message
