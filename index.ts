@@ -770,9 +770,11 @@ io.on("connection", function (socket: Socket)
 
                 const answer = janusHandle.getAnswer();
 
-                stream.isReady = true
-
-                sendUpdatedStreamSlotState(user)
+                janusHandle.onWebrtcUp(() =>
+                {
+                    stream.isReady = true
+                    sendUpdatedStreamSlotState(user)
+                })
 
                 socket.emit("server-rtc-message", streamSlotId, "answer", answer);
             }
