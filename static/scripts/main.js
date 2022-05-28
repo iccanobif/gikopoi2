@@ -57,6 +57,7 @@ const enabledListenerIconImagePromise = loadImage("enabled-listener.svg")
 const disabledListenerIconImagePromise = loadImage("disabled-listener.svg")
 let enabledListenerIconImage = null;
 let disabledListenerIconImage = null;
+let rtcPeerSlots = [];
 
 function UserException(message) {
     this.message = message;
@@ -184,7 +185,6 @@ window.vueApp = new Vue({
         clientSideStreamData: [],
         mediaStream: null,
         streamSlotIdInWhichIWantToStream: null,
-        rtcPeerSlots: [],
         takenStreams: [], // streams taken by me
         slotVolume: JSON.parse(localStorage.getItem("slotVolume")) || {}, // key: slot Id / value: volume
 
@@ -861,7 +861,7 @@ window.vueApp = new Vue({
             this.socket.on("server-rtc-message", async (streamSlotId, type, msg) =>
             {
                 console.log("server-rtc-message", streamSlotId, type, msg);
-                const rtcPeer = this.rtcPeerSlots[streamSlotId].rtcPeer;
+                const rtcPeer = rtcPeerSlots[streamSlotId].rtcPeer;
                 if (rtcPeer === null) return;
                 if(type == "offer")
                 {
@@ -2287,15 +2287,15 @@ window.vueApp = new Vue({
 
                 if (state == "connected")
                 {
-                    if (this.rtcPeerSlots[slotId])
-                        this.rtcPeerSlots[slotId].attempts = 0;
+                    if (rtcPeerSlots[slotId])
+                        rtcPeerSlots[slotId].attempts = 0;
                 }
                 // else if (["failed", "disconnected", "closed"].includes(state))
                 else if (["failed", "closed"].includes(state))
                 {
                     rtcPeer.close();
-                    if (!this.rtcPeerSlots[slotId]) return;
-                    if (this.rtcPeerSlots[slotId].attempts > 4)
+                    if (!rtcPeerSlots[slotId]) return;
+                    if (rtcPeerSlots[slotId].attempts > 4)
                     {
                         terminate()
                     }
@@ -2303,10 +2303,10 @@ window.vueApp = new Vue({
                     {
                         setTimeout(reconnect,
                             Math.max(this.takenStreams[slotId] ? 1000 : 0,
-                                this.rtcPeerSlots[slotId].attempts * 1000));
+                                rtcPeerSlots[slotId].attempts * 1000));
                     }
 
-                    this.rtcPeerSlots[slotId].attempts++;
+                    rtcPeerSlots[slotId].attempts++;
                 }
             });
             return rtcPeer;
@@ -2325,14 +2325,14 @@ window.vueApp = new Vue({
                 return !!this.takenStreams[slotId]
             });
 
-            // update this.rtcPeerSlots (keep the ones that were already established, drop the ones for streams that were just stopped by the streamer)
+            // update rtcPeerSlots (keep the ones that were already established, drop the ones for streams that were just stopped by the streamer)
             const newRtcPeerSlotsList = [];
             for (let slotId = 0; slotId < streams.length; slotId++)
             {
-                if (!this.rtcPeerSlots[slotId])
+                if (!rtcPeerSlots[slotId])
                     newRtcPeerSlotsList.push(null)
                 else if (this.takenStreams[slotId] || this.streamSlotIdInWhichIWantToStream == slotId)
-                    newRtcPeerSlotsList.push(this.rtcPeerSlots[slotId])
+                    newRtcPeerSlotsList.push(rtcPeerSlots[slotId])
                 else
                 {
                     await this.dropStream(slotId);
@@ -2340,7 +2340,7 @@ window.vueApp = new Vue({
                 }
             }
             console.log(newRtcPeerSlotsList);
-            this.rtcPeerSlots = newRtcPeerSlotsList;
+            rtcPeerSlots = newRtcPeerSlotsList;
 
             this.clientSideStreamData = streams.map((s, slotId) => {
                 if (this.clientSideStreamData[slotId])
@@ -2604,11 +2604,11 @@ window.vueApp = new Vue({
         },
         setupRtcPeerSlot: function(slotId)
         {
-            if (!this.rtcPeerSlots[slotId]) this.rtcPeerSlots[slotId] = {
+            if (!rtcPeerSlots[slotId]) rtcPeerSlots[slotId] = {
                 attempts: 0
             }
-            this.rtcPeerSlots[slotId].rtcPeer = this.setupRTCConnection(slotId)
-            return this.rtcPeerSlots[slotId]
+            rtcPeerSlots[slotId].rtcPeer = this.setupRTCConnection(slotId)
+            return rtcPeerSlots[slotId]
         },
         startStreaming: async function ()
         {
@@ -2647,10 +2647,10 @@ window.vueApp = new Vue({
 
             this.streamSlotIdInWhichIWantToStream = null;
 
-            if (this.rtcPeerSlots[streamSlotId])
+            if (rtcPeerSlots[streamSlotId])
             {
-                this.rtcPeerSlots[streamSlotId].rtcPeer.close()
-                this.rtcPeerSlots[streamSlotId] = null;
+                rtcPeerSlots[streamSlotId].rtcPeer.close()
+                rtcPeerSlots[streamSlotId] = null;
             }
 
             // On small screens, displaying the <video> element seems to cause a reflow in a way that
@@ -2671,7 +2671,7 @@ window.vueApp = new Vue({
         },
         takeStream: function (streamSlotId)
         {
-            if (this.rtcPeerSlots[streamSlotId]) return // no need to attempt again to take this stream
+            if (rtcPeerSlots[streamSlotId]) return // no need to attempt again to take this stream
 
             const rtcPeer = this.setupRtcPeerSlot(streamSlotId).rtcPeer;
 
@@ -2730,9 +2730,9 @@ window.vueApp = new Vue({
         },
         dropStream: async function (streamSlotId)
         {
-            if(!this.rtcPeerSlots[streamSlotId]) return;
-            this.rtcPeerSlots[streamSlotId].rtcPeer.close()
-            this.rtcPeerSlots[streamSlotId] = null;
+            if(!rtcPeerSlots[streamSlotId]) return;
+            rtcPeerSlots[streamSlotId].rtcPeer.close()
+            rtcPeerSlots[streamSlotId] = null;
             
             if (!this.isStreamAutoResumeEnabled)
                 Vue.set(this.takenStreams, streamSlotId, false);
