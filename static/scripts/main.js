@@ -602,7 +602,7 @@ window.vueApp = new Vue({
             this.blockHeight = this.currentRoom.blockHeight ? this.currentRoom.blockHeight : BLOCK_HEIGHT;
 
             // stream stuff
-            this.updateCurrentRoomStreams(streamsDto);
+            await this.updateCurrentRoomStreams(streamsDto);
 
             // Force update of user coordinates using the current room's logics (origin coordinates, etc)
             this.forcePhysicalPositionRefresh();
@@ -837,9 +837,9 @@ window.vueApp = new Vue({
                 this.wantToStream = false;
                 this.startStreaming();
             });
-            this.socket.on("server-update-current-room-streams", (streams) =>
+            this.socket.on("server-update-current-room-streams", async (streams) =>
             {
-                this.updateCurrentRoomStreams(streams);
+                await this.updateCurrentRoomStreams(streams);
             });
 
             this.socket.on("server-room-list", async (roomList) =>
@@ -1824,7 +1824,7 @@ window.vueApp = new Vue({
             if (this.mediaStream) this.stopStreaming();
             for (let i = 0; i < this.takenStreams.length; i++)
             {
-                this.dropStream(i)
+                await this.dropStream(i)
                 // when going to a new room, all streams must be off by default
                 this.takenStreams[i] = false
             }
@@ -2246,7 +2246,7 @@ window.vueApp = new Vue({
                     streamSlotId: slotId, type, msg})
             });
 
-            const reconnect = () =>
+            const reconnect = async () =>
             {
                 if (slotId == this.streamSlotIdInWhichIWantToStream)
                 {
@@ -2256,7 +2256,7 @@ window.vueApp = new Vue({
                 else if (this.takenStreams[slotId])
                 {
                     logToServer(new Date() + " " + this.myUserID + " Attempting to retake stream")
-                    this.dropStream(slotId)
+                    await this.dropStream(slotId)
                     this.takeStream(slotId)
                 }
                 else
@@ -2312,7 +2312,7 @@ window.vueApp = new Vue({
             return rtcPeer;
         },
 
-        updateCurrentRoomStreams: function (streams)
+        updateCurrentRoomStreams: async function (streams)
         {
             if (this.hideStreams)
                 streams = []
@@ -2335,7 +2335,7 @@ window.vueApp = new Vue({
                     newRtcPeerSlotsList.push(this.rtcPeerSlots[slotId])
                 else
                 {
-                    this.dropStream(slotId);
+                    await this.dropStream(slotId);
                     newRtcPeerSlotsList.push(null)
                 }
             }
@@ -2366,7 +2366,7 @@ window.vueApp = new Vue({
                 if (this.takenStreams[slotId])
                 {
                     if (!stream.isActive || !stream.isReady || !stream.isAllowed)
-                        this.dropStream(slotId);
+                        await this.dropStream(slotId);
                     else
                         this.takeStream(slotId);
                 }
@@ -2747,10 +2747,10 @@ window.vueApp = new Vue({
                 delete this.inboundAudioProcessors[streamSlotId]
             }
         },
-        wantToDropStream: function (streamSlotId)
+        wantToDropStream: async function (streamSlotId)
         {
             Vue.set(this.takenStreams, streamSlotId, false);
-            this.dropStream(streamSlotId);
+            await this.dropStream(streamSlotId);
         },
         rula: function (roomId)
         {
