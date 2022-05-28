@@ -2339,6 +2339,7 @@ window.vueApp = new Vue({
                     newRtcPeerSlotsList.push(null)
                 }
             }
+            console.log(newRtcPeerSlotsList);
             this.rtcPeerSlots = newRtcPeerSlotsList;
 
             this.clientSideStreamData = streams.map((s, slotId) => {
