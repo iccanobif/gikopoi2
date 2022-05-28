@@ -2325,19 +2325,21 @@ window.vueApp = new Vue({
                 return !!this.takenStreams[slotId]
             });
 
-            // WARNING! THIS .map() HAS SIDE EFFECTS (it calls dropStream())!
-            this.rtcPeerSlots = streams.map((s, slotId) => {
+            // update this.rtcPeerSlots (keep the ones that were already established, drop the ones for streams that were just stopped by the streamer)
+            const newRtcPeerSlotsList = [];
+            for (let slotId = 0; slotId < streams.length; slotId++)
+            {
                 if (!this.rtcPeerSlots[slotId])
-                    return null
-
-                // this.takenStreams[slotId] should be true only if updateCurrentRoomStreams()
-                // was called on an event different from a room change.
-                if (this.takenStreams[slotId] || this.streamSlotIdInWhichIWantToStream == slotId)
-                    return this.rtcPeerSlots[slotId]
-
-                this.dropStream(slotId);
-                return null
-            });
+                    newRtcPeerSlotsList.push(null)
+                else if (this.takenStreams[slotId] || this.streamSlotIdInWhichIWantToStream == slotId)
+                    newRtcPeerSlotsList.push(this.rtcPeerSlots[slotId])
+                else
+                {
+                    this.dropStream(slotId);
+                    newRtcPeerSlotsList.push(null)
+                }
+            }
+            this.rtcPeerSlots = newRtcPeerSlotsList;
 
             this.clientSideStreamData = streams.map((s, slotId) => {
                 if (this.clientSideStreamData[slotId])
