@@ -57,7 +57,7 @@ const enabledListenerIconImagePromise = loadImage("enabled-listener.svg")
 const disabledListenerIconImagePromise = loadImage("disabled-listener.svg")
 let enabledListenerIconImage = null;
 let disabledListenerIconImage = null;
-let rtcPeerSlots = [];
+window.rtcPeerSlots = [];
 
 function UserException(message) {
     this.message = message;
