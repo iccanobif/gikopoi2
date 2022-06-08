@@ -3227,6 +3227,37 @@ window.vueApp = new Vue({
             this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
             this.isRedrawRequired = true;
         },
+        moveVideoToNewTab: function(event, slotId)
+        {
+            const video = event.target;
+            const before = video.previousElementSibling;
+            video.onpause = video.play.bind(video);
+            const tab = open('about:blank');
+            tab.document.open();
+            tab.document.write('<!doctype html>\n<title>Stream Tab</title><style>*{margin:0;padding:0;border:0;width:100%;height:100%}</style>');
+            const streamSlot = this.streams[slotId];
+            const newTabTitle = i18n.t("ui.label_stream", {index: slotId + 1}) + " " + this.toDisplayName(this.users[streamSlot.userId].name);
+
+            tab.onload = () => {
+                tab.document.title = newTabTitle;
+                tab.document.body.appendChild(video);
+                tab.document.body.onclick = () => {
+                    p.remove();
+                    video.play();
+                };
+                tab.document.body.ondblclick = video.requestFullscreen.bind(video);
+                const p = document.createElement('p');
+                if (video.paused) {
+                    p.setAttribute('style', 'position:absolute;top:0;text-align:center;font-size:48px');
+                    p.textContent = this.areaId == "gen" ? 'クリックで再生します' : 'Click to play'; // TODO move to translation files
+                    tab.document.body.appendChild(p);
+                }
+            }
+            tab.onbeforeunload = () => {
+                before.after(video);
+            };
+            tab.document.close();
+        }
     },
 });
 
