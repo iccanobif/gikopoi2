@@ -3226,6 +3226,14 @@ window.vueApp = new Vue({
             this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
             this.isRedrawRequired = true;
         },
+        playVideo: function(event)
+        {
+            // When moving the video element to a new tab, chromium based browsers will
+            // automatically pause it and wait for a user interaction. With this function
+            // it's enough to click on the video to make it play again.
+            const video = event.target;
+            video.play();
+        },
         onVideoDoubleClick: function(event, slotId)
         {
             const video = event.target;
@@ -3238,26 +3246,22 @@ window.vueApp = new Vue({
             }
             else
             {
+                // On chromium based browser, for other people's streams, the video
+                // might automatically when it gets moved to another tab and need a user interaction
+                // before it can be started again... Make sure to test for that everytime a change is made to this code.
                 video.isFullscreen = true;
                 const originalPreviousSibling = video.previousElementSibling;
-                const tab = open('about:blank');
-                tab.document.open();
-                tab.document.write('<!doctype html>\n<title>Stream Tab</title><style>*{margin:0;padding:0;border:0;width:100%;height:100%}</style>');
+                const tab = open(window.origin + '/video-tab.html');
                 const streamSlot = this.streams[slotId];
                 const newTabTitle = i18n.t("ui.label_stream", {index: slotId + 1}) + " " + this.toDisplayName(this.users[streamSlot.userId].name);
                 tab.onload = () => {
                     tab.document.title = newTabTitle;
                     tab.document.body.appendChild(video);
-                    // On chromium based browser, for other people's streams, the video
-                    // automatically pauses when it gets moved to another tab, so here i forcefully
-                    // play it again.
-                    video.play();
+                    tab.onbeforeunload = () => {
+                        video.isFullscreen = false;
+                        originalPreviousSibling.after(video);
+                    };
                 }
-                tab.onbeforeunload = () => {
-                    video.isFullscreen = false;
-                    originalPreviousSibling.after(video);
-                };
-                tab.document.close();
             }
         }
     },

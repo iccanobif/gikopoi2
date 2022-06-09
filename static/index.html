@@ -236,10 +236,12 @@
                             v-on:click="toggleVideoSlotPinStatus(index)"></button>
                         <video :id="'local-video-' + index"
                             v-show="streamSlot.isActive && index == streamSlotIdInWhichIWantToStream"
+                            v-on:click="playVideo($event)"
                             v-on:dblclick="onVideoDoubleClick($event, index)"
                             autoplay muted playsinline></video>
                         <video :id="'received-video-' + index"
                             v-show="takenStreams[index] && index != streamSlotIdInWhichIWantToStream"
+                            v-on:click="playVideo($event)"
                             v-on:dblclick="onVideoDoubleClick($event, index)"
                             autoplay playsinline></video>
                     </div>
