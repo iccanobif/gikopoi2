@@ -2339,7 +2339,6 @@ window.vueApp = new Vue({
                     newRtcPeerSlotsList.push(null)
                 }
             }
-            console.log(newRtcPeerSlotsList);
             rtcPeerSlots = newRtcPeerSlotsList;
 
             this.clientSideStreamData = streams.map((s, slotId) => {
@@ -3227,26 +3226,36 @@ window.vueApp = new Vue({
             this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
             this.isRedrawRequired = true;
         },
-        moveVideoToNewTab: function(event, slotId)
+        onVideoDoubleClick: function(event, slotId)
         {
             const video = event.target;
-            const before = video.previousElementSibling;
-            // video.onpause = video.play.bind(video);
-            const tab = open('about:blank');
-            tab.document.open();
-            tab.document.write('<!doctype html>\n<title>Stream Tab</title><style>*{margin:0;padding:0;border:0;width:100%;height:100%}</style>');
-            const streamSlot = this.streams[slotId];
-            const newTabTitle = i18n.t("ui.label_stream", {index: slotId + 1}) + " " + this.toDisplayName(this.users[streamSlot.userId].name);
 
-            tab.onload = () => {
-                tab.document.title = newTabTitle;
-                tab.document.body.appendChild(video);
-                tab.document.body.ondblclick = video.requestFullscreen.bind(video);
+            // If this video was already moved to another tab, doubleclicking on it
+            // will make it fullscreen. Otherwise, move it to a new tab.
+            if (video.isFullscreen)
+            {
+                video.requestFullscreen();
             }
-            tab.onbeforeunload = () => {
-                before.after(video);
-            };
-            tab.document.close();
+            else
+            {
+                video.isFullscreen = true;
+                const originalPreviousSibling = video.previousElementSibling;
+                const tab = open('about:blank');
+                tab.document.open();
+                tab.document.write('<!doctype html>\n<title>Stream Tab</title><style>*{margin:0;padding:0;border:0;width:100%;height:100%}</style>');
+                const streamSlot = this.streams[slotId];
+                const newTabTitle = i18n.t("ui.label_stream", {index: slotId + 1}) + " " + this.toDisplayName(this.users[streamSlot.userId].name);
+                tab.onload = () => {
+                    tab.document.title = newTabTitle;
+                    tab.document.body.appendChild(video);
+                }
+                tab.onbeforeunload = () => {
+                    video.isFullscreen = false;
+                    originalPreviousSibling.after(video);
+
+                };
+                tab.document.close();
+            }
         }
     },
 });
