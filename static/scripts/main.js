@@ -3247,7 +3247,7 @@ window.vueApp = new Vue({
                     await video.ownerDocument.exitFullscreen()
                     video.isFullscreen = false;
                 }
-                else
+                else if (video.requestFullscreen) // requestFullscreen() not available on safari, try webkitRequestFullscreen() one day
                 {
                     await video.requestFullscreen();
                     video.isFullscreen = true;
