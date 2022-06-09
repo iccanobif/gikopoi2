@@ -65,6 +65,7 @@ export default
         chess_quit_game: "Ludi exire",
 
         visible_only_to_specific_users_stream: "Transmissio privata",
+        // double_click_to_move_to_new_tab: "",
     },
     msg:
     {

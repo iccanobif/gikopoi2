@@ -136,6 +136,7 @@ export default
         chess_quit_game: "Sluta spela",
 
         // visible_only_to_specific_users_stream: "",
+        // double_click_to_move_to_new_tab: "",
     },
     msg:
     {

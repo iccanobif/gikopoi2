@@ -139,6 +139,7 @@ export default
         chess_quit_game: "Esci dal gioco",
 
         // visible_only_to_specific_users_stream: "",
+        // double_click_to_move_to_new_tab: "",
     },
     msg:
     {

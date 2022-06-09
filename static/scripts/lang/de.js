@@ -136,6 +136,7 @@ export default
         chess_quit_game: "Spiel verlassen",
 
         visible_only_to_specific_users_stream: "Privater Stream",
+        // double_click_to_move_to_new_tab: "",
     },
     msg:
     {
