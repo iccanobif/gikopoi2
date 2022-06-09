@@ -3248,11 +3248,14 @@ window.vueApp = new Vue({
                 tab.onload = () => {
                     tab.document.title = newTabTitle;
                     tab.document.body.appendChild(video);
+                    // On chromium based browser, for other people's streams, the video
+                    // automatically pauses when it gets moved to another tab, so here i forcefully
+                    // play it again.
+                    video.play();
                 }
                 tab.onbeforeunload = () => {
                     video.isFullscreen = false;
                     originalPreviousSibling.after(video);
-
                 };
                 tab.document.close();
             }
