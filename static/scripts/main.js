@@ -3234,22 +3234,31 @@ window.vueApp = new Vue({
             const video = event.target;
             video.play();
         },
-        onVideoDoubleClick: function(event, slotId)
+        onVideoDoubleClick: async function(event, slotId)
         {
             const video = event.target;
 
             // If this video was already moved to another tab, doubleclicking on it
             // will make it fullscreen. Otherwise, move it to a new tab.
-            if (video.isFullscreen)
+            if (video.isSeparateTab)
             {
-                video.requestFullscreen();
+                if (video.isFullscreen)
+                {
+                    await video.ownerDocument.exitFullscreen()
+                    video.isFullscreen = false;
+                }
+                else
+                {
+                    await video.requestFullscreen();
+                    video.isFullscreen = true;
+                }
             }
             else
             {
                 // On chromium based browser, for other people's streams, the video
                 // might automatically when it gets moved to another tab and need a user interaction
                 // before it can be started again... Make sure to test for that everytime a change is made to this code.
-                video.isFullscreen = true;
+                video.isSeparateTab = true;
                 const originalPreviousSibling = video.previousElementSibling;
                 const tab = open(window.origin + '/video-tab.html');
                 const streamSlot = this.streams[slotId];
@@ -3258,6 +3267,7 @@ window.vueApp = new Vue({
                     tab.document.title = newTabTitle;
                     tab.document.body.appendChild(video);
                     tab.onbeforeunload = () => {
+                        video.isSeparateTab = false;
                         video.isFullscreen = false;
                         originalPreviousSibling.after(video);
                     };
