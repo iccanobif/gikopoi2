@@ -187,6 +187,7 @@ window.vueApp = new Vue({
         streamSlotIdInWhichIWantToStream: null,
         takenStreams: [], // streams taken by me
         slotVolume: JSON.parse(localStorage.getItem("slotVolume")) || {}, // key: slot Id / value: volume
+        detachedStreamTabs: {}, // key: slot Id
 
         // stream settings
         isStreamPopupOpen: false,
@@ -2737,6 +2738,19 @@ window.vueApp = new Vue({
                 Vue.set(this.takenStreams, streamSlotId, false);
 
             this.clientSideStreamData[streamSlotId].isListenerConnected = false
+
+            // If this video element was detached to another tab, reattach it to the current document and close the tab
+            if (this.detachedStreamTabs[streamSlotId])
+            {
+                const video = this.detachedStreamTabs[streamSlotId].document.getElementsByTagName("video")[0];
+                // TODO the following lines are copypasted from the tab's onbeforeunload handler,
+                // would be nice to centralize them somewhere
+                video.isSeparateTab = false;
+                video.isFullscreen = false;
+                video.originalPreviousSibling.after(video);
+                video.originalPreviousSibling = null;
+                this.detachedStreamTabs[streamSlotId].close();
+            }
             
             this.socket.emit("user-want-to-drop-stream", streamSlotId);
 
@@ -3259,17 +3273,26 @@ window.vueApp = new Vue({
                 // might automatically when it gets moved to another tab and need a user interaction
                 // before it can be started again... Make sure to test for that everytime a change is made to this code.
                 video.isSeparateTab = true;
-                const originalPreviousSibling = video.previousElementSibling;
+                video.originalPreviousSibling = video.previousElementSibling;
                 const tab = open(window.origin + '/video-tab.html');
+                this.detachedStreamTabs[slotId] = tab;
                 const streamSlot = this.streams[slotId];
                 const newTabTitle = i18n.t("ui.label_stream", {index: slotId + 1}) + " " + this.toDisplayName(this.users[streamSlot.userId].name);
                 tab.onload = () => {
                     tab.document.title = newTabTitle;
                     tab.document.body.appendChild(video);
                     tab.onbeforeunload = () => {
-                        video.isSeparateTab = false;
-                        video.isFullscreen = false;
-                        originalPreviousSibling.after(video);
+                        // video.isSeparateTab could be false if the stream was dropped while the video was detached
+                        // to a new tab: in that case, streamDrop() forcibly reattaches the video element to the original
+                        // document and closes the tab. In this scenario, there's no need to attempt once more to reattach
+                        // the video again.
+                        if (video.isSeparateTab)
+                        {
+                            video.isSeparateTab = false;
+                            video.isFullscreen = false;
+                            video.originalPreviousSibling.after(video);
+                            video.originalPreviousSibling = null;
+                        }
                     };
                 }
             }
