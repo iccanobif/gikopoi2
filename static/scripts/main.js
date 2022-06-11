@@ -2750,6 +2750,7 @@ window.vueApp = new Vue({
                 video.originalPreviousSibling.after(video);
                 video.originalPreviousSibling = null;
                 this.detachedStreamTabs[streamSlotId].close();
+                this.detachedStreamTabs[streamSlotId] = null;
             }
             
             this.socket.emit("user-want-to-drop-stream", streamSlotId);
@@ -3292,6 +3293,7 @@ window.vueApp = new Vue({
                             video.isFullscreen = false;
                             video.originalPreviousSibling.after(video);
                             video.originalPreviousSibling = null;
+                            this.detachedStreamTabs[slotId] = null;
                         }
                     };
                 }
