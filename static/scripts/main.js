@@ -861,7 +861,6 @@ window.vueApp = new Vue({
 
             this.socket.on("server-rtc-message", async (streamSlotId, type, msg) =>
             {
-                console.log("server-rtc-message", streamSlotId, type, msg);
                 const rtcPeer = rtcPeerSlots[streamSlotId].rtcPeer;
                 if (rtcPeer === null) return;
                 if(type == "offer")
@@ -2746,7 +2745,6 @@ window.vueApp = new Vue({
                 // TODO the following lines are copypasted from the tab's onbeforeunload handler,
                 // would be nice to centralize them somewhere
                 video.isSeparateTab = false;
-                video.isFullscreen = false;
                 video.originalPreviousSibling.after(video);
                 video.originalPreviousSibling = null;
                 this.detachedStreamTabs[streamSlotId].close();
@@ -3257,15 +3255,13 @@ window.vueApp = new Vue({
             // will make it fullscreen. Otherwise, move it to a new tab.
             if (video.isSeparateTab)
             {
-                if (video.isFullscreen)
+                if (video.ownerDocument.fullscreenElement)
                 {
                     await video.ownerDocument.exitFullscreen()
-                    video.isFullscreen = false;
                 }
                 else if (video.requestFullscreen) // requestFullscreen() not available on safari, try webkitRequestFullscreen() one day
                 {
                     await video.requestFullscreen();
-                    video.isFullscreen = true;
                 }
             }
             else
@@ -3290,7 +3286,6 @@ window.vueApp = new Vue({
                         if (video.isSeparateTab)
                         {
                             video.isSeparateTab = false;
-                            video.isFullscreen = false;
                             video.originalPreviousSibling.after(video);
                             video.originalPreviousSibling = null;
                             this.detachedStreamTabs[slotId] = null;
