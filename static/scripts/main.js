@@ -2629,6 +2629,8 @@ window.vueApp = new Vue({
 
             const streamSlotId = this.streamSlotIdInWhichIWantToStream;
 
+            this.reattachVideoFromOtherTabIfDetached(streamSlotId);
+
             document.getElementById("local-video-" + streamSlotId).srcObject = this.mediaStream = null;
 
             this.socket.emit("user-want-to-stop-stream");
@@ -2738,18 +2740,7 @@ window.vueApp = new Vue({
 
             this.clientSideStreamData[streamSlotId].isListenerConnected = false
 
-            // If this video element was detached to another tab, reattach it to the current document and close the tab
-            if (this.detachedStreamTabs[streamSlotId])
-            {
-                const video = this.detachedStreamTabs[streamSlotId].document.getElementsByTagName("video")[0];
-                // TODO the following lines are copypasted from the tab's onbeforeunload handler,
-                // would be nice to centralize them somewhere
-                video.isSeparateTab = false;
-                video.originalPreviousSibling.after(video);
-                video.originalPreviousSibling = null;
-                this.detachedStreamTabs[streamSlotId].close();
-                this.detachedStreamTabs[streamSlotId] = null;
-            }
+            this.reattachVideoFromOtherTabIfDetached(streamSlotId);
             
             this.socket.emit("user-want-to-drop-stream", streamSlotId);
 
@@ -3292,6 +3283,18 @@ window.vueApp = new Vue({
                         }
                     };
                 }
+            }
+        },
+        reattachVideoFromOtherTabIfDetached: function(streamSlotId)
+        {
+            if (this.detachedStreamTabs[streamSlotId])
+            {
+                const video = this.detachedStreamTabs[streamSlotId].document.getElementsByTagName("video")[0];
+                video.isSeparateTab = false;
+                video.originalPreviousSibling.after(video);
+                video.originalPreviousSibling = null;
+                this.detachedStreamTabs[streamSlotId].close();
+                this.detachedStreamTabs[streamSlotId] = null;
             }
         }
     },
