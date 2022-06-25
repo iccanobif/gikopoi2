@@ -374,7 +374,8 @@
                             <tr v-for="room in preparedRoomList"
                                 :id="'room-tr-' + room.id"
                                 v-bind:class="{'popup-row-is-selected': rulaRoomSelection == room.id}"
-                                v-on:click="selectRoomForRula(room.id)">
+                                v-on:click="selectRoomForRula(room.id)"
+                                v-on:dblclick="rula(room.id)">
                                 <td>{{ $t("room." + room.id) }}</td>
                                 <td>{{ room.userCount }}</td>
                                 <td>
