@@ -939,8 +939,6 @@ window.vueApp = new Vue({
             messageDiv.classList.add("message");
 
             messageDiv.dataset.userId = userId
-            if (userId && userId == this.highlightedUserId)
-                messageDiv.classList.add("highlighted-message")
 
             if (!userId && userName == "SYSTEM")
                 messageDiv.classList.add("system-message")
