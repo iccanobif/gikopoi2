@@ -458,6 +458,9 @@ video {
     width: auto;
     height: auto;
     transform: translate(-50%,-50%);
+    
+    max-height: 100%;
+    overflow: auto;
 
     outline: 2px solid #afb1b1;
     background-color: #ffffff;
