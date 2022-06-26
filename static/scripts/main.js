@@ -3122,7 +3122,8 @@ window.vueApp = new Vue({
             {
                 this.highlightedUserId = userId
                 this.highlightedUserName = userName
-                highlightedUserStyle.textContent = '.message[data-user-id="' + userId +'"]{color:red}'
+                // Need to add a rule for .message-author too to override shaddox mode's color
+                highlightedUserStyle.textContent = '.message[data-user-id="' + userId +'"] {color:red} .message[data-user-id="' + userId +'"] .message-author {color:red}'
             }
 
             this.isUsernameRedrawRequired = true;
