@@ -813,11 +813,6 @@ button.checked {
     font-weight: bold;
 }
 
-.highlighted-message
-{
-    color: red;
-}
-
 .system-message
 {
     font-weight: bold;

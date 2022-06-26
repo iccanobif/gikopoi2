@@ -3111,27 +3111,23 @@ window.vueApp = new Vue({
         },
         highlightUser: function(userId, userName)
         {
+            const highlightedUserStyle = document.getElementById("highlighted-user-style")
+
             if (this.highlightedUserId == userId)
             {
                 this.highlightedUserId = null
                 this.highlightedUserName = null
+                highlightedUserStyle.textContent = ''
             }
             else
             {
                 this.highlightedUserId = userId
                 this.highlightedUserName = userName
+                highlightedUserStyle.textContent = '.message[data-user-id="' + userId +'"]{color:red}'
             }
 
             this.isUsernameRedrawRequired = true;
             this.isRedrawRequired = true;
-
-            for (const messageElement of document.getElementsByClassName("message"))
-            {
-                if (messageElement.dataset.userId == this.highlightedUserId)
-                    messageElement.classList.add("highlighted-message")
-                else
-                    messageElement.classList.remove("highlighted-message")
-            }
 
             // Update the canvas objects list so that highlighted users are always displayed on top
             // relative to the other users in the same tile.
