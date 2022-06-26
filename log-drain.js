@@ -37,7 +37,6 @@ app.post("/", async (req, res) =>
         const logs = req.body
         const today = new Date()
         const filename = getFileName(today)
-        console.log(logs)
 
         await fs.appendFile(filename, logs)
 
