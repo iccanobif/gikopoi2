@@ -2393,25 +2393,24 @@ window.vueApp = new Vue({
                 // Automatically select device if there is only one of its kind
                 const audioDevices = this.deviceList.filter(d => d.type == "audioinput")
                 const videoDevices = this.deviceList.filter(d => d.type == "videoinput")
-
                 if (audioDevices.length == 1)
                     this.selectedAudioDeviceId = audioDevices[0].id
-                else
-                    this.selectedAudioDeviceId = null
-
                 if (videoDevices.length == 1)
                     this.selectedVideoDeviceId = videoDevices[0].id
-                else
-                    this.selectedVideoDeviceId = null
+
+                // If a previously selected device isn't available anymore, clear the selection.
+                // This also handles scenarios where, for example, a previous stream used a video device
+                // while this new stream is only audio: in that case videoDevices will be an empty list
+                // and this.selectedVideoDeviceId will be correctly set to null.
+                if (!audioDevices.find(d => d.id == this.selectedAudioDeviceId))
+                    this.selectedAudioDeviceId = null;
+                if (!videoDevices.find(d => d.id == this.selectedVideoDeviceId))
+                    this.selectedVideoDeviceId = null;
 
                 if (this.deviceList.length)
-                {
                     this.isDeviceSelectionOpen = true
-                }
                 else
-                {
                     this.wantToStartStreaming()
-                }
             }
             catch (err)
             {
