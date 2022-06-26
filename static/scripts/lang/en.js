@@ -138,7 +138,7 @@ export default
         chess_quit_game: "Quit game",
 
         visible_only_to_specific_users_stream: "Private stream",
-        double_click_to_move_to_new_tab: "Double click to move to a new tab",
+        double_click_to_move_to_new_tab: "Double click to move to a new tab, double click again to toggle fullscreen",
     },
     msg:
     {

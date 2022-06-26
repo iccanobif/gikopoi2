@@ -138,7 +138,7 @@ export default
         chess_quit_game: "投了",
 
         visible_only_to_specific_users_stream: "特定ユーザーのみに見える配信",
-        double_click_to_move_to_new_tab: "動画配信を新しいタブで開く",
+        double_click_to_move_to_new_tab: "ダブルクリックで動画配信を新しいタブで開く。もう一度ダブルクリックしたら全画面切り替えが出来る。",
     },
     msg:
     {
