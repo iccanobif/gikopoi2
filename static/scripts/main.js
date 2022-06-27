@@ -3261,13 +3261,13 @@ window.vueApp = new Vue({
             // will make it fullscreen. Otherwise, move it to a new tab.
             if (stream.isSeparateTab)
             {
-                if (video.ownerDocument.fullscreenElement)
+                if (videoContainer.ownerDocument.fullscreenElement)
                 {
-                    await video.ownerDocument.exitFullscreen()
+                    await videoContainer.ownerDocument.exitFullscreen()
                 }
-                else if (video.requestFullscreen) // requestFullscreen() not available on safari, try webkitRequestFullscreen() one day
+                else if (videoContainer.requestFullscreen) // requestFullscreen() not available on safari, try webkitRequestFullscreen() one day
                 {
-                    await video.requestFullscreen();
+                    await videoContainer.requestFullscreen();
                 }
             }
             else
