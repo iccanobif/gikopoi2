@@ -2563,7 +2563,12 @@ window.vueApp = new Vue({
                         if (level > 0.2)
                             this.streams[this.streamSlotIdInWhichIWantToStream].isJumping = true
                         else
-                            setTimeout(() => this.streams[this.streamSlotIdInWhichIWantToStream].isJumping = false, 100)
+                            setTimeout(() => {
+                                const stream = this.streams[this.streamSlotIdInWhichIWantToStream]
+                                // handle the case where before this 100 ms delay the stream was closed
+                                if (stream)
+                                    stream.isJumping = false
+                            }, 100)
                         this.$forceUpdate()
                     });
                 }
