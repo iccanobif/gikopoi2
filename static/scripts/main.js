@@ -3235,6 +3235,7 @@ window.vueApp = new Vue({
         onVideoDoubleClick: async function(event, slotId)
         {
             const video = event.target;
+            const videoContainer = video.parentElement
             const stream = this.streams[slotId];
 
             // If this video was already moved to another tab, doubleclicking on it
@@ -3257,14 +3258,14 @@ window.vueApp = new Vue({
                 // before it can be started again... Make sure to test for that everytime a change is made to this code.
                 stream.isSeparateTab = true;
                 this.$forceUpdate() // HACK: this is to force vue to rebind the title attribute of the <video> element
-                video.originalPreviousSibling = video.previousElementSibling;
+                videoContainer.originalPreviousSibling = videoContainer.previousElementSibling;
                 const tab = open(window.origin + '/video-tab.html');
                 this.detachedStreamTabs[slotId] = tab;
                 const streamSlot = this.streams[slotId];
                 const newTabTitle = i18n.t("ui.label_stream", {index: slotId + 1}) + " " + this.toDisplayName(this.users[streamSlot.userId].name);
                 tab.onload = () => {
                     tab.document.title = newTabTitle;
-                    tab.document.body.appendChild(video);
+                    tab.document.body.appendChild(videoContainer);
                     tab.onbeforeunload = () => {
                         // stream.isSeparateTab could be false if the stream was dropped while the video was detached
                         // to a new tab: in that case, streamDrop() forcibly reattaches the video element to the original
@@ -3274,8 +3275,8 @@ window.vueApp = new Vue({
                         {
                             stream.isSeparateTab = false;
                             this.$forceUpdate() // HACK: this is to force vue to rebind the title attribute of the <video> element
-                            video.originalPreviousSibling.after(video);
-                            video.originalPreviousSibling = null;
+                            videoContainer.originalPreviousSibling.after(videoContainer);
+                            videoContainer.originalPreviousSibling = null;
                             this.detachedStreamTabs[slotId] = null;
                         }
                     };
