@@ -136,6 +136,7 @@ export default
 
         // visible_only_to_specific_users_stream: "",
         // double_click_to_move_to_new_tab: "",
+        // double_click_to_toggle_fullscreen: "",
     },
     msg:
     {
