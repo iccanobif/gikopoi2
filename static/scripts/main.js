@@ -3254,10 +3254,12 @@ window.vueApp = new Vue({
         onVideoDoubleClick: async function(event, slotId)
         {
             const video = event.target;
+            const videoContainer = video.parentElement
+            const stream = this.streams[slotId];
 
             // If this video was already moved to another tab, doubleclicking on it
             // will make it fullscreen. Otherwise, move it to a new tab.
-            if (video.isSeparateTab)
+            if (stream.isSeparateTab)
             {
                 if (video.ownerDocument.fullscreenElement)
                 {
@@ -3273,41 +3275,48 @@ window.vueApp = new Vue({
                 // On chromium based browser, for other people's streams, the video
                 // might automatically when it gets moved to another tab and need a user interaction
                 // before it can be started again... Make sure to test for that everytime a change is made to this code.
-                video.isSeparateTab = true;
-                video.originalPreviousSibling = video.previousElementSibling;
+                stream.isSeparateTab = true;
+                this.$forceUpdate() // HACK: this is to force vue to rebind the title attribute of the <video> element
+                videoContainer.originalPreviousSibling = videoContainer.previousElementSibling;
                 const tab = open(window.origin + '/video-tab.html');
                 this.detachedStreamTabs[slotId] = tab;
                 const streamSlot = this.streams[slotId];
                 const newTabTitle = i18n.t("ui.label_stream", {index: slotId + 1}) + " " + this.toDisplayName(this.users[streamSlot.userId].name);
                 tab.onload = () => {
                     tab.document.title = newTabTitle;
-                    tab.document.body.appendChild(video);
+                    tab.document.body.appendChild(videoContainer);
                     tab.onbeforeunload = () => {
-                        // video.isSeparateTab could be false if the stream was dropped while the video was detached
+                        // stream.isSeparateTab could be false if the stream was dropped while the video was detached
                         // to a new tab: in that case, streamDrop() forcibly reattaches the video element to the original
                         // document and closes the tab. In this scenario, there's no need to attempt once more to reattach
                         // the video again.
-                        if (video.isSeparateTab)
+                        if (stream.isSeparateTab)
                         {
-                            video.isSeparateTab = false;
-                            video.originalPreviousSibling.after(video);
-                            video.originalPreviousSibling = null;
+                            stream.isSeparateTab = false;
+                            this.$forceUpdate() // HACK: this is to force vue to rebind the title attribute of the <video> element
+                            videoContainer.originalPreviousSibling.after(videoContainer);
+                            videoContainer.originalPreviousSibling = null;
                             this.detachedStreamTabs[slotId] = null;
                         }
                     };
                 }
+
+
+                
             }
         },
-        reattachVideoFromOtherTabIfDetached: function(streamSlotId)
+        reattachVideoFromOtherTabIfDetached: function(slotId)
         {
-            if (this.detachedStreamTabs[streamSlotId])
+            if (this.detachedStreamTabs[slotId])
             {
-                const video = this.detachedStreamTabs[streamSlotId].document.getElementsByTagName("video")[0];
-                video.isSeparateTab = false;
+                const video = this.detachedStreamTabs[slotId].document.getElementsByTagName("video")[0];
+                const stream = this.streams[slotId];
+
+                stream.isSeparateTab = false;
                 video.originalPreviousSibling.after(video);
                 video.originalPreviousSibling = null;
-                this.detachedStreamTabs[streamSlotId].close();
-                this.detachedStreamTabs[streamSlotId] = null;
+                this.detachedStreamTabs[slotId].close();
+                this.detachedStreamTabs[slotId] = null;
             }
         },
         getAvatarSpriteForUser: function(userId)
