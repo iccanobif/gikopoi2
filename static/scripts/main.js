@@ -3300,21 +3300,18 @@ window.vueApp = new Vue({
                         }
                     };
                 }
-
-
-                
             }
         },
         reattachVideoFromOtherTabIfDetached: function(slotId)
         {
             if (this.detachedStreamTabs[slotId])
             {
-                const video = this.detachedStreamTabs[slotId].document.getElementsByTagName("video")[0];
+                const videoContainer = this.detachedStreamTabs[slotId].document.getElementById("video-container-" + slotId);
                 const stream = this.streams[slotId];
 
                 stream.isSeparateTab = false;
-                video.originalPreviousSibling.after(video);
-                video.originalPreviousSibling = null;
+                videoContainer.originalPreviousSibling.after(videoContainer);
+                videoContainer.originalPreviousSibling = null;
                 this.detachedStreamTabs[slotId].close();
                 this.detachedStreamTabs[slotId] = null;
             }
