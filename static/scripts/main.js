@@ -2578,7 +2578,7 @@ window.vueApp = new Vue({
                     withVideo: withVideo,
                     withSound: withSound,
                     isVisibleOnlyToSpecificUsers: this.streamTarget == "specific_users",
-                    streamIsVtuberMode: this.streamIsVtuberMode,
+                    streamIsVtuberMode: withVideo && this.streamIsVtuberMode,
                     info: []
                         .concat(this.mediaStream.getAudioTracks().map(t => ({
                             constraints: t.getConstraints && t.getConstraints(),

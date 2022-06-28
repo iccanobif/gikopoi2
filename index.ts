@@ -522,6 +522,7 @@ io.on("connection", function (socket: Socket)
                      "streamSlotId:", streamSlotId,
                      "room:", user.roomId,
                      "isVisibleOnlyToSpecificUsers:", isVisibleOnlyToSpecificUsers,
+                     "streamIsVtuberMode:", streamIsVtuberMode,
                      JSON.stringify(info))
 
             const roomState = roomStates[user.areaId][user.roomId];

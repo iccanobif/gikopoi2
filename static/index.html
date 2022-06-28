@@ -506,7 +506,7 @@
                             for="stream-form-visible-only-to-specific-users">{{ $t("ui.stream_form_visible_only_to_specific_users") }}</label>
 
                     </div>
-                    <div class='popup-item' v-if="streamMode == 'video_sound'">
+                    <div class='popup-item' v-if="streamMode == 'video_sound' || streamMode == 'video'">
                         <input type="checkbox" id="stream-form-vtuber-mode" v-model="streamIsVtuberMode"><label
                             for="stream-form-vtuber-mode">{{ $t("ui.stream_form_vtuber_mode") }}</label>
                     </div>
