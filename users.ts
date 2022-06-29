@@ -31,7 +31,7 @@ export class Player
     public isInactive = false;
     public bubblePosition: Direction = "up";
     public lastRoomMessage: string = "";
-    public ip: string;
+    public ips: Set<string>;
     public voicePitch: number;
     public socketId: string | null = null;
     public blockedIps: string[] = [];
@@ -67,7 +67,7 @@ export class Player
         if (typeof options.name === "string") this.name = options.name
         this.characterId = options.characterId
         this.areaId = options.areaId
-        this.ip = options.ip
+        this.ips = new Set<string>([options.ip])
         lastUsedVoicePitchIndex = (lastUsedVoicePitchIndex + 1) % possibleVoicePitches.length
         this.voicePitch = possibleVoicePitches[lastUsedVoicePitchIndex]
     }
@@ -95,7 +95,7 @@ export function getUsersByIp(ip: string, areaId: string | null): Player[]
 {
     return Object.values(users)
         .filter(u => !areaId || u.areaId == areaId)
-        .filter(u => u.ip == ip)
+        .filter(u => u.ips.has(ip))
 }
 
 export function getAllUsers(): Player[]
@@ -131,6 +131,8 @@ export function restoreUserState(persistedUsers: Player[])
     {
         user.isGhost = true;
         user.disconnectionTime = Date.now()
+        if (typeof user.ips === "string")
+            user.ips = new Set([user.ips])
         if (user.blockedIps === undefined)
             user.blockedIps = []
         if (user.lastMessageDates === undefined)
@@ -146,12 +148,16 @@ export function getFilteredConnectedUserList(user: Player, roomId: string | null
 {
     return getConnectedUserList(roomId, areaId)
         .filter((u) => u.id == user.id
-            || (!user.blockedIps.includes(u.ip)
-                && !u.blockedIps.includes(user.ip)))
+            || (!isUserBlocking(user, u) && !isUserBlocking(u, user)))
 }
 
 export function setUserAsActive(user: Player)
 {
     user.isInactive = false
     user.lastAction = Date.now()
+}
+
+export function isUserBlocking(blocker: Player, blocked: Player)
+{
+    return blocker.blockedIps.some(blockedIp => blocked.ips.has(blockedIp))
 }

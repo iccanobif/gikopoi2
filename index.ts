@@ -1,7 +1,7 @@
 import express, { Request } from "express"
 import { buildRiverRoom, calculateCurrentRiverType, rooms } from "./rooms";
 import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, Room } from "./types";
-import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
+import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users";
 import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
@@ -194,7 +194,7 @@ const sendRoomState = (socket: Socket, user: Player, currentRoom: Room) =>
         streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams),
         chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId),
         coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
-        hideStreams: settings.noStreamIPs.includes(user.ip),
+        hideStreams: settings.noStreamIPs.some(noStreamIP => user.ips.has(noStreamIP)),
     }
 
     socket.emit("server-update-current-room-state", state)
@@ -366,7 +366,7 @@ io.on("connection", function (socket: Socket)
 
             // Log only if non empty message
             if (msg)
-                log.info("MSG:", user.ip, user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg.replace(/[\n\r]+/g, "<br>"));
+                log.info("MSG:", user.ips, user.id, user.areaId, user.roomId, "<" + user.name + ">" + ": " + msg.replace(/[\n\r]+/g, "<br>"));
 
             user.lastAction = Date.now()
 
@@ -552,9 +552,9 @@ io.on("connection", function (socket: Socket)
             if (stream.isActive && stream.publisher !== null)
             {
                 log.info("server-not-ok-to-stream", user.id)
-                if (stream.publisher.user.blockedIps.includes(user.ip))
+                if (isUserBlocking(stream.publisher.user, user))
                     socket.emit("server-not-ok-to-stream", "start_stream_stream_slot_already_taken_by_blocking_streamer")
-                else if (user.blockedIps.includes(stream.publisher.user.ip))
+                else if (isUserBlocking(user, stream.publisher.user))
                     socket.emit("server-not-ok-to-stream", "start_stream_stream_slot_already_taken_by_blocked_streamer")
                 else
                     socket.emit("server-not-ok-to-stream", "start_stream_stream_slot_already_taken")
@@ -620,7 +620,7 @@ io.on("connection", function (socket: Socket)
             const stream = roomState.streams[streamSlotId];
 
             if (stream.publisher === null
-                || stream.publisher.user.blockedIps.includes(user.ip)
+                || isUserBlocking(stream.publisher.user, user)
                 || stream.publisher.janusHandle === null
                 || stream.janusServer === null
                 || (stream.isVisibleOnlyToSpecificUsers && !stream.allowedListenerIDs.find(id => id == user.id))
@@ -928,12 +928,14 @@ io.on("connection", function (socket: Socket)
             log.info("user-block", user.id, userId)
             const blockedUser = getUser(userId);
             if (!blockedUser) return; // TODO Return a message to tell the user that the blocking failed
-            user.blockedIps.push(blockedUser.ip);
+
+            for (const ip of blockedUser.ips)
+                user.blockedIps.push(ip);
 
             const streams = roomStates[user.areaId][user.roomId].streams;
 
             getConnectedUserList(user.roomId, user.areaId)
-                .filter((u) => u.socketId && user.blockedIps.includes(u.ip))
+                .filter((u) => u.socketId && isUserBlocking(user, u))
                 .forEach((u) =>
             {
                 io.to(u.socketId!).emit("server-user-left-room", user.id)
@@ -1151,7 +1153,7 @@ function emitServerStats(areaId: string)
     const allConnectedUsers = getAllUsers().filter(u => !u.isGhost)
     const allForUsers = allConnectedUsers.filter(u => u.areaId == "for")
     const allGenUsers = allConnectedUsers.filter(u => u.areaId == "gen")
-    const allIps = new Set(allConnectedUsers.map(u => u.ip))
+    const allIps = new Set(allConnectedUsers.map(u => Array.from(u.ips.values())).flat())
     const forStreamCount = Object.values(roomStates["for"]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
     const genStreamCount = Object.values(roomStates["gen"]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
 
@@ -1200,7 +1202,7 @@ function roomEmit(areaId: string, roomId: string, ...msg: any[])
 
 function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSlotDto[]
 {
-    if (settings.noStreamIPs.includes(user.ip))
+    if (settings.noStreamIPs.some(noStreamIP => user.ips.has(noStreamIP)))
         return []
 
     return streamSlots.map((s) =>
@@ -1208,8 +1210,8 @@ function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSl
         const publisherUser = (s.publisher !== null ? s.publisher.user : null);
         const isInactive = !publisherUser
             || (user && publisherUser.id != user.id
-                && (user.blockedIps.includes(publisherUser.ip)
-                || publisherUser.blockedIps.includes(user.ip)));
+                && (isUserBlocking(user, publisherUser)
+                    || isUserBlocking(publisherUser, user)));
         return {
             isActive: isInactive ? false : s.isActive,
             isReady: isInactive ? false : s.isReady,
@@ -1544,7 +1546,7 @@ app.post("/user-list", (req, res) => {
                                                     + " &lt;" + user.name +  "&gt;"
                                                     + user.lastRoomMessage
                                                     + " streaming: " + (streamSlots.find(s=> s.publisher !== null && s.publisher.user == user) ? "Y" : "N")
-                                                    + " " + user.ip
+                                                    + " " + user.ips
                                                     + "</label>").join("</br>")
 
         const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
@@ -1614,7 +1616,8 @@ app.post("/ban", async (req, res) => {
         for (const id of userIdsToBan)
         {
             const user = getUser(id)
-            await banIP(user.ip)
+            for (const ip of user.ips)
+                await banIP(ip)
         }
         res.end("done")
     }
