@@ -3283,11 +3283,14 @@ window.vueApp = new Vue({
                 tab.onload = () => {
                     tab.document.title = newTabTitle;
                     tab.document.body.appendChild(videoContainer);
-                    tab.onbeforeunload = () => {
+                    // listen to onunload too for mobile support, android doesn't trigger onbeforeunload
+                    tab.onunload = tab.onbeforeunload = () => {
                         // stream.isSeparateTab could be false if the stream was dropped while the video was detached
                         // to a new tab: in that case, streamDrop() forcibly reattaches the video element to the original
                         // document and closes the tab. In this scenario, there's no need to attempt once more to reattach
                         // the video again.
+                        // Checking isSeparateTab is also useful to handle correctly browsers that raise both unload 
+                        // and beforeunload events
                         if (stream.isSeparateTab)
                         {
                             stream.isSeparateTab = false;
