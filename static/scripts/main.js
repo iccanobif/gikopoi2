@@ -2561,15 +2561,14 @@ window.vueApp = new Vue({
                         vuMeterBarPrimary.style.width = level * 100 + "%"
 
                         if (level > 0.2)
-                            this.streams[this.streamSlotIdInWhichIWantToStream].isJumping = true
+                            Vue.set(this.streams[this.streamSlotIdInWhichIWantToStream], "isJumping", true)
                         else
                             setTimeout(() => {
                                 const stream = this.streams[this.streamSlotIdInWhichIWantToStream]
                                 // handle the case where before this 100 ms delay the stream was closed
                                 if (stream)
-                                    stream.isJumping = false
+                                    Vue.set(stream, "isJumping", false)
                             }, 100)
-                        this.$forceUpdate()
                     });
                 }
 
@@ -2729,10 +2728,9 @@ window.vueApp = new Vue({
                                 vuMeterBarPrimary.style.width = level * 100 + "%"
                                 
                                 if (level > 0.2)
-                                    this.streams[streamSlotId].isJumping = true
+                                    Vue.set(this.streams[streamSlotId], "isJumping", true)
                                 else
-                                    setTimeout(() => this.streams[streamSlotId].isJumping = false, 100)
-                                this.$forceUpdate()
+                                    setTimeout(() => Vue.set(this.streams[streamSlotId], "isJumping", false), 100)
                             })
                         }
                     }
