@@ -121,10 +121,15 @@ export function removeUser(user: Player)
 
 export function restoreUserState(persistedUsers: Player[])
 {
-    users = persistedUsers.reduce((acc, val) => { 
-            acc[val.id] = val; 
-            return acc; 
-        }, {} as { [id: string]: Player; })
+    users = persistedUsers.reduce((acc, val) => {
+        // code that needs to be run only the first time the switch from "ip" to "ips" goes to production
+        const ip = (val as any).ip
+        if (ip)
+            val.ips = new Set([ip])
+        
+        acc[val.id] = val;
+        return acc;
+    }, {} as { [id: string]: Player; })
 
     // Initialize all users as ghosts (they'll be unflagged when users connect again through the websocket)
     for (const user of Object.values(users))
@@ -133,13 +138,6 @@ export function restoreUserState(persistedUsers: Player[])
         user.disconnectionTime = Date.now()
         if (typeof user.ips === "string")
             user.ips = new Set([user.ips])
-        if (user.blockedIps === undefined)
-            user.blockedIps = []
-        if (user.lastMessageDates === undefined)
-            user.lastMessageDates = []
-        if (user.lastRoomMessage.match(/(合言葉)|(あいことば)|(アイコトバ)|aikotoba/gi))
-            user.lastRoomMessage = "٩(ˊᗜˋ*)و"
-        user.lastRoomMessage = user.lastRoomMessage?.replace(/bread/g, "cocaine")
     }
     console.info("Restored user state (" + Object.values(users).length + " users)")
 }
