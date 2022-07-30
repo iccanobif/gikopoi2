@@ -116,6 +116,7 @@ export const characters = {
     shiinigami: new Character("shiinigami", "svg", !annualEvents.spooktober.isNow()),
     youkanman: new Character("youkanman", "svg", true),
     baba_shobon: new Character("baba_shobon", "svg", true),
+    uzukumari: new Character("uzukumari", "svg", false),
 }
 
 export const loadCharacters = async (crispMode) => {
