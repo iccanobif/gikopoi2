@@ -1670,6 +1670,33 @@ window.vueApp = new Vue({
             context.lineTo(cc_x, co.y);
             context.lineTo(cc_x, cc_y);
             context.stroke();
+
+            // y-ward lines
+            for (let x = 0; x <= this.currentRoom.size.x; x++)
+            {
+                const startCoordinates = calculateRealCoordinates(this.currentRoom, x, 0);
+                const endCoordinates = calculateRealCoordinates(this.currentRoom, x, this.currentRoom.size.y);
+                context.beginPath();
+                context.moveTo(co.x + this.getCanvasScale() * startCoordinates.x, 
+                               co.y + this.getCanvasScale() * (startCoordinates.y - this.blockHeight / 2));
+                context.lineTo(co.x + this.getCanvasScale() * endCoordinates.x, 
+                               co.y + this.getCanvasScale() * (endCoordinates.y - this.blockHeight / 2));
+                context.stroke();
+            }
+
+            // x-ward lines
+            for (let y = 0; y <= this.currentRoom.size.y; y++)
+            {
+                const startCoordinates = calculateRealCoordinates(this.currentRoom, 0, y);
+                const endCoordinates = calculateRealCoordinates(this.currentRoom, this.currentRoom.size.x, y);
+                context.beginPath();
+                context.moveTo(co.x + this.getCanvasScale() * startCoordinates.x, 
+                               co.y + this.getCanvasScale() * (startCoordinates.y - this.blockHeight / 2));
+                context.lineTo(co.x + this.getCanvasScale() * endCoordinates.x, 
+                               co.y + this.getCanvasScale() * (endCoordinates.y - this.blockHeight / 2));
+                context.stroke();
+            }
+
         },
 
         drawSpecialObjects: function () {
