@@ -3788,15 +3788,6 @@ export const rooms: { [roomId: string]: Room } = {
     }
 };
 
-
-
-
-
-
-
-
-
-
 const regularKonbini: Room = {
     id: "konbini",
     group: "gikopoipoi",
@@ -3908,14 +3899,59 @@ const summerKonbini: Room = {
     streamSlotCount: 1,
 }
 
+const summerIrori: Room = {
+    id: "irori",
+    group: "gikopoipoi",
+    scale: 1,
+    size: { x: 7, y: 11 },
+    originCoordinates: { x: 0, y: 361 },
+    spawnPoint: "door",
+    backgroundImageUrl: "rooms/irori/background.winter.svg",
+    objects: [
+        { x:  100, y:  100, width: 1, offset: { x: 0, y: 0 }, url: "top.winter.svg"},
+    ],
+    objectRenderSortMethod: "priority",
+    sit: [
+        { x: 1, y: 4 }, { x: 1, y: 5 }, { x: 1, y: 6 },
+        { x: 2, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 3 },
+        { x: 2, y: 7 }, { x: 3, y: 7 }, { x: 4, y: 7 },
+        { x: 5, y: 4 }, { x: 5, y: 5 }, { x: 5, y: 6 },
+    ],
+    blocked: [
+        { x: 0, y: 6 },
+        { x: 0, y: 4 },
+        { x: 0, y: 3 },
+        { x: 0, y: 2 },
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
+        { x: 2, y: 0 },
+        { x: 1, y: 2 },
+        // fireplace
+        { x: 2, y: 4 }, { x: 2, y: 5 }, { x: 2, y: 6 },
+        { x: 3, y: 4 }, { x: 3, y: 5 }, { x: 3, y: 6 },
+        { x: 4, y: 4 }, { x: 4, y: 5 }, { x: 4, y: 6 },
+    ],
+    forbiddenMovements: [
+        // { xFrom: 0, yFrom: 2, xTo: 1, yTo: 2 },
+        // { xFrom: 1, yFrom: 2, xTo: 0, yTo: 2 },
+    ],
+    doors: {
+        door: { x: 0, y: 10, direction: "right", target: { roomId: "irori", doorId: "door" } },
+    },
+    streamSlotCount: 1,
+}
+
+
 // In the frontend there's a thing called annualevents.js... I'm lazy so I'll just
 // reimplement here the logic for deciding if it's summer or not. Not even sure I'm
 // handling the edge cases right.
 const today = new Date()
-const isSummer = new Date(today.getFullYear(), 6, 21) < today
-                 && today < new Date(today.getFullYear(), 9, 21)
+const isSummer = new Date(today.getFullYear(), 6, 21) < today && today < new Date(today.getFullYear(), 9, 21)
+const isAutumn = new Date(today.getFullYear(), 9, 22) < today && today < new Date(today.getFullYear(), 12, 20)
+const isWinter = today > new Date(today.getFullYear(), 12, 21) || today < new Date(today.getFullYear(), 3, 19)
 
-if (isSummer)
-    rooms["konbini"] = summerKonbini
-else
-    rooms["konbini"] = regularKonbini
+rooms["konbini"] = isSummer ? summerKonbini : regularKonbini
+rooms["irori"] = isSummer ? summerIrori 
+                 : isWinter ? summerIrori // winterIrori
+                 : isAutumn ? summerIrori // autumnIrori
+                 : summerIrori
