@@ -1,0 +1,227 @@
+export default
+{
+    lang_name: "Türkçe",
+    default_user_name: "Anonim",
+    message_colon: ": ",
+    test: "test",
+    ui:
+    {
+        title: "Gikopoipoi",
+        subtitle: "Gayriresmi tekrar yapımı",
+        
+        login_user_count: "Kullanıcılar: ",
+        login_streamer_count: "Yayıncılar: ",
+        
+        infobox_label_area: "Bölge:",
+        infobox_label_room: "Oda:",
+        infobox_label_user_name: "İsim:",
+        infobox_label_user_count: "Kullanıcılar:",
+        infobox_label_stream_count: "Yayınlar:",
+        
+        label_username: "Kullanıcı adı:",
+        label_stream: "Kanal {index}: ",
+        label_input: "Girdi:",
+        label_log: "Defter:",
+
+        button_send: "Gönder",
+        button_stream_start: "Yayını başlat",
+        button_stream_stop: "Yayını durdur",
+        button_stream_take: "Yayını izle",
+        button_stream_drop: "İzlemeyi bırak",
+        button_rula: "#rula",
+        button_list: "#list",
+        button_preferences: "Seçenekler",
+        button_logout: "Çıkış yap",
+        volume: "Ses: ",
+        enable_compression: "Boost: ",
+        sound_effect: "Ses",
+        tts_volume: "SYS Sesi",
+        label_move: "Yürü",
+        label_bubble: "Balon",
+        
+        popup_button_ok: "Tamam",
+        popup_button_cancel: "İptal",
+        
+        warning_toast_title: "Uyarı",
+        
+        rula_menu_title: "Oda Bilgisi",
+        rula_menu_column_room_name: "Oda İsmi",
+        rula_menu_column_user_count: "Kullanıcılar",
+        rula_menu_column_streamers: "Yayıncılar",
+        rula_menu_button_rula: "Rula",
+        rula_menu_label_group: "Bölge",
+        rula_menu_group_option_all: "Hepsi",
+
+        user_list_popup_title: "Kullanıcı Listesi (toplam: @USER_COUNT@)",
+        user_list_popup_column_user_name: "Kullanıcı ismi",
+        user_not_in_room: "Bu kullanıcı bu odada değil.",
+        user_inactive: "Bu kullanıcı aktif değil.",
+        user_list_popup_ignore: "Yoksay",
+        user_list_popup_unignore: "Yoksaymayı Bırak",
+        user_list_popup_block: "Engelle",
+        user_list_popup_close: "Kapat",
+        user_list_popup_blurb: "Uyarı: Yoksayılan kullanıcıyı görmeyi bırakırsın fakat o seni görmeye devam eder. <br>Engellenen kullanıcı tekrar bağlansa bile engelli kalır.<br/>'Yayın kitlesi' eğer 'Yalnızca belirli kullanıcılar' olarak seçilirse hangi kullanıcıların yayını izleyececeğini 'Yayını göster' tuşuyla seçmek mümkündür.",
+        user_list_popup_give_stream: "Yayını göster",
+        user_list_popup_revoke_stream: "Yayını feshet",
+        
+        stream_form_title: "Yayın Ayarları",
+        stream_form_mode: "Mod:",
+        stream_form_video_sound_mode: "Görüntü + Ses",
+        stream_form_sound_only_mode: "Sadece ses",
+        stream_form_video_only_mode: "Sadece video",
+        stream_form_show_advanced: "Gelişmiş Ayarları Göster",
+        stream_form_hide_advanced: "Gelişmiş Ayarları Gizle",
+        stream_form_echo_cancellation: "Yankı Giderimi",
+        stream_form_noise_suppression: "Gürültü Azaltma",
+        stream_form_auto_gain: "Otomatik Gain Kontrolü",
+        stream_form_button_stream: "Yayını Başlat",
+        stream_form_screen_capture: "Ekran Paylaşımı",
+        stream_form_screen_capture_audio: "Ekran Sesi Paylaşımı",
+        stream_form_screen_capture_audio_notice: "Bu özellik deneyseldir. Yalnızca Chrome ve Edge için. \nWindows'ta  yalnızca ekran sesi ya da sekmenin sesi paylaşılabilir",
+        stream_form_stream_target: "Yayın kitlesi",
+        stream_form_visible_to_all_room : "Odadaki bütün kullanıcılar",
+        stream_form_visible_only_to_specific_users: "Yalnızca belirli kullanıcılar",
+        stream_form_vtuber_mode: "VTuber modu",
+
+        device_selection_title: "Aygıt seç",
+        device_selection_audio_devices: "Ses aygıtları",
+        device_selection_video_devices: "Video aygıtları",
+        
+        preferences_title: "Seçenekler",
+        preferences_name_bg: "Kullanıcı Adı Arkaplanı Göster",
+        preferences_shift_enter: "Shift+Enter Satırbaşı Yapar",
+        preferences_bubble_opacity: "Konuşma Balonu Opasitesi",
+        preferences_dark_mode: "Shaddox Modu",
+        preferences_command_section_visible: "Komut Butonlarını Göster",
+        preferences_move_section_visible: "Yürüme Butonlarını Göster",
+        preferences_bubble_section_visible: "Balon Butonlarını Göster",
+        preferences_logout_button_visible: "Çıkış Yap Butonunu Göster",
+        preferences_show_notifications: "Masaüstü Bildirimlerini Göster",
+        preferences_enable_text_to_speech: "Etkinleştir",
+        preferences_tts_voice: "Ses",
+        preferences_tts_voice_automatic: "Otomatik",
+        preferences_tts_voice_animalese: "Animalese",
+        notifications_are_denied: "Bu sitenin şuanda bildirimleri gösterme izni yok.\nLütfen tarayıcı ayarlarını kontrol edin.",
+        preferences_title_general: "Genel",
+        preferences_title_game: "Oyun",
+        preferences_title_toolbar: "Araç çubuğu",
+        preferences_title_tts: "Sesli Yanıt Sistemi",
+        preferences_title_notifications: "Bildirimler",
+        preferences_message_sound_enabled: "Mesaj Sesi",
+        preferences_login_sound_enabled: "Kullanıcı Giriş Sesi",
+        preferences_name_mention_sound_enabled: "Kullanıcı Adı Bahsedilme Sesi",
+        preferences_custom_mention_sound_pattern: "Özel Bahsedilme Ses Biçimi",
+        preferences_custom_mention_sound_notice: "Virgülle ayrılmış kelimeler ya da Regex.\nKelimeyi ya da Regex'i bulunduran mesajlar bahsedilme sesini tetikler.",
+        preferences_underlined_usernames: "Kullanıcı İsimlerinin Altını Çiz",
+        preferences_low_quality: "Düşük Kalite",
+        preferences_crisp_mode: "Canlı",
+        preferences_timestamps_in_copied_log: "Kopyalanan defterler zaman bilgisini içerir",
+        preferences_ignore_indicator_in_log: "Defterde yoksayılan kullanıcıların gönderdiği mesajların yerine bir ibre gösterilir",
+        preferences_language: "Dil",
+        preferences_enable_coin_sound: "Ses efektleri",
+
+        preferences_title_streams: "Yayınlar",
+        preferences_streams_auto_resume: "Otomatik sürdür",
+        preferences_streams_inbound_vu_meter_enabled: "İzlenilen yayın için VU metre göster",
+        preferences_title_chat: "Sohbet",
+        preferences_clear_log: "Sohbet defterini temizle",
+
+        back_to_homepage: "Ana sayfaya geri dön",
+
+        chess_slot_title: "Satranç",
+        chess_waiting_for_white: "Beyazın girmesi bekleniyor...",
+        chess_waiting_for_black: "Siyahın girmesi bekleniyor...",
+        chess_white: "Beyaz: ",
+        chess_black: "Siyah: ",
+        chess_display_game: "Oyunu göster",
+        chess_hide_game: "Oyunu gizle",
+        chess_join_game: "Oyuna katıl",
+        chess_quit_game: "Oyundan çık",
+
+        visible_only_to_specific_users_stream: "Özel yayın",
+        double_click_to_move_to_new_tab: "Yeni sekmeye gitmek için çift tıklayın",
+        double_click_to_toggle_fullscreen: "Tam ekran için çift tıklayın",
+    },
+    msg:
+    {
+        no_other_users_in_this_room: "Bu odada başka kullanıcı yok!",
+        connection_lost: "Tekrar bağlanılıyor...",
+        connection_refused: "Bağlantı Koptu, lütfen sayfayı yenileyin.",
+        page_refresh_required: "Güncelleme hazır, lütfen sayfayı yenileyin.",
+        
+        error_obtaining_media: "Medya alınamıyor. Lütfen tarayıcı izinlerini kontrol edin.",
+        error_obtaining_video: "Video alınamıyor. Lütfen tarayıcı izinlerini kontrol edin.",
+        error_obtaining_audio: "Ses alınamıyor. Lütfen tarayıcı izinlerini kontrol edin.",
+        no_webrtc: "Üzgünüz, tarayıcınız WebRTC desteklemiyor.",
+        error_didnt_select_device: "Lütfen bir aygıt seçin.",
+        
+        unknown_error: "Bağlantı bilinmedik bir hatadan dolayı koptu.",
+        invalid_username: "Geçersiz kullanıcı adı.",
+        ip_restricted: "Bu IP adresiyle zaten 2 kere bağlandınız.",
+        start_stream_stream_slot_already_taken: "Başkası bu kanalda yayın yapıyor.",
+        start_stream_stream_slot_already_taken_by_blocked_streamer: "Engellediğin biri bu kanalda yayın yapıyor.",
+        start_stream_stream_slot_already_taken_by_blocking_streamer: "Seni engellemiş olan biri bu kanalda yayın yapıyor",
+        start_stream_unknown_error: "Yayın başlatılamıyor.",
+        are_you_sure_you_want_to_logout: "Çıkış yapmak istediğine emin misin?",
+        are_you_sure_you_want_to_block: "Bu kullanıcıyı engellemek istediğine emin misin?",
+        goodbye: "Görüşmek üzere!",
+        flood_warning: "Hey, biraz fazla hızlı konuşmuyor musun? Gönderilmemiş mesaj: ",
+        chess_timeout_reached: "Satranç oyun sona serdi: zaman aşımına uğradı.",
+        chess_win: "Satranç oyun sona serdi: kazanan @USER_NAME@.",
+        chess_quit: "Satranç oyun sona serdi: @USER_NAME@ oyundan çıktı.",
+        
+        are_you_sure_you_want_to_clear_log: "Sohbet defterini temizlemek istediğine emin misin?",
+        chat_log_cleared: "Sohbet defteri temizlendi.",
+    },
+    room:
+    {
+        long_st: "Yılanbalığı Yolu", // Eel road/way/alley
+        jinja: "Tapınak",
+        jinja_st: "Tapınak Girişi",
+        school_ground: "Okul: Okul Bahçesi",
+        bar774: "Yeraltı Kasabası: Bar 774",
+        izakaya774: "Yeraltı Kasabası: Sarhoş'un Barı", // Izakaya Anonymous
+        basement: "Yeraltı Kasabası",
+        bar: "Bar",
+        school_st: "Okul kavşağı", // School street
+        bar_st: "Bar Sokağı",
+        admin_st: "Kanrinin Sokağı", // Development Bureau/Department Street
+        admin: "Geliştirici Salonu", // Development Bureau/Department
+        admin_bar: "Admin Barı", // Secret bar
+        cafe_st: "Cafe Vista", // Cafe street
+        enkai: "Ziyafet Salonu",
+        idoA: "Kuyu A",
+        idoB: "Kuyu B",
+        busstop: "Otobüs Durağı",
+        school: "Okul: Sınıf",
+        school_rouka: "Okul: Koridor",
+        school_international: "Okul: Kültür Odası", // International classroom
+        school_pc: "Okul Bilgisayar Labı",
+        seashore: "Deniz kıyısı",
+        radio: "Radyo Stüdyosu", // Radio station
+        radio_room1: "Radyo Stüdyosu 1", // Radio station studio 1
+        radio_room2: "Radyo Stüdyosu 2: BEAT GIKO", // Radio station studio 2 BEAT GIKO
+        radio_room3: "Radyo Stüdyosu 3: G-SQUID",
+        radio_gakuya: "Radyo Stüdyosu: Soyunma Odası",
+        radio_backstage: "Radyo Stüdyosu: Yeşil Oda", // Backstage/Behind the scenes/offstage
+        yatai: "Suşici", // (Ramen) vendor/stand/stall/food cart
+        kaidan: "Tepe merdivenleri",
+        takadai: "Doruk", // High ground/elevation
+        yoshinoya: "Yoshinoya",
+        silo: "Silo",
+        badend: "Düşüp öldün!",
+        bar_giko: "Bar Giko",
+        bar_giko2: "Bar Giko Alt Kat",
+        bar_giko_square: "Çeşme Meydanı",
+        densha: "Tren",
+        monachat: "Monachat",
+        konbini: "Bakkal",
+        nerd_office: "Hacker Ofisi",
+    },
+    area:
+    {
+        gikopoipoi: "Gikopoipoi",
+        gikopoi: "Deniz Şehri",
+        bar_giko: "Bar Giko Kasabası",
+    }
+}

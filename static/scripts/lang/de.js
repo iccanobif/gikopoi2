@@ -79,6 +79,7 @@ export default
         stream_form_stream_target: "Stream-Ziel",
         stream_form_visible_to_all_room : "Alle Benutzer im Raum",
         stream_form_visible_only_to_specific_users: "Nur bestimmte Benutzer",
+        // stream_form_vtuber_mode: "",
         
         device_selection_title: "Geräteauswahl",
         device_selection_audio_devices: "Audiogeräte",
@@ -134,6 +135,10 @@ export default
         chess_hide_game: "Spiel ausblenden",
         chess_join_game: "Spiel beitreten",
         chess_quit_game: "Spiel verlassen",
+
+        visible_only_to_specific_users_stream: "Privater Stream",
+        // double_click_to_move_to_new_tab: "",
+        // double_click_to_toggle_fullscreen: "",
     },
     msg:
     {

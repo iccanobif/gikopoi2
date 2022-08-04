@@ -183,6 +183,7 @@ input[type='range']
     background-repeat: no-repeat;
     background-size: 50px;
     margin: 4px 0px;
+    overflow: hidden;
 }
 
 video {
@@ -226,7 +227,6 @@ video {
 {
     width: 12px;
     height: 12px;
-    
     padding: 0;
     border: 0;
     cursor: pointer;
@@ -259,12 +259,9 @@ video {
     top: 0;
     right: 0;
     min-width: 170px;
-    
     background-color: rgba(120, 120, 120, 0.1);
     color: #ffffff;
-    
     padding: 3px;
-    
     font-size: 12px;
     text-shadow: #000 0 0 1px;
 }
@@ -416,12 +413,12 @@ video {
 
 #input-textbox
 {
-    /* 
-        HACK(?): text areas can't seem to get shrinked more than a certain amount, and it broke the 
+    /*
+        HACK(?): text areas can't seem to get shrunk more than a certain amount, and it broke the
         layout on mobile. because it's in a flex container, "width: 0px" doesn't really make it 0 pixels wide,
         but at least it allows the text area to shrink as much as needed.
     */
-    width: 0px; 
+    width: 0px;
     flex-grow: 1;
     resize: vertical;
     min-width: 180px;
@@ -505,6 +502,9 @@ video {
     width: auto;
     height: auto;
     transform: translate(-50%,-50%);
+    
+    max-height: 100%;
+    overflow: auto;
 
     outline: 2px solid #afb1b1;
     background-color: #ffffff;
@@ -857,11 +857,6 @@ button.checked {
     font-weight: bold;
 }
 
-.highlighted-message
-{
-    color: red;
-}
-
 .system-message
 {
     font-weight: bold;
@@ -870,6 +865,7 @@ button.checked {
 .ignored-message
 {
     display: none;
+    user-select: none;
 }
 
 .ignore-indicators-in-log .ignored-message
@@ -963,4 +959,37 @@ button
 .audio-stream-controls-spinner img
 {
     height: 18px;
+}
+
+.visible-only-to-specific-users-stream-icon
+{
+    color: #474747;
+    padding-right: 5px;
+}
+
+.vtuber-character
+{
+    position: absolute;
+    width: 30%;
+    right: 0;
+    bottom: -22%;
+    transform: scale(-1,1);
+    animation: 5s ease-in-out 0s infinite alternate vtuber_character_swaying;
+}
+
+.vtuber-character.jumping
+{
+    animation: 0.1s ease-in 0s infinite alternate vtuber_character_jumping;
+}
+
+@keyframes vtuber_character_jumping {
+    from { bottom: -22% } to { bottom: -20% }
+}
+
+@keyframes vtuber_character_swaying {
+    from {
+        transform: scale(-1,1) rotate(-5deg);
+    } to {
+        transform: scale(-1,1) rotate(5deg);
+    }
 }

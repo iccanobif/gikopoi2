@@ -1,0 +1,59 @@
+<!doctype html>
+<title>Stream Tab</title>
+<style>
+    video {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: black;
+    }
+
+    body {
+        background-color: black;
+        overflow: hidden;
+    }
+
+    p {
+        color: white;
+        text-align: center;
+    }
+
+    .vtuber-character
+    {
+        position: absolute;
+        height: 68%;
+        right: -6%;
+        bottom: -29%;
+        transform: scale(-1,1);
+        animation: 5s ease-in-out 0s infinite alternate vtuber_character_swaying;
+    }
+
+    .vtuber-character.jumping
+    {
+        animation: 0.1s ease-in 0s infinite alternate vtuber_character_jumping;
+    }
+
+    @keyframes vtuber_character_jumping {
+        from { bottom: -29% } to { bottom: -23% }
+    }
+
+    @keyframes vtuber_character_swaying {
+        from {
+            transform: scale(-1,1) rotate(-5deg);
+        } to {
+            transform: scale(-1,1) rotate(5deg);
+        }
+    }
+
+</style>
+
+<body>
+    
+</body>
+
+</html>

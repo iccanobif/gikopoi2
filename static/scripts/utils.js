@@ -146,6 +146,7 @@ export class AudioProcessor
         analyser.minDecibels = -60;
         analyser.maxDecibels = 0;
         analyser.smoothingTimeConstant = 0.01;
+        // fftSize must be 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, or 32768
         analyser.fftSize = 32
         const bufferLengthAlt = analyser.frequencyBinCount;
         const dataArrayAlt = new Uint8Array(bufferLengthAlt);

@@ -93,6 +93,7 @@ function initializeRoomStates()
                     listeners: [],
                     isVisibleOnlyToSpecificUsers: null,
                     allowedListenerIDs: [],
+                    streamIsVtuberMode: false,
                 })
             }
             roomNumberId++;
@@ -278,11 +279,11 @@ io.on("connection", function (socket: Socket)
         }
     }
 
-    // Flood detection (no more than 100 events in the span of one second)
+    // Flood detection (no more than 50 events in the span of one second)
     const lastEventDates: number[] = []
     socket.onAny(() => {
         lastEventDates.push(Date.now())
-        if (lastEventDates.length > 100)
+        if (lastEventDates.length > 50)
         {
             const firstEventTime = lastEventDates.shift()!
             if (Date.now() - firstEventTime < 1000)
@@ -335,6 +336,8 @@ io.on("connection", function (socket: Socket)
                     changeCharacter(user, "ika", false)
                     return;
                 }
+                
+                msg = msg.replace(/(vod)(k)(a)/gi, "$1$3$2")
                 
                 // no TIGER TIGER pls
                 if (msg.length > "TIGER".length && "TIGER".startsWith(msg.replace(/TIGER/gi, "").replace(/\s/g, "")))
@@ -506,17 +509,20 @@ io.on("connection", function (socket: Socket)
         withVideo: boolean,
         withSound: boolean,
         isVisibleOnlyToSpecificUsers: boolean,
-        info: any
+        isPrivateStream: boolean,
+        streamIsVtuberMode: boolean,
+        info: any,
     })
     {
         try
         {
-            const { streamSlotId, withVideo, withSound, info, isVisibleOnlyToSpecificUsers } = data
+            const { streamSlotId, withVideo, withSound, info, isVisibleOnlyToSpecificUsers, streamIsVtuberMode } = data
 
             log.info("user-want-to-stream", user.id,
                      "streamSlotId:", streamSlotId,
                      "room:", user.roomId,
                      "isVisibleOnlyToSpecificUsers:", isVisibleOnlyToSpecificUsers,
+                     "streamIsVtuberMode:", streamIsVtuberMode,
                      JSON.stringify(info))
 
             const roomState = roomStates[user.areaId][user.roomId];
@@ -559,6 +565,7 @@ io.on("connection", function (socket: Socket)
             stream.withSound = withSound
             stream.isVisibleOnlyToSpecificUsers = isVisibleOnlyToSpecificUsers
             stream.publisher = { user: user, janusHandle: null };
+            stream.streamIsVtuberMode = streamIsVtuberMode
 
             setTimeout(async () =>
             {
@@ -770,9 +777,11 @@ io.on("connection", function (socket: Socket)
 
                 const answer = janusHandle.getAnswer();
 
-                stream.isReady = true
-
-                sendUpdatedStreamSlotState(user)
+                janusHandle.onWebrtcUp(() =>
+                {
+                    stream.isReady = true
+                    sendUpdatedStreamSlotState(user)
+                })
 
                 socket.emit("server-rtc-message", streamSlotId, "answer", answer);
             }
@@ -867,27 +876,34 @@ io.on("connection", function (socket: Socket)
     {
         try
         {
-            const roomList: { id: string, group: string, userCount: number, streamers: string[] }[] =
+            const roomList: { 
+                id: string, 
+                group: string, 
+                userCount: number, 
+                streamers: string[],
+                streams: { userName: string, isVisibleOnlyToSpecificUsers: boolean }[],
+             }[] =
                 Object.values(rooms)
                 .filter(room => !room.secret)
                 .map(room => ({
                     id: room.id,
                     group: room.group,
                     userCount: getFilteredConnectedUserList(user, room.id, user.areaId).length,
-                    streamers: toStreamSlotDtoArray(user, roomStates[user.areaId][room.id].streams)
+                    streamers: [],
+                    streams: toStreamSlotDtoArray(user, roomStates[user.areaId][room.id].streams)
                         .filter(stream => stream.isActive && stream.userId != null)
                         .map(stream => {
                             if (room.forcedAnonymous)
-                                return ""
+                                return { userName: "", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
 
-                            const user = getUser(stream.userId!)
-                            if (!user)
+                            const streamUser = getUser(stream.userId!)
+                            if (!streamUser)
                             {
                                 log.error("ERROR: Can't find user", stream.userId, "when doing #rula")
-                                return "N/A"
+                                return { userName: "N/A", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
                             }
 
-                            return user.name
+                            return { userName: streamUser.name, isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
                         }),
                 }))
 
@@ -1194,9 +1210,11 @@ function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSl
             withSound: isInactive ? null : s.withSound,
             withVideo: isInactive ? null : s.withVideo,
             userId: isInactive ? null : publisherUser!.id,
+            isVisibleOnlyToSpecificUsers: isInactive ? null : s.isVisibleOnlyToSpecificUsers,
             isAllowed: !s.isVisibleOnlyToSpecificUsers
                        || !!s.allowedListenerIDs.find(id => id == user.id)
                        || s.publisher?.user.id == user.id,
+            streamIsVtuberMode: isInactive ? null : s.streamIsVtuberMode,
         }
     })
 }

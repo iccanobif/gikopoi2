@@ -57,6 +57,7 @@ const enabledListenerIconImagePromise = loadImage("enabled-listener.svg")
 const disabledListenerIconImagePromise = loadImage("disabled-listener.svg")
 let enabledListenerIconImage = null;
 let disabledListenerIconImage = null;
+window.rtcPeerSlots = [];
 
 function UserException(message) {
     this.message = message;
@@ -186,21 +187,23 @@ window.vueApp = new Vue({
         clientSideStreamData: [],
         mediaStream: null,
         streamSlotIdInWhichIWantToStream: null,
-        rtcPeerSlots: [],
         takenStreams: [], // streams taken by me
         slotVolume: JSON.parse(localStorage.getItem("slotVolume")) || {}, // key: slot Id / value: volume
+        detachedStreamTabs: {}, // key: slot Id
+        slotIsVtuberCharacterJumping: {}, // key: slot Id / value: boolean
 
         // stream settings
         isStreamPopupOpen: false,
-        streamMode: "video_sound",
-        displayAdvancedStreamSettings: false,
-        streamEchoCancellation: false,
-        streamNoiseSuppression: false,
-        streamAutoGain: false,
-        streamScreenCapture: false,
-        streamScreenCaptureAudio: false,
+        streamMode: localStorage.getItem("streamMode") || "video_sound",
+        displayAdvancedStreamSettings: localStorage.getItem("displayAdvancedStreamSettings") == "true",
+        streamEchoCancellation: localStorage.getItem("streamEchoCancellation") == "true",
+        streamNoiseSuppression: localStorage.getItem("streamNoiseSuppression") == "true",
+        streamAutoGain: localStorage.getItem("streamAutoGain") == "true",
+        streamScreenCapture: localStorage.getItem("streamScreenCapture") == "true",
+        streamScreenCaptureAudio: localStorage.getItem("streamScreenCaptureAudio") == "true",
         streamTarget: "all_room",
         allowedListenerIDs: new Set(),
+        streamIsVtuberMode: false,
 
         // Device selection popup
         isDeviceSelectionOpen: false,
@@ -316,12 +319,6 @@ window.vueApp = new Vue({
             this.setLanguage(this.language)
 
         loadCharacterImagesPromise = loadCharacters(this.isCrispModeEnabled);
-
-        // Enable dark mode stylesheet (gotta do it here in the "mounted" event because otherwise
-        // the screen will flash dark for a bit while loading the page)
-        for (let i = 0; i < document.styleSheets.length; i++)
-            if (document.styleSheets[i].title == "dark-mode-sheet")
-                document.styleSheets[i].disabled = false
 
         const charSelect = document.getElementById("character-selection")
         const charactersSelected = charSelect.getElementsByClassName("character-selected")
@@ -617,7 +614,7 @@ window.vueApp = new Vue({
             this.blockHeight = this.currentRoom.blockHeight ? this.currentRoom.blockHeight : BLOCK_HEIGHT;
 
             // stream stuff
-            this.updateCurrentRoomStreams(streamsDto);
+            await this.updateCurrentRoomStreams(streamsDto);
 
             // Force update of user coordinates using the current room's logics (origin coordinates, etc)
             this.forcePhysicalPositionRefresh();
@@ -852,17 +849,17 @@ window.vueApp = new Vue({
                 this.wantToStream = false;
                 this.startStreaming();
             });
-            this.socket.on("server-update-current-room-streams", (streams) =>
+            this.socket.on("server-update-current-room-streams", async (streams) =>
             {
-                this.updateCurrentRoomStreams(streams);
+                await this.updateCurrentRoomStreams(streams);
             });
 
             this.socket.on("server-room-list", async (roomList) =>
             {
                 roomList.forEach(r => {
                     r.sortName = i18n.t("room." + r.id, {reading: true});
-                    r.streamerCount = r.streamers.length;
-                    r.streamerDisplayNames = r.streamers.map(s => this.toDisplayName(s))
+                    r.streamerCount = r.streams.length;
+                    r.streamerDisplayNames = r.streams.map(s => this.toDisplayName(s.userName))
                 })
                 this.roomList = roomList;
                 this.rulaRoomGroup = "all";
@@ -875,8 +872,7 @@ window.vueApp = new Vue({
 
             this.socket.on("server-rtc-message", async (streamSlotId, type, msg) =>
             {
-                console.log("server-rtc-message", streamSlotId, type, msg);
-                const rtcPeer = this.rtcPeerSlots[streamSlotId].rtcPeer;
+                const rtcPeer = rtcPeerSlots[streamSlotId].rtcPeer;
                 if (rtcPeer === null) return;
                 if(type == "offer")
                 {
@@ -964,8 +960,6 @@ window.vueApp = new Vue({
             messageDiv.classList.add("message");
 
             messageDiv.dataset.userId = userId
-            if (userId && userId == this.highlightedUserId)
-                messageDiv.classList.add("highlighted-message")
 
             if (!userId && userName == "SYSTEM")
                 messageDiv.classList.add("system-message")
@@ -1851,7 +1845,7 @@ window.vueApp = new Vue({
             if (this.mediaStream) this.stopStreaming();
             for (let i = 0; i < this.takenStreams.length; i++)
             {
-                this.dropStream(i)
+                await this.dropStream(i)
                 // when going to a new room, all streams must be off by default
                 this.takenStreams[i] = false
             }
@@ -2273,7 +2267,7 @@ window.vueApp = new Vue({
                     streamSlotId: slotId, type, msg})
             });
 
-            const reconnect = () =>
+            const reconnect = async () =>
             {
                 if (slotId == this.streamSlotIdInWhichIWantToStream)
                 {
@@ -2283,7 +2277,7 @@ window.vueApp = new Vue({
                 else if (this.takenStreams[slotId])
                 {
                     logToServer(new Date() + " " + this.myUserID + " Attempting to retake stream")
-                    this.dropStream(slotId)
+                    await this.dropStream(slotId)
                     this.takeStream(slotId)
                 }
                 else
@@ -2314,15 +2308,15 @@ window.vueApp = new Vue({
 
                 if (state == "connected")
                 {
-                    if (this.rtcPeerSlots[slotId])
-                        this.rtcPeerSlots[slotId].attempts = 0;
+                    if (rtcPeerSlots[slotId])
+                        rtcPeerSlots[slotId].attempts = 0;
                 }
                 // else if (["failed", "disconnected", "closed"].includes(state))
                 else if (["failed", "closed"].includes(state))
                 {
                     rtcPeer.close();
-                    if (!this.rtcPeerSlots[slotId]) return;
-                    if (this.rtcPeerSlots[slotId].attempts > 4)
+                    if (!rtcPeerSlots[slotId]) return;
+                    if (rtcPeerSlots[slotId].attempts > 4)
                     {
                         terminate()
                     }
@@ -2330,16 +2324,16 @@ window.vueApp = new Vue({
                     {
                         setTimeout(reconnect,
                             Math.max(this.takenStreams[slotId] ? 1000 : 0,
-                                this.rtcPeerSlots[slotId].attempts * 1000));
+                                rtcPeerSlots[slotId].attempts * 1000));
                     }
 
-                    this.rtcPeerSlots[slotId].attempts++;
+                    rtcPeerSlots[slotId].attempts++;
                 }
             });
             return rtcPeer;
         },
 
-        updateCurrentRoomStreams: function (streams)
+        updateCurrentRoomStreams: async function (streams)
         {
             if (this.hideStreams)
                 streams = []
@@ -2352,19 +2346,21 @@ window.vueApp = new Vue({
                 return !!this.takenStreams[slotId]
             });
 
-            // WARNING! THIS .map() HAS SIDE EFFECTS (it calls dropStream())!
-            this.rtcPeerSlots = streams.map((s, slotId) => {
-                if (!this.rtcPeerSlots[slotId])
-                    return null
-
-                // this.takenStreams[slotId] should be true only if updateCurrentRoomStreams()
-                // was called on an event different from a room change.
-                if (this.takenStreams[slotId] || this.streamSlotIdInWhichIWantToStream == slotId)
-                    return this.rtcPeerSlots[slotId]
-
-                this.dropStream(slotId);
-                return null
-            });
+            // update rtcPeerSlots (keep the ones that were already established, drop the ones for streams that were just stopped by the streamer)
+            const newRtcPeerSlotsList = [];
+            for (let slotId = 0; slotId < streams.length; slotId++)
+            {
+                if (!rtcPeerSlots[slotId])
+                    newRtcPeerSlotsList.push(null)
+                else if (this.takenStreams[slotId] || this.streamSlotIdInWhichIWantToStream == slotId)
+                    newRtcPeerSlotsList.push(rtcPeerSlots[slotId])
+                else
+                {
+                    await this.dropStream(slotId);
+                    newRtcPeerSlotsList.push(null)
+                }
+            }
+            rtcPeerSlots = newRtcPeerSlotsList;
 
             this.clientSideStreamData = streams.map((s, slotId) => {
                 if (this.clientSideStreamData[slotId])
@@ -2390,7 +2386,7 @@ window.vueApp = new Vue({
                 if (this.takenStreams[slotId])
                 {
                     if (!stream.isActive || !stream.isReady || !stream.isAllowed)
-                        this.dropStream(slotId);
+                        await this.dropStream(slotId);
                     else
                         this.takeStream(slotId);
                 }
@@ -2404,10 +2400,12 @@ window.vueApp = new Vue({
 
         showDeviceSelectionPopup: async function ()
         {
+            this.isStreamPopupOpen = false;
             try
             {
                 const withVideo = this.streamMode != "sound" && !this.streamScreenCapture;
-                const withSound = this.streamMode != "video" && !this.streamScreenCaptureAudio;
+                const withSound = this.streamMode == "sound"
+                    || (this.streamMode == "video_sound" && !(this.streamScreenCapture && this.streamScreenCaptureAudio));
 
                 this.waitingForDevicePermission = true
                 this.deviceList = await getDeviceList(withSound, withVideo)
@@ -2416,35 +2414,32 @@ window.vueApp = new Vue({
                 // Automatically select device if there is only one of its kind
                 const audioDevices = this.deviceList.filter(d => d.type == "audioinput")
                 const videoDevices = this.deviceList.filter(d => d.type == "videoinput")
-
                 if (audioDevices.length == 1)
                     this.selectedAudioDeviceId = audioDevices[0].id
-                else
-                    this.selectedAudioDeviceId = null
-
                 if (videoDevices.length == 1)
                     this.selectedVideoDeviceId = videoDevices[0].id
-                else
-                    this.selectedVideoDeviceId = null
+
+                // If a previously selected device isn't available anymore, clear the selection.
+                // This also handles scenarios where, for example, a previous stream used a video device
+                // while this new stream is only audio: in that case videoDevices will be an empty list
+                // and this.selectedVideoDeviceId will be correctly set to null.
+                if (!audioDevices.find(d => d.id == this.selectedAudioDeviceId))
+                    this.selectedAudioDeviceId = null;
+                if (!videoDevices.find(d => d.id == this.selectedVideoDeviceId))
+                    this.selectedVideoDeviceId = null;
 
                 if (this.deviceList.length)
-                {
                     this.isDeviceSelectionOpen = true
-                    this.isStreamPopupOpen = false;
-                }
                 else
-                {
                     this.wantToStartStreaming()
-                }
             }
             catch (err)
             {
                 console.error(err)
                 this.showWarningToast(i18n.t("msg.error_obtaining_media"));
-                this.wantToStream = false;
                 this.mediaStream = false;
-                this.streamSlotIdInWhichIWantToStream = null;
                 this.waitingForDevicePermission = false;
+                this.isStreamPopupOpen = true;
             }
         },
 
@@ -2459,9 +2454,7 @@ window.vueApp = new Vue({
                 return
 
             this.isDeviceSelectionOpen = false
-
-            this.wantToStream = false;
-            this.streamSlotIdInWhichIWantToStream = null;
+            this.isStreamPopupOpen = true
         },
 
         wantToStartStreaming: async function ()
@@ -2587,6 +2580,16 @@ window.vueApp = new Vue({
 
                         vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
                         vuMeterBarPrimary.style.width = level * 100 + "%"
+
+                        if (level > 0.2)
+                            Vue.set(this.streams[this.streamSlotIdInWhichIWantToStream], "isJumping", true)
+                        else
+                            setTimeout(() => {
+                                const stream = this.streams[this.streamSlotIdInWhichIWantToStream]
+                                // handle the case where before this 100 ms delay the stream was closed
+                                if (stream)
+                                    Vue.set(stream, "isJumping", false)
+                            }, 100)
                     });
                 }
 
@@ -2595,6 +2598,7 @@ window.vueApp = new Vue({
                     withVideo: withVideo,
                     withSound: withSound,
                     isVisibleOnlyToSpecificUsers: this.streamTarget == "specific_users",
+                    streamIsVtuberMode: withVideo && this.streamIsVtuberMode,
                     info: []
                         .concat(this.mediaStream.getAudioTracks().map(t => ({
                             constraints: t.getConstraints && t.getConstraints(),
@@ -2630,11 +2634,11 @@ window.vueApp = new Vue({
         },
         setupRtcPeerSlot: function(slotId)
         {
-            if (!this.rtcPeerSlots[slotId]) this.rtcPeerSlots[slotId] = {
+            if (!rtcPeerSlots[slotId]) rtcPeerSlots[slotId] = {
                 attempts: 0
             }
-            this.rtcPeerSlots[slotId].rtcPeer = this.setupRTCConnection(slotId)
-            return this.rtcPeerSlots[slotId]
+            rtcPeerSlots[slotId].rtcPeer = this.setupRTCConnection(slotId)
+            return rtcPeerSlots[slotId]
         },
         startStreaming: async function ()
         {
@@ -2656,6 +2660,8 @@ window.vueApp = new Vue({
 
             const streamSlotId = this.streamSlotIdInWhichIWantToStream;
 
+            this.reattachVideoFromOtherTabIfDetached(streamSlotId);
+
             document.getElementById("local-video-" + streamSlotId).srcObject = this.mediaStream = null;
 
             this.socket.emit("user-want-to-stop-stream");
@@ -2673,10 +2679,10 @@ window.vueApp = new Vue({
 
             this.streamSlotIdInWhichIWantToStream = null;
 
-            if (this.rtcPeerSlots[streamSlotId])
+            if (rtcPeerSlots[streamSlotId])
             {
-                this.rtcPeerSlots[streamSlotId].rtcPeer.close()
-                this.rtcPeerSlots[streamSlotId] = null;
+                rtcPeerSlots[streamSlotId].rtcPeer.close()
+                rtcPeerSlots[streamSlotId] = null;
             }
 
             // On small screens, displaying the <video> element seems to cause a reflow in a way that
@@ -2697,7 +2703,7 @@ window.vueApp = new Vue({
         },
         takeStream: function (streamSlotId)
         {
-            if (this.rtcPeerSlots[streamSlotId]) return // no need to attempt again to take this stream
+            if (rtcPeerSlots[streamSlotId]) return // no need to attempt again to take this stream
 
             const rtcPeer = this.setupRtcPeerSlot(streamSlotId).rtcPeer;
 
@@ -2714,7 +2720,6 @@ window.vueApp = new Vue({
                 {
                     try
                     {
-           
                         if (this.hideStreams)
                             return;
 
@@ -2722,7 +2727,7 @@ window.vueApp = new Vue({
 
                         const stream = event.streams[0]
                         videoElement.srcObject = stream;
-
+                        
                         $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
 
                         if (this.inboundAudioProcessors[streamSlotId])
@@ -2742,6 +2747,11 @@ window.vueApp = new Vue({
         
                                 vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
                                 vuMeterBarPrimary.style.width = level * 100 + "%"
+                                
+                                if (level > 0.2)
+                                    Vue.set(this.streams[streamSlotId], "isJumping", true)
+                                else
+                                    setTimeout(() => Vue.set(this.streams[streamSlotId], "isJumping", false), 100)
                             })
                         }
                     }
@@ -2756,14 +2766,16 @@ window.vueApp = new Vue({
         },
         dropStream: async function (streamSlotId)
         {
-            if(!this.rtcPeerSlots[streamSlotId]) return;
-            this.rtcPeerSlots[streamSlotId].rtcPeer.close()
-            this.rtcPeerSlots[streamSlotId] = null;
+            if(!rtcPeerSlots[streamSlotId]) return;
+            rtcPeerSlots[streamSlotId].rtcPeer.close()
+            rtcPeerSlots[streamSlotId] = null;
             
             if (!this.isStreamAutoResumeEnabled)
                 Vue.set(this.takenStreams, streamSlotId, false);
 
             this.clientSideStreamData[streamSlotId].isListenerConnected = false
+
+            this.reattachVideoFromOtherTabIfDetached(streamSlotId);
             
             this.socket.emit("user-want-to-drop-stream", streamSlotId);
 
@@ -2773,10 +2785,10 @@ window.vueApp = new Vue({
                 delete this.inboundAudioProcessors[streamSlotId]
             }
         },
-        wantToDropStream: function (streamSlotId)
+        wantToDropStream: async function (streamSlotId)
         {
             Vue.set(this.takenStreams, streamSlotId, false);
-            this.dropStream(streamSlotId);
+            await this.dropStream(streamSlotId);
         },
         rula: function (roomId)
         {
@@ -2905,12 +2917,6 @@ window.vueApp = new Vue({
             this.wantToStream = true;
 
             this.isStreamPopupOpen = true;
-            this.streamMode = "video_sound";
-            this.streamEchoCancellation = false;
-            this.streamNoiseSuppression = false;
-            this.streamAutoGain = false;
-            this.streamScreenCapture = false;
-            this.streamScreenCaptureAudio = false;
         },
         closeStreamPopup: function ()
         {
@@ -3000,8 +3006,9 @@ window.vueApp = new Vue({
             this.storeSet('language');
             this.setLanguage(this.language);
         },
-        storeSet: function (itemName)
+        storeSet: function (itemName, value)
         {
+            if (value != undefined) this[itemName] = value;
             localStorage.setItem(itemName, this[itemName]);
         },
         handleBubbleOpacity: function ()
@@ -3138,27 +3145,24 @@ window.vueApp = new Vue({
         },
         highlightUser: function(userId, userName)
         {
+            const highlightedUserStyle = document.getElementById("highlighted-user-style")
+
             if (this.highlightedUserId == userId)
             {
                 this.highlightedUserId = null
                 this.highlightedUserName = null
+                highlightedUserStyle.textContent = ''
             }
             else
             {
                 this.highlightedUserId = userId
                 this.highlightedUserName = userName
+                // Need to add a rule for .message-author too to override shaddox mode's color
+                highlightedUserStyle.textContent = '.message[data-user-id="' + userId +'"] {color:red} .message[data-user-id="' + userId +'"] .message-author {color:red}'
             }
 
             this.isUsernameRedrawRequired = true;
             this.isRedrawRequired = true;
-
-            for (const messageElement of document.getElementsByClassName("message"))
-            {
-                if (messageElement.dataset.userId == this.highlightedUserId)
-                    messageElement.classList.add("highlighted-message")
-                else
-                    messageElement.classList.remove("highlighted-message")
-            }
 
             // Update the canvas objects list so that highlighted users are always displayed on top
             // relative to the other users in the same tile.
@@ -3255,6 +3259,87 @@ window.vueApp = new Vue({
             this.$forceUpdate()
             this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
             this.isRedrawRequired = true;
+        },
+        playVideo: function(event)
+        {
+            // When moving the video element to a new tab, chromium based browsers will
+            // automatically pause it and wait for a user interaction. With this function
+            // it's enough to click on the video to make it play again.
+            const video = event.target;
+            video.play();
+        },
+        onVideoDoubleClick: async function(event, slotId)
+        {
+            const video = event.target;
+            const videoContainer = video.parentElement
+            const stream = this.streams[slotId];
+
+            // If this video was already moved to another tab, doubleclicking on it
+            // will make it fullscreen. Otherwise, move it to a new tab.
+            if (stream.isSeparateTab)
+            {
+                if (videoContainer.ownerDocument.fullscreenElement)
+                {
+                    await videoContainer.ownerDocument.exitFullscreen()
+                }
+                else if (videoContainer.requestFullscreen) // requestFullscreen() not available on safari, try webkitRequestFullscreen() one day
+                {
+                    await videoContainer.requestFullscreen();
+                }
+            }
+            else
+            {
+                // On chromium based browser, for other people's streams, the video
+                // might automatically when it gets moved to another tab and need a user interaction
+                // before it can be started again... Make sure to test for that everytime a change is made to this code.
+                stream.isSeparateTab = true;
+                this.$forceUpdate() // HACK: this is to force vue to rebind the title attribute of the <video> element
+                videoContainer.originalPreviousSibling = videoContainer.previousElementSibling;
+                const tab = open(window.origin + '/video-tab.html');
+                this.detachedStreamTabs[slotId] = tab;
+                const streamSlot = this.streams[slotId];
+                const newTabTitle = i18n.t("ui.label_stream", {index: slotId + 1}) + " " + this.toDisplayName(this.users[streamSlot.userId].name);
+                tab.onload = () => {
+                    tab.document.title = newTabTitle;
+                    tab.document.body.appendChild(videoContainer);
+                    // listen to onunload too for mobile support, android doesn't trigger onbeforeunload
+                    tab.onunload = tab.onbeforeunload = () => {
+                        // stream.isSeparateTab could be false if the stream was dropped while the video was detached
+                        // to a new tab: in that case, streamDrop() forcibly reattaches the video element to the original
+                        // document and closes the tab. In this scenario, there's no need to attempt once more to reattach
+                        // the video again.
+                        // Checking isSeparateTab is also useful to handle correctly browsers that raise both unload 
+                        // and beforeunload events
+                        if (stream.isSeparateTab)
+                        {
+                            stream.isSeparateTab = false;
+                            this.$forceUpdate() // HACK: this is to force vue to rebind the title attribute of the <video> element
+                            videoContainer.originalPreviousSibling.after(videoContainer);
+                            videoContainer.originalPreviousSibling = null;
+                            this.detachedStreamTabs[slotId] = null;
+                        }
+                    };
+                }
+            }
+        },
+        reattachVideoFromOtherTabIfDetached: function(slotId)
+        {
+            if (this.detachedStreamTabs[slotId])
+            {
+                const videoContainer = this.detachedStreamTabs[slotId].document.getElementById("video-container-" + slotId);
+                const stream = this.streams[slotId];
+
+                stream.isSeparateTab = false;
+                videoContainer.originalPreviousSibling.after(videoContainer);
+                videoContainer.originalPreviousSibling = null;
+                this.detachedStreamTabs[slotId].close();
+                this.detachedStreamTabs[slotId] = null;
+            }
+        },
+        getAvatarSpriteForUser: function(userId)
+        {
+            const characterName = this.users[userId].character.characterName
+            return "characters/" + characterName + "/front-standing.svg"
         },
     },
 });

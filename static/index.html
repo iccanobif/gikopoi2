@@ -23,14 +23,15 @@
     <link rel='stylesheet' href='style/dark-mode.css' />
     <link rel='stylesheet' href='chess/css/chessboard-1.0.0.min.css' />
     <link href="font-awesome/css/all.css" rel="stylesheet">
-
     <link rel="stylesheet" href="libraries/jquery-ui/jquery-ui.css">
+    <style id="highlighted-user-style"></style>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <title>ギコっぽいぽい</title>
     <script>
         window.EXPECTED_SERVER_VERSION = Number.parseInt("@EXPECTED_SERVER_VERSION@");
     </script>
+    
 </head>
 
 <body>
@@ -226,6 +227,9 @@
                             class="stream-title active-stream-title"
                             v-bind:class="{'highlighted-stream-title': streamSlot.userId && streamSlot.userId == highlightedUserId}"
                             v-on:click="highlightUser(streamSlot.userId, streamSlot.title)">{{ toDisplayName(users[streamSlot.userId].name) }}
+                            <span v-bind:title="$t('ui.visible_only_to_specific_users_stream')"
+                                  v-if="streamSlot.isVisibleOnlyToSpecificUsers"
+                                  class="fas fa-lock visible-only-to-specific-users-stream-icon"></span>
                         </span>
                         <span v-if="!streamSlot.isActive" class="stream-title">OFF</span>
                     </div>
@@ -241,10 +245,20 @@
                             v-on:click="toggleVideoSlotPinStatus(index)"></button>
                         <video :id="'local-video-' + index"
                             v-show="streamSlot.isActive && index == streamSlotIdInWhichIWantToStream"
+                            v-on:click="playVideo($event)"
+                            v-on:dblclick="onVideoDoubleClick($event, index)"
+                            v-bind:title="streamSlot.isSeparateTab ? $t('ui.double_click_to_toggle_fullscreen') : $t('ui.double_click_to_move_to_new_tab')"
                             autoplay muted playsinline></video>
                         <video :id="'received-video-' + index"
                             v-show="takenStreams[index] && index != streamSlotIdInWhichIWantToStream"
+                            v-on:click="playVideo($event)"
+                            v-on:dblclick="onVideoDoubleClick($event, index)"
+                            v-bind:title="streamSlot.isSeparateTab ? $t('ui.double_click_to_toggle_fullscreen') : $t('ui.double_click_to_move_to_new_tab')"
                             autoplay playsinline></video>
+                        <img class="vtuber-character" 
+                            v-if="streamSlot.streamIsVtuberMode"
+                            :src="getAvatarSpriteForUser(streamSlot.userId)"
+                            v-bind:class="{'jumping': streamSlot.isJumping}" />
                     </div>
                     <div :id="'vu-meter-container-' + index"
                          v-show="streamSlot.isActive
@@ -373,10 +387,19 @@
                             <tr v-for="room in preparedRoomList"
                                 :id="'room-tr-' + room.id"
                                 v-bind:class="{'popup-row-is-selected': rulaRoomSelection == room.id}"
-                                v-on:click="selectRoomForRula(room.id)">
+                                v-on:click="selectRoomForRula(room.id)"
+                                v-on:dblclick="rula(room.id)">
                                 <td>{{ $t("room." + room.id) }}</td>
                                 <td>{{ room.userCount }}</td>
-                                <td>{{ room.streamerDisplayNames.join(", ") }}</td>
+                                <td>
+                                    <span v-for="(stream, index) in room.streams">
+                                        <span v-if="index !== 0">/</span>
+                                        {{ toDisplayName(stream.userName) }}
+                                        <span v-bind:title="$t('ui.visible_only_to_specific_users_stream')"
+                                              v-if="stream.isVisibleOnlyToSpecificUsers"
+                                              class="fas fa-lock visible-only-to-specific-users-stream-icon"></span>
+                                    </span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -464,17 +487,21 @@
                 <div class="popup-content">
                     <div class='popup-item'>
                         <span>{{ $t("ui.stream_form_mode") }}</span><input type="radio"
-                            id="stream-form-video-sound-mode" value="video_sound" v-model="streamMode"><label
+                            id="stream-form-video-sound-mode" value="video_sound"
+                            v-model="streamMode" v-on:change="storeSet('streamMode')"><label
                             for="stream-form-video-sound-mode">{{ $t("ui.stream_form_video_sound_mode") }}</label>
 
-                        <input type="radio" id="stream-form-sound-only-mode" value="sound" v-model="streamMode"><label
+                        <input type="radio" id="stream-form-sound-only-mode" value="sound"
+                            v-model="streamMode" v-on:change="storeSet('streamMode')"><label
                             for="stream-form-sound-only-mode">{{ $t("ui.stream_form_sound_only_mode") }}</label>
 
-                        <input type="radio" id="stream-form-video-only-mode" value="video" v-model="streamMode"><label
+                        <input type="radio" id="stream-form-video-only-mode" value="video"
+                            v-model="streamMode" v-on:change="storeSet('streamMode')"><label
                             for="stream-form-video-only-mode">{{ $t("ui.stream_form_video_only_mode") }}</label>
                     </div>
                     <div class='popup-item' v-if="streamMode != 'sound'">
-                        <input type="checkbox" id="stream-form-screen-capture" v-model="streamScreenCapture"><label
+                        <input type="checkbox" id="stream-form-screen-capture"
+                            v-model="streamScreenCapture" v-on:change="storeSet('streamScreenCapture')"><label
                             for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
                     </div>
                     <div class='popup-item'>
@@ -487,17 +514,22 @@
                             for="stream-form-visible-only-to-specific-users">{{ $t("ui.stream_form_visible_only_to_specific_users") }}</label>
 
                     </div>
+                    <div class='popup-item' v-if="streamMode == 'video_sound' || streamMode == 'video'">
+                        <input type="checkbox" id="stream-form-vtuber-mode" v-model="streamIsVtuberMode"><label
+                            for="stream-form-vtuber-mode">{{ $t("ui.stream_form_vtuber_mode") }}</label>
+                    </div>
                     <div v-if="streamMode != 'video'">
                         <div class='popup-item'>
                             <button v-if="!displayAdvancedStreamSettings"
-                                v-on:click="displayAdvancedStreamSettings = true">{{ $t("ui.stream_form_show_advanced") }}</button>
+                                v-on:click="storeSet('displayAdvancedStreamSettings', true)">{{ $t("ui.stream_form_show_advanced") }}</button>
                             <button v-if="displayAdvancedStreamSettings"
-                                v-on:click="displayAdvancedStreamSettings = false">{{ $t("ui.stream_form_hide_advanced") }}</button>
+                                v-on:click="storeSet('displayAdvancedStreamSettings', false)">{{ $t("ui.stream_form_hide_advanced") }}</button>
                         </div>
                         <div v-if="displayAdvancedStreamSettings">
                             <div class='popup-item' v-if="streamMode != 'sound' && streamScreenCapture">
                                 <div>
-                                    <input type="checkbox" id="stream-form-screen-capture-audio" v-model="streamScreenCaptureAudio"><label
+                                    <input type="checkbox" id="stream-form-screen-capture-audio"
+                                        v-model="streamScreenCaptureAudio" v-on:change="storeSet('streamScreenCaptureAudio')"><label
                                         for="stream-form-screen-capture-audio">{{ $t("ui.stream_form_screen_capture_audio") }}</label>
                                 </div>
                                 <div class='popup-notice'>{{ $t("ui.stream_form_screen_capture_audio_notice") }}</div>
@@ -505,16 +537,20 @@
                             <div class='popup-item' v-if="!streamScreenCapture || !streamScreenCaptureAudio">
                                 <div>
                                     <input type="checkbox" id="stream-form-echo-cancellation"
-                                        v-model="streamEchoCancellation"><label for="stream-form-echo-cancellation">{{
+                                        v-model="streamEchoCancellation" v-on:change="storeSet('streamEchoCancellation')"
+                                        ><label for="stream-form-echo-cancellation">{{
                                         $t("ui.stream_form_echo_cancellation") }}</label>
                                 </div>
                                 <div v-if="!streamScreenCapture || !streamScreenCaptureAudio">
                                     <input type="checkbox" id="stream-form-noise-suppression"
-                                        v-model="streamNoiseSuppression"><label for="stream-form-noise-suppression">{{
+                                        v-model="streamNoiseSuppression" v-on:change="storeSet('streamNoiseSuppression')"
+                                        ><label for="stream-form-noise-suppression">{{
                                         $t("ui.stream_form_noise_suppression") }}</label>
                                 </div>
                                 <div v-if="!streamScreenCapture || !streamScreenCaptureAudio">
-                                    <input type="checkbox" id="stream-form-auto-gain" v-model="streamAutoGain"><label
+                                    <input type="checkbox" id="stream-form-auto-gain"
+                                        v-model="streamAutoGain" v-on:change="storeSet('streamAutoGain')"
+                                        ><label
                                         for="stream-form-auto-gain">{{ $t("ui.stream_form_auto_gain") }}</label>
                                 </div>
                             </div>

@@ -79,6 +79,7 @@ export default
         stream_form_stream_target: "Siarkan ke...",
         stream_form_visible_to_all_room : "Semua orang di ruangan ini",
         stream_form_visible_only_to_specific_users: "Hanya beberapa orang",
+        // stream_form_vtuber_mode: "",
 
         device_selection_title: "Silakan pilih perangkat",
         device_selection_audio_devices: "Pilih perangkat audio",
@@ -133,6 +134,10 @@ export default
         chess_hide_game: "Sembunyikan permainan",
         chess_join_game: "Bergabunglah game",
         chess_quit_game: "Keluar dari permainan",
+
+        // visible_only_to_specific_users_stream: "",
+        // double_click_to_move_to_new_tab: "",
+        // double_click_to_toggle_fullscreen: "",
     },
     msg:
     {

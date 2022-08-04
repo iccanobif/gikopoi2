@@ -63,6 +63,10 @@ export default
         chess_hide_game: "Ludum abscondere",
         chess_join_game: "Ludum participare",
         chess_quit_game: "Ludi exire",
+
+        visible_only_to_specific_users_stream: "Transmissio privata",
+        // double_click_to_move_to_new_tab: "",
+        // double_click_to_toggle_fullscreen: "",
     },
     msg:
     {

@@ -79,6 +79,7 @@ export default
         // stream_form_stream_target: "",
         // stream_form_visible_to_all_room : "",
         // stream_form_visible_only_to_specific_users: "",
+        // stream_form_vtuber_mode: "",
 
         // device_selection_title: "",
         // device_selection_audio_devices: "",
@@ -133,6 +134,10 @@ export default
         chess_hide_game: "隱藏",
         chess_join_game: "參加",
         chess_quit_game: "投降",
+
+        // visible_only_to_specific_users_stream: "",
+        // double_click_to_move_to_new_tab: "",
+        // double_click_to_toggle_fullscreen: "",
     },
     msg:
     {

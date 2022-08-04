@@ -33,6 +33,7 @@ export interface StreamSlot
     listeners: Participant[],
     isVisibleOnlyToSpecificUsers: boolean | null,
     allowedListenerIDs: string[],
+    streamIsVtuberMode: boolean | null,
 }
 
 export interface Door
@@ -157,6 +158,8 @@ export interface StreamSlotDto
     withVideo: boolean | null,
     userId: string | null,
     isAllowed: boolean | null,
+    isVisibleOnlyToSpecificUsers: boolean | null,
+    streamIsVtuberMode: boolean | null,
 }
 
 export interface ChessboardState {

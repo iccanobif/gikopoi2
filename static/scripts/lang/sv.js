@@ -79,6 +79,7 @@ export default
         stream_form_stream_target: "Strömmomål",
         stream_form_visible_to_all_room : "Alla användare i rummet",
         stream_form_visible_only_to_specific_users: "Enbart utvalda användare",
+        stream_form_vtuber_mode: "VTubarläge",
 
         device_selection_title: "Välj enhet",
         device_selection_audio_devices: "Ljudenheter",
@@ -134,6 +135,10 @@ export default
         chess_hide_game: "Dölj spel",
         chess_join_game: "Börja spela",
         chess_quit_game: "Sluta spela",
+
+        visible_only_to_specific_users_stream: "Privat strömma",
+        double_click_to_move_to_new_tab: "Dubbelklicka för att flytta till en ny tabb",
+        double_click_to_toggle_fullscreen: "Dubbelklicka för helskärmsläge",
     },
     msg:
     {

@@ -20,9 +20,11 @@ server {
     listen [::]:443 ssl;
     server_name <DOMAIN NAME>;
 
-    location / {
-        proxy_pass http://localhost:8088;
-    }
+    # Useful for the info page at http://<DOMAIN NAME>/janus/info
+    # Otherwise unused by poipoi
+#    location / {
+#        proxy_pass http://localhost:8088;
+#    }
 
     location /ws {
         proxy_pass http://localhost:8188;
@@ -79,11 +81,6 @@ plugins:
 	disable = "libjanus_audiobridge.so,libjanus_echotest.so,libjanus_nosip.so,libjanus_recordplay.so,libjanus_sip.so,libjanus_streaming.so,libjanus_textroom.so,libjanus_videocall.so,libjanus_voicemail.so"
 ---
 
---- janus.transport.http.jcfg ---
-general:
-	base_path = "/"
----
-
 --- janus.plugin.videoroom.jcfg ---
 general:
 	publishers = 100
@@ -108,3 +105,6 @@ TasksMax=500000
 --- /etc/cron.d/increase_threads ---
 @reboot root echo 100000 > /proc/sys/kernel/threads-max
 ---
+
+# Restarting janus
+systemctl restart snap.janus-gateway.janus-gateway.service
