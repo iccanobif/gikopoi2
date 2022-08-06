@@ -2679,7 +2679,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  4, y:  2, offset: { x:  246, y:  365 }, url: 'counter_squid.svg' },
             { x:  5, y:  2, offset: { x:  288, y:  385 }, url: 'counter_chopsticks.svg' },
             { x:  1, y:  0, offset: { x:   49, y:  201 }, url: 'sign.svg' },
-            { x:  7, y:  , offset: { x:  413, y:  444 }, url: 'seat_with_bottle.svg' },
+            { x:  7, y:  3, offset: { x:  413, y:  444 }, url: 'seat_with_bottle.svg' },
         ],
         sit: [
             { x:  1, y:  1 },
