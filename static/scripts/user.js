@@ -19,7 +19,7 @@ export default class User
         this.isSpinning = false;
         this.isMoved = true;
         this.direction = "up";
-        this.stepLength = character.characterName == "onigiri" ? 10 : 8;
+        this.stepLength = character.characterName ==  "onigiri" ? (1000/60) * 10 : (1000/60) * 8;
         this.framesUntilNextStep = this.stepLength;
         this.frameCount = 0
         this.isInactive = false;
@@ -93,11 +93,12 @@ export default class User
             this.isSpinning = false;
         }
 
-        this.framesUntilNextStep--
-        if (this.framesUntilNextStep < 0)
-            this.framesUntilNextStep = this.stepLength
+        this.framesUntilNextStep  -= delta;
 
-        this.frameCount++
+        if (this.framesUntilNextStep < 0)
+            this.framesUntilNextStep = this.stepLength;
+
+        this.frameCount += delta;
         if (this.frameCount == Number.MAX_SAFE_INTEGER)
             this.frameCount = 0
     }
@@ -123,7 +124,7 @@ export default class User
 
         if (this.isSpinning)
         {
-            const spinCycle = Math.round(this.frameCount / 2) % 4
+            const spinCycle = Math.round((this.frameCount*60/1000) / 2) % 4
             switch (spinCycle)
             {
                 case 0:
@@ -142,7 +143,7 @@ export default class User
         }
         else if (this.isWalking)
         {
-            const walkCycle = this.framesUntilNextStep > this.stepLength / 2
+            const walkCycle = this.framesUntilNextStep > this.stepLength / 2;
             switch (this.direction)
             {
                 case "up":
