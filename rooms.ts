@@ -3797,7 +3797,7 @@ export const rooms: { [roomId: string]: Room } = {
             door: { x: 9, y: 0, direction: "up", target: { roomId: "bar_giko_square", doorId: "office" } },
         },
         streamSlotCount: 1,
-    }
+    },
 };
 
 const regularKonbini: Room = {
@@ -3961,10 +3961,7 @@ const summerIrori: Room = {
 }
 
 rooms["konbini"] = isSummer ? summerKonbini : regularKonbini
-rooms["irori"] = isSummer ? summerIrori 
-                 : isWinter ? summerIrori // winterIrori
-                 : isAutumn ? summerIrori // autumnIrori
-                 : summerIrori
+rooms["irori"] = summerIrori
 
 function buildBrookRoom(type: number): Room
 {

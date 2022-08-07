@@ -8,7 +8,7 @@
    style="clip-rule:evenodd;fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5"
    id="svg4402"
    sodipodi:docname="background.summer.svg"
-   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -23,14 +23,16 @@
    inkscape:pagecheckerboard="0"
    showgrid="false"
    inkscape:zoom="4.4083333"
-   inkscape:cx="173.87524"
-   inkscape:cy="379.50851"
+   inkscape:cx="173.98866"
+   inkscape:cy="379.62193"
    inkscape:window-width="1920"
    inkscape:window-height="996"
    inkscape:window-x="-8"
    inkscape:window-y="-8"
    inkscape:window-maximized="1"
-   inkscape:current-layer="svg4402" />
+   inkscape:current-layer="svg4402"
+   inkscape:showpageshadow="0"
+   inkscape:deskcolor="#505050" />
     
     <clipPath
    id="_clip16">
@@ -9499,19 +9501,4 @@
      stroke-linejoin="round"
      stroke-miterlimit="3"
      stroke-opacity="0.6"
-     id="path466" /></g><g
-   id="g1331-9"
-   transform="matrix(-1,0,0,1,647.558,126.13499)"
-   style="clip-rule:evenodd;fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5"><path
-     d="m 491.608,277.315 -19.95,10 -19.85,-9.9 20,-10 -7.6,-3.8 34.85,-0.25 v 17.4 l -7.45,-3.45"
-     fill="#ffcc66"
-     fill-opacity="0.6"
-     id="path464-6" /><path
-     d="m 499.058,280.765 v -17.4 l -34.85,0.25 7.6,3.8 -20,10 19.85,9.9 19.95,-10 z"
-     fill="none"
-     stroke="#ff6600"
-     stroke-linecap="round"
-     stroke-linejoin="round"
-     stroke-miterlimit="3"
-     stroke-opacity="0.6"
-     id="path466-2" /></g></svg>
+     id="path466" /></g></svg>
