@@ -3996,6 +3996,20 @@ function buildBrookRoom(type: number): Room
                 url: `top.${type}.svg`
             },
 
+            { 
+                x: 0,
+                y: 11,
+                scale: 1,
+                offset: { x: 300 , y: 605 },
+                url: "arrow-down.svg"
+            },
+            { 
+                x: 0,
+                y: 11,
+                scale: 1,
+                offset: { x: 532 , y: 526 },
+                url: "arrow-right.svg"
+            },
 
             // TODO add arrows
 
@@ -4076,4 +4090,4 @@ function buildBrookRoom(type: number): Room
 }
 
 // 6 is the most complete room
-rooms["brook"] = buildBrookRoom(4)
+rooms["brook"] = buildBrookRoom(3)
