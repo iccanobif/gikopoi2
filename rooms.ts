@@ -3989,18 +3989,19 @@ function buildBrookRoom(type: number): Room
                 url: `bench.${type}.svg`
             },
             { 
-                x: 8,
+                x: 9,
                 y: 0,
                 scale: scale,
                 offset: { x: 0, y: 0 },
                 url: `top.${type}.svg`
             },
+
+
+            // TODO add arrows
+
         ],
         sit: [{ x: 1, y: 5 }, { x: 1, y: 6 }, { x: 1, y: 7 }],
         blocked: [
-            // cosmos
-            { x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 },
-            { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 },
             // river left
             { x: 5, y: 0 }, { x: 5, y: 1 }, { x: 5, y: 2 }, { x: 5, y: 3 }, { x: 5, y: 4 },
             { x: 6, y: 0 }, { x: 6, y: 1 }, { x: 6, y: 2 }, { x: 6, y: 3 }, { x: 6, y: 4 },
@@ -4018,9 +4019,61 @@ function buildBrookRoom(type: number): Room
         },
         streamSlotCount: 0,
     }
+
+    if (type == 5 || type == 6)
+    {
+        // cosmos
+        room.blocked = room.blocked.concat([
+            { x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 },
+            { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 },
+        ]);
+        for (let i = 0; i < 2; i++)
+        {
+            room.objects.push({
+                x: 1,
+                y: 2,
+                scale: scale,
+                offset: { x: 0 + i * 60, y: 580 + i * 30},
+                url: `cosmos.${type}.svg`
+            })
+            room.objects.push({
+                x: 1,
+                y: 4,
+                scale: scale,
+                offset: { x: 113 + i * 60, y: 520 + i * 30},
+                url: `cosmos.${type}.svg`
+            })
+        }
+    }
+
+    if (type >= 4 && type <= 7)
+    {
+        // grass
+        room.blocked = room.blocked.concat([
+            { x: 4, y: 0 }, { x: 4, y: 1 }, { x: 4, y: 2 }, { x: 4, y: 3 },
+            { x: 8, y: 0 }, { x: 8, y: 1 }, { x: 8, y: 2 }, { x: 8, y: 3 },
+        ]);
+        for (let i = 0; i < 2; i++)
+        {
+            room.objects.push({
+                x: 8,
+                y: 0,
+                scale: scale,
+                offset: { x: 210 + i * 225, y: 580 + i * 105 },
+                url: `grass.${type}.svg`
+            })
+            room.objects.push({
+                x: 8,
+                y: 2,
+                scale: scale,
+                offset: { x: 210 + 105 + i * 225, y: 530 + i * 105 },
+                url: `grass.${type}.svg`
+            })
+        }
+    }
     
     return room;
 }
 
 // 6 is the most complete room
-rooms["brook"] = buildBrookRoom(6)
+rooms["brook"] = buildBrookRoom(4)
