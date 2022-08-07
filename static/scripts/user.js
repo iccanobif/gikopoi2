@@ -28,6 +28,7 @@ export default class User
         
         this.message = null;
         this.lastMessage = null;
+        this.lastMovedAt = new Date();
         this.bubblePosition = "up";
         this.bubbleImage = null;
         this.voicePitch = null;
@@ -50,7 +51,10 @@ export default class User
     moveToPosition(logicalPositionX, logicalPositionY, direction)
     {
         if (this.logicalPositionX != logicalPositionX || this.logicalPositionY != logicalPositionY)
+        {
             this.isWalking = true;
+            this.lastMovedAt = new Date();
+        }
 
         this.logicalPositionX = logicalPositionX;
         this.logicalPositionY = logicalPositionY;
