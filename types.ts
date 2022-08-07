@@ -71,10 +71,6 @@ export interface Room
             x: number;
             y: number;
         },
-        occupiedBlocks?: {
-            x: number;
-            y: number;
-        }[]
     }[];
     objectRenderSortMethod?: "diagonal_scan" | "priority";
     sit: Coordinates[];

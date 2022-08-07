@@ -3969,7 +3969,7 @@ function buildBrookRoom(type: number): Room
 {
     const scale = (10.5 * 80)/1202
 
-    return  {
+    const room: Room = {
         id: "brook",
         group: "gikopoipoi",
         scale: scale,
@@ -3977,16 +3977,50 @@ function buildBrookRoom(type: number): Room
         originCoordinates: { x: 0, y: 501 },
         spawnPoint: "door",
         backgroundImageUrl: `rooms/brook/background.${type}.svg`,
+        objectRenderSortMethod: "diagonal_scan",
         objects: [
+            { 
+                x: 1,
+                y: 7,
+                width: 1,
+                height: 3,
+                scale: scale,
+                offset: { x: 343, y: 454 },
+                url: `bench.${type}.svg`
+            },
+            { 
+                x: 8,
+                y: 0,
+                scale: scale,
+                offset: { x: 0, y: 0 },
+                url: `top.${type}.svg`
+            },
         ],
-        sit: [],
-        blocked: [],
+        sit: [{ x: 1, y: 5 }, { x: 1, y: 6 }, { x: 1, y: 7 }],
+        blocked: [
+            // cosmos
+            { x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 },
+            { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 },
+            // river left
+            { x: 5, y: 0 }, { x: 5, y: 1 }, { x: 5, y: 2 }, { x: 5, y: 3 }, { x: 5, y: 4 },
+            { x: 6, y: 0 }, { x: 6, y: 1 }, { x: 6, y: 2 }, { x: 6, y: 3 }, { x: 6, y: 4 },
+            // river right
+            { x: 3, y: 6 }, { x: 3, y: 7 }, { x: 3, y: 8 }, { x: 3, y: 9 }, { x: 3, y: 10 }, { x: 3, y: 11 },
+            { x: 4, y: 6 }, { x: 4, y: 7 }, { x: 4, y: 8 }, { x: 4, y: 9 }, { x: 4, y: 10 }, { x: 4, y: 11 },
+            { x: 2, y: 10 }, { x: 2, y: 11 }, 
+            { x: 1, y: 11 },
+            // tree right
+            { x: 8, y: 9 },
+        ],
         forbiddenMovements: [],
         doors: {
-            door: { x: 0, y: 0, direction: "right", target: { roomId: "brook", doorId: "door" } },
+            door: { x: 8, y: 5, direction: "left", target: { roomId: "brook", doorId: "door" } },
         },
         streamSlotCount: 0,
     }
+    
+    return room;
 }
 
-rooms["brook"] = buildBrookRoom(7)
+// 6 is the most complete room
+rooms["brook"] = buildBrookRoom(6)
