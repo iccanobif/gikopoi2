@@ -1460,6 +1460,7 @@ export const rooms: { [roomId: string]: Room } = {
             left: { x: 0, y: 12, direction: "right", target: { roomId: "monachat", doorId: "door" } },
             right: { x: 23, y: 11, direction: "left", target: { roomId: "konbini", doorId: "door" } },
             office: { x: 5, y: 17, direction: "down", target: { roomId: "nerd_office", doorId: "door"} },
+            brook: { x: 9, y: 2, direction: "right", target: { roomId: "brook", doorId: "right"} },
         },
         streamSlotCount: 3,
     },
@@ -3954,7 +3955,7 @@ const summerIrori: Room = {
         // { xFrom: 1, yFrom: 2, xTo: 0, yTo: 2 },
     ],
     doors: {
-        door: { x: 0, y: 10, direction: "right", target: { roomId: "irori", doorId: "door" } },
+        door: { x: 0, y: 10, direction: "down", target: { roomId: "brook", doorId: "left" } },
     },
     streamSlotCount: 1,
 }
@@ -3975,7 +3976,7 @@ function buildBrookRoom(type: number): Room
         scale: scale,
         size: { x: 9, y: 12 },
         originCoordinates: { x: 0, y: 501 },
-        spawnPoint: "door",
+        spawnPoint: "right",
         backgroundImageUrl: `rooms/brook/background.${type}.svg`,
         objectRenderSortMethod: "diagonal_scan",
         objects: [
@@ -4029,7 +4030,8 @@ function buildBrookRoom(type: number): Room
         ],
         forbiddenMovements: [],
         doors: {
-            door: { x: 8, y: 5, direction: "left", target: { roomId: "brook", doorId: "door" } },
+            right: { x: 8, y: 5, direction: "left", target: { roomId: "bar_giko_square", doorId: "brook" } },
+            left: { x: 7, y: 0, direction: "up", target: { roomId: "irori", doorId: "door" } },
         },
         streamSlotCount: 0,
     }
