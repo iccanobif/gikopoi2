@@ -3929,7 +3929,6 @@ const summerIrori: Room = {
                  : isAutumn ? "top.autumn.svg"
                  : "top.summer.svg"},
     ],
-    objectRenderSortMethod: "priority",
     sit: [
         { x: 1, y: 4 }, { x: 1, y: 5 }, { x: 1, y: 6 },
         { x: 2, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 3 },
@@ -3965,3 +3964,29 @@ rooms["irori"] = isSummer ? summerIrori
                  : isWinter ? summerIrori // winterIrori
                  : isAutumn ? summerIrori // autumnIrori
                  : summerIrori
+
+function buildBrookRoom(type: number): Room
+{
+    const scale = (10.5 * 80)/1202
+
+    return  {
+        id: "brook",
+        group: "gikopoipoi",
+        scale: scale,
+        size: { x: 9, y: 12 },
+        originCoordinates: { x: 0, y: 501 },
+        spawnPoint: "door",
+        backgroundImageUrl: `rooms/brook/background.${type}.svg`,
+        objects: [
+        ],
+        sit: [],
+        blocked: [],
+        forbiddenMovements: [],
+        doors: {
+            door: { x: 0, y: 0, direction: "right", target: { roomId: "brook", doorId: "door" } },
+        },
+        streamSlotCount: 0,
+    }
+}
+
+rooms["brook"] = buildBrookRoom(7)
