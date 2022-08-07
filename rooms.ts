@@ -1,5 +1,16 @@
 import { Room } from "./types";
 
+// In the frontend there's a thing called annualevents.js... I'm lazy so I'll just
+// reimplement here the logic for deciding if it's summer or not. Not even sure I'm
+// handling the edge cases right.
+const today = new Date()
+const isSummer = new Date(today.getFullYear(), 6, 21) < today && today < new Date(today.getFullYear(), 9, 21)
+const isAutumn = new Date(today.getFullYear(), 9, 22) < today && today < new Date(today.getFullYear(), 12, 20)
+const isWinter = today > new Date(today.getFullYear(), 12, 21) || today < new Date(today.getFullYear(), 3, 19)
+// const isSummer = false
+// const isAutumn = true
+// const isWinter = false
+
 export const rooms: { [roomId: string]: Room } = {
     bar: {
         id: "bar",
@@ -3906,9 +3917,17 @@ const summerIrori: Room = {
     size: { x: 7, y: 11 },
     originCoordinates: { x: 0, y: 361 },
     spawnPoint: "door",
-    backgroundImageUrl: "rooms/irori/background.winter.svg",
+    backgroundImageUrl: isSummer ? "rooms/irori/background.summer.svg"
+                        : isWinter ? "rooms/irori/background.winter.svg"
+                        : isAutumn ? "rooms/irori/background.autumn.svg"
+                        : "rooms/irori/background.summer.svg",
     objects: [
-        { x:  100, y:  100, width: 1, offset: { x: 0, y: 0 }, url: "top.winter.svg"},
+        // { x:  100, y:  100, width: 1, offset: { x: 0, y: 0 }, url: "top.winter.svg"},
+        { x:  6, y:  0, width: 100, offset: { x: 0, y: 0 },
+            url: isSummer ? "top.summer.svg"
+                 : isWinter ? "top.winter.svg"
+                 : isAutumn ? "top.autumn.svg"
+                 : "top.summer.svg"},
     ],
     objectRenderSortMethod: "priority",
     sit: [
@@ -3940,15 +3959,6 @@ const summerIrori: Room = {
     },
     streamSlotCount: 1,
 }
-
-
-// In the frontend there's a thing called annualevents.js... I'm lazy so I'll just
-// reimplement here the logic for deciding if it's summer or not. Not even sure I'm
-// handling the edge cases right.
-const today = new Date()
-const isSummer = new Date(today.getFullYear(), 6, 21) < today && today < new Date(today.getFullYear(), 9, 21)
-const isAutumn = new Date(today.getFullYear(), 9, 22) < today && today < new Date(today.getFullYear(), 12, 20)
-const isWinter = today > new Date(today.getFullYear(), 12, 21) || today < new Date(today.getFullYear(), 3, 19)
 
 rooms["konbini"] = isSummer ? summerKonbini : regularKonbini
 rooms["irori"] = isSummer ? summerIrori 

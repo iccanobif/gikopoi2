@@ -22,9 +22,9 @@
    inkscape:pageopacity="0"
    inkscape:pagecheckerboard="0"
    showgrid="false"
-   inkscape:zoom="0.27552083"
-   inkscape:cx="1232.2117"
-   inkscape:cy="453.6862"
+   inkscape:zoom="4.4083333"
+   inkscape:cx="173.87524"
+   inkscape:cy="379.50851"
    inkscape:window-width="1920"
    inkscape:window-height="996"
    inkscape:window-x="-8"
@@ -9485,4 +9485,33 @@
      style="stop-color:rgb(33,11,11);stop-opacity:1"
      id="stop4397" /></linearGradient>
     </defs>
-</svg>
+<g
+   id="g1331"
+   transform="translate(-37.143056,-132.90959)"><path
+     d="m 491.608,277.315 -19.95,10 -19.85,-9.9 20,-10 -7.6,-3.8 34.85,-0.25 v 17.4 l -7.45,-3.45"
+     fill="#ffcc66"
+     fill-opacity="0.6"
+     id="path464" /><path
+     d="m 499.058,280.765 v -17.4 l -34.85,0.25 7.6,3.8 -20,10 19.85,9.9 19.95,-10 z"
+     fill="none"
+     stroke="#ff6600"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-miterlimit="3"
+     stroke-opacity="0.6"
+     id="path466" /></g><g
+   id="g1331-9"
+   transform="matrix(-1,0,0,1,647.558,126.13499)"
+   style="clip-rule:evenodd;fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5"><path
+     d="m 491.608,277.315 -19.95,10 -19.85,-9.9 20,-10 -7.6,-3.8 34.85,-0.25 v 17.4 l -7.45,-3.45"
+     fill="#ffcc66"
+     fill-opacity="0.6"
+     id="path464-6" /><path
+     d="m 499.058,280.765 v -17.4 l -34.85,0.25 7.6,3.8 -20,10 19.85,9.9 19.95,-10 z"
+     fill="none"
+     stroke="#ff6600"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-miterlimit="3"
+     stroke-opacity="0.6"
+     id="path466-2" /></g></svg>
