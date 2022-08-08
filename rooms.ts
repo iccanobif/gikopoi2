@@ -2680,7 +2680,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  6, y:  3, offset: { x:  348, y:  225 }, url: 'panel.svg' },
             { x:  1, y:  2, width: 5, offset: { x:  133, y:  310 }, url: 'counter.svg' },
             { x:  1, y:  0, offset: { x:   49, y:  201 }, url: 'sign.svg' },
-            { x:  1, y:  0, offset: { x:  413, y:  444 }, url: 'seat_with_bottle.svg' },
+            { x:  7, y:  3, offset: { x:  413, y:  444 }, url: 'seat_with_bottle.svg' },
         ],
         sit: [
             { x:  1, y:  1 },
