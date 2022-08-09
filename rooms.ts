@@ -3963,7 +3963,31 @@ const summerIrori: Room = {
 rooms["konbini"] = isSummer ? summerKonbini : regularKonbini
 rooms["irori"] = summerIrori
 
-function buildBrookRoom(type: number): Room
+export function calculateCurrentBrookType(): number
+{
+    // 1 =  4月1日～4月30日
+    // 2 =  5月1日～5月31日
+    // 3 =  6月1日～6月30日
+    // 4 =  7月1日～7月31日
+    // 5 =  8月1日～8月31日
+    // 6 =  9月1日～9月30日
+    // 7 = 10月1日～11月30日
+    // 8 = 12月1日～3月31日
+    const today = new Date();
+    const i = (today.getMonth() + 1) * 100 + today.getDate();
+
+    if (i >=   401 && i <  430) return 1
+    if (i >=   501 && i <  531) return 2
+    if (i >=   601 && i <  630) return 3
+    if (i >=   701 && i <  731) return 4
+    if (i >=   801 && i <  831) return 5
+    if (i >=   901 && i <  930) return 6
+    if (i >=  1001 && i <  1130) return 7
+    if (i >=  1201 || i <  331) return 8
+    return 0 // should never happen
+}
+
+export function buildBrookRoom(type: number): Room
 {
     const scale = (10.5 * 80)/1202
 
@@ -4088,5 +4112,4 @@ function buildBrookRoom(type: number): Room
     return room;
 }
 
-// 6 is the most complete room
-rooms["brook"] = buildBrookRoom(3)
+rooms["brook"] = buildBrookRoom(calculateCurrentBrookType())
