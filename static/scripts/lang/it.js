@@ -218,6 +218,7 @@ export default
         monachat: "Monachat",
         //konbini: "",
         nerd_office: "Ufficio degli hacker",
+        //admin_old: "",
     },
     area:
     {

@@ -217,6 +217,7 @@ export default
         monachat: "Monachat",
         konbini: "Bakkal",
         nerd_office: "Hacker Ofisi",
+        //admin_old: "",
     },
     area:
     {
