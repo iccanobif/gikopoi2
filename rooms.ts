@@ -291,7 +291,8 @@ export const rooms: { [roomId: string]: Room } = {
         doors: {
             down: { x: 6, y: 0, direction: "up", target: { roomId: "admin_st", doorId: "admin" } }
         },
-        streamSlotCount: 3,
+        streamSlotCount: 0,
+        secret: true,
     },
     radio_backstage: {
         id: "radio_backstage",
