@@ -217,6 +217,7 @@ export default
         monachat: "Monachat",
         konbini: "Convenience Store",
         nerd_office: "Hacker Office",
+        admin_old: "Lost Lounge",
     },
     area:
     {
