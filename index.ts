@@ -457,6 +457,7 @@ io.on("connection", function (socket: Socket)
 
                 user.position.x = newX
                 user.position.y = newY
+                user.lastMovement = Date.now()
                 
                 if (currentRoom.id == "idoA" && user.position.x == 6 && user.position.y == 6)
                 {
@@ -478,6 +479,7 @@ io.on("connection", function (socket: Socket)
                     x: user.position.x,
                     y: user.position.y,
                     direction: user.direction,
+                    lastMovement: user.lastMovement,
                     isInstant: false,
                     shouldSpinwalk,
                 });
@@ -1233,6 +1235,7 @@ function toPlayerDto(player: Player): PlayerDto
         voicePitch: player.voicePitch,
         lastRoomMessage: player.lastRoomMessage?.toLocaleLowerCase().match(settings.censoredWordsRegex) ? "" : player.lastRoomMessage,
         isAlternateCharacter: player.isAlternateCharacter,
+        lastMovement: player.lastMovement,
     };
     if (rooms[player.roomId].forcedAnonymous)
     {

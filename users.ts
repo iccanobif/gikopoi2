@@ -23,6 +23,7 @@ export class Player
     public isGhost: boolean = true;
     public roomId: string;
     public lastAction = Date.now();
+    public lastMovement = Date.now();
     // Initializing disconnectionTime at login time to simplify the user cleanup's job code.
     public disconnectionTime: number | null = Date.now(); // null if isGhost == false, non-null otherwise
     public characterId: string;

@@ -148,6 +148,7 @@ export interface PlayerDto
     voicePitch: number,
     lastRoomMessage: string,
     isAlternateCharacter: boolean,
+    lastMovement: number,
 }
 
 export interface StreamSlotDto

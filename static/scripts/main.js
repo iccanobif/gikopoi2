@@ -748,7 +748,7 @@ window.vueApp = new Vue({
 
             this.socket.on("server-move", (dto) =>
             {
-                const { userId, x, y, direction, isInstant, shouldSpinwalk } = dto
+                const { userId, x, y, direction, lastMovement, isInstant, shouldSpinwalk } = dto
 
                 const user = this.users[userId];
 
@@ -756,7 +756,8 @@ window.vueApp = new Vue({
 
                 const oldX = user.logicalPositionX;
                 const oldY = user.logicalPositionY;
-
+                
+                user.lastMovement = lastMovement
                 if (isInstant)
                     user.moveImmediatelyToPosition(this.currentRoom, x, y, direction);
                 else user.moveToPosition(x, y, direction);
@@ -923,6 +924,7 @@ window.vueApp = new Vue({
                 userDTO.position.y,
                 userDTO.direction
             );
+            newUser.lastMovement = userDTO.lastMovement;
             newUser.isInactive = userDTO.isInactive;
             newUser.message = userDTO.lastRoomMessage;
             newUser.bubblePosition = userDTO.bubblePosition;
@@ -1427,7 +1429,7 @@ window.vueApp = new Vue({
                             return 1
                         if (b.id == self.highlightedUserId)
                             return -1
-                        return a.lastMovedAt < b.lastMovedAt;
+                        return a.lastMovement < b.lastMovement;
                     })
                     .forEach(o => addObject({
                         o,
@@ -1476,7 +1478,7 @@ window.vueApp = new Vue({
                                 return 1
                             if (b.o.id == self.highlightedUserId)
                                 return -1
-                            return a.o.lastMovedAt < b.o.lastMovedAt;
+                            return a.o.lastMovement < b.o.lastMovement;
                         }
                         
                         return 0
