@@ -184,7 +184,7 @@ export default
         school_st: "Schulstraße",
         bar_st: "Kneipenstraße",
         admin_st: "Entwicklerstraße",
-        admin: "Entwicklerkabuff",
+        admin: "Entwicklerkammer",
         admin_bar: "Unsichtbar",
         cafe_st: "Kaffeefleck",
         enkai: "Festsaal",
@@ -215,7 +215,7 @@ export default
         monachat: "Monachat",
         konbini: "Gemischtwarenladen",
         nerd_office: "Hackerbüro",
-        //admin_old: "",
+        admin_old: "Verborgene Kammer",
     },
     area:
     {
