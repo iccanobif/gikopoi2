@@ -2178,7 +2178,6 @@ setInterval(() => {
         for (const areaId of ["gen", "for"])
             for (const u of getConnectedUserList("brook", areaId).filter(u => u.socketId))
                 sendRoomState(io.to(u.socketId), u, rooms["brook"]);
-
     }
     previousBrookType = newBrookType;
 }, 1000 * 10) // ten seconds
