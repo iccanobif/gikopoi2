@@ -5,11 +5,8 @@ import { Room } from "./types";
 // handling the edge cases right.
 const today = new Date()
 const isSummer = new Date(today.getFullYear(), 6, 21) < today && today < new Date(today.getFullYear(), 9, 21)
-const isAutumn = new Date(today.getFullYear(), 9, 22) < today && today < new Date(today.getFullYear(), 12, 20)
-const isWinter = today > new Date(today.getFullYear(), 12, 21) || today < new Date(today.getFullYear(), 3, 19)
-// const isSummer = false
-// const isAutumn = true
-// const isWinter = false
+// const isAutumn = new Date(today.getFullYear(), 9, 22) < today && today < new Date(today.getFullYear(), 12, 20)
+// const isWinter = today > new Date(today.getFullYear(), 12, 21) || today < new Date(today.getFullYear(), 3, 19)
 
 export const rooms: { [roomId: string]: Room } = {
     bar: {
@@ -3911,57 +3908,56 @@ const summerKonbini: Room = {
     streamSlotCount: 1,
 }
 
-const summerIrori: Room = {
-    id: "irori",
-    group: "gikopoipoi",
-    scale: 1,
-    size: { x: 7, y: 11 },
-    originCoordinates: { x: 0, y: 361 },
-    spawnPoint: "door",
-    backgroundImageUrl: isSummer ? "rooms/irori/background.summer.svg"
-                        : isWinter ? "rooms/irori/background.winter.svg"
-                        : isAutumn ? "rooms/irori/background.autumn.svg"
-                        : "rooms/irori/background.summer.svg",
-    objects: [
-        // { x:  100, y:  100, width: 1, offset: { x: 0, y: 0 }, url: "top.winter.svg"},
-        { x:  6, y:  0, width: 100, offset: { x: 0, y: 0 },
-            url: isSummer ? "top.summer.svg"
-                 : isWinter ? "top.winter.svg"
-                 : isAutumn ? "top.autumn.svg"
-                 : "top.summer.svg"},
-    ],
-    sit: [
-        { x: 1, y: 4 }, { x: 1, y: 5 }, { x: 1, y: 6 },
-        { x: 2, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 3 },
-        { x: 2, y: 7 }, { x: 3, y: 7 }, { x: 4, y: 7 },
-        { x: 5, y: 4 }, { x: 5, y: 5 }, { x: 5, y: 6 },
-    ],
-    blocked: [
-        { x: 0, y: 6 },
-        { x: 0, y: 4 },
-        { x: 0, y: 3 },
-        { x: 0, y: 2 },
-        { x: 1, y: 1 },
-        { x: 2, y: 1 },
-        { x: 2, y: 0 },
-        { x: 1, y: 2 },
-        // fireplace
-        { x: 2, y: 4 }, { x: 2, y: 5 }, { x: 2, y: 6 },
-        { x: 3, y: 4 }, { x: 3, y: 5 }, { x: 3, y: 6 },
-        { x: 4, y: 4 }, { x: 4, y: 5 }, { x: 4, y: 6 },
-    ],
-    forbiddenMovements: [
-        // { xFrom: 0, yFrom: 2, xTo: 1, yTo: 2 },
-        // { xFrom: 1, yFrom: 2, xTo: 0, yTo: 2 },
-    ],
-    doors: {
-        door: { x: 0, y: 10, direction: "down", target: { roomId: "brook", doorId: "left" } },
-    },
-    streamSlotCount: 1,
-}
-
 rooms["konbini"] = isSummer ? summerKonbini : regularKonbini
-rooms["irori"] = summerIrori
+
+// rooms["irori"] = {
+//     id: "irori",
+//     group: "gikopoipoi",
+//     scale: 1,
+//     size: { x: 7, y: 11 },
+//     originCoordinates: { x: 0, y: 361 },
+//     spawnPoint: "door",
+//     backgroundImageUrl: isSummer ? "rooms/irori/background.summer.svg"
+//                         : isWinter ? "rooms/irori/background.winter.svg"
+//                         : isAutumn ? "rooms/irori/background.autumn.svg"
+//                         : "rooms/irori/background.summer.svg",
+//     objects: [
+//         // { x:  100, y:  100, width: 1, offset: { x: 0, y: 0 }, url: "top.winter.svg"},
+//         { x:  6, y:  0, width: 100, offset: { x: 0, y: 0 },
+//             url: isSummer ? "top.summer.svg"
+//                  : isWinter ? "top.winter.svg"
+//                  : isAutumn ? "top.autumn.svg"
+//                  : "top.summer.svg"},
+//     ],
+//     sit: [
+//         { x: 1, y: 4 }, { x: 1, y: 5 }, { x: 1, y: 6 },
+//         { x: 2, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 3 },
+//         { x: 2, y: 7 }, { x: 3, y: 7 }, { x: 4, y: 7 },
+//         { x: 5, y: 4 }, { x: 5, y: 5 }, { x: 5, y: 6 },
+//     ],
+//     blocked: [
+//         { x: 0, y: 6 },
+//         { x: 0, y: 4 },
+//         { x: 0, y: 3 },
+//         { x: 0, y: 2 },
+//         { x: 1, y: 1 },
+//         { x: 2, y: 1 },
+//         { x: 2, y: 0 },
+//         { x: 1, y: 2 },
+//         // fireplace
+//         { x: 2, y: 4 }, { x: 2, y: 5 }, { x: 2, y: 6 },
+//         { x: 3, y: 4 }, { x: 3, y: 5 }, { x: 3, y: 6 },
+//         { x: 4, y: 4 }, { x: 4, y: 5 }, { x: 4, y: 6 },
+//     ],
+//     forbiddenMovements: [
+//         // { xFrom: 0, yFrom: 2, xTo: 1, yTo: 2 },
+//         // { xFrom: 1, yFrom: 2, xTo: 0, yTo: 2 },
+//     ],
+//     doors: {
+//         door: { x: 0, y: 10, direction: "down", target: { roomId: "brook", doorId: "left" } },
+//     },
+//     streamSlotCount: 1,
+// }
 
 export function calculateCurrentBrookType(): number
 {
@@ -4016,14 +4012,13 @@ export function buildBrookRoom(type: number): Room
                 offset: { x: 0, y: 0 },
                 url: `top.${type}.svg`
             },
-
-            { 
-                x: 0,
-                y: 11,
-                scale: 1,
-                offset: { x: 300 , y: 605 },
-                url: "arrow-down.svg"
-            },
+            // { 
+            //     x: 0,
+            //     y: 11,
+            //     scale: 1,
+            //     offset: { x: 300 , y: 605 },
+            //     url: "arrow-down.svg"
+            // },
             { 
                 x: 0,
                 y: 11,
@@ -4031,9 +4026,6 @@ export function buildBrookRoom(type: number): Room
                 offset: { x: 532 , y: 526 },
                 url: "arrow-right.svg"
             },
-
-            // TODO add arrows
-
         ],
         sit: [{ x: 1, y: 5 }, { x: 1, y: 6 }, { x: 1, y: 7 }],
         blocked: [
@@ -4051,7 +4043,7 @@ export function buildBrookRoom(type: number): Room
         forbiddenMovements: [],
         doors: {
             right: { x: 8, y: 5, direction: "left", target: { roomId: "bar_giko_square", doorId: "brook" } },
-            left: { x: 7, y: 0, direction: "up", target: { roomId: "irori", doorId: "door" } },
+            // left: { x: 7, y: 0, direction: "up", target: { roomId: "irori", doorId: "door" } },
         },
         streamSlotCount: 0,
     }
