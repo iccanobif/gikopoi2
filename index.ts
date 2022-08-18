@@ -1,5 +1,5 @@
 import express, { Request } from "express"
-import { buildBrookRoom, calculateCurrentBrookType, rooms } from "./rooms";
+import { buildRiverRoom, calculateCurrentRiverType, rooms } from "./rooms";
 import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, Room } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
 import got from "got";
@@ -2166,20 +2166,20 @@ async function restoreState()
 
 setInterval(() => persistState(), persistInterval)
 
-// When the season change, send to all involved users the new brook room
+// When the season change, send to all involved users the new river room
 // TODO: do the same for konbini to switch between normal, summer and christmas
-let previousBrookType = calculateCurrentBrookType()
+let previousRiverType = calculateCurrentRiverType()
 setInterval(() => {
-    const newBrookType = calculateCurrentBrookType()
-    if (newBrookType != previousBrookType)
+    const newRiverType = calculateCurrentRiverType()
+    if (newRiverType != previousRiverType)
     {
-        rooms["brook"] = buildBrookRoom(newBrookType)
+        rooms["river"] = buildRiverRoom(newRiverType)
 
         for (const areaId of ["gen", "for"])
-            for (const u of getConnectedUserList("brook", areaId).filter(u => u.socketId))
-                sendRoomState(io.to(u.socketId), u, rooms["brook"]);
+            for (const u of getConnectedUserList("river", areaId).filter(u => u.socketId))
+                sendRoomState(io.to(u.socketId), u, rooms["river"]);
     }
-    previousBrookType = newBrookType;
+    previousRiverType = newRiverType;
 }, 1000 * 10) // ten seconds
 
 const port = process.env.PORT == undefined

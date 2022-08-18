@@ -1457,7 +1457,6 @@ export const rooms: { [roomId: string]: Room } = {
             left: { x: 0, y: 12, direction: "right", target: { roomId: "monachat", doorId: "door" } },
             right: { x: 23, y: 11, direction: "left", target: { roomId: "konbini", doorId: "door" } },
             office: { x: 5, y: 17, direction: "down", target: { roomId: "nerd_office", doorId: "door"} },
-            // brook: { x: 9, y: 2, direction: "right", target: { roomId: "brook", doorId: "right"} },
         },
         streamSlotCount: 3,
     },
@@ -3245,7 +3244,7 @@ export const rooms: { [roomId: string]: Room } = {
             left_middle: { x: 0, y: 7, direction: "right", target: { roomId: "bar_giko_square", doorId: "up" } },
             top: { x: 1, y: 14, direction: "down", target: { roomId: "densha", doorId: "bottom" } },
             bottom: { x: 1, y: 0, direction: "up", target: { roomId: "densha", doorId: "top" } },
-            left_bottom: { x: 0, y: 2, direction: "right", target: { roomId: "brook", doorId: "right"} },
+            left_bottom: { x: 0, y: 2, direction: "right", target: { roomId: "river", doorId: "right"} },
         },
         streamSlotCount: 1,
     },
@@ -3955,12 +3954,12 @@ rooms["konbini"] = isSummer ? summerKonbini : regularKonbini
 //         // { xFrom: 1, yFrom: 2, xTo: 0, yTo: 2 },
 //     ],
 //     doors: {
-//         door: { x: 0, y: 10, direction: "down", target: { roomId: "brook", doorId: "left" } },
+//         door: { x: 0, y: 10, direction: "down", target: { roomId: "river", doorId: "left" } },
 //     },
 //     streamSlotCount: 1,
 // }
 
-export function calculateCurrentBrookType(): number
+export function calculateCurrentRiverType(): number
 {
     //1 =  3月21日～4月30日
     //2 =  5月1日～5月31日
@@ -3983,18 +3982,18 @@ export function calculateCurrentBrookType(): number
     return 1 // should never happen, but i'll return a valid number, just in case
 }
 
-export function buildBrookRoom(type: number): Room
+export function buildRiverRoom(type: number): Room
 {
     const scale = (10.5 * 80)/1202
 
     const room: Room = {
-        id: "brook",
+        id: "river",
         group: "gikopoipoi",
         scale: scale,
         size: { x: 9, y: 12 },
         originCoordinates: { x: 0, y: 501 },
         spawnPoint: "right",
-        backgroundImageUrl: `rooms/brook/background.${type}.svg`,
+        backgroundImageUrl: `rooms/river/background.${type}.svg`,
         objectRenderSortMethod: "diagonal_scan",
         objects: [
             { 
@@ -4104,4 +4103,4 @@ export function buildBrookRoom(type: number): Room
     return room;
 }
 
-rooms["brook"] = buildBrookRoom(calculateCurrentBrookType())
+rooms["river"] = buildRiverRoom(calculateCurrentRiverType())

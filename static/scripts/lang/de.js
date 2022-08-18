@@ -215,6 +215,7 @@ export default
         monachat: "Monachat",
         konbini: "Gemischtwarenladen",
         nerd_office: "Hackerbüro",
+        // river: "",
     },
     area:
     {

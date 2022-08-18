@@ -217,6 +217,8 @@ export default
         monachat: r("もなちゃと", "もなちゃと"),
         konbini: r("コンビニ", "こんびに"),
         nerd_office: r("ハッカーのアジト", "はっかーのあじと"),
+        irori: r("囲炉裏", "いろり"),
+        river: r("小川", "こがわ"),
     },
     area:
     {

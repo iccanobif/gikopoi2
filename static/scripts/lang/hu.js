@@ -215,6 +215,7 @@ export default
         monachat: "Monachat",
         konbini: "Közért",
         // nerd_office: "hacker office",
+        // river: "",
     },
     area:
     {
