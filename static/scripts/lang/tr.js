@@ -218,6 +218,7 @@ export default
         konbini: "Bakkal",
         nerd_office: "Hacker Ofisi",
         //admin_old: "",
+        // river: "",
     },
     area:
     {

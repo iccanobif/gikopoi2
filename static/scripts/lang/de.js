@@ -216,6 +216,7 @@ export default
         konbini: "Gemischtwarenladen",
         nerd_office: "Hackerbüro",
         admin_old: "Verschollene Kammer",
+        // river: "",
     },
     area:
     {

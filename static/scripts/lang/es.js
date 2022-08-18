@@ -215,6 +215,7 @@ export default
         konbini: "Tienda de conveniencia",
         // nerd_office: "hacker office",
         //admin_old: "",
+        // river: "",
     },
     area:
     {

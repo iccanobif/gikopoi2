@@ -216,6 +216,7 @@ export default
         konbini: "Närbutiken",
         nerd_office: "Hackarnästet",
         //admin_old: "",
+        // river: "",
     },
     area:
     {

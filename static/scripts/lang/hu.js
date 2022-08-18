@@ -216,6 +216,7 @@ export default
         konbini: "Közért",
         // nerd_office: "hacker office",
         //admin_old: "",
+        // river: "",
     },
     area:
     {

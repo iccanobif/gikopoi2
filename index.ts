@@ -1,6 +1,6 @@
 import express, { Request } from "express"
-import { rooms } from "./rooms";
-import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto } from "./types";
+import { buildRiverRoom, calculateCurrentRiverType, rooms } from "./rooms";
+import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, Room } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState } from "./users";
 import got from "got";
 import log from "loglevel";
@@ -182,27 +182,31 @@ io.use(async (socket: Socket, next: () => void) => {
     }
 })
 
+
+const sendRoomState = (socket: Socket, user: Player, currentRoom: Room) =>
+{
+    const connectedUsers: PlayerDto[] = getFilteredConnectedUserList(user, user.roomId, user.areaId)
+        .map(p => toPlayerDto(p))
+
+    const state: RoomStateDto = {
+        currentRoom,
+        connectedUsers,
+        streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams),
+        chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId),
+        coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
+        hideStreams: settings.noStreamIPs.includes(user.ip),
+    }
+
+    socket.emit("server-update-current-room-state", state)
+}
+
+
 io.on("connection", function (socket: Socket)
 {
     let user: Player;
     let currentRoom = rooms.admin_st;
     
-    const sendCurrentRoomState = () =>
-    {
-        const connectedUsers: PlayerDto[] = getFilteredConnectedUserList(user, user.roomId, user.areaId)
-            .map(p => toPlayerDto(p))
-
-        const state: RoomStateDto = {
-            currentRoom,
-            connectedUsers,
-            streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams),
-            chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId),
-            coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
-            hideStreams: settings.noStreamIPs.includes(user.ip),
-        }
-
-        socket.emit("server-update-current-room-state", state)
-    }
+    const sendCurrentRoomState = () => sendRoomState(socket, user, currentRoom);
 
     const sendNewUserInfo = () =>
     {
@@ -2165,14 +2169,30 @@ async function restoreState()
 
 setInterval(() => persistState(), persistInterval)
 
+// When the season change, send to all involved users the new river room
+// TODO: do the same for konbini to switch between normal, summer and christmas
+let previousRiverType = calculateCurrentRiverType()
+setInterval(() => {
+    const newRiverType = calculateCurrentRiverType()
+    if (newRiverType != previousRiverType)
+    {
+        rooms["river"] = buildRiverRoom(newRiverType)
+
+        for (const areaId of ["gen", "for"])
+            for (const u of getConnectedUserList("river", areaId).filter(u => u.socketId))
+                sendRoomState(io.to(u.socketId), u, rooms["river"]);
+    }
+    previousRiverType = newRiverType;
+}, 1000 * 10) // ten seconds
+
 const port = process.env.PORT == undefined
     ? 8085
     : Number.parseInt(process.env.PORT)
 
-restoreState().then(() =>
-{
-    http.listen(port, "0.0.0.0");
-
-    log.info("Server running on http://localhost:" + port);
-})
+restoreState()
+    .then(() =>
+    {
+        http.listen(port, "0.0.0.0");
+        log.info("Server running on http://localhost:" + port);
+    })
     .catch(log.error)

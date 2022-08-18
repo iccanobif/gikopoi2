@@ -218,6 +218,7 @@ export default
         konbini: "Convenience Store",
         nerd_office: "Hacker Office",
         admin_old: "Lost Lounge",
+        river: "River",
     },
     area:
     {

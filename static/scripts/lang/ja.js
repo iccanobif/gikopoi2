@@ -218,6 +218,8 @@ export default
         konbini: r("コンビニ", "こんびに"),
         nerd_office: r("ハッカーのアジト", "はっかーのあじと"),
         admin_old: r("忘れられた開発局", "わすれられたかいはつきょく"),
+        irori: r("囲炉裏", "いろり"),
+        river: r("小川", "こがわ"),
     },
     area:
     {

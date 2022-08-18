@@ -215,6 +215,7 @@ export default
         konbini: "Toserba",
         nerd_office: "Kantor Peretas",
         //admin_old: "",
+        // river: "",
     },
     area:
     {

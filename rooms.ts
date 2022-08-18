@@ -1,5 +1,13 @@
 import { Room } from "./types";
 
+// In the frontend there's a thing called annualevents.js... I'm lazy so I'll just
+// reimplement here the logic for deciding if it's summer or not. Not even sure I'm
+// handling the edge cases right.
+const today = new Date()
+const isSummer = new Date(today.getFullYear(), 6, 21) < today && today < new Date(today.getFullYear(), 9, 21)
+// const isAutumn = new Date(today.getFullYear(), 9, 22) < today && today < new Date(today.getFullYear(), 12, 20)
+// const isWinter = today > new Date(today.getFullYear(), 12, 21) || today < new Date(today.getFullYear(), 3, 19)
+
 export const rooms: { [roomId: string]: Room } = {
     bar: {
         id: "bar",
@@ -3276,6 +3284,7 @@ export const rooms: { [roomId: string]: Room } = {
             left_middle: { x: 0, y: 7, direction: "right", target: { roomId: "bar_giko_square", doorId: "up" } },
             top: { x: 1, y: 14, direction: "down", target: { roomId: "densha", doorId: "bottom" } },
             bottom: { x: 1, y: 0, direction: "up", target: { roomId: "densha", doorId: "top" } },
+            left_bottom: { x: 0, y: 2, direction: "right", target: { roomId: "river", doorId: "right"} },
         },
         streamSlotCount: 1,
     },
@@ -3825,17 +3834,8 @@ export const rooms: { [roomId: string]: Room } = {
             door: { x: 9, y: 0, direction: "up", target: { roomId: "bar_giko_square", doorId: "office" } },
         },
         streamSlotCount: 1,
-    }
+    },
 };
-
-
-
-
-
-
-
-
-
 
 const regularKonbini: Room = {
     id: "konbini",
@@ -3948,14 +3948,199 @@ const summerKonbini: Room = {
     streamSlotCount: 1,
 }
 
-// In the frontend there's a thing called annualevents.js... I'm lazy so I'll just
-// reimplement here the logic for deciding if it's summer or not. Not even sure I'm
-// handling the edge cases right.
-const today = new Date()
-const isSummer = new Date(today.getFullYear(), 6, 21) < today
-                 && today < new Date(today.getFullYear(), 9, 21)
+rooms["konbini"] = isSummer ? summerKonbini : regularKonbini
 
-if (isSummer)
-    rooms["konbini"] = summerKonbini
-else
-    rooms["konbini"] = regularKonbini
+// rooms["irori"] = {
+//     id: "irori",
+//     group: "gikopoipoi",
+//     scale: 1,
+//     size: { x: 7, y: 11 },
+//     originCoordinates: { x: 0, y: 361 },
+//     spawnPoint: "door",
+//     backgroundImageUrl: isSummer ? "rooms/irori/background.summer.svg"
+//                         : isWinter ? "rooms/irori/background.winter.svg"
+//                         : isAutumn ? "rooms/irori/background.autumn.svg"
+//                         : "rooms/irori/background.summer.svg",
+//     objects: [
+//         // { x:  100, y:  100, width: 1, offset: { x: 0, y: 0 }, url: "top.winter.svg"},
+//         { x:  6, y:  0, width: 100, offset: { x: 0, y: 0 },
+//             url: isSummer ? "top.summer.svg"
+//                  : isWinter ? "top.winter.svg"
+//                  : isAutumn ? "top.autumn.svg"
+//                  : "top.summer.svg"},
+//     ],
+//     sit: [
+//         { x: 1, y: 4 }, { x: 1, y: 5 }, { x: 1, y: 6 },
+//         { x: 2, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 3 },
+//         { x: 2, y: 7 }, { x: 3, y: 7 }, { x: 4, y: 7 },
+//         { x: 5, y: 4 }, { x: 5, y: 5 }, { x: 5, y: 6 },
+//     ],
+//     blocked: [
+//         { x: 0, y: 6 },
+//         { x: 0, y: 4 },
+//         { x: 0, y: 3 },
+//         { x: 0, y: 2 },
+//         { x: 1, y: 1 },
+//         { x: 2, y: 1 },
+//         { x: 2, y: 0 },
+//         { x: 1, y: 2 },
+//         // fireplace
+//         { x: 2, y: 4 }, { x: 2, y: 5 }, { x: 2, y: 6 },
+//         { x: 3, y: 4 }, { x: 3, y: 5 }, { x: 3, y: 6 },
+//         { x: 4, y: 4 }, { x: 4, y: 5 }, { x: 4, y: 6 },
+//     ],
+//     forbiddenMovements: [
+//         // { xFrom: 0, yFrom: 2, xTo: 1, yTo: 2 },
+//         // { xFrom: 1, yFrom: 2, xTo: 0, yTo: 2 },
+//     ],
+//     doors: {
+//         door: { x: 0, y: 10, direction: "down", target: { roomId: "river", doorId: "left" } },
+//     },
+//     streamSlotCount: 1,
+// }
+
+export function calculateCurrentRiverType(): number
+{
+    //1 =  3月21日～4月30日
+    //2 =  5月1日～5月31日
+    //3 =  6月1日～6月30日
+    //4 =  7月1日～7月9日
+    //5 =  7月10日～8月31日
+    //6 =  9月1日～9月30日
+    //7 = 10月1日～11月30日
+    //8 = 12月1日～3月20日
+    const today = new Date();
+    const i = (today.getMonth() + 1) * 100 + today.getDate();
+    if (i >=   321 && i <=  430) return 1
+    if (i >=   501 && i <=  531) return 2
+    if (i >=   601 && i <=  630) return 3
+    if (i >=   701 && i <=  709) return 4
+    if (i >=   710 && i <=  831) return 5
+    if (i >=   901 && i <=  930) return 6
+    if (i >=  1001 && i <=  1130) return 7
+    if (i >=  1201 || i <=  320) return 8
+    return 1 // should never happen, but i'll return a valid number, just in case
+}
+
+export function buildRiverRoom(type: number): Room
+{
+    const scale = (10.5 * 80)/1202
+
+    const room: Room = {
+        id: "river",
+        group: "gikopoipoi",
+        scale: scale,
+        size: { x: 9, y: 12 },
+        originCoordinates: { x: 0, y: 501 },
+        spawnPoint: "right",
+        backgroundImageUrl: `rooms/river/background.${type}.svg`,
+        objectRenderSortMethod: "diagonal_scan",
+        objects: [
+            { 
+                x: 1,
+                y: 7,
+                width: 1,
+                height: 3,
+                scale: scale,
+                offset: { x: 343, y: 454 },
+                url: `bench.${type}.svg`
+            },
+            { 
+                x: 9,
+                y: 0,
+                scale: scale,
+                offset: { x: 0, y: 0 },
+                url: `top.${type}.svg`
+            },
+            // { 
+            //     x: 0,
+            //     y: 11,
+            //     scale: 1,
+            //     offset: { x: 300 , y: 605 },
+            //     url: "arrow-down.svg"
+            // },
+            { 
+                x: 0,
+                y: 11,
+                scale: 1,
+                offset: { x: 532 , y: 526 },
+                url: "arrow-right.svg"
+            },
+        ],
+        sit: [{ x: 1, y: 5 }, { x: 1, y: 6 }, { x: 1, y: 7 }],
+        blocked: [
+            // river left
+            { x: 5, y: 0 }, { x: 5, y: 1 }, { x: 5, y: 2 }, { x: 5, y: 3 }, { x: 5, y: 4 },
+            { x: 6, y: 0 }, { x: 6, y: 1 }, { x: 6, y: 2 }, { x: 6, y: 3 }, { x: 6, y: 4 },
+            // river right
+            { x: 3, y: 6 }, { x: 3, y: 7 }, { x: 3, y: 8 }, { x: 3, y: 9 }, { x: 3, y: 10 }, { x: 3, y: 11 },
+            { x: 4, y: 6 }, { x: 4, y: 7 }, { x: 4, y: 8 }, { x: 4, y: 9 }, { x: 4, y: 10 }, { x: 4, y: 11 },
+            { x: 2, y: 10 }, { x: 2, y: 11 }, 
+            { x: 1, y: 11 },
+            // tree right
+            { x: 8, y: 9 },
+        ],
+        forbiddenMovements: [],
+        doors: {
+            right: { x: 8, y: 5, direction: "left", target: { roomId: "densha", doorId: "left_bottom" } },
+            // left: { x: 7, y: 0, direction: "up", target: { roomId: "irori", doorId: "door" } },
+        },
+        streamSlotCount: 0,
+    }
+
+    if (type == 5 || type == 6)
+    {
+        // cosmos
+        room.blocked = room.blocked.concat([
+            { x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 },
+            { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 },
+        ]);
+        for (let i = 0; i < 2; i++)
+        {
+            room.objects.push({
+                x: 1,
+                y: 2,
+                scale: scale,
+                offset: { x: 0 + i * 60, y: 580 + i * 30},
+                url: `cosmos.${type}.svg`
+            })
+            room.objects.push({
+                x: 1,
+                y: 4,
+                scale: scale,
+                offset: { x: 113 + i * 60, y: 520 + i * 30},
+                url: `cosmos.${type}.svg`
+            })
+        }
+    }
+
+    if (type >= 4 && type <= 7)
+    {
+        // grass
+        room.blocked = room.blocked.concat([
+            { x: 4, y: 0 }, { x: 4, y: 1 }, { x: 4, y: 2 }, { x: 4, y: 3 },
+            { x: 8, y: 0 }, { x: 8, y: 1 }, { x: 8, y: 2 }, { x: 8, y: 3 },
+        ]);
+        for (let i = 0; i < 2; i++)
+        {
+            room.objects.push({
+                x: 8,
+                y: 0,
+                scale: scale,
+                offset: { x: 210 + i * 225, y: 580 + i * 105 },
+                url: `grass.${type}.svg`
+            })
+            room.objects.push({
+                x: 8,
+                y: 2,
+                scale: scale,
+                offset: { x: 210 + 105 + i * 225, y: 530 + i * 105 },
+                url: `grass.${type}.svg`
+            })
+        }
+    }
+    
+    return room;
+}
+
+rooms["river"] = buildRiverRoom(calculateCurrentRiverType())
