@@ -1738,7 +1738,7 @@ app.post("/login", async (req, res) =>
 
         const n = userName.indexOf("#");
         let processedUserName = (n >= 0 ? userName.substr(0, n) : userName)
-            .replace(/◆/g, "◇");
+            .replace(/[◆⯁♦⬥]/g, "◇");
         if (n >= 0)
             processedUserName = processedUserName + "◆" + (tripcode(userName.substr(n + 1)) || "fnkquv7jY2");
 
