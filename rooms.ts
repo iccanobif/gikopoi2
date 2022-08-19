@@ -4036,7 +4036,7 @@ export function buildRiverRoom(type: number): Room
         backgroundImageUrl: `rooms/river/background.${type}.svg`,
         objectRenderSortMethod: "diagonal_scan",
         objects: [
-            { 
+            {
                 x: 1,
                 y: 7,
                 width: 1,
@@ -4045,12 +4045,19 @@ export function buildRiverRoom(type: number): Room
                 offset: { x: 343, y: 454 },
                 url: `bench.${type}.svg`
             },
-            { 
+            {
                 x: 9,
                 y: 0,
                 scale: scale,
                 offset: { x: 0, y: 0 },
                 url: `top.${type}.svg`
+            },
+            {
+                x: 1,
+                y: 11,
+                scale: scale,
+                offset: { x: 0, y: 0 },
+                url: `backtree.${type}.svg`
             },
             // { 
             //     x: 0,
@@ -4059,7 +4066,7 @@ export function buildRiverRoom(type: number): Room
             //     offset: { x: 300 , y: 605 },
             //     url: "arrow-down.svg"
             // },
-            { 
+            {
                 x: 0,
                 y: 11,
                 scale: 1,
@@ -4075,7 +4082,6 @@ export function buildRiverRoom(type: number): Room
             // river right
             { x: 3, y: 6 }, { x: 3, y: 7 }, { x: 3, y: 8 }, { x: 3, y: 9 }, { x: 3, y: 10 }, { x: 3, y: 11 },
             { x: 4, y: 6 }, { x: 4, y: 7 }, { x: 4, y: 8 }, { x: 4, y: 9 }, { x: 4, y: 10 }, { x: 4, y: 11 },
-            { x: 2, y: 10 }, { x: 2, y: 11 }, 
             { x: 1, y: 11 },
             // tree right
             { x: 8, y: 9 },
