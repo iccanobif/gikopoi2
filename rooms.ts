@@ -4001,6 +4001,7 @@ rooms["konbini"] = isSummer ? summerKonbini : regularKonbini
 
 export function calculateCurrentRiverType(): number
 {
+    return 4
     //1 =  3月21日～4月30日
     //2 =  5月1日～5月31日
     //3 =  6月1日～6月30日
@@ -4074,14 +4075,14 @@ export function buildRiverRoom(type: number): Room
                 url: "arrow-right.svg"
             },
         ],
-        sit: [{ x: 1, y: 5 }, { x: 1, y: 6 }, { x: 1, y: 7 }],
+        sit: [{ x: 1, y: 5 }, { x: 1, y: 6 }, { x: 1, y: 7 }, { x: 4, y: 9 }],
         blocked: [
             // river left
             { x: 5, y: 0 }, { x: 5, y: 1 }, { x: 5, y: 2 }, { x: 5, y: 3 }, { x: 5, y: 4 },
             { x: 6, y: 0 }, { x: 6, y: 1 }, { x: 6, y: 2 }, { x: 6, y: 3 }, { x: 6, y: 4 },
             // river right
-            { x: 3, y: 6 }, { x: 3, y: 7 }, { x: 3, y: 8 }, { x: 3, y: 9 }, { x: 3, y: 10 }, { x: 3, y: 11 },
-            { x: 4, y: 6 }, { x: 4, y: 7 }, { x: 4, y: 8 }, { x: 4, y: 9 }, { x: 4, y: 10 }, { x: 4, y: 11 },
+            { x: 3, y: 6 }, { x: 3, y: 7 }, { x: 3, y: 8 }, { x: 3, y: 10 }, { x: 3, y: 9 }, { x: 3, y: 11 },
+            { x: 4, y: 6 }, { x: 4, y: 7 }, { x: 4, y: 8 }, { x: 4, y: 10 }, { x: 4, y: 11 },
             { x: 1, y: 11 },
             // tree right
             { x: 8, y: 9 },
