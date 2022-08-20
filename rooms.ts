@@ -4001,7 +4001,6 @@ rooms["konbini"] = isSummer ? summerKonbini : regularKonbini
 
 export function calculateCurrentRiverType(): number
 {
-    return 4
     //1 =  3月21日～4月30日
     //2 =  5月1日～5月31日
     //3 =  6月1日～6月30日
