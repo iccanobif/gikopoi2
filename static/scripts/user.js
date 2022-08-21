@@ -75,6 +75,12 @@ export default class User
         let walkingSpeedX = blockWidth / ( this.character.characterName == "shar_naito" ? 13 : 40)
         let walkingSpeedY = blockHeight / ( this.character.characterName == "shar_naito" ? 13 : 40)
 
+        if (room.id == "long_st")
+        {
+            walkingSpeedX *= 2;
+            walkingSpeedY *= 2;
+        }
+
         // Adjust for delta since last animation frame
         walkingSpeedX *= delta / (1000 / 60)
         walkingSpeedY *= delta / (1000 / 60)
