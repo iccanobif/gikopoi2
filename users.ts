@@ -31,7 +31,8 @@ export class Player
     public isInactive = false;
     public bubblePosition: Direction = "up";
     public lastRoomMessage: string = "";
-    public ips: Set<string>;
+    // I would have liked ips to be a Set<string>, but we need Player objects to be serializable
+    public ips: string[];
     public voicePitch: number;
     public socketId: string | null = null;
     public blockedIps: string[] = [];
@@ -67,7 +68,7 @@ export class Player
         if (typeof options.name === "string") this.name = options.name
         this.characterId = options.characterId
         this.areaId = options.areaId
-        this.ips = new Set<string>([options.ip])
+        this.ips = [options.ip]
         lastUsedVoicePitchIndex = (lastUsedVoicePitchIndex + 1) % possibleVoicePitches.length
         this.voicePitch = possibleVoicePitches[lastUsedVoicePitchIndex]
     }
@@ -95,7 +96,7 @@ export function getUsersByIp(ip: string, areaId: string | null): Player[]
 {
     return Object.values(users)
         .filter(u => !areaId || u.areaId == areaId)
-        .filter(u => u.ips.has(ip))
+        .filter(u => u.ips.some(i => i == ip))
 }
 
 export function getAllUsers(): Player[]
@@ -125,7 +126,7 @@ export function restoreUserState(persistedUsers: Player[])
         // code that needs to be run only the first time the switch from "ip" to "ips" goes to production
         const ip = (val as any).ip
         if (ip)
-            val.ips = new Set([ip])
+            val.ips = [ip]
         
         acc[val.id] = val;
         return acc;
@@ -137,7 +138,7 @@ export function restoreUserState(persistedUsers: Player[])
         user.isGhost = true;
         user.disconnectionTime = Date.now()
         if (typeof user.ips === "string")
-            user.ips = new Set([user.ips])
+            user.ips = [user.ips]
     }
     console.info("Restored user state (" + Object.values(users).length + " users)")
 }
@@ -157,5 +158,5 @@ export function setUserAsActive(user: Player)
 
 export function isUserBlocking(blocker: Player, blocked: Player)
 {
-    return blocker.blockedIps.some(blockedIp => blocked.ips.has(blockedIp))
+    return blocker.blockedIps.some(blockedIp => blocked.ips.some(ip => ip == blockedIp))
 }

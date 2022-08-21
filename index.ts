@@ -194,7 +194,7 @@ const sendRoomState = (socket: Socket, user: Player, currentRoom: Room) =>
         streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams),
         chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId),
         coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
-        hideStreams: settings.noStreamIPs.some(noStreamIP => user.ips.has(noStreamIP)),
+        hideStreams: settings.noStreamIPs.some(noStreamIP => user.ips.some(ip => noStreamIP)),
     }
 
     socket.emit("server-update-current-room-state", state)
@@ -1202,7 +1202,7 @@ function roomEmit(areaId: string, roomId: string, ...msg: any[])
 
 function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSlotDto[]
 {
-    if (settings.noStreamIPs.some(noStreamIP => user.ips.has(noStreamIP)))
+    if (settings.noStreamIPs.some(noStreamIP => user.ips.some(ip => ip == noStreamIP)))
         return []
 
     return streamSlots.map((s) =>
