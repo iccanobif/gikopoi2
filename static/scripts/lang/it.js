@@ -216,8 +216,10 @@ export default
         bar_giko_square: "Piazza della fontana",
         densha: "Treno",
         monachat: "Monachat",
-        //konbini: "",
+        konbini: "Alimentari",
         nerd_office: "Ufficio degli hacker",
+        admin_old: "Dipartimento degli sviluppatori perduto",
+        river: "Fiume",
     },
     area:
     {

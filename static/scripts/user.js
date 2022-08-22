@@ -19,7 +19,7 @@ export default class User
         this.isSpinning = false;
         this.isMoved = true;
         this.direction = "up";
-        this.stepLength = character.characterName == "onigiri" ? 10 : 8;
+        this.stepLength = character.characterName ==  "onigiri" ? (1000/60) * 10 : (1000/60) * 8;
         this.framesUntilNextStep = this.stepLength;
         this.frameCount = 0
         this.isInactive = false;
@@ -28,6 +28,7 @@ export default class User
         
         this.message = null;
         this.lastMessage = null;
+        this.lastMovement = null;
         this.bubblePosition = "up";
         this.bubbleImage = null;
         this.voicePitch = null;
@@ -50,7 +51,9 @@ export default class User
     moveToPosition(logicalPositionX, logicalPositionY, direction)
     {
         if (this.logicalPositionX != logicalPositionX || this.logicalPositionY != logicalPositionY)
+        {
             this.isWalking = true;
+        }
 
         this.logicalPositionX = logicalPositionX;
         this.logicalPositionY = logicalPositionY;
@@ -71,6 +74,12 @@ export default class User
         
         let walkingSpeedX = blockWidth / ( this.character.characterName == "shar_naito" ? 13 : 40)
         let walkingSpeedY = blockHeight / ( this.character.characterName == "shar_naito" ? 13 : 40)
+
+        if (room.id == "long_st")
+        {
+            walkingSpeedX *= 2;
+            walkingSpeedY *= 2;
+        }
 
         // Adjust for delta since last animation frame
         walkingSpeedX *= delta / (1000 / 60)
@@ -93,11 +102,12 @@ export default class User
             this.isSpinning = false;
         }
 
-        this.framesUntilNextStep--
-        if (this.framesUntilNextStep < 0)
-            this.framesUntilNextStep = this.stepLength
+        this.framesUntilNextStep  -= delta;
 
-        this.frameCount++
+        if (this.framesUntilNextStep < 0)
+            this.framesUntilNextStep = this.stepLength;
+
+        this.frameCount += delta;
         if (this.frameCount == Number.MAX_SAFE_INTEGER)
             this.frameCount = 0
     }
@@ -123,7 +133,7 @@ export default class User
 
         if (this.isSpinning)
         {
-            const spinCycle = Math.round(this.frameCount / 2) % 4
+            const spinCycle = Math.round((this.frameCount*60/1000) / 2) % 4
             switch (spinCycle)
             {
                 case 0:
@@ -142,7 +152,7 @@ export default class User
         }
         else if (this.isWalking)
         {
-            const walkCycle = this.framesUntilNextStep > this.stepLength / 2
+            const walkCycle = this.framesUntilNextStep > this.stepLength / 2;
             switch (this.direction)
             {
                 case "up":

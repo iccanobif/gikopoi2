@@ -247,13 +247,13 @@
                             v-show="streamSlot.isActive && index == streamSlotIdInWhichIWantToStream"
                             v-on:click="playVideo($event)"
                             v-on:dblclick="onVideoDoubleClick($event, index)"
-                            v-bind:title="streamSlot.isSeparateTab ? $t('ui.double_click_to_toggle_fullscreen') : $t('ui.double_click_to_move_to_new_tab')"
+                            v-bind:title="clientSideStreamData[index].isSeparateTab ? $t('ui.double_click_to_toggle_fullscreen') : $t('ui.double_click_to_move_to_new_tab')"
                             autoplay muted playsinline></video>
                         <video :id="'received-video-' + index"
                             v-show="takenStreams[index] && index != streamSlotIdInWhichIWantToStream"
                             v-on:click="playVideo($event)"
                             v-on:dblclick="onVideoDoubleClick($event, index)"
-                            v-bind:title="streamSlot.isSeparateTab ? $t('ui.double_click_to_toggle_fullscreen') : $t('ui.double_click_to_move_to_new_tab')"
+                            v-bind:title="clientSideStreamData[index].isSeparateTab ? $t('ui.double_click_to_toggle_fullscreen') : $t('ui.double_click_to_move_to_new_tab')"
                             autoplay playsinline></video>
                         <img class="vtuber-character" 
                             v-if="streamSlot.streamIsVtuberMode"

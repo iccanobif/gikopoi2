@@ -214,6 +214,8 @@ export default
         monachat: "Monachat",
         konbini: "Tienda de conveniencia",
         // nerd_office: "hacker office",
+        //admin_old: "",
+        // river: "",
     },
     area:
     {

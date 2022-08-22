@@ -71,10 +71,6 @@ export interface Room
             x: number;
             y: number;
         },
-        occupiedBlocks?: {
-            x: number;
-            y: number;
-        }[]
     }[];
     objectRenderSortMethod?: "diagonal_scan" | "priority";
     sit: Coordinates[];
@@ -148,6 +144,7 @@ export interface PlayerDto
     voicePitch: number,
     lastRoomMessage: string,
     isAlternateCharacter: boolean,
+    lastMovement: number,
 }
 
 export interface StreamSlotDto

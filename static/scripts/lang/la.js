@@ -116,6 +116,8 @@ export default
         monachat: "Monachat",
         konbini: "Emporium",
         nerd_office: "Officium hackerorum",
+        //admin_old: "",
+        river: "Flumen",
     },
     area:
     {

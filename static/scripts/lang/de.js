@@ -137,8 +137,8 @@ export default
         chess_quit_game: "Spiel verlassen",
 
         visible_only_to_specific_users_stream: "Privater Stream",
-        // double_click_to_move_to_new_tab: "",
-        // double_click_to_toggle_fullscreen: "",
+        double_click_to_move_to_new_tab: "Doppelklicken, um zu einem neuen Tab zu wechseln",
+        double_click_to_toggle_fullscreen: "Doppelklicken, um in den Vollbildmodus zu wechseln",
     },
     msg:
     {
@@ -184,7 +184,7 @@ export default
         school_st: "Schulstraße",
         bar_st: "Kneipenstraße",
         admin_st: "Entwicklerstraße",
-        admin: "Entwicklerkabuff",
+        admin: "Entwicklerkammer",
         admin_bar: "Unsichtbar",
         cafe_st: "Kaffeefleck",
         enkai: "Festsaal",
@@ -215,6 +215,8 @@ export default
         monachat: "Monachat",
         konbini: "Gemischtwarenladen",
         nerd_office: "Hackerbüro",
+        admin_old: "Verschollene Kammer",
+        // river: "",
     },
     area:
     {

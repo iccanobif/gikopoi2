@@ -757,7 +757,7 @@ window.vueApp = new Vue({
 
             this.socket.on("server-move", (dto) =>
             {
-                const { userId, x, y, direction, isInstant, shouldSpinwalk } = dto
+                const { userId, x, y, direction, lastMovement, isInstant, shouldSpinwalk } = dto
 
                 const user = this.users[userId];
 
@@ -765,7 +765,8 @@ window.vueApp = new Vue({
 
                 const oldX = user.logicalPositionX;
                 const oldY = user.logicalPositionY;
-
+                
+                user.lastMovement = lastMovement
                 if (isInstant)
                     user.moveImmediatelyToPosition(this.currentRoom, x, y, direction);
                 else user.moveToPosition(x, y, direction);
@@ -932,6 +933,7 @@ window.vueApp = new Vue({
                 userDTO.position.y,
                 userDTO.direction
             );
+            newUser.lastMovement = userDTO.lastMovement;
             newUser.isInactive = userDTO.isInactive;
             newUser.message = userDTO.lastRoomMessage;
             newUser.bubblePosition = userDTO.bubblePosition;
@@ -1448,7 +1450,7 @@ window.vueApp = new Vue({
                             return 1
                         if (b.id == self.highlightedUserId)
                             return -1
-                        return a.id.localeCompare(b.id);
+                        return a.lastMovement < b.lastMovement;
                     })
                     .forEach(o => addObject({
                         o,
@@ -1497,7 +1499,7 @@ window.vueApp = new Vue({
                                 return 1
                             if (b.o.id == self.highlightedUserId)
                                 return -1
-                            return a.o.id.localeCompare(b.o.id);
+                            return a.o.lastMovement < b.o.lastMovement;
                         }
                         
                         return 0
@@ -1691,6 +1693,33 @@ window.vueApp = new Vue({
             context.lineTo(cc_x, co.y);
             context.lineTo(cc_x, cc_y);
             context.stroke();
+
+            // y-ward lines
+            for (let x = 0; x <= this.currentRoom.size.x; x++)
+            {
+                const startCoordinates = calculateRealCoordinates(this.currentRoom, x, 0);
+                const endCoordinates = calculateRealCoordinates(this.currentRoom, x, this.currentRoom.size.y);
+                context.beginPath();
+                context.moveTo(co.x + this.getCanvasScale() * startCoordinates.x, 
+                               co.y + this.getCanvasScale() * (startCoordinates.y - this.blockHeight / 2));
+                context.lineTo(co.x + this.getCanvasScale() * endCoordinates.x, 
+                               co.y + this.getCanvasScale() * (endCoordinates.y - this.blockHeight / 2));
+                context.stroke();
+            }
+
+            // x-ward lines
+            for (let y = 0; y <= this.currentRoom.size.y; y++)
+            {
+                const startCoordinates = calculateRealCoordinates(this.currentRoom, 0, y);
+                const endCoordinates = calculateRealCoordinates(this.currentRoom, this.currentRoom.size.x, y);
+                context.beginPath();
+                context.moveTo(co.x + this.getCanvasScale() * startCoordinates.x, 
+                               co.y + this.getCanvasScale() * (startCoordinates.y - this.blockHeight / 2));
+                context.lineTo(co.x + this.getCanvasScale() * endCoordinates.x, 
+                               co.y + this.getCanvasScale() * (endCoordinates.y - this.blockHeight / 2));
+                context.stroke();
+            }
+
         },
 
         drawSpecialObjects: function () {
@@ -2366,7 +2395,7 @@ window.vueApp = new Vue({
                 if (this.clientSideStreamData[slotId])
                     return this.clientSideStreamData[slotId];
                 else
-                    return { isListenerConnected: false };
+                    return { isListenerConnected: false, isSeparateTab: false };
             })
 
             this.streams = streams;
@@ -3276,7 +3305,7 @@ window.vueApp = new Vue({
 
             // If this video was already moved to another tab, doubleclicking on it
             // will make it fullscreen. Otherwise, move it to a new tab.
-            if (stream.isSeparateTab)
+            if (this.clientSideStreamData[slotId].isSeparateTab)
             {
                 if (videoContainer.ownerDocument.fullscreenElement)
                 {
@@ -3292,7 +3321,7 @@ window.vueApp = new Vue({
                 // On chromium based browser, for other people's streams, the video
                 // might automatically when it gets moved to another tab and need a user interaction
                 // before it can be started again... Make sure to test for that everytime a change is made to this code.
-                stream.isSeparateTab = true;
+                this.clientSideStreamData[slotId].isSeparateTab = true;
                 this.$forceUpdate() // HACK: this is to force vue to rebind the title attribute of the <video> element
                 videoContainer.originalPreviousSibling = videoContainer.previousElementSibling;
                 const tab = open(window.origin + '/video-tab.html');
@@ -3304,15 +3333,15 @@ window.vueApp = new Vue({
                     tab.document.body.appendChild(videoContainer);
                     // listen to onunload too for mobile support, android doesn't trigger onbeforeunload
                     tab.onunload = tab.onbeforeunload = () => {
-                        // stream.isSeparateTab could be false if the stream was dropped while the video was detached
+                        // this.clientSideStreamData[slotId].isSeparateTab could be false if the stream was dropped while the video was detached
                         // to a new tab: in that case, streamDrop() forcibly reattaches the video element to the original
                         // document and closes the tab. In this scenario, there's no need to attempt once more to reattach
                         // the video again.
                         // Checking isSeparateTab is also useful to handle correctly browsers that raise both unload 
                         // and beforeunload events
-                        if (stream.isSeparateTab)
+                        if (this.clientSideStreamData[slotId].isSeparateTab)
                         {
-                            stream.isSeparateTab = false;
+                            this.clientSideStreamData[slotId].isSeparateTab = false;
                             this.$forceUpdate() // HACK: this is to force vue to rebind the title attribute of the <video> element
                             videoContainer.originalPreviousSibling.after(videoContainer);
                             videoContainer.originalPreviousSibling = null;
@@ -3329,7 +3358,7 @@ window.vueApp = new Vue({
                 const videoContainer = this.detachedStreamTabs[slotId].document.getElementById("video-container-" + slotId);
                 const stream = this.streams[slotId];
 
-                stream.isSeparateTab = false;
+                this.clientSideStreamData[slotId].isSeparateTab = false;
                 videoContainer.originalPreviousSibling.after(videoContainer);
                 videoContainer.originalPreviousSibling = null;
                 this.detachedStreamTabs[slotId].close();

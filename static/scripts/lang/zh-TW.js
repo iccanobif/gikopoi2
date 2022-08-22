@@ -214,6 +214,8 @@ export default
         //monachat: "",
         //konbini: "",
         nerd_office: "黑客基地",
+        //admin_old: "",
+        // river: "",
     },
     area:
     {

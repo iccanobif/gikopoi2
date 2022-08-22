@@ -23,6 +23,7 @@ export class Player
     public isGhost: boolean = true;
     public roomId: string;
     public lastAction = Date.now();
+    public lastMovement = Date.now();
     // Initializing disconnectionTime at login time to simplify the user cleanup's job code.
     public disconnectionTime: number | null = Date.now(); // null if isGhost == false, non-null otherwise
     public characterId: string;
@@ -30,7 +31,8 @@ export class Player
     public isInactive = false;
     public bubblePosition: Direction = "up";
     public lastRoomMessage: string = "";
-    public ip: string;
+    // I would have liked ips to be a Set<string>, but we need Player objects to be serializable
+    public ips: string[];
     public voicePitch: number;
     public socketId: string | null = null;
     public blockedIps: string[] = [];
@@ -66,7 +68,7 @@ export class Player
         if (typeof options.name === "string") this.name = options.name
         this.characterId = options.characterId
         this.areaId = options.areaId
-        this.ip = options.ip
+        this.ips = [options.ip]
         lastUsedVoicePitchIndex = (lastUsedVoicePitchIndex + 1) % possibleVoicePitches.length
         this.voicePitch = possibleVoicePitches[lastUsedVoicePitchIndex]
     }
@@ -94,7 +96,7 @@ export function getUsersByIp(ip: string, areaId: string | null): Player[]
 {
     return Object.values(users)
         .filter(u => !areaId || u.areaId == areaId)
-        .filter(u => u.ip == ip)
+        .filter(u => u.ips.some(i => i == ip))
 }
 
 export function getAllUsers(): Player[]
@@ -120,23 +122,23 @@ export function removeUser(user: Player)
 
 export function restoreUserState(persistedUsers: Player[])
 {
-    users = persistedUsers.reduce((acc, val) => { 
-            acc[val.id] = val; 
-            return acc; 
-        }, {} as { [id: string]: Player; })
+    users = persistedUsers.reduce((acc, val) => {
+        // code that needs to be run only the first time the switch from "ip" to "ips" goes to production
+        const ip = (val as any).ip
+        if (ip)
+            val.ips = [ip]
+        
+        acc[val.id] = val;
+        return acc;
+    }, {} as { [id: string]: Player; })
 
     // Initialize all users as ghosts (they'll be unflagged when users connect again through the websocket)
     for (const user of Object.values(users))
     {
         user.isGhost = true;
         user.disconnectionTime = Date.now()
-        if (user.blockedIps === undefined)
-            user.blockedIps = []
-        if (user.lastMessageDates === undefined)
-            user.lastMessageDates = []
-        if (user.lastRoomMessage.match(/(合言葉)|(あいことば)|(アイコトバ)|aikotoba/gi))
-            user.lastRoomMessage = "٩(ˊᗜˋ*)و"
-        user.lastRoomMessage = user.lastRoomMessage?.replace(/bread/g, "cocaine")
+        if (typeof user.ips === "string")
+            user.ips = [user.ips]
     }
     console.info("Restored user state (" + Object.values(users).length + " users)")
 }
@@ -145,12 +147,16 @@ export function getFilteredConnectedUserList(user: Player, roomId: string | null
 {
     return getConnectedUserList(roomId, areaId)
         .filter((u) => u.id == user.id
-            || (!user.blockedIps.includes(u.ip)
-                && !u.blockedIps.includes(user.ip)))
+            || (!isUserBlocking(user, u) && !isUserBlocking(u, user)))
 }
 
 export function setUserAsActive(user: Player)
 {
     user.isInactive = false
     user.lastAction = Date.now()
+}
+
+export function isUserBlocking(blocker: Player, blocked: Player)
+{
+    return blocker.blockedIps.some(blockedIp => blocked.ips.some(ip => ip == blockedIp))
 }
