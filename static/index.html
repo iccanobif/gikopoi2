@@ -88,7 +88,7 @@
             <h2 v-if="connectionRefused">
                 {{ $t("msg.connection_refused") }}
             </h2>
-            <div id="main-section">
+            <div id="main-section" v-bind:class="{'log-above-toolbar': showLogAboveToolbar}">
                 <div id="canvas-container" v-if="!connectionRefused">
                     <canvas id="room-canvas" tabindex="1"
                         v-on:keydown="handleCanvasKeydown($event)"
@@ -206,8 +206,10 @@
                         </div>
                     </div>
                 </div>
-                {{ $t("ui.label_log") }}
-                <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames, 'timestamps-in-copied-log': timestampsInCopiedLog, 'ignore-indicators-in-log': showIgnoreIndicatorInLog}" v-on:keydown="handlechatLogKeydown($event)">
+                <div id='chat-log-container'>
+                    <div id='chat-log-label'>{{ $t("ui.label_log") }}</div>
+                    <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames, 'timestamps-in-copied-log': timestampsInCopiedLog, 'ignore-indicators-in-log': showIgnoreIndicatorInLog}" v-on:keydown="handlechatLogKeydown($event)">
+                    </div>
                 </div>
             </div>
             <div id="video-streams" v-if="!connectionRefused">
@@ -612,6 +614,11 @@
                             <input type="checkbox" id="preferences-ignore-indicator-in-log"
                                 v-model="showIgnoreIndicatorInLog" v-on:change="storeSet('showIgnoreIndicatorInLog')"><label
                                 for="preferences-ignore-indicator-in-log">{{ $t("ui.preferences_ignore_indicator_in_log") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-show-log-above-toolbar"
+                                v-model="showLogAboveToolbar" v-on:change="storeSet('showLogAboveToolbar')"><label
+                                for="preferences-show-log-above-toolbar">{{ $t("ui.preferences_show_log_above_toolbar") }}</label>
                         </div>
                         <div class='popup-item'>
                             <button v-on:click="clearLog">{{ $t("ui.preferences_clear_log") }}</button>
