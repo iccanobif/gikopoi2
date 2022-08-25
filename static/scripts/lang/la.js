@@ -116,7 +116,7 @@ export default
         monachat: "Monachat",
         konbini: "Emporium",
         nerd_office: "Officium hackerorum",
-        //admin_old: "",
+        admin_old: "Officina perdita",
         river: "Flumen",
     },
     area:
