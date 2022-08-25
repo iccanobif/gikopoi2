@@ -968,6 +968,19 @@ window.vueApp = new Vue({
 
             if (this.ignoredUserIds.has(userId))
                 messageDiv.classList.add("ignored-message")
+			
+			if(this.isCanvasChatLogEnabled)
+			{
+				messageDiv.classList.add("canvas-chat-log-message-visible", "canvas-chat-log-message-displayed")
+				setTimeout(()=>
+				{
+					messageDiv.classList.remove("canvas-chat-log-message-visible")
+					setTimeout(()=> // Wait for fade out effect to finish and then make display: none so it's not interactable anymore
+					{
+						messageDiv.classList.remove("canvas-chat-log-message-displayed")
+					}, 1100)
+				}, 20000) // Could be a pref maybe
+			}
 
             const [displayName, tripcode] = this.toDisplayName(userName).split("◆")
 

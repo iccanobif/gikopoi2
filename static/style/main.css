@@ -152,6 +152,25 @@ input[type='range']
     padding: 3px 6px 3px 5px;
     line-height: 25px;
     pointer-events: auto;
+	transition: opacity 1000ms linear;
+	opacity: 0;
+	display: None;
+}
+
+#canvas-chat-log-container .message.canvas-chat-log-message-visible
+{
+	opacity: 1;
+}
+
+#canvas-chat-log-container .message.canvas-chat-log-message-displayed
+{
+	display: inline;
+}
+
+#canvas-chat-log-container:hover .message
+{
+	opacity: 1;
+	display: inline;
 }
 
 .timestamps-in-copied-log .message .message-timestamp
