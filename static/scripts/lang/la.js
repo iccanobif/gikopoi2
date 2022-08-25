@@ -115,7 +115,7 @@ export default
         densha: "Tramen",
         monachat: "Monachat",
         konbini: "Emporium",
-        nerd_office: "Officium hackerorum",
+        nerd_office: "Officina hackerorum",
         admin_old: "Officina perdita",
         river: "Flumen",
     },
