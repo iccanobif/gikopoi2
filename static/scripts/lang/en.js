@@ -119,6 +119,7 @@ export default
         preferences_ignore_indicator_in_log: "Show in the log an indicator in place of the messages by ignored users",
         preferences_language: "Language",
         preferences_enable_coin_sound: "SFX Sounds",
+        preferences_show_log_above_toolbar: "Show log above toolbar",
 
         preferences_title_streams: "Streams",
         preferences_streams_auto_resume: "Auto resume",

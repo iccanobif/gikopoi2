@@ -117,6 +117,8 @@ export default
         preferences_ignore_indicator_in_log: "Ketika pengguna diabaikan. Menampilkan placeholder untuk pesan tersembunyi di log.",
         preferences_language: "Bahasa",
         preferences_enable_coin_sound: "SFX on",
+        // preferences_show_log_above_toolbar: "",
+
         preferences_title_streams: "Siarkan",
         preferences_streams_auto_resume: "Otomatis Lanjutkan",
         preferences_streams_inbound_vu_meter_enabled: "Meter suara",

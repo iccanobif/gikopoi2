@@ -117,6 +117,7 @@ export default
         preferences_ignore_indicator_in_log: "Einen Indikator anstelle der Nachrichten ignorierter Benutzer im log anzeigen",
         preferences_language: "Sprache",
         preferences_enable_coin_sound: "Münzton aktivieren",
+        preferences_show_log_above_toolbar: "Log über der Toolbar anzeigen",
 
         preferences_title_streams: "Streams",
         preferences_streams_auto_resume: "Automatische Fortsetzung",

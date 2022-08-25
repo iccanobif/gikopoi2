@@ -117,6 +117,8 @@ export default
         preferences_ignore_indicator_in_log: "在聊天紀錄中以紅點標記隱藏用戶之訊息位置",
         preferences_language: "語言",
         // preferences_enable_coin_sound: "Enable coin sound",
+        // preferences_show_log_above_toolbar: "",
+
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
         // preferences_streams_inbound_vu_meter_enabled: "",
