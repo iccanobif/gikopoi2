@@ -158,9 +158,16 @@ io.use(async (socket: Socket, next: () => void) => {
             // socket.disconnect(true)
             // return;
             next()
+            return
         }
 
         socket.data = { user: user }
+
+        if (!user.ips.some(i => i == ip))
+        {
+            log.info("Adding ip", ip, "for user", user.id)
+            user.ips.push(ip)
+        }
 
         if (!ip) {
             next();

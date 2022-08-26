@@ -221,6 +221,7 @@ export default
         admin_old: r("忘れられた開発局", "わすれられたかいはつきょく"),
         irori: r("囲炉裏", "いろり"),
         river: r("小川", "おがわ"),
+        irori: r("囲炉裏", "いろり"),
     },
     area:
     {

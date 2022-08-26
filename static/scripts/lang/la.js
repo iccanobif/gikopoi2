@@ -118,6 +118,7 @@ export default
         nerd_office: "Officina hackerorum",
         admin_old: "Officina perdita",
         river: "Flumen",
+        // irori: "Fireplace",
     },
     area:
     {

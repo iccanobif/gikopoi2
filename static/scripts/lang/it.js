@@ -222,6 +222,7 @@ export default
         nerd_office: "Ufficio degli hacker",
         admin_old: "Dipartimento degli sviluppatori perduto",
         river: "Fiume",
+        // irori: "Fireplace",
     },
     area:
     {

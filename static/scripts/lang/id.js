@@ -218,6 +218,7 @@ export default
         nerd_office: "Kantor Peretas",
         //admin_old: "",
         // river: "",
+        // irori: "Fireplace",
     },
     area:
     {

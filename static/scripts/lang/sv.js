@@ -218,6 +218,7 @@ export default
         nerd_office: "Hackarnästet",
         admin_old: "Vinden",
         river: "Ån",
+        // irori: "Fireplace",
     },
     area:
     {

@@ -218,6 +218,7 @@ export default
         // nerd_office: "hacker office",
         //admin_old: "",
         // river: "",
+        // irori: "Fireplace",
     },
     area:
     {

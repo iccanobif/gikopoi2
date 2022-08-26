@@ -220,6 +220,7 @@ export default
         nerd_office: "Hacker Office",
         admin_old: "Lost Lounge",
         river: "River",
+        irori: "Fireplace",
     },
     area:
     {

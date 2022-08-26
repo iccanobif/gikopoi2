@@ -220,6 +220,7 @@ export default
         nerd_office: "Hacker Ofisi",
         //admin_old: "",
         // river: "",
+        // irori: "Fireplace",
     },
     area:
     {
