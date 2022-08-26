@@ -256,7 +256,7 @@ window.vueApp = new Vue({
 
         lastCoinTossTime: 0, // unix timestamp
 
-        hideStreams: false,
+        // hideStreams: false,
         // the key is the slot ID
         inboundAudioProcessors: {},
         outboundAudioProcessor: null,
@@ -568,12 +568,12 @@ window.vueApp = new Vue({
             const usersDto = dto.connectedUsers
             const streamsDto = dto.streams
 
-            if (!this.hideStreams && (dto.hideStreams || localStorage.getItem("hideStreams")))
-                logToServer(this.myUserID + " setting hideStreams to true")
+            // if (!this.hideStreams && (dto.hideStreams || localStorage.getItem("hideStreams")))
+            //     logToServer(this.myUserID + " setting hideStreams to true")
 
-            if (dto.hideStreams)
-                localStorage.setItem("hideStreams", "true")
-            this.hideStreams = localStorage.getItem("hideStreams") == "true";
+            // if (dto.hideStreams)
+            //     localStorage.setItem("hideStreams", "true")
+            // this.hideStreams = localStorage.getItem("hideStreams") == "true";
 
             this.chessboardState = dto.chessboardState
 
@@ -2344,8 +2344,8 @@ window.vueApp = new Vue({
 
         updateCurrentRoomStreams: async function (streams)
         {
-            if (this.hideStreams)
-                streams = []
+            // if (this.hideStreams)
+            //     streams = []
 
             // If I'm a streamer and the server just forcefully killed my stream (for example, because of a server restart), stop streaming
             if (this.mediaStream && !streams.find(s => s.userId == this.myUserID))
@@ -2729,8 +2729,8 @@ window.vueApp = new Vue({
                 {
                     try
                     {
-                        if (this.hideStreams)
-                            return;
+                        // if (this.hideStreams)
+                        //     return;
 
                         this.clientSideStreamData[streamSlotId].isListenerConnected = true
 
