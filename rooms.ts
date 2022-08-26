@@ -3964,7 +3964,7 @@ rooms["irori"] = {
                         : "rooms/irori/background.summer.svg",
     objects: [
         // { x:  100, y:  100, width: 1, offset: { x: 0, y: 0 }, url: "top.winter.svg"},
-        { x:  6, y:  0, width: 100, offset: { x: 0, y: 0 },
+        { x:  7, y: -1, width: 100, offset: { x: 0, y: 0 },
             url: isSummer ? "top.summer.svg"
                  : isWinter ? "top.winter.svg"
                  : isAutumn ? "top.autumn.svg"
