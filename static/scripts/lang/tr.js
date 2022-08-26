@@ -119,6 +119,7 @@ export default
         preferences_ignore_indicator_in_log: "Defterde yoksayılan kullanıcıların gönderdiği mesajların yerine bir ibre gösterilir",
         preferences_language: "Dil",
         preferences_enable_coin_sound: "Ses efektleri",
+        // preferences_show_log_above_toolbar: "",
 
         preferences_title_streams: "Yayınlar",
         preferences_streams_auto_resume: "Otomatik sürdür",

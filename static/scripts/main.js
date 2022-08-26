@@ -179,6 +179,7 @@ window.vueApp = new Vue({
         mentionSoundFunction: null,
         isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
         isStreamInboundVuMeterEnabled: localStorage.getItem("isStreamInboundVuMeterEnabled") != "false",
+        showLogAboveToolbar: localStorage.getItem("showLogAboveToolbar") == "true",
 
         // streaming
         streams: [],

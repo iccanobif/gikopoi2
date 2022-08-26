@@ -254,6 +254,8 @@ video {
     width: 70%;
     position: relative;
     padding-right: 7px;
+    display: flex;
+    flex-direction: column;
 }
 
 /* #main-section::after
@@ -301,6 +303,7 @@ video {
     font-family: Arial, Helvetica, sans-serif;
     resize: vertical;
     overflow: auto;
+    order: 1;
 }
 
 #toolbar
@@ -309,6 +312,29 @@ video {
     align-items: stretch;
     flex-wrap: wrap;
     overflow: auto;
+    order: 2;
+}
+
+.log-above-toolbar #toolbar
+{
+    order: 3;
+}
+
+#chat-log-container
+{
+    order: 3;
+}
+
+.log-above-toolbar #chat-log-container
+{
+    order: 2;
+    display: flex;
+}
+
+.log-above-toolbar #chatLog
+{
+    flex-grow: 1;
+    margin: 3px;
 }
 
 #login-page button,

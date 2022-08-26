@@ -117,6 +117,8 @@ export default
         preferences_ignore_indicator_in_log: "Mostrar en logs un indicador para mensajes de usuarios ignorados",
         preferences_language: "Idioma",
         // preferences_enable_coin_sound: "Enable coin sound",
+        // preferences_show_log_above_toolbar: "",
+
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
         // preferences_streams_inbound_vu_meter_enabled: "",

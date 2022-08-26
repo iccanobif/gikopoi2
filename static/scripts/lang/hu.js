@@ -117,6 +117,7 @@ export default
         preferences_ignore_indicator_in_log: "Jelek beillesztése a naplóba eltüntetett felhasználók üzenetei helyett",
         preferences_language: "Nyelv",
         preferences_enable_coin_sound: "Hangeffektek",
+        // preferences_show_log_above_toolbar: "",
 
         preferences_title_streams: "Közvetítések",
         preferences_streams_auto_resume: "Automatikus visszakapcsolás",
