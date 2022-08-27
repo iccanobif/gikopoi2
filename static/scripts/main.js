@@ -1430,7 +1430,11 @@ window.vueApp = new Vue({
                             return 1
                         if (b.id == self.highlightedUserId)
                             return -1
-                        return a.lastMovement < b.lastMovement ? 1 : -1;
+                        if (a.lastMovement < b.lastMovement)
+                            return 1
+                        if (a.lastMovement > b.lastMovement)
+                            return -1
+                        return a.id.localeCompare(b.id);
                     })
                     .forEach(o => addObject({
                         o,
@@ -1479,7 +1483,11 @@ window.vueApp = new Vue({
                                 return 1
                             if (b.o.id == self.highlightedUserId)
                                 return -1
-                            return a.o.lastMovement < b.o.lastMovement ? 1 : -1;
+                            if (a.o.lastMovement < b.o.lastMovement)
+                                return 1
+                            if (a.o.lastMovement > b.o.lastMovement)
+                                return -1
+                            return a.o.id.localeCompare(b.o.id);
                         }
                         
                         return 0
