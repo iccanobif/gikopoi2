@@ -1413,6 +1413,19 @@ window.vueApp = new Vue({
                 }
             }
 
+            function compareUsers(a,b)
+            {
+                if (a.id == self.highlightedUserId)
+                    return 1
+                if (b.id == self.highlightedUserId)
+                    return -1
+                if (a.lastMovement < b.lastMovement)
+                    return 1
+                if (a.lastMovement > b.lastMovement)
+                    return -1
+                return a.id.localeCompare(b.id);
+            }
+
             function getObjectsByDiagonalScanSort()
             {
                 const objectsByPosition = {};
@@ -1425,17 +1438,7 @@ window.vueApp = new Vue({
                 }, objectsByPosition));
 
                 Object.values(self.users)
-                    .sort((a, b) => {
-                        if (a.id == self.highlightedUserId)
-                            return 1
-                        if (b.id == self.highlightedUserId)
-                            return -1
-                        if (a.lastMovement < b.lastMovement)
-                            return 1
-                        if (a.lastMovement > b.lastMovement)
-                            return -1
-                        return a.id.localeCompare(b.id);
-                    })
+                    .sort(compareUsers)
                     .forEach(o => addObject({
                         o,
                         type: "user",
@@ -1478,17 +1481,7 @@ window.vueApp = new Vue({
 
                         // If it's two users in the same spot, put the highlighted one on top.
                         if (a.type == "user" && b.type == "user")
-                        {
-                            if (a.o.id == self.highlightedUserId)
-                                return 1
-                            if (b.o.id == self.highlightedUserId)
-                                return -1
-                            if (a.o.lastMovement < b.o.lastMovement)
-                                return 1
-                            if (a.o.lastMovement > b.o.lastMovement)
-                                return -1
-                            return a.o.id.localeCompare(b.o.id);
-                        }
+                            return compareUsers(a.o, b.o)
                         
                         return 0
                     });
