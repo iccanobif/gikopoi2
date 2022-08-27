@@ -1415,10 +1415,12 @@ window.vueApp = new Vue({
 
             function compareUserObjects(a,b)
             {
+                // A highlighted user will always be on top.
                 if (a.id == self.highlightedUserId)
                     return 1
                 if (b.id == self.highlightedUserId)
                     return -1
+                // The user that moved last will be underneath
                 if (a.lastMovement < b.lastMovement)
                     return 1
                 if (a.lastMovement > b.lastMovement)
@@ -1479,7 +1481,6 @@ window.vueApp = new Vue({
                         if (aPriority < bPriority) return -1;
                         if (aPriority > bPriority) return 1;
 
-                        // If it's two users in the same spot, put the highlighted one on top.
                         if (a.type == "user" && b.type == "user")
                             return compareUserObjects(a.o, b.o)
                         
