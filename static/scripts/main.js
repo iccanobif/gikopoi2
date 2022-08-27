@@ -1413,7 +1413,7 @@ window.vueApp = new Vue({
                 }
             }
 
-            function compareUsers(a,b)
+            function compareUserObjects(a,b)
             {
                 if (a.id == self.highlightedUserId)
                     return 1
@@ -1438,7 +1438,7 @@ window.vueApp = new Vue({
                 }, objectsByPosition));
 
                 Object.values(self.users)
-                    .sort(compareUsers)
+                    .sort(compareUserObjects)
                     .forEach(o => addObject({
                         o,
                         type: "user",
@@ -1481,7 +1481,7 @@ window.vueApp = new Vue({
 
                         // If it's two users in the same spot, put the highlighted one on top.
                         if (a.type == "user" && b.type == "user")
-                            return compareUsers(a.o, b.o)
+                            return compareUserObjects(a.o, b.o)
                         
                         return 0
                     });
