@@ -1430,7 +1430,7 @@ window.vueApp = new Vue({
                             return 1
                         if (b.id == self.highlightedUserId)
                             return -1
-                        return a.lastMovement < b.lastMovement;
+                        return a.lastMovement < b.lastMovement ? 1 : -1;
                     })
                     .forEach(o => addObject({
                         o,
@@ -1479,7 +1479,7 @@ window.vueApp = new Vue({
                                 return 1
                             if (b.o.id == self.highlightedUserId)
                                 return -1
-                            return a.o.lastMovement < b.o.lastMovement;
+                            return a.o.lastMovement < b.o.lastMovement ? 1 : -1;
                         }
                         
                         return 0
