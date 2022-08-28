@@ -93,7 +93,6 @@ function getDefaultAreaId()
 
 function getAppState()
 {
-    return "redirect_notice"
     if (window.location.hostname == "gikopoi2.herokuapp.com")
         return "redirect_notice"
     else
