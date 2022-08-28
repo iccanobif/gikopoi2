@@ -91,6 +91,15 @@ function getDefaultAreaId()
     }
 }
 
+function getAppState()
+{
+    return "redirect_notice"
+    if (window.location.hostname == "gikopoi2.herokuapp.com")
+        return "redirect_notice"
+    else
+        return "login"
+}
+
 const i18n = new VueI18n({
     locale: "ja",
     fallbackLocale: "en",
@@ -219,7 +228,7 @@ window.vueApp = new Vue({
         dialogPopupButtonIndex: null,
         isDialogPopupOpen: false,
         
-        appState: "login",
+        appState: getAppState(),
 
         enableGridNumbers: false,
         username: localStorage.getItem("username") || "",

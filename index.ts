@@ -1292,13 +1292,6 @@ function getRealIpWebSocket(socket: Socket): string
 
 app.get("/", async (req, res) =>
 {
-    if (req.headers.host == "gikopoi2.herokuapp.com")
-    {
-        log.info("Redirecting to gikopoipoi.net ", getRealIp(req))
-        res.redirect(301, 'https://gikopoipoi.net')
-        return
-    }
-
     log.info("Fetching root..." + getRealIp(req) + " " + req.rawHeaders.join("|"))
 
     try
