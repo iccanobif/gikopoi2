@@ -36,7 +36,7 @@
 
 <body>
     <div id="vue-app" v-cloak v-bind:class="{'dark-mode': isDarkMode}" v-bind:lang="$i18n.locale">
-        <div id="login-page" v-if="!loggedIn && !loggedOut && !isPoop">
+        <div id="login-page" v-if="appState == 'login'">
             <header>
                 <div>
                     <h1><a href="/">{{ $t("ui.title") }}</a></h1>
@@ -78,7 +78,7 @@
                 @LOGIN_FOOTER@
             </div>
         </div>
-        <div id="stage" v-if="loggedIn && !isPoop">
+        <div id="stage" v-if="appState == 'stage'">
             <h2 class="big-red-alert" v-if="connectionLost && !connectionRefused">
                 {{ $t("msg.connection_lost") }}
             </h2>
@@ -773,12 +773,12 @@
                 </div>
             </fieldset>
         </div>
-        <div id="logged-out-page" v-if="loggedOut" class="full-screen-page">
+        <div id="logged-out-page" v-if="appState == 'logout'" class="full-screen-page">
             {{ $t("msg.goodbye") }}
             <img src="characters/giko/front-standing.svg"/>
             <a href="/">{{ $t("ui.back_to_homepage") }}</a>
         </div>
-        <div id="poop-page" v-if="isPoop" class="full-screen-page">
+        <div id="poop-page" v-if="appState == 'poop'" class="full-screen-page">
             💩
         </div>
     </div>

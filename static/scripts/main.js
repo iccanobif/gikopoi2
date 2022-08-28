@@ -219,9 +219,7 @@ window.vueApp = new Vue({
         dialogPopupButtonIndex: null,
         isDialogPopupOpen: false,
         
-        loggedIn: false,
-        loggedOut: false,
-        isPoop: false,
+        appState: "login",
 
         enableGridNumbers: false,
         username: localStorage.getItem("username") || "",
@@ -370,7 +368,7 @@ window.vueApp = new Vue({
                 if (this.password == "iapetus56")
                     this.characterId = "shar_naito"
 
-                this.loggedIn = true;
+                this.appState = "stage";
                 this.selectedCharacter = characters[this.characterId];
 
                 // wait next tick so that canvas-container gets rendered in the DOM
@@ -642,7 +640,7 @@ window.vueApp = new Vue({
             // prevent accidental page closing
             window.onbeforeunload = () => {
 
-                if (this.loggedOut)
+                if (this.appState == 'logout')
                     return null
 
                 // Before onbeforeunload the socket has already died, so
@@ -703,7 +701,7 @@ window.vueApp = new Vue({
 
             this.socket.on("disconnect", (reason) =>
             {
-                if (!this.loggedOut)
+                if (this.appState != "logout")
                 {
                     console.error("Socket disconnected:", reason)
                     this.connectionLost = true;
@@ -1908,7 +1906,7 @@ window.vueApp = new Vue({
             
             if (message.match(/sageru/gi))
             {
-                this.isPoop = true
+                this.appState = "poop";
                 return
             }
 
@@ -1930,7 +1928,7 @@ window.vueApp = new Vue({
             // Ping so that if my avatar was transparent, it turns back to normal.
             // Use debounce so that we never send more than one ping every 10 minutes
             const debouncedPing = debounceWithImmediateExecution(() => {
-                if (!this.connectionLost && !this.connectionRefused && !this.loggedOut)
+                if (!this.connectionLost && !this.connectionRefused && page != "logout")
                 {
                     this.socket.emit("user-ping");
                 }
@@ -3039,8 +3037,7 @@ window.vueApp = new Vue({
                 if (this.streamSlotIdInWhichIWantToStream != null)
                     this.stopStreaming()
 
-                this.loggedIn = false
-                this.loggedOut = true
+                this.appState = "logout";
 
                 this.socket.close()
 
