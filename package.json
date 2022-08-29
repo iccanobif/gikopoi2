@@ -30,7 +30,8 @@
     "deploy-prod": "git push origin master:CI-PROD",
     "deploy-test": "git push origin HEAD:CI-TEST -f",
     "optimize-svgs": "node optimize-svgs.js",
-    "build-docker": "docker build -t gikopoipoi ."
+    "build-docker": "docker build -t gikopoipoi .",
+    "run-docker": "docker run -ti -p 8085:8085 gikopoipoi"
   },
   "devDependencies": {
     "@types/chess.js": "^0.11.0",

@@ -1,6 +1,17 @@
-FROM node:14-alpine
+FROM node:16-alpine
+
+EXPOSE 8085
+
+# git needed by yarn
 RUN apk add git
-ADD . /gikopoipoi
+
+# yarn install
 WORKDIR /gikopoipoi
+ADD package.json ./package.json
+ADD yarn.lock ./yarn.lock
+ADD tripcode ./tripcode
 RUN yarn install
-CMD ["yarn", "dev"]
+
+ADD . .
+RUN yarn build
+CMD ["node", "build/index.js"]
