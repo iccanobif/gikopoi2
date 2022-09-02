@@ -508,12 +508,15 @@ window.vueApp = new Vue({
             }
             return true;
         },
-        showWarningToast: function (text)
+        showWarningToast: async function (text)
         {
             this.openDialog(text,
                 i18n.t("ui.warning_toast_title"),
                 [i18n.t("ui.popup_button_ok")],
                 0);
+            await Vue.nextTick();
+            const firstButton = document.querySelector("#dialog-popup .popup-buttons button");
+            firstButton.focus();
         },
         confirm: function (text, okCallback, cancelCallback, button)
         {
