@@ -4106,14 +4106,14 @@ export function buildRiverRoom(type: number): Room
         {
             room.objects.push({
                 x: 1,
-                y: 2,
+                y: 3,
                 scale: scale,
                 offset: { x: 0 + i * 60, y: 580 + i * 30},
                 url: `cosmos.${type}.svg`
             })
             room.objects.push({
                 x: 1,
-                y: 4,
+                y: 3,
                 scale: scale,
                 offset: { x: 113 + i * 60, y: 520 + i * 30},
                 url: `cosmos.${type}.svg`
