@@ -117,7 +117,7 @@ export default
         preferences_ignore_indicator_in_log: "Ersätt meddelanden från ignorerade användare med en indikator i loggen.",
         preferences_language: "Språk",
         preferences_enable_coin_sound: "Ljudeffekter",
-        // preferences_show_log_above_toolbar: "",
+        preferences_show_log_above_toolbar: "Placera loggen ovanför verktygsraden",
 
         preferences_title_streams: "Strömmor",
         preferences_streams_auto_resume: "Automatisk återupptagning",
@@ -218,7 +218,7 @@ export default
         nerd_office: "Hackarnästet",
         admin_old: "Vinden",
         river: "Ån",
-        // irori: "Fireplace",
+        irori: "Stugan",
     },
     area:
     {
