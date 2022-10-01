@@ -4,9 +4,9 @@ import { Room } from "./types";
 // reimplement here the logic for deciding if it's summer or not. Not even sure I'm
 // handling the edge cases right.
 const today = new Date()
-const isSummer = new Date(today.getFullYear(), 6, 21) < today && today < new Date(today.getFullYear(), 9, 21)
-const isAutumn = new Date(today.getFullYear(), 9, 22) < today && today < new Date(today.getFullYear(), 12, 20)
-const isWinter = today > new Date(today.getFullYear(), 12, 21) || today < new Date(today.getFullYear(), 3, 19)
+const isSummer = new Date(today.getFullYear(), 6 - 1, 21) < today && today < new Date(today.getFullYear(), 9 - 1, 21)
+const isAutumn = new Date(today.getFullYear(), 9 - 1, 22) < today && today < new Date(today.getFullYear(), 12 - 1, 20)
+const isWinter = today > new Date(today.getFullYear(), 12 - 1, 21) || today < new Date(today.getFullYear(), 3 - 1, 19)
 
 export const rooms: { [roomId: string]: Room } = {
     bar: {
