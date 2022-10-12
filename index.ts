@@ -1736,8 +1736,8 @@ app.post("/login", async (req, res) =>
             }
         }
 
-        if (userName.length > 20)
-            userName = userName.substr(0, 20)
+        if (userName.length > 22)
+            userName = userName.substring(0, 22)
 
         const n = userName.indexOf("#");
         let processedUserName = (n >= 0 ? userName.substr(0, n) : userName)
