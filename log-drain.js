@@ -72,7 +72,10 @@ setInterval(async () => {
             const zip = new jszip()
             zip.file(filenameOfFileToZip, txtContentBuffer)
             
-            const zipContents = await zip.generateAsync({ type: "uint8array" })
+            const zipContents = await zip.generateAsync({
+                type: "uint8array",
+                compression: "DEFLATE"
+            })
 
             await fs.writeFile(filenameOfFileToZip + ".zip", zipContents)
             await fs.unlink(filenameOfFileToZip)
