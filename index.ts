@@ -1657,7 +1657,7 @@ app.post("/client-log", (req, res) =>
 {
     try
     {
-        log.error("Client log:", req.body.replace(/[\n\r]/g, ""))
+        log.error(`Client log ${getRealIp(req)}:`, req.body.replace(/[\n\r]/g, ""))
         res.end()
     }
     catch (exc)
