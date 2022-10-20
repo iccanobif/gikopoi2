@@ -346,6 +346,10 @@ window.vueApp = new Vue({
         login: async function (ev)
         {
             try {
+                // Workaround for making TTS work on iphone, since it needs to be activated on a user interaction
+                if (window.speechSynthesis)
+                    speechSynthesis.speak(new SpeechSynthesisUtterance(""));
+
                 ev.preventDefault();
                 this.isLoggingIn = true;
 
