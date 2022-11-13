@@ -3196,6 +3196,7 @@ window.vueApp = new Vue({
         {
             const output = Object.values(this.users)
                 .filter(u => u.id != this.myUserID)
+                .sort((a, b) => a.name.localeCompare(b.name))
                 .map(u => ({
                     id: u.id,
                     name: u.name,
