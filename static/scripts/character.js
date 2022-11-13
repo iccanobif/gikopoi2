@@ -7,9 +7,11 @@ export class Character
     {
         this.characterName = name;
         this.format = format;
-        this.isHidden = isHidden
-        this.scale = scale || 0.5
 
+        // On new year's, all characters are visible
+        this.isHidden = annualEvents.newYears.isNow() ? false : isHidden
+
+        this.scale = scale || 0.5
         this.frontSittingImage = null;
         this.frontStandingImage = null;
         this.frontWalking1Image = null;

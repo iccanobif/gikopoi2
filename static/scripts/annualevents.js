@@ -41,4 +41,6 @@ export const annualEvents =
 	goldenWeek: new AnnualEvent(4, 29,  5,  5),
 	spooktober: new AnnualEvent(10, 17,  11,  1),
 	christmasTime: new AnnualEvent(12,  1,  12, 31),
+
+	newYears: new AnnualEvent(12, 31, 1, 1),
 }
