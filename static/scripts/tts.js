@@ -66,14 +66,12 @@ export function speak(message, voiceURI, volume, pitch) {
 
     const cleanMsgForSpeech = message
         .replace(urlRegex, "URL")
-        .replace(/ww+/gi, "わらわら")
-        .replace(/ｗｗ+/gi, "わらわら")
-        .replace(/88+/gi, "ぱちぱち")
-        .replace(/８８+/gi, "ぱちぱち")
-        .replace(/^w$/i, "わら")
         .replace(/[Ａ-Ｚａ-ｚ０-９]/g, function (s) {
             return String.fromCharCode(s.charCodeAt(0) - 0xFEE0)
         })
+        .replace(/ww+/gi, "わらわら")
+        .replace(/88+/gi, "ぱちぱち")
+        .replace(/^w$/i, "わら")
 
     if (voiceURI == "animalese") {
         speakAnimalese(cleanMsgForSpeech, pitch, volume)
