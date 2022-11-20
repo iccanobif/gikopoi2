@@ -31,16 +31,50 @@ class AnnualEvent
 	}
 }
 
+class AnnualMonthEvent extends AnnualEvent
+{
+	constructor(monthNumber)
+	{
+		this.monthNumber
+	}
+	
+	getOccurrence(y)
+	{
+		return [
+			new Date(y, this.monthNumber, 1),
+			new Date(y, this.monthNumber + 1, 0)]
+	}
+}
+
+const monthNames = [
+	"january",
+	"february",
+	"march",
+	"april",
+	"may",
+	"june",
+	"july",
+	"august",
+	"september",
+	"october",
+	"november",
+	"december"
+]
+
 export const annualEvents =
 {
-	spring: new AnnualEvent( 3, 20,   6, 20),
-	summer: new AnnualEvent( 6, 21,   9, 21),
-	autumn: new AnnualEvent( 9, 22,  12, 20),
-	winter: new AnnualEvent(12, 21,   3, 19),
+	spring: new AnnualEvent( 3, 20,  6, 20),
+	summer: new AnnualEvent( 6, 21,  9, 21),
+	autumn: new AnnualEvent( 9, 22, 12, 20),
+	winter: new AnnualEvent(12, 21,  3, 19),
 	
-	goldenWeek: new AnnualEvent(4, 29,  5,  5),
-	spooktober: new AnnualEvent(10, 17,  11,  1),
-	christmasTime: new AnnualEvent(12,  1,  12, 31),
-
-	newYears: new AnnualEvent(12, 31, 1, 1),
+	goldenWeek: new AnnualEvent( 4, 29,  5,  5),
+	fireflies: new AnnualEvent( 7,  1,  7,  9),
+	spooktober: new AnnualEvent(10, 17, 11,  1),
+	christmasTime: new AnnualEvent(12,  1, 12, 31),
+	newYears: new AnnualEvent(12, 31,  1,  1),
 }
+
+monthNames.forEach((monthName, monthNumber) => {
+	annualEvents[monthName] = new AnnualMonthEvent(monthNumber);
+})
