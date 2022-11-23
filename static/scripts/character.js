@@ -83,6 +83,7 @@ export const characters = {
     salmon: new Character("salmon", "svg", false),
     giko_hat: new Character("giko_hat", "svg", false),
     shii_hat: new Character("shii_hat", "svg", false),
+    shobon_hat: new Character("shobon_hat", "svg", !annualEvents.christmasTime.isNow()),
     furoshiki: new Character("furoshiki", "svg", false),
     golden_furoshiki: new Character("golden_furoshiki", "svg", !annualEvents.goldenWeek.isNow()),
     furoshiki_shii: new Character("furoshiki_shii", "svg", annualEvents.spring.isNow()),
