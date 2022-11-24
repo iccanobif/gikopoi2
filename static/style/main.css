@@ -695,7 +695,7 @@ video {
 
 #character-selection .character-selected {
     border: solid 1px blue;
-    outline: solid 2px blue;
+    outline: solid 1px blue;
 }
 
 #character-selection input {
