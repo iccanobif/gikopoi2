@@ -17,8 +17,6 @@ export class Character
         this.portraitTop = isNum(portraitTop) ? portraitTop : 0;
         this.portraitScale = isNum(portraitScale) ? portraitScale : 1.9;
         
-        console.log(portraitLeft, this.portraitLeft, portraitTop, this.portraitTop, this.portraitScale);
-        
         // On new year's, all characters are visible
         this.isHidden = annualEvents.newYears.isNow() ? false : isHidden
         
