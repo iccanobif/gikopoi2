@@ -63,15 +63,15 @@ const monthNames = [
 
 export const annualEvents =
 {
-	spring: new AnnualEvent( 3, 20,  6, 20),
-	summer: new AnnualEvent( 6, 21,  9, 21),
-	autumn: new AnnualEvent( 9, 22, 12, 20),
-	winter: new AnnualEvent(12, 21,  3, 19),
+	spring: new AnnualEvent( 3,  1,  5, 31),
+	summer: new AnnualEvent( 6,  1,  8, 31),
+	autumn: new AnnualEvent( 9,  1, 11, 30),
+	winter: new AnnualEvent(12,  1,  3, 29),
 	
 	goldenWeek: new AnnualEvent( 4, 29,  5,  5),
 	fireflies: new AnnualEvent( 7,  1,  7,  9),
 	spooktober: new AnnualEvent(10, 17, 11,  1),
-	christmasTime: new AnnualEvent(12,  1, 12, 31),
+	christmasTime: new AnnualEvent(12,  1, 12, 30),
 	newYears: new AnnualEvent(12, 31,  1,  1),
 }
 
