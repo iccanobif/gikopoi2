@@ -1,52 +1,50 @@
-class AnnualEvent
+import * as moment from "moment";
+import { AnnualEventObject } from "./types";
+
+function parseEventString(eventString: string): moment.Moment
 {
-	constructor(monthFrom, dayFrom, monthTo, dayTo)
-	{
-		this.monthFrom = monthFrom;
-		this.dayFrom = dayFrom
-		this.monthTo = monthTo
-		this.dayTo = dayTo
-	}
-	
-	getOccurrence(y)
-	{
-		return [
-			new Date(y, this.monthFrom-1, this.dayFrom),
-			new Date(y, this.monthTo-1, this.dayTo, 23, 59, 59, 999)]
-	}
-	
-	isBetween(date)
-	{
-		if (!date) date = new Date();
-		const [start, end] = this.getOccurrence(date.getFullYear());
-		if (start > end)
-			return start <= date || date <= end;
-		else
-			return start <= date && date <= end;
-	}
-	
-	isNow()
-	{
-		return this.isBetween()
-	}
+    return eval("moment()." + eventString);
 }
 
-class AnnualMonthEvent extends AnnualEvent
+export class AnnualEvent
 {
-	constructor(monthNumber)
-	{
-		this.monthNumber
-	}
-	
-	getOccurrence(y)
-	{
-		return [
-			new Date(y, this.monthNumber, 1),
-			new Date(y, this.monthNumber + 1, 0)]
-	}
+    private from: moment.Moment;
+    private to: moment.Moment;
+    private areRangeDatesSameYear: boolean;
+    
+    constructor(annualEventObject: AnnualEventObject)
+    {
+        this.from = parseEventString(annualEventObject.from);
+        this.to = parseEventString(annualEventObject.to);
+        this.areRangeDatesSameYear = this.from.isBefore(this.to);
+    }
+    
+    isBetween(checkDate: moment.Moment): boolean
+    {
+        if (this.areRangeDatesSameYear)
+        {
+            return checkDate.isSameOrAfter(this.from, "day") && checkDate.isSameOrBefore(this.to, "day");
+        }
+        else
+        {
+            return checkDate.isSameOrBefore(this.to, "day") || checkDate.isSameOrAfter(this.from, "day");
+        }
+    }
+    
+    isNow(): boolean
+    {
+        const now = moment()
+        return this.isBetween(now)
+    }
 }
 
-const monthNames = [
+// annualEvent("winter").isNow()
+export function annualEvent(eventName): AnnualEvent
+{
+    return new AnnualEvent(annualEvents[eventName]);
+}
+
+const monthNames: [string] = [
 	"january",
 	"february",
 	"march",
@@ -61,20 +59,21 @@ const monthNames = [
 	"december"
 ]
 
-export const annualEvents =
+
+export const annualEvents: {[eventName: string]: AnnualEventObject} =
 {
-	spring: new AnnualEvent( 3,  1,  5, 31),
-	summer: new AnnualEvent( 6,  1,  8, 31),
-	autumn: new AnnualEvent( 9,  1, 11, 30),
-	winter: new AnnualEvent(12,  1,  3, 29),
-	
-	goldenWeek: new AnnualEvent( 4, 29,  5,  5),
-	fireflies: new AnnualEvent( 7,  1,  7,  9),
-	spooktober: new AnnualEvent(10, 17, 11,  1),
-	christmasTime: new AnnualEvent(12,  1, 12, 30),
-	newYears: new AnnualEvent(12, 31,  1,  1),
+    spring: {from: "month(3).date(21)", to: "month(5).endOf('month')"}, // starting with cherry blossoms blooming
+    summer: {from: "month(6).startOf('month')", to: "month(8).endOf('month')"}, // sun
+    autumn: {from: "month(9).startOf('month')", to: "month(11).endOf('month')"}, // orange/yellow/brown leaves
+    winter: {from: "month(12).startOf('month')", to: "month(3).date(20)"}, // snow
+    
+    goldenWeek: {from: "month(4).date(29)", to: "month(5).date(5)"},
+    fireflies: {from: "month(7).date(1)", to: "month(7).date(9)"},
+    spooktober: {from: "month(10).date(17)", to: "month(11).date(1)"},
+    christmasTime: {from: "month(12).date(1)", to: "month(12).date(30)"},
+    newYears: {from: "month(12).date(31)", to: "month(1).date(1)"},
 }
 
 monthNames.forEach((monthName, monthNumber) => {
-	annualEvents[monthName] = new AnnualMonthEvent(monthNumber);
+	annualEvents[monthName] = {from: "month(" + (monthNumber+1) + ").startOf('month')", to: "month(" + (monthNumber+1) + ").endOf('month')"};
 })

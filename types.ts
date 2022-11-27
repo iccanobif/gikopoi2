@@ -203,3 +203,9 @@ export interface CharacterSvgDto
     backWalking1Alt: string | null
     backWalking2Alt: string | null
 }
+
+export interface AnnualEventObject
+{
+    from: string;
+    to: string;
+}

@@ -1,12 +1,5 @@
 import { Room } from "./types";
-
-// In the frontend there's a thing called annualevents.js... I'm lazy so I'll just
-// reimplement here the logic for deciding if it's summer or not. Not even sure I'm
-// handling the edge cases right.
-const today = new Date()
-const isSummer = new Date(today.getFullYear(), 6 - 1, 21) < today && today < new Date(today.getFullYear(), 9 - 1, 21)
-const isAutumn = new Date(today.getFullYear(), 9 - 1, 22) < today && today < new Date(today.getFullYear(), 12 - 1, 20)
-const isWinter = today > new Date(today.getFullYear(), 12 - 1, 21) || today < new Date(today.getFullYear(), 3 - 1, 19)
+import { annualEvent } from "./annualevents";
 
 export const rooms: { [roomId: string]: Room } = {
     bar: {
@@ -3948,7 +3941,7 @@ const summerKonbini: Room = {
     streamSlotCount: 1,
 }
 
-rooms["konbini"] = isSummer ? summerKonbini : regularKonbini
+rooms["konbini"] = annualEvent("summer").isNow() ? summerKonbini : regularKonbini
 
 rooms["irori"] = {
     id: "irori",
@@ -3958,16 +3951,14 @@ rooms["irori"] = {
     size: { x: 7, y: 11 },
     originCoordinates: { x: 0, y: 361 },
     spawnPoint: "door",
-    backgroundImageUrl: isSummer ? "rooms/irori/background.summer.svg"
-                        : isWinter ? "rooms/irori/background.winter.svg"
-                        : isAutumn ? "rooms/irori/background.autumn.svg"
+    backgroundImageUrl: annualEvent("winter").isNow() ? "rooms/irori/background.winter.svg"
+                        : annualEvent("autumn").isNow() ? "rooms/irori/background.autumn.svg"
                         : "rooms/irori/background.summer.svg",
     objects: [
         // { x:  100, y:  100, width: 1, offset: { x: 0, y: 0 }, url: "top.winter.svg"},
         { x:  7, y: -1, width: 100, offset: { x: 0, y: 0 },
-            url: isSummer ? "top.summer.svg"
-                 : isWinter ? "top.winter.svg"
-                 : isAutumn ? "top.autumn.svg"
+            url: annualEvent("winter").isNow() ? "top.winter.svg"
+                 : annualEvent("autumn").isNow() ? "top.autumn.svg"
                  : "top.summer.svg"},
     ],
     sit: [
@@ -4002,16 +3993,26 @@ rooms["irori"] = {
 
 export function calculateCurrentRiverType(): number
 {
-	if (annualEvents["winter"].isNow()) return 8 // snow
-	if (annualEvents["fireflies"].isNow()) return 4
-	if (annualEvents["may"].isNow()) return 2
-	if (annualEvents["june"].isNow()) return 3
-	if (annualEvents["september"].isNow()) return 6
-	if (annualEvents["spring"].isNow()) return 1 // more of an early spring, with cherry blossoms
-	if (annualEvents["summer"].isNow()) return 5 // high summer?
-	if (annualEvents["autumn"].isNow()) return 7
-	
-    return 5 // default to summer
+    //1 =  3月21日～4月30日
+    //2 =  5月1日～5月31日
+    //3 =  6月1日～6月30日
+    //4 =  7月1日～7月9日
+    //5 =  7月10日～8月31日
+    //6 =  9月1日～9月30日
+    //7 = 10月1日～11月30日
+    //8 = 12月1日～3月20日
+    
+    if (annualEvent("may").isNow()) return 2
+	if (annualEvent("june").isNow()) return 3
+    if (annualEvent("fireflies").isNow()) return 4
+	if (annualEvent("september").isNow()) return 6
+    
+    if (annualEvent("spring").isNow()) return 1
+    if (annualEvent("summer").isNow()) return 5
+    if (annualEvent("autumn").isNow()) return 7
+	if (annualEvent("winter").isNow()) return 8
+    
+    return 5
 }
 
 export function buildRiverRoom(type: number): Room
