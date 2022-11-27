@@ -1,5 +1,5 @@
 import { RenderCache } from "./rendercache.js";
-import { annualEvents } from "./annualevents.js";
+import { annualEvent } from "./annualevents.js";
 
 function isNum(num)
 {
@@ -18,7 +18,7 @@ export class Character
         this.portraitScale = isNum(portraitScale) ? portraitScale : 1.9;
         
         // On new year's, all characters are visible
-        this.isHidden = annualEvents.newYears.isNow() ? false : isHidden
+        this.isHidden = annualEvent("newYears").isNow() ? false : isHidden
         
         this.scale = isNum(scale) ? scale : 0.5;
         this.frontSittingImage = null;
@@ -92,11 +92,11 @@ export const characters = {
     salmon: new Character("salmon", "svg", false, null, 0.17, -0.54, null),
     giko_hat: new Character("giko_hat", "svg", false, null, -0.5, 0.10, null),
     shii_hat: new Character("shii_hat", "svg", false, null, -0.5, 0.10, null),
-    shobon_hat: new Character("shobon_hat", "svg", !annualEvents.christmasTime.isNow(), null, -0.41, -0.2, null),
+    shobon_hat: new Character("shobon_hat", "svg", !annualEvent("christmasTime").isNow(), null, -0.41, -0.2, null),
     furoshiki: new Character("furoshiki", "svg", false, null, -0.5, 0.24, null),
-    golden_furoshiki: new Character("golden_furoshiki", "svg", !annualEvents.goldenWeek.isNow(), null, -0.5, 0.24, null),
-    furoshiki_shii: new Character("furoshiki_shii", "svg", annualEvents.spring.isNow(), null, -0.5, 0.24, null),
-    sakura_furoshiki_shii: new Character("sakura_furoshiki_shii", "svg", !annualEvents.spring.isNow(), null, -0.5, 0.24, null),
+    golden_furoshiki: new Character("golden_furoshiki", "svg", !annualEvent("goldenWeek").isNow(), null, -0.5, 0.24, null),
+    furoshiki_shii: new Character("furoshiki_shii", "svg", annualEvent("spring").isNow(), null, -0.5, 0.24, null),
+    sakura_furoshiki_shii: new Character("sakura_furoshiki_shii", "svg", !annualEvent("spring").isNow(), null, -0.5, 0.24, null),
     furoshiki_shobon: new Character("furoshiki_shobon", "svg", false, null, -0.41, -0.2, null),
     naitoapple: new Character("naitoapple", "svg", false, null, -0.5, 0.1, null),
     shii_pianica: new Character("shii_pianica", "svg", false, null, -0.46, 0.24, null),
@@ -122,10 +122,10 @@ export const characters = {
     zonu: new Character("zonu", "svg", false, null, -0.7, -0.46, null),
     george: new Character("george", "svg", false, null, -0.48, 0.13, null),
     chotto_toorimasu_yo: new Character("chotto_toorimasu_yo", "svg", false, null, -0.54, -0.34, null),
-    tokita_naito: new Character("tokita_naito", "svg", !annualEvents.spooktober.isNow(), null, -0.40, 0.04, 1.7),
-    pumpkinhead: new Character("pumpkinhead", "svg", !annualEvents.spooktober.isNow(), null, -0.74, 0.34, 2.3),
-    naito_yurei: new Character("naito_yurei", "svg", !annualEvents.spooktober.isNow(), null, -0.48, 0.13, null),
-    shiinigami: new Character("shiinigami", "svg", !annualEvents.spooktober.isNow(), null, -1, 0.02, 2.8),
+    tokita_naito: new Character("tokita_naito", "svg", !annualEvent("spooktober").isNow(), null, -0.40, 0.04, 1.7),
+    pumpkinhead: new Character("pumpkinhead", "svg", !annualEvent("spooktober").isNow(), null, -0.74, 0.34, 2.3),
+    naito_yurei: new Character("naito_yurei", "svg", !annualEvent("spooktober").isNow(), null, -0.48, 0.13, null),
+    shiinigami: new Character("shiinigami", "svg", !annualEvent("spooktober").isNow(), null, -1, 0.02, 2.8),
     youkanman: new Character("youkanman", "svg", true, null, -0.46, -0.5, 1.8),
     baba_shobon: new Character("baba_shobon", "svg", true, null, -0.5, -0.2, null),
     uzukumari: new Character("uzukumari", "svg", false, null, -0.98, -0.69, null),

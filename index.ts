@@ -12,6 +12,7 @@ import { readdir, readFile, writeFile } from "fs/promises";
 import { Chess } from "chess.js";
 import { Socket } from "socket.io";
 import { intersectionBy } from "lodash"
+import { annualEvents } from "./annualevents";
 
 const app: express.Application = express()
 const http = require('http').Server(app);
@@ -1313,6 +1314,7 @@ app.get("/", async (req, res) =>
         }
 
         data = data.replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
+        data = data.replace("@ANNUAL_EVENTS@", JSON.stringify(annualEvents))
 
         for (const areaId in roomStates)
         {
