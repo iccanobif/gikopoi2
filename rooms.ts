@@ -3993,21 +3993,21 @@ rooms["irori"] = {
 
 export function calculateCurrentRiverType(): number
 {
-    //1 =  3月21日～4月30日
-    //2 =  5月1日～5月31日
-    //3 =  6月1日～6月30日
-    //4 =  7月1日～7月9日
-    //5 =  7月10日～8月31日
-    //6 =  9月1日～9月30日
-    //7 = 10月1日～11月30日
-    //8 = 12月1日～3月20日
+    //1 =  3月21日～4月30日  sakura
+    //2 =  5月1日～5月31日   spring
+    //3 =  6月1日～6月30日   rainy
+    //4 =  7月1日～7月9日    fireflies
+    //5 =  7月10日～8月31日  summer
+    //6 =  9月1日～9月30日   akizakura
+    //7 = 10月1日～11月30日  autumn
+    //8 = 12月1日～3月20日   winter
     
-    if (annualEvent("may").isNow()) return 2
-	if (annualEvent("june").isNow()) return 3
+    if (annualEvent("sakura").isNow()) return 1
+	if (annualEvent("rainy").isNow()) return 3
     if (annualEvent("fireflies").isNow()) return 4
-	if (annualEvent("september").isNow()) return 6
+	if (annualEvent("akizakura").isNow()) return 6
     
-    if (annualEvent("spring").isNow()) return 1
+    if (annualEvent("spring").isNow()) return 2
     if (annualEvent("summer").isNow()) return 5
     if (annualEvent("autumn").isNow()) return 7
 	if (annualEvent("winter").isNow()) return 8

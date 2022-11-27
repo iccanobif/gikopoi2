@@ -39,7 +39,7 @@ export class AnnualEvent
     
     isNow(): boolean
     {
-        const now = dayjs('2022-12-20')
+        const now = dayjs()
         return this.isBetween(now)
     }
 }
@@ -51,35 +51,19 @@ export function annualEvent(eventName: string): AnnualEvent
 }
 
 
-const monthNames: string[] = [
-	"january",
-	"february",
-	"march",
-	"april",
-	"may",
-	"june",
-	"july",
-	"august",
-	"september",
-	"october",
-	"november",
-	"december"
-]
-
 export const annualEvents: {[eventName: string]: AnnualEventObject} =
 {
     spring: {from: "month(2).date(21)", to: "month(4).endOf('month')"}, // starting with cherry blossoms blooming
     summer: {from: "month(5).startOf('month')", to: "month(7).endOf('month')"}, // sun
-    autumn: {from: "month(8).startOf('month')", to: "month(10).endOf('month')"}, // orange/yellow/brown leaves
+    autumn: {from: "month(8).startOf('month')", to: "month(10).endOf('month')"}, // orange/yellow/brown colors
     winter: {from: "month(11).startOf('month')", to: "month(2).date(20)"}, // snow
     
+    sakura: {from: "month(2).date(21)", to: "month(3).endOf('month')"}, // cherry blossoms
     goldenWeek: {from: "month(3).date(29)", to: "month(4).date(5)"},
-    fireflies: {from: "month(6).date(1)", to: "month(6).date(9)"},
+    rainy: {from: "month(5).startOf('month')", to: "month(5).endOf('month')"}, // tsuyu / rainy season
+    fireflies: {from: "month(6).date(1)", to: "month(6).date(9)"}, // ホタル観賞
+    akizakura: {from: "month(8).startOf('month')", to: "month(8).endOf('month')"}, // cosmos flowers
     spooktober: {from: "month(9).date(17)", to: "month(10).date(1)"},
     christmasTime: {from: "month(11).date(1)", to: "month(11).date(30)"},
     newYears: {from: "month(11).date(31)", to: "month(0).date(1)"},
 }
-
-monthNames.forEach((monthName, monthNumber) => {
-	annualEvents[monthName] = {from: "month(" + monthNumber + ").startOf('month')", to: "month(" + monthNumber + ").endOf('month')"};
-})
