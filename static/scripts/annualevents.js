@@ -1,15 +1,15 @@
-import * as moment from "moment";
 import { AnnualEventObject } from "./types";
+import * as dayjs from "dayjs";
 
-function parseEventString(eventString: string): moment.Moment
+function parseEventString(eventString: string): dayjs.Dayjs
 {
-    return eval("moment()." + eventString);
+    return eval("dayjs()." + eventString);
 }
 
 export class AnnualEvent
 {
-    private from: moment.Moment;
-    private to: moment.Moment;
+    private from: dayjs.Dayjs;
+    private to: dayjs.Dayjs;
     private areRangeDatesSameYear: boolean;
     
     constructor(annualEventObject: AnnualEventObject)
@@ -19,21 +19,21 @@ export class AnnualEvent
         this.areRangeDatesSameYear = this.from.isBefore(this.to);
     }
     
-    isBetween(checkDate: moment.Moment): boolean
+    isBetween(checkDate: dayjs.Dayjs): boolean
     {
         if (this.areRangeDatesSameYear)
-        {
-            return checkDate.isSameOrAfter(this.from, "day") && checkDate.isSameOrBefore(this.to, "day");
+        {   // if between the dates
+            return !checkDate.isBefore(this.from, "day") && !checkDate.isAfter(this.to, "day");
         }
         else
-        {
-            return checkDate.isSameOrBefore(this.to, "day") || checkDate.isSameOrAfter(this.from, "day");
+        {   // if after the `from` date OR before the `to` date
+            return !checkDate.isBefore(this.from, "day") || !checkDate.isAfter(this.to, "day");
         }
     }
     
     isNow(): boolean
     {
-        const now = moment()
+        const now = dayjs()
         return this.isBetween(now)
     }
 }
@@ -43,6 +43,7 @@ export function annualEvent(eventName): AnnualEvent
 {
     return new AnnualEvent(annualEvents[eventName]);
 }
+
 
 const monthNames: [string] = [
 	"january",
@@ -58,7 +59,6 @@ const monthNames: [string] = [
 	"november",
 	"december"
 ]
-
 
 export const annualEvents: {[eventName: string]: AnnualEventObject} =
 {
