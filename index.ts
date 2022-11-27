@@ -938,7 +938,7 @@ io.on("connection", function (socket: Socket)
             if (!blockedUser) return; // TODO Return a message to tell the user that the blocking failed
             
             // filter out previous blockers and blockees
-            const blockersUserList = getFilteredConnectedUserList(user.roomId, user.areaId)
+            const blockersUserList = getFilteredConnectedUserList(user, user.roomId, user.areaId)
 
             for (const ip of blockedUser.ips)
                 user.blockedIps.push(ip);
