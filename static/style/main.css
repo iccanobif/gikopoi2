@@ -675,18 +675,27 @@ video {
     user-select: none;
 }
 
-#character-selection img {
-    height: 70px;
-    width: 60px;
-    padding-top: 10px;
-    min-width: 10px;
+#character-selection label
+{
+    position: relative;
+    min-height: 60px;
+    min-width: 60px;
     margin: 2px;
-    object-fit: contain;
+    overflow: hidden;
+    display: block;
+    border: 1px solid #999999;
+}
+
+#character-selection img
+{
+    display: block;
+    position: absolute;
+    object-fit: cover;
 }
 
 #character-selection .character-selected {
-    border: solid 2px blue;
-    margin: 0;
+    border: solid 1px blue;
+    outline: solid 1px blue;
 }
 
 #character-selection input {

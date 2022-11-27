@@ -1,17 +1,26 @@
 import { RenderCache } from "./rendercache.js";
 import { annualEvents } from "./annualevents.js";
 
+function isNum(num)
+{
+    return !isNaN(parseFloat(num))
+}
+
 export class Character
 {
-    constructor(name, format, isHidden, scale)
+    constructor(name, format, isHidden, scale, portraitLeft, portraitTop, portraitScale)
     {
         this.characterName = name;
         this.format = format;
-
+        
+        this.portraitLeft = isNum(portraitLeft) ? portraitLeft : -0.5;
+        this.portraitTop = isNum(portraitTop) ? portraitTop : 0;
+        this.portraitScale = isNum(portraitScale) ? portraitScale : 1.9;
+        
         // On new year's, all characters are visible
         this.isHidden = annualEvents.newYears.isNow() ? false : isHidden
-
-        this.scale = scale || 0.5
+        
+        this.scale = isNum(scale) ? scale : 0.5;
         this.frontSittingImage = null;
         this.frontStandingImage = null;
         this.frontWalking1Image = null;
@@ -73,52 +82,53 @@ export class Character
 }
 
 export const characters = {
-    giko: new Character("giko", "svg", false),
-    naito: new Character("naito", "svg", false),
-    shii: new Character("shii", "svg", false),
-    hikki: new Character("hikki", "svg", false),
-    tinpopo: new Character("tinpopo", "svg", false),
-    shobon: new Character("shobon", "svg", false),
-    nida: new Character("nida", "svg", false),
-    salmon: new Character("salmon", "svg", false),
-    giko_hat: new Character("giko_hat", "svg", false),
-    shii_hat: new Character("shii_hat", "svg", false),
-    furoshiki: new Character("furoshiki", "svg", false),
-    golden_furoshiki: new Character("golden_furoshiki", "svg", !annualEvents.goldenWeek.isNow()),
-    furoshiki_shii: new Character("furoshiki_shii", "svg", annualEvents.spring.isNow()),
-    sakura_furoshiki_shii: new Character("sakura_furoshiki_shii", "svg", !annualEvents.spring.isNow()),
-    furoshiki_shobon: new Character("furoshiki_shobon", "svg", false),
-    naitoapple: new Character("naitoapple", "svg", false),
-    shii_pianica: new Character("shii_pianica", "svg", false),
-    shii_uniform: new Character("shii_uniform", "svg", false),
-    hungry_giko: new Character("hungry_giko", "svg", true),
-    rikishi_naito: new Character("rikishi_naito", "svg", true),
-    hentai_giko: new Character("hentai_giko", "svg", true),
-    shar_naito: new Character("shar_naito", "svg", true),
-    dark_naito_walking: new Character("dark_naito_walking", "svg", true),
-    ika: new Character("ika", "svg", true),
-    takenoko: new Character("takenoko", "svg", true),
-    kaminarisama_naito: new Character("kaminarisama_naito", "svg", true),
-    panda_naito: new Character("panda_naito", "svg", false),
-    wild_panda_naito: new Character("wild_panda_naito", "svg", true),
-    funkynaito: new Character("funkynaito", "png", true),
-    molgiko: new Character("molgiko", "png", true),
-    tikan_giko: new Character("tikan_giko", "svg", true),
-    hotsuma_giko: new Character("hotsuma_giko", "svg", false),
-    dokuo: new Character("dokuo", "svg", false),
-    onigiri: new Character("onigiri", "svg", false),
-    tabako_dokuo: new Character("tabako_dokuo", "svg", true),
-    himawari: new Character("himawari", "svg", true),
-    zonu: new Character("zonu", "svg", false),
-    george: new Character("george", "svg", false),
-    chotto_toorimasu_yo: new Character("chotto_toorimasu_yo", "svg", false),
-    tokita_naito: new Character("tokita_naito", "svg", !annualEvents.spooktober.isNow()),
-    pumpkinhead: new Character("pumpkinhead", "svg", !annualEvents.spooktober.isNow()),
-    naito_yurei: new Character("naito_yurei", "svg", !annualEvents.spooktober.isNow()),
-    shiinigami: new Character("shiinigami", "svg", !annualEvents.spooktober.isNow()),
-    youkanman: new Character("youkanman", "svg", true),
-    baba_shobon: new Character("baba_shobon", "svg", true),
-    uzukumari: new Character("uzukumari", "svg", false),
+    giko: new Character("giko", "svg", false, null, -0.5, 0.24, null),
+    naito: new Character("naito", "svg", false, null, -0.48, 0.13, null),
+    shii: new Character("shii", "svg", false, null, -0.5, 0.24, null),
+    hikki: new Character("hikki", "svg", false, null, -0.44, -0.12, null),
+    tinpopo: new Character("tinpopo", "svg", false, null, -0.5, 0.26, null),
+    shobon: new Character("shobon", "svg", false, null, -0.5, -0.2, null),
+    nida: new Character("nida", "svg", false, null, -0.5, 0.27, null),
+    salmon: new Character("salmon", "svg", false, null, 0.17, -0.54, null),
+    giko_hat: new Character("giko_hat", "svg", false, null, -0.5, 0.10, null),
+    shii_hat: new Character("shii_hat", "svg", false, null, -0.5, 0.10, null),
+    shobon_hat: new Character("shobon_hat", "svg", !annualEvents.christmasTime.isNow(), null, -0.41, -0.2, null),
+    furoshiki: new Character("furoshiki", "svg", false, null, -0.5, 0.24, null),
+    golden_furoshiki: new Character("golden_furoshiki", "svg", !annualEvents.goldenWeek.isNow(), null, -0.5, 0.24, null),
+    furoshiki_shii: new Character("furoshiki_shii", "svg", annualEvents.spring.isNow(), null, -0.5, 0.24, null),
+    sakura_furoshiki_shii: new Character("sakura_furoshiki_shii", "svg", !annualEvents.spring.isNow(), null, -0.5, 0.24, null),
+    furoshiki_shobon: new Character("furoshiki_shobon", "svg", false, null, -0.41, -0.2, null),
+    naitoapple: new Character("naitoapple", "svg", false, null, -0.5, 0.1, null),
+    shii_pianica: new Character("shii_pianica", "svg", false, null, -0.46, 0.24, null),
+    shii_uniform: new Character("shii_uniform", "svg", false, null, -0.5, 0.24, null),
+    hungry_giko: new Character("hungry_giko", "svg", true, null, -0.45, 0.15, null),
+    rikishi_naito: new Character("rikishi_naito", "svg", true, null, -0.30, -0.18, 1.7),
+    hentai_giko: new Character("hentai_giko", "svg", true, null, -0.45, 0.33, 1.7),
+    shar_naito: new Character("shar_naito", "svg", true, null, -0.48, 0.13, null),
+    dark_naito_walking: new Character("dark_naito_walking", "svg", true, null, -0.48, 0.13, null),
+    ika: new Character("ika", "svg", true, null, 0, 0.18, 1),
+    takenoko: new Character("takenoko", "svg", true, null, 0, 0, 1),
+    kaminarisama_naito: new Character("kaminarisama_naito", "svg", true, null, -0.48, 0.13, null),
+    panda_naito: new Character("panda_naito", "svg", false, null, -0.48, 0.13, null),
+    wild_panda_naito: new Character("wild_panda_naito", "svg", true, null, -0.48, 0.13, null),
+    funkynaito: new Character("funkynaito", "png", true, null, -0.48, 0.13, null),
+    molgiko: new Character("molgiko", "png", true, null, -0.8, -0.7, null),
+    tikan_giko: new Character("tikan_giko", "svg", true, null, -0.5, 0.24, null),
+    hotsuma_giko: new Character("hotsuma_giko", "svg", false, null, -0.5, 0.24, null),
+    dokuo: new Character("dokuo", "svg", false, null, -0.58, -0.33, null),
+    onigiri: new Character("onigiri", "svg", false, null, -0.38, 0.20, 1.7),
+    tabako_dokuo: new Character("tabako_dokuo", "svg", true, null, -0.58, -0.33, null),
+    himawari: new Character("himawari", "svg", true, null, -0.47, 0, null),
+    zonu: new Character("zonu", "svg", false, null, -0.7, -0.46, null),
+    george: new Character("george", "svg", false, null, -0.48, 0.13, null),
+    chotto_toorimasu_yo: new Character("chotto_toorimasu_yo", "svg", false, null, -0.54, -0.34, null),
+    tokita_naito: new Character("tokita_naito", "svg", !annualEvents.spooktober.isNow(), null, -0.40, 0.04, 1.7),
+    pumpkinhead: new Character("pumpkinhead", "svg", !annualEvents.spooktober.isNow(), null, -0.74, 0.34, 2.3),
+    naito_yurei: new Character("naito_yurei", "svg", !annualEvents.spooktober.isNow(), null, -0.48, 0.13, null),
+    shiinigami: new Character("shiinigami", "svg", !annualEvents.spooktober.isNow(), null, -1, 0.02, 2.8),
+    youkanman: new Character("youkanman", "svg", true, null, -0.46, -0.5, 1.8),
+    baba_shobon: new Character("baba_shobon", "svg", true, null, -0.5, -0.2, null),
+    uzukumari: new Character("uzukumari", "svg", false, null, -0.98, -0.69, null),
 }
 
 export const loadCharacters = async (crispMode) => {

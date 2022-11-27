@@ -62,14 +62,15 @@
                 </div>
                 <div id="character-selection">
                     <label v-for="character in allCharacters" :for="character.characterName + '-selection'"
-                        v-show="!character.isHidden">
+                        v-show="!character.isHidden"
+                        v-bind:class="{'character-selected': character.characterName == characterId}">
                         <template v-if="character.isHidden">
                             This is a secret, please don't tell anyone. これは秘密です、誰にも言わないでください。
                         </template>
                         <input type="radio" :id="character.characterName + '-selection'" :disabled="isLoggingIn"
                             :value="character.characterName" v-model="characterId">
-                        <img :src="'characters/' + character.characterName + '/front-standing.' + character.format"
-                            v-bind:class="{'character-selected': character.characterName == characterId}"/>
+                        <img :style="{ top: (character.portraitTop*100) + '%', left: (character.portraitLeft*100) + '%', width: (character.portraitScale*100) + '%'}"
+                            :src="'characters/' + character.characterName + '/front-standing.' + character.format"/>
                     </label>
                 </div>
                 <button id="login-button" v-on:click="login" :disabled="isLoggingIn">Login</button>
