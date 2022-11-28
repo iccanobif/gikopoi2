@@ -65,7 +65,7 @@ export const annualEvents: {[eventName: string]: AnnualEventObject} =
     akizakura: {from: "month(8).startOf('month')", to: "month(8).endOf('month')"}, // cosmos flowers
     spooktober: {from: "month(9).date(17)", to: "month(10).date(1)"},
     christmasTime: {
-        from: "month(11).date(25).subtract(1, 'day').startOf('week').subtract(3, 'week')", // first advent
+        from: "month(11).date(24).startOf('week').subtract(3, 'week')", // first advent
         to: "month(11).date(30)"},
     newYears: {from: "month(11).date(31)", to: "month(0).date(1)"},
 }
