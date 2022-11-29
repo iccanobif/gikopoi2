@@ -1,5 +1,5 @@
 import { Room } from "./types";
-import { annualEvent } from "./annualevents";
+import { annualEvents } from "./annualevents";
 
 export const rooms: { [roomId: string]: Room } = {
     bar: {
@@ -3941,7 +3941,7 @@ const summerKonbini: Room = {
     streamSlotCount: 1,
 }
 
-rooms["konbini"] = annualEvent("summer").isNow() ? summerKonbini : regularKonbini
+rooms["konbini"] = annualEvents.summer.isNow() ? summerKonbini : regularKonbini
 
 rooms["irori"] = {
     id: "irori",
@@ -3951,14 +3951,14 @@ rooms["irori"] = {
     size: { x: 7, y: 11 },
     originCoordinates: { x: 0, y: 361 },
     spawnPoint: "door",
-    backgroundImageUrl: annualEvent("winter").isNow() ? "rooms/irori/background.winter.svg"
-                        : annualEvent("autumn").isNow() ? "rooms/irori/background.autumn.svg"
+    backgroundImageUrl: annualEvents.winter.isNow() ? "rooms/irori/background.winter.svg"
+                        : annualEvents.autumn.isNow() ? "rooms/irori/background.autumn.svg"
                         : "rooms/irori/background.summer.svg",
     objects: [
         // { x:  100, y:  100, width: 1, offset: { x: 0, y: 0 }, url: "top.winter.svg"},
         { x:  7, y: -1, width: 100, offset: { x: 0, y: 0 },
-            url: annualEvent("winter").isNow() ? "top.winter.svg"
-                 : annualEvent("autumn").isNow() ? "top.autumn.svg"
+            url: annualEvents.winter.isNow() ? "top.winter.svg"
+                 : annualEvents.autumn.isNow() ? "top.autumn.svg"
                  : "top.summer.svg"},
     ],
     sit: [
@@ -4002,15 +4002,15 @@ export function calculateCurrentRiverType(): number
     //7 = 10月1日～11月30日  autumn
     //8 = 12月1日～3月20日   winter
     
-    if (annualEvent("sakura").isNow()) return 1
-	if (annualEvent("rainy").isNow()) return 3
-    if (annualEvent("fireflies").isNow()) return 4
-	if (annualEvent("akizakura").isNow()) return 6
+    if (annualEvents.sakura.isNow()) return 1
+	if (annualEvents.rainy.isNow()) return 3
+    if (annualEvents.fireflies.isNow()) return 4
+	if (annualEvents.akizakura.isNow()) return 6
     
-    if (annualEvent("spring").isNow()) return 2
-    if (annualEvent("summer").isNow()) return 5
-    if (annualEvent("autumn").isNow()) return 7
-	if (annualEvent("winter").isNow()) return 8
+    if (annualEvents.spring.isNow()) return 2
+    if (annualEvents.summer.isNow()) return 5
+    if (annualEvents.autumn.isNow()) return 7
+	if (annualEvents.winter.isNow()) return 8
     
     return 5
 }
