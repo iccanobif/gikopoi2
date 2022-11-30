@@ -213,9 +213,8 @@ const sendRoomState = (socket: Socket, user: Player, currentRoom: Room) =>
 io.on("connection", function (socket: Socket)
 {
     let user: Player;
-    let currentRoom = rooms.admin_st;
     
-    const sendCurrentRoomState = () => sendRoomState(socket, user, currentRoom);
+    const sendCurrentRoomState = () => sendRoomState(socket, user, rooms[user.roomId]);
 
     const sendNewUserInfo = () =>
     {
@@ -247,8 +246,7 @@ io.on("connection", function (socket: Socket)
         }
     })
 
-
-    // Initialize user and currentRoom
+    // Initialize user
     try
     {
         user = socket.data.user;
@@ -261,15 +259,11 @@ io.on("connection", function (socket: Socket)
 
         log.info("user-connect userId:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
 
-        currentRoom = rooms[user.roomId]
-
         socket.join(user.areaId)
-        socket.join(user.areaId + currentRoom.id)
+        socket.join(user.areaId + user.roomId)
 
         user.isGhost = false
         user.disconnectionTime = null
-
-        currentRoom = rooms[user.roomId]
 
         sendCurrentRoomState()
 
@@ -442,16 +436,16 @@ io.on("connection", function (socket: Socket)
                 // prevent going outside of the map
                 if (newX < 0) { rejectMovement(); return }
                 if (newY < 0) { rejectMovement(); return }
-                if (newX >= currentRoom.size.x) { rejectMovement(); return }
-                if (newY >= currentRoom.size.y) { rejectMovement(); return }
+                if (newX >= rooms[user.roomId].size.x) { rejectMovement(); return }
+                if (newY >= rooms[user.roomId].size.y) { rejectMovement(); return }
 
                 // prevent moving over a blocked square
-                if (currentRoom.blocked.find(p => p.x == newX && p.y == newY))
+                if (rooms[user.roomId].blocked.find(p => p.x == newX && p.y == newY))
                 {
                     rejectMovement();
                     return
                 }
-                if (currentRoom.forbiddenMovements.find(p =>
+                if (rooms[user.roomId].forbiddenMovements.find(p =>
                     p.xTo == newX &&
                     p.yTo == newY &&
                     p.xFrom == user.position.x &&
@@ -463,7 +457,7 @@ io.on("connection", function (socket: Socket)
 
                 // Become fat if you're at position 2,4 in yoshinoya room
                 // But if you're a squid, you'll stay a squid all your life!
-                if (currentRoom.id == "yoshinoya" && user.position.x == 2 && user.position.y == 4)
+                if (user.roomId == "yoshinoya" && user.position.x == 2 && user.position.y == 4)
                 {
                     changeCharacter(user, "hungry_giko", false)
                 }
@@ -472,7 +466,7 @@ io.on("connection", function (socket: Socket)
                 user.position.y = newY
                 user.lastMovement = Date.now()
                 
-                if (currentRoom.id == "idoA" && user.position.x == 6 && user.position.y == 6)
+                if (user.roomId == "idoA" && user.position.x == 6 && user.position.y == 6)
                 {
                     setTimeout(() => {
                         if (user.position.x == 6 && user.position.y == 6)
@@ -849,8 +843,6 @@ io.on("connection", function (socket: Socket)
             // Validation
             if (!rooms.hasOwnProperty(targetRoomId)) return;
             if (targetDoorId && !rooms[targetRoomId].doors.hasOwnProperty(targetDoorId)) return;
-
-            currentRoom = rooms[targetRoomId]
             
             await clearStream(user)
             await clearRoomListener(user)
