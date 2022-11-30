@@ -1,6 +1,7 @@
 import express, { Request } from "express"
-import { buildRiverRoom, calculateCurrentRiverType, rooms } from "./rooms";
-import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, Room } from "./types";
+import { rooms, dynamicRooms } from "./rooms";
+//import { buildRiverRoom, calculateCurrentRiverType, rooms } from "./rooms";
+import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, Room, DynamicRoom } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users";
 import got from "got";
 import log from "loglevel";
@@ -12,7 +13,7 @@ import { readdir, readFile, writeFile } from "fs/promises";
 import { Chess } from "chess.js";
 import { Socket } from "socket.io";
 import { intersectionBy } from "lodash"
-import { annualEventObjects } from "./annualevents";
+import { annualEventObjects, subscribeToAnnualEvents } from "./annualevents";
 
 const app: express.Application = express()
 const http = require('http').Server(app);
@@ -2168,21 +2169,20 @@ async function restoreState()
 
 setInterval(() => persistState(), persistInterval)
 
-// When the season change, send to all involved users the new river room
-// TODO: do the same for konbini to switch between normal, summer and christmas
-let previousRiverType = calculateCurrentRiverType()
-setInterval(() => {
-    const newRiverType = calculateCurrentRiverType()
-    if (newRiverType != previousRiverType)
-    {
-        rooms["river"] = buildRiverRoom(newRiverType)
 
-        for (const areaId of ["gen", "for"])
-            for (const u of getConnectedUserList("river", areaId).filter(u => u.socketId))
-                sendRoomState(io.to(u.socketId), u, rooms["river"]);
-    }
-    previousRiverType = newRiverType;
-}, 1000 * 10) // ten seconds
+dynamicRooms.forEach((dynamicRoom: DynamicRoom) =>
+{
+    subscribeToAnnualEvents(dynamicRoom.subscribedAnnualEvents, (current, added, removed) =>
+    {
+        console.log("subscribed event", dynamicRoom)
+        if (dynamicRoom.build(current, added, removed) !== false)
+        {
+            for (const areaId of ["gen", "for"])
+                for (const u of getConnectedUserList(dynamicRoom.roomId, areaId).filter(u => u.socketId))
+                    sendRoomState(io.to(u.socketId), u, rooms[dynamicRoom.roomId]);
+        }
+    })
+})
 
 const port = process.env.PORT == undefined
     ? 8085

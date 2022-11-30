@@ -1,4 +1,4 @@
-import { AnnualEventObject } from "./types";
+import { AnnualEventObject, AnnualEventCallback} from "./types";
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
@@ -29,6 +29,15 @@ export class AnnualEvent
         this.from = parseEventString("startOf('day')." + annualEventObject.from);
         this.to = parseEventString("endOf('day')." + annualEventObject.to);
         this.areRangeDatesSameYear = this.from.isBefore(this.to);
+    }
+    
+    getNextEventDate(checkDate?: dayjs.Dayjs): dayjs.Dayjs
+    {
+        const cd = checkDate ? checkDate : dayjs()
+        if (this.isBetween(cd))
+            return this.to
+        else
+            return this.from
     }
     
     isBetween(checkDate: dayjs.Dayjs): boolean
@@ -73,3 +82,57 @@ export const annualEventObjects: {[eventName: string]: AnnualEventObject} =
 export const annualEvents: {[eventName: string]: AnnualEvent} = Object.fromEntries(
     Object.entries(annualEventObjects).map(([eventName, annualEventObject]) => [eventName, new AnnualEvent(annualEventObject)]));
 
+const testDays = [dayjs("2022-04-05"), dayjs("2022-05-05"), dayjs("2022-06-05"), dayjs("2022-07-05"), dayjs("2022-08-05"), dayjs("2022-09-05"), dayjs("2022-10-05"), dayjs("2022-11-05"), dayjs("2022-12-05")]
+let testDaysIndex = 0
+
+export function getCurrentAnnualEvents(): string[]
+{
+    const now = testDays[testDaysIndex]
+    console.log("current annual events")
+    
+    testDaysIndex++
+    if (testDaysIndex > testDays.length-1)
+        testDaysIndex = 0;
+    
+    return Object.entries(annualEvents)
+        .filter(([eventName, annualEvent]) => annualEvent.isBetween(now))
+        .map(([eventName, annualEvent]) => eventName)
+}
+
+export function getSoonestEventDate(): dayjs.Dayjs
+{
+    const now = dayjs()
+    return Object.values(annualEvents)
+        .map(annualEvent => annualEvent.getNextEventDate(now))
+        .reduce((previous, current) => current.isBefore(previous) ? current : previous)
+}
+
+
+const eventObservers: {[eventName: string]: AnnualEventCallback[]} = {}
+
+export function subscribeToAnnualEvents(annualEventNames: string[], callbackFunction: AnnualEventCallback)
+{
+    annualEventNames.forEach(name =>
+    {
+        if (!(name in eventObservers)) eventObservers[name] = []
+        eventObservers[name].push(callbackFunction)
+    })
+}
+
+function observeEvents(previousAnnualEvents?: string[])
+{
+    const currentAnnualEvents = getCurrentAnnualEvents();
+    if (typeof previousAnnualEvents !== "undefined")
+    {
+        const added: string[] = currentAnnualEvents.filter(eventName => !previousAnnualEvents.includes(eventName));
+        const removed: string[] = previousAnnualEvents.filter(eventName => !currentAnnualEvents.includes(eventName));
+        
+        (new Set(added.concat(removed)
+            .filter(name => name in eventObservers)
+            .map(eventName => eventObservers[eventName])
+            .flat()))
+                .forEach(callbackFunction => callbackFunction(currentAnnualEvents, added, removed));
+    }
+    setTimeout(observeEvents, Math.min(dayjs().diff(getSoonestEventDate()), 2*1000), currentAnnualEvents); // min every hour or time to next event date
+}
+observeEvents()
