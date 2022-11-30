@@ -177,6 +177,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "Are you sure you want to clear the chat log?",
         chat_log_cleared: "The chat log has been cleared.",
+        stream_start_notification: "@USER_NAME@ has started a stream.",
     },
     room:
     {

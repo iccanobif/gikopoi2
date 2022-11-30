@@ -174,6 +174,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "Apakah Anda ingin menghapus log obrolan?",
         chat_log_cleared: "Log obrolan telah dihapus",
+        // stream_start_notification: "@USER_NAME@ has started a stream.",
     },
     room:
     {

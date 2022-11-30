@@ -176,6 +176,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "Sohbet defterini temizlemek istediğine emin misin?",
         chat_log_cleared: "Sohbet defteri temizlendi.",
+        // stream_start_notification: "@USER_NAME@ has started a stream.",
     },
     room:
     {

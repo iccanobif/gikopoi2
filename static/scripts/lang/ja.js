@@ -177,6 +177,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "チャットログをクリアしますか？",
         chat_log_cleared: "チャットログがクリアされました。",
+        stream_start_notification: "@USER_NAME@が配信を始めた。",
     },
     room:
     {

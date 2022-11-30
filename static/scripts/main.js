@@ -58,6 +58,7 @@ const enabledListenerIconImagePromise = loadImage("enabled-listener.svg")
 const disabledListenerIconImagePromise = loadImage("disabled-listener.svg")
 let enabledListenerIconImage = null;
 let disabledListenerIconImage = null;
+// I forgot why I defined rtcPeerSlots in the window object, but I remember it was important...
 window.rtcPeerSlots = [];
 
 function UserException(message) {
@@ -1074,10 +1075,9 @@ window.vueApp = new Vue({
                 const permission = await requestNotificationPermission()
                 if (permission != "granted") return;
 
-                const character = user.character
                 new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
                     {
-                        icon: "characters/" + character.characterName + "/front-standing." + character.format
+                        icon: this.getAvatarSpriteForUser(user.id)
                     })
             }
         },
@@ -2379,22 +2379,44 @@ window.vueApp = new Vue({
             return rtcPeer;
         },
 
-        updateCurrentRoomStreams: async function (streams)
+        updateCurrentRoomStreams: async function (updatedStreams)
         {
-            // if (this.hideStreams)
-            //     streams = []
+            // Compare old stream slots with updated ones, to send a notification if
+            // a new stream started
+            for (let slotId = 0; slotId < updatedStreams.length; slotId++)
+            {
+                const oldStream = this.streams[slotId];
+                const newStream = updatedStreams[slotId];
+                if (oldStream
+                    && !oldStream.isActive
+                    && newStream.isActive
+                    && newStream.userId != this.myUserID)
+                {
+                    const streamUser = this.users[newStream.userId]
+                    const message = i18n.t("msg.stream_start_notification").replace("@USER_NAME@", this.toDisplayName(streamUser.name))
+                    const notification = new Notification(message,
+                        {
+                            icon: this.getAvatarSpriteForUser(newStream.userId)
+                        })
+        
+                    notification.addEventListener("click", (event) => {
+                        vueApp.wantToTakeStream(slotId);
+                        window.focus();
+                    })
+                }
+            }
 
             // If I'm a streamer and the server just forcefully killed my stream (for example, because of a server restart), stop streaming
-            if (this.mediaStream && !streams.find(s => s.userId == this.myUserID))
+            if (this.mediaStream && !updatedStreams.find(s => s.userId == this.myUserID))
                 this.stopStreaming();
 
-            this.takenStreams = streams.map((s, slotId) => {
+            this.takenStreams = updatedStreams.map((s, slotId) => {
                 return !!this.takenStreams[slotId]
             });
 
             // update rtcPeerSlots (keep the ones that were already established, drop the ones for streams that were just stopped by the streamer)
             const newRtcPeerSlotsList = [];
-            for (let slotId = 0; slotId < streams.length; slotId++)
+            for (let slotId = 0; slotId < updatedStreams.length; slotId++)
             {
                 if (!rtcPeerSlots[slotId])
                     newRtcPeerSlotsList.push(null)
@@ -2408,34 +2430,28 @@ window.vueApp = new Vue({
             }
             rtcPeerSlots = newRtcPeerSlotsList;
 
-            this.clientSideStreamData = streams.map((s, slotId) => {
+            this.clientSideStreamData = updatedStreams.map((s, slotId) => {
                 if (this.clientSideStreamData[slotId])
                     return this.clientSideStreamData[slotId];
                 else
                     return { isListenerConnected: false, isSeparateTab: false };
             })
 
-            this.streams = streams;
+            this.streams = updatedStreams;
 
             this.streamSlotIdInWhichIWantToStream = null;
 
-            for (const slotId in streams)
+            for (const slotId in updatedStreams)
             {
-                const stream = streams[slotId];
+                const stream = updatedStreams[slotId];
                 if (stream.isActive)
-                {
                     if (stream.userId == this.myUserID)
-                    {
                         this.streamSlotIdInWhichIWantToStream = slotId;
-                    }
-                }
                 if (this.takenStreams[slotId])
-                {
                     if (!stream.isActive || !stream.isReady || !stream.isAllowed)
                         await this.dropStream(slotId);
                     else
                         this.takeStream(slotId);
-                }
 
                 $( "#video-container-" + slotId ).resizable({aspectRatio: true})
 
@@ -3393,8 +3409,8 @@ window.vueApp = new Vue({
         },
         getAvatarSpriteForUser: function(userId)
         {
-            const characterName = this.users[userId].character.characterName
-            return "characters/" + characterName + "/front-standing.svg"
+            const character = this.users[userId].character
+            return "characters/" + character.characterName + "/front-standing." + character.format
         },
     },
 });

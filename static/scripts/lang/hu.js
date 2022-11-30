@@ -174,6 +174,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "Biztosan törölni akarod a naplót?",
         chat_log_cleared: "A napló törlésre került.",
+        // stream_start_notification: "@USER_NAME@ has started a stream.",
     },
     room:
     {

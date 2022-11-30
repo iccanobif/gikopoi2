@@ -174,6 +174,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "Vill du verkligen rensa chattloggen",
         chat_log_cleared: "Chattloggen har rensats.",
+        // stream_start_notification: "@USER_NAME@ has started a stream.",
     },
     room:
     {

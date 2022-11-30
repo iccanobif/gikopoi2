@@ -178,6 +178,7 @@ export default
         
         // are_you_sure_you_want_to_clear_log: "",
         // chat_log_cleared: "",
+        // stream_start_notification: "@USER_NAME@ has started a stream.",
     },
     room:
     {
