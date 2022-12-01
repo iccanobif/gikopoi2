@@ -60,7 +60,7 @@ export class AnnualEvent
 }
 
 
-export const annualEventObjects: {[eventName: string]: AnnualEventObject} =
+export const annualEventDefinitions: {[eventName: string]: AnnualEventObject} =
 {
     spring: {from: "month(2).date(21)", to: "month(4).endOf('month')"}, // starting with cherry blossoms blooming
     summer: {from: "month(5).startOf('month')", to: "month(7).endOf('month')"}, // sun
@@ -80,7 +80,7 @@ export const annualEventObjects: {[eventName: string]: AnnualEventObject} =
 }
 
 export const annualEvents: {[eventName: string]: AnnualEvent} = Object.fromEntries(
-    Object.entries(annualEventObjects).map(([eventName, annualEventObject]) => [eventName, new AnnualEvent(annualEventObject)]));
+    Object.entries(annualEventDefinitions).map(([eventName, annualEventObject]) => [eventName, new AnnualEvent(annualEventObject)]));
 
 const testDays = [dayjs("2022-04-05"), dayjs("2022-05-05"), dayjs("2022-06-05"), dayjs("2022-07-05"), dayjs("2022-08-05"), dayjs("2022-09-05"), dayjs("2022-10-05"), dayjs("2022-11-05"), dayjs("2022-12-05")]
 let testDaysIndex = 0
@@ -127,12 +127,14 @@ function observeEvents(previousAnnualEvents?: string[])
         const added: string[] = currentAnnualEvents.filter(eventName => !previousAnnualEvents.includes(eventName));
         const removed: string[] = previousAnnualEvents.filter(eventName => !currentAnnualEvents.includes(eventName));
         
-        (new Set(added.concat(removed)
+        const callbackFunctionsToCall = new Set(added.concat(removed)
             .filter(name => name in eventObservers)
             .map(eventName => eventObservers[eventName])
-            .flat()))
-                .forEach(callbackFunction => callbackFunction(currentAnnualEvents, added, removed));
+            .flat());
+
+        callbackFunctionsToCall.forEach(callbackFunction => callbackFunction(currentAnnualEvents, added, removed));
     }
     setTimeout(observeEvents, Math.min(dayjs().diff(getSoonestEventDate()), 2*1000), currentAnnualEvents); // min every hour or time to next event date
 }
+
 observeEvents()
