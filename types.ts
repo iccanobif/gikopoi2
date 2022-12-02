@@ -51,6 +51,7 @@ export interface Room
 {
     id: string;
     group: "bar_giko" | "gikopoi" | "gikopoipoi";
+    variant?: string;
     scale: number;
     size: Coordinates;
     originCoordinates: Coordinates;
@@ -212,7 +213,7 @@ export interface AnnualEventObject
 
 export type AnnualEventCallback = (currentEvents: string[], addedEvents: string[], removedEvents: string[]) => void
 
-export type DynamicRoomBuildFunction = (currentAnnualEvents: string[], addedEvents: string[], removedEvents: string[]) => boolean | void
+export type DynamicRoomBuildFunction = (currentAnnualEvents: string[], addedEvents: string[], removedEvents: string[]) => Room
 
 export interface DynamicRoom
 {
