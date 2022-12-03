@@ -2164,14 +2164,19 @@ setInterval(() => persistState(), persistInterval)
 
 dynamicRooms.forEach((dynamicRoom: DynamicRoom) =>
 {
+    let previousVariant: string | null = null
     subscribeToAnnualEvents(dynamicRoom.subscribedAnnualEvents, (current, added, removed) =>
     {
         console.log("subscribed event", dynamicRoom)
-        if (dynamicRoom.build(current, added, removed) !== false)
+        const room = dynamicRoom.build(current, added, removed)
+        if (previousVariant != room.variant)
         {
+            rooms[dynamicRoom.roomId] = room
             for (const areaId of ["gen", "for"])
                 for (const u of getConnectedUserList(dynamicRoom.roomId, areaId).filter(u => u.socketId))
                     sendRoomState(io.to(u.socketId), u, rooms[dynamicRoom.roomId]);
+            if (typeof room.variant === "string")
+                previousVariant = room.variant
         }
     })
 })

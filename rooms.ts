@@ -3838,125 +3838,103 @@ dynamicRooms.push({
     subscribedAnnualEvents: ["summer", "christmasTime"],
     build: (currentAnnualEvents: string[]) =>
     {
+        const room: Room = {
+            id: "konbini",
+            group: "gikopoipoi",
+            variant:
+                currentAnnualEvents.includes("summer") ? "summer" :
+                currentAnnualEvents.includes("christmasTime") ? "christmas" :
+                "normal",
+            scale: 1,
+            size: { x: 9, y: 8 },
+            originCoordinates: { x: 4, y: 332 },
+            spawnPoint: "door",
+            backgroundImageUrl: 
+                currentAnnualEvents.includes("summer") ? "rooms/konbini/background.summer.svg" :
+                currentAnnualEvents.includes("christmasTime") ? "rooms/konbini/background.christmas.svg":
+                "rooms/konbini/background.svg",
+            objects: [],
+            objectRenderSortMethod: "diagonal_scan",
+            sit: currentAnnualEvents.includes("summer") ? [{ x:  0, y:  0 },] : [],
+            blocked: [
+                // register
+                { x:  4, y:  6 },
+                { x:  5, y:  6 },
+                { x:  6, y:  6 },
+                { x:  7, y:  6 },
+                { x:  8, y:  6 },
+                // coffee machine
+                { x:  0, y:  7 },
+                { x:  1, y:  7 },
+                { x:  2, y:  7 },
+            ],
+            forbiddenMovements: [
+                { xFrom: 0, yFrom: 2, xTo: 1, yTo: 2 },
+                { xFrom: 1, yFrom: 2, xTo: 0, yTo: 2 },
+            ],
+            doors: {
+                door: { x: 0, y: 6, direction: "right", target: { roomId: "bar_giko_square", doorId: "right" } },
+            },
+            streamSlotCount: 1,
+        }
+        
         if (currentAnnualEvents.includes("summer"))
         {
-            rooms["konbini"] = {
-                id: "konbini",
-                group: "gikopoipoi",
-                scale: 1,
-                size: { x: 9, y: 8 },
-                originCoordinates: { x: 4, y: 332 },
-                spawnPoint: "door",
-                backgroundImageUrl: "rooms/konbini/background.summer.svg",
-                objects: [
-                    { x:  4, y:  6, width: 5, offset: { x: 400, y: 156 }, url: "register.summer.svg"},
-                    { x:  1, y:  2, height: 2, offset: { x: 40 + 40, y: 184 - 20 }, url: "refrigerator.summer.svg", scale: 1 }, // drinks
-                    { x:  1, y:  4, height: 2, offset: { x: 40 * 4, y: 184 - 60 }, url: "bento.summer.svg", scale: 1 }, // drinks
-                    { x:  6, y:  2, width: 2, height: 3, offset: { x: 160 + 120, y: 203 + 60 }, url: "foods.summer.svg" }, // snacks
-                    { x:  3, y:  3, width: 2, height: 2, offset: { x: 280 - 80, y: 340 - 80 }, url: "freezer.svg" },
-                ],
-                objectRenderSortMethod: "diagonal_scan",
-                sit: [],
-                blocked: [
-                    // bathroom
-                    { x:  0, y:  4 },
-                    { x:  0, y:  1 },
-                    // coffee machine
-                    { x:  0, y:  7 },
-                    { x:  1, y:  7 },
-                    { x:  2, y:  7 },
-                    // refrigerator
-                    { x:  1, y:  1 },
-                    { x:  1, y:  2 },
-                    { x:  1, y:  3 },
-                    { x:  1, y:  4 },
-                    // freezer
-                    // { x:  3, y:  1 }, { x:  4, y:  1 },
-                    { x:  3, y:  2 }, { x:  4, y:  2 },
-                    { x:  3, y:  3 }, { x:  4, y:  3 },
-                    // foods
-                    { x:  6, y:  1 }, { x:  7, y:  1 },
-                    { x:  6, y:  2 }, { x:  7, y:  2 },
-                    { x:  6, y:  3 }, { x:  7, y:  3 },
-                    // register
-                    { x:  4, y:  6 },
-                    { x:  5, y:  6 },
-                    { x:  6, y:  6 },
-                    { x:  7, y:  6 },
-                    { x:  8, y:  6 },
-                ],
-                forbiddenMovements: [
-                    { xFrom: 0, yFrom: 2, xTo: 1, yTo: 2 },
-                    { xFrom: 1, yFrom: 2, xTo: 0, yTo: 2 },
-                ],
-                doors: {
-                    door: { x: 0, y: 6, direction: "right", target: { roomId: "bar_giko_square", doorId: "right" } },
-                },
-                streamSlotCount: 1,
-            }
+            room.objects = room.objects.concat([
+                { x:  4, y:  6, width: 5, offset: { x: 400, y: 156 }, url: "register.summer.svg"},
+                { x:  1, y:  2, height: 2, offset: { x: 40 + 40, y: 184 - 20 }, url: "refrigerator.summer.svg", scale: 1 }, // drinks
+                { x:  1, y:  4, height: 2, offset: { x: 40 * 4, y: 184 - 60 }, url: "bento.summer.svg", scale: 1 }, // drinks
+                { x:  6, y:  2, width: 2, height: 3, offset: { x: 160 + 120, y: 203 + 60 }, url: "foods.summer.svg" }, // snacks
+                { x:  3, y:  3, width: 2, height: 2, offset: { x: 280 - 80, y: 340 - 80 }, url: "freezer.svg" },
+            ])
+            room.blocked = room.blocked.concat([
+                // bathroom
+                { x:  0, y:  4 },
+                { x:  0, y:  1 },
+                // refrigerator
+                { x:  1, y:  1 },
+                { x:  1, y:  2 },
+                { x:  1, y:  3 },
+                { x:  1, y:  4 },
+                // freezer
+                // { x:  3, y:  1 }, { x:  4, y:  1 },
+                { x:  3, y:  2 }, { x:  4, y:  2 },
+                { x:  3, y:  3 }, { x:  4, y:  3 },
+                // foods
+                { x:  6, y:  1 }, { x:  7, y:  1 },
+                { x:  6, y:  2 }, { x:  7, y:  2 },
+                { x:  6, y:  3 }, { x:  7, y:  3 },
+            ])
         }
         else
         {
-            rooms["konbini"] = {
-                id: "konbini",
-                group: "gikopoipoi",
-                scale: 1,
-                size: { x: 9, y: 8 },
-                originCoordinates: { x: 4, y: 332 },
-                spawnPoint: "door",
-                backgroundImageUrl:
-                    currentAnnualEvents.includes("christmasTime") ?
-                    "rooms/konbini/background.christmas.svg" :
-                    "rooms/konbini/background.svg",
-                objects: [
-                    { x:  1, y: 2, offset: { x: 40, y: 124 }, url: "toilet-wall-left.svg" },
-                    { x:  1, y: 4, offset: { x: 166, y: 109 }, url: "toilet-wall-right.svg" },
-                    { x:  4, y:  6, width: 5, offset: { x: 400, y: 156 },
-                        url: currentAnnualEvents.includes("christmasTime") ? "register.christmas.svg" : "register.svg"},
-                    { x:  6, y:  2, width: 2, height: 2, offset: { x: 280, y: 340 }, url: "freezer.svg" },
-                    { x:  1, y:  1, height: 2, offset: { x: 40, y: 184 }, url: "refrigerator.svg", scale: 1 }, // drinks
-                    { x:  3, y:  3, width: 2, height: 3, offset: { x: 160, y: 203 }, url: "foods.svg" }, // snacks
-                ],
-                objectRenderSortMethod: "diagonal_scan",
-                sit: [
-                    { x:  0, y:  0 },
-                ],
-                blocked: [
-                    // bathroom
-                    // { x:  0, y:  0 },
-                    // { x:  0, y:  1 },
-                    { x:  0, y:  4 },
-                    // coffee machine
-                    { x:  0, y:  7 },
-                    { x:  1, y:  7 },
-                    { x:  2, y:  7 },
-                    // refrigerator
-                    { x:  1, y:  0 },
-                    { x:  1, y:  1 },
-                    // foods
-                    { x:  3, y:  1 }, { x:  4, y:  1 },
-                    { x:  3, y:  2 }, { x:  4, y:  2 },
-                    { x:  3, y:  3 }, { x:  4, y:  3 },
-                    // freezer
-                    { x:  6, y:  1 }, { x:  7, y:  1 },
-                    { x:  6, y:  2 }, { x:  7, y:  2 },
-                    // register
-                    { x:  4, y:  6 },
-                    { x:  5, y:  6 },
-                    { x:  6, y:  6 },
-                    { x:  7, y:  6 },
-                    { x:  8, y:  6 },
-                ],
-                forbiddenMovements: [
-                    { xFrom: 0, yFrom: 2, xTo: 1, yTo: 2 },
-                    { xFrom: 1, yFrom: 2, xTo: 0, yTo: 2 },
-                ],
-                doors: {
-                    door: { x: 0, y: 6, direction: "right", target: { roomId: "bar_giko_square", doorId: "right" } },
-                },
-                streamSlotCount: 1,
-            }
+            room.objects = room.objects.concat([
+                { x:  1, y: 2, offset: { x: 40, y: 124 }, url: "toilet-wall-left.svg" },
+                { x:  1, y: 4, offset: { x: 166, y: 109 }, url: "toilet-wall-right.svg" },
+                { x:  4, y:  6, width: 5, offset: { x: 400, y: 156 },
+                    url: currentAnnualEvents.includes("christmasTime") ? "register.christmas.svg" : "register.svg"},
+                { x:  6, y:  2, width: 2, height: 2, offset: { x: 280, y: 340 }, url: "freezer.svg" },
+                { x:  1, y:  1, height: 2, offset: { x: 40, y: 184 }, url: "refrigerator.svg", scale: 1 }, // drinks
+                { x:  3, y:  3, width: 2, height: 3, offset: { x: 160, y: 203 }, url: "foods.svg" }, // snacks
+            ])
+            room.blocked = room.blocked.concat([
+                // bathroom
+                // { x:  0, y:  0 },
+                // { x:  0, y:  1 },
+                { x:  0, y:  4 },
+                // refrigerator
+                { x:  1, y:  0 },
+                { x:  1, y:  1 },
+                // foods
+                { x:  3, y:  1 }, { x:  4, y:  1 },
+                { x:  3, y:  2 }, { x:  4, y:  2 },
+                { x:  3, y:  3 }, { x:  4, y:  3 },
+                // freezer
+                { x:  6, y:  1 }, { x:  7, y:  1 },
+                { x:  6, y:  2 }, { x:  7, y:  2 },
+            ])
         }
+        return room
     }
 });
 
@@ -3965,9 +3943,12 @@ dynamicRooms.push({
     subscribedAnnualEvents: ["winter", "autumn"],
     build: (currentAnnualEvents: string[]) =>
     {
-        rooms["irori"] = {
+        return {
             id: "irori",
             group: "gikopoipoi",
+            variant: currentAnnualEvents.includes("winter") ? "winter"
+                : currentAnnualEvents.includes("autumn") ? "autumn"
+                : "summer",
             scale: 1,
             backgroundColor: "#000000",
             size: { x: 7, y: 11 },
@@ -4015,7 +3996,9 @@ dynamicRooms.push({
     }
 });
 
-
+// annual events can overlap, so we first check if we're in a short, "specific" event and if not, we
+// check which of the four seasons we're in.
+const annualEventPriority = ["sakura", "rainy", "fireflies", "akizakura", "spring", "summer", "autumn", "winter"]
 const riverAnnualEventToTypeOrder = ["sakura", "spring", "rainy", "fireflies", "summer", "akizakura", "autumn", "winter"]
 //1 =  3月21日～4月30日  sakura
 //2 =  5月1日～5月31日   spring
@@ -4028,147 +4011,138 @@ const riverAnnualEventToTypeOrder = ["sakura", "spring", "rainy", "fireflies", "
 dynamicRooms.push({
     roomId: "river",
     subscribedAnnualEvents: riverAnnualEventToTypeOrder,
-    build: (() =>
+    build: (currentAnnualEvents: string[]) =>
     {
-        // annual events for this room overlap, so we first check if we're in a short, "specific" event and if not, we
-        // check which of the four seasons we're in.
-        const annualEventPriority = ["sakura", "rainy", "fireflies", "akizakura", "spring", "summer", "autumn", "winter"]
+        const eventName = annualEventPriority.find((eventName: string) => currentAnnualEvents.includes(eventName)) || "summer"
+        const type = riverAnnualEventToTypeOrder.indexOf(eventName) + 1
         
-        let lastType: number | null = null
-        return (currentAnnualEvents: string[]) =>
-        {
-            const type = riverAnnualEventToTypeOrder.indexOf(
-                annualEventPriority.find((eventName: string) => currentAnnualEvents.includes(eventName)) || "summer") + 1
-            if (type == lastType) return false
-            lastType = type
-            
-            const scale = (10.5 * 80)/1202
-            
-            const room: Room = {
-                id: "river",
-                group: "gikopoipoi",
-                scale: scale,
-                size: { x: 9, y: 12 },
-                originCoordinates: { x: 0, y: 501 },
-                spawnPoint: "right",
-                backgroundImageUrl: `rooms/river/background.${type}.svg`,
-                objectRenderSortMethod: "diagonal_scan",
-                objects: [
-                    {
-                        x: 1,
-                        y: 7,
-                        width: 1,
-                        height: 3,
-                        scale: scale,
-                        offset: { x: 343, y: 454 },
-                        url: `bench.${type}.svg`
-                    },
-                    {
-                        x: 9,
-                        y: 0,
-                        scale: scale,
-                        offset: { x: 0, y: 0 },
-                        url: `top.${type}.svg`
-                    },
-                    {
-                        x: 1,
-                        y: 11,
-                        scale: scale,
-                        offset: { x: 0, y: 0 },
-                        url: `backtree.${type}.svg`
-                    },
-                    { 
-                        x: 0,
-                        y: 11,
-                        scale: 1,
-                        offset: { x: 300 , y: 605 },
-                        url: "arrow-down.svg"
-                    },
-                    {
-                        x: 0,
-                        y: 11,
-                        scale: 1,
-                        offset: { x: 532 , y: 526 },
-                        url: "arrow-right.svg"
-                    },
-                ],
-                sit: [{ x: 1, y: 5 }, { x: 1, y: 6 }, { x: 1, y: 7 }, { x: 4, y: 9 }],
-                blocked: [
-                    // river left
-                    { x: 5, y: 0 }, { x: 5, y: 1 }, { x: 5, y: 2 }, { x: 5, y: 3 }, { x: 5, y: 4 },
-                    { x: 6, y: 0 }, { x: 6, y: 1 }, { x: 6, y: 2 }, { x: 6, y: 3 }, { x: 6, y: 4 },
-                    // river right
-                    { x: 3, y: 6 }, { x: 3, y: 7 }, { x: 3, y: 8 }, { x: 3, y: 10 }, { x: 3, y: 9 }, { x: 3, y: 11 },
-                    { x: 4, y: 6 }, { x: 4, y: 7 }, { x: 4, y: 8 }, { x: 4, y: 10 }, { x: 4, y: 11 },
-                    { x: 1, y: 11 },
-                    // tree right
-                    { x: 8, y: 9 },
-                ],
-                forbiddenMovements: [],
-                doors: {
-                    right: { x: 8, y: 5, direction: "left", target: { roomId: "densha", doorId: "left_bottom" } },
-                    left: { x: 7, y: 0, direction: "up", target: { roomId: "irori", doorId: "door" } },
+        const scale = (10.5 * 80)/1202
+        
+        const room: Room = {
+            id: "river",
+            group: "gikopoipoi",
+            variant: eventName,
+            scale: scale,
+            size: { x: 9, y: 12 },
+            originCoordinates: { x: 0, y: 501 },
+            spawnPoint: "right",
+            backgroundImageUrl: `rooms/river/background.${type}.svg`,
+            objectRenderSortMethod: "diagonal_scan",
+            objects: [
+                {
+                    x: 1,
+                    y: 7,
+                    width: 1,
+                    height: 3,
+                    scale: scale,
+                    offset: { x: 343, y: 454 },
+                    url: `bench.${type}.svg`
                 },
-                streamSlotCount: 0,
-            }
-
-            if (type == 5 || type == 6)
-            {
-                // cosmos
-                room.blocked = room.blocked.concat([
-                    { x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 },
-                    { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 },
-                ]);
-                for (let i = 0; i < 2; i++)
                 {
-                    room.objects.push({
-                        x: 1,
-                        y: 3,
-                        scale: scale,
-                        offset: { x: 0 + i * 60, y: 580 + i * 30},
-                        url: `cosmos.${type}.svg`
-                    })
-                    room.objects.push({
-                        x: 1,
-                        y: 3,
-                        scale: scale,
-                        offset: { x: 113 + i * 60, y: 520 + i * 30},
-                        url: `cosmos.${type}.svg`
-                    })
-                }
-            }
-
-            if (type >= 4 && type <= 7)
-            {
-                // grass
-                room.blocked = room.blocked.concat([
-                    { x: 4, y: 0 }, { x: 4, y: 1 }, { x: 4, y: 2 }, { x: 4, y: 3 },
-                    { x: 8, y: 0 }, { x: 8, y: 1 }, { x: 8, y: 2 }, { x: 8, y: 3 },
-                ]);
-                for (let i = 0; i < 2; i++)
+                    x: 9,
+                    y: 0,
+                    scale: scale,
+                    offset: { x: 0, y: 0 },
+                    url: `top.${type}.svg`
+                },
                 {
-                    room.objects.push({
-                        x: 8,
-                        y: 0,
-                        scale: scale,
-                        offset: { x: 210 + i * 225, y: 580 + i * 105 },
-                        url: `grass.${type}.svg`
-                    })
-                    room.objects.push({
-                        x: 8,
-                        y: 2,
-                        scale: scale,
-                        offset: { x: 210 + 105 + i * 225, y: 530 + i * 105 },
-                        url: `grass.${type}.svg`
-                    })
-                }
-            }
-            
-            rooms["river"] = room
-            return true
+                    x: 1,
+                    y: 11,
+                    scale: scale,
+                    offset: { x: 0, y: 0 },
+                    url: `backtree.${type}.svg`
+                },
+                { 
+                    x: 0,
+                    y: 11,
+                    scale: 1,
+                    offset: { x: 300 , y: 605 },
+                    url: "arrow-down.svg"
+                },
+                {
+                    x: 0,
+                    y: 11,
+                    scale: 1,
+                    offset: { x: 532 , y: 526 },
+                    url: "arrow-right.svg"
+                },
+            ],
+            sit: [{ x: 1, y: 5 }, { x: 1, y: 6 }, { x: 1, y: 7 }, { x: 4, y: 9 }],
+            blocked: [
+                // river left
+                { x: 5, y: 0 }, { x: 5, y: 1 }, { x: 5, y: 2 }, { x: 5, y: 3 }, { x: 5, y: 4 },
+                { x: 6, y: 0 }, { x: 6, y: 1 }, { x: 6, y: 2 }, { x: 6, y: 3 }, { x: 6, y: 4 },
+                // river right
+                { x: 3, y: 6 }, { x: 3, y: 7 }, { x: 3, y: 8 }, { x: 3, y: 10 }, { x: 3, y: 9 }, { x: 3, y: 11 },
+                { x: 4, y: 6 }, { x: 4, y: 7 }, { x: 4, y: 8 }, { x: 4, y: 10 }, { x: 4, y: 11 },
+                { x: 1, y: 11 },
+                // tree right
+                { x: 8, y: 9 },
+            ],
+            forbiddenMovements: [],
+            doors: {
+                right: { x: 8, y: 5, direction: "left", target: { roomId: "densha", doorId: "left_bottom" } },
+                left: { x: 7, y: 0, direction: "up", target: { roomId: "irori", doorId: "door" } },
+            },
+            streamSlotCount: 0,
         }
-    })()
+
+        if (type == 5 || type == 6)
+        {
+            // cosmos
+            room.blocked = room.blocked.concat([
+                { x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 },
+                { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 },
+            ]);
+            for (let i = 0; i < 2; i++)
+            {
+                room.objects.push({
+                    x: 1,
+                    y: 3,
+                    scale: scale,
+                    offset: { x: 0 + i * 60, y: 580 + i * 30},
+                    url: `cosmos.${type}.svg`
+                })
+                room.objects.push({
+                    x: 1,
+                    y: 3,
+                    scale: scale,
+                    offset: { x: 113 + i * 60, y: 520 + i * 30},
+                    url: `cosmos.${type}.svg`
+                })
+            }
+        }
+
+        if (type >= 4 && type <= 7)
+        {
+            // grass
+            room.blocked = room.blocked.concat([
+                { x: 4, y: 0 }, { x: 4, y: 1 }, { x: 4, y: 2 }, { x: 4, y: 3 },
+                { x: 8, y: 0 }, { x: 8, y: 1 }, { x: 8, y: 2 }, { x: 8, y: 3 },
+            ]);
+            for (let i = 0; i < 2; i++)
+            {
+                room.objects.push({
+                    x: 8,
+                    y: 0,
+                    scale: scale,
+                    offset: { x: 210 + i * 225, y: 580 + i * 105 },
+                    url: `grass.${type}.svg`
+                })
+                room.objects.push({
+                    x: 8,
+                    y: 2,
+                    scale: scale,
+                    offset: { x: 210 + 105 + i * 225, y: 530 + i * 105 },
+                    url: `grass.${type}.svg`
+                })
+            }
+        }
+        
+        return room
+    }
 })
 
 const currentAnnualEvents = getCurrentAnnualEvents()
-dynamicRooms.forEach((dynamicRoom) => dynamicRoom.build(currentAnnualEvents, currentAnnualEvents, []))
+dynamicRooms.forEach((dynamicRoom: DynamicRoom) => rooms[dynamicRoom.roomId] = dynamicRoom.build(currentAnnualEvents, currentAnnualEvents, []))
+
