@@ -211,7 +211,7 @@
                 </div>
                 <div id='chat-log-container'>
                     <div id='chat-log-label'>{{ $t("ui.label_log") }}</div>
-                    <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames, 'timestamps-in-copied-log': timestampsInCopiedLog, 'ignore-indicators-in-log': showIgnoreIndicatorInLog}" v-on:keydown="handlechatLogKeydown($event)">
+                    <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames, 'timestamps-in-copied-log': timestampsInCopiedLog, 'ignore-indicators-in-log': showIgnoreIndicatorInLog, 'log-dividers': showLogDividers}" v-on:keydown="handlechatLogKeydown($event)">
                     </div>
                 </div>
             </div>
@@ -625,6 +625,11 @@
                             <input type="checkbox" id="preferences-show-log-above-toolbar"
                                 v-model="showLogAboveToolbar" v-on:change="storeSet('showLogAboveToolbar')"><label
                                 for="preferences-show-log-above-toolbar">{{ $t("ui.preferences_show_log_above_toolbar") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-show-log-dividers"
+                                v-model="showLogDividers" v-on:change="storeSet('showLogDividers')"><label
+                                for="preferences-show-log-dividers">{{ $t("ui.preferences_show_log_dividers") }}</label>
                         </div>
                         <div class='popup-item'>
                             <button v-on:click="clearLog">{{ $t("ui.preferences_clear_log") }}</button>

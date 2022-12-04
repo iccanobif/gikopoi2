@@ -188,6 +188,7 @@ window.vueApp = new Vue({
         isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
         isStreamInboundVuMeterEnabled: localStorage.getItem("isStreamInboundVuMeterEnabled") != "false",
         showLogAboveToolbar: localStorage.getItem("showLogAboveToolbar") == "true",
+        showLogDividers: localStorage.getItem("showLogDividers") == "true",
 
         // streaming
         streams: [],

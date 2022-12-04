@@ -86,7 +86,6 @@ input[type='range']
     background-color: white;
     height: 150px;
     overflow-y: auto;
-    padding-left: 5px;
     resize: vertical;
 }
 
@@ -100,6 +99,7 @@ input[type='range']
 {
     overflow: hidden;
     line-height: 20px;
+    padding-left: 5px;
 }
 
 .message span
@@ -110,6 +110,17 @@ input[type='range']
 .timestamps-in-copied-log .message .message-timestamp
 {
     display: inline-block;
+}
+
+.log-dividers .message
+{
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.log-dividers .message:not(:first-child)
+{
+    border-top: 1px solid #c0c0c0;
 }
 
 .message .message-timestamp

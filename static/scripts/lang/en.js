@@ -123,6 +123,7 @@ export default
         preferences_language: "Language",
         preferences_enable_coin_sound: "SFX Sounds",
         preferences_show_log_above_toolbar: "Show log above toolbar",
+        preferences_show_log_dividers: "Show log message dividing lines",
 
         preferences_title_streams: "Streams",
         preferences_streams_auto_resume: "Auto resume",

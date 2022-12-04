@@ -8,9 +8,7 @@
 }
 .theme-shaddox .message {
     background-color: #354F52;
-    border-top: 1px solid gray;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    border-color: gray;
 }
 
 .theme-shaddox .message a {

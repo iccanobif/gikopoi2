@@ -20,6 +20,10 @@
     color: #c2cde1;
 }
 
+.theme-dark .log-dividers .message {
+    border-color: #666666;
+}
+
 .theme-dark input[type="text"],
 .theme-dark textarea {
 

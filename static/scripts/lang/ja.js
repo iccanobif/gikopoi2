@@ -123,6 +123,7 @@ export default
         preferences_language: "言語",
         preferences_enable_coin_sound: "効果音",
         preferences_show_log_above_toolbar: "ツールバーの上にログを表示",
+        preferences_show_log_dividers: "ログメッセージの仕切りを表示",
 
         preferences_title_streams: "配信",
         preferences_streams_auto_resume: "配信再開後に自動受信",
