@@ -173,7 +173,7 @@ window.vueApp = new Vue({
         isMoveSectionVisible: localStorage.getItem("isMoveSectionVisible") != "false",
         isBubbleSectionVisible: localStorage.getItem("isBubbleSectionVisible") != "false",
         isLogoutButtonVisible: localStorage.getItem("isLogoutButtonVisible") != "false",
-        isDarkMode: localStorage.getItem("isDarkMode") == "true",
+        uiTheme: localStorage.getItem("uiTheme") || (localStorage.getItem("isDarkMode") ? "shaddox" : "gikopoi"),
         showNotifications: localStorage.getItem("showNotifications") != "false",
         enableTextToSpeech: localStorage.getItem("enableTextToSpeech") == "true",
         ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
@@ -1519,11 +1519,16 @@ window.vueApp = new Vue({
         paintBackground: function ()
         {
             const context = this.canvasContext;
-            
             if (this.currentRoom.backgroundColor)
+            {
                 context.fillStyle = this.currentRoom.backgroundColor;
+            }
             else
-                context.fillStyle = this.isDarkMode ? getComputedStyle(this.$el).getPropertyValue("background-color") : "#b0b0b0";
+            {
+                const backgroundColor = getComputedStyle(this.$el).getPropertyValue("background-color").match(/\d+/g).slice(0, 3).map(c => parseInt(c));
+                const isDark = Math.round(backgroundColor.reduce((p, c) => p + c) / backgroundColor.length) <= 127
+                context.fillStyle = "rgb(" + backgroundColor.map(c => Math.max(Math.min(isDark ? c+16 : c-16, 255), 0)).join(", ") + ")";
+            }
             context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
 
             this.drawImage(
@@ -2997,7 +3002,7 @@ window.vueApp = new Vue({
         {
             this.passwordInputVisible = true;
         },
-        handleDarkMode: async function ()
+        handleUiTheme: async function ()
         {
             this.isRedrawRequired = true
             
@@ -3012,10 +3017,10 @@ window.vueApp = new Vue({
                 observer.observe(chatLog.lastChild);
             }
 
-            this.storeSet("isDarkMode");
+            this.storeSet("uiTheme");
 
             // Need to wait for the next tick so that knobElement.refresh() is called
-            // with isDarkMode already updated to its new value.
+            // with uiTheme already updated to its new value.
             await Vue.nextTick()
             for (const knobElement of document.getElementsByClassName("input-knob"))
             {

@@ -1,0 +1,79 @@
+#vue-app.theme-dark {
+    background-color: #28282b;
+    color: #f0f0f0;
+}
+
+.theme-dark h1 a {
+    color: #f0f0f0;
+}
+
+.theme-dark #chatLog {
+    background-color: #38383b;
+}
+
+.theme-dark .message a {
+    color: #c2cde1;
+}
+
+.theme-dark .message-author {
+    padding-right: 2px;
+    color: #c2cde1;
+}
+
+.theme-dark input[type="text"],
+.theme-dark textarea {
+
+    background-color: #38383b;
+    color: #f0f0f0;
+    border: 1px solid #999999;
+}
+
+.theme-dark #login-page button,
+.theme-dark #toolbar button,
+.theme-dark #video-streams button,
+.theme-dark .popup button {
+    background-color: #38383b;
+    color: #f0f0f0;
+    border: 1px solid #999999
+}
+
+.theme-dark .popup {
+    background-color: #38383b;
+    color: #f0f0f0;
+}
+
+.theme-dark .popup .popup-titlebar {
+    background-color: #38383b;
+    color: #f0f0f0;
+}
+
+.theme-dark .popup th {
+    background-color: #38383b;
+    color: #f0f0f0;
+}
+
+.theme-dark .popup-selectable-table tr:hover td {
+    background-color: #242424;
+}
+
+.theme-dark .popup-selectable-table tr.popup-row-is-selected td {
+    color: #f0f0f0;
+    background-color: #242424;
+}
+
+.theme-dark .arrow-button-left
+{
+    background-image: url("../north_west_black_24dp.dark.svg");
+}
+.theme-dark .arrow-button-up
+{
+    background-image: url("../north_east_black_24dp.dark.svg");
+}
+.theme-dark .arrow-button-down
+{
+    background-image: url("../south_west_black_24dp.dark.svg");
+}
+.theme-dark .arrow-button-right
+{
+    background-image: url("../south_east_black_24dp.dark.svg");
+}

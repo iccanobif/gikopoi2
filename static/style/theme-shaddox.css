@@ -1,0 +1,88 @@
+#vue-app.theme-shaddox {
+    background-color: #354F52;
+    color: #CAD2C5;
+}
+
+.theme-shaddox #chatLog {
+    background-color: #354F52;
+}
+.theme-shaddox .message {
+    background-color: #354F52;
+    border-top: 1px solid gray;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.theme-shaddox .message a {
+    color: #84A98C;
+}
+
+.theme-shaddox .message-author {
+    padding-right: 2px;
+    color: #84A98C;
+}
+
+.theme-shaddox .underlined-usernames .message-author
+{
+    text-decoration-color: #84A98C;
+}
+
+.theme-shaddox .message:nth-child(even) {
+    background-color: #2F3E46;
+}
+
+.theme-shaddox input[type="text"],
+.theme-shaddox textarea {
+
+    background-color: #2F3E46;
+    color: #CAD2C5;
+}
+
+.theme-shaddox #login-page button,
+.theme-shaddox #toolbar button,
+.theme-shaddox #video-streams button,
+.theme-shaddox .popup button {
+    background-color: #2F3E46;
+    color: #CAD2C5;
+}
+
+.theme-shaddox .popup {
+    background-color: #2F3E46;
+    color: #CAD2C5;
+}
+
+.theme-shaddox .popup .popup-titlebar {
+    background-color: #2F3E46;
+    color: #CAD2C5;
+}
+
+.theme-shaddox .popup th {
+    background-color: #2F3E46;
+    color: #CAD2C5;
+}
+
+.theme-shaddox .popup-selectable-table tr:hover td {
+    background-color: #354F52;
+}
+
+.theme-shaddox .popup-selectable-table tr.popup-row-is-selected td {
+    color: #CAD2C5;
+    background-color: #354F52;
+}
+
+.theme-shaddox .arrow-button-left
+{
+    background-image: url("../north_west_black_24dp.dark.svg");
+}
+.theme-shaddox .arrow-button-up
+{
+    background-image: url("../north_east_black_24dp.dark.svg");
+}
+.theme-shaddox .arrow-button-down
+{
+    background-image: url("../south_west_black_24dp.dark.svg");
+}
+.theme-shaddox .arrow-button-right
+{
+    background-image: url("../south_east_black_24dp.dark.svg");
+}

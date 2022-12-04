@@ -20,7 +20,8 @@
     <meta name="description" content="ギコっぽいぽい">
 
     <link rel='stylesheet' href='style/main.css' />
-    <link rel='stylesheet' href='style/dark-mode.css' />
+    <link rel='stylesheet' href='style/theme-dark.css' />
+    <link rel='stylesheet' href='style/theme-shaddox.css' />
     <link rel='stylesheet' href='chess/css/chessboard-1.0.0.min.css' />
     <link href="font-awesome/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="libraries/jquery-ui/jquery-ui.css">
@@ -36,7 +37,7 @@
 </head>
 
 <body>
-    <div id="vue-app" v-cloak v-bind:class="{'dark-mode': isDarkMode}" v-bind:lang="$i18n.locale">
+    <div id="vue-app" v-cloak :class="['theme-' + uiTheme]" v-bind:lang="$i18n.locale">
         <div id="login-page" v-if="appState == 'login'">
             <header>
                 <div>
@@ -568,9 +569,12 @@
                     <div class='popup-section'>
                         <div class='popup-header'>{{ $t("ui.preferences_title_general") }}</div>
                         <div class='popup-item'>
-                            <input type="checkbox" id="preferences-dark-mode"
-                                v-model="isDarkMode" v-on:change="handleDarkMode"><label
-                                for="preferences-dark-mode">{{ $t("ui.preferences_dark_mode") }}</label>
+                            <label for="preferences-ui-theme">{{ $t("ui.preferences_ui_theme") }}</label>
+                            <select id="preferences-ui-theme" v-model="uiTheme" v-on:change="handleUiTheme">
+                                <option value="gikopoi">{{ $t("ui.preferences_ui_theme_gikopoi") }}</option>
+                                <option value="shaddox">{{ $t("ui.preferences_ui_theme_shaddox") }}</option>
+                                <option value="dark">{{ $t("ui.preferences_ui_theme_dark") }}</option>
+                            </select>
                         </div>
                         <div class='popup-item' v-if="areaId != 'gen'">
                             <label for="preferences-language">{{ $t("ui.preferences_language") }}</label>
