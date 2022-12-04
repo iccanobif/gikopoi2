@@ -1519,11 +1519,11 @@ window.vueApp = new Vue({
         paintBackground: function ()
         {
             const context = this.canvasContext;
-
+            
             if (this.currentRoom.backgroundColor)
                 context.fillStyle = this.currentRoom.backgroundColor;
             else
-                context.fillStyle = getComputedStyle(this.$el).getPropertyValue("background-color");
+                context.fillStyle = this.isDarkMode ? getComputedStyle(this.$el).getPropertyValue("background-color") : "#b0b0b0";
             context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
 
             this.drawImage(
