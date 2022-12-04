@@ -24,6 +24,10 @@
     border-color: #666666;
 }
 
+.theme-dark .message:nth-child(even) {
+    background-color: #2F3E46;
+}
+
 .theme-dark input[type="text"],
 .theme-dark textarea {
 
