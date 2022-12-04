@@ -91,7 +91,7 @@ export default
         preferences_bubble_opacity: "Sprechblase-Opazität",
         preferences_ui_theme: "Farbschema",
         preferences_ui_theme_gikopoi: "Gikopoi",
-        preferences_ui_theme_shaddox: "Shaddox Mode",
+        preferences_ui_theme_shaddox: "Shaddox-Modus",
         preferences_ui_theme_dark: "Dunkel",
         preferences_command_section_visible: "Befehl-Buttons anzeigen",
         preferences_move_section_visible: "Bewegungs-Buttons anzeigen",
