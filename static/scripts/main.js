@@ -1523,7 +1523,7 @@ window.vueApp = new Vue({
             if (this.currentRoom.backgroundColor)
                 context.fillStyle = this.currentRoom.backgroundColor;
             else
-                context.fillStyle = this.isDarkMode ? "#354F52" : "#b0b0b0";
+                context.fillStyle = getComputedStyle(this.$el).getPropertyValue("background-color");
             context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
 
             this.drawImage(
