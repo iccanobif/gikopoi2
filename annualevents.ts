@@ -82,18 +82,9 @@ export const annualEventDefinitions: {[eventName: string]: AnnualEventObject} =
 export const annualEvents: {[eventName: string]: AnnualEvent} = Object.fromEntries(
     Object.entries(annualEventDefinitions).map(([eventName, annualEventObject]) => [eventName, new AnnualEvent(annualEventObject)]));
 
-const testDays = [dayjs("2022-04-05"), dayjs("2022-05-05"), dayjs("2022-06-05"), dayjs("2022-07-05"), dayjs("2022-08-05"), dayjs("2022-09-05"), dayjs("2022-10-05"), dayjs("2022-11-05"), dayjs("2022-12-05")]
-let testDaysIndex = 0
-
 export function getCurrentAnnualEvents(): string[]
 {
-    const now = testDays[testDaysIndex]
-    console.log("current annual events")
-    
-    testDaysIndex++
-    if (testDaysIndex > testDays.length-1)
-        testDaysIndex = 0;
-    
+    const now = dayjs()
     return Object.entries(annualEvents)
         .filter(([eventName, annualEvent]) => annualEvent.isBetween(now))
         .map(([eventName, annualEvent]) => eventName)
@@ -134,7 +125,7 @@ function observeEvents(previousAnnualEvents?: string[])
 
         callbackFunctionsToCall.forEach(callbackFunction => callbackFunction(currentAnnualEvents, added, removed));
     }
-    setTimeout(observeEvents, Math.min(dayjs().diff(getSoonestEventDate()), 2*1000), currentAnnualEvents); // min every hour or time to next event date
+    setTimeout(observeEvents, Math.min(dayjs().diff(getSoonestEventDate()), 60*60*1000), currentAnnualEvents); // min every hour or time to next event date
 }
 
 observeEvents()
