@@ -25,7 +25,7 @@
 }
 
 .theme-dark .message:nth-child(even) {
-    background-color: #2F3E46;
+    background-color: #28282b;
 }
 
 .theme-dark input[type="text"],
