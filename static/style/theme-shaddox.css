@@ -38,10 +38,17 @@
 
 .theme-shaddox #login-page button,
 .theme-shaddox #toolbar button,
-.theme-shaddox #video-streams button,
+.theme-shaddox .stream-buttons button,
+.theme-shaddox .chessboard-slot-wrapper button
 .theme-shaddox .popup button {
     background-color: #2F3E46;
     color: #CAD2C5;
+}
+
+.theme-shaddox .stream-buttons button.red-button,
+.theme-shaddox .chessboard-slot-wrapper button.red-button
+{
+    background-color: #624a4a;
 }
 
 .theme-shaddox .popup {
