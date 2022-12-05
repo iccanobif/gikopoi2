@@ -24,7 +24,7 @@
     border-color: #666666;
 }
 
-.theme-dark .message:nth-child(even) {
+.theme-dark .log-dividers .message:nth-child(even) {
     background-color: #28282b;
 }
 
