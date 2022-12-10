@@ -62,11 +62,12 @@ export interface Room
     needsFixedCamera?: boolean;
     isBackgroundImageOffsetEdge?: boolean;
     objects: {
+        id?: string;
         x: number;
         y: number;
         width?: number;
         height?: number;
-        url: string;
+        url: string | string[];
         scale?: number;
         offset?: {
             x: number;

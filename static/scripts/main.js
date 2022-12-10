@@ -24,6 +24,7 @@ import messages from "./lang.js";
 import { speak } from "./tts.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";
+import { animateJizou } from "./animations.js";
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -566,19 +567,26 @@ window.vueApp = new Vue({
 
             const roomLoadId = this.roomLoadId;
 
-            await Promise.all(Object.values(this.currentRoom.objects).map(o =>
-                loadImage("rooms/" + this.currentRoom.id + "/" + o.url.replace(".svg", urlMode + ".svg"))
-                    .then((image) =>
-                    {
-                        const scale = o.scale ? o.scale : 1;
-                        if (this.roomLoadId != roomLoadId) return;
-                        o.image = RenderCache.Image(image, scale);
+            const promises = Object
+                .values(this.currentRoom.objects)
+                .map(async o => {
+                    // url can be either a single string or an array of strings for objects that can be animated
+                    const urls = typeof o.url == "string" ? [o.url] : o.url
 
-                        o.physicalPositionX = o.offset ? o.offset.x * scale : 0
-                        o.physicalPositionY = o.offset ? o.offset.y * scale : 0
-                        this.isRedrawRequired = true;
-                    })
-            ))
+                    const images = await Promise.all(urls.map(url => loadImage("rooms/" + this.currentRoom.id + "/" + url.replace(".svg", urlMode + ".svg"))))
+                    
+                    const scale = o.scale ? o.scale : 1;
+                    if (this.roomLoadId != roomLoadId)
+                        return;
+                    o.allImages = images.map(i => RenderCache.Image(i, scale))
+                    o.image = o.allImages[0]
+                    o.physicalPositionX = o.offset ? o.offset.x * scale : 0;
+                    o.physicalPositionY = o.offset ? o.offset.y * scale : 0;
+                    this.isRedrawRequired = true;
+                })
+                .flat()
+
+            await Promise.all(promises)
         },
         updateRoomState: async function (dto)
         {
@@ -1844,6 +1852,12 @@ window.vueApp = new Vue({
             const delta = this.lastFrameTimestamp === null ? 0 : timestamp - this.lastFrameTimestamp;
 
             this.lastFrameTimestamp = timestamp
+
+            // apply animation logic
+            const furimukuJizou = this.canvasObjects.find(o => o.o.id == "moving_jizou")
+            if (furimukuJizou)
+                if (animateJizou(furimukuJizou.o, this.users))
+                    this.isRedrawRequired = true
 
             this.paint(delta)
 
