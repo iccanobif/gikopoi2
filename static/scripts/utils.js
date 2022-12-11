@@ -107,15 +107,18 @@ var AudioContext = window.AudioContext          // Default
 
 export class AudioProcessor
 {
-    constructor(stream, volume, vuMeterCallback)
+    constructor(stream, volume, isInbound, vuMeterCallback)
     {
         this.stream = stream
         this.isBoostEnabled = false
+        this.isMute = false
+        this.isInbound = isInbound
 
         this.vuMeterCallback = vuMeterCallback
 
         this.context = new AudioContext();
         this.source = this.context.createMediaStreamSource(stream);
+        this.destination = this.context.createMediaStreamDestination()
         this.compressor = this.context.createDynamicsCompressor();
         this.compressor.threshold.value = -50;
         this.compressor.knee.value = 40;
@@ -154,6 +157,13 @@ export class AudioProcessor
 
         this.vuMeterTimer = setInterval(() => {
             try {
+                // TODO: Check if this is actually needed
+                if (this.isMute)
+                {
+                    vuMeterCallback(0)
+                    return
+                }
+                
                 analyser.getByteFrequencyData(dataArrayAlt)
 
                 const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
@@ -192,15 +202,18 @@ export class AudioProcessor
         {
             this.source.connect(this.compressor)
             this.compressor.connect(this.gain)
-            this.gain.connect(this.pan)
-            this.pan.connect(this.context.destination)
         }
         else
         {
             this.source.connect(this.gain)
-            this.gain.connect(this.pan)
-            this.pan.connect(this.context.destination)
         }
+
+        this.gain.connect(this.pan)
+
+        if (this.isInbound)
+            this.pan.connect(this.context.destination)
+        else
+            this.pan.connect(this.destination)
     }
 
     setVolume(volume)
@@ -210,6 +223,18 @@ export class AudioProcessor
         this.gain.gain.value = this.isBoostEnabled
             ? volume * maxGain
             : volume
+    }
+
+    mute()
+    {
+        this.gain.gain.value = 0
+        this.isMute = true
+    }
+
+    unmute()
+    {
+        this.gain.gain.value = this.volume
+        this.isMute = false
     }
 
     setPan(value)
@@ -240,7 +265,7 @@ export function getFormattedCurrentDate() {
             date.getSeconds().toString().padStart(2, '0'),
            ].join('');
   };
-  
+
 // On normal god-fearing browsers requestPermission() returns a Promise, while
 // safari uses a callback parameter.
 export function requestNotificationPermission()

@@ -306,6 +306,14 @@
                                 v-on:change="onCompressionChanged(index)">
                         </div>
                     </div>
+                    <div v-if="streamSlotIdInWhichIWantToStream == index">
+                        <button v-on:click="mute" v-if="streamSlot.withSound && !outboundAudioProcessor?.isMute">
+                            mute
+                        </button>
+                        <button v-on:click="unmute" v-if="streamSlot.withSound && outboundAudioProcessor?.isMute">
+                            unmute
+                        </button>
+                    </div>
                     <div class="stream-buttons" v-if="!streamSlot.isActive || streamSlot.isAllowed">
                         <button :id="'take-stream-button-' + index"
                             v-bind:class="{'red-button': streamSlot.isReady}"
@@ -323,7 +331,6 @@
                             v-on:click="wantToDropStream(index)">
                             {{ $t("ui.button_stream_drop") }}
                         </button>
-
                         <button :id="'start-video-streaming-button-' + index"
                             v-if="!streamSlot.isActive && !wantToStream 
                                   && streamSlotIdInWhichIWantToStream == null"
