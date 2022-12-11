@@ -10,7 +10,7 @@ export function animateJizou(jizouObject, users)
 
     const needToTurnAround = !!Object.values(users).find(u => u.logicalPositionX == 7 && u.logicalPositionY == 5)
 
-    // initialize state
+    // Initialize state
     if (!jizouObject.lastUserCameOrLeftTime)
     {
         jizouObject.lastUserCameOrLeftTime = now
@@ -25,10 +25,11 @@ export function animateJizou(jizouObject, users)
 
     const elapsedTime = Date.now() - jizouObject.lastUserCameOrLeftTime
 
-    // frames from 0 to 3 are for the movement, frame 4 is for eye blinking
+    // Calculate the frame that should be displayed now.
+    // Frames from 0 to 3 are for the head movement, frame 4 is for eye blinking
     if (needToTurnAround)
     {
-        // look at the viewer
+        // look at the camera
         if (jizouObject.currentFrame == 0 && elapsedTime > 1500)
             jizouObject.currentFrame = 1
         else if (jizouObject.currentFrame == 1 && elapsedTime > 1500 + 60)
@@ -43,7 +44,7 @@ export function animateJizou(jizouObject, users)
             else
                 jizouObject.currentFrame = 3
     }
-    else
+    else // return to base position, looking away from the camera
     {
         if (jizouObject.currentFrame == 3)
             jizouObject.currentFrame = 2
@@ -53,7 +54,7 @@ export function animateJizou(jizouObject, users)
             jizouObject.currentFrame = 0
     }
 
-    // If the current frame was changed, set the new image
+    // If the current frame was changed, set the new image. Return true if redraw is required.
     if (jizouObject.image == jizouObject.allImages[jizouObject.currentFrame])
         return false
     else
