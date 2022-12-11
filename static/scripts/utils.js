@@ -139,32 +139,24 @@ export class AudioProcessor
             this.pan = this.context.createGain();
         }
 
-        this.setVolume(volume)
+        this.analyser = this.context.createAnalyser()
 
         this.connectNodes()
 
+        this.setVolume(volume)
+
         // Vu meter
-        const vuMeterSource = this.context.createMediaStreamSource(stream);
-        const analyser = this.context.createAnalyser()
-        analyser.minDecibels = -60;
-        analyser.maxDecibels = 0;
-        analyser.smoothingTimeConstant = 0.01;
+        this.analyser.minDecibels = -60;
+        this.analyser.maxDecibels = 0;
+        this.analyser.smoothingTimeConstant = 0.01;
         // fftSize must be 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, or 32768
-        analyser.fftSize = 32
-        const bufferLengthAlt = analyser.frequencyBinCount;
+        this.analyser.fftSize = 32
+        const bufferLengthAlt = this.analyser.frequencyBinCount;
         const dataArrayAlt = new Uint8Array(bufferLengthAlt);
-        vuMeterSource.connect(analyser);
 
         this.vuMeterTimer = setInterval(() => {
             try {
-                // TODO: Check if this is actually needed
-                if (this.isMute)
-                {
-                    vuMeterCallback(0)
-                    return
-                }
-                
-                analyser.getByteFrequencyData(dataArrayAlt)
+                this.analyser.getByteFrequencyData(dataArrayAlt)
 
                 const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
 
@@ -212,8 +204,9 @@ export class AudioProcessor
 
         if (this.isInbound)
             this.pan.connect(this.context.destination)
-        else
-            this.pan.connect(this.destination)
+        
+        this.pan.connect(this.destination)
+        this.pan.connect(this.analyser)
     }
 
     setVolume(volume)
