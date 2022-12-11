@@ -3341,12 +3341,10 @@ window.vueApp = new Vue({
         mute: function()
         {
             this.outboundAudioProcessor.mute()
-            this.$forceUpdate() // TODO Check if this is still actually needed
         },
         unmute: function()
         {
             this.outboundAudioProcessor.unmute()
-            this.$forceUpdate() // TODO Check if this is still actually needed
         },
         isStreaming: function()
         {
