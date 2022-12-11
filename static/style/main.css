@@ -381,6 +381,10 @@ video {
     color :rgb(109, 109, 109);
 }
 
+.mute-unmute-button span.fas {
+    width: 16px;
+}
+
 .preferences-percentage
 {
     display: inline-block;
@@ -834,6 +838,14 @@ button.checked {
 {
     /* visibility: visible; */
     opacity: 1;
+}
+
+.stream-buttons {
+    width: 219px;
+}
+
+.stream-buttons .mute-unmute-button {
+    float: right;
 }
 
 .stream-buttons button,
