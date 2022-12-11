@@ -2113,8 +2113,9 @@ function applyState(state: PersistedState)
     
     if(state.areas) state.areas.forEach(area =>
     {
-        if (roomStates[area.id]["jinja"])
+        try {
             roomStates[area.id]["jinja"].coinCounter = area.coinCounter
+        } catch {}
     })
 }
 
