@@ -25,7 +25,8 @@
         },
         {
             "id": "two",
-            "name": "Two"
+            "name": "Two",
+            "unlisted": true
         }
     ],
 }
