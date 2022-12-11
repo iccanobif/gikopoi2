@@ -16,5 +16,16 @@
     "abuseIpDBApiKey": "",
     "adminKey": "",
     "censoredWordsRegex": "(poop|peepee)",
-    "noStreamIPs": []
+    "noStreamIPs": [],
+    siteAreas: jsonContents.siteAreas || [
+        {
+            "id": "one",
+            "name": "One",
+            "restrictToLanguage": "ja",
+        },
+        {
+            "id": "two",
+            "name": "Two"
+        }
+    ],
 }

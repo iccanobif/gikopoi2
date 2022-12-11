@@ -48,15 +48,5 @@ export const settings: PoiPoiSettings = {
     // $-^ is a regex that never matches any string
     censoredWordsRegex: jsonContents.censoredWordsRegex || "$-^",
     noStreamIPs: jsonContents.noStreamIPs || [],
-    siteAreas: jsonContents.siteAreas || [
-        {
-            "id": "gen",
-            "name": "一般 (_gen)",
-            "restrictToLanguage": "ja",
-        },
-        {
-            "id": "for",
-            "name": "International (_for)"
-        }
-    ],
+    siteAreas: jsonContents.siteAreas || [{"id": "def","name": "Default Area Name"}],
 }
