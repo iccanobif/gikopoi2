@@ -154,6 +154,7 @@ window.vueApp = new Vue({
         blockWidth: BLOCK_WIDTH,
         blockHeight: BLOCK_HEIGHT,
         devicePixelRatio: null,
+        canvasObjects: [],
 
         // rula stuff
         isRulaPopupOpen: false,
