@@ -181,6 +181,8 @@ export interface PersistedState
     users: Player[],
     bannedIPs: string[],
     areas: { id: string, coinCounter: number }[],
+    forCoinCount?: number, // backwards compatibility
+    genCoinCount?: number // backwards compatibility
 }
 
 export interface CharacterSvgDto

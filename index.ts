@@ -2117,6 +2117,12 @@ function applyState(state: PersistedState)
             roomStates[area.id]["jinja"].coinCounter = area.coinCounter
         } catch {}
     })
+    
+    // backwards compatibility
+    try {
+        if (state.forCoinCount) roomStates["for"]["jinja"].coinCounter = state.forCoinCount
+        if (state.genCoinCount) roomStates["gen"]["jinja"].coinCounter = state.genCoinCount
+    } catch {}
 }
 
 async function restoreState()
