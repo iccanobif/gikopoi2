@@ -28,6 +28,8 @@ export default
         button_stream_stop: "Akhir siaran",
         button_stream_take: "Menonton",
         button_stream_drop: "Berhenti menonton",
+        // button_stream_mute: "Mute",
+        // button_stream_unmute: "Unmute",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Konfigurasi",

@@ -28,6 +28,8 @@ export default
         button_stream_stop: "Stream stoppen",
         button_stream_take: "Stream schauen",
         button_stream_drop: "Stream schließen",
+        // button_stream_mute: "Mute",
+        // button_stream_unmute: "Unmute",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Einstellungen",

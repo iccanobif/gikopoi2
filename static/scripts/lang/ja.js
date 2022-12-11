@@ -28,6 +28,8 @@ export default
         button_stream_stop: "配信停止",
         button_stream_take: "受信",
         button_stream_drop: "受信停止",
+        button_stream_mute: "ミュート",
+        button_stream_unmute: "ミュート解除",
         button_rula: "#ﾙｰﾗ",
         button_list: "#ﾘｽﾄ",
         button_preferences: "設定",

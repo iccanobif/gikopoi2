@@ -28,6 +28,8 @@ export default
         button_stream_stop: "Közvetítés leállítása",
         button_stream_take: "Közvetítés betöltése",
         button_stream_drop: "Közvetítés leállítása",
+        // button_stream_mute: "Mute",
+        // button_stream_unmute: "Unmute",
         button_rula: "#rula",
         button_list: "#lista",
         button_preferences: "Beállítások",

@@ -341,7 +341,8 @@
                                 && streamSlot.withSound
                                 && !outboundAudioProcessor?.isMute"
                             v-on:click="mute"
-                            class="mute-unmute-button">
+                            class="mute-unmute-button"
+                            v-bind:title="$t('ui.button_stream_mute')">
                             <span class="fas fa-microphone"></span>
                         </button>
                         <button
@@ -349,7 +350,8 @@
                                 && streamSlot.withSound
                                 && outboundAudioProcessor?.isMute"
                             v-on:click="unmute"
-                            class="mute-unmute-button">
+                            class="mute-unmute-button"
+                            v-bind:title="$t('ui.button_stream_unmute')">
                             <span class="fas fa-microphone-slash"></span>
                         </button>
                     </div>
