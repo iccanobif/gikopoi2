@@ -28,6 +28,8 @@ export default
         button_stream_stop: "Yayını durdur",
         button_stream_take: "Yayını izle",
         button_stream_drop: "İzlemeyi bırak",
+        // button_stream_mute: "Mute",
+        // button_stream_unmute: "Unmute",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Seçenekler",
@@ -176,6 +178,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "Sohbet defterini temizlemek istediğine emin misin?",
         chat_log_cleared: "Sohbet defteri temizlendi.",
+        // stream_start_notification: "@USER_NAME@ has started a stream.",
     },
     room:
     {

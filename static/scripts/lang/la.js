@@ -23,6 +23,8 @@ export default
         button_stream_stop: "Transmissionem sistere",
         button_stream_take: "Transmissionem recipere",
         button_stream_drop: "Transmissionem interrumpere",
+        // button_stream_mute: "Mute",
+        // button_stream_unmute: "Unmute",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Praeferentiae",

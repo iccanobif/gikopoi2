@@ -28,6 +28,8 @@ export default
         button_stream_stop: "Közvetítés leállítása",
         button_stream_take: "Közvetítés betöltése",
         button_stream_drop: "Közvetítés leállítása",
+        // button_stream_mute: "Mute",
+        // button_stream_unmute: "Unmute",
         button_rula: "#rula",
         button_list: "#lista",
         button_preferences: "Beállítások",
@@ -174,6 +176,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "Biztosan törölni akarod a naplót?",
         chat_log_cleared: "A napló törlésre került.",
+        // stream_start_notification: "@USER_NAME@ has started a stream.",
     },
     room:
     {

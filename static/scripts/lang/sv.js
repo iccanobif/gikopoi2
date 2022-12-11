@@ -28,6 +28,8 @@ export default
         button_stream_stop: "Sluta strömma",
         button_stream_take: "Hämta ström",
         button_stream_drop: "Släpp ström",
+        // button_stream_mute: "Mute",
+        // button_stream_unmute: "Unmute",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Inställningar",
@@ -174,6 +176,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "Vill du verkligen rensa chattloggen",
         chat_log_cleared: "Chattloggen har rensats.",
+        // stream_start_notification: "@USER_NAME@ has started a stream.",
     },
     room:
     {

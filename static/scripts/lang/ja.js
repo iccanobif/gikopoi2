@@ -28,6 +28,8 @@ export default
         button_stream_stop: "配信停止",
         button_stream_take: "受信",
         button_stream_drop: "受信停止",
+        button_stream_mute: "ミュート",
+        button_stream_unmute: "ミュート解除",
         button_rula: "#ﾙｰﾗ",
         button_list: "#ﾘｽﾄ",
         button_preferences: "設定",
@@ -177,6 +179,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "チャットログをクリアしますか？",
         chat_log_cleared: "チャットログがクリアされました。",
+        stream_start_notification: "@USER_NAME@が配信を始めた。",
     },
     room:
     {

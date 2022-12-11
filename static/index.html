@@ -35,7 +35,6 @@
         window.siteAreas = JSON.parse("@SITE_AREAS@");
         window.siteAreasInfo = JSON.parse("@SITE_AREAS_INFO@");
     </script>
-    
 </head>
 
 <body>
@@ -229,10 +228,10 @@
                         </span>
                         <span v-if="!streamSlot.isActive" class="stream-title">OFF</span>
                     </div>
-                    <div :id="'video-container-' + index" 
-                         class='video-container pinned-video' 
-                         v-show="streamSlot.withVideo 
-                                 && ((takenStreams[index] && streamSlot.isReady) 
+                    <div :id="'video-container-' + index"
+                         class='video-container pinned-video'
+                         v-show="streamSlot.withVideo
+                                 && ((takenStreams[index] && streamSlot.isReady)
                                      || index == streamSlotIdInWhichIWantToStream)
                                  && streamSlot.isAllowed">
                         <button
@@ -251,7 +250,7 @@
                             v-on:dblclick="onVideoDoubleClick($event, index)"
                             v-bind:title="clientSideStreamData[index].isSeparateTab ? $t('ui.double_click_to_toggle_fullscreen') : $t('ui.double_click_to_move_to_new_tab')"
                             autoplay playsinline></video>
-                        <img class="vtuber-character" 
+                        <img class="vtuber-character"
                             v-if="streamSlot.streamIsVtuberMode"
                             :src="getAvatarSpriteForUser(streamSlot.userId)"
                             v-bind:class="{'jumping': streamSlot.isJumping}" />
@@ -305,10 +304,13 @@
                                 v-on:change="onCompressionChanged(index)">
                         </div>
                     </div>
+                    <div v-if="streamSlotIdInWhichIWantToStream == index">
+
+                    </div>
                     <div class="stream-buttons" v-if="!streamSlot.isActive || streamSlot.isAllowed">
                         <button :id="'take-stream-button-' + index"
                             v-bind:class="{'red-button': streamSlot.isReady}"
-                            v-if="!takenStreams[index] 
+                            v-if="!takenStreams[index]
                                   && streamSlot.userId != myUserID
                                   && !wantToStream
                                   && (isStreamAutoResumeEnabled || streamSlot.isReady)"
@@ -322,17 +324,34 @@
                             v-on:click="wantToDropStream(index)">
                             {{ $t("ui.button_stream_drop") }}
                         </button>
-
                         <button :id="'start-video-streaming-button-' + index"
-                            v-if="!streamSlot.isActive && !wantToStream 
+                            v-if="!streamSlot.isActive && !wantToStream
                                   && streamSlotIdInWhichIWantToStream == null"
                             v-on:click="openStreamPopup(index)">
                             {{ $t("ui.button_stream_start") }}
                         </button>
                         <button :id="'stop-streaming-button-' + index"
-                            v-if="streamSlotIdInWhichIWantToStream == index" 
+                            v-if="streamSlotIdInWhichIWantToStream == index"
                             v-on:click="stopStreaming">
                             {{ $t("ui.button_stream_stop") }}
+                        </button>
+                        <button
+                            v-if="streamSlotIdInWhichIWantToStream == index
+                                && streamSlot.withSound
+                                && !outboundAudioProcessor?.isMute"
+                            v-on:click="mute"
+                            class="mute-unmute-button"
+                            v-bind:title="$t('ui.button_stream_mute')">
+                            <span class="fas fa-microphone"></span>
+                        </button>
+                        <button
+                            v-if="streamSlotIdInWhichIWantToStream == index
+                                && streamSlot.withSound
+                                && outboundAudioProcessor?.isMute"
+                            v-on:click="unmute"
+                            class="mute-unmute-button"
+                            v-bind:title="$t('ui.button_stream_unmute')">
+                            <span class="fas fa-microphone-slash"></span>
                         </button>
                     </div>
                 </div>

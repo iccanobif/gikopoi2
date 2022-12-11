@@ -107,15 +107,18 @@ var AudioContext = window.AudioContext          // Default
 
 export class AudioProcessor
 {
-    constructor(stream, volume, vuMeterCallback)
+    constructor(stream, volume, isInbound, vuMeterCallback)
     {
         this.stream = stream
         this.isBoostEnabled = false
+        this.isMute = false
+        this.isInbound = isInbound
 
         this.vuMeterCallback = vuMeterCallback
 
         this.context = new AudioContext();
         this.source = this.context.createMediaStreamSource(stream);
+        this.destination = this.context.createMediaStreamDestination()
         this.compressor = this.context.createDynamicsCompressor();
         this.compressor.threshold.value = -50;
         this.compressor.knee.value = 40;
@@ -136,25 +139,24 @@ export class AudioProcessor
             this.pan = this.context.createGain();
         }
 
-        this.setVolume(volume)
+        this.analyser = this.context.createAnalyser()
 
         this.connectNodes()
 
+        this.setVolume(volume)
+
         // Vu meter
-        const vuMeterSource = this.context.createMediaStreamSource(stream);
-        const analyser = this.context.createAnalyser()
-        analyser.minDecibels = -60;
-        analyser.maxDecibels = 0;
-        analyser.smoothingTimeConstant = 0.01;
+        this.analyser.minDecibels = -60;
+        this.analyser.maxDecibels = 0;
+        this.analyser.smoothingTimeConstant = 0.01;
         // fftSize must be 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, or 32768
-        analyser.fftSize = 32
-        const bufferLengthAlt = analyser.frequencyBinCount;
+        this.analyser.fftSize = 32
+        const bufferLengthAlt = this.analyser.frequencyBinCount;
         const dataArrayAlt = new Uint8Array(bufferLengthAlt);
-        vuMeterSource.connect(analyser);
 
         this.vuMeterTimer = setInterval(() => {
             try {
-                analyser.getByteFrequencyData(dataArrayAlt)
+                this.analyser.getByteFrequencyData(dataArrayAlt)
 
                 const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
 
@@ -192,15 +194,19 @@ export class AudioProcessor
         {
             this.source.connect(this.compressor)
             this.compressor.connect(this.gain)
-            this.gain.connect(this.pan)
-            this.pan.connect(this.context.destination)
         }
         else
         {
             this.source.connect(this.gain)
-            this.gain.connect(this.pan)
-            this.pan.connect(this.context.destination)
         }
+
+        this.gain.connect(this.pan)
+
+        if (this.isInbound)
+            this.pan.connect(this.context.destination)
+        
+        this.pan.connect(this.destination)
+        this.pan.connect(this.analyser)
     }
 
     setVolume(volume)
@@ -210,6 +216,18 @@ export class AudioProcessor
         this.gain.gain.value = this.isBoostEnabled
             ? volume * maxGain
             : volume
+    }
+
+    mute()
+    {
+        this.gain.gain.value = 0
+        this.isMute = true
+    }
+
+    unmute()
+    {
+        this.gain.gain.value = this.volume
+        this.isMute = false
     }
 
     setPan(value)
@@ -240,7 +258,7 @@ export function getFormattedCurrentDate() {
             date.getSeconds().toString().padStart(2, '0'),
            ].join('');
   };
-  
+
 // On normal god-fearing browsers requestPermission() returns a Promise, while
 // safari uses a callback parameter.
 export function requestNotificationPermission()

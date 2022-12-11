@@ -28,6 +28,8 @@ export default
         button_stream_stop: "Chiudi stream",
         button_stream_take: "Ricevi stream",
         button_stream_drop: "Interrompi stream",
+        // button_stream_mute: "Mute",
+        // button_stream_unmute: "Unmute",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Impostazioni",
@@ -178,6 +180,7 @@ export default
         
         // are_you_sure_you_want_to_clear_log: "",
         // chat_log_cleared: "",
+        // stream_start_notification: "@USER_NAME@ has started a stream.",
     },
     room:
     {

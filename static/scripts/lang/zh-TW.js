@@ -28,6 +28,8 @@ export default
         button_stream_stop: "停止直播",
         button_stream_take: "觀看直播",
         button_stream_drop: "取消觀看",
+        // button_stream_mute: "Mute",
+        // button_stream_unmute: "Unmute",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "設定",
@@ -174,6 +176,7 @@ export default
         
         // are_you_sure_you_want_to_clear_log: "",
         // chat_log_cleared: "",
+        // stream_start_notification: "@USER_NAME@ has started a stream.",
     },
     room:
     {

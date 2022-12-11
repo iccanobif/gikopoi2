@@ -28,6 +28,8 @@ export default
         button_stream_stop: "Stop stream",
         button_stream_take: "Get stream",
         button_stream_drop: "Drop stream",
+        button_stream_mute: "Mute",
+        button_stream_unmute: "Unmute",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Preferences",
@@ -177,6 +179,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "Are you sure you want to clear the chat log?",
         chat_log_cleared: "The chat log has been cleared.",
+        stream_start_notification: "@USER_NAME@ has started a stream.",
     },
     room:
     {
