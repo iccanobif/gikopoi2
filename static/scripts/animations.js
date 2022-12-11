@@ -2,66 +2,63 @@
 // return true if redraw is required
 export function animateJizou(jizouObject, users)
 {
-    const now = Date.now();
+    // If the images have not been loaded yet, do nothing
+    if (!jizouObject.allImages)
+        return false
 
-    // initialize state
-    if (!jizouObject.lastEventTime)
-    {
-        jizouObject.lastEventTime = now
-        jizouObject.currentFrame = 0
-        jizouObject.needToTurnAround = false
-    }
+    const now = Date.now();
 
     const needToTurnAround = !!Object.values(users).find(u => u.logicalPositionX == 7 && u.logicalPositionY == 5)
 
-    // I consider switching from needToTurnAround == false to needToTurnAround == true an event so that i can wait
-    // a full second before starting the animation, but when going from needToTurnAround == true to needToTurnAround == false
-    // I want the animation to start immediately, so I don't update lastEventTime.
-    if (!jizouObject.needToTurnAround && needToTurnAround)
-        jizouObject.lastEventTime = now
+    // initialize state
+    if (!jizouObject.lastUserCameOrLeftTime)
+    {
+        jizouObject.lastUserCameOrLeftTime = now
+        // If when I enter the room someone else is already in front of the jizou, immediately display it at frame 3
+        jizouObject.currentFrame = needToTurnAround ? 3 : 0
+        jizouObject.needToTurnAround = needToTurnAround
+    }
+
+    if (jizouObject.needToTurnAround != needToTurnAround)
+        jizouObject.lastUserCameOrLeftTime = now
     jizouObject.needToTurnAround = needToTurnAround
 
-    // When a user moves in front of the jizou, I want to wait for one second before starting the animation
-    const timeForNewFrame = now - jizouObject.lastEventTime > (jizouObject.currentFrame == 0 ? 1500 : 60)
-
-    if (!timeForNewFrame)
-        return false
-
-    jizouObject.lastEventTime = now;
+    const elapsedTime = Date.now() - jizouObject.lastUserCameOrLeftTime
 
     // frames from 0 to 3 are for the movement, frame 4 is for eye blinking
-
     if (needToTurnAround)
-        switch (jizouObject.currentFrame)
-        {
-            case 0:
-                jizouObject.image = jizouObject.allImages[1];
-                jizouObject.currentFrame = 1
-                return true;
-            case 1: 
-                jizouObject.image = jizouObject.allImages[2];
-                jizouObject.currentFrame = 2
-                return true;
-            case 2:
-                jizouObject.image = jizouObject.allImages[3];
+    {
+        // look at the viewer
+        if (jizouObject.currentFrame == 0 && elapsedTime > 1500)
+            jizouObject.currentFrame = 1
+        else if (jizouObject.currentFrame == 1 && elapsedTime > 1500 + 60)
+            jizouObject.currentFrame = 2
+        else if (jizouObject.currentFrame == 2 && elapsedTime > 1500 + 60 * 2)
+            jizouObject.currentFrame = 3
+        // eye blinking (blink twice for 70ms every 5 seconds)
+        else if (jizouObject.currentFrame == 3 || jizouObject.currentFrame == 4)
+            if ((elapsedTime % 5000 > 3000 && elapsedTime % 5000 < 3000 + 70)
+                || elapsedTime % 5000 > 3170 && elapsedTime % 5000 < 3240)
+                jizouObject.currentFrame = 4
+            else
                 jizouObject.currentFrame = 3
-                return true;
-        }
+    }
     else
-        switch (jizouObject.currentFrame)
-        {
-            case 3:
-                jizouObject.image = jizouObject.allImages[2];
-                jizouObject.currentFrame = 2
-                return true;
-            case 2:
-                jizouObject.image = jizouObject.allImages[1];
-                jizouObject.currentFrame = 1
-                return true;
-            case 1:
-                jizouObject.image = jizouObject.allImages[0];
-                jizouObject.currentFrame = 0
-                return true;
-            case 0: return false;
-        }
+    {
+        if (jizouObject.currentFrame == 3)
+            jizouObject.currentFrame = 2
+        else if (jizouObject.currentFrame == 2 && elapsedTime > 60)
+            jizouObject.currentFrame = 1
+        else if (jizouObject.currentFrame == 1 && elapsedTime > 60 * 2)
+            jizouObject.currentFrame = 0
+    }
+
+    // If the current frame was changed, set the new image
+    if (jizouObject.image == jizouObject.allImages[jizouObject.currentFrame])
+        return false
+    else
+    {
+        jizouObject.image = jizouObject.allImages[jizouObject.currentFrame]
+        return true
+    }
 }
