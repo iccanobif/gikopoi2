@@ -76,6 +76,11 @@
     background-color: #242424;
 }
 
+.theme-dark .popup-row-is-selected
+{
+    color: black;
+}
+
 .theme-dark .arrow-button-left
 {
     background-image: url("../north_west_black_24dp.dark.svg");
