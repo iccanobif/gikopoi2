@@ -27,17 +27,17 @@ export function animateJizou(jizouObject, users)
     if (!timeForNewFrame)
         return false
 
+    jizouObject.lastEventTime = now;
+
     if (needToTurnAround)
         switch (jizouObject.currentFrame)
         {
             case 0:
                 jizouObject.image = jizouObject.allImages[1];
-                jizouObject.lastEventTime = now;
                 jizouObject.currentFrame = 1
                 return true;
             case 1: 
                 jizouObject.image = jizouObject.allImages[2];
-                jizouObject.lastEventTime = now;
                 jizouObject.currentFrame = 2
                 return true;
             case 2: return false;
@@ -47,12 +47,10 @@ export function animateJizou(jizouObject, users)
         {
             case 2:
                 jizouObject.image = jizouObject.allImages[1];
-                jizouObject.lastEventTime = now;
                 jizouObject.currentFrame = 1
                 return true;
             case 1:
                 jizouObject.image = jizouObject.allImages[0];
-                jizouObject.lastEventTime = now;
                 jizouObject.currentFrame = 0
                 return true;
             case 0: return false;
