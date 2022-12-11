@@ -29,6 +29,8 @@ export function animateJizou(jizouObject, users)
 
     jizouObject.lastEventTime = now;
 
+    // frames from 0 to 3 are for the movement, frame 4 is for eye blinking
+
     if (needToTurnAround)
         switch (jizouObject.currentFrame)
         {
@@ -40,11 +42,18 @@ export function animateJizou(jizouObject, users)
                 jizouObject.image = jizouObject.allImages[2];
                 jizouObject.currentFrame = 2
                 return true;
-            case 2: return false;
+            case 2:
+                jizouObject.image = jizouObject.allImages[3];
+                jizouObject.currentFrame = 3
+                return true;
         }
     else
         switch (jizouObject.currentFrame)
         {
+            case 3:
+                jizouObject.image = jizouObject.allImages[2];
+                jizouObject.currentFrame = 2
+                return true;
             case 2:
                 jizouObject.image = jizouObject.allImages[1];
                 jizouObject.currentFrame = 1

@@ -444,9 +444,9 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  5, y:  5, offset: { x: 1290-320, y: 1076-300 }, url: "fire.svg" },
             { x:  8, y:  0, offset: { x: 1178-320, y: 1124-300 }, url: "denwa_box.svg" },
             { x:  8, y:  2, offset: { x: 1285-320, y: 1218-300 }, url: "jizou_mini.svg" },
-            { x:  8, y:  3, offset: { x: 1317-320, y: 1171-300 }, url: "jizou_1.svg" },
-            { x:  8, y:  4, offset: { x: 1357-320, y: 1151-300 }, url: "jizou_1.svg" },
-            { id: "moving_jizou", x:  8, y:  5, offset: { x: 1397-320, y: 1131-300 }, url: ["jizou_1.svg", "jizou_2.svg", "jizou_3.svg"] },
+            { x:  8, y:  3, offset: { x: 1317-320, y: 1171-300 }, url: "jizou_0.svg" },
+            { x:  8, y:  4, offset: { x: 1357-320, y: 1151-300 }, url: "jizou_0.svg" },
+            { id: "moving_jizou", x:  8, y:  5, offset: { x: 1397-320, y: 1131-300 }, url: ["jizou_0.svg", "jizou_1.svg", "jizou_2.svg", "jizou_3.svg", "jizou_4.svg"] },
 
             { x:  9, y:  7, offset: { x: 1509-320, y: 1098-300 }, url: "wall_front_with_bush.svg" },
             { x:  8, y:  7, offset: { x: 1469-320, y: 1078-300 }, url: "wall_front_with_bush_and_hole.svg" },
