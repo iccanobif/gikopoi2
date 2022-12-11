@@ -4,7 +4,6 @@ import { ChessInstance } from "chess.js"
 const JanusClient = require('janus-videoroom-client').Janus;
 
 export type Direction = 'up' | 'down' | 'left' | 'right'
-export type Area = 'for' | 'gen'
 
 export interface Coordinates
 {
@@ -180,8 +179,7 @@ export interface PersistedState
 {
     users: Player[],
     bannedIPs: string[],
-    forCoinCount: number,
-    genCoinCount: number,
+    areas: { id: string, coinCounter: number }[],
 }
 
 export interface CharacterSvgDto

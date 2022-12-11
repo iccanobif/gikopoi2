@@ -80,15 +80,19 @@ function getSpawnRoomId()
 
 function getDefaultAreaId()
 {
+    let areaId = null
     try
     {
         const urlSearchParams = new URLSearchParams(window.location.search);
-        return urlSearchParams.get("areaid") || localStorage.getItem("areaId") || "gen"
+        areaId = urlSearchParams.get("areaid")
     }
     catch
-    {
-        return localStorage.getItem("areaId") || "gen"
-    }
+    {}
+    areaId = areaId || localStorage.getItem("areaId")
+    if (window.siteAreas.find(area => area.id == areaId))
+        return areaId
+    else
+        return window.siteAreas[0].id
 }
 
 function getAppState()
@@ -109,6 +113,9 @@ window.vueApp = new Vue({
     i18n,
     el: "#vue-app",
     data: {
+        siteAreas: window.siteAreas,
+        siteAreasInfo: window.siteAreasInfo,
+        
         selectedCharacter: null,
         socket: null,
         users: {},
@@ -130,7 +137,7 @@ window.vueApp = new Vue({
         soundEffectVolume: 0,
         characterId: localStorage.getItem("characterId") || "giko",
         isLoggingIn: false,
-        areaId: getDefaultAreaId(), // 'gen' or 'for'
+        areaId: getDefaultAreaId(),
         language: localStorage.getItem("language") || "en",
         uiBackgroundColor: null,
         isUiBackgroundDark: null,
@@ -316,10 +323,7 @@ window.vueApp = new Vue({
         // the button.
         document.addEventListener("mouseup", () => this.setMovementDirection(null))
 
-        if (this.areaId == "gen")
-            this.setLanguage("ja")
-        else
-            this.setLanguage(this.language)
+        this.setLanguage(this.getSiteArea().restrictToLanguage || this.language)
 
         loadCharacterImagesPromise = loadCharacters(this.isCrispModeEnabled);
 
@@ -488,6 +492,10 @@ window.vueApp = new Vue({
         getLangCodes: function()
         {
             return Object.keys(i18n.messages);
+        },
+        getSiteArea: function()
+        {
+            return this.siteAreas.find(area => area.id == this.areaId)
         },
         openDialog: function (text, title, buttons, cancelButtonIndex, callback)
         {

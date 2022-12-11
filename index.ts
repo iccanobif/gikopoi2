@@ -58,17 +58,30 @@ let bannedIPs: Set<string> = new Set<string>()
 
 function initializeRoomStates()
 {
-    let areaNumberId = 0;
-    roomStates = {}
-
-    for (const areaId of ["for", "gen"])
+    roomStates = Object.fromEntries(settings.siteAreas.map((area, areaNumberId) =>
     {
-        let roomNumberId = 0;
-        roomStates[areaId] = {}
-        for (const roomId in rooms)
+        return [area.id, Object.fromEntries(Object.entries(rooms).map(([roomId, room], roomNumberId) =>
         {
-            roomStates[areaId][roomId] = {
-                streams: [],
+            const roomState = {
+                streams: (!janusServers.length ? [] : Array.from({ length: room.streamSlotCount }, (v, i) => i).map(slotId =>
+                {
+                    return {
+                        streamId: 0,
+                        janusServer: null,
+                        janusSession: null,
+                        janusRoomName: settings.janusRoomNamePrefix + ":" + area.id + ":" + roomId + ":" + slotId,
+                        janusRoomIntName: (settings.janusRoomNameIntPrefix * 1000000000) + (areaNumberId * 1000000) + (roomNumberId * 100) + slotId,
+                        isActive: false,
+                        isReady: false,
+                        withSound: null,
+                        withVideo: null,
+                        publisher: null,
+                        listeners: [],
+                        isVisibleOnlyToSpecificUsers: null,
+                        allowedListenerIDs: [],
+                        streamIsVtuberMode: false,
+                    }
+                })),
                 chess: {
                     instance: null,
                     blackUserID: null,
@@ -78,30 +91,9 @@ function initializeRoomStates()
                 },
                 coinCounter: 0,
             }
-            if (janusServers.length)
-                for (let i = 0; i < rooms[roomId].streamSlotCount; i++)
-            {
-                roomStates[areaId][roomId].streams.push({
-                    streamId: 0,
-                    janusServer: null,
-                    janusSession: null,
-                    janusRoomName: settings.janusRoomNamePrefix + ":" + areaId + ":" + roomId + ":" + i,
-                    janusRoomIntName: (settings.janusRoomNameIntPrefix * 1000000000) + (areaNumberId * 1000000) + (roomNumberId * 100) + i,
-                    isActive: false,
-                    isReady: false,
-                    withSound: null,
-                    withVideo: null,
-                    publisher: null,
-                    listeners: [],
-                    isVisibleOnlyToSpecificUsers: null,
-                    allowedListenerIDs: [],
-                    streamIsVtuberMode: false,
-                })
-            }
-            roomNumberId++;
-        }
-        areaNumberId++;
-    }
+            return [roomId, roomState]
+        }))]
+    }))
 }
 
 initializeRoomStates()
@@ -1155,13 +1147,14 @@ io.on("connection", function (socket: Socket)
 function emitServerStats(areaId: string)
 {
     const allConnectedUsers = getAllUsers().filter(u => !u.isGhost)
-    const allForUsers = allConnectedUsers.filter(u => u.areaId == "for")
-    const allGenUsers = allConnectedUsers.filter(u => u.areaId == "gen")
+    const logLineAreas = settings.siteAreas.map(area =>
+    {
+        return area.id + " users: " + allConnectedUsers.filter(u => u.areaId == area.id) + " " +
+            area.id + " streams: " + Object.values(roomStates[area.id]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
+    }).join(" ")
     const allIps = new Set(allConnectedUsers.map(u => Array.from(u.ips.values())).flat())
-    const forStreamCount = Object.values(roomStates["for"]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
-    const genStreamCount = Object.values(roomStates["gen"]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
 
-    log.info("Server stats: gen users:", allGenUsers.length, "gen streams:", genStreamCount, "for users:", allForUsers.length, "for streams:", forStreamCount, "total IPs:", allIps.size)
+    log.info("Server stats:", logLineAreas, "total IPs:", allIps.size)
 
     getConnectedUserList(null, areaId).forEach((u) =>
     {
@@ -1311,23 +1304,24 @@ app.get("/", async (req, res) =>
 
         data = data.replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
         data = data.replace("@ANNUAL_EVENTS@", JSON.stringify(annualEventDefinitions).replace(/\"/g, "\\\""))
-
-        for (const areaId in roomStates)
+        data = data.replace("@SITE_AREAS@", JSON.stringify(settings.siteAreas).replace(/\"/g, "\\\""))
+        
+        const siteAreasInfo = Object.fromEntries(Object.keys(roomStates).map(areaId =>
         {
             const connectedUserIds: Set<string> = getConnectedUserList(null, areaId)
                 .filter((u) => !u.blockedIps.includes(getRealIp(req)))
                 .reduce((acc, val) => acc.add(val.id), new Set<string>())
 
-            data = data
-                .replace("@USER_COUNT_" + areaId.toUpperCase() + "@",
-                    connectedUserIds.size.toString())
-                .replace("@STREAMER_COUNT_" + areaId.toUpperCase() + "@",
-                    Object.values(roomStates[areaId])
-                        .map(s => s.streams)
-                        .flat()
-                        .filter(s => s.publisher != null && s.publisher.user.id && connectedUserIds.has(s.publisher.user.id))
-                        .length.toString())
-        }
+            return [areaId, {
+                userCount: connectedUserIds.size,
+                streamerCount: Object.values(roomStates[areaId])
+                    .map(s => s.streams)
+                    .flat()
+                    .filter(s => s.publisher != null && s.publisher.user.id && connectedUserIds.has(s.publisher.user.id))
+                    .length
+            }]
+        }))
+        data = data.replace("@SITE_AREAS_INFO@", JSON.stringify(siteAreasInfo).replace(/\"/g, "\\\""))
 
         res.set({
             'Content-Type': 'text/html; charset=utf-8',
@@ -2078,8 +2072,13 @@ async function persistState()
         const state: PersistedState = {
             users: getAllUsers(),
             bannedIPs: Array.from(bannedIPs),
-            forCoinCount: roomStates["for"]["jinja"].coinCounter,
-            genCoinCount: roomStates["gen"]["jinja"].coinCounter,
+            areas: settings.siteAreas.map(area =>
+            {
+                return {
+                    id: area.id,
+                    coinCounter: roomStates[area.id]["jinja"].coinCounter
+                }
+            }),
         }
 
         if (settings.persistorUrl)
@@ -2111,8 +2110,12 @@ function applyState(state: PersistedState)
 {
     restoreUserState(state.users)
     bannedIPs = new Set(state.bannedIPs)
-    roomStates["for"]["jinja"].coinCounter = state.forCoinCount || 0;
-    roomStates["gen"]["jinja"].coinCounter = state.genCoinCount || 0;
+    
+    if(state.areas) state.areas.forEach(area =>
+    {
+        if (roomStates[area.id]["jinja"])
+            roomStates[area.id]["jinja"].coinCounter = area.coinCounter
+    })
 }
 
 async function restoreState()
@@ -2172,9 +2175,11 @@ dynamicRooms.forEach((dynamicRoom: DynamicRoom) =>
         if (previousVariant != room.variant)
         {
             rooms[dynamicRoom.roomId] = room
-            for (const areaId of ["gen", "for"])
-                for (const u of getConnectedUserList(dynamicRoom.roomId, areaId).filter(u => u.socketId))
+            settings.siteAreas.forEach(area =>
+            {
+                for (const u of getConnectedUserList(dynamicRoom.roomId, area.id).filter(u => u.socketId))
                     sendRoomState(io.to(u.socketId), u, rooms[dynamicRoom.roomId]);
+            })
             if (typeof room.variant === "string")
                 previousVariant = room.variant
         }

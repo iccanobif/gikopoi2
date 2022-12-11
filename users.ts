@@ -1,6 +1,7 @@
 import { v4 } from "uuid";
 import { rooms } from "./rooms";
-import { Area, Direction } from "./types";
+import { Direction } from "./types";
+import { settings } from "./settings";
 
 function generateId()
 {
@@ -27,7 +28,7 @@ export class Player
     // Initializing disconnectionTime at login time to simplify the user cleanup's job code.
     public disconnectionTime: number | null = Date.now(); // null if isGhost == false, non-null otherwise
     public characterId: string;
-    public areaId: Area;
+    public areaId: string;
     public isInactive = false;
     public bubblePosition: Direction = "up";
     public lastRoomMessage: string = "";
@@ -39,9 +40,9 @@ export class Player
     public lastMessageDates: number[] = [];
     public isAlternateCharacter: boolean = false;
 
-    constructor(options: { name?: string, characterId: string, areaId: Area, roomId: string, ip: string })
+    constructor(options: { name?: string, characterId: string, areaId: string, roomId: string, ip: string })
     {
-        if (options.areaId != "for" && options.areaId != "gen")
+        if (!settings.siteAreas.find(area => area.id == options.areaId))
             throw "invalid area id"
 
         if (!(options.roomId in rooms))
@@ -76,7 +77,7 @@ export class Player
 
 let users: { [id: string]: Player; } = {}
 
-export function addNewUser(name: string, characterId: string, areaId: Area, roomId: string, ip: string)
+export function addNewUser(name: string, characterId: string, areaId: string, roomId: string, ip: string)
 {
     const p = new Player({ name, characterId, areaId, roomId, ip });
     users[p.id] = p;
