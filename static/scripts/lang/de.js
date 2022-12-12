@@ -225,7 +225,7 @@ export default
         nerd_office: "Hackerbüro",
         admin_old: "Verschollene Kammer",
         river: "Fluss",
-        // irori: "Fireplace",
+        irori: "Feuerstelle",
     },
     area:
     {
