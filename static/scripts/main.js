@@ -1067,20 +1067,26 @@ window.vueApp = new Vue({
                 speak(plainMsg, this.ttsVoiceURI, this.voiceVolume, user.voicePitch)
             }
 
+            if (user.id != this.myUserID)
+                this.displayNotification(this.toDisplayName(user.name) + ": " + plainMsg, this.getAvatarSpriteForUser(user.id))
+        },
+        displayNotification: async function(message, icon)
+        {
             if (window.Notification)
             {
                 if (!this.showNotifications
-                    || document.visibilityState == "visible"
-                    || user.id == this.myUserID) return;
+                    || document.visibilityState == "visible") return;
 
                 const permission = await requestNotificationPermission()
                 if (permission != "granted") return;
 
-                new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
+                return new Notification(message,
                     {
-                        icon: this.getAvatarSpriteForUser(user.id)
+                        icon: icon
                     })
             }
+
+            return null
         },
         toDisplayName: function (name)
         {
@@ -2395,15 +2401,14 @@ window.vueApp = new Vue({
                 {
                     const streamUser = this.users[newStream.userId]
                     const message = i18n.t("msg.stream_start_notification").replace("@USER_NAME@", this.toDisplayName(streamUser.name))
-                    const notification = new Notification(message,
-                        {
-                            icon: this.getAvatarSpriteForUser(newStream.userId)
+
+                    const notification = this.displayNotification(message, this.getAvatarSpriteForUser(newStream.userId))
+
+                    if (notification)
+                        notification.addEventListener("click", (event) => {
+                            vueApp.wantToTakeStream(slotId);
+                            window.focus();
                         })
-        
-                    notification.addEventListener("click", (event) => {
-                        vueApp.wantToTakeStream(slotId);
-                        window.focus();
-                    })
                 }
             }
 

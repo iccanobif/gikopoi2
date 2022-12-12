@@ -46,7 +46,7 @@ export function animateJizou(jizouObject, users)
     }
     else // return to base position, looking away from the camera
     {
-        if (jizouObject.currentFrame == 3)
+        if (jizouObject.currentFrame == 3 || jizouObject.currentFrame == 4)
             jizouObject.currentFrame = 2
         else if (jizouObject.currentFrame == 2 && elapsedTime > 60)
             jizouObject.currentFrame = 1
