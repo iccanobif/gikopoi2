@@ -28,8 +28,8 @@ export default
         button_stream_stop: "Stream stoppen",
         button_stream_take: "Stream schauen",
         button_stream_drop: "Stream schließen",
-        // button_stream_mute: "Mute",
-        // button_stream_unmute: "Unmute",
+        button_stream_mute: "Stummschalten",
+        button_stream_unmute: "Stummschaltung aufheben",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Einstellungen",
@@ -177,7 +177,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "Sind sie sicher, dass Sie das Chat-Log löschen möchten?",
         chat_log_cleared: "Das Chat-Log wurde gelöscht.",
-        // stream_start_notification: "@USER_NAME@ has started a stream.",
+        stream_start_notification: "@USER_NAME@ hat einen Stream gestartet.",
     },
     room:
     {
