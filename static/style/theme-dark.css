@@ -1,14 +1,11 @@
 #vue-app.theme-dark {
     background-color: #28282b;
     color: #f0f0f0;
+    scrollbar-color: #686868 #28282b;
 }
 
 .theme-dark h1 a {
     color: #f0f0f0;
-}
-
-.theme-dark #chatLog {
-    background-color: #38383b;
 }
 
 .theme-dark .message a {
@@ -29,13 +26,8 @@
 }
 
 .theme-dark input[type="text"],
-.theme-dark textarea {
-
-    background-color: #38383b;
-    color: #f0f0f0;
-    border: 1px solid #999999;
-}
-
+.theme-dark textarea,
+.theme-dark #chatLog,
 .theme-dark #login-page button,
 .theme-dark #toolbar button,
 .theme-dark .stream-buttons button,
@@ -43,7 +35,23 @@
 .theme-dark .popup button {
     background-color: #38383b;
     color: #f0f0f0;
-    border: 1px solid #999999
+    border: 1px solid #686868;
+}
+
+::-webkit-scrollbar {
+    background-color: #28282b;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #28282b;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #686868;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: #28282b;
 }
 
 .theme-dark .stream-buttons button.red-button,
@@ -74,6 +82,11 @@
 .theme-dark .popup-selectable-table tr.popup-row-is-selected td {
     color: #f0f0f0;
     background-color: #242424;
+}
+
+.theme-dark .popup-row-is-selected
+{
+    color: black;
 }
 
 .theme-dark .arrow-button-left

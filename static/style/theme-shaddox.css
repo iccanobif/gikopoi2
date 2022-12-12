@@ -75,6 +75,11 @@
     background-color: #354F52;
 }
 
+.theme-shaddox .popup-row-is-selected
+{
+    color: black;
+}
+
 .theme-shaddox .arrow-button-left
 {
     background-image: url("../north_west_black_24dp.dark.svg");
