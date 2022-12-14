@@ -1068,7 +1068,7 @@ window.vueApp = new Vue({
             }
 
             if (user.id != this.myUserID)
-                this.displayNotification(this.toDisplayName(user.name) + ": " + plainMsg, this.getAvatarSpriteForUser(user.id))
+                await this.displayNotification(this.toDisplayName(user.name) + ": " + plainMsg, this.getAvatarSpriteForUser(user.id))
         },
         displayNotification: async function(message, icon)
         {
@@ -2402,7 +2402,7 @@ window.vueApp = new Vue({
                     const streamUser = this.users[newStream.userId]
                     const message = i18n.t("msg.stream_start_notification").replace("@USER_NAME@", this.toDisplayName(streamUser.name))
 
-                    const notification = this.displayNotification(message, this.getAvatarSpriteForUser(newStream.userId))
+                    const notification = await this.displayNotification(message, this.getAvatarSpriteForUser(newStream.userId))
 
                     if (notification)
                         notification.addEventListener("click", (event) => {
