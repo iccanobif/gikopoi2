@@ -123,6 +123,7 @@ export default
         preferences_language: "Språk",
         preferences_enable_coin_sound: "Ljudeffekter",
         preferences_show_log_above_toolbar: "Placera loggen ovanför verktygsraden",
+        // preferences_show_log_dividers: "",
 
         preferences_title_streams: "Strömmor",
         preferences_streams_auto_resume: "Automatisk återupptagning",

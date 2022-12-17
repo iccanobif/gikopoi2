@@ -123,6 +123,7 @@ export default
         preferences_language: "Nyelv",
         preferences_enable_coin_sound: "Hangeffektek",
         // preferences_show_log_above_toolbar: "",
+        // preferences_show_log_dividers: "",
 
         preferences_title_streams: "Közvetítések",
         preferences_streams_auto_resume: "Automatikus visszakapcsolás",

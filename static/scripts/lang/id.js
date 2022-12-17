@@ -123,6 +123,7 @@ export default
         preferences_language: "Bahasa",
         preferences_enable_coin_sound: "SFX on",
         // preferences_show_log_above_toolbar: "",
+        // preferences_show_log_dividers: "",
 
         preferences_title_streams: "Siarkan",
         preferences_streams_auto_resume: "Otomatis Lanjutkan",

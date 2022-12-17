@@ -127,6 +127,7 @@ export default
         preferences_language: "Lingua",
         // preferences_enable_coin_sound: "Enable coin sound",
         // preferences_show_log_above_toolbar: "",
+        // preferences_show_log_dividers: "",
 
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",
