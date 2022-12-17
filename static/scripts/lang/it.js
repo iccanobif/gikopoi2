@@ -83,10 +83,6 @@ export default
         // stream_form_stream_target: "",
         // stream_form_visible_to_all_room : "",
         // stream_form_visible_only_to_specific_users: "",
-        
-        stream_form_camera_facing: "Fotocamera telefono:",
-        stream_form_camera_facing_user: "Anteriore",
-        stream_form_camera_facing_environment: "Posteriore",
         stream_form_vtuber_mode: "Modalità VTuber",
 
         // device_selection_title: "",
