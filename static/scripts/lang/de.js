@@ -63,6 +63,8 @@ export default
         user_list_popup_block: "Blockieren",
         user_list_popup_close: "Schließen",
         user_list_popup_blurb: "Warnung: Wenn Sie einen Benutzer ignorieren, werden Sie ihn nicht sehen, aber er Sie.<br>Wenn Sie einen Benutzer blockieren, bleibt er blockiert, auch wenn er sich erneut verbindet.",
+        // user_list_popup_give_stream: "",
+        // user_list_popup_revoke_stream: "",
         
         stream_form_title: "Stream-Einstellungen",
         stream_form_mode: "Modus:",

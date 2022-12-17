@@ -63,6 +63,8 @@ export default
         user_list_popup_block: "Blocca",
         user_list_popup_close: "Chiudi",
         user_list_popup_blurb: "Attenzione: Quando ignori un utente, tu non lo vedrai, ma lui potrà ancora vedere te.<br>Quando blocchi un utente, lui rimarrà bloccato anche se si riconnette.",
+        // user_list_popup_give_stream: "",
+        // user_list_popup_revoke_stream: "",
         
         stream_form_title: "Impostazioni streaming",
         stream_form_mode: "Modalità:",

@@ -63,6 +63,8 @@ export default
         user_list_popup_block: "Tiltás",
         user_list_popup_close: "Bezárás",
         user_list_popup_blurb: "Figyelmeztetés: Ha eltüntetsz egy felhasználót, nem fogod látni őt, de ő ugyanúgy láthat téged.<br>Ha letiltasz egy felhasználót, tiltva marad akkor is, ha újracsatlakozik.",
+        // user_list_popup_give_stream: "",
+        // user_list_popup_revoke_stream: "",
         
         stream_form_title: "Közvetítés beállítások",
         stream_form_mode: "Mód:",
