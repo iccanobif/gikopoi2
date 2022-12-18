@@ -1017,6 +1017,7 @@ window.vueApp = new Vue({
                     const url = anchor.textContent;
                     anchor.href = (prefix == 'www.' ? 'http://' + url : url);
                     anchor.textContent = safeDecodeURI(url);
+                    anchor.rel = "noopener noreferrer";
                     return anchor.outerHTML;
                 });
 
