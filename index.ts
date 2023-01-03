@@ -236,8 +236,8 @@ io.on("connection", function (socket: Socket)
             await clearStream(user) // This also calls emitServerStats(), but only if the user was streaming...
             emitServerStats(user.areaId)
             await clearRoomListener(user)
-            userRoomEmit(user, user.areaId, user.roomId,
-                "server-user-left-room", user.id);
+            userRoomEmit(user, user.areaId, user.roomId, "server-user-left-room",
+                { userId: user.id, playLogoutAnimation: true } );
             stopChessGame(roomStates, user)
         }
         catch (exc)
@@ -848,7 +848,7 @@ io.on("connection", function (socket: Socket)
             await clearRoomListener(user)
             stopChessGame(roomStates, user)
             userRoomEmit(user, user.areaId, user.roomId,
-                "server-user-left-room", user.id)
+                "server-user-left-room", { userId: user.id, playLogoutAnimation: true })
             socket.leave(user.areaId + user.roomId)
 
             if (targetDoorId == undefined)
@@ -942,10 +942,10 @@ io.on("connection", function (socket: Socket)
                 .filter((u) => u.socketId && isUserBlocking(user, u))
                 .forEach((u) =>
             {
-                io.to(u.socketId!).emit("server-user-left-room", user.id)
+                io.to(u.socketId!).emit("server-user-left-room", { userId: user.id, playLogoutAnimation: true })
                 io.to(u.socketId!).emit("server-update-current-room-streams", toStreamSlotDtoArray(u, streams))
 
-                socket.emit("server-user-left-room", u.id);
+                socket.emit("server-user-left-room", { userId: u.id, playLogoutAnimation: true });
             })
 
             socket.emit("server-update-current-room-streams", toStreamSlotDtoArray(user, streams))
@@ -1963,7 +1963,7 @@ async function disconnectUser(user: Player)
     removeUser(user)
 
     userRoomEmit(user, user.areaId, user.roomId,
-        "server-user-left-room", user.id);
+        "server-user-left-room", { userId: user.id, playLogoutAnimation: true });
     emitServerStats(user.areaId)
 }
 

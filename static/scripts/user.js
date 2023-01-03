@@ -198,3 +198,23 @@ export default class User
         this.isSpinning = true;
     }
 }
+
+export function makeUserObjectFromDTO(userDTO, currentRoom)
+{
+    const newUser = new User(characters[userDTO.characterId], userDTO.name);
+    newUser.moveImmediatelyToPosition(
+        currentRoom,
+        userDTO.position.x,
+        userDTO.position.y,
+        userDTO.direction
+    );
+    newUser.lastMovement = userDTO.lastMovement;
+    newUser.isInactive = userDTO.isInactive;
+    newUser.message = userDTO.lastRoomMessage;
+    newUser.bubblePosition = userDTO.bubblePosition;
+    newUser.id = userDTO.id;
+    newUser.voicePitch = userDTO.voicePitch
+    newUser.isAlternateCharacter = userDTO.isAlternateCharacter
+
+    return newUser
+}

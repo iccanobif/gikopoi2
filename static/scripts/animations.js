@@ -65,3 +65,8 @@ export function animateJizou(jizouObject, users)
         return true
     }
 }
+
+export function animateLogoutAnimationObject()
+{
+    // TODO
+}

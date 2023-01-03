@@ -2,7 +2,7 @@
 localStorage.removeItem("debug");
 
 import { characters, loadCharacters } from "./character.js";
-import User from "./user.js";
+import { makeUserObjectFromDTO } from "./user.js";
 import {
     loadImage,
     calculateRealCoordinates,
@@ -114,6 +114,10 @@ window.vueApp = new Vue({
         selectedCharacter: null,
         socket: null,
         users: {},
+        // loggedOutUsers is needed pretty much only for the logout animation.
+        // Users who log out are temporarily moved to this list and kept here until
+        // their logout animation is done.
+        loggedOutUsers: [],
         roomLoadId: 0,
         currentRoom: {
             id: null,
@@ -593,7 +597,7 @@ window.vueApp = new Vue({
         updateRoomState: async function (dto)
         {
             const roomDto = dto.currentRoom
-            const usersDto = dto.connectedUsers
+            const userDTOs = dto.connectedUsers
             const streamsDto = dto.streams
 
             // if (!this.hideStreams && (dto.hideStreams || localStorage.getItem("hideStreams")))
@@ -618,13 +622,24 @@ window.vueApp = new Vue({
                 this.currentRoom.specialObjects[1].value = dto.coinCounter;
             }
 
-            this.users = {};
+            // this.users = {};
 
-            for (const u of usersDto)
+            for (const userDTO of userDTOs)
             {
-                this.addUser(u);
-                if(previousRoomId != this.currentRoom.id && this.users[u.id].message)
-                    this.displayUserMessage(u, this.users[u.id].message);
+                const user = makeUserObjectFromDTO(userDTO, this.currentRoom)
+                this.users[userDTO.id] = user;
+                if(previousRoomId != this.currentRoom.id && this.users[userDTO.id].message)
+                    this.displayUserMessage(userDTO, this.users[userDTO.id].message);
+            }
+
+            // Handled logged out users
+            // TODO: Only users that actually logged out (not users who simply moved through a portal) should go here
+            const loggedInUserIDs = new Set(userDTOs.map(u => u.id))
+            const loggedOutUserIDs = Object.keys(this.users).filter(id => !loggedInUserIDs.has(id))
+            for (const loggedOutUserID of loggedOutUserIDs)
+            {
+                this.loggedOutUsers.push(this.users[loggedOutUserID])
+                delete this.users[loggedOutUserID]
             }
 
             this.loadRoomBackground();
@@ -824,9 +839,13 @@ window.vueApp = new Vue({
                 this.isRedrawRequired = true;
             });
 
-            this.socket.on("server-user-left-room", (userId) =>
+            this.socket.on("server-user-left-room", ({ userId, playLogoutAnimation}) =>
             {
-                if (userId != this.myUserID) delete this.users[userId];
+                if (userId != this.myUserID) {
+                    if (playLogoutAnimation)
+                        this.loggedOutUsers.push(this.users[userId])
+                    delete this.users[userId];
+                }
                 this.updateCanvasObjects();
                 this.isRedrawRequired = true;
             });
@@ -946,21 +965,7 @@ window.vueApp = new Vue({
         },
         addUser: function (userDTO)
         {
-            const newUser = new User(characters[userDTO.characterId], userDTO.name);
-            newUser.moveImmediatelyToPosition(
-                this.currentRoom,
-                userDTO.position.x,
-                userDTO.position.y,
-                userDTO.direction
-            );
-            newUser.lastMovement = userDTO.lastMovement;
-            newUser.isInactive = userDTO.isInactive;
-            newUser.message = userDTO.lastRoomMessage;
-            newUser.bubblePosition = userDTO.bubblePosition;
-            newUser.id = userDTO.id;
-            newUser.voicePitch = userDTO.voicePitch
-            newUser.isAlternateCharacter = userDTO.isAlternateCharacter
-
+            const newUser = makeUserObjectFromDTO(userDTO, this.currentRoom)
             this.users[userDTO.id] = newUser;
         },
         writeMessageToLog: function(userName, msg, userId)
