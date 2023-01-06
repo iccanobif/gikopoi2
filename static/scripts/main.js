@@ -2314,6 +2314,7 @@ window.vueApp = new Vue({
         {
             const rtcPeer = new RTCPeer(defaultIceConfig, (type, msg) =>
             {
+                console.log(msg)
                 // TODO figure out if keeping this line causes issues.
                 // More privacy with candidates not being sent.
                 if(type == "candidate") return;
@@ -2354,6 +2355,8 @@ window.vueApp = new Vue({
                 console.error("icecandidateerror", ev, ev.errorCode, ev.errorText, ev.address, ev.url, ev.port)
             })
 
+            // Maybe it's better to use the connectionstatechange event and rtcPeer.conn.connectionState, 
+            // which in theory are a combination of the state of the ICE agent and DTLS agent.
             rtcPeer.conn.addEventListener("iceconnectionstatechange", (ev) =>
             {
                 const state = rtcPeer.conn.iceConnectionState;
