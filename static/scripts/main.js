@@ -2314,7 +2314,6 @@ window.vueApp = new Vue({
         {
             const rtcPeer = new RTCPeer(defaultIceConfig, (type, msg) =>
             {
-                console.log(msg)
                 // TODO figure out if keeping this line causes issues.
                 // More privacy with candidates not being sent.
                 if(type == "candidate") return;
