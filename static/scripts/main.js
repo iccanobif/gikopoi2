@@ -2753,7 +2753,16 @@ window.vueApp = new Vue({
         },
         stopStreaming: async function ()
         {
-            for (const track of this.mediaStream.getTracks()) track.stop();
+            // Note that when streaming audio, the audio track in this.mediaStream is the
+            // output of the outboundAudioProcessor. The "raw" input track is stopped
+            // by outboundAudioProcessor.dispose()
+            for (const track of this.mediaStream.getTracks()) track.stop()
+
+            if (this.outboundAudioProcessor)
+            {
+                await this.outboundAudioProcessor.dispose()
+                this.outboundAudioProcessor = null
+            }
 
             const streamSlotId = this.streamSlotIdInWhichIWantToStream;
 
@@ -2762,12 +2771,6 @@ window.vueApp = new Vue({
             document.getElementById("local-video-" + streamSlotId).srcObject = this.mediaStream = null;
 
             this.socket.emit("user-want-to-stop-stream");
-
-            if (this.outboundAudioProcessor)
-            {
-                await this.outboundAudioProcessor.dispose()
-                this.outboundAudioProcessor = null
-            }
 
             this.allowedListenerIDs = new Set()
 

@@ -179,6 +179,7 @@ export class AudioProcessor
 
     dispose()
     {
+        for (const track of this.stream.getTracks()) track.stop();
         clearInterval(this.vuMeterTimer)
         return this.context.close().catch(console.error)
     }
