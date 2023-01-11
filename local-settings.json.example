@@ -17,16 +17,16 @@
     "adminKey": "",
     "censoredWordsRegex": "(poop|peepee)",
     "noStreamIPs": [],
-    siteAreas: jsonContents.siteAreas || [
+    "siteAreas": [
         {
             "id": "one",
             "name": "One",
-            "restrictToLanguage": "ja",
+            "restrictToLanguage": "ja"
         },
         {
             "id": "two",
             "name": "Two",
             "unlisted": true
         }
-    ],
+    ]
 }
