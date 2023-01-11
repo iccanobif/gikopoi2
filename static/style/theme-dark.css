@@ -38,19 +38,19 @@
     border: 1px solid #686868;
 }
 
-::-webkit-scrollbar {
+.theme-dark ::-webkit-scrollbar {
     background-color: #28282b;
 }
 
-::-webkit-scrollbar-track {
+.theme-dark ::-webkit-scrollbar-track {
     background-color: #28282b;
 }
 
-::-webkit-scrollbar-thumb {
+.theme-dark ::-webkit-scrollbar-thumb {
     background-color: #686868;
 }
 
-::-webkit-scrollbar-corner {
+.theme-dark ::-webkit-scrollbar-corner {
     background-color: #28282b;
 }
 

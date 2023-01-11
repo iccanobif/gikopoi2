@@ -1025,6 +1025,7 @@ window.vueApp = new Vue({
                     const url = anchor.textContent;
                     anchor.href = (prefix == 'www.' ? 'http://' + url : url);
                     anchor.textContent = safeDecodeURI(url);
+                    anchor.rel = "noopener noreferrer";
                     return anchor.outerHTML;
                 });
 
@@ -1075,20 +1076,26 @@ window.vueApp = new Vue({
                 speak(plainMsg, this.ttsVoiceURI, this.voiceVolume, user.voicePitch)
             }
 
+            if (user.id != this.myUserID)
+                await this.displayNotification(this.toDisplayName(user.name) + ": " + plainMsg, this.getAvatarSpriteForUser(user.id))
+        },
+        displayNotification: async function(message, icon)
+        {
             if (window.Notification)
             {
                 if (!this.showNotifications
-                    || document.visibilityState == "visible"
-                    || user.id == this.myUserID) return;
+                    || document.visibilityState == "visible") return;
 
                 const permission = await requestNotificationPermission()
                 if (permission != "granted") return;
 
-                new Notification(this.toDisplayName(user.name) + ": " + plainMsg,
+                return new Notification(message,
                     {
-                        icon: this.getAvatarSpriteForUser(user.id)
+                        icon: icon
                     })
             }
+
+            return null
         },
         toDisplayName: function (name)
         {
@@ -2355,6 +2362,8 @@ window.vueApp = new Vue({
                 console.error("icecandidateerror", ev, ev.errorCode, ev.errorText, ev.address, ev.url, ev.port)
             })
 
+            // Maybe it's better to use the connectionstatechange event and rtcPeer.conn.connectionState, 
+            // which in theory are a combination of the state of the ICE agent and DTLS agent.
             rtcPeer.conn.addEventListener("iceconnectionstatechange", (ev) =>
             {
                 const state = rtcPeer.conn.iceConnectionState;
@@ -2403,15 +2412,14 @@ window.vueApp = new Vue({
                 {
                     const streamUser = this.users[newStream.userId]
                     const message = i18n.t("msg.stream_start_notification").replace("@USER_NAME@", this.toDisplayName(streamUser.name))
-                    const notification = new Notification(message,
-                        {
-                            icon: this.getAvatarSpriteForUser(newStream.userId)
+
+                    const notification = await this.displayNotification(message, this.getAvatarSpriteForUser(newStream.userId))
+
+                    if (notification)
+                        notification.addEventListener("click", (event) => {
+                            vueApp.wantToTakeStream(slotId);
+                            window.focus();
                         })
-        
-                    notification.addEventListener("click", (event) => {
-                        vueApp.wantToTakeStream(slotId);
-                        window.focus();
-                    })
                 }
             }
 
@@ -2753,7 +2761,16 @@ window.vueApp = new Vue({
         },
         stopStreaming: async function ()
         {
-            for (const track of this.mediaStream.getTracks()) track.stop();
+            // Note that when streaming audio, the audio track in this.mediaStream is the
+            // output of the outboundAudioProcessor. The "raw" input track is stopped
+            // by outboundAudioProcessor.dispose()
+            for (const track of this.mediaStream.getTracks()) track.stop()
+
+            if (this.outboundAudioProcessor)
+            {
+                await this.outboundAudioProcessor.dispose()
+                this.outboundAudioProcessor = null
+            }
 
             const streamSlotId = this.streamSlotIdInWhichIWantToStream;
 
@@ -2762,12 +2779,6 @@ window.vueApp = new Vue({
             document.getElementById("local-video-" + streamSlotId).srcObject = this.mediaStream = null;
 
             this.socket.emit("user-want-to-stop-stream");
-
-            if (this.outboundAudioProcessor)
-            {
-                await this.outboundAudioProcessor.dispose()
-                this.outboundAudioProcessor = null
-            }
 
             this.allowedListenerIDs = new Set()
 

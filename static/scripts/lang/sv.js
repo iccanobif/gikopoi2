@@ -63,6 +63,8 @@ export default
         user_list_popup_block: "Blockera",
         user_list_popup_close: "Stäng",
         user_list_popup_blurb: "Varning: När du ignorerar användare kommer du inte se dem, men de kommer fortfarande att se dig.<br>En blockerad användare fortsätter vara blockerad även efter återanslutning.",
+        // user_list_popup_give_stream: "",
+        // user_list_popup_revoke_stream: "",
         
         stream_form_title: "Ströminställningar",
         stream_form_mode: "Läge:",
@@ -123,6 +125,7 @@ export default
         preferences_language: "Språk",
         preferences_enable_coin_sound: "Ljudeffekter",
         preferences_show_log_above_toolbar: "Placera loggen ovanför verktygsraden",
+        // preferences_show_log_dividers: "",
 
         preferences_title_streams: "Strömmor",
         preferences_streams_auto_resume: "Automatisk återupptagning",

@@ -63,6 +63,8 @@ export default
         user_list_popup_block: "Block",
         user_list_popup_close: "Tutup",
         user_list_popup_blurb: "Warning: Ketika kamu mengabaikan pengguna, kamu tidak akan melihat mereka, tapi mereka akan melihat mu.<br>ketika kamu block pengguna, dia akan tetap diblokir bahkan jika dia terhubung kembali.",
+        // user_list_popup_give_stream: "",
+        // user_list_popup_revoke_stream: "",
         
         stream_form_title: "Pengaturan Siaran",
         stream_form_mode: "Mode:",
@@ -123,6 +125,7 @@ export default
         preferences_language: "Bahasa",
         preferences_enable_coin_sound: "SFX on",
         // preferences_show_log_above_toolbar: "",
+        // preferences_show_log_dividers: "",
 
         preferences_title_streams: "Siarkan",
         preferences_streams_auto_resume: "Otomatis Lanjutkan",

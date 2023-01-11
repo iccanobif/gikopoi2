@@ -63,6 +63,8 @@ export default
         user_list_popup_block: "Bloquear",
         user_list_popup_close: "Cerrar",
         user_list_popup_blurb: "Advertencia: cuando ignoras a un usuario, tú no lo verás, pero aún podrán verte a ti.<br>Cuando bloqueas a un usuario, permanecerá bloqueado incluso si vuelve a conectarse.",
+        // user_list_popup_give_stream: "",
+        // user_list_popup_revoke_stream: "",
         
         stream_form_title: "Configuración de Stream",
         stream_form_mode: "Modo:",
@@ -123,6 +125,7 @@ export default
         preferences_language: "Idioma",
         // preferences_enable_coin_sound: "Enable coin sound",
         // preferences_show_log_above_toolbar: "",
+        // preferences_show_log_dividers: "",
 
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",

@@ -28,8 +28,8 @@ export default
         button_stream_stop: "Yayını durdur",
         button_stream_take: "Yayını izle",
         button_stream_drop: "İzlemeyi bırak",
-        // button_stream_mute: "Mute",
-        // button_stream_unmute: "Unmute",
+        button_stream_mute: "Sessize al",
+        button_stream_unmute: "Sessizden çıkar",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Seçenekler",
@@ -124,7 +124,8 @@ export default
         preferences_ignore_indicator_in_log: "Defterde yoksayılan kullanıcıların gönderdiği mesajların yerine bir ibre gösterilir",
         preferences_language: "Dil",
         preferences_enable_coin_sound: "Ses efektleri",
-        // preferences_show_log_above_toolbar: "",
+        preferences_show_log_above_toolbar: "Sobhet defterini araç çubuğunun üzerinde göster",
+        preferences_show_log_dividers: "Sohbet defteri ayraçlarını göster",
 
         preferences_title_streams: "Yayınlar",
         preferences_streams_auto_resume: "Otomatik sürdür",
@@ -178,7 +179,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "Sohbet defterini temizlemek istediğine emin misin?",
         chat_log_cleared: "Sohbet defteri temizlendi.",
-        // stream_start_notification: "@USER_NAME@ has started a stream.",
+        stream_start_notification: "@USER_NAME@ yayın başlattı.",
     },
     room:
     {
@@ -224,9 +225,9 @@ export default
         monachat: "Monachat",
         konbini: "Bakkal",
         nerd_office: "Hacker Ofisi",
-        //admin_old: "",
-        // river: "",
-        // irori: "Fireplace",
+        admin_old: "Kayıp Salon",
+        river: "Nehir",
+        irori: "Şömine",
     },
     area:
     {

@@ -28,8 +28,8 @@ export default
         button_stream_stop: "Chiudi stream",
         button_stream_take: "Ricevi stream",
         button_stream_drop: "Interrompi stream",
-        // button_stream_mute: "Mute",
-        // button_stream_unmute: "Unmute",
+        // button_stream_mute: "",
+        // button_stream_unmute: "",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Impostazioni",
@@ -63,6 +63,8 @@ export default
         user_list_popup_block: "Blocca",
         user_list_popup_close: "Chiudi",
         user_list_popup_blurb: "Attenzione: Quando ignori un utente, tu non lo vedrai, ma lui potrà ancora vedere te.<br>Quando blocchi un utente, lui rimarrà bloccato anche se si riconnette.",
+        // user_list_popup_give_stream: "",
+        // user_list_popup_revoke_stream: "",
         
         stream_form_title: "Impostazioni streaming",
         stream_form_mode: "Modalità:",
@@ -81,10 +83,6 @@ export default
         // stream_form_stream_target: "",
         // stream_form_visible_to_all_room : "",
         // stream_form_visible_only_to_specific_users: "",
-        
-        stream_form_camera_facing: "Fotocamera telefono:",
-        stream_form_camera_facing_user: "Anteriore",
-        stream_form_camera_facing_environment: "Posteriore",
         stream_form_vtuber_mode: "Modalità VTuber",
 
         // device_selection_title: "",
@@ -127,6 +125,7 @@ export default
         preferences_language: "Lingua",
         // preferences_enable_coin_sound: "Enable coin sound",
         // preferences_show_log_above_toolbar: "",
+        // preferences_show_log_dividers: "",
 
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",

@@ -63,6 +63,8 @@ export default
         user_list_popup_block: "封鎖",
         user_list_popup_close: "關閉",
         user_list_popup_blurb: "隱藏：對方的訊息與角色不會出現在你的畫面中(註：對方仍可以看到你。)，對方重新登入後隱藏失效。<br>封鎖：雙方無法看到彼此的訊息與角色，解除封鎖需要重新啟動瀏覽器。",
+        // user_list_popup_give_stream: "",
+        // user_list_popup_revoke_stream: "",
         
         stream_form_title: "直播設定",
         stream_form_mode: "模式：",
@@ -123,6 +125,7 @@ export default
         preferences_language: "語言",
         // preferences_enable_coin_sound: "Enable coin sound",
         // preferences_show_log_above_toolbar: "",
+        // preferences_show_log_dividers: "",
 
         // preferences_title_streams: "",
         // preferences_streams_auto_resume: "",

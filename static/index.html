@@ -88,6 +88,7 @@
             </h2>
             <h2 v-if="connectionRefused">
                 {{ $t("msg.connection_refused") }}
+                <a href="/">{{ $t("ui.back_to_homepage") }}</a>
             </h2>
             <div id="main-section" v-bind:class="{'log-above-toolbar': showLogAboveToolbar}">
                 <div id="canvas-container" v-if="!connectionRefused">

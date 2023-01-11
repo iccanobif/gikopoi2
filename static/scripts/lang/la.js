@@ -23,8 +23,8 @@ export default
         button_stream_stop: "Transmissionem sistere",
         button_stream_take: "Transmissionem recipere",
         button_stream_drop: "Transmissionem interrumpere",
-        // button_stream_mute: "Mute",
-        // button_stream_unmute: "Unmute",
+        button_stream_mute: "Silentium facere",
+        button_stream_unmute: "Silentium interrumpere",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Praeferentiae",
@@ -72,7 +72,7 @@ export default
     },
     msg:
     {
-         goodbye: "Vade in pace!",
+        goodbye: "Vade in pace!",
     },
     room:
     {

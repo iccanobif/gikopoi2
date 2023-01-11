@@ -46,6 +46,8 @@ export function animateJizou(jizouObject, users)
     }
     else // return to base position, looking away from the camera
     {
+        // not checking currentFrame == 4 on purpose, so that if the user moves away right when the jizou is blinking, it gets stuck
+        // technically this is a bug, but it's funny so let's keep it.
         if (jizouObject.currentFrame == 3)
             jizouObject.currentFrame = 2
         else if (jizouObject.currentFrame == 2 && elapsedTime > 60)
