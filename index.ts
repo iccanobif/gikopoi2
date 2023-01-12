@@ -1149,7 +1149,7 @@ function emitServerStats(areaId: string)
     const allConnectedUsers = getAllUsers().filter(u => !u.isGhost)
     const logLineAreas = settings.siteAreas.map(area =>
     {
-        return area.id + " users: " + allConnectedUsers.filter(u => u.areaId == area.id) + " " +
+        return area.id + " users: " + allConnectedUsers.filter(u => u.areaId == area.id).length + " " +
             area.id + " streams: " + Object.values(roomStates[area.id]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
     }).join(" ")
     const allIps = new Set(allConnectedUsers.map(u => Array.from(u.ips.values())).flat())
