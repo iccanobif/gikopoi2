@@ -210,8 +210,7 @@ io.on("connection", function (socket: Socket)
 
     const sendNewUserInfo = () =>
     {
-        userRoomEmit(user, user.areaId, user.roomId,
-            "server-user-joined-room", toPlayerDto(user));
+        userRoomEmit(user, "server-user-joined-room", toPlayerDto(user));
     }
 
     socket.on("disconnect", async function ()
@@ -228,8 +227,7 @@ io.on("connection", function (socket: Socket)
             await clearStream(user) // This also calls emitServerStats(), but only if the user was streaming...
             emitServerStats(user.areaId)
             await clearRoomListener(user)
-            userRoomEmit(user, user.areaId, user.roomId,
-                "server-user-left-room", user.id);
+            userRoomEmit(user, "server-user-left-room", user.id);
             stopChessGame(roomStates, user)
         }
         catch (exc)
@@ -368,8 +366,7 @@ io.on("connection", function (socket: Socket)
             if (msg.toLowerCase().match(settings.censoredWordsRegex))
                 socket.emit("server-msg", user.id, msg) // if there's a bad word, show the message only to the guy who wrote it
             else
-                userRoomEmit(user, user.areaId, user.roomId,
-                    "server-msg", user.id, msg);
+                userRoomEmit(user, "server-msg", user.id, msg);
         }
         catch (e)
         {
@@ -471,8 +468,7 @@ io.on("connection", function (socket: Socket)
 
             }
 
-            userRoomEmit(user, user.areaId, user.roomId,
-                "server-move",
+            userRoomEmit(user, "server-move",
                 {
                     userId: user.id,
                     x: user.position.x,
@@ -497,8 +493,7 @@ io.on("connection", function (socket: Socket)
 
             user.bubblePosition = position;
 
-            userRoomEmit(user, user.areaId, user.roomId,
-                "server-bubble-position", user.id, position);
+            userRoomEmit(user, "server-bubble-position", user.id, position);
         }
         catch (e)
         {
@@ -839,8 +834,7 @@ io.on("connection", function (socket: Socket)
             await clearStream(user)
             await clearRoomListener(user)
             stopChessGame(roomStates, user)
-            userRoomEmit(user, user.areaId, user.roomId,
-                "server-user-left-room", user.id)
+            userRoomEmit(user, "server-user-left-room", user.id)
             socket.leave(user.areaId + user.roomId)
 
             if (targetDoorId == undefined)
@@ -958,7 +952,7 @@ io.on("connection", function (socket: Socket)
 
             log.info("user-ping", user.id)
             setUserAsActive(user)
-            userRoomEmit(user, user.areaId, user.roomId, "server-user-active", user.id);
+            userRoomEmit(user, "server-user-active", user.id);
         }
         catch (e)
         {
@@ -1060,7 +1054,7 @@ io.on("connection", function (socket: Socket)
             //get donation box
             roomStates[user.areaId][user.roomId].coinCounter += 10;
             //send the value to users
-            userRoomEmit(user, user.areaId, user.roomId, "special-events:server-add-shrine-coin" ,roomStates[user.areaId][user.roomId].coinCounter);
+            userRoomEmit(user, "special-events:server-add-shrine-coin", roomStates[user.areaId][user.roomId].coinCounter);
         }
         catch (e)
         {
@@ -1180,13 +1174,12 @@ function changeCharacter(user: Player, characterId: string, isAlternateCharacter
     user.characterId = characterId
     user.isAlternateCharacter = isAlternateCharacter
     user.lastAction = Date.now()
-    userRoomEmit(user, user.areaId, user.roomId, "server-character-changed", user.id, user.characterId, user.isAlternateCharacter)
+    userRoomEmit(user, "server-character-changed", user.id, user.characterId, user.isAlternateCharacter)
 }
 
-// TODO remove areaId and roomId parameters, we can get them from user.areaId and user.roomId
-function userRoomEmit(user: Player, areaId: string, roomId: string | null, ...msg: any[])
+function userRoomEmit(user: Player, ...msg: any[])
 {
-    for (const u of getFilteredConnectedUserList(user, roomId, areaId))
+    for (const u of getFilteredConnectedUserList(user, user.roomId, user.areaId))
         if (u.socketId)
             io.to(u.socketId).emit(...msg)
 }
@@ -1956,8 +1949,7 @@ async function disconnectUser(user: Player)
     await clearRoomListener(user)
     removeUser(user)
 
-    userRoomEmit(user, user.areaId, user.roomId,
-        "server-user-left-room", user.id);
+    userRoomEmit(user, "server-user-left-room", user.id);
     emitServerStats(user.areaId)
 }
 
@@ -2048,8 +2040,7 @@ setInterval(async () =>
                 // Make user transparent after 30 minutes without moving or talking
                 if (!user.isInactive && Date.now() - user.lastAction > inactivityTimeout)
                 {
-                    userRoomEmit(user, user.areaId, user.roomId,
-                        "server-user-inactive", user.id);
+                    userRoomEmit(user, "server-user-inactive", user.id);
                     user.isInactive = true
                     log.info(user.id, "is inactive", Date.now(), user.lastAction);
                 }
