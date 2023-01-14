@@ -19,7 +19,7 @@ export default class User
         this.isSpinning = false;
         this.isMoved = true;
         this.direction = "up";
-        this.stepLength = character.characterName ==  "onigiri" ? (1000/60) * 10 : (1000/60) * 8;
+        this.stepLength = this.character.characterName ==  "onigiri" ? (1000/60) * 10 : (1000/60) * 8;
         this.framesUntilNextStep = this.stepLength;
         this.frameCount = 0
         this.isInactive = false;

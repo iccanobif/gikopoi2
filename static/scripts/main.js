@@ -954,7 +954,10 @@ window.vueApp = new Vue({
         },
         addUser: function (userDTO)
         {
-            const newUser = new User(characters[userDTO.characterId], userDTO.name);
+            // Check that the characterId is valid (need to use hasOwnProperty() too to make sure that a characterId
+            // like "toString" is not used). If not valid, default to giko
+            const character = characters.hasOwnProperty(userDTO.characterId) ? characters[userDTO.characterId] : characters.giko;
+            const newUser = new User(character, userDTO.name);
             newUser.moveImmediatelyToPosition(
                 this.currentRoom,
                 userDTO.position.x,
