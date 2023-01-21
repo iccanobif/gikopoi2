@@ -416,6 +416,9 @@ video {
     flex-grow: 1;
     resize: vertical;
     min-width: 180px;
+    /* Strangely, the font-family rule applied to #vue-app in theory is effective on #input-textbox, but in practice
+       the text is rendered with the browser's default font unless I explicitly redefine the font-family rule here too. */
+    font-family: IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif;
 }
 
 .tooltip-section
