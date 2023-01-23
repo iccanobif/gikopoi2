@@ -282,6 +282,9 @@ window.vueApp = new Vue({
     },
     mounted: function ()
     {
+        if (this.appState == "redirect_notice")
+            return;
+
         console.log("%c(,,ﾟДﾟ)",
             "background-color: white; color: black; font-weight: bold; padding: 4px 6px; font-size: 50px",);
 
@@ -331,14 +334,9 @@ window.vueApp = new Vue({
         loadCharacterImagesPromise = loadCharacters(this.isCrispModeEnabled);
 
         const charSelect = document.getElementById("character-selection")
-        if (charSelect)
-        {
-            // charSelect can be undefined if this page is opened from the old gikopoi2.herokuapp.com url,
-            // in which case only an error message is displayed instead of the normal home page.
-            const charactersSelected = charSelect.getElementsByClassName("character-selected")
-            if (charactersSelected.length)
-                charactersSelected[0].scrollIntoView({block: "nearest"})
-        }
+        const charactersSelected = charSelect.getElementsByClassName("character-selected")
+        if (charactersSelected.length)
+            charactersSelected[0].scrollIntoView({block: "nearest"})
             
         document.getElementById("username-textbox").focus()
 
