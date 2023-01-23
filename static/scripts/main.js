@@ -331,10 +331,15 @@ window.vueApp = new Vue({
         loadCharacterImagesPromise = loadCharacters(this.isCrispModeEnabled);
 
         const charSelect = document.getElementById("character-selection")
-        const charactersSelected = charSelect.getElementsByClassName("character-selected")
-        if (charactersSelected.length)
-            charactersSelected[0].scrollIntoView({block: "nearest"})
-
+        if (charSelect)
+        {
+            // charSelect can be undefined if this page is opened from the old gikopoi2.herokuapp.com url,
+            // in which case only an error message is displayed instead of the normal home page.
+            const charactersSelected = charSelect.getElementsByClassName("character-selected")
+            if (charactersSelected.length)
+                charactersSelected[0].scrollIntoView({block: "nearest"})
+        }
+            
         document.getElementById("username-textbox").focus()
 
         if (window.speechSynthesis)
