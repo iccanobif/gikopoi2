@@ -1147,8 +1147,9 @@ function emitServerStats(areaId: string)
             area.id + " streams: " + Object.values(roomStates[area.id]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
     }).join(" ")
     const allIps = new Set(allConnectedUsers.map(u => Array.from(u.ips.values())).flat())
+    const allActiveIps = new Set(allConnectedUsers.filter(u => !u.isInactive).map(u => Array.from(u.ips.values())).flat())
 
-    log.info("Server stats:", logLineAreas, "total IPs:", allIps.size)
+    log.info("Server stats:", logLineAreas, "total IPs:", allIps.size, "active IPs:", allActiveIps.size)
 
     getConnectedUserList(null, areaId).forEach((u) =>
     {
