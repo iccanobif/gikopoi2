@@ -2971,6 +2971,10 @@ window.vueApp = new Vue({
             }
 
             this.isRedrawRequired = true
+            // Redraw usernames too because it's possible that a user was highlighted, then ignored,
+            // then unhighlighted, and then unignored. In that case, its name would appear red even if
+            // it's not highlighted anymore
+            this.isUsernameRedrawRequired = true
             this.$forceUpdate() // HACK: the v-if for the ignore and unignore buttons doesn't get automatically re-evaluated
         },
         blockUser: function(userId)
