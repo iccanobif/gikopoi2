@@ -28,8 +28,8 @@ export default
         button_stream_stop: "Sluta strömma",
         button_stream_take: "Hämta ström",
         button_stream_drop: "Släpp ström",
-        // button_stream_mute: "Mute",
-        // button_stream_unmute: "Unmute",
+        button_stream_mute: "Tyst",
+        button_stream_unmute: "Ljudlig",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Inställningar",
@@ -63,8 +63,8 @@ export default
         user_list_popup_block: "Blockera",
         user_list_popup_close: "Stäng",
         user_list_popup_blurb: "Varning: När du ignorerar användare kommer du inte se dem, men de kommer fortfarande att se dig.<br>En blockerad användare fortsätter vara blockerad även efter återanslutning.",
-        // user_list_popup_give_stream: "",
-        // user_list_popup_revoke_stream: "",
+        user_list_popup_give_stream: "Tillåt strömning",
+        user_list_popup_revoke_stream: "Återkalla strömningstillstånd",
         
         stream_form_title: "Ströminställningar",
         stream_form_mode: "Läge:",
@@ -125,7 +125,7 @@ export default
         preferences_language: "Språk",
         preferences_enable_coin_sound: "Ljudeffekter",
         preferences_show_log_above_toolbar: "Placera loggen ovanför verktygsraden",
-        // preferences_show_log_dividers: "",
+        preferences_show_log_dividers: "Avskilj inläggen med horisontella linjer",
 
         preferences_title_streams: "Strömmor",
         preferences_streams_auto_resume: "Automatisk återupptagning",
@@ -179,7 +179,7 @@ export default
         
         are_you_sure_you_want_to_clear_log: "Vill du verkligen rensa chattloggen",
         chat_log_cleared: "Chattloggen har rensats.",
-        // stream_start_notification: "@USER_NAME@ has started a stream.",
+        stream_start_notification: "@USER_NAME@ har börjat strömma.",
     },
     room:
     {
