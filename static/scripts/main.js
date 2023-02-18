@@ -329,7 +329,7 @@ window.vueApp = new Vue({
         // the button.
         document.addEventListener("mouseup", () => this.setMovementDirection(null))
 
-        this.setLanguage(this.getSiteArea().restrictToLanguage || this.language)
+        this.setLocale()
 
         loadCharacterImagesPromise = loadCharacters(this.isCrispModeEnabled);
 
@@ -491,9 +491,9 @@ window.vueApp = new Vue({
             await (loadCharacters(this.getSVGMode()));
             this.isRedrawRequired = true;
         },
-        setLanguage: function (code)
+        setLocale: function ()
         {
-            i18n.locale = code;
+            i18n.locale = this.getSiteArea().restrictToLanguage || this.language
         },
         getLangEntries: function()
         {
@@ -3147,7 +3147,7 @@ window.vueApp = new Vue({
         handleLanguageChange: function ()
         {
             this.storeSet('language');
-            this.setLanguage(this.language);
+            this.setLocale();
         },
         storeSet: function (itemName, value)
         {
