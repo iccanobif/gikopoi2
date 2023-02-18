@@ -212,6 +212,10 @@
                     <div id='chat-log-label'>{{ $t("ui.label_log") }}</div>
                     <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': underlinedUsernames, 'timestamps-in-copied-log': timestampsInCopiedLog, 'ignore-indicators-in-log': showIgnoreIndicatorInLog, 'log-dividers': showLogDividers}" v-on:keydown="handlechatLogKeydown($event)">
                     </div>
+                    <div id="dummyElement">
+                        <!-- This element is needed only to make chatLog.nextSibling return something, so that we can 
+                            use it with setBaseAndExtent() when pressing Ctrl+A to select the entire chat log -->
+                    </div>
                 </div>
             </div>
             <div id="video-streams" v-if="!connectionRefused">
