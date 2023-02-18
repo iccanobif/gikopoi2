@@ -183,38 +183,38 @@ export default
     },
     room:
     {
-        long_st: "Ungurio alėja", // Eel road/way/alley
+        long_st: "Ungurio alėja",
         jinja: "Šventykla",
         jinja_st: "Šventyklos įėjimas",
         school_ground: "Mokykla: Kiemas",
         bar774: "Požeminis Miestas: Baras 774",
-        izakaya774: "Požeminis Miestas: Girtuoklių Baras", // Izakaya Anonymous
+        izakaya774: "Požeminis Miestas: Girtuoklių Baras",
         basement: "Požeminis Miestas",
         bar: "Baras",
-        school_st: "Mokyklos Perėja", // School street
+        school_st: "Mokyklos Perėja",
         bar_st: "Baro Gatvė",
-        admin_st: "Kanrinin Gatvė", // Development Bureau/Department Street
-        admin: "Programuotojų Kambarys", // Development Bureau/Department
-        admin_bar: "Administracijos Baras", // Secret bar
-        cafe_st: "Cafe Vista", // Cafe street
+        admin_st: "Kanrinin Gatvė",
+        admin: "Programuotojų Kambarys",
+        admin_bar: "Administracijos Baras",
+        cafe_st: "Cafe Vista",
         enkai: "Banketų Salė",
         idoA: "Šulinys A",
         idoB: "Šulinys B",
         busstop: "Autobusų Stotelė",
         school: "Mokykla: Klasė",
         school_rouka: "Mokykla: Koridorius",
-        school_international: "Mokykla: Kultūros Kambarys", // International classroom
+        school_international: "Mokykla: Kultūros Kambarys",
         school_pc: "Mokykla: Kompiuterinė",
         seashore: "Krantas",
-        radio: "Radijo Studija", // Radio station
-        radio_room1: "Radijo Studija 1", // Radio station studio 1
-        radio_room2: "Radijo Studija 2: BEAT GIKO", // Radio station studio 2 BEAT GIKO
+        radio: "Radijo Studija",
+        radio_room1: "Radijo Studija 1",
+        radio_room2: "Radijo Studija 2: BEAT GIKO",
         radio_room3: "Radijo Studija 3: G-SQUID",
         radio_gakuya: "Radijo Studija: Rūbinė",
-        radio_backstage: "Radijo Studija: Užkulisiai", // Backstage/Behind the scenes/offstage
-        yatai: "Sušių pardavėjas", // (Ramen) vendor/stand/stall/food cart
+        radio_backstage: "Radijo Studija: Užkulisiai",
+        yatai: "Sušių pardavėjas",
         kaidan: "Kalvos laiptai",
-        takadai: "Kalvos viršūnė", // High ground/elevation
+        takadai: "Kalvos viršūnė",
         yoshinoya: "Jošinoja",
         silo: "Silosas",
         badend: "Nukritai savon mirtin!",

@@ -183,38 +183,38 @@ export default
     },
     room:
     {
-        long_st: "Yılanbalığı Yolu", // Eel road/way/alley
+        long_st: "Yılanbalığı Yolu",
         jinja: "Tapınak",
         jinja_st: "Tapınak Girişi",
         school_ground: "Okul: Okul Bahçesi",
         bar774: "Yeraltı Kasabası: Bar 774",
-        izakaya774: "Yeraltı Kasabası: Sarhoş'un Barı", // Izakaya Anonymous
+        izakaya774: "Yeraltı Kasabası: Sarhoş'un Barı",
         basement: "Yeraltı Kasabası",
         bar: "Bar",
-        school_st: "Okul kavşağı", // School street
+        school_st: "Okul kavşağı",
         bar_st: "Bar Sokağı",
-        admin_st: "Kanrinin Sokağı", // Development Bureau/Department Street
-        admin: "Geliştirici Salonu", // Development Bureau/Department
-        admin_bar: "Admin Barı", // Secret bar
-        cafe_st: "Cafe Vista", // Cafe street
+        admin_st: "Kanrinin Sokağı",
+        admin: "Geliştirici Salonu",
+        admin_bar: "Admin Barı",
+        cafe_st: "Cafe Vista",
         enkai: "Ziyafet Salonu",
         idoA: "Kuyu A",
         idoB: "Kuyu B",
         busstop: "Otobüs Durağı",
         school: "Okul: Sınıf",
         school_rouka: "Okul: Koridor",
-        school_international: "Okul: Kültür Odası", // International classroom
+        school_international: "Okul: Kültür Odası",
         school_pc: "Okul Bilgisayar Labı",
         seashore: "Deniz kıyısı",
-        radio: "Radyo Stüdyosu", // Radio station
-        radio_room1: "Radyo Stüdyosu 1", // Radio station studio 1
-        radio_room2: "Radyo Stüdyosu 2: BEAT GIKO", // Radio station studio 2 BEAT GIKO
+        radio: "Radyo Stüdyosu",
+        radio_room1: "Radyo Stüdyosu 1",
+        radio_room2: "Radyo Stüdyosu 2: BEAT GIKO",
         radio_room3: "Radyo Stüdyosu 3: G-SQUID",
         radio_gakuya: "Radyo Stüdyosu: Soyunma Odası",
-        radio_backstage: "Radyo Stüdyosu: Yeşil Oda", // Backstage/Behind the scenes/offstage
-        yatai: "Suşici", // (Ramen) vendor/stand/stall/food cart
+        radio_backstage: "Radyo Stüdyosu: Yeşil Oda",
+        yatai: "Suşici",
         kaidan: "Tepe merdivenleri",
-        takadai: "Doruk", // High ground/elevation
+        takadai: "Doruk",
         yoshinoya: "Yoshinoya",
         silo: "Silo",
         badend: "Düşüp öldün!",
