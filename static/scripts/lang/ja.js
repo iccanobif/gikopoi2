@@ -1,6 +1,7 @@
 export default
 {
     lang_name: "日本語",
+    lang_sort_key: "日本語",
     default_user_name: "名無しさん",
     message_colon: "：",
     test: "テスト",

@@ -1,6 +1,7 @@
 export default
 {
-    lang_name: "Lingua Latina (Minimal)",
+    lang_name: "Latina (Minimal)",
+    lang_sort_key: "Latina",
     default_user_name: "Nomen nescio",
     message_colon: ": ",
     ui:

@@ -1,6 +1,7 @@
 export default
 {
     lang_name: "Bahasa Indonesia",
+    lang_sort_key: "Indonesia",
     default_user_name: "Anonim",
     message_colon: ": ",
     test: "tes",

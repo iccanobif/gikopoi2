@@ -495,9 +495,27 @@ window.vueApp = new Vue({
         {
             i18n.locale = code;
         },
-        getLangCodes: function()
+        getLangEntries: function()
         {
-            return Object.keys(i18n.messages);
+            const topEntries = ["ja", "en"]
+            return Object.entries(i18n.messages)
+                .sort((a, b) =>
+            {
+                const ta = topEntries.indexOf(a[0])
+                const tb = topEntries.indexOf(b[0])
+                if(ta >= 0 || tb >= 0)
+                {
+                    if (ta < 0) return 1
+                    if (tb < 0) return -1
+                    return ta < tb ? -1 : 1
+                }
+                return a[1].lang_sort_key.localeCompare(b[1].lang_sort_key)
+            })
+                .map(([id, obj]) =>
+            {
+                return {id, name: obj.lang_name, endOfTopEntries: id == topEntries[topEntries.length-1]}
+            })
+                
         },
         getSiteArea: function()
         {

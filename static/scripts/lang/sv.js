@@ -1,6 +1,7 @@
 export default
 {
     lang_name: "Svenska",
+    lang_sort_key: "Svenska",
     default_user_name: "Okänd",
     message_colon: ": ",
     test: "test",

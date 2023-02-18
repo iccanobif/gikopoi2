@@ -1,6 +1,7 @@
 export default
 {
     lang_name: "Italiano",
+    lang_sort_key: "Italiano",
     default_user_name: "Anonimo",
     message_colon: ": ",
     test: "test",

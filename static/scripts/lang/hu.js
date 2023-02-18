@@ -1,6 +1,7 @@
 export default
 {
     lang_name: "Magyar",
+    lang_sort_key: "Magyar",
     default_user_name: "Névtelen",
     message_colon: ": ",
     test: "test",

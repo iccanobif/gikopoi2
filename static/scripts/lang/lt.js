@@ -1,6 +1,7 @@
 export default
 {
     lang_name: "Lietuvių",
+    lang_sort_key: "Lietuvių",
     default_user_name: "Anonymous",
     message_colon: ": ",
     test: "test",

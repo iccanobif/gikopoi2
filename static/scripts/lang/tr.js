@@ -1,6 +1,7 @@
 export default
 {
     lang_name: "Türkçe",
+    lang_sort_key: "Türkçe",
     default_user_name: "Anonim",
     message_colon: ": ",
     test: "test",

@@ -602,7 +602,10 @@
                         <div class='popup-item' v-if="!getSiteArea().restrictToLanguage">
                             <label for="preferences-language">{{ $t("ui.preferences_language") }}</label>
                             <select id="preferences-language" v-model="language" v-on:change="handleLanguageChange">
-                                <option v-for="langCode in getLangCodes()" :value="langCode">{{ $t("lang_name", langCode) }}</option>
+                                <template v-for="lang in getLangEntries()">
+                                    <option :value="lang.id">{{ lang.name }}</option>
+                                    <option disabled v-if="lang.endOfTopEntries">———</option>
+                                </template>
                             </select>
                         </div>
                     </div>
