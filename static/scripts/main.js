@@ -515,7 +515,6 @@ window.vueApp = new Vue({
             {
                 return {id, name: obj.lang_name, endOfTopEntries: id == topEntries[topEntries.length-1]}
             })
-                
         },
         getSiteArea: function()
         {
