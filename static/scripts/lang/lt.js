@@ -107,7 +107,7 @@ export default
         preferences_tts_voice: "Balsas",
         preferences_tts_voice_automatic: "Automatinis",
         preferences_tts_voice_animalese: "Žvėriukiškas",
-        notifications_are_denied: "Šiuo metu puslapis negali rodyti žinučių.\Pasitikrinkite savo naršyklės nustatymus.",
+        notifications_are_denied: "Šiuo metu puslapis negali rodyti žinučių.\nPasitikrinkite savo naršyklės nustatymus.",
         preferences_title_general: "Bendri",
         preferences_title_game: "Žaidimas",
         preferences_title_toolbar: "Įrankių juosta",
