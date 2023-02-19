@@ -491,9 +491,9 @@ window.vueApp = new Vue({
             await (loadCharacters(this.getSVGMode()));
             this.isRedrawRequired = true;
         },
-        setLocale: function ()
+        setLocale: function (code)
         {
-            i18n.locale = this.getSiteArea().restrictToLanguage || this.language
+            i18n.locale = code || this.getSiteArea().restrictToLanguage || this.language
         },
         getLangEntries: function()
         {
