@@ -16,7 +16,7 @@ interface PoiPoiSettings
     adminKey: string
     censoredWordsRegex: string
     noStreamIPs: string[],
-    siteAreas: { id: string, name: string, restrictToLanguage?: string, unlisted?: boolean }[]
+    siteAreas: { id: string, name: string, language?: string, restrictLanguage?: boolean, unlisted?: boolean }[]
 }
 
 let jsonContents: PoiPoiSettings;

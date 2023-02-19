@@ -93,8 +93,12 @@ function getDefaultAreaId()
     areaId = areaId || localStorage.getItem("areaId")
     if (window.siteAreas.find(area => area.id == areaId))
         return areaId
-    else
-        return window.siteAreas[0].id
+    
+    const siteArea =
+        window.siteAreas.find(area => area.language != "any" && (new RegExp("^" + area.language + "\\b")).test(navigator.language))
+        || window.siteAreas.find(area => area.language == "any")
+    if (siteArea) return siteArea.id
+    return window.siteAreas[0].id
 }
 
 function getAppState()
@@ -493,8 +497,10 @@ window.vueApp = new Vue({
         },
         setLocale: function (code)
         {
-            i18n.locale = code || this.getSiteArea().restrictToLanguage || this.language
+            const siteArea = this.getSiteArea()
+            i18n.locale = code || (siteArea.restrictLanguage && siteArea.language) || this.language
             document.title = i18n.t("ui.title")
+            document.getElementsByTagName('meta')["description"].content = i18n.t("ui.subtitle")
         },
         getLangEntries: function()
         {
