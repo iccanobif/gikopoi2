@@ -26,8 +26,8 @@ try
     const fileStringContents = readFileSync("local-settings.json", { encoding: "utf8" })
     jsonContents = JSON.parse(fileStringContents)
 }
-catch {
-    log.warn("No local-settings.json file found")
+catch(err) {
+    log.warn("Error reading local-settings.json file: " + err)
 
     jsonContents = JSON.parse(process.env.GIKO2_SETTINGS || "{}" as string)
 }
