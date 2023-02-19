@@ -494,6 +494,7 @@ window.vueApp = new Vue({
         setLocale: function (code)
         {
             i18n.locale = code || this.getSiteArea().restrictToLanguage || this.language
+            document.title = i18n.t("ui.title")
         },
         getLangEntries: function()
         {
