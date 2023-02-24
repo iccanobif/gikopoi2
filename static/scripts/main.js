@@ -199,8 +199,9 @@ window.vueApp = new Vue({
         isLoginSoundEnabled: localStorage.getItem("isLoginSoundEnabled") != "false",
         isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
         customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
+        customMentionRegexObject: null,
+        usernameMentionRegexObject: null,
         isCoinSoundEnabled: localStorage.getItem("isCoinSoundEnabled") != "false",
-        mentionSoundFunction: null,
         isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
         isStreamInboundVuMeterEnabled: localStorage.getItem("isStreamInboundVuMeterEnabled") != "false",
         showLogAboveToolbar: localStorage.getItem("showLogAboveToolbar") == "true",
@@ -354,8 +355,6 @@ window.vueApp = new Vue({
                 })
             }
         }
-
-        this.setMentionSoundFunction()
 
         this.devicePixelRatio = this.getDevicePixelRatio();
     },
@@ -661,6 +660,7 @@ window.vueApp = new Vue({
                 if(previousRoomId != this.currentRoom.id && this.users[u.id].message)
                     this.displayUserMessage(u, this.users[u.id].message);
             }
+            this.setMentionRegexObjects()
 
             this.loadRoomBackground();
             this.loadRoomObjects();
@@ -1054,10 +1054,19 @@ window.vueApp = new Vue({
                     anchor.innerHTML = htmlUrl;
                     const url = anchor.textContent;
                     anchor.href = (prefix == 'www.' ? 'http://' + url : url);
-                    anchor.textContent = safeDecodeURI(url);
                     anchor.rel = "noopener noreferrer";
                     return anchor.outerHTML;
-                });
+                })
+            if (userId) // Only mark mentions in user messages
+                bodySpan.childNodes.forEach(node =>
+                {
+                    let el = node.nodeType == 3
+                        ? document.createElement("span")
+                        : node
+                    el.innerHTML = this.markMentions(node.textContent)
+                    if (node.nodeType == 3)
+                        bodySpan.replaceChild(el, node)
+                })
 
             messageDiv.append(timestampSpan);
             messageDiv.append(authorSpan);
@@ -1094,8 +1103,7 @@ window.vueApp = new Vue({
 
             if (this.soundEffectVolume > 0)
             {
-                if (this.mentionSoundFunction &&
-                    this.mentionSoundFunction(plainMsg))
+                if (this.checkIfMentioned(plainMsg))
                     document.getElementById("mention-sound").play();
                 else if (this.isMessageSoundEnabled)
                     document.getElementById("message-sound").play();
@@ -3202,38 +3210,91 @@ window.vueApp = new Vue({
             }
             this.storeSet("showNotifications")
         },
-        setMentionSoundFunction: function ()
+        setMentionRegexObjects: function ()
         {
-            this.customMentionSoundPattern =
-                this.customMentionSoundPattern.trim();
-            const match = this.customMentionSoundPattern
-                .match(/^\/(.*)\/([a-z]*)$/);
-
-            const re_object = match
-                ? new RegExp(match[1], match[2])
-                : null;
-            let words = match
-                ? []
-                : this.customMentionSoundPattern.split(',')
-                    .map(word => word.trim().toLowerCase()).filter(word => word);
-
-            this.mentionSoundFunction = (msg) =>
+            function wordsToRegexObject(words)
             {
-                if (re_object)
+                return new RegExp(
+                    "("
+                    + words
+                        .map(word => word.trim().toLowerCase())
+                        .filter(word => word)
+                        .map(word => word.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')) // Escapes regex special chars
+                        .join("|")
+                    + ")", "ig")
+            }
+            
+            const customMentionSoundPattern = this.customMentionSoundPattern.trim();
+            
+            if (customMentionSoundPattern)
+            {
+                const match = customMentionSoundPattern.match(/^\/(.*)\/([a-z]*)$/)
+                this.customMentionRegexObject = match
+                    ? new RegExp(match[1], match[2].includes("g") ? match[2] : match[2] + "g")
+                    : wordsToRegexObject(customMentionSoundPattern.split(','))
+            }
+            else
+            {
+                this.customMentionRegexObject = null
+            }
+            
+            this.usernameMentionRegexObject = null
+            if (!(this.myUserID in this.users) || !this.isNameMentionSoundEnabled) return
+            this.usernameMentionRegexObject = wordsToRegexObject(
+                this.toDisplayName(this.users[this.myUserID].name).split("◆"))
+        },
+        markMentions: function(msg)
+        {
+            function regexReplace(stringArray, regex, replacement)
+            {
+                // function could be used later for other formatting things.
+                // skips arrays within the array, and puts replaced parts of the
+                // string into their own subarrays to mark which ones have been done to avoid double matching.
+                // this prevents overlapping of mention <span>s and matching html that was inserted
+                if (!regex) return stringArray
+                return stringArray.map(s =>
                 {
-                    const res = re_object.test(msg)
-                    re_object.lastIndex = 0;
-                    if (res) return true;
-                }
-                const lmsg = msg.toLowerCase()
-                if (this.isNameMentionSoundEnabled && this.users[this.myUserID])
-                {
-                    const name = this.toDisplayName(this.users[this.myUserID].name).trim().toLowerCase();
-                    if (name.split("◆").some(word => word && lmsg.includes(word))) return true;
-                }
-
-                return words.some(word => lmsg.includes(word));
-            };
+                    if (typeof s != "string") return [s]
+                    
+                    const rs = []
+                    let match = null
+                    while (match = regex.exec(s))
+                    {
+                        if (match[0] == "") break
+                        if (match.index > 0)
+                            rs.push(s.slice(0, match.index))
+                        rs.push([
+                            typeof replacement == "string"
+                            ? replacement
+                            : replacement(match[0])])
+                        s = s.slice(regex.lastIndex)
+                        regex.lastIndex = 0
+                    }
+                    if (s)
+                        rs.push(s)
+                    return rs
+                }).flat()
+            }
+            function replacementFunction(word)
+            {
+                return "<span class='message-mention'>" + word + "</span>"
+            }
+            msg = [msg]
+            msg = regexReplace(msg, this.customMentionRegexObject, replacementFunction)
+            msg = regexReplace(msg, this.usernameMentionRegexObject, replacementFunction)
+            return msg.flat().join("")
+        },
+        checkIfMentioned: function(msg)
+        {
+            function test(ro, s)
+            {
+                if (!ro) return false
+                const isMatch = ro.test(s)
+                ro.lastIndex = 0
+                return isMatch
+            }
+            return test(this.customMentionRegexObject, msg)
+                || test(this.usernameMentionRegexObject, msg)
         },
         handleLowQualityEnabled: function ()
         {
@@ -3247,13 +3308,13 @@ window.vueApp = new Vue({
         },
         handleNameMentionSoundEnabled: function ()
         {
-            this.storeSet('isNameMentionSoundEnabled');
-            this.setMentionSoundFunction();
+            this.storeSet('isNameMentionSoundEnabled')
+            this.setMentionRegexObjects()
         },
         handleCustomMentionSoundPattern: function ()
         {
-            this.storeSet('customMentionSoundPattern');
-            this.setMentionSoundFunction();
+            this.storeSet('customMentionSoundPattern')
+            this.setMentionRegexObjects()
         },
         handleEnableTextToSpeech: function ()
         {

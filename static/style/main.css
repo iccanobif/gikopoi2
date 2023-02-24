@@ -132,6 +132,11 @@ input[type='range']
     overflow: hidden; /* overflow: clip doesn't work on safari */
 }
 
+.message .message-mention
+{
+	font-weight: bold;
+}
+
 .video-container
 {
     z-index: 150;
