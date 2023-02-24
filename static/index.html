@@ -682,11 +682,11 @@
                                 v-model="isMessageSoundEnabled" v-on:change="storeSet('isMessageSoundEnabled')"><label
                                 for="preferences-message-sound-enabled">{{ $t("ui.preferences_message_sound_enabled") }}</label>
                         </div>
-            <div class='popup-item'>
-                <input type="checkbox" id="enable-coin-sound"
-                               v-model="isCoinSoundEnabled" v-on:change="toggleCoinSound"><label
-                   for="enable-coin-sound">{{ $t("ui.preferences_enable_coin_sound")}}</label>
-            </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="enable-coin-sound"
+                                           v-model="isCoinSoundEnabled" v-on:change="toggleCoinSound"><label
+                               for="enable-coin-sound">{{ $t("ui.preferences_enable_coin_sound")}}</label>
+                        </div>
                         <div class='popup-item'>
                             <input type="checkbox" id="preferences-name-mention-sound-enabled"
                                 v-model="isNameMentionSoundEnabled" v-on:change="handleNameMentionSoundEnabled"><label
