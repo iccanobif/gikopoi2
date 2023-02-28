@@ -121,6 +121,7 @@ export default
         preferences_underlined_usernames: "Garis bawahi Nama Pengguna",
         preferences_low_quality: "Kualitas Rendah",
         preferences_crisp_mode: "Tajam",
+        // preferences_disable_animations: "",
         preferences_timestamps_in_copied_log: "Sertakan waktu dalam log yang disalin",
         preferences_ignore_indicator_in_log: "Tampilan pesan pengganti di dalam log yang menggantikan pesan dari pengguna yang diabaikan.",
         preferences_language: "Bahasa",

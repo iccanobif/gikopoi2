@@ -121,6 +121,7 @@ export default
         preferences_underlined_usernames: "Kullanıcı İsimlerinin Altını Çiz",
         preferences_low_quality: "Düşük Kalite",
         preferences_crisp_mode: "Canlı",
+        // preferences_disable_animations: "",
         preferences_timestamps_in_copied_log: "Kopyalanan defterler zaman bilgisini içerir",
         preferences_ignore_indicator_in_log: "Defterde yoksayılan kullanıcıların gönderdiği mesajların yerine bir ibre gösterilir",
         preferences_language: "Dil",

@@ -121,6 +121,7 @@ export default
         preferences_underlined_usernames: "Benutzernamen unterstreichen",
         preferences_low_quality: "Geringe Qualität",
         preferences_crisp_mode: "Knackig",
+        preferences_disable_animations: "Animationen deaktivieren",
         preferences_timestamps_in_copied_log: "Zeitstempel in den kopierten Logs aufnehmen",
         preferences_ignore_indicator_in_log: "Einen Indikator anstelle der Nachrichten ignorierter Benutzer im log anzeigen",
         preferences_language: "Sprache",

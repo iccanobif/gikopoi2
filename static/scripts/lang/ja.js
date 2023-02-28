@@ -121,6 +121,7 @@ export default
         preferences_underlined_usernames: "ログの名前にアンダーラインを付ける",
         preferences_low_quality: "低画質",
         preferences_crisp_mode: "シャープ",
+        preferences_disable_animations: "アニメーションを無効化",
         preferences_timestamps_in_copied_log: "コピーしたログに時刻を含む",
         preferences_ignore_indicator_in_log: "一方あぼーんされたユーザーからのログの代わりにインジケーターを表示",
         preferences_language: "言語",

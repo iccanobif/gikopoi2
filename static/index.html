@@ -724,6 +724,11 @@
                                 v-model="isCrispModeEnabled" v-on:change="handleCrispModeEnabled"><label
                                 for="preferences-crisp-mode">{{ $t("ui.preferences_crisp_mode") }}</label>
                         </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-disable-animations"
+                                v-model="isAnimationDisabled" v-on:change="handleAnimationDisabled"><label
+                                for="preferences-disable-animations">{{ $t("ui.preferences_disable_animations") }}</label>
+                        </div>
                     </div>
                     <div class='popup-section'>
                         <div class='popup-header'>{{ $t("ui.preferences_title_streams") }}</div>

@@ -121,6 +121,7 @@ export default
         preferences_underlined_usernames: "Subrayar nombres de usuario",
         preferences_low_quality: "Baja calidad",
         preferences_crisp_mode: "Nítido",
+        // preferences_disable_animations: "",
         preferences_timestamps_in_copied_log: "Incluir fecha y hora en logs copiados",
         preferences_ignore_indicator_in_log: "Mostrar en logs un indicador para mensajes de usuarios ignorados",
         preferences_language: "Idioma",

@@ -162,6 +162,7 @@ window.vueApp = new Vue({
         userCanvasScaleStart: null,
         isLowQualityEnabled: localStorage.getItem("isLowQualityEnabled") == "true",
         isCrispModeEnabled: localStorage.getItem("isCrispModeEnabled") == "true",
+        isAnimationDisabled: localStorage.getItem("isAnimationDisabled") == "true",
         blockWidth: BLOCK_WIDTH,
         blockHeight: BLOCK_HEIGHT,
         devicePixelRatio: null,
@@ -1932,15 +1933,18 @@ window.vueApp = new Vue({
             const delta = this.lastFrameTimestamp === null ? 0 : timestamp - this.lastFrameTimestamp;
 
             this.lastFrameTimestamp = timestamp
-
-            if(animateObjects(this.canvasObjects, this.users))
-                this.isRedrawRequired = true
             
-            // apply animation logic
-            const furimukuJizou = this.canvasObjects.find(o => o.o.id == "moving_jizou")
-            if (furimukuJizou)
-                if (animateJizou(furimukuJizou.o, this.users))
+            if (!this.isAnimationDisabled)
+            {
+                if(animateObjects(this.canvasObjects, this.users))
                     this.isRedrawRequired = true
+                
+                // apply animation logic
+                const furimukuJizou = this.canvasObjects.find(o => o.o.id == "moving_jizou")
+                if (furimukuJizou)
+                    if (animateJizou(furimukuJizou.o, this.users))
+                        this.isRedrawRequired = true
+            }
 
             this.paint(delta)
 
@@ -3333,6 +3337,11 @@ window.vueApp = new Vue({
         handleCrispModeEnabled: function ()
         {
             this.storeSet('isCrispModeEnabled');
+            this.reloadImages()
+        },
+        handleAnimationDisabled: function ()
+        {
+            this.storeSet('isAnimationDisabled');
             this.reloadImages()
         },
         handleNameMentionSoundEnabled: function ()

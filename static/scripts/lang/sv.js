@@ -121,6 +121,7 @@ export default
         preferences_underlined_usernames: "Stryk under användarnamn",
         preferences_low_quality: "Låg kvalitet",
         preferences_crisp_mode: "Skarp",
+        // preferences_disable_animations: "",
         preferences_timestamps_in_copied_log: "Inkludera tidsstämplar i kopierad logg",
         preferences_ignore_indicator_in_log: "Ersätt meddelanden från ignorerade användare med en indikator i loggen.",
         preferences_language: "Språk",

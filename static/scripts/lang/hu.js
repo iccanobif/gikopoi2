@@ -121,6 +121,7 @@ export default
         preferences_underlined_usernames: "Felhasználónevek aláhúzása",
         preferences_low_quality: "Alacsony minőség",
         preferences_crisp_mode: "Éles mód",
+        // preferences_disable_animations: "",
         preferences_timestamps_in_copied_log: "Időbélyeg megjelenítése a másolt naplókban",
         preferences_ignore_indicator_in_log: "Jelek beillesztése a naplóba eltüntetett felhasználók üzenetei helyett",
         preferences_language: "Nyelv",
