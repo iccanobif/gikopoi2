@@ -84,6 +84,7 @@ export interface Room
                 }
             }
             frameDelay?: number;
+            cycleShift?: number;
         }
         scale?: number;
         offset?: {

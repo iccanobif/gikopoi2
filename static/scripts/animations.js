@@ -81,7 +81,7 @@ export function animateObjects(canvasObjects, users)
             if (mainScene.frames.length == 0 || typeof mainScene.frames[0] == "string" || !mainScene.frames[0].image) return false
             
             const totalLength = mainScene.frames.reduce((accLength, frame) => accLength + frame.frameDelay , 0)
-            const currentTime = now % totalLength
+            const currentTime = (now+(object.animation.cycleShift || 0)) % totalLength
             let accLength = 0
             const currentFrame = mainScene.frames.find(frame =>
             {
