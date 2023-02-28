@@ -65,3 +65,37 @@ export function animateJizou(jizouObject, users)
         return true
     }
 }
+
+export function animateObjects(canvasObjects, users)
+{
+    const now = Date.now();
+    return canvasObjects
+        .filter(o => o.o.animation)
+        .map(o => o.o)
+        .map(object =>
+    {
+        if (object.animation.type == "cycle")
+        {
+            if (!object.animation.scenes["main"]) return false
+            const mainScene = object.animation.scenes["main"]
+            if (mainScene.frames.length == 0 || typeof mainScene.frames[0] == "string" || !mainScene.frames[0].image) return false
+            
+            const totalLength = mainScene.frames.reduce((accLength, frame) => accLength + frame.frameDelay , 0)
+            const currentTime = now % totalLength
+            let accLength = 0
+            const currentFrame = mainScene.frames.find(frame =>
+            {
+                accLength += frame.frameDelay
+                return currentTime < accLength
+            })
+            
+            const isDifferentFrame = object.animation.currentFrame != currentFrame
+            object.animation.currentFrame = currentFrame
+            
+            object.image = currentFrame.image
+            return isDifferentFrame
+        }
+        
+        return false
+    }).some(isRedrawRequired => isRedrawRequired)
+}

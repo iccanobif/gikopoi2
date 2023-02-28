@@ -441,7 +441,8 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  1, y:  7, offset: { x: 1205-320, y:  936-300 }, url: "radio.svg" },
             { x:  0, y: 10, offset: { x: 1272-320, y:  887-300 }, url: "telescope.svg" },
             { x:  0, y: 12, offset: { x: 1352-320, y:  847-300 }, url: "telescope.svg" },
-            { x:  5, y:  5, offset: { x: 1290-320, y: 1076-300 }, url: "fire.svg" },
+            { x:  5, y:  5, offset: { x: 1290-320, y: 1076-300 }, url: "fire/1.svg",
+                animation: { type: "cycle", scenes: { "main": { frames: { "prefix": "fire/", amount: 4, suffix: ".svg" } } }, frameDelay: 250 } },
             { x:  8, y:  0, offset: { x: 1178-320, y: 1124-300 }, url: "denwa_box.svg" },
             { x:  8, y:  2, offset: { x: 1285-320, y: 1218-300 }, url: "jizou_mini.svg" },
             { x:  8, y:  3, offset: { x: 1317-320, y: 1171-300 }, url: "jizou_0.svg" },
@@ -1208,8 +1209,10 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  2, y:  7, offset: { x: 366, y:   93 }, url: "polish.svg" },
             { x:  2, y:  9, offset: { x: 446, y:   53 }, url: "polish.svg" },
             
-            { x:  7, y:  6, offset: { x: 531, y:  219 }, url: "fountain.svg" },
-            //{ x:  6, y:  7, offset: { x: 514, y:  241 }, url: "fountain_water_surface.svg" },
+            { x:  7, y:  6, offset: { x: 531, y:  219 }, url: "hunsui/1.svg",
+                animation: { type: "cycle", scenes: { "main": { frames: { "prefix": "hunsui/", amount: 2, suffix: ".svg" } } }, frameDelay: 80 } },
+            { x:  6, y:  7, offset: { x: 514, y:  225 }, url: "water/1.svg",
+                animation: { type: "cycle", scenes: { "main": { frames: { "prefix": "water/", amount: 5, suffix: ".svg" } } }, frameDelay: 80 } },
         ],
         sit: [
             { x:  0, y:  0 },

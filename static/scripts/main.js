@@ -24,7 +24,7 @@ import messages from "./lang.js";
 import { speak } from "./tts.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";
-import { animateJizou } from "./animations.js";
+import { animateObjects, animateJizou } from "./animations.js";
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -606,18 +606,44 @@ window.vueApp = new Vue({
             const promises = Object
                 .values(this.currentRoom.objects)
                 .map(async o => {
-                    // url can be either a single string or an array of strings for objects that can be animated
-                    const urls = typeof o.url == "string" ? [o.url] : o.url
-
-                    const images = await Promise.all(urls.map(url => loadImage("rooms/" + this.currentRoom.id + "/" + url.replace(".svg", urlMode + ".svg"))))
-                    
-                    const scale = o.scale ? o.scale : 1;
                     if (this.roomLoadId != roomLoadId)
                         return;
-                    o.allImages = images.map(i => RenderCache.Image(i, scale))
-                    o.image = o.allImages[0]
+                    
+                    const loadRoomImage = async (url) =>
+                    {
+                        return loadImage("rooms/" + this.currentRoom.id + "/" + url.replace(".svg", urlMode + ".svg"))
+                    }
+                    
+                    const scale = o.scale ? o.scale : 1;
                     o.physicalPositionX = o.offset ? o.offset.x * scale : 0;
                     o.physicalPositionY = o.offset ? o.offset.y * scale : 0;
+                    
+                    // url can be either a single string or an array of strings for objects that can be animated
+                    const urls = typeof o.url == "string" ? [o.url] : o.url
+                    
+                    const scenes = o.animation ? o.animation.scenes : []
+                    
+                    await Promise.all([
+                        Promise.all(urls.map(url => loadRoomImage(url).then(image => RenderCache.Image(image, scale))))
+                            .then(images => // loadRoomImage(o.url).then(image => { o.image = RenderCache.Image(image, scale) }),
+                        {
+                            o.allImages = images
+                            o.image = images[0]
+                        }),
+                        Object.values(scenes).map(s =>
+                        {
+                            if (!Array.isArray(s.frames))
+                            {
+                                s.frames = Array.from({length: s.frames.amount}, (v, i) => { return { url: s.frames.prefix + (i+1) + s.frames.suffix } })
+                            }
+                            return s.frames.map((f, i) =>
+                            {
+                                s.frames[i] = typeof f == "string" ? { url: f } : f
+                                s.frames[i].frameDelay = s.frames[i].frameDelay || s.frameDelay || o.animation.frameDelay
+                                return loadRoomImage(s.frames[i].url).then(image => { s.frames[i].image = RenderCache.Image(image, scale) })
+                            })
+                        }).flat()
+                    ])
                     this.isRedrawRequired = true;
                 })
                 .flat()
@@ -1907,6 +1933,9 @@ window.vueApp = new Vue({
 
             this.lastFrameTimestamp = timestamp
 
+            if(animateObjects(this.canvasObjects, this.users))
+                this.isRedrawRequired = true
+            
             // apply animation logic
             const furimukuJizou = this.canvasObjects.find(o => o.o.id == "moving_jizou")
             if (furimukuJizou)

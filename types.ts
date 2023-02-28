@@ -67,6 +67,24 @@ export interface Room
         width?: number;
         height?: number;
         url: string | string[];
+        animation?:
+        {
+            type: string;
+            scenes: {
+                [sceneId: string]: {
+                    frames: {
+                        prefix: string;
+                        suffix: string;
+                        amount: number;
+                    } | (string | {
+                        url: string;
+                        frameDelay?: number;
+                    })[],
+                    frameDelay?: number;
+                }
+            }
+            frameDelay?: number;
+        }
         scale?: number;
         offset?: {
             x: number;
