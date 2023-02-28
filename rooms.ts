@@ -3168,6 +3168,13 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  6, y:  9, offset: { x: 1131, y:  494 }, url: 'seat.svg' },
             { x:  6, y: 10, offset: { x: 1171, y:  486 }, url: 'seat.svg' },
             { x:  6, y: 11, offset: { x: 1211, y:  479 }, url: 'seat.svg' },
+            
+            { x:  -2, y:  15, offset: { x: -231, y:  183 }, url: 'water/1.svg',
+                animation: { type: "cycle", scenes: { "main": { frames: { "prefix": "water/", amount: 120, suffix: ".svg" } } }, frameDelay: 80 } },
+            { x:  -1, y:  14, offset: { x:  500+223, y:  338+120 }, url: 'waves/1.svg', scale: 0.8,
+                animation: { type: "cycle", scenes: { "main": { frames: { "prefix": "waves/", amount: 151, suffix: ".svg" } } }, frameDelay: 80 } },
+            { x:  -1, y:  14, offset: { x:  500+223, y:  338+120 }, url: 'waves/1.svg', scale: 0.8,
+                animation: { type: "cycle", scenes: { "main": { frames: { "prefix": "waves/", amount: 151, suffix: ".svg" } } }, frameDelay: 80, cycleShift: 4800 } },
         ],
         sit: [
             { x:  2, y:  6 },
