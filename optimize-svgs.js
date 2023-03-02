@@ -1,16 +1,17 @@
-const { optimize } = require('svgo');
+const { optimize, loadConfig } = require('svgo');
 const fs = require("fs/promises")
 
+let svgoConfig
 const charactersDirectory = "static/characters"
 const roomsDirectory = "static/rooms"
 
 async function optimizeFile(fileFullName)
 {
+    if (!svgoConfig)
+        svgoConfig = await loadConfig(); // loads svgo.config.js from the cwd
+    
     const svgString = await fs.readFile(fileFullName)
-    const result = optimize(svgString, {
-        path: fileFullName,
-        multipass: true,
-    });
+    const result = optimize(svgString, { path: fileFullName, ...svgoConfig });
 
     await fs.writeFile(fileFullName, result.data)
     console.log(Math.round((result.data.length / svgString.length) * 100, 2) + "%", fileFullName, result.data.length + " bytes, was " + svgString.length + " bytes")
@@ -48,4 +49,8 @@ async function optimizeAll()
     }
 }
 
-optimizeAll().catch(console.error)
+const args = process.argv.slice(2);
+if (args.length > 0)
+    optimizeFile(args[0]).catch(console.error)
+else
+    optimizeAll().catch(console.error)
