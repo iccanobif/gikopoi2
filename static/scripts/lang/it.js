@@ -121,7 +121,7 @@ export default
         preferences_underlined_usernames: "Sottolinea nomi utente",
         preferences_low_quality: "Bassa qualità",
         preferences_crisp_mode: "Niente",
-        // preferences_disable_animations: "",
+        // preferences_disable_idle_animations: "",
         preferences_timestamps_in_copied_log: "Includi timestamp nei log copiati",
         preferences_ignore_indicator_in_log: "Mostra nel log un indicatore per i messaggi di utenti ignorati",
         preferences_language: "Lingua",

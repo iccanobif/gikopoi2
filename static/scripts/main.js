@@ -162,7 +162,7 @@ window.vueApp = new Vue({
         userCanvasScaleStart: null,
         isLowQualityEnabled: localStorage.getItem("isLowQualityEnabled") == "true",
         isCrispModeEnabled: localStorage.getItem("isCrispModeEnabled") == "true",
-        isAnimationDisabled: localStorage.getItem("isAnimationDisabled") == "true",
+        isIdleAnimationDisabled: localStorage.getItem("isIdleAnimationDisabled") == "true",
         blockWidth: BLOCK_WIDTH,
         blockHeight: BLOCK_HEIGHT,
         devicePixelRatio: null,
@@ -190,7 +190,7 @@ window.vueApp = new Vue({
         isMoveSectionVisible: localStorage.getItem("isMoveSectionVisible") != "false",
         isBubbleSectionVisible: localStorage.getItem("isBubbleSectionVisible") != "false",
         isLogoutButtonVisible: localStorage.getItem("isLogoutButtonVisible") != "false",
-        uiTheme: localStorage.getItem("uiTheme") || (localStorage.getItem("isDarkMode") == "true" ? "shaddox" : "gikopoi"),
+        uiTheme: localStorage.getItem("uiTheme") || "gikopoi",
         showNotifications: localStorage.getItem("showNotifications") != "false",
         enableTextToSpeech: localStorage.getItem("enableTextToSpeech") == "true",
         ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
@@ -1656,14 +1656,16 @@ window.vueApp = new Vue({
 
                     if (o.o.isInactive)
                         context.globalAlpha = 0.5
-
-                    const renderImage = o.o.getCurrentImage(this.currentRoom);
-                    this.drawImage(
-                        context,
-                        renderImage.getImage(this.getCanvasScale()),
-                        o.o.currentPhysicalPositionX + this.blockWidth/2 - renderImage.width/2,
-                        o.o.currentPhysicalPositionY - renderImage.height
-                    );
+                    
+                    o.o.getCurrentImage(this.currentRoom).forEach(renderImage =>
+                    {
+                        this.drawImage(
+                            context,
+                            renderImage.getImage(this.getCanvasScale()),
+                            o.o.currentPhysicalPositionX + this.blockWidth/2 - renderImage.width/2,
+                            o.o.currentPhysicalPositionY - renderImage.height
+                        )
+                    })
 
                     context.restore()
                 }
@@ -1898,16 +1900,38 @@ window.vueApp = new Vue({
         {
             if (this.isLoadingRoom || !this.currentRoom.backgroundImage)
                 return;
-
+            
             this.detectCanvasResize();
-
-            const usersRequiringRedraw = [];
+            
+            const now = Date.now()
+            
+            if (!this.isIdleAnimationDisabled)
+            {
+                if(animateObjects(this.canvasObjects, this.users))
+                    this.isRedrawRequired = true
+                
+                // apply animation logic
+                const furimukuJizou = this.canvasObjects.find(o => o.o.id == "moving_jizou")
+                if (furimukuJizou)
+                    if (animateJizou(furimukuJizou.o, this.users))
+                        this.isRedrawRequired = true
+            }
+            
+            const usersRequiringRedraw = new Set()
             for (const [userId, user] of Object.entries(this.users))
-                if (user.checkIfRedrawRequired()) usersRequiringRedraw.push(userId);
+            {
+                if (user.checkIfRedrawRequired()) usersRequiringRedraw.add(userId)
+                
+                if (!this.isIdleAnimationDisabled && user.animateBlinking(now))
+                    usersRequiringRedraw.add(userId)
+                
+                if (this.isIdleAnimationDisabled)
+                    user.resetBlinking()
+            }
 
             if (this.isRedrawRequired
                 || this.isDraggingCanvas
-                || usersRequiringRedraw.length
+                || usersRequiringRedraw.size
                 || this.enableGridNumbers)
             {
                 this.calculateUserPhysicalPositions(delta);
@@ -1934,18 +1958,6 @@ window.vueApp = new Vue({
             const delta = this.lastFrameTimestamp === null ? 0 : timestamp - this.lastFrameTimestamp;
 
             this.lastFrameTimestamp = timestamp
-            
-            if (!this.isAnimationDisabled)
-            {
-                if(animateObjects(this.canvasObjects, this.users))
-                    this.isRedrawRequired = true
-                
-                // apply animation logic
-                const furimukuJizou = this.canvasObjects.find(o => o.o.id == "moving_jizou")
-                if (furimukuJizou)
-                    if (animateJizou(furimukuJizou.o, this.users))
-                        this.isRedrawRequired = true
-            }
 
             this.paint(delta)
 
@@ -3340,10 +3352,10 @@ window.vueApp = new Vue({
             this.storeSet('isCrispModeEnabled');
             this.reloadImages()
         },
-        handleAnimationDisabled: function ()
+        handleIdleAnimationDisabled: function ()
         {
-            this.storeSet('isAnimationDisabled');
-            this.reloadImages()
+            this.storeSet('isIdleAnimationDisabled');
+            this.isRedrawRequired = true
         },
         handleNameMentionSoundEnabled: function ()
         {

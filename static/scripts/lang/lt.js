@@ -121,7 +121,7 @@ export default
         preferences_underlined_usernames: "Pabraukti vardus",
         preferences_low_quality: "Žemesnė kokybė",
         preferences_crisp_mode: "Aštrūs kontūrai",
-        // preferences_disable_animations: "",
+        // preferences_disable_idle_animations: "",
         preferences_timestamps_in_copied_log: "Prikabinti datas prie nukopijuotų žinučių",
         preferences_ignore_indicator_in_log: "Rodyti ignoruotų vartotojų žinučių vietą pokalbio lange",
         preferences_language: "Kalba",

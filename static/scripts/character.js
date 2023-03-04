@@ -6,6 +6,20 @@ function isNum(num)
     return !isNaN(parseFloat(num))
 }
 
+const characterStates = [
+    "stand",
+    "sit",
+    "walk1",
+    "walk2"
+]
+
+const characterFeatureNames = [
+    "eyes_open",
+    "eyes_closed",
+    "mouth_open",
+    "mouth_closed",
+]
+
 export class Character
 {
     constructor(name, format, isHidden, scale, portraitLeft, portraitTop, portraitScale)
@@ -21,63 +35,153 @@ export class Character
         this.isHidden = annualEvent("newYears").isNow() ? false : isHidden
         
         this.scale = isNum(scale) ? scale : 0.5;
-        this.frontSittingImage = null;
-        this.frontStandingImage = null;
-        this.frontWalking1Image = null;
-        this.frontWalking2Image = null;
-        this.backSittingImage = null;
-        this.backStandingImage = null;
-        this.backWalking1Image = null;
-        this.backWalking2Image = null;
+        
+        this.rawImages = {}
+        this.renderImages = {}
+    }
+    
+    _validateVersion(version)
+    {
+        return (version && this.rawImages[version]) ? version : "normal"
+    }
+    
+    _validateState(state)
+    {
+        return (state && characterStates.includes(state)) ? state : characterStates[0]
+    }
+    
+    getImage(props)
+    {
+        if (!this.rawImages["normal"]) return []
+        
+        props = {
+            version: this._validateVersion(props.version),
+            isShowingBack: props.isShowingBack || false,
+            state: this._validateState(props.state),
+            isMirroredLeft: props.isMirroredLeft || false,
+            hasEyesClosed: props.hasEyesClosed || false,
+            hasMouthClosed: props.hasMouthClosed || false,
+        }
+        
+        const imageKeyArray = [
+            props.version,
+            props.isShowingBack,
+            props.state,
+            props.isMirroredLeft
+        ]
+        const rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
+        if (!rawImageObject) return []
+        
+        if (rawImageObject.features["eyes_closed"])
+            imageKeyArray.push(props.hasEyesClosed)
+        if (rawImageObject.features["mouth_closed"])
+            imageKeyArray.push(props.hasMouthClosed)
+        
+        const imageKey = imageKeyArray.join(",")
+        
+        if (this.renderImages[imageKey])
+            return this.renderImages[imageKey]
+        
+        const imageLayers = [rawImageObject.base]
+        
+        if (props.hasEyesClosed && rawImageObject.features["eyes_closed"])
+            imageLayers.push(rawImageObject.features["eyes_closed"])
+        else if (!props.hasEyesClosed && rawImageObject.features["eyes_open"])
+            imageLayers.push(rawImageObject.features["eyes_open"])
+        
+        if (props.hasMouthClosed && rawImageObject.features["mouth_closed"])
+            imageLayers.push(rawImageObject.features["mouth_closed"])
+        else if (!props.hasMouthClosed && rawImageObject.features["mouth_open"])
+            imageLayers.push(rawImageObject.features["mouth_open"])
+        
+        this.renderImages[imageKey] = imageLayers.map(rawImage => RenderCache.Image(rawImage, this.scale, props.isMirroredLeft))
+        return this.renderImages[imageKey]
     }
 
     async loadImages(dto)
     {
-        const stringToImage = (svgString) => new Promise((resolve) => {
-            const img = new Image()
+        const rawImages = {}
+        
+        const stringToImage = (version, side, state, svgString) => new Promise((resolve) =>
+        {
+            if (!rawImages[version])
+                rawImages[version] = { "front": {}, "back": {} }
             if (dto.isBase64)
+            {
+                const img = new Image()
                 img.src = "data:image/png;base64," + svgString
-            else
-                img.src = "data:image/svg+xml;base64," + btoa(svgString)
-            img.addEventListener("load", () => resolve(img))
+                img.addEventListener("load", () => 
+                {
+                    rawImages[version][side][state] = { base: img, features: {} }
+                    resolve()
+                })
+                return
+            }
+            
+            const svgDoc = document.createElement("template")
+            svgDoc.innerHTML = svgString
+            
+            svgDoc.content.firstChild.querySelectorAll('[id^="gikopoipoi_"]')
+                .forEach(el => { el.style.display = "none" })
+            
+            const mainImg = new Image()
+            mainImg.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstChild.outerHTML)
+            
+            const promises = [new Promise(r =>
+                {
+                    mainImg.addEventListener("load", () => r(mainImg))
+                })]
+                .concat(
+                    characterFeatureNames
+                    .map(featureName =>
+                    {
+                        const featureElement = svgDoc.content.firstChild.getElementById("gikopoipoi_" + featureName)
+                        if (!featureElement) return null
+                        Array.from(featureElement.parentElement.children)
+                            .filter(el => el != featureElement && el.tagName != "defs")
+                            .forEach(el => { el.style.display = "none" })
+                        featureElement.style.display = ""
+                        
+                        const img = new Image()
+                        img.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstChild.outerHTML)
+                        return new Promise(r => { img.addEventListener("load", () => r([featureName, img])) })
+                    })
+                    .filter(p => p))
+            
+            Promise.all(promises).then(images =>
+            {
+                rawImages[version][side][state] = {
+                    base: images[0],
+                    features: Object.fromEntries(images.slice(1))
+                }
+                resolve()
+            })
         })
-
-        this.frontSittingImage = RenderCache.Image(await stringToImage(dto.frontSitting), this.scale)
-        this.frontStandingImage = RenderCache.Image(await stringToImage(dto.frontStanding), this.scale)
-        this.frontWalking1Image = RenderCache.Image(await stringToImage(dto.frontWalking1), this.scale)
-        this.frontWalking2Image = RenderCache.Image(await stringToImage(dto.frontWalking2), this.scale)
-        this.backSittingImage = RenderCache.Image(await stringToImage(dto.backSitting), this.scale)
-        this.backStandingImage = RenderCache.Image(await stringToImage(dto.backStanding), this.scale)
-        this.backWalking1Image = RenderCache.Image(await stringToImage(dto.backWalking1), this.scale)
-        this.backWalking2Image = RenderCache.Image(await stringToImage(dto.backWalking2), this.scale)
         
-        this.frontSittingFlippedImage = RenderCache.Image(await stringToImage(dto.frontSitting), this.scale, true)
-        this.frontStandingFlippedImage = RenderCache.Image(await stringToImage(dto.frontStanding), this.scale, true)
-        this.frontWalking1FlippedImage = RenderCache.Image(await stringToImage(dto.frontWalking1), this.scale, true)
-        this.frontWalking2FlippedImage = RenderCache.Image(await stringToImage(dto.frontWalking2), this.scale, true)
-        this.backSittingFlippedImage = RenderCache.Image(await stringToImage(dto.backSitting), this.scale, true)
-        this.backStandingFlippedImage = RenderCache.Image(await stringToImage(dto.backStanding), this.scale, true)
-        this.backWalking1FlippedImage = RenderCache.Image(await stringToImage(dto.backWalking1), this.scale, true)
-        this.backWalking2FlippedImage = RenderCache.Image(await stringToImage(dto.backWalking2), this.scale, true)
         
-        // Alternate images
-        this.frontSittingImageAlt = RenderCache.Image(await stringToImage(dto.frontSittingAlt || dto.frontSitting), this.scale)
-        this.frontStandingImageAlt = RenderCache.Image(await stringToImage(dto.frontStandingAlt || dto.frontStanding), this.scale)
-        this.frontWalking1ImageAlt = RenderCache.Image(await stringToImage(dto.frontWalking1Alt || dto.frontWalking1), this.scale)
-        this.frontWalking2ImageAlt = RenderCache.Image(await stringToImage(dto.frontWalking2Alt || dto.frontWalking2), this.scale)
-        this.backSittingImageAlt = RenderCache.Image(await stringToImage(dto.backSittingAlt || dto.backSitting), this.scale)
-        this.backStandingImageAlt = RenderCache.Image(await stringToImage(dto.backStandingAlt || dto.backStanding), this.scale)
-        this.backWalking1ImageAlt = RenderCache.Image(await stringToImage(dto.backWalking1Alt || dto.backWalking1), this.scale)
-        this.backWalking2ImageAlt = RenderCache.Image(await stringToImage(dto.backWalking2Alt || dto.backWalking2), this.scale)
+        const promises = [
+            stringToImage("normal", "front", "stand", dto.frontStanding),
+            stringToImage("normal", "front", "sit", dto.frontSitting),
+            stringToImage("normal", "front", "walk1", dto.frontWalking1),
+            stringToImage("normal", "front", "walk2", dto.frontWalking2),
+            stringToImage("normal", "back", "stand", dto.backStanding),
+            stringToImage("normal", "back", "sit", dto.backSitting),
+            stringToImage("normal", "back", "walk1", dto.backWalking1),
+            stringToImage("normal", "back", "walk2", dto.backWalking2)
+        ]
         
-        this.frontSittingFlippedImageAlt = RenderCache.Image(await stringToImage(dto.frontSittingAlt || dto.frontSitting ), this.scale, true)
-        this.frontStandingFlippedImageAlt = RenderCache.Image(await stringToImage(dto.frontStandingAlt || dto.frontStanding ), this.scale, true)
-        this.frontWalking1FlippedImageAlt = RenderCache.Image(await stringToImage(dto.frontWalking1Alt || dto.frontWalking1 ), this.scale, true)
-        this.frontWalking2FlippedImageAlt = RenderCache.Image(await stringToImage(dto.frontWalking2Alt || dto.frontWalking2 ), this.scale, true)
-        this.backSittingFlippedImageAlt = RenderCache.Image(await stringToImage(dto.backSittingAlt || dto.backSitting ), this.scale, true)
-        this.backStandingFlippedImageAlt = RenderCache.Image(await stringToImage(dto.backStandingAlt || dto.backStanding ), this.scale, true)
-        this.backWalking1FlippedImageAlt = RenderCache.Image(await stringToImage(dto.backWalking1Alt || dto.backWalking1 ), this.scale, true)
-        this.backWalking2FlippedImageAlt = RenderCache.Image(await stringToImage(dto.backWalking2Alt || dto.backWalking2 ), this.scale, true)
+        if (dto.frontStandingAlt) promises.push(stringToImage("alt", "front", "stand", dto.frontStandingAlt))
+        if (dto.frontSittingAlt) promises.push(stringToImage("alt", "front", "sit", dto.frontSittingAlt))
+        if (dto.frontWalking1Alt) promises.push(stringToImage("alt", "front", "walk1", dto.frontWalking1Alt))
+        if (dto.frontWalking2Alt) promises.push(stringToImage("alt", "front", "walk2", dto.frontWalking2Alt))
+        if (dto.backStandingAlt) promises.push(stringToImage("alt", "back", "stand", dto.backStandingAlt))
+        if (dto.backSittingAlt) promises.push(stringToImage("alt", "back", "sit", dto.backSittingAlt))
+        if (dto.backWalking1Alt) promises.push(stringToImage("alt", "back", "walk1", dto.backWalking1Alt))
+        if (dto.backWalking2Alt) promises.push(stringToImage("alt", "back", "walk2", dto.backWalking2Alt))
+        
+        await Promise.all(promises)
+        
+        this.rawImages = rawImages
     }
 }
 

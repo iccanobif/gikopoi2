@@ -121,7 +121,7 @@ export default
         preferences_underlined_usernames: "為聊天紀錄中的用戶名稱添加底線",
         preferences_low_quality: "低畫質",
         preferences_crisp_mode: "粗糙",
-        // preferences_disable_animations: "",
+        // preferences_disable_idle_animations: "",
         preferences_timestamps_in_copied_log: "在複製的聊天紀錄中包含時間標記",
         preferences_ignore_indicator_in_log: "在聊天紀錄中以紅點標記隱藏用戶之訊息位置",
         preferences_language: "語言",

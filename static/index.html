@@ -715,19 +715,19 @@
                                 class='preferences-percentage'>{{ bubbleOpacity }}%</div>
                         </div>
                         <div class='popup-item'>
-                            <input type="checkbox" id="preferences-low-quality"
-                                v-model="isLowQualityEnabled" v-on:change="handleLowQualityEnabled"><label
-                                for="preferences-low-quality">{{ $t("ui.preferences_low_quality") }}</label>
-                        </div>
-                        <div class='popup-item'>
                             <input type="checkbox" id="preferences-crisp-mode"
                                 v-model="isCrispModeEnabled" v-on:change="handleCrispModeEnabled"><label
                                 for="preferences-crisp-mode">{{ $t("ui.preferences_crisp_mode") }}</label>
                         </div>
                         <div class='popup-item'>
-                            <input type="checkbox" id="preferences-disable-animations"
-                                v-model="isAnimationDisabled" v-on:change="handleAnimationDisabled"><label
-                                for="preferences-disable-animations">{{ $t("ui.preferences_disable_animations") }}</label>
+                            <input type="checkbox" id="preferences-low-quality"
+                                v-model="isLowQualityEnabled" v-on:change="handleLowQualityEnabled"><label
+                                for="preferences-low-quality">{{ $t("ui.preferences_low_quality") }}</label>
+                        </div>
+                        <div class='popup-item'>
+                            <input type="checkbox" id="preferences-disable-idle-animations"
+                                v-model="isIdleAnimationDisabled" v-on:change="handleIdleAnimationDisabled"><label
+                                for="preferences-disable-idle-animations">{{ $t("ui.preferences_disable_idle_animations") }}</label>
                         </div>
                     </div>
                     <div class='popup-section'>
