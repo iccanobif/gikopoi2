@@ -134,8 +134,6 @@ export default class User
             charProps.state = "walk1"
             charProps.isShowingBack = spinCycle == 0 || spinCycle == 1 // direction up or left
             charProps.isMirroredLeft = spinCycle == 1 || spinCycle == 2 // direction left or down
-            
-            this.resetBlinking()
         }
         else
         {
@@ -164,7 +162,7 @@ export default class User
     
     animateBlinking(now)
     {
-        if (this.isInactive)
+        if (this.isInactive || this.isSpinning)
         {
             this.resetBlinking()
             return
