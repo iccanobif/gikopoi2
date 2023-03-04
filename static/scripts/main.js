@@ -946,8 +946,9 @@ window.vueApp = new Vue({
                 })
                 this.roomList = roomList;
                 this.rulaRoomGroup = "all";
-                this.prepareRulaRoomList()
+                this.prepareRulaRoomList();
                 this.isRulaPopupOpen = true;
+                this.rulaRoomSelection = this.currentRoom.id;
 
                 await Vue.nextTick()
                 document.getElementById("rula-popup").focus()
