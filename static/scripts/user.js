@@ -152,7 +152,10 @@ export default class User
             }
         }
         
-        charProps.hasEyesClosed = this.isBlinking || this.isInactive
+        charProps.hasEyesClosed =
+            this.isBlinking
+            || this.isSpinning
+            || this.isInactive
         
         return this.character.getImage(charProps)
     }
