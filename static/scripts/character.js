@@ -52,6 +52,8 @@ export class Character
     
     getImage(props)
     {
+        if (!this.rawImages["normal"]) return []
+        
         props = {
             version: this._validateVersion(props.version),
             isShowingBack: props.isShowingBack || false,
@@ -68,17 +70,7 @@ export class Character
             props.isMirroredLeft
         ]
         const rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
-        
-        if (!rawImageObject) // This should never really be undefined
-        {
-            console.log(props.version, props.isShowingBack ? "back" : "front", props.state)
-            console.log(this.rawImages[props.version])
-            console.log(this.rawImages[props.version][props.isShowingBack ? "back" : "front"])
-            const xx = this.rawImages[props.version][props.isShowingBack ? "back" : "front"]
-            console.log(xx)
-            console.log(JSON.stringify(xx))
-            console.log(this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state])
-        }
+        if (!rawImageObject) return []
         
         if (rawImageObject.features["eyes_closed"])
             imageKeyArray.push(props.hasEyesClosed)
@@ -157,15 +149,22 @@ export class Character
             })
         })
         
-        this.setupRawImagesStructure("normal")
-        this.rawImages["normal"]["front"]["stand"] = await stringToImage(dto.frontStanding)
-        this.rawImages["normal"]["front"]["sit"] = await stringToImage(dto.frontSitting)
-        this.rawImages["normal"]["front"]["walk1"] = await stringToImage(dto.frontWalking1)
-        this.rawImages["normal"]["front"]["walk2"] = await stringToImage(dto.frontWalking2)
-        this.rawImages["normal"]["back"]["stand"] = await stringToImage(dto.backStanding)
-        this.rawImages["normal"]["back"]["sit"] = await stringToImage(dto.backSitting)
-        this.rawImages["normal"]["back"]["walk1"] = await stringToImage(dto.backWalking1)
-        this.rawImages["normal"]["back"]["walk2"] = await stringToImage(dto.backWalking2)
+        const rawImages = {}
+        
+        function setupRawImagesStructure(version)
+        {
+            rawImages[version] = { "front": {}, "back": {} }
+        }
+        
+        setupRawImagesStructure("normal")
+        rawImages["normal"]["front"]["stand"] = await stringToImage(dto.frontStanding)
+        rawImages["normal"]["front"]["sit"] = await stringToImage(dto.frontSitting)
+        rawImages["normal"]["front"]["walk1"] = await stringToImage(dto.frontWalking1)
+        rawImages["normal"]["front"]["walk2"] = await stringToImage(dto.frontWalking2)
+        rawImages["normal"]["back"]["stand"] = await stringToImage(dto.backStanding)
+        rawImages["normal"]["back"]["sit"] = await stringToImage(dto.backSitting)
+        rawImages["normal"]["back"]["walk1"] = await stringToImage(dto.backWalking1)
+        rawImages["normal"]["back"]["walk2"] = await stringToImage(dto.backWalking2)
         
         if (dto.frontStandingAlt
             || dto.frontSittingAlt
@@ -176,21 +175,18 @@ export class Character
             || dto.backWalking1Alt
             || dto.backWalking2Alt)
         {
-            this.setupRawImagesStructure("alt")
-            this.rawImages["alt"]["front"]["stand"] = await stringToImage(dto.frontStandingAlt || dto.frontStanding)
-            this.rawImages["alt"]["front"]["sit"] = await stringToImage(dto.frontSittingAlt || dto.frontSitting)
-            this.rawImages["alt"]["front"]["walk1"] = await stringToImage(dto.frontWalking1Alt || dto.frontWalking1)
-            this.rawImages["alt"]["front"]["walk2"] = await stringToImage(dto.frontWalking2Alt || dto.frontWalking2)
-            this.rawImages["alt"]["back"]["stand"] = await stringToImage(dto.backStandingAlt || dto.backStanding)
-            this.rawImages["alt"]["back"]["sit"] = await stringToImage(dto.backSittingAlt || dto.backSitting)
-            this.rawImages["alt"]["back"]["walk1"] = await stringToImage(dto.backWalking1Alt || dto.backWalking1)
-            this.rawImages["alt"]["back"]["walk2"] = await stringToImage(dto.backWalking2Alt || dto.backWalking2)
+            setupRawImagesStructure("alt")
+            rawImages["alt"]["front"]["stand"] = await stringToImage(dto.frontStandingAlt || dto.frontStanding)
+            rawImages["alt"]["front"]["sit"] = await stringToImage(dto.frontSittingAlt || dto.frontSitting)
+            rawImages["alt"]["front"]["walk1"] = await stringToImage(dto.frontWalking1Alt || dto.frontWalking1)
+            rawImages["alt"]["front"]["walk2"] = await stringToImage(dto.frontWalking2Alt || dto.frontWalking2)
+            rawImages["alt"]["back"]["stand"] = await stringToImage(dto.backStandingAlt || dto.backStanding)
+            rawImages["alt"]["back"]["sit"] = await stringToImage(dto.backSittingAlt || dto.backSitting)
+            rawImages["alt"]["back"]["walk1"] = await stringToImage(dto.backWalking1Alt || dto.backWalking1)
+            rawImages["alt"]["back"]["walk2"] = await stringToImage(dto.backWalking2Alt || dto.backWalking2)
         }
-    }
-    
-    setupRawImagesStructure(version)
-    {
-        this.rawImages[version] = { "front": {}, "back": {} }
+        
+        this.rawImages = rawImages
     }
 }
 

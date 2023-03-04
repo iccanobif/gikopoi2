@@ -3354,7 +3354,7 @@ window.vueApp = new Vue({
         handleAnimationDisabled: function ()
         {
             this.storeSet('isAnimationDisabled');
-            this.reloadImages()
+            this.isRedrawRequired = true
         },
         handleNameMentionSoundEnabled: function ()
         {
