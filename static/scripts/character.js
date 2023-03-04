@@ -50,6 +50,22 @@ export class Character
         return (state && characterStates.includes(state)) ? state : characterStates[0]
     }
     
+    _getRawImageObject(props)
+    {
+        let rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
+        if (rawImageObject) return rawImageObject
+        props.version = "normal"
+        rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
+        if (rawImageObject) return rawImageObject
+        props.state = "stand"
+        rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
+        if (rawImageObject) return rawImageObject
+        props.isShowingBack = false
+        rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
+        if (rawImageObject) return rawImageObject
+        return null
+    }
+    
     getImage(props)
     {
         if (!this.rawImages["normal"]) return []
@@ -63,15 +79,17 @@ export class Character
             hasMouthClosed: props.hasMouthClosed || false,
         }
         
+        
+        const rawImageObject = this._getRawImageObject(props)
+        if (!rawImageObject) return []
+        
+        
         const imageKeyArray = [
             props.version,
             props.isShowingBack,
             props.state,
             props.isMirroredLeft
         ]
-        const rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
-            || this.rawImages["normal"][props.isShowingBack ? "back" : "front"][props.state]
-        if (!rawImageObject) return []
         
         if (rawImageObject.features["eyes_closed"])
             imageKeyArray.push(props.hasEyesClosed)
@@ -80,8 +98,9 @@ export class Character
         
         const imageKey = imageKeyArray.join(",")
         
-        if (this.renderImages[imageKey])
-            return this.renderImages[imageKey]
+        
+        if (this.renderImages[imageKey]) return this.renderImages[imageKey]
+        
         
         const imageLayers = [rawImageObject.base]
         
