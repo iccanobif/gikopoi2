@@ -162,7 +162,7 @@ window.vueApp = new Vue({
         userCanvasScaleStart: null,
         isLowQualityEnabled: localStorage.getItem("isLowQualityEnabled") == "true",
         isCrispModeEnabled: localStorage.getItem("isCrispModeEnabled") == "true",
-        isAnimationDisabled: localStorage.getItem("isAnimationDisabled") == "true",
+        isIdleAnimationDisabled: localStorage.getItem("isIdleAnimationDisabled") == "true",
         blockWidth: BLOCK_WIDTH,
         blockHeight: BLOCK_HEIGHT,
         devicePixelRatio: null,
@@ -1904,7 +1904,7 @@ window.vueApp = new Vue({
             
             const now = Date.now()
             
-            if (!this.isAnimationDisabled)
+            if (!this.isIdleAnimationDisabled)
             {
                 if(animateObjects(this.canvasObjects, this.users))
                     this.isRedrawRequired = true
@@ -1921,10 +1921,10 @@ window.vueApp = new Vue({
             {
                 if (user.checkIfRedrawRequired()) usersRequiringRedraw.add(userId)
                 
-                if (!this.isAnimationDisabled && user.animateBlinking(now))
+                if (!this.isIdleAnimationDisabled && user.animateBlinking(now))
                     usersRequiringRedraw.add(userId)
                 
-                if (this.isAnimationDisabled)
+                if (this.isIdleAnimationDisabled)
                     user.resetBlinking()
             }
 
@@ -3351,9 +3351,9 @@ window.vueApp = new Vue({
             this.storeSet('isCrispModeEnabled');
             this.reloadImages()
         },
-        handleAnimationDisabled: function ()
+        handleIdleAnimationDisabled: function ()
         {
-            this.storeSet('isAnimationDisabled');
+            this.storeSet('isIdleAnimationDisabled');
             this.isRedrawRequired = true
         },
         handleNameMentionSoundEnabled: function ()
