@@ -1925,7 +1925,7 @@ window.vueApp = new Vue({
                     usersRequiringRedraw.add(userId)
                 
                 if (this.isAnimationDisabled)
-                    user.stopBlinking()
+                    user.resetBlinking()
             }
 
             if (this.isRedrawRequired
