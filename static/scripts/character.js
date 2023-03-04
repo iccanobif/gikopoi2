@@ -100,13 +100,21 @@ export class Character
 
     async loadImages(dto)
     {
-        const stringToImage = (svgString) => new Promise((resolve) => {
-            
+        const rawImages = {}
+        
+        const stringToImage = (version, side, state, svgString) => new Promise((resolve) =>
+        {
+            if (!rawImages[version])
+                rawImages[version] = { "front": {}, "back": {} }
             if (dto.isBase64)
             {
                 const img = new Image()
                 img.src = "data:image/png;base64," + svgString
-                img.addEventListener("load", () => resolve({ base: img, features: {} }))
+                img.addEventListener("load", () => 
+                {
+                    rawImages[version][side][state] = { base: img, features: {} }
+                    resolve()
+                })
                 return
             }
             
@@ -142,49 +150,36 @@ export class Character
             
             Promise.all(promises).then(images =>
             {
-                resolve({
+                rawImages[version][side][state] = {
                     base: images[0],
                     features: Object.fromEntries(images.slice(1))
-                })
+                }
+                resolve()
             })
         })
         
-        const rawImages = {}
         
-        function setupRawImagesStructure(version)
-        {
-            rawImages[version] = { "front": {}, "back": {} }
-        }
+        const promises = [
+            stringToImage("normal", "front", "stand", dto.frontStanding),
+            stringToImage("normal", "front", "sit", dto.frontSitting),
+            stringToImage("normal", "front", "walk1", dto.frontWalking1),
+            stringToImage("normal", "front", "walk2", dto.frontWalking2),
+            stringToImage("normal", "back", "stand", dto.backStanding),
+            stringToImage("normal", "back", "sit", dto.backSitting),
+            stringToImage("normal", "back", "walk1", dto.backWalking1),
+            stringToImage("normal", "back", "walk2", dto.backWalking2)
+        ]
         
-        setupRawImagesStructure("normal")
-        rawImages["normal"]["front"]["stand"] = await stringToImage(dto.frontStanding)
-        rawImages["normal"]["front"]["sit"] = await stringToImage(dto.frontSitting)
-        rawImages["normal"]["front"]["walk1"] = await stringToImage(dto.frontWalking1)
-        rawImages["normal"]["front"]["walk2"] = await stringToImage(dto.frontWalking2)
-        rawImages["normal"]["back"]["stand"] = await stringToImage(dto.backStanding)
-        rawImages["normal"]["back"]["sit"] = await stringToImage(dto.backSitting)
-        rawImages["normal"]["back"]["walk1"] = await stringToImage(dto.backWalking1)
-        rawImages["normal"]["back"]["walk2"] = await stringToImage(dto.backWalking2)
+        if (dto.frontStandingAlt) promises.push(stringToImage("alt", "front", "stand", dto.frontStandingAlt))
+        if (dto.frontSittingAlt) promises.push(stringToImage("alt", "front", "sit", dto.frontSittingAlt))
+        if (dto.frontWalking1Alt) promises.push(stringToImage("alt", "front", "walk1", dto.frontWalking1Alt))
+        if (dto.frontWalking2Alt) promises.push(stringToImage("alt", "front", "walk2", dto.frontWalking2Alt))
+        if (dto.backStandingAlt) promises.push(stringToImage("alt", "back", "stand", dto.backStandingAlt))
+        if (dto.backSittingAlt) promises.push(stringToImage("alt", "back", "sit", dto.backSittingAlt))
+        if (dto.backWalking1Alt) promises.push(stringToImage("alt", "back", "walk1", dto.backWalking1Alt))
+        if (dto.backWalking2Alt) promises.push(stringToImage("alt", "back", "walk2", dto.backWalking2Alt))
         
-        if (dto.frontStandingAlt
-            || dto.frontSittingAlt
-            || dto.frontWalking1Alt
-            || dto.frontWalking2Alt
-            || dto.backStandingAlt
-            || dto.backSittingAlt
-            || dto.backWalking1Alt
-            || dto.backWalking2Alt)
-        {
-            setupRawImagesStructure("alt")
-            rawImages["alt"]["front"]["stand"] = await stringToImage(dto.frontStandingAlt || dto.frontStanding)
-            rawImages["alt"]["front"]["sit"] = await stringToImage(dto.frontSittingAlt || dto.frontSitting)
-            rawImages["alt"]["front"]["walk1"] = await stringToImage(dto.frontWalking1Alt || dto.frontWalking1)
-            rawImages["alt"]["front"]["walk2"] = await stringToImage(dto.frontWalking2Alt || dto.frontWalking2)
-            rawImages["alt"]["back"]["stand"] = await stringToImage(dto.backStandingAlt || dto.backStanding)
-            rawImages["alt"]["back"]["sit"] = await stringToImage(dto.backSittingAlt || dto.backSitting)
-            rawImages["alt"]["back"]["walk1"] = await stringToImage(dto.backWalking1Alt || dto.backWalking1)
-            rawImages["alt"]["back"]["walk2"] = await stringToImage(dto.backWalking2Alt || dto.backWalking2)
-        }
+        await Promise.all(promises)
         
         this.rawImages = rawImages
     }
