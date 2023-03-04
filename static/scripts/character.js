@@ -70,6 +70,7 @@ export class Character
             props.isMirroredLeft
         ]
         const rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
+            || this.rawImages["normal"][props.isShowingBack ? "back" : "front"][props.state]
         if (!rawImageObject) return []
         
         if (rawImageObject.features["eyes_closed"])
