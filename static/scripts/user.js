@@ -2,6 +2,13 @@ import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils.js"
 import { RenderCache } from "./rendercache.js";
 import { characters } from "./character.js";
 
+const blinkLength = 1000
+
+function getTimeToNextBlink()
+{
+    return Math.floor((Math.random() * 1 + 6) * 1000)
+}
+
 export default class User
 {
     constructor(character, name)
@@ -32,7 +39,10 @@ export default class User
         this.bubblePosition = "up";
         this.bubbleImage = null;
         this.voicePitch = null;
+        
         this.isAlternateCharacter = false;
+        this.blinkAt = null
+        this.isBlinking = false
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)
@@ -114,73 +124,59 @@ export default class User
 
     getCurrentImage(room)
     {
-        const frontSittingImage = this.isAlternateCharacter ? this.character.frontSittingImageAlt : this.character.frontSittingImage;
-        const frontStandingImage = this.isAlternateCharacter ? this.character.frontStandingImageAlt : this.character.frontStandingImage;
-        const frontWalking1Image = this.isAlternateCharacter ? this.character.frontWalking1ImageAlt : this.character.frontWalking1Image;
-        const frontWalking2Image = this.isAlternateCharacter ? this.character.frontWalking2ImageAlt : this.character.frontWalking2Image;
-        const backSittingImage = this.isAlternateCharacter ? this.character.backSittingImageAlt : this.character.backSittingImage;
-        const backStandingImage = this.isAlternateCharacter ? this.character.backStandingImageAlt : this.character.backStandingImage;
-        const backWalking1Image = this.isAlternateCharacter ? this.character.backWalking1ImageAlt : this.character.backWalking1Image;
-        const backWalking2Image = this.isAlternateCharacter ? this.character.backWalking2ImageAlt : this.character.backWalking2Image;
-        const frontSittingFlippedImage = this.isAlternateCharacter ? this.character.frontSittingFlippedImageAlt : this.character.frontSittingFlippedImage;
-        const frontStandingFlippedImage = this.isAlternateCharacter ? this.character.frontStandingFlippedImageAlt : this.character.frontStandingFlippedImage;
-        const frontWalking1FlippedImage = this.isAlternateCharacter ? this.character.frontWalking1FlippedImageAlt : this.character.frontWalking1FlippedImage;
-        const frontWalking2FlippedImage = this.isAlternateCharacter ? this.character.frontWalking2FlippedImageAlt : this.character.frontWalking2FlippedImage;
-        const backSittingFlippedImage = this.isAlternateCharacter ? this.character.backSittingFlippedImageAlt : this.character.backSittingFlippedImage;
-        const backStandingFlippedImage = this.isAlternateCharacter ? this.character.backStandingFlippedImageAlt : this.character.backStandingFlippedImage;
-        const backWalking1FlippedImage = this.isAlternateCharacter ? this.character.backWalking1FlippedImageAlt : this.character.backWalking1FlippedImage;
-        const backWalking2FlippedImage = this.isAlternateCharacter ? this.character.backWalking2FlippedImageAlt : this.character.backWalking2FlippedImage;
-
+        const charProps = {}
+        charProps.version = this.isAlternateCharacter ? "alt" : "normal"
+        
         if (this.isSpinning)
         {
             const spinCycle = Math.round((this.frameCount*60/1000) / 2) % 4
-            switch (spinCycle)
-            {
-                case 0:
-                    // this.direction = "up"
-                    return backWalking1Image;
-                case 1:
-                    // this.direction = "left"
-                    return backWalking1FlippedImage;
-                case 2:
-                    // this.direction = "down"
-                    return frontWalking1FlippedImage;
-                case 3:
-                    // this.direction = "right"
-                    return frontWalking1Image;
-            }
-        }
-        else if (this.isWalking)
-        {
-            const walkCycle = this.framesUntilNextStep > this.stepLength / 2;
-            switch (this.direction)
-            {
-                case "up":
-                    return walkCycle ? backWalking1Image : backWalking2Image;
-                case "left":
-                    return walkCycle ? backWalking1FlippedImage : backWalking2FlippedImage;
-                case "down":
-                    return walkCycle ? frontWalking1FlippedImage : frontWalking2FlippedImage;
-                case "right":
-                    return walkCycle ? frontWalking1Image : frontWalking2Image;
-            }
+            
+            charProps.state = "walk1"
+            charProps.isShowingBack = spinCycle == 0 || spinCycle == 1 // direction up or left
+            charProps.isMirroredLeft = spinCycle == 1 || spinCycle == 2 // direction left or down
         }
         else
         {
-            const isSitting = !!room.sit.find(s => s.x == this.logicalPositionX && s.y == this.logicalPositionY)
-
-            switch (this.direction)
+            charProps.isShowingBack = this.direction == "up" || this.direction == "left"
+            charProps.isMirroredLeft = this.direction == "left" || this.direction == "down"
+            
+            if (this.isWalking)
             {
-                case "up":
-                    return isSitting ? backSittingImage : backStandingImage;
-                case "left":
-                    return isSitting ? backSittingFlippedImage : backStandingFlippedImage;
-                case "down":
-                    return isSitting ? frontSittingFlippedImage : frontStandingFlippedImage;
-                case "right":
-                    return isSitting ? frontSittingImage : frontStandingImage;
+                const walkCycle = this.framesUntilNextStep > this.stepLength / 2
+                charProps.state = walkCycle ? "walk1" : "walk2"
+            }
+            else
+            {
+                const isSitting = !!room.sit.find(s => s.x == this.logicalPositionX && s.y == this.logicalPositionY)
+                charProps.state = isSitting ? "sit" : "stand"
             }
         }
+        
+        charProps.hasEyesClosed = this.isBlinking
+        
+        return this.character.getImage(charProps)
+    }
+    
+    animateBlinking(now)
+    {
+        if (!this.blinkAt || this.isBlinking && (this.blinkAt + blinkLength) <= now)
+        {
+            this.isBlinking = false
+            this.blinkAt = now + getTimeToNextBlink()
+            return true
+        }
+        else if (!this.isBlinking && this.blinkAt <= now)
+        {
+            this.isBlinking = true
+            return true
+        }
+    }
+    
+    stopBlinking()
+    {
+        if (!this.blinkAt && !this.isBlinking) return
+        this.isBlinking = false
+        this.blinkAt = null
     }
     
     checkIfRedrawRequired()

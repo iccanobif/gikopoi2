@@ -6,6 +6,20 @@ function isNum(num)
     return !isNaN(parseFloat(num))
 }
 
+const characterStates = [
+    "stand",
+    "sit",
+    "walk1",
+    "walk2"
+]
+
+const characterFeatureNames = [
+    "eyes_open",
+    "eyes_closed",
+    "mouth_open",
+    "mouth_closed",
+]
+
 export class Character
 {
     constructor(name, format, isHidden, scale, portraitLeft, portraitTop, portraitScale)
@@ -21,63 +35,162 @@ export class Character
         this.isHidden = annualEvent("newYears").isNow() ? false : isHidden
         
         this.scale = isNum(scale) ? scale : 0.5;
-        this.frontSittingImage = null;
-        this.frontStandingImage = null;
-        this.frontWalking1Image = null;
-        this.frontWalking2Image = null;
-        this.backSittingImage = null;
-        this.backStandingImage = null;
-        this.backWalking1Image = null;
-        this.backWalking2Image = null;
+        
+        this.rawImages = {}
+        this.renderImages = {}
+    }
+    
+    _validateVersion(version)
+    {
+        return (version && this.rawImages[version]) ? version : "normal"
+    }
+    
+    _validateState(state)
+    {
+        return (state && characterStates.includes(state)) ? state : characterStates[0]
+    }
+    
+    getImage(props)
+    {
+        props = {
+            version: this._validateVersion(props.version),
+            isShowingBack: props.isShowingBack || false,
+            state: this._validateState(props.state),
+            isMirroredLeft: props.isMirroredLeft || false,
+            hasEyesClosed: props.hasEyesClosed || false,
+            hasMouthClosed: props.hasMouthClosed || false,
+        }
+        
+        const imageKeyArray = [
+            props.version,
+            props.isShowingBack,
+            props.state,
+            props.isMirroredLeft
+        ]
+        const rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
+        
+        if (!rawImageObject) // This should never really be undefined
+        {
+            console.log(props.version, props.isShowingBack ? "back" : "front", props.state)
+            console.log(this.rawImages[props.version])
+            console.log(this.rawImages[props.version][props.isShowingBack ? "back" : "front"])
+            const xx = this.rawImages[props.version][props.isShowingBack ? "back" : "front"]
+            console.log(xx)
+            console.log(JSON.stringify(xx))
+            console.log(this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state])
+        }
+        
+        if (rawImageObject.features["eyes_closed"])
+            imageKeyArray.push(props.hasEyesClosed)
+        if (rawImageObject.features["mouth_closed"])
+            imageKeyArray.push(props.hasMouthClosed)
+        
+        const imageKey = imageKeyArray.join(",")
+        
+        if (this.renderImages[imageKey])
+            return this.renderImages[imageKey]
+        
+        const imageLayers = [rawImageObject.base]
+        
+        if (props.hasEyesClosed && rawImageObject.features["eyes_closed"])
+            imageLayers.push(rawImageObject.features["eyes_closed"])
+        else if (!props.hasEyesClosed && rawImageObject.features["eyes_open"])
+            imageLayers.push(rawImageObject.features["eyes_open"])
+        
+        if (props.hasMouthClosed && rawImageObject.features["mouth_closed"])
+            imageLayers.push(rawImageObject.features["mouth_closed"])
+        else if (!props.hasMouthClosed && rawImageObject.features["mouth_open"])
+            imageLayers.push(rawImageObject.features["mouth_open"])
+        
+        this.renderImages[imageKey] = imageLayers.map(rawImage => RenderCache.Image(rawImage, this.scale, props.isMirroredLeft))
+        return this.renderImages[imageKey]
     }
 
     async loadImages(dto)
     {
         const stringToImage = (svgString) => new Promise((resolve) => {
-            const img = new Image()
+            
             if (dto.isBase64)
+            {
+                const img = new Image()
                 img.src = "data:image/png;base64," + svgString
-            else
-                img.src = "data:image/svg+xml;base64," + btoa(svgString)
-            img.addEventListener("load", () => resolve(img))
+                img.addEventListener("load", () => resolve({ base: img, features: {} }))
+                return
+            }
+            
+            const svgDoc = document.createElement("template")
+            svgDoc.innerHTML = svgString
+            
+            svgDoc.content.firstChild.querySelectorAll('[id^="gikopoipoi_"]')
+                .forEach(el => { el.style.display = "none" })
+            
+            const mainImg = new Image()
+            mainImg.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstChild.outerHTML)
+            
+            const promises = [new Promise(r =>
+                {
+                    mainImg.addEventListener("load", () => r(mainImg))
+                })]
+                .concat(
+                    characterFeatureNames
+                    .map(featureName =>
+                    {
+                        const featureElement = svgDoc.content.firstChild.getElementById("gikopoipoi_" + featureName)
+                        if (!featureElement) return null
+                        Array.from(featureElement.parentElement.children)
+                            .filter(el => el != featureElement && el.tagName != "defs")
+                            .forEach(el => { el.style.display = "none" })
+                        featureElement.style.display = ""
+                        
+                        const img = new Image()
+                        img.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstChild.outerHTML)
+                        return new Promise(r => { img.addEventListener("load", () => r([featureName, img])) })
+                    })
+                    .filter(p => p))
+            
+            Promise.all(promises).then(images =>
+            {
+                resolve({
+                    base: images[0],
+                    features: Object.fromEntries(images.slice(1))
+                })
+            })
         })
-
-        this.frontSittingImage = RenderCache.Image(await stringToImage(dto.frontSitting), this.scale)
-        this.frontStandingImage = RenderCache.Image(await stringToImage(dto.frontStanding), this.scale)
-        this.frontWalking1Image = RenderCache.Image(await stringToImage(dto.frontWalking1), this.scale)
-        this.frontWalking2Image = RenderCache.Image(await stringToImage(dto.frontWalking2), this.scale)
-        this.backSittingImage = RenderCache.Image(await stringToImage(dto.backSitting), this.scale)
-        this.backStandingImage = RenderCache.Image(await stringToImage(dto.backStanding), this.scale)
-        this.backWalking1Image = RenderCache.Image(await stringToImage(dto.backWalking1), this.scale)
-        this.backWalking2Image = RenderCache.Image(await stringToImage(dto.backWalking2), this.scale)
         
-        this.frontSittingFlippedImage = RenderCache.Image(await stringToImage(dto.frontSitting), this.scale, true)
-        this.frontStandingFlippedImage = RenderCache.Image(await stringToImage(dto.frontStanding), this.scale, true)
-        this.frontWalking1FlippedImage = RenderCache.Image(await stringToImage(dto.frontWalking1), this.scale, true)
-        this.frontWalking2FlippedImage = RenderCache.Image(await stringToImage(dto.frontWalking2), this.scale, true)
-        this.backSittingFlippedImage = RenderCache.Image(await stringToImage(dto.backSitting), this.scale, true)
-        this.backStandingFlippedImage = RenderCache.Image(await stringToImage(dto.backStanding), this.scale, true)
-        this.backWalking1FlippedImage = RenderCache.Image(await stringToImage(dto.backWalking1), this.scale, true)
-        this.backWalking2FlippedImage = RenderCache.Image(await stringToImage(dto.backWalking2), this.scale, true)
+        this.setupRawImagesStructure("normal")
+        this.rawImages["normal"]["front"]["stand"] = await stringToImage(dto.frontStanding)
+        this.rawImages["normal"]["front"]["sit"] = await stringToImage(dto.frontSitting)
+        this.rawImages["normal"]["front"]["walk1"] = await stringToImage(dto.frontWalking1)
+        this.rawImages["normal"]["front"]["walk2"] = await stringToImage(dto.frontWalking2)
+        this.rawImages["normal"]["back"]["stand"] = await stringToImage(dto.backStanding)
+        this.rawImages["normal"]["back"]["sit"] = await stringToImage(dto.backSitting)
+        this.rawImages["normal"]["back"]["walk1"] = await stringToImage(dto.backWalking1)
+        this.rawImages["normal"]["back"]["walk2"] = await stringToImage(dto.backWalking2)
         
-        // Alternate images
-        this.frontSittingImageAlt = RenderCache.Image(await stringToImage(dto.frontSittingAlt || dto.frontSitting), this.scale)
-        this.frontStandingImageAlt = RenderCache.Image(await stringToImage(dto.frontStandingAlt || dto.frontStanding), this.scale)
-        this.frontWalking1ImageAlt = RenderCache.Image(await stringToImage(dto.frontWalking1Alt || dto.frontWalking1), this.scale)
-        this.frontWalking2ImageAlt = RenderCache.Image(await stringToImage(dto.frontWalking2Alt || dto.frontWalking2), this.scale)
-        this.backSittingImageAlt = RenderCache.Image(await stringToImage(dto.backSittingAlt || dto.backSitting), this.scale)
-        this.backStandingImageAlt = RenderCache.Image(await stringToImage(dto.backStandingAlt || dto.backStanding), this.scale)
-        this.backWalking1ImageAlt = RenderCache.Image(await stringToImage(dto.backWalking1Alt || dto.backWalking1), this.scale)
-        this.backWalking2ImageAlt = RenderCache.Image(await stringToImage(dto.backWalking2Alt || dto.backWalking2), this.scale)
-        
-        this.frontSittingFlippedImageAlt = RenderCache.Image(await stringToImage(dto.frontSittingAlt || dto.frontSitting ), this.scale, true)
-        this.frontStandingFlippedImageAlt = RenderCache.Image(await stringToImage(dto.frontStandingAlt || dto.frontStanding ), this.scale, true)
-        this.frontWalking1FlippedImageAlt = RenderCache.Image(await stringToImage(dto.frontWalking1Alt || dto.frontWalking1 ), this.scale, true)
-        this.frontWalking2FlippedImageAlt = RenderCache.Image(await stringToImage(dto.frontWalking2Alt || dto.frontWalking2 ), this.scale, true)
-        this.backSittingFlippedImageAlt = RenderCache.Image(await stringToImage(dto.backSittingAlt || dto.backSitting ), this.scale, true)
-        this.backStandingFlippedImageAlt = RenderCache.Image(await stringToImage(dto.backStandingAlt || dto.backStanding ), this.scale, true)
-        this.backWalking1FlippedImageAlt = RenderCache.Image(await stringToImage(dto.backWalking1Alt || dto.backWalking1 ), this.scale, true)
-        this.backWalking2FlippedImageAlt = RenderCache.Image(await stringToImage(dto.backWalking2Alt || dto.backWalking2 ), this.scale, true)
+        if (dto.frontStandingAlt
+            || dto.frontSittingAlt
+            || dto.frontWalking1Alt
+            || dto.frontWalking2Alt
+            || dto.backStandingAlt
+            || dto.backSittingAlt
+            || dto.backWalking1Alt
+            || dto.backWalking2Alt)
+        {
+            this.setupRawImagesStructure("alt")
+            this.rawImages["alt"]["front"]["stand"] = await stringToImage(dto.frontStandingAlt || dto.frontStanding)
+            this.rawImages["alt"]["front"]["sit"] = await stringToImage(dto.frontSittingAlt || dto.frontSitting)
+            this.rawImages["alt"]["front"]["walk1"] = await stringToImage(dto.frontWalking1Alt || dto.frontWalking1)
+            this.rawImages["alt"]["front"]["walk2"] = await stringToImage(dto.frontWalking2Alt || dto.frontWalking2)
+            this.rawImages["alt"]["back"]["stand"] = await stringToImage(dto.backStandingAlt || dto.backStanding)
+            this.rawImages["alt"]["back"]["sit"] = await stringToImage(dto.backSittingAlt || dto.backSitting)
+            this.rawImages["alt"]["back"]["walk1"] = await stringToImage(dto.backWalking1Alt || dto.backWalking1)
+            this.rawImages["alt"]["back"]["walk2"] = await stringToImage(dto.backWalking2Alt || dto.backWalking2)
+        }
+    }
+    
+    setupRawImagesStructure(version)
+    {
+        this.rawImages[version] = { "front": {}, "back": {} }
     }
 }
 
