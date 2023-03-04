@@ -190,7 +190,7 @@ window.vueApp = new Vue({
         isMoveSectionVisible: localStorage.getItem("isMoveSectionVisible") != "false",
         isBubbleSectionVisible: localStorage.getItem("isBubbleSectionVisible") != "false",
         isLogoutButtonVisible: localStorage.getItem("isLogoutButtonVisible") != "false",
-        uiTheme: localStorage.getItem("uiTheme") || (localStorage.getItem("isDarkMode") == "true" ? "shaddox" : "gikopoi"),
+        uiTheme: localStorage.getItem("uiTheme") || "gikopoi",
         showNotifications: localStorage.getItem("showNotifications") != "false",
         enableTextToSpeech: localStorage.getItem("enableTextToSpeech") == "true",
         ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
