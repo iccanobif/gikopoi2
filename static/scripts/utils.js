@@ -303,3 +303,38 @@ export function getClickCoordinatesWithinCanvas(canvas, clickEvent, devicePixelR
         y: (clickEvent.clientY - canvasBoundingClientRect.y) * devicePixelRatio,
     }
 }
+
+// HTML control functions
+
+export const controlCharLT = String.fromCharCode(2)
+export const controlCharGT = String.fromCharCode(3)
+export const controlCharAmp = String.fromCharCode(31)
+
+export function htmlToControlChars(string)
+{
+    return string
+        .replaceAll("&", controlCharAmp)
+        .replaceAll("<", controlCharLT)
+        .replaceAll(">", controlCharGT)
+}
+
+export function controlCharsToHtml(string)
+{
+    return string
+        .replaceAll(controlCharAmp, "&")
+        .replaceAll(controlCharLT, "<")
+        .replaceAll(controlCharGT, ">")
+}
+
+export function removeControlChars(string)
+{
+    return string.replace(/[\u0000-\u001F\u007F-\u009F]/g, "")
+}
+
+export function escapeHTML(string)
+{
+    return string
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+}

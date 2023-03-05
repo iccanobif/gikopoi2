@@ -19,6 +19,10 @@ import {
     requestNotificationPermission,
     getDeviceList,
     getClickCoordinatesWithinCanvas,
+    htmlToControlChars,
+    controlCharsToHtml,
+    removeControlChars,
+    escapeHTML
 } from "./utils.js";
 import messages from "./lang.js";
 import { speak } from "./tts.js";
@@ -1085,17 +1089,18 @@ window.vueApp = new Vue({
                     anchor.rel = "noopener noreferrer";
                     return anchor.outerHTML;
                 })
-            /*if (userId) // Only mark mentions in user messages
+            if (userId) // Only mark mentions in user messages
                 bodySpan.childNodes.forEach(node =>
                 {
                     let el = node.nodeType == 3
                         ? document.createElement("span")
                         : node
-                    el.innerHTML = this.markMentions(node.textContent)
+                        
+                    el.innerHTML = controlCharsToHtml(escapeHTML(this.markMentions(removeControlChars(node.textContent))))
                     if (node.nodeType == 3)
                         bodySpan.replaceChild(el, node)
                 })
-            */
+            
             messageDiv.append(timestampSpan);
             messageDiv.append(authorSpan);
             messageDiv.append(tripcodeSpan);
@@ -3323,7 +3328,7 @@ window.vueApp = new Vue({
             }
             function replacementFunction(word)
             {
-                return "<span class='message-mention'>" + word + "</span>"
+                return htmlToControlChars("<span class='message-mention'>" + word + "</span>")
             }
             msg = [msg]
             msg = regexReplace(msg, this.customMentionRegexObject, replacementFunction)
