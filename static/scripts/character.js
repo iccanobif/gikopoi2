@@ -160,7 +160,7 @@ export class Character
                         Array.from(featureElement.parentElement.children)
                             .filter(el => el != featureElement && el.tagName != "defs")
                             .forEach(el => { el.style.display = "none" })
-                        featureElement.style.display = ""
+                        featureElement.style.display = "inline"
                         
                         const img = new Image()
                         img.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstChild.outerHTML)
