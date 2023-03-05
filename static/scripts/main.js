@@ -1085,7 +1085,7 @@ window.vueApp = new Vue({
                     anchor.rel = "noopener noreferrer";
                     return anchor.outerHTML;
                 })
-            if (userId) // Only mark mentions in user messages
+            /*if (userId) // Only mark mentions in user messages
                 bodySpan.childNodes.forEach(node =>
                 {
                     let el = node.nodeType == 3
@@ -1095,7 +1095,7 @@ window.vueApp = new Vue({
                     if (node.nodeType == 3)
                         bodySpan.replaceChild(el, node)
                 })
-
+            */
             messageDiv.append(timestampSpan);
             messageDiv.append(authorSpan);
             messageDiv.append(tripcodeSpan);
