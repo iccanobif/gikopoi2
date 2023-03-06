@@ -1,5 +1,6 @@
 import { RenderCache } from "./rendercache.js";
 import { annualEvent } from "./annualevents.js";
+import { stringToImage } from "./utils.js";
 
 function isNum(num)
 {
@@ -111,75 +112,32 @@ export class Character
     async loadImages(dto)
     {
         const rawImages = {}
-        
-        const stringToImage = (version, side, state, svgString) => new Promise((resolve) =>
+        const addImageString = (version, side, state, svgString) =>
         {
             if (!rawImages[version])
                 rawImages[version] = { "front": {}, "back": {} }
-            if (dto.isBase64)
-            {
-                const img = new Image()
-                img.src = "data:image/png;base64," + svgString
-                img.addEventListener("load", () => 
-                {
-                    rawImages[version][side][state] = [[ "", img ]]
-                    resolve()
-                })
-                return
-            }
-            
-            const svgDoc = document.createElement("template")
-            svgDoc.innerHTML = svgString
-            
-            const elements = Array.from(svgDoc.content.firstChild.children)
-                .filter(el => el.tagName != "defs")
-            
-            Promise.all(elements
-                .reduce((acc, el) =>
-            {
-                const key = (el.id && el.id.startsWith("gikopoipoi_")) ? el.id.slice(11) : null
-                const lastIndex = acc.length - 1
-                if (acc.length == 0 || acc[lastIndex][0] != key)
-                    acc.push([key, [el]])
-                else
-                    acc[lastIndex][1].push(el)
-                return acc
-            }, [])
-                .map(([key, layerEls]) =>
-            {
-                elements.forEach(el => { el.style.display = layerEls.includes(el) ? "inline" : "none" })
-                
-                const img = new Image()
-                img.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstChild.outerHTML)
-                return new Promise(r => { img.addEventListener("load", () => r([key, img])) })
-            }))
-                .then(images =>
-            {
-                rawImages[version][side][state] = images
-                resolve()
-            })
-        })
-        
+            return stringToImage(svgString, dto.isBase64).then(images => { rawImages[version][side][state] = images })
+        }
         
         const promises = [
-            stringToImage("normal", "front", "stand", dto.frontStanding),
-            stringToImage("normal", "front", "sit", dto.frontSitting),
-            stringToImage("normal", "front", "walk1", dto.frontWalking1),
-            stringToImage("normal", "front", "walk2", dto.frontWalking2),
-            stringToImage("normal", "back", "stand", dto.backStanding),
-            stringToImage("normal", "back", "sit", dto.backSitting),
-            stringToImage("normal", "back", "walk1", dto.backWalking1),
-            stringToImage("normal", "back", "walk2", dto.backWalking2)
+            addImageString("normal", "front", "stand", dto.frontStanding),
+            addImageString("normal", "front", "sit", dto.frontSitting),
+            addImageString("normal", "front", "walk1", dto.frontWalking1),
+            addImageString("normal", "front", "walk2", dto.frontWalking2),
+            addImageString("normal", "back", "stand", dto.backStanding),
+            addImageString("normal", "back", "sit", dto.backSitting),
+            addImageString("normal", "back", "walk1", dto.backWalking1),
+            addImageString("normal", "back", "walk2", dto.backWalking2)
         ]
         
-        if (dto.frontStandingAlt) promises.push(stringToImage("alt", "front", "stand", dto.frontStandingAlt))
-        if (dto.frontSittingAlt) promises.push(stringToImage("alt", "front", "sit", dto.frontSittingAlt))
-        if (dto.frontWalking1Alt) promises.push(stringToImage("alt", "front", "walk1", dto.frontWalking1Alt))
-        if (dto.frontWalking2Alt) promises.push(stringToImage("alt", "front", "walk2", dto.frontWalking2Alt))
-        if (dto.backStandingAlt) promises.push(stringToImage("alt", "back", "stand", dto.backStandingAlt))
-        if (dto.backSittingAlt) promises.push(stringToImage("alt", "back", "sit", dto.backSittingAlt))
-        if (dto.backWalking1Alt) promises.push(stringToImage("alt", "back", "walk1", dto.backWalking1Alt))
-        if (dto.backWalking2Alt) promises.push(stringToImage("alt", "back", "walk2", dto.backWalking2Alt))
+        if (dto.frontStandingAlt) promises.push(addImageString("alt", "front", "stand", dto.frontStandingAlt))
+        if (dto.frontSittingAlt) promises.push(addImageString("alt", "front", "sit", dto.frontSittingAlt))
+        if (dto.frontWalking1Alt) promises.push(addImageString("alt", "front", "walk1", dto.frontWalking1Alt))
+        if (dto.frontWalking2Alt) promises.push(addImageString("alt", "front", "walk2", dto.frontWalking2Alt))
+        if (dto.backStandingAlt) promises.push(addImageString("alt", "back", "stand", dto.backStandingAlt))
+        if (dto.backSittingAlt) promises.push(addImageString("alt", "back", "sit", dto.backSittingAlt))
+        if (dto.backWalking1Alt) promises.push(addImageString("alt", "back", "walk1", dto.backWalking1Alt))
+        if (dto.backWalking2Alt) promises.push(addImageString("alt", "back", "walk2", dto.backWalking2Alt))
         
         await Promise.all(promises)
         

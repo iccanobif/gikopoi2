@@ -24,6 +24,47 @@ export function loadImage(url)
     })
 }
 
+export function stringToImage(imageString, isBase64)
+{
+    return new Promise((resolve) =>
+    {
+        if (isBase64)
+        {
+            const img = new Image()
+            img.src = "data:image/png;base64," + imageString
+            img.addEventListener("load", () => { resolve([[ "", img ]]) })
+            return
+        }
+        
+        const svgDoc = document.createElement("template")
+        svgDoc.innerHTML = imageString
+        
+        const elements = Array.from(svgDoc.content.firstChild.children)
+            .filter(el => el.tagName != "defs")
+        
+        Promise.all(elements
+            .reduce((acc, el) =>
+        {
+            const key = (el.id && el.id.startsWith("gikopoipoi_")) ? el.id.slice(11) : null
+            const lastIndex = acc.length - 1
+            if (acc.length == 0 || acc[lastIndex][0] != key)
+                acc.push([key, [el]])
+            else
+                acc[lastIndex][1].push(el)
+            return acc
+        }, [])
+            .map(([key, layerEls]) =>
+        {
+            elements.forEach(el => { el.style.display = layerEls.includes(el) ? "inline" : "none" })
+            
+            const img = new Image()
+            img.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstChild.outerHTML)
+            return new Promise(r => { img.addEventListener("load", () => r([key, img])) })
+        }))
+            .then(images => { resolve(images) })
+    })
+}
+
 // returns "left" and "bottom" positions
 export function calculateRealCoordinates(room, x, y)
 {
@@ -306,9 +347,9 @@ export function getClickCoordinatesWithinCanvas(canvas, clickEvent, devicePixelR
 
 // HTML control functions
 
-export const controlCharLT = String.fromCharCode(2)
-export const controlCharGT = String.fromCharCode(3)
-export const controlCharAmp = String.fromCharCode(31)
+export const controlCharLT = String.fromCharCode(2) // <
+export const controlCharGT = String.fromCharCode(3) // >
+export const controlCharAmp = String.fromCharCode(31) // &
 
 export function htmlToControlChars(string)
 {
