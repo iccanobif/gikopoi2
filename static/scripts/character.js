@@ -103,8 +103,6 @@ export class Character
             || !props.hasEyesClosed && key == "eyes_open"
             || props.hasMouthClosed && key == "mouth_closed"
             || !props.hasMouthClosed && key == "mouth_open"))
-            
-        console.log(props, outputLayers)
         
         this.renderImages[imageKey] = outputLayers.map(([_, rawImage]) => RenderCache.Image(rawImage, this.scale, props.isMirroredLeft))
         return this.renderImages[imageKey]
