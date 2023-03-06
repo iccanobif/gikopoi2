@@ -50,7 +50,7 @@ export class Character
         return (state && characterStates.includes(state)) ? state : characterStates[0]
     }
     
-    _getRawImageObject(props)
+    _getRawImage(props)
     {
         let rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
         if (rawImageObject) return rawImageObject
@@ -79,10 +79,8 @@ export class Character
             hasMouthClosed: props.hasMouthClosed || false,
         }
         
-        
-        const rawImageObject = this._getRawImageObject(props)
-        if (!rawImageObject) return []
-        
+        const rawImageLayers = this._getRawImage(props)
+        if (!rawImageLayers) return []
         
         const imageKeyArray = [
             props.version,
@@ -91,30 +89,24 @@ export class Character
             props.isMirroredLeft
         ]
         
-        if (rawImageObject.features["eyes_closed"])
+        if (rawImageLayers.find(([key, _]) => key == "eyes_closed"))
             imageKeyArray.push(props.hasEyesClosed)
-        if (rawImageObject.features["mouth_closed"])
+        if (rawImageLayers.find(([key, _]) => key == "mouth_closed"))
             imageKeyArray.push(props.hasMouthClosed)
         
         const imageKey = imageKeyArray.join(",")
         
-        
         if (this.renderImages[imageKey]) return this.renderImages[imageKey]
         
+        const outputLayers = rawImageLayers.filter(([key, _]) => (key == null
+            || props.hasEyesClosed && key == "eyes_closed"
+            || !props.hasEyesClosed && key == "eyes_open"
+            || props.hasMouthClosed && key == "mouth_closed"
+            || !props.hasMouthClosed && key == "mouth_open"))
+            
+        console.log(props, outputLayers)
         
-        const imageLayers = [rawImageObject.base]
-        
-        if (props.hasEyesClosed && rawImageObject.features["eyes_closed"])
-            imageLayers.push(rawImageObject.features["eyes_closed"])
-        else if (!props.hasEyesClosed && rawImageObject.features["eyes_open"])
-            imageLayers.push(rawImageObject.features["eyes_open"])
-        
-        if (props.hasMouthClosed && rawImageObject.features["mouth_closed"])
-            imageLayers.push(rawImageObject.features["mouth_closed"])
-        else if (!props.hasMouthClosed && rawImageObject.features["mouth_open"])
-            imageLayers.push(rawImageObject.features["mouth_open"])
-        
-        this.renderImages[imageKey] = imageLayers.map(rawImage => RenderCache.Image(rawImage, this.scale, props.isMirroredLeft))
+        this.renderImages[imageKey] = outputLayers.map(([_, rawImage]) => RenderCache.Image(rawImage, this.scale, props.isMirroredLeft))
         return this.renderImages[imageKey]
     }
 
@@ -132,7 +124,7 @@ export class Character
                 img.src = "data:image/png;base64," + svgString
                 img.addEventListener("load", () => 
                 {
-                    rawImages[version][side][state] = { base: img, features: {} }
+                    rawImages[version][side][state] = [[ "", img ]]
                     resolve()
                 })
                 return
@@ -141,39 +133,31 @@ export class Character
             const svgDoc = document.createElement("template")
             svgDoc.innerHTML = svgString
             
-            svgDoc.content.firstChild.querySelectorAll('[id^="gikopoipoi_"]')
-                .forEach(el => { el.style.display = "none" })
+            const elements = Array.from(svgDoc.content.firstChild.children)
+                .filter(el => el.tagName != "defs")
             
-            const mainImg = new Image()
-            mainImg.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstChild.outerHTML)
-            
-            const promises = [new Promise(r =>
-                {
-                    mainImg.addEventListener("load", () => r(mainImg))
-                })]
-                .concat(
-                    characterFeatureNames
-                    .map(featureName =>
-                    {
-                        const featureElement = svgDoc.content.firstChild.getElementById("gikopoipoi_" + featureName)
-                        if (!featureElement) return null
-                        Array.from(featureElement.parentElement.children)
-                            .filter(el => el != featureElement && el.tagName != "defs")
-                            .forEach(el => { el.style.display = "none" })
-                        featureElement.style.display = "inline"
-                        
-                        const img = new Image()
-                        img.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstChild.outerHTML)
-                        return new Promise(r => { img.addEventListener("load", () => r([featureName, img])) })
-                    })
-                    .filter(p => p))
-            
-            Promise.all(promises).then(images =>
+            Promise.all(elements
+                .reduce((acc, el) =>
             {
-                rawImages[version][side][state] = {
-                    base: images[0],
-                    features: Object.fromEntries(images.slice(1))
-                }
+                const key = (el.id && el.id.startsWith("gikopoipoi_")) ? el.id.slice(11) : null
+                const lastIndex = acc.length - 1
+                if (acc.length == 0 || acc[lastIndex][0] != key)
+                    acc.push([key, [el]])
+                else
+                    acc[lastIndex][1].push(el)
+                return acc
+            }, [])
+                .map(([key, layerEls]) =>
+            {
+                elements.forEach(el => { el.style.display = layerEls.includes(el) ? "inline" : "none" })
+                
+                const img = new Image()
+                img.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstChild.outerHTML)
+                return new Promise(r => { img.addEventListener("load", () => r([key, img])) })
+            }))
+                .then(images =>
+            {
+                rawImages[version][side][state] = images
                 resolve()
             })
         })
