@@ -32,7 +32,7 @@ export function stringToImage(imageString, isBase64)
         {
             const img = new Image()
             img.src = "data:image/png;base64," + imageString
-            img.addEventListener("load", () => { resolve([[ "", img ]]) })
+            img.addEventListener("load", () => { resolve([{ image: img }]) })
             return
         }
         
@@ -45,21 +45,32 @@ export function stringToImage(imageString, isBase64)
         Promise.all(elements
             .reduce((acc, el) =>
         {
-            const key = (el.id && el.id.startsWith("gikopoipoi_")) ? el.id.slice(11) : null
+            const object = (el.firstElementChild
+                    && el.firstElementChild.tagName == "desc"
+                    && el.firstElementChild.textContent.charAt(0) == "{")
+                ? JSON.parse(el.firstElementChild.textContent)
+                : {}
+            if (el.id && el.id.startsWith("gikopoipoi_"))
+            {
+                if (!object.tags) object.tags = []
+                object.tags.push(el.id.slice(11))
+            }
             const lastIndex = acc.length - 1
-            if (acc.length == 0 || acc[lastIndex][0] != key)
-                acc.push([key, [el]])
+            const isCurrentObjectUsed = Object.keys(object).length > 0
+            const isLastObjectUsed = acc[lastIndex] && Object.keys(acc[lastIndex][0].length > 0)
+            if (acc.length == 0 || isCurrentObjectUsed || isLastObjectUsed)
+                acc.push([object, [el]])
             else
                 acc[lastIndex][1].push(el)
             return acc
         }, [])
-            .map(([key, layerEls]) =>
+            .map(([object, layerEls]) =>
         {
             elements.forEach(el => { el.style.display = layerEls.includes(el) ? "inline" : "none" })
             
-            const img = new Image()
-            img.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstChild.outerHTML)
-            return new Promise(r => { img.addEventListener("load", () => r([key, img])) })
+            object.image = new Image()
+            object.image.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstChild.outerHTML)
+            return new Promise(r => { object.image.addEventListener("load", () => r(object)) })
         }))
             .then(images => { resolve(images) })
     })

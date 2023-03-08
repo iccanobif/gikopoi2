@@ -90,22 +90,22 @@ export class Character
             props.isMirroredLeft
         ]
         
-        if (rawImageLayers.find(([key, _]) => key == "eyes_closed"))
+        if (rawImageLayers.find(o => o.tags && o.tags.includes("eyes_closed")))
             imageKeyArray.push(props.hasEyesClosed)
-        if (rawImageLayers.find(([key, _]) => key == "mouth_closed"))
+        if (rawImageLayers.find(o => o.tags && o.tags.includes("mouth_closed")))
             imageKeyArray.push(props.hasMouthClosed)
         
         const imageKey = imageKeyArray.join(",")
         
         if (this.renderImages[imageKey]) return this.renderImages[imageKey]
         
-        const outputLayers = rawImageLayers.filter(([key, _]) => (key == null
-            || props.hasEyesClosed && key == "eyes_closed"
-            || !props.hasEyesClosed && key == "eyes_open"
-            || props.hasMouthClosed && key == "mouth_closed"
-            || !props.hasMouthClosed && key == "mouth_open"))
+        const outputLayers = rawImageLayers.filter(o => (!o.tags
+            || props.hasEyesClosed && o.tags.includes("eyes_closed")
+            || !props.hasEyesClosed && o.tags.includes("eyes_open")
+            || props.hasMouthClosed && o.tags.includes("mouth_closed")
+            || !props.hasMouthClosed && o.tags.includes("mouth_open")))
         
-        this.renderImages[imageKey] = outputLayers.map(([_, rawImage]) => RenderCache.Image(rawImage, this.scale, props.isMirroredLeft))
+        this.renderImages[imageKey] = outputLayers.map(o => RenderCache.Image(o.image, this.scale, props.isMirroredLeft))
         return this.renderImages[imageKey]
     }
 
