@@ -57,7 +57,8 @@ export function stringToImage(imageString, isBase64)
             }
             const lastIndex = acc.length - 1
             const isCurrentObjectUsed = Object.keys(object).length > 0
-            const isLastObjectUsed = acc[lastIndex] && Object.keys(acc[lastIndex][0].length > 0)
+            const isLastObjectUsed = acc[lastIndex] && Object.keys(acc[lastIndex][0]).length > 0
+            if (debug) console.log(object, acc.length == 0, isCurrentObjectUsed, isLastObjectUsed)
             if (acc.length == 0 || isCurrentObjectUsed || isLastObjectUsed)
                 acc.push([object, [el]])
             else
