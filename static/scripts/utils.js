@@ -39,7 +39,7 @@ export function stringToImage(imageString, isBase64)
         const svgDoc = document.createElement("template")
         svgDoc.innerHTML = imageString
         
-        const elements = Array.from(svgDoc.content.firstChild.children)
+        const elements = Array.from(svgDoc.content.firstElementChild.children)
             .filter(el => el.tagName != "defs")
         
         Promise.all(elements
@@ -69,7 +69,7 @@ export function stringToImage(imageString, isBase64)
             elements.forEach(el => { el.style.display = layerEls.includes(el) ? "inline" : "none" })
             
             object.image = new Image()
-            object.image.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstChild.outerHTML)
+            object.image.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstElementChild.outerHTML)
             return new Promise(r => { object.image.addEventListener("load", () => r(object)) })
         }))
             .then(images => { resolve(images) })
