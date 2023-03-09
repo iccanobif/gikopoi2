@@ -1016,7 +1016,7 @@ window.vueApp = new Vue({
             // Check that the characterId is valid (need to use hasOwnProperty() too to make sure that a characterId
             // like "toString" is not used). If not valid, default to giko
             const character = characters.hasOwnProperty(userDTO.characterId) ? characters[userDTO.characterId] : characters.giko;
-            const newUser = new User(character, userDTO.name);
+            const newUser = new User(userDTO.id, userDTO.name, character);
             newUser.moveImmediatelyToPosition(
                 this.currentRoom,
                 userDTO.position.x,
@@ -1027,7 +1027,6 @@ window.vueApp = new Vue({
             newUser.isInactive = userDTO.isInactive;
             newUser.message = userDTO.lastRoomMessage;
             newUser.bubblePosition = userDTO.bubblePosition;
-            newUser.id = userDTO.id;
             newUser.voicePitch = userDTO.voicePitch
             newUser.isAlternateCharacter = userDTO.isAlternateCharacter
 
