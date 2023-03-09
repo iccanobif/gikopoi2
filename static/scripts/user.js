@@ -2,9 +2,9 @@ import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils.js"
 import { RenderCache } from "./rendercache.js";
 import { characters } from "./character.js";
 
-const minLengthUntilBlink = 6000
-const maxBlinkLengthVariation = 1000
-const blinkLength = 1000
+const blinkOpenMinLength = 6000
+const blinkOpenLengthVariation = 1000
+const blinkClosedLength = 1000
 
 export default class User
 {
@@ -42,9 +42,9 @@ export default class User
         this.isAlternateCharacter = false
         
         this.isBlinking = false
-        this.blinkingStartShift = (parseInt(uniquePattern.slice(0, 2), 16) / 256) * (minLengthUntilBlink + maxBlinkLengthVariation + blinkLength)
+        this.blinkingStartShift = (parseInt(uniquePattern.slice(0, 2), 16) / 256) * (blinkOpenMinLength + blinkOpenLengthVariation + blinkClosedLength)
         this.blinkingPattern = uniquePattern.slice(2).split("").map((value, index, values) =>
-            (values[index] = (values[index-1] || 0) + (minLengthUntilBlink + Math.floor((parseInt(value, 16)/16) * maxBlinkLengthVariation) + blinkLength)))
+            (values[index] = (values[index-1] || 0) + (blinkOpenMinLength + Math.floor((parseInt(value, 16)/16) * blinkOpenLengthVariation) + blinkClosedLength)))
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)
@@ -162,7 +162,7 @@ export default class User
     animateBlinking(now)
     {
         const currentCycleTime = (now+this.blinkingStartShift) % this.blinkingPattern[this.blinkingPattern.length-1]
-        const isBlinking = ((this.blinkingPattern.find(b => currentCycleTime < b) - currentCycleTime) - blinkLength) <= 0
+        const isBlinking = ((this.blinkingPattern.find(b => currentCycleTime < b) - currentCycleTime) - blinkClosedLength) <= 0
         if (this.isBlinking != isBlinking)
         {
             this.isBlinking = isBlinking
