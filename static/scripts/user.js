@@ -15,7 +15,7 @@ export default class User
         // default to giko if the user has somehow set a non-existing character id
         this.character = character || characters.giko; 
         
-        const uniquePattern = id.slice(0, 8) + id.slice(9, 9+4) + id.slice(15, 15+3) + id.slice(20, 20+3) + id.slice(24, 24+12)
+        const uniquePattern = id.slice(0, 8) + id.slice(9, 9+4) + id.slice(15, 15+3) + id.slice(20, 20+3) + id.slice(24, 24+12) // this needs an id in the uuid format
 
         this.logicalPositionX = 0;
         this.logicalPositionY = 0;
@@ -42,12 +42,9 @@ export default class User
         this.isAlternateCharacter = false
         
         this.isBlinking = false
-        this.blinkingPattern = uniquePattern.slice(2).split("").reduce((a, c) =>
-        {
-            a.push((a[a.length-1] || 0) + (minLengthUntilBlink + Math.floor((parseInt(c, 16)/16) * maxBlinkLengthVariation) + blinkLength))
-            return a
-        }, [])
         this.blinkingStartShift = (parseInt(uniquePattern.slice(0, 2), 16) / 256) * (minLengthUntilBlink + maxBlinkLengthVariation + blinkLength)
+        this.blinkingPattern = uniquePattern.slice(2).split("").map((value, index, values) =>
+            (values[index] = (values[index-1] || 0) + (minLengthUntilBlink + Math.floor((parseInt(value, 16)/16) * maxBlinkLengthVariation) + blinkLength)))
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)
