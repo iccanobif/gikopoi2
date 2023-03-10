@@ -42,9 +42,9 @@ export default class User
         this.isAlternateCharacter = false
         
         this.isBlinking = false
-        this.blinkingStartShift = (parseInt(uniquePattern.slice(0, 2), 16) / 256) * (blinkOpenMinLength + blinkOpenLengthVariation + blinkClosedLength)
         this.blinkingPattern = uniquePattern.slice(2).split("").map((value, index, values) =>
             (values[index] = (values[index-1] || 0) + (blinkOpenMinLength + Math.floor((parseInt(value, 16)/16) * blinkOpenLengthVariation) + blinkClosedLength)))
+        this.blinkingStartShift = (parseInt(uniquePattern.slice(0, 2), 16) / 256) * this.blinkingPattern[this.blinkingPattern.length-1]
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)
