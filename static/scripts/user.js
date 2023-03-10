@@ -162,7 +162,7 @@ export default class User
     animateBlinking(now)
     {
         const currentCycleTime = (now+this.blinkingStartShift) % this.blinkingPattern[this.blinkingPattern.length-1]
-        const isBlinking = (((this.blinkingPattern.find(b => currentCycleTime <= b) || 0) - currentCycleTime) - blinkClosedLength) <= 0
+        const isBlinking = ((this.blinkingPattern.find(b => currentCycleTime < b) - currentCycleTime) - blinkClosedLength) <= 0
         if (this.isBlinking != isBlinking)
         {
             this.isBlinking = isBlinking
