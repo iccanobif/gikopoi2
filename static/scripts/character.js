@@ -175,7 +175,7 @@ export const characters = {
     kaminarisama_naito: new Character("kaminarisama_naito", "svg", true, null, -0.48, 0.13, null),
     panda_naito: new Character("panda_naito", "svg", false, null, -0.48, 0.13, null),
     wild_panda_naito: new Character("wild_panda_naito", "svg", true, null, -0.48, 0.13, null),
-    funkynaito: new Character("funkynaito", "png", true, null, -0.48, 0.13, null),
+    funkynaito: new Character("funkynaito", "svg", true, null, -0.48, 0.13, null),
     molgiko: new Character("molgiko", "png", true, null, -0.8, -0.7, null),
     tikan_giko: new Character("tikan_giko", "svg", true, null, -0.5, 0.24, null),
     hotsuma_giko: new Character("hotsuma_giko", "svg", false, null, -0.5, 0.24, null),

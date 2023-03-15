@@ -1429,7 +1429,7 @@ async function getCharacterImages(crisp: boolean)
     const output: { [characterId: string]: CharacterSvgDto} = {}
     for (const characterId of characterIds)
     {
-        const extension = characterId == "funkynaito" || characterId == "molgiko" ? "png" : "svg"
+        const extension = characterId == "molgiko" ? "png" : "svg"
 
         const getCharacterImage = async (path: string, crisp: boolean) => {
             const completePath = "static/characters/" + path
