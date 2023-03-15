@@ -1492,6 +1492,7 @@ app.get("/admin", (req, res) => {
     {
         const output = "<form action='user-list' method='post'><input type='text' name='pwd'><input type='submit' value='user-list'></form>"
                     + "<form action='banned-ip-list' method='post'><input type='text' name='pwd'><input type='submit' value='unban'></form>"
+                    + "<form action='ban-ip-entry' method='post'><input type='text' name='pwd'><input type='submit' value='ban'></form>"
 
         res.set({
             'Content-Type': 'text/html; charset=utf-8',
@@ -1587,6 +1588,37 @@ app.post("/banned-ip-list", (req, res) => {
     }
 })
 
+app.post("/ban-ip-entry", (req, res) => {
+    try 
+    {
+        const pwd = req.body.pwd
+
+        if (pwd != settings.adminKey)
+        {
+            res.end("nope")
+            return
+        }
+        
+        const ipInput = "<input type='text' name='ip'>"
+        const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
+        const banButton = "<br/><input type='submit'>"
+
+        const output = "<form action='ban-ip' method='post'>" + pwdInput + ipInput + banButton + "</form>"
+
+        res.set({
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-store'
+        })
+
+        res.end(output)
+    }
+    catch (exc)
+    {
+        logException(exc, null)
+        res.end("error")
+    }
+})
+
 app.post("/ban", async (req, res) => {
     try 
     {
@@ -1606,6 +1638,27 @@ app.post("/ban", async (req, res) => {
             for (const ip of user.ips)
                 await banIP(ip)
         }
+        res.end("done")
+    }
+    catch (exc)
+    {
+        logException(exc, null)
+        res.end("error")
+    }
+})
+
+app.post("/ban-ip", async (req, res) => {
+    try 
+    {
+        const pwd = req.body.pwd
+
+        if (pwd != settings.adminKey)
+        {
+            res.end("nope")
+            return
+        }
+        
+        await banIP(req.body.ip)
         res.end("done")
     }
     catch (exc)

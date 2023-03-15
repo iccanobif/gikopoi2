@@ -19,6 +19,10 @@ import {
     requestNotificationPermission,
     getDeviceList,
     getClickCoordinatesWithinCanvas,
+    htmlToControlChars,
+    controlCharsToHtml,
+    removeControlChars,
+    escapeHTML
 } from "./utils.js";
 import messages from "./lang.js";
 import { speak } from "./tts.js";
@@ -1012,7 +1016,7 @@ window.vueApp = new Vue({
             // Check that the characterId is valid (need to use hasOwnProperty() too to make sure that a characterId
             // like "toString" is not used). If not valid, default to giko
             const character = characters.hasOwnProperty(userDTO.characterId) ? characters[userDTO.characterId] : characters.giko;
-            const newUser = new User(character, userDTO.name);
+            const newUser = new User(userDTO.id, userDTO.name, character);
             newUser.moveImmediatelyToPosition(
                 this.currentRoom,
                 userDTO.position.x,
@@ -1023,7 +1027,6 @@ window.vueApp = new Vue({
             newUser.isInactive = userDTO.isInactive;
             newUser.message = userDTO.lastRoomMessage;
             newUser.bubblePosition = userDTO.bubblePosition;
-            newUser.id = userDTO.id;
             newUser.voicePitch = userDTO.voicePitch
             newUser.isAlternateCharacter = userDTO.isAlternateCharacter
 
@@ -1085,17 +1088,18 @@ window.vueApp = new Vue({
                     anchor.rel = "noopener noreferrer";
                     return anchor.outerHTML;
                 })
-            /*if (userId) // Only mark mentions in user messages
+            if (userId) // Only mark mentions in user messages
                 bodySpan.childNodes.forEach(node =>
                 {
                     let el = node.nodeType == 3
                         ? document.createElement("span")
                         : node
-                    el.innerHTML = this.markMentions(node.textContent)
+                        
+                    el.innerHTML = controlCharsToHtml(escapeHTML(this.markMentions(removeControlChars(node.textContent))))
                     if (node.nodeType == 3)
                         bodySpan.replaceChild(el, node)
                 })
-            */
+            
             messageDiv.append(timestampSpan);
             messageDiv.append(authorSpan);
             messageDiv.append(tripcodeSpan);
@@ -3323,7 +3327,7 @@ window.vueApp = new Vue({
             }
             function replacementFunction(word)
             {
-                return "<span class='message-mention'>" + word + "</span>"
+                return htmlToControlChars("<span class='message-mention'>" + word + "</span>")
             }
             msg = [msg]
             msg = regexReplace(msg, this.customMentionRegexObject, replacementFunction)

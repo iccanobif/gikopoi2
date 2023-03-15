@@ -120,6 +120,7 @@ export default
         preferences_custom_mention_sound_notice: "Žodžius arba jų dalis atskirkite kableliu.\nPaminėjus įrašytus žodžius arbą jų dalis aktyvuosis garsinis signalas.",
         preferences_underlined_usernames: "Pabraukti vardus",
         preferences_low_quality: "Žemesnė kokybė",
+        preferences_disable_idle_animations: "Išjungti pasyvias animacijas",
         preferences_crisp_mode: "Aštrūs kontūrai",
         preferences_timestamps_in_copied_log: "Prikabinti datas prie nukopijuotų žinučių",
         preferences_ignore_indicator_in_log: "Rodyti ignoruotų naudotojų žinučių vietą pokalbio lange",

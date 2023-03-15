@@ -2,21 +2,20 @@ import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils.js"
 import { RenderCache } from "./rendercache.js";
 import { characters } from "./character.js";
 
-const blinkLength = 1000
-
-function getTimeToNextBlink()
-{
-    return Math.floor((Math.random() * 1 + 6) * 1000)
-}
+const blinkOpenMinLength = 6000
+const blinkOpenLengthVariation = 1000
+const blinkClosedLength = 1000
 
 export default class User
 {
-    constructor(character, name)
+    constructor(id, name, character)
     {
-        this.id = null;
+        this.id = id;
         this.name = name;
         // default to giko if the user has somehow set a non-existing character id
         this.character = character || characters.giko; 
+        
+        const uniquePattern = id.slice(0, 8) + id.slice(9, 9+4) + id.slice(15, 15+3) + id.slice(20, 20+3) + id.slice(24, 24+12) // this needs an id in the uuid format
 
         this.logicalPositionX = 0;
         this.logicalPositionY = 0;
@@ -40,9 +39,12 @@ export default class User
         this.bubbleImage = null;
         this.voicePitch = null;
         
-        this.isAlternateCharacter = false;
-        this.blinkAt = null
+        this.isAlternateCharacter = false
+        
         this.isBlinking = false
+        this.blinkingPattern = uniquePattern.slice(2).split("").map((value, index, values) =>
+            (values[index] = (values[index-1] || 0) + (blinkOpenMinLength + Math.floor((parseInt(value, 16)/16) * blinkOpenLengthVariation) + blinkClosedLength)))
+        this.blinkingStartShift = (parseInt(uniquePattern.slice(0, 2), 16) / 256) * this.blinkingPattern[this.blinkingPattern.length-1]
     }
 
     moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)
@@ -159,30 +161,18 @@ export default class User
     
     animateBlinking(now)
     {
-        if (this.isSpinning || this.isInactive)
+        const currentCycleTime = (now+this.blinkingStartShift) % this.blinkingPattern[this.blinkingPattern.length-1]
+        const isBlinking = ((this.blinkingPattern.find(b => currentCycleTime < b) - currentCycleTime) - blinkClosedLength) <= 0
+        if (this.isBlinking != isBlinking)
         {
-            this.resetBlinking()
-            return
-        }
-        
-        if (!this.blinkAt || this.isBlinking && (this.blinkAt + blinkLength) <= now)
-        {
-            this.isBlinking = false
-            this.blinkAt = now + getTimeToNextBlink()
-            return true
-        }
-        else if (!this.isBlinking && this.blinkAt <= now)
-        {
-            this.isBlinking = true
+            this.isBlinking = isBlinking
             return true
         }
     }
     
     resetBlinking()
     {
-        if (!this.blinkAt && !this.isBlinking) return
         this.isBlinking = false
-        this.blinkAt = null
     }
     
     checkIfRedrawRequired()

@@ -24,6 +24,58 @@ export function loadImage(url)
     })
 }
 
+export function stringToImage(imageString, isBase64)
+{
+    return new Promise((resolve) =>
+    {
+        if (isBase64)
+        {
+            const img = new Image()
+            img.src = "data:image/png;base64," + imageString
+            img.addEventListener("load", () => { resolve([{ image: img }]) })
+            return
+        }
+        
+        const svgDoc = document.createElement("template")
+        svgDoc.innerHTML = imageString
+        
+        const elements = Array.from(svgDoc.content.firstElementChild.children)
+            .filter(el => el.tagName != "defs")
+        
+        Promise.all(elements
+            .reduce((acc, el) =>
+        {
+            const object = (el.firstElementChild
+                    && el.firstElementChild.tagName == "desc"
+                    && el.firstElementChild.textContent.charAt(0) == "{")
+                ? JSON.parse(el.firstElementChild.textContent)
+                : {}
+            if (el.id && el.id.startsWith("gikopoipoi_"))
+            {
+                if (!object.tags) object.tags = []
+                object.tags.push(el.id.slice(11))
+            }
+            const lastIndex = acc.length - 1
+            const isCurrentObjectUsed = Object.keys(object).length > 0
+            const isLastObjectUsed = acc[lastIndex] && Object.keys(acc[lastIndex][0]).length > 0
+            if (acc.length == 0 || isCurrentObjectUsed || isLastObjectUsed)
+                acc.push([object, [el]])
+            else
+                acc[lastIndex][1].push(el)
+            return acc
+        }, [])
+            .map(([object, layerEls]) =>
+        {
+            elements.forEach(el => { el.style.display = layerEls.includes(el) ? "inline" : "none" })
+            
+            object.image = new Image()
+            object.image.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstElementChild.outerHTML)
+            return new Promise(r => { object.image.addEventListener("load", () => r(object)) })
+        }))
+            .then(images => { resolve(images) })
+    })
+}
+
 // returns "left" and "bottom" positions
 export function calculateRealCoordinates(room, x, y)
 {
@@ -302,4 +354,39 @@ export function getClickCoordinatesWithinCanvas(canvas, clickEvent, devicePixelR
         x: (clickEvent.clientX - canvasBoundingClientRect.x) * devicePixelRatio,
         y: (clickEvent.clientY - canvasBoundingClientRect.y) * devicePixelRatio,
     }
+}
+
+// HTML control functions
+
+export const controlCharLT = String.fromCharCode(2) // <
+export const controlCharGT = String.fromCharCode(3) // >
+export const controlCharAmp = String.fromCharCode(31) // &
+
+export function htmlToControlChars(string)
+{
+    return string
+        .replaceAll("&", controlCharAmp)
+        .replaceAll("<", controlCharLT)
+        .replaceAll(">", controlCharGT)
+}
+
+export function controlCharsToHtml(string)
+{
+    return string
+        .replaceAll(controlCharAmp, "&")
+        .replaceAll(controlCharLT, "<")
+        .replaceAll(controlCharGT, ">")
+}
+
+export function removeControlChars(string)
+{
+    return string.replace(/[\u0000-\u001F\u007F-\u009F]/g, "")
+}
+
+export function escapeHTML(string)
+{
+    return string
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
 }
