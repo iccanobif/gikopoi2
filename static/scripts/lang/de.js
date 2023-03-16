@@ -127,7 +127,7 @@ export default
         preferences_language: "Sprache",
         preferences_enable_coin_sound: "Münzton aktivieren",
         preferences_show_log_above_toolbar: "Log über der Toolbar anzeigen",
-        preferences_show_log_dividers: "Trennlinien der Log-nachrichten anzeigen",
+        preferences_show_log_dividers: "Trennlinien der Log-Nachrichten anzeigen",
 
         preferences_title_streams: "Streams",
         preferences_streams_auto_resume: "Automatische Fortsetzung",
