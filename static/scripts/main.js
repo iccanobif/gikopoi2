@@ -1181,15 +1181,32 @@ window.vueApp = new Vue({
                 this.showWarningToast(i18n.t("msg.chat_log_cleared"));
             });
         },
-        drawImage: function (context, image, x, y)
+        drawImage: function (context, image, dx, dy, sx, sy, w, h)
         {
-            if (!x) x = 0;
-            if (!y) y = 0;
-            context.drawImage(
-                image,
-                Math.round(this.getCanvasScale() * x + this.canvasGlobalOffset.x),
-                Math.round(this.getCanvasScale() * y + this.canvasGlobalOffset.y)
-            );
+            if (!dx) dx = 0;
+            if (!dy) dy = 0;
+            if (sx)
+            {
+                context.drawImage(
+                    image,
+                    sx,
+                    sy,
+                    w,
+                    h,
+                    Math.round(this.getCanvasScale() * dx + sx + this.canvasGlobalOffset.x),
+                    Math.round(this.getCanvasScale() * dy + sy + this.canvasGlobalOffset.y),
+                    w,
+                    h
+                );
+            }
+            else
+            {
+                context.drawImage(
+                    image,
+                    Math.round(this.getCanvasScale() * dx + this.canvasGlobalOffset.x),
+                    Math.round(this.getCanvasScale() * dy + this.canvasGlobalOffset.y)
+                );
+            }
         },
         getNameImage: function(user, withBackground)
         {
@@ -1243,7 +1260,7 @@ window.vueApp = new Vue({
                     context.fillText(displayName ? displayName : "◆" + tripcode, canvas.width/2, canvas.height/2 + 1 * scale);
                 }
 
-                return [width, height];
+                return { width, height };
             });
         },
         getBubbleImage: function(user)
@@ -1362,7 +1379,7 @@ window.vueApp = new Vue({
                         !arrowCorner[1] * sBoxMargin + sBoxPadding[1] + (i*sLineHeight) + (sLineHeight/2));
                 }
 
-                return [boxWidth + boxMargin, boxHeight + boxMargin]
+                return { width: boxWidth + boxMargin, height: boxHeight + boxMargin }
             });
         },
         detectCanvasResize: function ()
@@ -1667,7 +1684,11 @@ window.vueApp = new Vue({
                             context,
                             renderImage.getImage(this.getCanvasScale()),
                             o.o.currentPhysicalPositionX + this.blockWidth/2 - renderImage.width/2,
-                            o.o.currentPhysicalPositionY - renderImage.height
+                            o.o.currentPhysicalPositionY - renderImage.height,
+                            renderImage.cropX,
+                            renderImage.cropY,
+                            renderImage.cropWidth,
+                            renderImage.cropHeight
                         )
                     })
 
