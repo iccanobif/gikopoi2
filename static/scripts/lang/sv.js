@@ -85,7 +85,7 @@ export default
         stream_form_visible_to_all_room : "Alla användare i rummet",
         stream_form_visible_only_to_specific_users: "Enbart utvalda användare",
         stream_form_vtuber_mode: "VTubarläge",
-        // stream_form_niconico_mode: "",
+        stream_form_niconico_mode: "NicoNicoläge",
 
         device_selection_title: "Välj enhet",
         device_selection_audio_devices: "Ljudenheter",
@@ -122,7 +122,7 @@ export default
         preferences_underlined_usernames: "Stryk under användarnamn",
         preferences_low_quality: "Låg kvalitet",
         preferences_crisp_mode: "Skarp",
-        // preferences_disable_idle_animations: "",
+        preferences_disable_idle_animations: "Avaktivera vänteanimationer",
         preferences_timestamps_in_copied_log: "Inkludera tidsstämplar i kopierad logg",
         preferences_ignore_indicator_in_log: "Ersätt meddelanden från ignorerade användare med en indikator i loggen.",
         preferences_language: "Språk",
