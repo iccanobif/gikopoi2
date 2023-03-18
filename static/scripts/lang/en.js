@@ -85,6 +85,7 @@ export default
         stream_form_visible_to_all_room : "All users in the room",
         stream_form_visible_only_to_specific_users: "Only specific users",
         stream_form_vtuber_mode: "VTuber mode",
+        stream_form_niconico_mode: "Niconico mode",
 
         device_selection_title: "Select device",
         device_selection_audio_devices: "Audio devices",

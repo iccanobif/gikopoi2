@@ -85,6 +85,7 @@ export default
         stream_form_visible_to_all_room : "室内の全員",
         stream_form_visible_only_to_specific_users: "特定のユーザーだけに見える配信",
         stream_form_vtuber_mode: "VTuberモード",
+        stream_form_niconico_mode: "ニコニコ動画モード",
 
         device_selection_title: "デバイスを選択",
         device_selection_audio_devices: "音声デバイス",

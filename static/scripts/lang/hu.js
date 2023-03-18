@@ -85,6 +85,7 @@ export default
         // stream_form_visible_to_all_room : "",
         // stream_form_visible_only_to_specific_users: "",
         // stream_form_vtuber_mode: "",
+        // stream_form_niconico_mode: "",
 
         device_selection_title: "Eszköz kiválasztása",
         device_selection_audio_devices: "Hang eszközök",

@@ -1012,3 +1012,33 @@ button
         transform: scale(-1,1) rotate(5deg);
     }
 }
+
+.nico-nico-messages-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.nico-nico-messages-container span {
+    color: white;
+    font-size: 2vw;
+    white-space: nowrap;
+    position: absolute;
+    left: 0;
+    transform: translate(-100%, 0);
+    animation: nico-nico-message-animation 3s linear infinite;
+}
+
+@keyframes nico-nico-message-animation {
+    0% {
+        left: 100%;
+        transform: translate(0, 0);
+    }
+
+    100% {
+        left: 0;
+        transform: translate(-100%, 0);
+    }
+}

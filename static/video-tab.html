@@ -23,37 +23,72 @@
         text-align: center;
     }
 
-    .vtuber-character
-    {
+    .vtuber-character {
         position: absolute;
         height: 68%;
         right: -6%;
         bottom: -29%;
-        transform: scale(-1,1);
+        transform: scale(-1, 1);
         animation: 5s ease-in-out 0s infinite alternate vtuber_character_swaying;
     }
 
-    .vtuber-character.jumping
-    {
+    .vtuber-character.jumping {
         animation: 0.1s ease-in 0s infinite alternate vtuber_character_jumping;
     }
 
     @keyframes vtuber_character_jumping {
-        from { bottom: -29% } to { bottom: -23% }
+        from {
+            bottom: -29%
+        }
+
+        to {
+            bottom: -23%
+        }
     }
 
     @keyframes vtuber_character_swaying {
         from {
-            transform: scale(-1,1) rotate(-5deg);
-        } to {
-            transform: scale(-1,1) rotate(5deg);
+            transform: scale(-1, 1) rotate(-5deg);
+        }
+
+        to {
+            transform: scale(-1, 1) rotate(5deg);
         }
     }
 
+    .nico-nico-messages-container {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .nico-nico-messages-container span {
+        color: white;
+        font-size: 2vw;
+        white-space: nowrap;
+        position: absolute;
+        left: 0;
+        transform: translate(-100%, 0);
+        animation: nico-nico-message-animation 3s linear infinite;
+    }
+
+    @keyframes nico-nico-message-animation {
+        0% {
+            left: 100%;
+            transform: translate(0, 0);
+        }
+
+        100% {
+            left: 0;
+            transform: translate(-100%, 0);
+        }
+    }
 </style>
 
 <body>
-    
+
 </body>
 
 </html>

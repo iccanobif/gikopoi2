@@ -33,6 +33,7 @@ export interface StreamSlot
     isVisibleOnlyToSpecificUsers: boolean | null,
     allowedListenerIDs: string[],
     streamIsVtuberMode: boolean | null,
+    isNicoNicoMode: boolean | null,
 }
 
 export interface Door
@@ -177,6 +178,7 @@ export interface StreamSlotDto
     isAllowed: boolean | null,
     isVisibleOnlyToSpecificUsers: boolean | null,
     streamIsVtuberMode: boolean | null,
+    isNicoNicoMode: boolean | null,
 }
 
 export interface ChessboardState {

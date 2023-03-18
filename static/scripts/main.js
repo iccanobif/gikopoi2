@@ -234,6 +234,7 @@ window.vueApp = new Vue({
         streamTarget: "all_room",
         allowedListenerIDs: new Set(),
         streamIsVtuberMode: false,
+        isNicoNicoMode: false,
 
         // Device selection popup
         isDeviceSelectionOpen: false,
@@ -1148,6 +1149,26 @@ window.vueApp = new Vue({
 
             if (user.id != this.myUserID)
                 await this.displayNotification(this.toDisplayName(user.name) + ": " + plainMsg, this.getAvatarSpriteForUser(user.id))
+
+            // write message to niconico style streams (if any)
+            const niconicoMessageContainers = document.getElementsByClassName("nico-nico-messages-container")
+            for (let i = 0; i < niconicoMessageContainers.length; i++)
+                this.addNiconicoMessageToVideoContainer(niconicoMessageContainers[i], plainMsg)
+            for (const i of Object.keys(this.detachedStreamTabs))
+            {
+                const container = this.detachedStreamTabs[i].document.getElementsByClassName("nico-nico-messages-container")[0]
+                this.addNiconicoMessageToVideoContainer(container, plainMsg)
+            }
+        },
+        addNiconicoMessageToVideoContainer: function(videoContainer, messageText)
+        {
+            const niconicoMessageElement = document.createElement("span");
+            niconicoMessageElement.innerText = messageText
+            niconicoMessageElement.style.top = Math.random() * 80 + 2 + "%"
+            videoContainer.appendChild(niconicoMessageElement)
+            setTimeout(() => {
+                videoContainer.removeChild(niconicoMessageElement)
+            }, 3000)
         },
         displayNotification: async function(message, icon)
         {
@@ -2792,6 +2813,7 @@ window.vueApp = new Vue({
                     withSound: withSound,
                     isVisibleOnlyToSpecificUsers: this.streamTarget == "specific_users",
                     streamIsVtuberMode: withVideo && this.streamIsVtuberMode,
+                    isNicoNicoMode: withVideo && this.isNicoNicoMode,
                     info: []
                         .concat(this.mediaStream.getAudioTracks().map(t => ({
                             constraints: t.getConstraints && t.getConstraints(),

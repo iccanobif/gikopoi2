@@ -85,6 +85,7 @@ export default
         // stream_form_visible_to_all_room : "",
         // stream_form_visible_only_to_specific_users: "",
         stream_form_vtuber_mode: "Modalità VTuber",
+        stream_form_niconico_mode: "Modalità Niconico",
 
         // device_selection_title: "",
         // device_selection_audio_devices: "",

@@ -85,6 +85,7 @@ export default
         stream_form_visible_to_all_room : "Alla användare i rummet",
         stream_form_visible_only_to_specific_users: "Enbart utvalda användare",
         stream_form_vtuber_mode: "VTubarläge",
+        // stream_form_niconico_mode: "",
 
         device_selection_title: "Välj enhet",
         device_selection_audio_devices: "Ljudenheter",
