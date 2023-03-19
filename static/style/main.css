@@ -1029,7 +1029,7 @@ button
     left: 0;
     height: 10%;
     transform: translate(-100%, 0);
-    animation: nico-nico-message-animation 3s linear infinite;
+    animation: nico-nico-message-animation 3s linear 1;
     stroke: white;
     fill: white;
 }
