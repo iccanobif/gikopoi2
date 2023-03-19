@@ -1162,24 +1162,8 @@ window.vueApp = new Vue({
         },
         addNiconicoMessageToVideoContainer: function(videoContainer, messageText, userID)
         {
-            // I create svg elements by cloning one that is already in the DOM because
-            // I couldn't get document.createElementNS() to create SVGs that looked the same
-            // as one defined in the HTML (browser bug, possibly?).
-            const niconicoMessageElement = document
-                .getElementById("niconico-message-template")
-                .cloneNode(true)
-            if (window.nextNiconicoMessageElementId == undefined)
-                window.nextNiconicoMessageElementId = 0
-            niconicoMessageElement.id = "niconico-message-" + window.nextNiconicoMessageElementId++;
-            const textElement = niconicoMessageElement.getElementsByTagName("text")[0]
-            textElement.textContent = messageText
-
-            // Calculate text width
-            const canvas = document.getElementById("room-canvas")
-            const context = canvas.getContext('2d');
-            const width = Math.round(context.measureText(messageText).width)
-
-            niconicoMessageElement.setAttributeNS('http://www.w3.org/2000/svg', "viewBox", "0 0 " + width + " 15")
+            const span = document.createElement("span")
+            span.textContent = messageText
 
             // Calculate the vertical position as a crude "hash" of the userid and text of the message,
             // so that all users see messages more or less in the same place
@@ -1187,17 +1171,10 @@ window.vueApp = new Vue({
                 .split("")
                 .map(c => c.charCodeAt(0))
                 .reduce((sum, val) => sum + val) % 256) / 256
-
-            niconicoMessageElement.style.top = top * 80 + 2 + "%"
-
-            const span = document.createElement("span")
-            span.textContent = messageText
             span.style.top = top * 80 + 2 + "%"
 
-            // videoContainer.appendChild(niconicoMessageElement)
             videoContainer.appendChild(span)
             setTimeout(() => {
-                // videoContainer.removeChild(niconicoMessageElement)
                 videoContainer.removeChild(span)
             }, 3200)
         },
@@ -2610,7 +2587,10 @@ window.vueApp = new Vue({
                     else
                         this.takeStream(slotId);
 
-                $( "#video-container-" + slotId ).resizable({aspectRatio: true})
+                $( "#video-container-" + slotId ).resizable({
+                    aspectRatio: true,
+                    resize: adjustNiconicoMessagesFontSize
+                })
 
                 if (this.slotVolume[slotId] === undefined)
                     this.slotVolume[slotId] = 1
@@ -2977,7 +2957,10 @@ window.vueApp = new Vue({
                         const stream = event.streams[0]
                         videoElement.srcObject = stream;
                         
-                        $( "#video-container-" + streamSlotId ).resizable({aspectRatio: true})
+                        $( "#video-container-" + streamSlotId ).resizable({
+                            aspectRatio: true,
+                            resize: adjustNiconicoMessagesFontSize
+                        })
 
                         if (this.inboundAudioProcessors[streamSlotId])
                         {
@@ -3649,8 +3632,10 @@ window.vueApp = new Vue({
                             // the main page we don't need that).
                             const niconicoMessagesContainer = videoContainer.getElementsByClassName("nico-nico-messages-container")[0]
                             niconicoMessagesContainer.style.width = "100%"
+                            adjustNiconicoMessagesFontSize()
                         }
                     };
+                    tab.postMessage("adjust-niconico-stuff")
                 }
             }
         },
@@ -3688,7 +3673,8 @@ const debouncedLogSoundVolume = debounceWithDelayedExecution((myUserID, volume) 
     logToServer(myUserID + " SFX volume: " + volume)
 }, 150)
 
-
+// TODO: handle cases where the geometry of the <video> element changes during the stream,
+//       can be done with a ResizeObserver, maybe
 function adjustNiconicoMessagesFontSize()
 {
     const videoElements = document.getElementsByClassName("video-being-played")
@@ -3701,5 +3687,3 @@ function adjustNiconicoMessagesFontSize()
             niconicoMessagesContainer.style.fontSize = fontsize + "px"
     }
 }
-
-setInterval(adjustNiconicoMessagesFontSize, 500)

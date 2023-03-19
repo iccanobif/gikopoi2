@@ -75,16 +75,6 @@
         overflow: hidden;
     }
 
-    .nico-nico-messages-container svg {
-        position: absolute;
-        left: 0;
-        height: 10%;
-        transform: translate(-100%, 0);
-        animation: nico-nico-message-animation 3s linear 1;
-        stroke: white;
-        fill: white;
-    }
-
     .nico-nico-messages-container span {
         position: absolute;
         left: 0;
@@ -123,8 +113,7 @@
             const niconicoMessagesContainer = document.getElementsByClassName("nico-nico-messages-container")[0]
             niconicoMessagesContainer.style.width = width + "px"
         }
-
-        setInterval(adjustNiconicoMessagesContainerSize, 500)
+        document.addEventListener("resize", adjustNiconicoMessagesContainerSize)
 
         // this is copypasted from main.js
         function adjustNiconicoMessagesFontSize()
@@ -139,7 +128,19 @@
                     niconicoMessagesContainer.style.fontSize = fontsize + "px"
             }
         }
-        setInterval(adjustNiconicoMessagesFontSize, 500)
+        document.addEventListener("resize", adjustNiconicoMessagesContainerSize)
+
+        // TODO: handle cases where the geometry of the <video> element changes during the stream,
+        //       can be done with a ResizeObserver, maybe
+
+        window.addEventListener("message", (event) =>
+        {
+            if (event.data == "adjust-niconico-stuff")
+            {
+                adjustNiconicoMessagesContainerSize()
+                adjustNiconicoMessagesFontSize()
+            }
+        })
 
     </script>
 </body>
