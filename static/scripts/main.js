@@ -3621,6 +3621,12 @@ window.vueApp = new Vue({
                             videoContainer.originalPreviousSibling.after(videoContainer);
                             videoContainer.originalPreviousSibling = null;
                             this.detachedStreamTabs[slotId] = null;
+
+                            // Restore original width for the niconico messages container (the detached tab
+                            // uses javascript to set its width equal to the one of the <video> element, but in 
+                            // the main page we don't need that).
+                            const niconicoMessagesContainer = videoContainer.getElementsByClassName("nico-nico-messages-container")[0]
+                            niconicoMessagesContainer.style.width = "100%"
                         }
                     };
                 }
