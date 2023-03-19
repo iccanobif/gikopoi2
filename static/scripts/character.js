@@ -197,7 +197,7 @@ export const characters = {
 
 export const loadCharacters = async (crispMode) => {
 
-    const response = await fetch("/characters/" + (crispMode ? "crisp" : "regular"))
+    const response = await fetch("/characters/" + (crispMode ? "crisp" : "regular") + "?v=" + window.EXPECTED_SERVER_VERSION)
     const dto = await response.json()
 
     return Promise.all(Object.keys(characters).map(characterId => characters[characterId].loadImages(dto[characterId])))

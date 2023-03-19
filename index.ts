@@ -1483,13 +1483,29 @@ function getCharacterImages(crisp: boolean)
 const regularCharacterImages = getCharacterImages(false)
 app.get("/characters/regular", async (req, res) =>
 {
-    try { res.json(regularCharacterImages) } catch (e) { res.end(stringifyException(e)) }
+    try
+    {
+        res.set("Cache-Control", "public, max-age=604800, immutable")
+        res.json(regularCharacterImages) 
+    }
+    catch (e)
+    {
+        res.end(stringifyException(e))
+    }
 })
 
 const crispCharacterImages = getCharacterImages(true)
 app.get("/characters/crisp", async (req, res) =>
 {
-    try { res.json(crispCharacterImages) } catch (e) { res.end(stringifyException(e)) }
+    try
+    {
+        res.set("Cache-Control", "public, max-age=604800, immutable")
+        res.json(crispCharacterImages) 
+    }
+    catch (e)
+    {
+        res.end(stringifyException(e))
+    }
 })
 
 app.use(express.urlencoded({ extended: false }))
