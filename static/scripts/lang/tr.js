@@ -85,7 +85,7 @@ export default
         stream_form_visible_to_all_room : "Odadaki bütün kullanıcılar",
         stream_form_visible_only_to_specific_users: "Yalnızca belirli kullanıcılar",
         stream_form_vtuber_mode: "VTuber modu",
-        // stream_form_niconico_mode: "",
+        stream_form_niconico_mode: "NicoNico modu",
 
         device_selection_title: "Aygıt seç",
         device_selection_audio_devices: "Ses aygıtları",
