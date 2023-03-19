@@ -1019,16 +1019,19 @@ button
     position: absolute;
     top: 0;
     left: 0;
+    /* pointer-events set to none so that onVideoDoubleClick() isn't called
+       with a niconico message as event.target instead of the correct <video> element*/
+    pointer-events: none;
 }
 
-.nico-nico-messages-container span {
-    color: white;
-    font-size: 2vw;
-    white-space: nowrap;
+.nico-nico-messages-container svg {
     position: absolute;
     left: 0;
+    height: 10%;
     transform: translate(-100%, 0);
     animation: nico-nico-message-animation 3s linear infinite;
+    stroke: white;
+    fill: white;
 }
 
 @keyframes nico-nico-message-animation {
@@ -1041,4 +1044,8 @@ button
         left: 0;
         transform: translate(-100%, 0);
     }
+}
+
+#niconico-message-template {
+    display: none;
 }

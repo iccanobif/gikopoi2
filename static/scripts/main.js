@@ -1162,13 +1162,22 @@ window.vueApp = new Vue({
         },
         addNiconicoMessageToVideoContainer: function(videoContainer, messageText)
         {
-            const niconicoMessageElement = document.createElement("span");
-            niconicoMessageElement.innerText = messageText
+            // I create svg elements by cloning one that is already in the DOM because
+            // I couldn't get document.createElementNS() to create SVGs that looked the same
+            // as one defined in the HTML (browser bug, possibly?).
+            const niconicoMessageElement = document
+                .getElementById("niconico-message-template")
+                .cloneNode(true)
+            if (window.nextNiconicoMessageElementId == undefined)
+                window.nextNiconicoMessageElementId = 0
+            niconicoMessageElement.id = "niconico-message-" + window.nextNiconicoMessageElementId++;
+            const textElement = niconicoMessageElement.getElementsByTagName("text")[0]
+            textElement.textContent = messageText
             niconicoMessageElement.style.top = Math.random() * 80 + 2 + "%"
             videoContainer.appendChild(niconicoMessageElement)
             setTimeout(() => {
                 videoContainer.removeChild(niconicoMessageElement)
-            }, 3000)
+            }, 3200)
         },
         displayNotification: async function(message, icon)
         {
@@ -3124,8 +3133,6 @@ window.vueApp = new Vue({
                     sort = b[key] - a[key];
                 return sort * direction;
             })
-
-
         },
         openStreamPopup: function (streamSlotId)
         {

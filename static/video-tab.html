@@ -1,6 +1,25 @@
 <!doctype html>
 <title>Stream Tab</title>
 <style>
+    .video-container {
+        /* overflow hidden so that niconico messages are not
+           displayed outside of their container */
+        /* overflow: hidden;
+        position: absolute;
+        height: 100%;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%); */
+    }
+
+    button {
+        display: none;
+    }
+
+    .ui-resizable-handle {
+        display: none;
+    }
+
     video {
         margin: 0;
         padding: 0;
@@ -57,21 +76,23 @@
     }
 
     .nico-nico-messages-container {
-        width: 100%;
+        /* still need to figure out how to position this stuff correctly */
+        display: none;
+        /* width: 100%;
         height: 100%;
         position: absolute;
         top: 0;
-        left: 0;
+        left: 0; */
     }
 
-    .nico-nico-messages-container span {
-        color: white;
-        font-size: 2vw;
-        white-space: nowrap;
+    .nico-nico-messages-container svg {
         position: absolute;
         left: 0;
+        height: 10%;
         transform: translate(-100%, 0);
         animation: nico-nico-message-animation 3s linear infinite;
+        stroke: white;
+        fill: white;
     }
 
     @keyframes nico-nico-message-animation {

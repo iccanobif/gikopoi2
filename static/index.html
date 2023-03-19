@@ -259,7 +259,8 @@
                             v-if="streamSlot.streamIsVtuberMode"
                             :src="getAvatarSpriteForUser(streamSlot.userId)"
                             v-bind:class="{'jumping': streamSlot.isJumping}" />
-                        <div class="nico-nico-messages-container" v-if="streamSlot.isNicoNicoMode">
+                        <div class="nico-nico-messages-container"
+                             v-if="streamSlot.isNicoNicoMode">
                         </div>
                     </div>
                     <div :id="'vu-meter-container-' + index"
@@ -877,6 +878,10 @@
             </div>
         </div>
     </script>
+
+    <svg id="niconico-message-template" viewBox="0 0 100 15">
+        <text x="0" y="12"></text>
+    </svg>
 
     <audio id="message-sound" src="message.mp3"></audio>
     <audio id="mention-sound" src="mention.mp3"></audio>
