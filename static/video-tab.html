@@ -23,7 +23,7 @@
 
     body {
         background-color: black;
-        font-family: IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif;
+        font-family: IPAMonaPGothic, 'IPA モナー Pゴシック', Monapo, Mona, 'MS PGothic', 'ＭＳ Ｐゴシック', submona, sans-serif;
     }
 
     p {
@@ -65,7 +65,8 @@
     }
 
     .nico-nico-messages-container {
-        width: 100%; /* width gets readjusted by javascript every half second */
+        width: 100%;
+        /* width gets readjusted by javascript every half second */
         position: absolute;
         height: 100%;
         top: 0px;
@@ -79,9 +80,18 @@
         left: 0;
         height: 10%;
         transform: translate(-100%, 0);
-        animation: nico-nico-message-animation 3s linear infinite;
+        animation: nico-nico-message-animation 3s linear 1;
         stroke: white;
         fill: white;
+    }
+
+    .nico-nico-messages-container span {
+        position: absolute;
+        left: 0;
+        transform: translate(-100%, 0);
+        animation: nico-nico-message-animation 3s linear 1;
+        color: white;
+        white-space: nowrap;
     }
 
     @keyframes nico-nico-message-animation {
@@ -98,24 +108,40 @@
 </style>
 
 <body>
-<script>
-    // set width of nico-nico-messages-container to be the same as the video that's being 
-    // displayed (I couldn't find a way to do it with pure CSS, please forgive me...)
-    function adjustNiconicoMessagesContainerSize()
-    {
-        const videoElements = document.getElementsByClassName("video-being-played")
-        if (videoElements.length == 0)
-            return
+    <script>
+        // set width of nico-nico-messages-container to be the same as the video that's being 
+        // displayed (I couldn't find a way to do it with pure CSS, please forgive me...)
+        function adjustNiconicoMessagesContainerSize()
+        {
+            const videoElements = document.getElementsByClassName("video-being-played")
+            if (videoElements.length == 0)
+                return
 
-        const videoElement = videoElements[0]
-        const width = (videoElement.videoWidth / videoElement.videoHeight) * videoElement.clientHeight
+            const videoElement = videoElements[0]
+            const width = (videoElement.videoWidth / videoElement.videoHeight) * videoElement.clientHeight
 
-        const niconicoMessagesContainer = document.getElementsByClassName("nico-nico-messages-container")[0]
-        niconicoMessagesContainer.style.width = width + "px"
-    }
+            const niconicoMessagesContainer = document.getElementsByClassName("nico-nico-messages-container")[0]
+            niconicoMessagesContainer.style.width = width + "px"
+        }
 
-    setInterval(adjustNiconicoMessagesContainerSize, 500)
-</script>
+        setInterval(adjustNiconicoMessagesContainerSize, 500)
+
+        // this is copypasted from main.js
+        function adjustNiconicoMessagesFontSize()
+        {
+            const videoElements = document.getElementsByClassName("video-being-played")
+            for (const videoElement of videoElements)
+            {
+                const width = (videoElement.videoWidth / videoElement.videoHeight) * videoElement.clientHeight
+                const fontsize = Math.round(width / 15)
+                const niconicoMessagesContainer = videoElement.parentElement.getElementsByClassName("nico-nico-messages-container")[0]
+                if (niconicoMessagesContainer)
+                    niconicoMessagesContainer.style.fontSize = fontsize + "px"
+            }
+        }
+        setInterval(adjustNiconicoMessagesFontSize, 500)
+
+    </script>
 </body>
 
 </html>

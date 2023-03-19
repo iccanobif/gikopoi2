@@ -1174,6 +1174,13 @@ window.vueApp = new Vue({
             const textElement = niconicoMessageElement.getElementsByTagName("text")[0]
             textElement.textContent = messageText
 
+            // Calculate text width
+            const canvas = document.getElementById("room-canvas")
+            const context = canvas.getContext('2d');
+            const width = Math.round(context.measureText(messageText).width)
+
+            niconicoMessageElement.setAttributeNS('http://www.w3.org/2000/svg', "viewBox", "0 0 " + width + " 15")
+
             // Calculate the vertical position as a crude "hash" of the userid and text of the message,
             // so that all users see messages more or less in the same place
             const top = ((userID + messageText)
@@ -1182,9 +1189,16 @@ window.vueApp = new Vue({
                 .reduce((sum, val) => sum + val) % 256) / 256
 
             niconicoMessageElement.style.top = top * 80 + 2 + "%"
-            videoContainer.appendChild(niconicoMessageElement)
+
+            const span = document.createElement("span")
+            span.textContent = messageText
+            span.style.top = top * 80 + 2 + "%"
+
+            // videoContainer.appendChild(niconicoMessageElement)
+            videoContainer.appendChild(span)
             setTimeout(() => {
-                videoContainer.removeChild(niconicoMessageElement)
+                // videoContainer.removeChild(niconicoMessageElement)
+                videoContainer.removeChild(span)
             }, 3200)
         },
         displayNotification: async function(message, icon)
@@ -3674,3 +3688,18 @@ const debouncedLogSoundVolume = debounceWithDelayedExecution((myUserID, volume) 
     logToServer(myUserID + " SFX volume: " + volume)
 }, 150)
 
+
+function adjustNiconicoMessagesFontSize()
+{
+    const videoElements = document.getElementsByClassName("video-being-played")
+    for (const videoElement of videoElements)
+    {
+        const width = (videoElement.videoWidth / videoElement.videoHeight) * videoElement.clientHeight
+        const fontsize = Math.round(width / 15)
+        const niconicoMessagesContainer = videoElement.parentElement.getElementsByClassName("nico-nico-messages-container")[0]
+        if (niconicoMessagesContainer)
+            niconicoMessagesContainer.style.fontSize = fontsize + "px"
+    }
+}
+
+setInterval(adjustNiconicoMessagesFontSize, 500)
