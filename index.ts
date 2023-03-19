@@ -1488,10 +1488,7 @@ app.get("/characters/regular", async (req, res) =>
         res.set("Cache-Control", "public, max-age=604800, immutable")
         res.json(regularCharacterImages) 
     }
-    catch (e)
-    {
-        res.end(stringifyException(e))
-    }
+    catch (e) { res.end(stringifyException(e)) }
 })
 
 const crispCharacterImages = getCharacterImages(true)
@@ -1502,10 +1499,7 @@ app.get("/characters/crisp", async (req, res) =>
         res.set("Cache-Control", "public, max-age=604800, immutable")
         res.json(crispCharacterImages) 
     }
-    catch (e)
-    {
-        res.end(stringifyException(e))
-    }
+    catch (e) { res.end(stringifyException(e)) }
 })
 
 app.use(express.urlencoded({ extended: false }))
