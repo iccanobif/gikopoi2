@@ -8,8 +8,8 @@ import log from "loglevel";
 import { settings } from "./settings";
 import compression from 'compression';
 import { getAbuseConfidenceScore } from "./abuse-ip-db";
-import { existsSync, readFileSync } from "fs";
-import { readdir, readFile, writeFile } from "fs/promises";
+import { existsSync, readdirSync, readFileSync } from "fs";
+import { readFile, writeFile } from "fs/promises";
 import { Chess } from "chess.js";
 import { Socket } from "socket.io";
 import { intersectionBy } from "lodash"
@@ -1434,22 +1434,22 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
     }
 })
 
-async function getCharacterImages(crisp: boolean)
+function getCharacterImages(crisp: boolean)
 {
-    const characterIds = await readdir("static/characters")
+    const characterIds = readdirSync("static/characters")
 
     const output: { [characterId: string]: CharacterSvgDto} = {}
     for (const characterId of characterIds)
     {
         const extension = characterId == "molgiko" ? "png" : "svg"
 
-        const getCharacterImage = async (path: string, crisp: boolean) => {
+        const getCharacterImage = (path: string, crisp: boolean) => {
             const completePath = "static/characters/" + path
 
             if (!existsSync(completePath))
                 return null
             
-            let text = await readFile(completePath, { encoding: path.endsWith(".svg") ? "utf-8" : "base64"})
+            let text = readFileSync(completePath, { encoding: path.endsWith(".svg") ? "utf-8" : "base64"})
 
             if (crisp && path.endsWith(".svg"))
                 text = text.replace('<svg', '<svg shape-rendering="crispEdges"')
@@ -1459,35 +1459,37 @@ async function getCharacterImages(crisp: boolean)
 
         output[characterId] = {
             isBase64: extension == "png",
-            frontSitting: (await getCharacterImage(characterId + "/front-sitting." + extension, crisp))!,
-            frontStanding: (await getCharacterImage(characterId + "/front-standing." + extension, crisp))!,
-            frontWalking1: (await getCharacterImage(characterId + "/front-walking-1." + extension, crisp))!,
-            frontWalking2: (await getCharacterImage(characterId + "/front-walking-2." + extension, crisp))!,
-            backSitting: (await getCharacterImage(characterId + "/back-sitting." + extension, crisp))!,
-            backStanding: (await getCharacterImage(characterId + "/back-standing." + extension, crisp))!,
-            backWalking1: (await getCharacterImage(characterId + "/back-walking-1." + extension, crisp))!,
-            backWalking2: (await getCharacterImage(characterId + "/back-walking-2." + extension, crisp))!,
-            frontSittingAlt: await getCharacterImage(characterId + "/front-sitting-alt." + extension, crisp),
-            frontStandingAlt: await getCharacterImage(characterId + "/front-standing-alt." + extension, crisp),
-            frontWalking1Alt: await getCharacterImage(characterId + "/front-walking-1-alt." + extension, crisp),
-            frontWalking2Alt: await getCharacterImage(characterId + "/front-walking-2-alt." + extension, crisp),
-            backSittingAlt: await getCharacterImage(characterId + "/back-sitting-alt." + extension, crisp),
-            backStandingAlt: await getCharacterImage(characterId + "/back-standing-alt." + extension, crisp),
-            backWalking1Alt: await getCharacterImage(characterId + "/back-walking-1-alt." + extension, crisp),
-            backWalking2Alt: await getCharacterImage(characterId + "/back-walking-2-alt." + extension, crisp),
+            frontSitting: (getCharacterImage(characterId + "/front-sitting." + extension, crisp))!,
+            frontStanding: (getCharacterImage(characterId + "/front-standing." + extension, crisp))!,
+            frontWalking1: (getCharacterImage(characterId + "/front-walking-1." + extension, crisp))!,
+            frontWalking2: (getCharacterImage(characterId + "/front-walking-2." + extension, crisp))!,
+            backSitting: (getCharacterImage(characterId + "/back-sitting." + extension, crisp))!,
+            backStanding: (getCharacterImage(characterId + "/back-standing." + extension, crisp))!,
+            backWalking1: (getCharacterImage(characterId + "/back-walking-1." + extension, crisp))!,
+            backWalking2: (getCharacterImage(characterId + "/back-walking-2." + extension, crisp))!,
+            frontSittingAlt: getCharacterImage(characterId + "/front-sitting-alt." + extension, crisp),
+            frontStandingAlt: getCharacterImage(characterId + "/front-standing-alt." + extension, crisp),
+            frontWalking1Alt: getCharacterImage(characterId + "/front-walking-1-alt." + extension, crisp),
+            frontWalking2Alt: getCharacterImage(characterId + "/front-walking-2-alt." + extension, crisp),
+            backSittingAlt: getCharacterImage(characterId + "/back-sitting-alt." + extension, crisp),
+            backStandingAlt: getCharacterImage(characterId + "/back-standing-alt." + extension, crisp),
+            backWalking1Alt: getCharacterImage(characterId + "/back-walking-1-alt." + extension, crisp),
+            backWalking2Alt: getCharacterImage(characterId + "/back-walking-2-alt." + extension, crisp),
         }
     }
     return output
 }
 
+const regularCharacterImages = getCharacterImages(false)
 app.get("/characters/regular", async (req, res) =>
 {
-    try { res.json(await getCharacterImages(false)) } catch (e) { res.end(stringifyException(e)) }
+    try { res.json(regularCharacterImages) } catch (e) { res.end(stringifyException(e)) }
 })
 
+const crispCharacterImages = getCharacterImages(true)
 app.get("/characters/crisp", async (req, res) =>
 {
-    try { res.json(await getCharacterImages(true)) } catch (e) { res.end(stringifyException(e)) }
+    try { res.json(crispCharacterImages) } catch (e) { res.end(stringifyException(e)) }
 })
 
 app.use(express.urlencoded({ extended: false }))
