@@ -23,7 +23,7 @@
 
     body {
         background-color: black;
-        overflow: hidden;
+        font-family: IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif;
     }
 
     p {
@@ -101,7 +101,8 @@
 <script>
     // set width of nico-nico-messages-container to be the same as the video that's being 
     // displayed (I couldn't find a way to do it with pure CSS, please forgive me...)
-    setInterval(() => {
+    function adjustNiconicoMessagesContainerSize()
+    {
         const videoElements = document.getElementsByClassName("video-being-played")
         if (videoElements.length == 0)
             return
@@ -111,8 +112,9 @@
 
         const niconicoMessagesContainer = document.getElementsByClassName("nico-nico-messages-container")[0]
         niconicoMessagesContainer.style.width = width + "px"
+    }
 
-    }, 500)
+    setInterval(adjustNiconicoMessagesContainerSize, 500)
 </script>
 </body>
 

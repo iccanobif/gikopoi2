@@ -1157,10 +1157,10 @@ window.vueApp = new Vue({
             for (const i of Object.keys(this.detachedStreamTabs))
             {
                 const container = this.detachedStreamTabs[i].document.getElementsByClassName("nico-nico-messages-container")[0]
-                this.addNiconicoMessageToVideoContainer(container, plainMsg)
+                this.addNiconicoMessageToVideoContainer(container, plainMsg, user.id)
             }
         },
-        addNiconicoMessageToVideoContainer: function(videoContainer, messageText)
+        addNiconicoMessageToVideoContainer: function(videoContainer, messageText, userID)
         {
             // I create svg elements by cloning one that is already in the DOM because
             // I couldn't get document.createElementNS() to create SVGs that looked the same
@@ -1173,7 +1173,15 @@ window.vueApp = new Vue({
             niconicoMessageElement.id = "niconico-message-" + window.nextNiconicoMessageElementId++;
             const textElement = niconicoMessageElement.getElementsByTagName("text")[0]
             textElement.textContent = messageText
-            niconicoMessageElement.style.top = Math.random() * 80 + 2 + "%"
+
+            // Calculate the vertical position as a crude "hash" of the userid and text of the message,
+            // so that all users see messages more or less in the same place
+            const top = ((userID + messageText)
+                .split("")
+                .map(c => c.charCodeAt(0))
+                .reduce((sum, val) => sum + val) % 256) / 256
+
+            niconicoMessageElement.style.top = top * 80 + 2 + "%"
             videoContainer.appendChild(niconicoMessageElement)
             setTimeout(() => {
                 videoContainer.removeChild(niconicoMessageElement)
