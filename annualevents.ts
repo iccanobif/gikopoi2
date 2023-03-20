@@ -5,12 +5,15 @@ import timezone from 'dayjs/plugin/timezone'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-dayjs.tz.setDefault("Asia/Tokyo")
+function getNow()
+{
+    return dayjs().tz("Asia/Tokyo")
+}
 
 // @ts-ignore
 function _evalDayjs()
 {
-    return dayjs()
+    return getNow()
 }
 
 function parseEventString(eventString: string): dayjs.Dayjs
@@ -33,7 +36,7 @@ export class AnnualEvent
     
     getNextEventDate(checkDate?: dayjs.Dayjs): dayjs.Dayjs
     {
-        const cd = checkDate ? checkDate : dayjs()
+        const cd = checkDate ? checkDate : getNow()
         if (this.isBetween(cd))
             return this.to
         else
@@ -52,9 +55,9 @@ export class AnnualEvent
         }
     }
     
-    isNow(): boolean
+    isgetNow(): boolean
     {
-        const now = dayjs()
+        const now = getNow()
         return this.isBetween(now)
     }
 }
@@ -84,7 +87,7 @@ export const annualEvents: {[eventName: string]: AnnualEvent} = Object.fromEntri
 
 export function getCurrentAnnualEvents(): string[]
 {
-    const now = dayjs()
+    const now = getNow()
     return Object.entries(annualEvents)
         .filter(([eventName, annualEvent]) => annualEvent.isBetween(now))
         .map(([eventName, annualEvent]) => eventName)
@@ -92,7 +95,7 @@ export function getCurrentAnnualEvents(): string[]
 
 export function getSoonestEventDate(): dayjs.Dayjs
 {
-    const now = dayjs()
+    const now = getNow()
     return Object.values(annualEvents)
         .map(annualEvent => annualEvent.getNextEventDate(now))
         .reduce((previous, current) => current.isBefore(previous) ? current : previous)
@@ -125,7 +128,7 @@ function observeEvents(previousAnnualEvents?: string[])
 
         callbackFunctionsToCall.forEach(callbackFunction => callbackFunction(currentAnnualEvents, added, removed));
     }
-    setTimeout(observeEvents, Math.min(dayjs().diff(getSoonestEventDate()), 60*60*1000), currentAnnualEvents); // min every hour or time to next event date
+    setTimeout(observeEvents, Math.min(getSoonestEventDate().diff(getNow()), 60*60*1000), currentAnnualEvents); // min every hour or time to next event date
 }
 
 observeEvents()
