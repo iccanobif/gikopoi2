@@ -55,7 +55,7 @@ export class AnnualEvent
         }
     }
     
-    isgetNow(): boolean
+    isNow(): boolean
     {
         const now = getNow()
         return this.isBetween(now)
