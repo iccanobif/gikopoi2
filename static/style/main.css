@@ -1028,7 +1028,7 @@ button
     position: absolute;
     left: 0;
     transform: translate(-100%, 0);
-    animation: nico-nico-message-animation 3s linear 1;
+    animation: nico-nico-message-animation 5s linear 1;
     color: white;
     white-space: nowrap;
 }
