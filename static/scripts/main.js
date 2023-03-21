@@ -1176,7 +1176,7 @@ window.vueApp = new Vue({
             videoContainer.appendChild(span)
             setTimeout(() => {
                 videoContainer.removeChild(span)
-            }, 3200)
+            }, 5200)
         },
         displayNotification: async function(message, icon)
         {
