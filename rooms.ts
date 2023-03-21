@@ -3953,7 +3953,7 @@ dynamicRooms.push({
 
 dynamicRooms.push({
     roomId: "irori",
-    subscribedAnnualEvents: ["winter", "autumn"],
+    subscribedAnnualEvents: ["summer", "autumn"],
     build: (currentAnnualEvents: string[]) =>
     {
         return {
