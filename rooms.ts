@@ -3959,23 +3959,23 @@ dynamicRooms.push({
         return {
             id: "irori",
             group: "gikopoipoi",
-            variant: currentAnnualEvents.includes("winter") ? "winter"
+            variant: currentAnnualEvents.includes("summer") ? "summer"
                 : currentAnnualEvents.includes("autumn") ? "autumn"
-                : "summer",
+                : "winter",
             scale: 1,
             backgroundColor: "#000000",
             size: { x: 7, y: 11 },
             originCoordinates: { x: 0, y: 361 },
             spawnPoint: "door",
-            backgroundImageUrl: currentAnnualEvents.includes("winter") ? "rooms/irori/background.winter.svg"
+            backgroundImageUrl: currentAnnualEvents.includes("summer") ? "rooms/irori/background.summer.svg"
                                 : currentAnnualEvents.includes("autumn") ? "rooms/irori/background.autumn.svg"
-                                : "rooms/irori/background.summer.svg",
+                                : "rooms/irori/background.winter.svg",
             objects: [
                 // { x:  100, y:  100, width: 1, offset: { x: 0, y: 0 }, url: "top.winter.svg"},
                 { x:  7, y: -1, width: 100, offset: { x: 0, y: 0 },
-                    url: currentAnnualEvents.includes("winter") ? "top.winter.svg"
+                    url: currentAnnualEvents.includes("summer") ? "top.summer.svg"
                          : currentAnnualEvents.includes("autumn") ? "top.autumn.svg"
-                         : "top.summer.svg"},
+                         : "top.winter.svg"},
             ],
             sit: [
                 { x: 1, y: 4 }, { x: 1, y: 5 }, { x: 1, y: 6 },
