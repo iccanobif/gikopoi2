@@ -1397,14 +1397,20 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
 {
     try
     {
+        function setResponseToUnauthorized(msg: string)
+        {
+            log.error(getRealIp(req), msg)
+            res.status(401)
+            res.end("")
+        }
+
         const roomId = req.params.roomId
         const areaId = req.params.areaId
 
         const bearerHeader = req.headers["authorization"]
         if (!bearerHeader)
         {
-            log.error("ERROR: Room API called with no authentication")
-            res.end("")
+            setResponseToUnauthorized(`ERROR: Room API called with no authentication`)
             return
         }
         
@@ -1413,15 +1419,13 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
 
         if (!user)
         {
-            log.error(`ERROR: User ${userPrivateId} doesn't exist`)
-            res.end("")
+            setResponseToUnauthorized(`ERROR: User ${userPrivateId} doesn't exist`)
             return
         }
 
         if (user.areaId != areaId || user.roomId != roomId)
         {
-            log.error(`ERROR: User ${userPrivateId} tried to access room ${roomId} on ${areaId} but he's in room ${user.roomId} on ${user.areaId}`)
-            res.end("")
+            setResponseToUnauthorized(`ERROR: User ${userPrivateId} tried to access room ${roomId} on ${areaId} but he's in room ${user.roomId} on ${user.areaId}`)
             return
         }
 
