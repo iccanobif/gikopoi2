@@ -1,4 +1,4 @@
-#vue-app
+#page-container
 {
     background-color: #c0c0c0;
     /* background-image: url("../characters/ika/front-standing.svg"); */
@@ -909,7 +909,7 @@ button.checked {
 }
 
 /* make all jquery slider handles round */
-#vue-app .ui-corner-all
+#page-container .ui-corner-all
 {
     border-radius: 10px;
 }

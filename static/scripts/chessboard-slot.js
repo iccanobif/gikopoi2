@@ -1,14 +1,14 @@
-Vue.component('chessboard-slot', {
+export default {
     props: ["socket", "chessboardState", "users"],
     template: "#chessboard-slot",
-    data: function ()
+    data()
     {
         return {
             chessboard: null,
             visible: false,
         }
     },
-    mounted: function ()
+    mounted()
     {
         if (!this.chessboard && this.chessboardState && this.chessboardState.blackUserID)
         {
@@ -35,7 +35,7 @@ Vue.component('chessboard-slot', {
     },
     methods:
     {
-        buildChessboard: function ()
+        buildChessboard()
         {
             const chessboardElement = document.getElementById("chessboard")
 
@@ -83,7 +83,7 @@ Vue.component('chessboard-slot', {
                 }
             })
         },
-        makeResizable: function ()
+        makeResizable()
         {
             // $("#chessboard").resizable({
             //     aspectRatio: true,
@@ -101,27 +101,27 @@ Vue.component('chessboard-slot', {
             //     }
             // })
         },
-        wantToJoinGame: function ()
+        wantToJoinGame()
         {
             this.socket.emit("user-want-to-play-chess")
             this.visible = true
         },
-        wantToQuitGame: function ()
+        wantToQuitGame()
         {
             this.socket.emit("user-want-to-quit-chess")
         },
-        wantToDisplayGame: function ()
+        wantToDisplayGame()
         {
             this.visible = true
         },
-        wantToHideGame: function ()
+        wantToHideGame()
         {
             this.visible = false
         },
-        amIPlaying: function ()
+        amIPlaying()
         {
             return this.chessboardState.blackUserID == myUserID 
                    || this.chessboardState.whiteUserID == myUserID
         },
     },
-})
+}

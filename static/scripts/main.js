@@ -30,6 +30,8 @@ import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";
 import { animateObjects, animateJizou } from "./animations.js";
 
+import ChessboardSlot from './chessboard-slot.js'
+
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
 window.myUserID = null;
@@ -113,185 +115,188 @@ function getAppState()
         return "login"
 }
 
-const i18n = new VueI18n({
+const i18n = VueI18n.createI18n({
     locale: "ja",
     fallbackLocale: "en",
     messages,
 });
 
-window.vueApp = new Vue({
-    i18n,
-    el: "#vue-app",
-    data: {
-        siteAreas: window.siteAreas,
-        siteAreasInfo: window.siteAreasInfo,
-        
-        selectedCharacter: null,
-        socket: null,
-        users: {},
-        roomLoadId: 0,
-        currentRoom: {
-            id: null,
-            group: "gikopoi",
-            objects: [],
-            hasChessboard: false,
-            specialObjects: [],
-        },
-        myUserID: null,
-        myPrivateUserID: null,
-        isWaitingForServerResponseOnMovement: false,
-        justSpawnedToThisRoom: true,
-        isLoadingRoom: false,
-        requestedRoomChange: false,
-        isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
-        soundEffectVolume: 0,
-        characterId: localStorage.getItem("characterId") || "giko",
-        isLoggingIn: false,
-        areaId: getDefaultAreaId(),
-        language: localStorage.getItem("language") || "en",
-        uiBackgroundColor: null,
-        isUiBackgroundDark: null,
-
-        // canvas
-        canvasContext: null,
-        isRedrawRequired: false,
-        isUsernameRedrawRequired: false,
-        isDraggingCanvas: false,
-        canvasPointerStartState: null,
-        canvasDragStartOffset: null,
-        canvasManualOffset: { x: 0, y: 0 },
-        canvasGlobalOffset: { x: 0, y: 0 },
-        canvasDimensions: { w: 0, h: 0 },
-        userCanvasScale: 1,
-        userCanvasScaleStart: null,
-        isLowQualityEnabled: localStorage.getItem("isLowQualityEnabled") == "true",
-        isCrispModeEnabled: localStorage.getItem("isCrispModeEnabled") == "true",
-        isIdleAnimationDisabled: localStorage.getItem("isIdleAnimationDisabled") == "true",
-        blockWidth: BLOCK_WIDTH,
-        blockHeight: BLOCK_HEIGHT,
-        devicePixelRatio: null,
-        canvasObjects: [],
-
-        // rula stuff
-        isRulaPopupOpen: false,
-        roomList: [],
-        preparedRoomList: [],
-        rulaRoomGroup: "all",
-        rulaRoomListSortKey: localStorage.getItem("rulaRoomListSortKey") || "sortName",
-        rulaRoomListSortDirection: localStorage.getItem("rulaRoomListSortDirection") || 1,
-        rulaRoomSelection: null,
-
-        // user list stuff
-        isUserListPopupOpen: false,
-        ignoredUserIds: new Set(),
-
-        // preferences stuff
-        isPreferencesPopupOpen: false,
-        showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
-        isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") != "false",
-        bubbleOpacity: localStorage.getItem("bubbleOpacity") || 100,
-        isCommandSectionVisible: localStorage.getItem("isCommandSectionVisible") != "false",
-        isMoveSectionVisible: localStorage.getItem("isMoveSectionVisible") != "false",
-        isBubbleSectionVisible: localStorage.getItem("isBubbleSectionVisible") != "false",
-        isLogoutButtonVisible: localStorage.getItem("isLogoutButtonVisible") != "false",
-        uiTheme: localStorage.getItem("uiTheme") || "gikopoi",
-        showNotifications: localStorage.getItem("showNotifications") != "false",
-        enableTextToSpeech: localStorage.getItem("enableTextToSpeech") == "true",
-        ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
-        voiceVolume: localStorage.getItem("voiceVolume") || 100,
-        availableTTSVoices: [],
-        isMessageSoundEnabled: localStorage.getItem("isMessageSoundEnabled") != "false",
-        isLoginSoundEnabled: localStorage.getItem("isLoginSoundEnabled") != "false",
-        isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
-        customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
-        customMentionRegexObject: null,
-        usernameMentionRegexObject: null,
-        isCoinSoundEnabled: localStorage.getItem("isCoinSoundEnabled") != "false",
-        isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
-        isStreamInboundVuMeterEnabled: localStorage.getItem("isStreamInboundVuMeterEnabled") != "false",
-        showLogAboveToolbar: localStorage.getItem("showLogAboveToolbar") == "true",
-        showLogDividers: localStorage.getItem("showLogDividers") == "true",
-
-        // streaming
-        streams: [],
-        clientSideStreamData: [],
-        mediaStream: null,
-        streamSlotIdInWhichIWantToStream: null,
-        takenStreams: [], // streams taken by me
-        slotVolume: JSON.parse(localStorage.getItem("slotVolume")) || {}, // key: slot Id / value: volume
-        detachedStreamTabs: {}, // key: slot Id
-        slotIsVtuberCharacterJumping: {}, // key: slot Id / value: boolean
-
-        // stream settings
-        isStreamPopupOpen: false,
-        streamMode: localStorage.getItem("streamMode") || "video_sound",
-        displayAdvancedStreamSettings: localStorage.getItem("displayAdvancedStreamSettings") == "true",
-        streamEchoCancellation: localStorage.getItem("streamEchoCancellation") == "true",
-        streamNoiseSuppression: localStorage.getItem("streamNoiseSuppression") == "true",
-        streamAutoGain: localStorage.getItem("streamAutoGain") == "true",
-        streamScreenCapture: localStorage.getItem("streamScreenCapture") == "true",
-        streamScreenCaptureAudio: localStorage.getItem("streamScreenCaptureAudio") == "true",
-        streamTarget: "all_room",
-        allowedListenerIDs: new Set(),
-        streamIsVtuberMode: false,
-        isNicoNicoMode: false,
-
-        // Device selection popup
-        isDeviceSelectionOpen: false,
-        deviceList: [],
-        selectedAudioDeviceId: null,
-        selectedVideoDeviceId: null,
-        waitingForDevicePermission: false,
-        
-        // Dialog Popup
-        dialogPopupMessage: '',
-        dialogPopupTitle: '',
-        dialogPopupButtons: [],
-        dialogPopupCallback: null,
-        dialogPopupButtonIndex: null,
-        isDialogPopupOpen: false,
-        
-        appState: getAppState(),
-
-        enableGridNumbers: false,
-        username: localStorage.getItem("username") || "",
-
-        // Possibly redundant data:
-        serverStats: {
-            userCount: 0,
-            streamCount: 0,
-        },
-        wantToStream: false,
-        connectionLost: false,
-        connectionRefused: false,
-
-        pageRefreshRequired: false,
-        passwordInputVisible: false,
-        password: "",
-
-        allCharacters: Object.values(characters),
-
-        vuMeterTimer: null,
-        highlightedUserId: null,
-        highlightedUserName: null,
-        movementDirection: null,
-        underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
-        timestampsInCopiedLog: localStorage.getItem("timestampsInCopiedLog") != "false",
-        showIgnoreIndicatorInLog: localStorage.getItem("showIgnoreIndicatorInLog") == "true",
-        notificationPermissionsGranted: false,
-        lastFrameTimestamp: null,
-        chessboardState: {},
-
-        canvasContainerResizeObserver: null,
-
-        lastCoinTossTime: 0, // unix timestamp
-
-        // hideStreams: false,
-        // the key is the slot ID
-        inboundAudioProcessors: {},
-        outboundAudioProcessor: null,
+window.vueApp = Vue.createApp({
+    components: {
+        ChessboardSlot
     },
-    mounted: function ()
+    data() {
+        return {
+            siteAreas: window.siteAreas,
+            siteAreasInfo: window.siteAreasInfo,
+            
+            selectedCharacter: null,
+            socket: null,
+            users: {},
+            roomLoadId: 0,
+            currentRoom: {
+                id: null,
+                group: "gikopoi",
+                objects: [],
+                hasChessboard: false,
+                specialObjects: [],
+            },
+            myUserID: null,
+            myPrivateUserID: null,
+            isWaitingForServerResponseOnMovement: false,
+            justSpawnedToThisRoom: true,
+            isLoadingRoom: false,
+            requestedRoomChange: false,
+            isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
+            soundEffectVolume: 0,
+            characterId: localStorage.getItem("characterId") || "giko",
+            isLoggingIn: false,
+            areaId: getDefaultAreaId(),
+            language: localStorage.getItem("language") || "en",
+            uiBackgroundColor: null,
+            isUiBackgroundDark: null,
+
+            // canvas
+            canvasContext: null,
+            isRedrawRequired: false,
+            isUsernameRedrawRequired: false,
+            isDraggingCanvas: false,
+            canvasPointerStartState: null,
+            canvasDragStartOffset: null,
+            canvasManualOffset: { x: 0, y: 0 },
+            canvasGlobalOffset: { x: 0, y: 0 },
+            canvasDimensions: { w: 0, h: 0 },
+            userCanvasScale: 1,
+            userCanvasScaleStart: null,
+            isLowQualityEnabled: localStorage.getItem("isLowQualityEnabled") == "true",
+            isCrispModeEnabled: localStorage.getItem("isCrispModeEnabled") == "true",
+            isIdleAnimationDisabled: localStorage.getItem("isIdleAnimationDisabled") == "true",
+            blockWidth: BLOCK_WIDTH,
+            blockHeight: BLOCK_HEIGHT,
+            devicePixelRatio: null,
+            canvasObjects: [],
+
+            // rula stuff
+            isRulaPopupOpen: false,
+            roomList: [],
+            preparedRoomList: [],
+            rulaRoomGroup: "all",
+            rulaRoomListSortKey: localStorage.getItem("rulaRoomListSortKey") || "sortName",
+            rulaRoomListSortDirection: localStorage.getItem("rulaRoomListSortDirection") || 1,
+            rulaRoomSelection: null,
+
+            // user list stuff
+            isUserListPopupOpen: false,
+            ignoredUserIds: new Set(),
+
+            // preferences stuff
+            isPreferencesPopupOpen: false,
+            showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
+            isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") != "false",
+            bubbleOpacity: localStorage.getItem("bubbleOpacity") || 100,
+            isCommandSectionVisible: localStorage.getItem("isCommandSectionVisible") != "false",
+            isMoveSectionVisible: localStorage.getItem("isMoveSectionVisible") != "false",
+            isBubbleSectionVisible: localStorage.getItem("isBubbleSectionVisible") != "false",
+            isLogoutButtonVisible: localStorage.getItem("isLogoutButtonVisible") != "false",
+            uiTheme: localStorage.getItem("uiTheme") || "gikopoi",
+            showNotifications: localStorage.getItem("showNotifications") != "false",
+            enableTextToSpeech: localStorage.getItem("enableTextToSpeech") == "true",
+            ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
+            voiceVolume: localStorage.getItem("voiceVolume") || 100,
+            availableTTSVoices: [],
+            isMessageSoundEnabled: localStorage.getItem("isMessageSoundEnabled") != "false",
+            isLoginSoundEnabled: localStorage.getItem("isLoginSoundEnabled") != "false",
+            isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
+            customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
+            customMentionRegexObject: null,
+            usernameMentionRegexObject: null,
+            isCoinSoundEnabled: localStorage.getItem("isCoinSoundEnabled") != "false",
+            isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
+            isStreamInboundVuMeterEnabled: localStorage.getItem("isStreamInboundVuMeterEnabled") != "false",
+            showLogAboveToolbar: localStorage.getItem("showLogAboveToolbar") == "true",
+            showLogDividers: localStorage.getItem("showLogDividers") == "true",
+
+            // streaming
+            streams: [],
+            clientSideStreamData: [],
+            mediaStream: null,
+            streamSlotIdInWhichIWantToStream: null,
+            takenStreams: [], // streams taken by me
+            slotVolume: JSON.parse(localStorage.getItem("slotVolume")) || {}, // key: slot Id / value: volume
+            detachedStreamTabs: {}, // key: slot Id
+            slotIsVtuberCharacterJumping: {}, // key: slot Id / value: boolean
+
+            // stream settings
+            isStreamPopupOpen: false,
+            streamMode: localStorage.getItem("streamMode") || "video_sound",
+            displayAdvancedStreamSettings: localStorage.getItem("displayAdvancedStreamSettings") == "true",
+            streamEchoCancellation: localStorage.getItem("streamEchoCancellation") == "true",
+            streamNoiseSuppression: localStorage.getItem("streamNoiseSuppression") == "true",
+            streamAutoGain: localStorage.getItem("streamAutoGain") == "true",
+            streamScreenCapture: localStorage.getItem("streamScreenCapture") == "true",
+            streamScreenCaptureAudio: localStorage.getItem("streamScreenCaptureAudio") == "true",
+            streamTarget: "all_room",
+            allowedListenerIDs: new Set(),
+            streamIsVtuberMode: false,
+            isNicoNicoMode: false,
+
+            // Device selection popup
+            isDeviceSelectionOpen: false,
+            deviceList: [],
+            selectedAudioDeviceId: null,
+            selectedVideoDeviceId: null,
+            waitingForDevicePermission: false,
+            
+            // Dialog Popup
+            dialogPopupMessage: '',
+            dialogPopupTitle: '',
+            dialogPopupButtons: [],
+            dialogPopupCallback: null,
+            dialogPopupButtonIndex: null,
+            isDialogPopupOpen: false,
+            
+            appState: getAppState(),
+
+            enableGridNumbers: false,
+            username: localStorage.getItem("username") || "",
+
+            // Possibly redundant data:
+            serverStats: {
+                userCount: 0,
+                streamCount: 0,
+            },
+            wantToStream: false,
+            connectionLost: false,
+            connectionRefused: false,
+
+            pageRefreshRequired: false,
+            passwordInputVisible: false,
+            password: "",
+
+            allCharacters: Object.values(characters),
+
+            vuMeterTimer: null,
+            highlightedUserId: null,
+            highlightedUserName: null,
+            movementDirection: null,
+            underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
+            timestampsInCopiedLog: localStorage.getItem("timestampsInCopiedLog") != "false",
+            showIgnoreIndicatorInLog: localStorage.getItem("showIgnoreIndicatorInLog") == "true",
+            notificationPermissionsGranted: false,
+            lastFrameTimestamp: null,
+            chessboardState: {},
+
+            canvasContainerResizeObserver: null,
+
+            lastCoinTossTime: 0, // unix timestamp
+
+            // hideStreams: false,
+            // the key is the slot ID
+            inboundAudioProcessors: {},
+            outboundAudioProcessor: null,
+        }
+    },
+    mounted()
     {
         if (this.appState == "redirect_notice")
             return;
@@ -365,7 +370,7 @@ window.vueApp = new Vue({
         this.devicePixelRatio = this.getDevicePixelRatio();
     },
     methods: {
-        login: async function (ev)
+        async login(ev)
         {
             try {
                 // Workaround for making TTS work on iphone, since it needs to be activated on a user interaction
@@ -479,20 +484,20 @@ window.vueApp = new Vue({
                 console.error(e)
                 if (e instanceof UserException)
                 {
-                    alert(i18n.t("msg." + e.message))
+                    alert(this.$t("msg." + e.message))
                 }
                 else
                 {
-                    alert(i18n.t("msg.unknown_error"))
+                    alert(this.$t("msg.unknown_error"))
                 }
                 window.location.reload();
             }
         },
-        getSVGMode: function ()
+        getSVGMode()
         {
             return this.isCrispModeEnabled ? "crisp" : null;
         },
-        reloadImages: async function ()
+        async reloadImages()
         {
             this.loadRoomBackground();
             this.loadRoomObjects();
@@ -500,17 +505,17 @@ window.vueApp = new Vue({
             await (loadCharacters(this.getSVGMode()));
             this.isRedrawRequired = true;
         },
-        setLocale: function (code)
+        setLocale(code)
         {
             const siteArea = this.getSiteArea()
-            i18n.locale = code || (siteArea.restrictLanguage && siteArea.language) || this.language
-            document.title = i18n.t("ui.title")
-            document.getElementsByTagName('meta')["description"].content = i18n.t("ui.subtitle")
+            this.$i18n.locale = code || (siteArea.restrictLanguage && siteArea.language) || this.language
+            document.title = this.$t("ui.title")
+            document.getElementsByTagName('meta')["description"].content = this.$t("ui.subtitle")
         },
-        getLangEntries: function()
+        getLangEntries()
         {
             const topEntries = ["ja", "en"]
-            return Object.entries(i18n.messages)
+            return Object.entries(this.$i18n.messages)
                 .sort((a, b) =>
             {
                 const ta = topEntries.indexOf(a[0])
@@ -528,11 +533,11 @@ window.vueApp = new Vue({
                 return {id, name: obj.lang_name, endOfTopEntries: id == topEntries[topEntries.length-1]}
             })
         },
-        getSiteArea: function()
+        getSiteArea()
         {
             return this.siteAreas.find(area => area.id == this.areaId)
         },
-        openDialog: function (text, title, buttons, cancelButtonIndex, callback)
+        openDialog(text, title, buttons, cancelButtonIndex, callback)
         {
             this.dialogPopupMessage = text;
             this.dialogPopupTitle = title;
@@ -541,7 +546,7 @@ window.vueApp = new Vue({
             this.dialogPopupCallback = callback;
             this.isDialogPopupOpen = true;
         },
-        closeDialog: function (buttonIndex)
+        closeDialog(buttonIndex)
         {
             if (!this.isDialogPopupOpen) return null;
             if (!(buttonIndex >= 0))
@@ -560,28 +565,28 @@ window.vueApp = new Vue({
             }
             return true;
         },
-        showWarningToast: async function (text)
+        async showWarningToast(text)
         {
             this.openDialog(text,
-                i18n.t("ui.warning_toast_title"),
-                [i18n.t("ui.popup_button_ok")],
+                this.$t("ui.warning_toast_title"),
+                [this.$t("ui.popup_button_ok")],
                 0);
             await Vue.nextTick();
             const firstButton = document.querySelector("#dialog-popup .popup-buttons button");
             firstButton.focus();
         },
-        confirm: function (text, okCallback, cancelCallback, button)
+        confirm(text, okCallback, cancelCallback, button)
         {
             // button param can be an array of two strings for confirm and cancel,
             // or one string to be used for confirm
             if (button == undefined)
             {
-                button = [i18n.t("ui.popup_button_ok"),
-                    i18n.t("ui.popup_button_cancel")];
+                button = [this.$t("ui.popup_button_ok"),
+                    this.$t("ui.popup_button_cancel")];
             }
             else if (!Array.isArray(button))
             {
-                button = [button, i18n.t("ui.popup_button_cancel")];
+                button = [button, this.$t("ui.popup_button_cancel")];
             }
             this.openDialog(text, null, button, 1, buttonIndex =>
             {
@@ -591,7 +596,7 @@ window.vueApp = new Vue({
                     cancelCallback();
             });
         },
-        loadRoomBackground: async function ()
+        async loadRoomBackground()
         {
             const urlMode = (!this.getSVGMode() ? "" : "." + this.getSVGMode());
 
@@ -603,7 +608,7 @@ window.vueApp = new Vue({
             this.currentRoom.backgroundImage = RenderCache.Image(image, this.currentRoom.scale);
             this.isRedrawRequired = true;
         },
-        loadRoomObjects: async function (mode)
+        async loadRoomObjects(mode)
         {
             const urlMode = (!this.getSVGMode() ? "" : "." + this.getSVGMode());
 
@@ -656,7 +661,7 @@ window.vueApp = new Vue({
 
             await Promise.all(promises)
         },
-        updateRoomState: async function (dto)
+        async updateRoomState(dto)
         {
             const roomDto = dto.currentRoom
             const usersDto = dto.connectedUsers
@@ -711,7 +716,7 @@ window.vueApp = new Vue({
             this.isLoadingRoom = false;
             this.requestedRoomChange = false;
         },
-        connectToServer: async function ()
+        async connectToServer()
         {
             const loginResponse = await postJson("/login", {
                 userName: this.username,
@@ -762,7 +767,7 @@ window.vueApp = new Vue({
 
             this.initializeSocket()
         },
-        initializeSocket: function()
+        initializeSocket()
         {
             this.socket = io({
                 extraHeaders: {"private-user-id": this.myPrivateUserID},
@@ -830,7 +835,7 @@ window.vueApp = new Vue({
 
             this.socket.on("server-system-message", (messageCode, extra) =>
             {
-                let message = i18n.t("msg." + messageCode);
+                let message = this.$t("msg." + messageCode);
                 if (messageCode == "flood_warning")
                     message += extra;
                 
@@ -926,7 +931,7 @@ window.vueApp = new Vue({
             {
                 this.wantToStream = false;
                 this.stopStreaming();
-                this.showWarningToast(i18n.t("msg." + reason));
+                this.showWarningToast(this.$t("msg." + reason));
             });
             this.socket.on("server-not-ok-to-take-stream", (streamSlotId) =>
             {
@@ -945,7 +950,7 @@ window.vueApp = new Vue({
             this.socket.on("server-room-list", async (roomList) =>
             {
                 roomList.forEach(r => {
-                    r.sortName = i18n.t("room." + r.id, {reading: true});
+                    r.sortName = this.$t("room." + r.id, {reading: true});
                     r.streamerCount = r.streams.length;
                     r.streamerDisplayNames = r.streams.map(s => this.toDisplayName(s.userName))
                 })
@@ -992,13 +997,13 @@ window.vueApp = new Vue({
             this.socket.on("server-chess-win", winnerUserId => {
                 const winnerUserName = this.toDisplayName(this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A")
 
-                this.writeMessageToLog("SYSTEM", i18n.t("msg.chess_win").replace("@USER_NAME@", winnerUserName), null)
+                this.writeMessageToLog("SYSTEM", this.$t("msg.chess_win").replace("@USER_NAME@", winnerUserName), null)
             })
 
             this.socket.on("server-chess-quit", winnerUserId => {
                 const winnerUserName = this.toDisplayName(this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A")
 
-                this.writeMessageToLog("SYSTEM", i18n.t("msg.chess_quit").replace("@USER_NAME@", winnerUserName), null)
+                this.writeMessageToLog("SYSTEM", this.$t("msg.chess_quit").replace("@USER_NAME@", winnerUserName), null)
             })
             this.socket.on("special-events:server-add-shrine-coin", donationBoxValue => {
                 this.currentRoom.specialObjects[1].value = donationBoxValue;
@@ -1012,7 +1017,7 @@ window.vueApp = new Vue({
                 }, 1200)
             })
         },
-        addUser: function (userDTO)
+        addUser(userDTO)
         {
             // Check that the characterId is valid (need to use hasOwnProperty() too to make sure that a characterId
             // like "toString" is not used). If not valid, default to giko
@@ -1033,7 +1038,7 @@ window.vueApp = new Vue({
 
             this.users[userDTO.id] = newUser;
         },
-        writeMessageToLog: function(userName, msg, userId)
+        writeMessageToLog(userName, msg, userId)
         {
             const chatLog = document.getElementById("chatLog");
             const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
@@ -1104,7 +1109,7 @@ window.vueApp = new Vue({
             messageDiv.append(timestampSpan);
             messageDiv.append(authorSpan);
             messageDiv.append(tripcodeSpan);
-            messageDiv.append(document.createTextNode(i18n.t("message_colon")));
+            messageDiv.append(document.createTextNode(this.$t("message_colon")));
             messageDiv.append(bodySpan);
 
             chatLog.appendChild(messageDiv);
@@ -1113,7 +1118,7 @@ window.vueApp = new Vue({
                 chatLog.scrollTop = chatLog.scrollHeight -
                     chatLog.clientHeight;
         },
-        displayUserMessage: async function (user, msg)
+        async displayUserMessage(user, msg)
         {
             const isIgnored = this.ignoredUserIds.has(user.id);
 
@@ -1144,7 +1149,7 @@ window.vueApp = new Vue({
 
             if (this.enableTextToSpeech)
             {
-                speak(plainMsg, this.ttsVoiceURI, this.voiceVolume, user.voicePitch)
+                speak(plainMsg, this.$ttsVoiceURI, this.voiceVolume, user.voicePitch)
             }
 
             if (user.id != this.myUserID)
@@ -1160,7 +1165,7 @@ window.vueApp = new Vue({
                 this.addNiconicoMessageToVideoContainer(container, plainMsg, user.id)
             }
         },
-        addNiconicoMessageToVideoContainer: function(videoContainer, messageText, userID)
+        addNiconicoMessageToVideoContainer(videoContainer, messageText, userID)
         {
             const span = document.createElement("span")
             span.textContent = messageText
@@ -1178,7 +1183,7 @@ window.vueApp = new Vue({
                 videoContainer.removeChild(span)
             }, 5200)
         },
-        displayNotification: async function(message, icon)
+        async displayNotification(message, icon)
         {
             if (window.Notification)
             {
@@ -1196,21 +1201,21 @@ window.vueApp = new Vue({
 
             return null
         },
-        toDisplayName: function (name)
+        toDisplayName(name)
         {
             if (name == "")
-                return i18n.t("default_user_name");
+                return this.$t("default_user_name");
             return name;
         },
-        clearLog: function ()
+        clearLog()
         {
-            this.confirm(i18n.t("msg.are_you_sure_you_want_to_clear_log"), () =>
+            this.confirm(this.$t("msg.are_you_sure_you_want_to_clear_log"), () =>
             {
                 document.getElementById("chatLog").innerHTML = '';
-                this.showWarningToast(i18n.t("msg.chat_log_cleared"));
+                this.showWarningToast(this.$t("msg.chat_log_cleared"));
             });
         },
-        drawImage: function (context, image, x, y)
+        drawImage(context, image, x, y)
         {
             if (!x) x = 0;
             if (!y) y = 0;
@@ -1220,7 +1225,7 @@ window.vueApp = new Vue({
                 Math.round(this.getCanvasScale() * y + this.canvasGlobalOffset.y)
             );
         },
-        getNameImage: function(user, withBackground)
+        getNameImage(user, withBackground)
         {
             const [displayName, tripcode] = this.toDisplayName(user.name).split("◆")
 
@@ -1275,7 +1280,7 @@ window.vueApp = new Vue({
                 return [width, height];
             });
         },
-        getBubbleImage: function(user)
+        getBubbleImage(user)
         {
             const maxLineWidth = 250;
             const lineHeight = 15;
@@ -1394,7 +1399,7 @@ window.vueApp = new Vue({
                 return [boxWidth + boxMargin, boxHeight + boxMargin]
             });
         },
-        detectCanvasResize: function ()
+        detectCanvasResize()
         {
             const devicePixelRatio = this.getDevicePixelRatio();
 
@@ -1414,7 +1419,7 @@ window.vueApp = new Vue({
                 this.devicePixelRatio = devicePixelRatio
             }
         },
-        setCanvasGlobalOffset: function ()
+        setCanvasGlobalOffset()
         {
             if (this.currentRoom.needsFixedCamera)
             {
@@ -1478,7 +1483,7 @@ window.vueApp = new Vue({
             this.canvasGlobalOffset.y = canvasOffset.y;
         },
 
-        calculateUserPhysicalPositions: function (delta)
+        calculateUserPhysicalPositions(delta)
         {
             for (const id in this.users)
             {
@@ -1644,7 +1649,7 @@ window.vueApp = new Vue({
             };
         })(),
 
-        paintBackground: function ()
+        paintBackground()
         {
             const context = this.canvasContext;
             if (this.currentRoom.backgroundColor)
@@ -1663,7 +1668,7 @@ window.vueApp = new Vue({
             );
         },
 
-        drawObjects: function ()
+        drawObjects()
         {
             const context = this.canvasContext;
 
@@ -1705,7 +1710,7 @@ window.vueApp = new Vue({
             }
         },
 
-        drawUsernames: function ()
+        drawUsernames()
         {
             for (const o of this.canvasObjects.filter(o => o.type == "user" && !this.ignoredUserIds.has(o.o.id)))
             {
@@ -1725,7 +1730,7 @@ window.vueApp = new Vue({
                 this.isUsernameRedrawRequired = false;
         },
 
-        resetBubbleImages: function ()
+        resetBubbleImages()
         {
             for (const u in this.users)
             {
@@ -1733,7 +1738,7 @@ window.vueApp = new Vue({
             }
             this.isRedrawRequired = true;
         },
-        drawBubbles: function()
+        drawBubbles()
         {
             for (const o of this.canvasObjects.filter(o => o.type == "user" && !this.ignoredUserIds.has(o.o.id)))
             {
@@ -1760,7 +1765,7 @@ window.vueApp = new Vue({
                 );
             }
         },
-        drawPrivateStreamIcons: function ()
+        drawPrivateStreamIcons()
         {
             // these icons are visible only the streamers who chose "specific_users" as stream target.
             if (!this.isStreaming() || this.streamTarget == "all_room")
@@ -1785,7 +1790,7 @@ window.vueApp = new Vue({
                 );
             }
         },
-        drawOriginLines: function ()
+        drawOriginLines()
         {
             const context = this.canvasContext;
 
@@ -1850,7 +1855,7 @@ window.vueApp = new Vue({
 
         },
 
-        drawSpecialObjects: function () {
+        drawSpecialObjects() {
             if (this.currentRoom.id === 'jinja') {
                 if (Date.now() - this.lastCoinTossTime < 1000)
                 {
@@ -1875,7 +1880,7 @@ window.vueApp = new Vue({
             }
         },
 
-        canvasClick: function(clickEvent)
+        canvasClick(clickEvent)
         {
             if (this.currentRoom.id === 'jinja') {
                 const specialObjectDonationBox = this.currentRoom.specialObjects.find(o => o.name == "donation-box");
@@ -1898,7 +1903,7 @@ window.vueApp = new Vue({
             }
         },
 
-        drawGridNumbers: function ()
+        drawGridNumbers()
         {
             const context = this.canvasContext;
 
@@ -1929,7 +1934,7 @@ window.vueApp = new Vue({
                 }
         },
 
-        paint: function (delta)
+        paint(delta)
         {
             if (this.isLoadingRoom || !this.currentRoom.backgroundImage)
                 return;
@@ -1986,7 +1991,7 @@ window.vueApp = new Vue({
             this.changeRoomIfSteppingOnDoor();
         },
 
-        paintLoop: function (timestamp)
+        paintLoop(timestamp)
         {
             const delta = this.lastFrameTimestamp === null ? 0 : timestamp - this.lastFrameTimestamp;
 
@@ -1996,7 +2001,7 @@ window.vueApp = new Vue({
 
             requestAnimationFrame(this.paintLoop);
         },
-        changeRoomIfSteppingOnDoor: function ()
+        changeRoomIfSteppingOnDoor()
         {
             if (this.justSpawnedToThisRoom) return;
             if (this.isWaitingForServerResponseOnMovement) return;
@@ -2019,14 +2024,14 @@ window.vueApp = new Vue({
 
             this.changeRoom(roomId, doorId);
         },
-        changeRoom: async function (targetRoomId, targetDoorId)
+        async changeRoom(targetRoomId, targetDoorId)
         {
             if (this.mediaStream) this.stopStreaming();
-            for (let i = 0; i < this.takenStreams.length; i++)
+            for (let i = 0; i < this.$takenStreams.length; i++)
             {
                 await this.dropStream(i)
                 // when going to a new room, all streams must be off by default
-                this.takenStreams[i] = false
+                this.$takenStreams[i] = false
             }
 
             if (window.speechSynthesis)
@@ -2034,7 +2039,7 @@ window.vueApp = new Vue({
             this.requestedRoomChange = true;
             this.socket.emit("user-change-room", { targetRoomId, targetDoorId });
         },
-        forcePhysicalPositionRefresh: function ()
+        forcePhysicalPositionRefresh()
         {
             for (const u of Object.values(this.users))
                 u.moveImmediatelyToPosition(
@@ -2046,7 +2051,7 @@ window.vueApp = new Vue({
             this.updateCanvasObjects();
             this.isRedrawRequired = true;
         },
-        sendNewPositionToServer: function (direction)
+        sendNewPositionToServer(direction)
         {
             if (
                 this.isLoadingRoom ||
@@ -2058,11 +2063,11 @@ window.vueApp = new Vue({
             this.isWaitingForServerResponseOnMovement = true;
             this.socket.emit("user-move", direction);
         },
-        sendNewBubblePositionToServer: function (position)
+        sendNewBubblePositionToServer(position)
         {
             this.socket.emit("user-bubble-position", position);
         },
-        sendMessageToServer: function ()
+        sendMessageToServer()
         {
             const inputTextbox = document.getElementById("input-textbox");
 
@@ -2093,7 +2098,7 @@ window.vueApp = new Vue({
             inputTextbox.value = "";
             inputTextbox.focus()
         },
-        registerKeybindings: function ()
+        registerKeybindings()
         {
             // Ping so that if my avatar was transparent, it turns back to normal.
             // Use debounce so that we never send more than one ping every 10 minutes
@@ -2150,14 +2155,14 @@ window.vueApp = new Vue({
                 this.canvasContainerResizeObserver.observe(document.getElementById("canvas-container"));
             }
         },
-        toggleInfobox: function ()
+        toggleInfobox()
         {
             localStorage.setItem(
                 "isInfoboxVisible",
                 (this.isInfoboxVisible = !this.isInfoboxVisible)
             );
         },
-        toggleUsernameBackground: function () {
+        toggleUsernameBackground() {
             localStorage.setItem(
                 "showUsernameBackground",
                 (this.showUsernameBackground = !this.showUsernameBackground)
@@ -2165,7 +2170,7 @@ window.vueApp = new Vue({
             this.isUsernameRedrawRequired = true;
             this.isRedrawRequired = true;
         },
-        handleCanvasKeydown: function (event)
+        handleCanvasKeydown(event)
         {
             if (event.code == "KeyG" && event.ctrlKey)
             {
@@ -2272,7 +2277,7 @@ window.vueApp = new Vue({
                 }
             }
         },
-        setMovementDirection: function(ev, direction)
+        setMovementDirection(ev, direction)
         {
             // this preventDefault() is a workaround needed for iOS: longpress on a button selects it as text (and the "user-select: none" css
             // doesn't work since it just prevents the button from being selected and selects the next selectable element instead...)
@@ -2290,7 +2295,7 @@ window.vueApp = new Vue({
                     this.sendNewPositionToServer(this.movementDirection)
             }
         },
-        getPointerState: function (event)
+        getPointerState(event)
         {
             if ("targetTouches" in event)
             {
@@ -2318,7 +2323,7 @@ window.vueApp = new Vue({
                 }
             }
         },
-        handleCanvasPointerDown: function (event)
+        handleCanvasPointerDown(event)
         {
             const state = this.getPointerState(event);
             if (!state) return;
@@ -2331,7 +2336,7 @@ window.vueApp = new Vue({
             event.preventDefault();
             event.target.focus()
         },
-        handleCanvasPointerMove: function (event)
+        handleCanvasPointerMove(event)
         {
             if (!this.isCanvasPointerDown) return;
 
@@ -2368,7 +2373,7 @@ window.vueApp = new Vue({
 
             event.preventDefault();
         },
-        handleMessageInputKeydown: function (event)
+        handleMessageInputKeydown(event)
         {
             if (event.code == "KeyG" && event.ctrlKey)
             {
@@ -2380,7 +2385,7 @@ window.vueApp = new Vue({
                 return
             }
         },
-        handleMessageInputKeypress: function (event)
+        handleMessageInputKeypress(event)
         {
             if (event.key != "Enter"
                 || (this.isNewlineOnShiftEnter && event.shiftKey)
@@ -2391,19 +2396,19 @@ window.vueApp = new Vue({
             event.preventDefault();
             return false;
         },
-        resetZoom: function ()
+        resetZoom()
         {
             this.setCanvasScale(1);
         },
-        zoomIn: function ()
+        zoomIn()
         {
             this.setCanvasScale(this.userCanvasScale + 0.1);
         },
-        zoomOut: function ()
+        zoomOut()
         {
             this.setCanvasScale(this.userCanvasScale - 0.1);
         },
-        handleCanvasWheel: function (event)
+        handleCanvasWheel(event)
         {
             if (event.deltaY < 0)
                 this.zoomIn()
@@ -2413,7 +2418,7 @@ window.vueApp = new Vue({
             event.preventDefault();
             return false;
         },
-        setCanvasScale: function (canvasScale)
+        setCanvasScale(canvasScale)
         {
             if(canvasScale > 3)
                 canvasScale = 3;
@@ -2424,18 +2429,18 @@ window.vueApp = new Vue({
             this.isRedrawRequired = true;
         },
 
-        getCanvasScale: function ()
+        getCanvasScale()
         {
             return this.userCanvasScale * this.devicePixelRatio;
         },
 
-        getDevicePixelRatio: function ()
+        getDevicePixelRatio()
         {
             if (this.isLowQualityEnabled) return 1;
             return Math.round(window.devicePixelRatio*100)/100;
         },
 
-        setupRTCConnection: function (slotId)
+        setupRTCConnection(slotId)
         {
             const rtcPeer = new RTCPeer(defaultIceConfig, (type, msg) =>
             {
@@ -2453,11 +2458,11 @@ window.vueApp = new Vue({
                     logToServer(new Date() + " " + this.myUserID + " Attempting to restart stream")
                     this.startStreaming()
                 }
-                else if (this.takenStreams[slotId])
+                else if (this.$takenStreams[slotId])
                 {
                     logToServer(new Date() + " " + this.myUserID + " Attempting to retake stream")
                     await this.dropStream(slotId)
-                    this.takeStream(slotId)
+                    this.$takeStream(slotId)
                 }
                 else
                 {
@@ -2469,7 +2474,7 @@ window.vueApp = new Vue({
             {
                 if (slotId == this.streamSlotIdInWhichIWantToStream)
                     this.stopStreaming()
-                else if (this.takenStreams[slotId])
+                else if (this.$takenStreams[slotId])
                     this.wantToDropStream(slotId)
             };
 
@@ -2504,7 +2509,7 @@ window.vueApp = new Vue({
                     else
                     {
                         setTimeout(reconnect,
-                            Math.max(this.takenStreams[slotId] ? 1000 : 0,
+                            Math.max(this.$takenStreams[slotId] ? 1000 : 0,
                                 rtcPeerSlots[slotId].attempts * 1000));
                     }
 
@@ -2514,7 +2519,7 @@ window.vueApp = new Vue({
             return rtcPeer;
         },
 
-        updateCurrentRoomStreams: async function (updatedStreams)
+        async updateCurrentRoomStreams(updatedStreams)
         {
             // Compare old stream slots with updated ones, to send a notification if
             // a new stream started
@@ -2528,7 +2533,7 @@ window.vueApp = new Vue({
                     && newStream.userId != this.myUserID)
                 {
                     const streamUser = this.users[newStream.userId]
-                    const message = i18n.t("msg.stream_start_notification").replace("@USER_NAME@", this.toDisplayName(streamUser.name))
+                    const message = this.$t("msg.stream_start_notification").replace("@USER_NAME@", this.toDisplayName(streamUser.name))
 
                     const notification = await this.displayNotification(message, this.getAvatarSpriteForUser(newStream.userId))
 
@@ -2544,8 +2549,8 @@ window.vueApp = new Vue({
             if (this.mediaStream && !updatedStreams.find(s => s.userId == this.myUserID))
                 this.stopStreaming();
 
-            this.takenStreams = updatedStreams.map((s, slotId) => {
-                return !!this.takenStreams[slotId]
+            this.$takenStreams = updatedStreams.map((s, slotId) => {
+                return !!this.$takenStreams[slotId]
             });
 
             // update rtcPeerSlots (keep the ones that were already established, drop the ones for streams that were just stopped by the streamer)
@@ -2554,7 +2559,7 @@ window.vueApp = new Vue({
             {
                 if (!rtcPeerSlots[slotId])
                     newRtcPeerSlotsList.push(null)
-                else if (this.takenStreams[slotId] || this.streamSlotIdInWhichIWantToStream == slotId)
+                else if (this.$takenStreams[slotId] || this.streamSlotIdInWhichIWantToStream == slotId)
                     newRtcPeerSlotsList.push(rtcPeerSlots[slotId])
                 else
                 {
@@ -2581,11 +2586,11 @@ window.vueApp = new Vue({
                 if (stream.isActive)
                     if (stream.userId == this.myUserID)
                         this.streamSlotIdInWhichIWantToStream = slotId;
-                if (this.takenStreams[slotId])
+                if (this.$takenStreams[slotId])
                     if (!stream.isActive || !stream.isReady || !stream.isAllowed)
                         await this.dropStream(slotId);
                     else
-                        this.takeStream(slotId);
+                        this.$takeStream(slotId);
 
                 $( "#video-container-" + slotId ).resizable({
                     aspectRatio: true,
@@ -2597,7 +2602,7 @@ window.vueApp = new Vue({
             }
         },
 
-        showDeviceSelectionPopup: async function ()
+        async showDeviceSelectionPopup()
         {
             this.isStreamPopupOpen = false;
             try
@@ -2635,14 +2640,14 @@ window.vueApp = new Vue({
             catch (err)
             {
                 console.error(err)
-                this.showWarningToast(i18n.t("msg.error_obtaining_media"));
+                this.showWarningToast(this.$t("msg.error_obtaining_media"));
                 this.mediaStream = false;
                 this.waitingForDevicePermission = false;
                 this.isStreamPopupOpen = true;
             }
         },
 
-        cancelDeviceSelection: function()
+        cancelDeviceSelection()
         {
             if (!this.isDeviceSelectionOpen)
                 return
@@ -2656,7 +2661,7 @@ window.vueApp = new Vue({
             this.isStreamPopupOpen = true
         },
 
-        wantToStartStreaming: async function ()
+        async wantToStartStreaming()
         {
             try
             {
@@ -2675,7 +2680,7 @@ window.vueApp = new Vue({
                 if ((withVideo && !this.selectedVideoDeviceId && !this.streamScreenCapture)
                     || (withSound && !this.selectedAudioDeviceId && !this.streamScreenCaptureAudio))
                 {
-                    this.showWarningToast(i18n.t("msg.error_didnt_select_device"));
+                    this.showWarningToast(this.$t("msg.error_didnt_select_device"));
                     return;
                 }
 
@@ -2846,11 +2851,11 @@ window.vueApp = new Vue({
                 console.error(e)
                 if (e instanceof UserException)
                 {
-                    this.showWarningToast(i18n.t("msg." + e.message));
+                    this.showWarningToast(this.$t("msg." + e.message));
                 }
                 else
                 {
-                    this.showWarningToast(i18n.t("msg.error_obtaining_media"));
+                    this.showWarningToast(this.$t("msg.error_obtaining_media"));
                 }
                 this.wantToStream = false;
                 this.mediaStream = false;
@@ -2858,7 +2863,7 @@ window.vueApp = new Vue({
                 this.waitingForDevicePermission = false;
             }
         },
-        setupRtcPeerSlot: function(slotId)
+        setupRtcPeerSlot(slotId)
         {
             if (!rtcPeerSlots[slotId]) rtcPeerSlots[slotId] = {
                 attempts: 0
@@ -2866,12 +2871,12 @@ window.vueApp = new Vue({
             rtcPeerSlots[slotId].rtcPeer = this.setupRTCConnection(slotId)
             return rtcPeerSlots[slotId]
         },
-        startStreaming: async function ()
+        async startStreaming()
         {
             const slotId = this.streamSlotIdInWhichIWantToStream;
             const rtcPeer = this.setupRtcPeerSlot(slotId).rtcPeer;
 
-            Vue.set(this.takenStreams, slotId, false);
+            Vue.set(this.$takenStreams, slotId, false);
             this.mediaStream
                 .getTracks()
                 .forEach((track) =>
@@ -2880,7 +2885,7 @@ window.vueApp = new Vue({
 
             document.getElementById("local-video-" + slotId).srcObject = this.mediaStream;
         },
-        stopStreaming: async function ()
+        async stopStreaming()
         {
             // Note that when streaming audio, the audio track in this.mediaStream is the
             // output of the outboundAudioProcessor. The "raw" input track is stopped
@@ -2918,19 +2923,19 @@ window.vueApp = new Vue({
             // makes the canvas completely gray, so i force a redraw. Also needed to hide private stream icons.
             this.isRedrawRequired = true;
         },
-        wantToTakeStream: function (streamSlotId)
+        wantToTakeStream(streamSlotId)
         {
             if (!window.RTCPeerConnection)
             {
-                this.showWarningToast(i18n.t("msg.no_webrtc"));
+                this.showWarningToast(this.$t("msg.no_webrtc"));
                 return;
             }
-            Vue.set(this.takenStreams, streamSlotId, true);
+            Vue.set(this.$takenStreams, streamSlotId, true);
 
             if (streamSlotId in this.streams && this.streams[streamSlotId].isReady)
-                this.takeStream(streamSlotId);
+                this.$takeStream(streamSlotId);
         },
-        takeStream: function (streamSlotId)
+        takeStream(streamSlotId)
         {
             if (rtcPeerSlots[streamSlotId]) return // no need to attempt again to take this stream
 
@@ -2996,14 +3001,14 @@ window.vueApp = new Vue({
             );
             this.socket.emit("user-want-to-take-stream", streamSlotId);
         },
-        dropStream: async function (streamSlotId)
+        async dropStream(streamSlotId)
         {
             if(!rtcPeerSlots[streamSlotId]) return;
             rtcPeerSlots[streamSlotId].rtcPeer.close()
             rtcPeerSlots[streamSlotId] = null;
             
             if (!this.isStreamAutoResumeEnabled)
-                Vue.set(this.takenStreams, streamSlotId, false);
+                Vue.set(this.$takenStreams, streamSlotId, false);
 
             this.clientSideStreamData[streamSlotId].isListenerConnected = false
 
@@ -3017,12 +3022,12 @@ window.vueApp = new Vue({
                 delete this.inboundAudioProcessors[streamSlotId]
             }
         },
-        wantToDropStream: async function (streamSlotId)
+        async wantToDropStream(streamSlotId)
         {
-            Vue.set(this.takenStreams, streamSlotId, false);
+            Vue.set(this.$takenStreams, streamSlotId, false);
             await this.dropStream(streamSlotId);
         },
-        rula: function (roomId)
+        rula(roomId)
         {
             if (!roomId) return;
             this.canvasManualOffset = { x: 0, y: 0 };
@@ -3030,16 +3035,16 @@ window.vueApp = new Vue({
             this.isRulaPopupOpen = false;
             this.rulaRoomSelection = null;
         },
-        closeRulaPopup: function ()
+        closeRulaPopup()
         {
             this.isRulaPopupOpen = false;
             this.rulaRoomSelection = null;
         },
-        openUserListPopup: function ()
+        openUserListPopup()
         {
             if (this.getUserListForListPopup().length == 0)
             {
-                this.showWarningToast(i18n.t("msg.no_other_users_in_this_room"));
+                this.showWarningToast(this.$t("msg.no_other_users_in_this_room"));
             }
             else
             {
@@ -3053,19 +3058,19 @@ window.vueApp = new Vue({
                 }
             }
         },
-        closeUserListPopup: function ()
+        closeUserListPopup()
         {
             this.isUserListPopupOpen = false;
         },
-        openPreferencesPopup: function ()
+        openPreferencesPopup()
         {
             this.isPreferencesPopupOpen = true;
         },
-        closePreferencesPopup: function ()
+        closePreferencesPopup()
         {
             this.isPreferencesPopupOpen = false;
         },
-        ignoreUser: function(userId)
+        ignoreUser(userId)
         {
             this.ignoredUserIds.add(userId)
 
@@ -3078,7 +3083,7 @@ window.vueApp = new Vue({
             this.isRedrawRequired = true
             this.$forceUpdate() // HACK: the v-if for the ignore and unignore buttons doesn't get automatically re-evaluated
         },
-        unignoreUser: function(userId)
+        unignoreUser(userId)
         {
             this.ignoredUserIds.delete(userId)
 
@@ -3095,9 +3100,9 @@ window.vueApp = new Vue({
             this.isUsernameRedrawRequired = true
             this.$forceUpdate() // HACK: the v-if for the ignore and unignore buttons doesn't get automatically re-evaluated
         },
-        blockUser: function(userId)
+        blockUser(userId)
         {
-            this.confirm(i18n.t("msg.are_you_sure_you_want_to_block"), () =>
+            this.confirm(this.$t("msg.are_you_sure_you_want_to_block"), () =>
             {
                 this.socket.emit("user-block", userId);
             });
@@ -3117,7 +3122,7 @@ window.vueApp = new Vue({
 
             this.prepareRulaRoomList();
         },
-        prepareRulaRoomList: function ()
+        prepareRulaRoomList()
         {
             const key = this.rulaRoomListSortKey;
             const direction = this.rulaRoomListSortDirection;
@@ -3131,7 +3136,7 @@ window.vueApp = new Vue({
             {
                 let sort;
                 if (key == "sortName")
-                    sort = a[key].localeCompare(b[key], i18n.locale);
+                    sort = a[key].localeCompare(b[key], this.$i18n.locale);
                 else if(key == "streamers")
                     sort = b[key].length - a[key].length;
                 else
@@ -3139,11 +3144,11 @@ window.vueApp = new Vue({
                 return sort * direction;
             })
         },
-        openStreamPopup: function (streamSlotId)
+        openStreamPopup(streamSlotId)
         {
             if (!window.RTCPeerConnection)
             {
-                this.showWarningToast(i18n.t("msg.no_webrtc"));
+                this.showWarningToast(this.$t("msg.no_webrtc"));
                 return;
             }
 
@@ -3152,7 +3157,7 @@ window.vueApp = new Vue({
 
             this.isStreamPopupOpen = true;
         },
-        closeStreamPopup: function ()
+        closeStreamPopup()
         {
             if (!this.isStreamPopupOpen)
                 return
@@ -3166,7 +3171,7 @@ window.vueApp = new Vue({
             this.wantToStream = false;
             this.streamSlotIdInWhichIWantToStream = null;
         },
-        changeStreamVolume: function (streamSlotId)
+        changeStreamVolume(streamSlotId)
         {
             const volumeSlider = document.getElementById("volume-" + streamSlotId);
 
@@ -3175,7 +3180,7 @@ window.vueApp = new Vue({
             this.slotVolume[streamSlotId] = volumeSlider.value;
             localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
         },
-        changeSoundEffectVolume: function (newVolume)
+        changeSoundEffectVolume(newVolume)
         {
             debouncedLogSoundVolume(this.myUserID, newVolume)
             this.soundEffectVolume = newVolume
@@ -3184,7 +3189,7 @@ window.vueApp = new Vue({
             document.getElementById("message-sound").play()
             localStorage.setItem(this.areaId + "soundEffectVolume", this.soundEffectVolume);
         },
-        updateAudioElementsVolume: function ()
+        updateAudioElementsVolume()
         {
             for (const elementId of ["message-sound", "login-sound", "mention-sound"])
             {
@@ -3192,27 +3197,27 @@ window.vueApp = new Vue({
                 el.volume = this.soundEffectVolume
             }
         },
-        requestRoomList: function ()
+        requestRoomList()
         {
             // Socket could be null if the user clicks on the #list button
             // very quickly after login and before initializing the socket
             if (this.socket)
                 this.socket.emit("user-room-list");
         },
-        selectRoomForRula: function (roomId)
+        selectRoomForRula(roomId)
         {
             this.rulaRoomSelection = roomId;
         },
-        showPasswordInput: function ()
+        showPasswordInput()
         {
             this.passwordInputVisible = true;
         },
-        checkBackgroundColor: function ()
+        checkBackgroundColor()
         {
-            this.uiBackgroundColor = getComputedStyle(this.$el).getPropertyValue("background-color").match(/\d+/g).slice(0, 3).map(c => parseInt(c));
+            this.uiBackgroundColor = getComputedStyle(this.$refs["page-container"]).getPropertyValue("background-color").match(/\d+/g).slice(0, 3).map(c => parseInt(c));
             this.isUiBackgroundDark = Math.round(this.uiBackgroundColor.reduce((p, c) => p + c) / this.uiBackgroundColor.length) <= 127
         },
-        handleUiTheme: async function ()
+        async handleUiTheme()
         {
             this.isRedrawRequired = true
             
@@ -3239,28 +3244,28 @@ window.vueApp = new Vue({
             }
             this.isRedrawRequired = true
         },
-        toggleCoinSound: function ()
+        toggleCoinSound()
         {
             this.storeSet('isCoinSoundEnabled');
         },
-        handleLanguageChange: function ()
+        handleLanguageChange()
         {
             this.storeSet('language');
             this.setLocale();
         },
-        storeSet: function (itemName, value)
+        storeSet(itemName, value)
         {
             if (value != undefined) this[itemName] = value;
             localStorage.setItem(itemName, this[itemName]);
         },
-        handleBubbleOpacity: function ()
+        handleBubbleOpacity()
         {
             this.storeSet("bubbleOpacity");
             this.resetBubbleImages();
         },
-        logout: async function ()
+        async logout()
         {
-            this.confirm(i18n.t("msg.are_you_sure_you_want_to_logout"), () =>
+            this.confirm(this.$t("msg.are_you_sure_you_want_to_logout"), () =>
             {
                 logToServer(new Date() + " " + this.myUserID + " Logging out")
                 if (this.canvasContainerResizeObserver)
@@ -3273,14 +3278,14 @@ window.vueApp = new Vue({
 
                 this.socket.close()
 
-                for (let i = 0; i < this.takenStreams.length; i++)
-                    if (this.takenStreams[i])
+                for (let i = 0; i < this.$takenStreams.length; i++)
+                    if (this.$takenStreams[i])
                         this.wantToDropStream(i)
 
                 window.onbeforeunload = null
             });
         },
-        handleShowNotifications: async function ()
+        async handleShowNotifications()
         {
             if (!window.Notification)
             {
@@ -3294,7 +3299,7 @@ window.vueApp = new Vue({
             }
             this.storeSet("showNotifications")
         },
-        setMentionRegexObjects: function ()
+        setMentionRegexObjects()
         {
             function wordsToRegexObject(words)
             {
@@ -3327,7 +3332,7 @@ window.vueApp = new Vue({
             this.usernameMentionRegexObject = wordsToRegexObject(
                 this.toDisplayName(this.users[this.myUserID].name).split("◆"))
         },
-        markMentions: function(msg)
+        markMentions(msg)
         {
             function regexReplace(stringArray, regex, replacement)
             {
@@ -3368,7 +3373,7 @@ window.vueApp = new Vue({
             msg = regexReplace(msg, this.usernameMentionRegexObject, replacementFunction)
             return msg.flat().join("")
         },
-        checkIfMentioned: function(msg)
+        checkIfMentioned(msg)
         {
             function test(ro, s)
             {
@@ -3380,53 +3385,53 @@ window.vueApp = new Vue({
             return test(this.customMentionRegexObject, msg)
                 || test(this.usernameMentionRegexObject, msg)
         },
-        handleLowQualityEnabled: function ()
+        handleLowQualityEnabled()
         {
             this.storeSet('isLowQualityEnabled');
             this.isRedrawRequired = true
         },
-        handleCrispModeEnabled: function ()
+        handleCrispModeEnabled()
         {
             this.storeSet('isCrispModeEnabled');
             this.reloadImages()
         },
-        handleIdleAnimationDisabled: function ()
+        handleIdleAnimationDisabled()
         {
             this.storeSet('isIdleAnimationDisabled');
             this.isRedrawRequired = true
         },
-        handleNameMentionSoundEnabled: function ()
+        handleNameMentionSoundEnabled()
         {
             this.storeSet('isNameMentionSoundEnabled')
             this.setMentionRegexObjects()
         },
-        handleCustomMentionSoundPattern: function ()
+        handleCustomMentionSoundPattern()
         {
             this.storeSet('customMentionSoundPattern')
             this.setMentionRegexObjects()
         },
-        handleEnableTextToSpeech: function ()
+        handleEnableTextToSpeech()
         {
             if (window.speechSynthesis)
                 speechSynthesis.cancel()
             this.storeSet('enableTextToSpeech')
         },
-        changeVoice: function () {
-            speak(i18n.t("test"), this.ttsVoiceURI, this.voiceVolume)
+        changeVoice() {
+            speak(this.$t("test"), this.$ttsVoiceURI, this.voiceVolume)
             this.storeSet('ttsVoiceURI')
         },
         // I think this getVoices() function isn't called anywhere, might be okay to remove
-        getVoices: function () {
+        getVoices() {
             if (!window.speechSynthesis)
                 return []
             return speechSynthesis.getVoices()
         },
-        changeVoiceVolume: function(newValue) {
+        changeVoiceVolume(newValue) {
             this.voiceVolume = newValue
             this.storeSet('voiceVolume')
-            debouncedSpeakTest(this.ttsVoiceURI, this.voiceVolume)
+            debouncedSpeakTest(this.$ttsVoiceURI, this.voiceVolume)
         },
-        toggleVideoSlotPinStatus: function(slotId) {
+        toggleVideoSlotPinStatus(slotId) {
             const videoContainer = document.getElementById('video-container-' + slotId)
             videoContainer.classList.toggle("pinned-video")
             videoContainer.classList.toggle("unpinned-video")
@@ -3442,7 +3447,7 @@ window.vueApp = new Vue({
                 videoContainer.style = ""
             }
         },
-        highlightUser: function(userId, userName)
+        highlightUser(userId, userName)
         {
             const highlightedUserStyle = document.getElementById("highlighted-user-style")
 
@@ -3467,7 +3472,7 @@ window.vueApp = new Vue({
             // relative to the other users in the same tile.
             this.updateCanvasObjects();
         },
-        getUserListForListPopup: function ()
+        getUserListForListPopup()
         {
             const output = Object.values(this.users)
                 .filter(u => u.id != this.myUserID)
@@ -3489,7 +3494,7 @@ window.vueApp = new Vue({
 
             return output
         },
-        handleRulaPopupKeydown: function(event)
+        handleRulaPopupKeydown(event)
         {
             const previousIndex = this.preparedRoomList.findIndex(r => r.id == this.rulaRoomSelection)
 
@@ -3513,7 +3518,7 @@ window.vueApp = new Vue({
                     break;
             }
         },
-        handlechatLogKeydown: function(ev) {
+        handlechatLogKeydown(ev) {
             // hitting ctrl+a when the log is focused selects only the text in the log
             if (ev.code == "KeyA" && ev.ctrlKey)
             {
@@ -3522,54 +3527,54 @@ window.vueApp = new Vue({
                 document.getSelection().setBaseAndExtent(chatLog, 0, chatLog.nextSibling, 0);
             }
         },
-        toggleDesktopNotifications: function() {
+        toggleDesktopNotifications() {
             this.showNotifications = !this.showNotifications
             this.handleShowNotifications()
         },
-        onCompressionChanged: function(streamSlotID)
+        onCompressionChanged(streamSlotID)
         {
             this.inboundAudioProcessors[streamSlotID].onCompressionChanged()
         },
-        onPanChanged: function(streamSlotID, event)
+        onPanChanged(streamSlotID, event)
         {
             const value = event.target.value
             this.inboundAudioProcessors[streamSlotID].setPan(value)
         },
-        resetPan: function(streamSlotID)
+        resetPan(streamSlotID)
         {
             const panKnobElement = document.getElementById("pan-knob-" + streamSlotID);
             panKnobElement.value = 0;
             this.inboundAudioProcessors[streamSlotID].setPan(0);
         },
-        mute: function()
+        mute()
         {
             this.outboundAudioProcessor.mute()
         },
-        unmute: function()
+        unmute()
         {
             this.outboundAudioProcessor.unmute()
         },
-        isStreaming: function()
+        isStreaming()
         {
             // Not correct, because streamSlotIdInWhichIWantToStream is different from null also when
             // the stream settings popup is open but the stream hasn't started yet
             return this.streamSlotIdInWhichIWantToStream != null
         },
-        giveStreamToUser: function(userID)
+        giveStreamToUser(userID)
         {
             this.allowedListenerIDs.add(userID)
             this.$forceUpdate()
             this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
             this.isRedrawRequired = true;
         },
-        revokeStreamToUser: function(userID)
+        revokeStreamToUser(userID)
         {
             this.allowedListenerIDs.delete(userID)
             this.$forceUpdate()
             this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
             this.isRedrawRequired = true;
         },
-        playVideo: function(event)
+        playVideo(event)
         {
             // When moving the video element to a new tab, chromium based browsers will
             // automatically pause it and wait for a user interaction. With this function
@@ -3577,7 +3582,7 @@ window.vueApp = new Vue({
             const video = event.target;
             video.play();
         },
-        onVideoDoubleClick: async function(event, slotId)
+        async onVideoDoubleClick(event, slotId)
         {
             const video = event.target;
             const videoContainer = video.parentElement
@@ -3607,7 +3612,7 @@ window.vueApp = new Vue({
                 const tab = open(window.origin + '/video-tab.html');
                 this.detachedStreamTabs[slotId] = tab;
                 const streamSlot = this.streams[slotId];
-                const newTabTitle = i18n.t("ui.label_stream", {index: slotId + 1}) + " " + this.toDisplayName(this.users[streamSlot.userId].name);
+                const newTabTitle = this.$t("ui.label_stream", {index: slotId + 1}) + " " + this.toDisplayName(this.users[streamSlot.userId].name);
                 tab.onload = () => {
                     tab.document.title = newTabTitle;
                     tab.document.body.appendChild(videoContainer);
@@ -3639,7 +3644,7 @@ window.vueApp = new Vue({
                 }
             }
         },
-        reattachVideoFromOtherTabIfDetached: function(slotId)
+        reattachVideoFromOtherTabIfDetached(slotId)
         {
             if (this.detachedStreamTabs[slotId])
             {
@@ -3653,19 +3658,21 @@ window.vueApp = new Vue({
                 this.detachedStreamTabs[slotId] = null;
             }
         },
-        getAvatarSpriteForUser: function(userId)
+        getAvatarSpriteForUser(userId)
         {
             const character = this.users[userId].character
             return "characters/" + character.characterName + "/front-standing." + character.format
         },
     },
 });
+window.vueApp.use(i18n)
+window.vueApp.mount("#vue-app")
 
 const debouncedSpeakTest = debounceWithDelayedExecution((ttsVoiceURI, voiceVolume) => {
     if (window.speechSynthesis)
     {
         speechSynthesis.cancel()
-        speak(i18n.t("test"), ttsVoiceURI, voiceVolume)
+        speak(i18n.global.t("test"), ttsVoiceURI, voiceVolume)
     }
 }, 150)
 
