@@ -1149,7 +1149,7 @@ window.vueApp = Vue.createApp({
 
             if (this.enableTextToSpeech)
             {
-                speak(plainMsg, this.$ttsVoiceURI, this.voiceVolume, user.voicePitch)
+                speak(plainMsg, this.ttsVoiceURI, this.voiceVolume, user.voicePitch)
             }
 
             if (user.id != this.myUserID)
@@ -2027,11 +2027,11 @@ window.vueApp = Vue.createApp({
         async changeRoom(targetRoomId, targetDoorId)
         {
             if (this.mediaStream) this.stopStreaming();
-            for (let i = 0; i < this.$takenStreams.length; i++)
+            for (let i = 0; i < this.takenStreams.length; i++)
             {
                 await this.dropStream(i)
                 // when going to a new room, all streams must be off by default
-                this.$takenStreams[i] = false
+                this.takenStreams[i] = false
             }
 
             if (window.speechSynthesis)
@@ -2458,11 +2458,11 @@ window.vueApp = Vue.createApp({
                     logToServer(new Date() + " " + this.myUserID + " Attempting to restart stream")
                     this.startStreaming()
                 }
-                else if (this.$takenStreams[slotId])
+                else if (this.takenStreams[slotId])
                 {
                     logToServer(new Date() + " " + this.myUserID + " Attempting to retake stream")
                     await this.dropStream(slotId)
-                    this.$takeStream(slotId)
+                    this.takeStream(slotId)
                 }
                 else
                 {
@@ -2474,7 +2474,7 @@ window.vueApp = Vue.createApp({
             {
                 if (slotId == this.streamSlotIdInWhichIWantToStream)
                     this.stopStreaming()
-                else if (this.$takenStreams[slotId])
+                else if (this.takenStreams[slotId])
                     this.wantToDropStream(slotId)
             };
 
@@ -2509,7 +2509,7 @@ window.vueApp = Vue.createApp({
                     else
                     {
                         setTimeout(reconnect,
-                            Math.max(this.$takenStreams[slotId] ? 1000 : 0,
+                            Math.max(this.takenStreams[slotId] ? 1000 : 0,
                                 rtcPeerSlots[slotId].attempts * 1000));
                     }
 
@@ -2549,8 +2549,8 @@ window.vueApp = Vue.createApp({
             if (this.mediaStream && !updatedStreams.find(s => s.userId == this.myUserID))
                 this.stopStreaming();
 
-            this.$takenStreams = updatedStreams.map((s, slotId) => {
-                return !!this.$takenStreams[slotId]
+            this.takenStreams = updatedStreams.map((s, slotId) => {
+                return !!this.takenStreams[slotId]
             });
 
             // update rtcPeerSlots (keep the ones that were already established, drop the ones for streams that were just stopped by the streamer)
@@ -2559,7 +2559,7 @@ window.vueApp = Vue.createApp({
             {
                 if (!rtcPeerSlots[slotId])
                     newRtcPeerSlotsList.push(null)
-                else if (this.$takenStreams[slotId] || this.streamSlotIdInWhichIWantToStream == slotId)
+                else if (this.takenStreams[slotId] || this.streamSlotIdInWhichIWantToStream == slotId)
                     newRtcPeerSlotsList.push(rtcPeerSlots[slotId])
                 else
                 {
@@ -2586,11 +2586,11 @@ window.vueApp = Vue.createApp({
                 if (stream.isActive)
                     if (stream.userId == this.myUserID)
                         this.streamSlotIdInWhichIWantToStream = slotId;
-                if (this.$takenStreams[slotId])
+                if (this.takenStreams[slotId])
                     if (!stream.isActive || !stream.isReady || !stream.isAllowed)
                         await this.dropStream(slotId);
                     else
-                        this.$takeStream(slotId);
+                        this.takeStream(slotId);
 
                 $( "#video-container-" + slotId ).resizable({
                     aspectRatio: true,
@@ -2876,7 +2876,7 @@ window.vueApp = Vue.createApp({
             const slotId = this.streamSlotIdInWhichIWantToStream;
             const rtcPeer = this.setupRtcPeerSlot(slotId).rtcPeer;
 
-            Vue.set(this.$takenStreams, slotId, false);
+            Vue.set(this.takenStreams, slotId, false);
             this.mediaStream
                 .getTracks()
                 .forEach((track) =>
@@ -2930,10 +2930,10 @@ window.vueApp = Vue.createApp({
                 this.showWarningToast(this.$t("msg.no_webrtc"));
                 return;
             }
-            Vue.set(this.$takenStreams, streamSlotId, true);
+            Vue.set(this.takenStreams, streamSlotId, true);
 
             if (streamSlotId in this.streams && this.streams[streamSlotId].isReady)
-                this.$takeStream(streamSlotId);
+                this.takeStream(streamSlotId);
         },
         takeStream(streamSlotId)
         {
@@ -3008,7 +3008,7 @@ window.vueApp = Vue.createApp({
             rtcPeerSlots[streamSlotId] = null;
             
             if (!this.isStreamAutoResumeEnabled)
-                Vue.set(this.$takenStreams, streamSlotId, false);
+                Vue.set(this.takenStreams, streamSlotId, false);
 
             this.clientSideStreamData[streamSlotId].isListenerConnected = false
 
@@ -3024,7 +3024,7 @@ window.vueApp = Vue.createApp({
         },
         async wantToDropStream(streamSlotId)
         {
-            Vue.set(this.$takenStreams, streamSlotId, false);
+            Vue.set(this.takenStreams, streamSlotId, false);
             await this.dropStream(streamSlotId);
         },
         rula(roomId)
@@ -3278,8 +3278,8 @@ window.vueApp = Vue.createApp({
 
                 this.socket.close()
 
-                for (let i = 0; i < this.$takenStreams.length; i++)
-                    if (this.$takenStreams[i])
+                for (let i = 0; i < this.takenStreams.length; i++)
+                    if (this.takenStreams[i])
                         this.wantToDropStream(i)
 
                 window.onbeforeunload = null
@@ -3417,7 +3417,7 @@ window.vueApp = Vue.createApp({
             this.storeSet('enableTextToSpeech')
         },
         changeVoice() {
-            speak(this.$t("test"), this.$ttsVoiceURI, this.voiceVolume)
+            speak(this.$t("test"), this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('ttsVoiceURI')
         },
         // I think this getVoices() function isn't called anywhere, might be okay to remove
@@ -3429,7 +3429,7 @@ window.vueApp = Vue.createApp({
         changeVoiceVolume(newValue) {
             this.voiceVolume = newValue
             this.storeSet('voiceVolume')
-            debouncedSpeakTest(this.$ttsVoiceURI, this.voiceVolume)
+            debouncedSpeakTest(this.ttsVoiceURI, this.voiceVolume)
         },
         toggleVideoSlotPinStatus(slotId) {
             const videoContainer = document.getElementById('video-container-' + slotId)
