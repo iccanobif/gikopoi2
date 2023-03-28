@@ -55,7 +55,7 @@ export default
         rula_menu_label_group: "Area",
         rula_menu_group_option_all: "Todas",
 
-        user_list_popup_title: "Lista de usuarios (total: @USER_COUNT@)",
+        user_list_popup_title: "Lista de usuarios (total: {userCount})",
         user_list_popup_column_user_name: "Nombre de usuario",
         user_not_in_room: "Este usuario no está en esta sala.",
         user_inactive: "Este usuario está inactivo.",
@@ -177,12 +177,12 @@ export default
         goodbye: "¡Nos vemos pronto!",
         flood_warning: "Oye, ¿no te parece que estás hablando demasiado rápido? Mensaje no entregado: ",
         chess_timeout_reached: "Finalizó la partida de ajedrez: timeout alcanzado.",
-        chess_win: "Finalizó la partida de ajedrez: el ganador es @USER_NAME@.",
-        chess_quit: "Finalizó la partida de ajedrez: @USER_NAME@ abandonó la partida.",
+        chess_win: "Finalizó la partida de ajedrez: el ganador es {userName}.",
+        chess_quit: "Finalizó la partida de ajedrez: {userName} abandonó la partida.",
         
         // are_you_sure_you_want_to_clear_log: "",
         // chat_log_cleared: "",
-        // stream_start_notification: "@USER_NAME@ has started a stream.",
+        // stream_start_notification: "{userName} has started a stream.",
     },
     room:
     {

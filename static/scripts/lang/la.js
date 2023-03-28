@@ -50,7 +50,7 @@ export default
         rula_menu_label_group: "Area",
         rula_menu_group_option_all: "Omnes",
 
-        user_list_popup_title: "Tabula usoris (totum: @USER_COUNT@)",
+        user_list_popup_title: "Tabula usoris (totum: {userCount})",
         user_list_popup_column_user_name: "Nomen usoris",
         user_list_popup_ignore: "Ignorare",
         user_list_popup_unignore: "Deignorare",

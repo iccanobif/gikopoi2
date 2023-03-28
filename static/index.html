@@ -439,7 +439,7 @@
                 <div class="popup-overlay" v-if="isUserListPopupOpen" v-on:click="closeUserListPopup"></div>
                 <div id="user-list-popup" class="popup" v-if="isUserListPopupOpen">
                     <div class="popup-titlebar">
-                        <div class="popup-title">{{ $t("ui.user_list_popup_title").replace("@USER_COUNT@", getUserListForListPopup().length) }}</div>
+                        <div class="popup-title">{{ $t("ui.user_list_popup_title", {userCount: getUserListForListPopup().length}) }}</div>
                     </div>
                     <div class="popup-item" v-html="$t('ui.user_list_popup_blurb')"></div>
                     <div class="popup-content">

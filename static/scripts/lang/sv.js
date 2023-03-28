@@ -55,7 +55,7 @@ export default
         rula_menu_label_group: "Område",
         rula_menu_group_option_all: "Alla",
 
-        user_list_popup_title: "Användarlista (totalt: @USER_COUNT@)",
+        user_list_popup_title: "Användarlista (totalt: {userCount})",
         user_list_popup_column_user_name: "Användarnamn",
         user_not_in_room: "Användaren är inte i det här rummet.",
         user_inactive: "Användaren är inaktiv.",
@@ -177,12 +177,12 @@ export default
         goodbye: "På återseende!",
         flood_warning: "Hörru, snackar du inte lite fort nu? Olevererat meddelande: ",
         chess_timeout_reached: "Schackspelet är över: timeout uppnådd.",
-        chess_win: "Schackspelet är över: segraren är @USER_NAME@.",
-        chess_quit: "Schackspelet är över: @USER_NAME@ lämnade spelet.",
+        chess_win: "Schackspelet är över: segraren är {userName}.",
+        chess_quit: "Schackspelet är över: {userName} lämnade spelet.",
         
         are_you_sure_you_want_to_clear_log: "Vill du verkligen rensa chattloggen",
         chat_log_cleared: "Chattloggen har rensats.",
-        stream_start_notification: "@USER_NAME@ har börjat strömma.",
+        stream_start_notification: "{userName} har börjat strömma.",
     },
     room:
     {

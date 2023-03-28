@@ -55,7 +55,7 @@ export default
         rula_menu_label_group: "Terület",
         rula_menu_group_option_all: "Összes",
 
-        user_list_popup_title: "Felhasználó lista (Összesen: @USER_COUNT@)",
+        user_list_popup_title: "Felhasználó lista (Összesen: {userCount})",
         user_list_popup_column_user_name: "Felhasználó neve",
         user_not_in_room: "Ez a felhasználó nincs ebben a szobában.",
         user_inactive: "Ez a felhasználó inaktív.",
@@ -177,12 +177,12 @@ export default
         goodbye: "Viszlát!",
         flood_warning: "Hé, nem beszélsz egy kicsit túl gyorsan? Elküldetlen üzenet: ",
         chess_timeout_reached: "A sakkjátszma véget ért: időkorlát elérése.",
-        chess_win: "A sakkjátszma véget ért: a győztes @USER_NAME@ lett.",
-        chess_quit: "A sakkjátszma véget ért: @USER_NAME@ kilépett a játékból.",
+        chess_win: "A sakkjátszma véget ért: a győztes {userName} lett.",
+        chess_quit: "A sakkjátszma véget ért: {userName} kilépett a játékból.",
         
         are_you_sure_you_want_to_clear_log: "Biztosan törölni akarod a naplót?",
         chat_log_cleared: "A napló törlésre került.",
-        // stream_start_notification: "@USER_NAME@ has started a stream.",
+        // stream_start_notification: "{userName} has started a stream.",
     },
     room:
     {

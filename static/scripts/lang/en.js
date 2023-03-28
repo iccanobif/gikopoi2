@@ -55,7 +55,7 @@ export default
         rula_menu_label_group: "Area",
         rula_menu_group_option_all: "All",
 
-        user_list_popup_title: "User List (total: @USER_COUNT@)",
+        user_list_popup_title: "User List (total: {userCount})",
         user_list_popup_column_user_name: "User name",
         user_not_in_room: "This user is not in this room.",
         user_inactive: "This user is inactive.",
@@ -177,12 +177,12 @@ export default
         goodbye: "See you soon!",
         flood_warning: "Hey, aren't you talking a bit too fast? Undelivered message: ",
         chess_timeout_reached: "The chess game is over: timeout reached.",
-        chess_win: "The chess game is over: the winner is @USER_NAME@.",
-        chess_quit: "The chess game is over: @USER_NAME@ quit the game.",
+        chess_win: "The chess game is over: the winner is {userName}.",
+        chess_quit: "The chess game is over: {userName} quit the game.",
         
         are_you_sure_you_want_to_clear_log: "Are you sure you want to clear the chat log?",
         chat_log_cleared: "The chat log has been cleared.",
-        stream_start_notification: "@USER_NAME@ has started a stream.",
+        stream_start_notification: "{userName} has started a stream.",
     },
     room:
     {

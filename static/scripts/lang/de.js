@@ -55,7 +55,7 @@ export default
         rula_menu_label_group: "Ort",
         rula_menu_group_option_all: "Alle",
 
-        user_list_popup_title: "Benutzerliste (Gesamt: @USER_COUNT@)",
+        user_list_popup_title: "Benutzerliste (Gesamt: {userCount})",
         user_list_popup_column_user_name: "Benutzername",
         user_not_in_room: "Dieser Benutzer ist nicht in diesem Raum.",
         user_inactive: "Dieser Benutzer ist inaktiv.",
@@ -177,12 +177,12 @@ export default
         goodbye: "Auf Wiedersehen!",
         flood_warning: "Hey, sprechen Sie nicht eine bisschen zu schnell? Nicht zugestellte Nachricht: ",
         chess_timeout_reached: "Das Schachspiel ist vorbei: Bedenkzeit überschreitet.",
-        chess_win: "Das Schachspiel ist vorbei: Der Gewinner ist @USER_NAME@.",
-        chess_quit: "Das Schachspiel ist vorbei: @USER_NAME@ hat das Spiel verlassen.",
+        chess_win: "Das Schachspiel ist vorbei: Der Gewinner ist {userName}.",
+        chess_quit: "Das Schachspiel ist vorbei: {userName} hat das Spiel verlassen.",
         
         are_you_sure_you_want_to_clear_log: "Sind sie sicher, dass Sie das Chat-Log löschen möchten?",
         chat_log_cleared: "Das Chat-Log wurde gelöscht.",
-        stream_start_notification: "@USER_NAME@ hat einen Stream gestartet.",
+        stream_start_notification: "{userName} hat einen Stream gestartet.",
     },
     room:
     {

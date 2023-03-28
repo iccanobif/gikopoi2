@@ -55,7 +55,7 @@ export default
         rula_menu_label_group: "Daerah",
         rula_menu_group_option_all: "Semua",
 
-        user_list_popup_title: "Daftar Pengguna (total: @USER_COUNT@)",
+        user_list_popup_title: "Daftar Pengguna (total: {userCount})",
         user_list_popup_column_user_name: "Nama Pengguna",
         user_not_in_room: "Pengguna ini tidak ada di sini.",
         user_inactive: "Pengguna ini tidak aktif.",
@@ -176,12 +176,12 @@ export default
         goodbye: "Sampai nanti!",
         flood_warning: "Anda berbicara terlalu banyak! Pesan yang tidak terkirim: ",
         chess_timeout_reached: "Game catur sudah berakhir : waktu telah habis.",
-        chess_win: "Game catur sudah berakhir: Pemenangnya @USER_NAME@.",
-        chess_quit: "Game catur berakhir: @USER_NAME@ berhenti main.",
+        chess_win: "Game catur sudah berakhir: Pemenangnya {userName}.",
+        chess_quit: "Game catur berakhir: {userName} berhenti main.",
         
         are_you_sure_you_want_to_clear_log: "Apakah Anda ingin menghapus log obrolan?",
         chat_log_cleared: "Log obrolan telah dihapus.",
-        stream_start_notification: "@USER_NAME@ telah memulai siaran.",
+        stream_start_notification: "{userName} telah memulai siaran.",
     },
     room:
     {

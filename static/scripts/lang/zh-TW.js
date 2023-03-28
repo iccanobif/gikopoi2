@@ -55,7 +55,7 @@ export default
         rula_menu_label_group: "區域",
         //rula_menu_group_option_all: "",
 
-        user_list_popup_title: "用戶訊息過濾（@USER_COUNT@名）",
+        user_list_popup_title: "用戶訊息過濾（{userCount}名）",
         user_list_popup_column_user_name: "用戶名",
         user_not_in_room: "所在地點找不到此用戶。",
         user_inactive: "閒置中。",
@@ -177,12 +177,12 @@ export default
         goodbye: "路上小心！約定好了還要再回來呦！",
         flood_warning: "欸，你會不會講太快了！ Undelivered message: ", // Partial
         chess_timeout_reached: "對弈結束：時間到",
-        chess_win: "對弈結束：@USER_NAME@贏了。",
-        chess_quit: "對弈結束：@USER_NAME@投降了。",
+        chess_win: "對弈結束：{userName}贏了。",
+        chess_quit: "對弈結束：{userName}投降了。",
         
         // are_you_sure_you_want_to_clear_log: "",
         // chat_log_cleared: "",
-        // stream_start_notification: "@USER_NAME@ has started a stream.",
+        // stream_start_notification: "{userName} has started a stream.",
     },
     room:
     {

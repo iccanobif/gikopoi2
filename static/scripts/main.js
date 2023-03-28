@@ -997,13 +997,13 @@ window.vueApp = Vue.createApp({
             this.socket.on("server-chess-win", winnerUserId => {
                 const winnerUserName = this.toDisplayName(this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A")
 
-                this.writeMessageToLog("SYSTEM", this.$t("msg.chess_win").replace("@USER_NAME@", winnerUserName), null)
+                this.writeMessageToLog("SYSTEM", this.$t("msg.chess_win", {userName: winnerUserName}), null)
             })
 
             this.socket.on("server-chess-quit", winnerUserId => {
                 const winnerUserName = this.toDisplayName(this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A")
 
-                this.writeMessageToLog("SYSTEM", this.$t("msg.chess_quit").replace("@USER_NAME@", winnerUserName), null)
+                this.writeMessageToLog("SYSTEM", this.$t("msg.chess_quit", {userName: winnerUserName}), null)
             })
             this.socket.on("special-events:server-add-shrine-coin", donationBoxValue => {
                 this.currentRoom.specialObjects[1].value = donationBoxValue;
@@ -2533,7 +2533,7 @@ window.vueApp = Vue.createApp({
                     && newStream.userId != this.myUserID)
                 {
                     const streamUser = this.users[newStream.userId]
-                    const message = this.$t("msg.stream_start_notification").replace("@USER_NAME@", this.toDisplayName(streamUser.name))
+                    const message = this.$t("msg.stream_start_notification", {userName: this.toDisplayName(streamUser.name)})
 
                     const notification = await this.displayNotification(message, this.getAvatarSpriteForUser(newStream.userId))
 
@@ -2770,13 +2770,13 @@ window.vueApp = Vue.createApp({
                         vuMeterBarPrimary.style.width = level * 100 + "%"
 
                         if (level > 0.2)
-                            Vue.set(this.streams[this.streamSlotIdInWhichIWantToStream], "isJumping", true)
+                            this.streams[this.streamSlotIdInWhichIWantToStream].isJumping = true
                         else
                             setTimeout(() => {
                                 const stream = this.streams[this.streamSlotIdInWhichIWantToStream]
                                 // handle the case where before this 100 ms delay the stream was closed
                                 if (stream)
-                                    Vue.set(stream, "isJumping", false)
+                                    stream.isJumping = false
                             }, 100)
                     });
 
@@ -2876,7 +2876,7 @@ window.vueApp = Vue.createApp({
             const slotId = this.streamSlotIdInWhichIWantToStream;
             const rtcPeer = this.setupRtcPeerSlot(slotId).rtcPeer;
 
-            Vue.set(this.takenStreams, slotId, false);
+            this.takenStreams[slotId] = false
             this.mediaStream
                 .getTracks()
                 .forEach((track) =>
@@ -2930,7 +2930,7 @@ window.vueApp = Vue.createApp({
                 this.showWarningToast(this.$t("msg.no_webrtc"));
                 return;
             }
-            Vue.set(this.takenStreams, streamSlotId, true);
+            this.takenStreams[streamSlotId] = true
 
             if (streamSlotId in this.streams && this.streams[streamSlotId].isReady)
                 this.takeStream(streamSlotId);
@@ -2986,9 +2986,9 @@ window.vueApp = Vue.createApp({
                                 vuMeterBarPrimary.style.width = level * 100 + "%"
                                 
                                 if (level > 0.2)
-                                    Vue.set(this.streams[streamSlotId], "isJumping", true)
+                                    this.streams[streamSlotId].isJumping = true
                                 else
-                                    setTimeout(() => Vue.set(this.streams[streamSlotId], "isJumping", false), 100)
+                                    setTimeout(() => {this.streams[streamSlotId].isJumping = false}, 100)
                             })
                         }
                     }
@@ -3008,7 +3008,7 @@ window.vueApp = Vue.createApp({
             rtcPeerSlots[streamSlotId] = null;
             
             if (!this.isStreamAutoResumeEnabled)
-                Vue.set(this.takenStreams, streamSlotId, false);
+                this.takenStreams[streamSlotId] = false
 
             this.clientSideStreamData[streamSlotId].isListenerConnected = false
 
@@ -3024,7 +3024,7 @@ window.vueApp = Vue.createApp({
         },
         async wantToDropStream(streamSlotId)
         {
-            Vue.set(this.takenStreams, streamSlotId, false);
+            this.takenStreams[streamSlotId] = false
             await this.dropStream(streamSlotId);
         },
         rula(roomId)

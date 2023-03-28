@@ -55,7 +55,7 @@ export default
         rula_menu_label_group: "Bölge",
         rula_menu_group_option_all: "Hepsi",
 
-        user_list_popup_title: "Kullanıcı Listesi (toplam: @USER_COUNT@)",
+        user_list_popup_title: "Kullanıcı Listesi (toplam: {userCount})",
         user_list_popup_column_user_name: "Kullanıcı ismi",
         user_not_in_room: "Bu kullanıcı bu odada değil.",
         user_inactive: "Bu kullanıcı aktif değil.",
@@ -177,12 +177,12 @@ export default
         goodbye: "Görüşmek üzere!",
         flood_warning: "Hey, biraz fazla hızlı konuşmuyor musun? Gönderilmemiş mesaj: ",
         chess_timeout_reached: "Satranç oyun sona serdi: zaman aşımına uğradı.",
-        chess_win: "Satranç oyun sona serdi: kazanan @USER_NAME@.",
-        chess_quit: "Satranç oyun sona serdi: @USER_NAME@ oyundan çıktı.",
+        chess_win: "Satranç oyun sona serdi: kazanan {userName}.",
+        chess_quit: "Satranç oyun sona serdi: {userName} oyundan çıktı.",
         
         are_you_sure_you_want_to_clear_log: "Sohbet defterini temizlemek istediğine emin misin?",
         chat_log_cleared: "Sohbet defteri temizlendi.",
-        stream_start_notification: "@USER_NAME@ yayın başlattı.",
+        stream_start_notification: "{userName} yayın başlattı.",
     },
     room:
     {

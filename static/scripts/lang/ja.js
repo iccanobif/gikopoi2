@@ -55,7 +55,7 @@ export default
         rula_menu_label_group: "エリア",
         rula_menu_group_option_all: "すべて",
 
-        user_list_popup_title: "ユーザーリスト（@USER_COUNT@名）",
+        user_list_popup_title: "ユーザーリスト（{userCount}名）",
         user_list_popup_column_user_name: "ユーザー名",
         user_not_in_room: "このユーザーはこの部屋にいません。",
         user_inactive: "このユーザーは活動停止中。",
@@ -177,12 +177,12 @@ export default
         goodbye: "　またね！",
         flood_warning: "おい、早口すぎるじゃないか！未配信のメッセージ：",
         chess_timeout_reached: "チェス対局が終わりました：時間切れ",
-        chess_win: "チェス対局が終わりました：@USER_NAME@の勝利。",
-        chess_quit: "チェス対局が終わりました：@USER_NAME@が投了した。",
+        chess_win: "チェス対局が終わりました：{userName}の勝利。",
+        chess_quit: "チェス対局が終わりました：{userName}が投了した。",
         
         are_you_sure_you_want_to_clear_log: "チャットログをクリアしますか？",
         chat_log_cleared: "チャットログがクリアされました。",
-        stream_start_notification: "@USER_NAME@が配信を始めた。",
+        stream_start_notification: "{userName}が配信を始めた。",
     },
     room:
     {
