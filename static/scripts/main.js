@@ -118,6 +118,7 @@ function getAppState()
 const i18n = VueI18n.createI18n({
     locale: "ja",
     fallbackLocale: "en",
+    warnHtmlInMessage: "off",
     messages,
 });
 
