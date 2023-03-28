@@ -751,11 +751,11 @@ window.vueApp = new Vue({
                 return "Are you sure?";
             }
 
-            // load the room state before connecting the websocket, so that all
+            // Load the room state before connecting the websocket, so that all
             // code handling websocket events (and paint() events) can assume that
-            // currentRoom, streams etc... are all defined
-
-            const response = await fetch("/areas/" + this.areaId + "/rooms/" + getSpawnRoomId())
+            // currentRoom, streams etc... are all defined.
+            const response = await fetch("/areas/" + this.areaId + "/rooms/" + getSpawnRoomId(),
+                                         { headers: { "Authorization": "Bearer " + this.myPrivateUserID } })
             this.updateRoomState(await response.json())
 
             logToServer(new Date() + " " + this.myUserID + " User agent: " + navigator.userAgent)

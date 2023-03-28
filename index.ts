@@ -1,8 +1,7 @@
 import express, { Request } from "express"
 import { rooms, dynamicRooms } from "./rooms";
-//import { buildRiverRoom, calculateCurrentRiverType, rooms } from "./rooms";
 import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, Room, DynamicRoom } from "./types";
-import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getLoginUser, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users";
+import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getUserByPrivateId, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users";
 import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
@@ -12,7 +11,6 @@ import { existsSync, readdirSync, readFileSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import { Chess } from "chess.js";
 import { Socket } from "socket.io";
-import { intersectionBy } from "lodash"
 import { annualEventDefinitions, subscribeToAnnualEvents } from "./annualevents";
 
 const app: express.Application = express()
@@ -135,7 +133,7 @@ io.use(async (socket: Socket, next: () => void) => {
         // Array.isArray(privateUserId) is needed only to make typescript happy
         // and make it understand that I expect privateUserId to be just a string
         user = (privateUserId && !Array.isArray(privateUserId)) 
-                            ? getLoginUser(privateUserId) 
+                            ? getUserByPrivateId(privateUserId) 
                             : null;
 
         const ip = getRealIpWebSocket(socket)
@@ -1402,24 +1400,36 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
         const roomId = req.params.roomId
         const areaId = req.params.areaId
 
-        // The IP this request is coming from could be linked to more than ones user, and
-        // each of those users could be blocking/blocked by a different set of other users.
-        // So i get the filtered user list for each of those users and return its intersection
-        // to make sure I don't leak info about someone who is blocking this IP. This 
-        // API is used only to initialize the room and the user list will be replaced with an updated
-        // one when the socket is opened, so in theory it'd be okay to just send an empty user list here,
-        // and the only side effect would be that the open bubbles in the spawn room would not be shown to the log
-
-        const usersForThisIP = getUsersByIp(getRealIp(req), areaId)
+        const bearerHeader = req.headers["authorization"]
+        if (!bearerHeader)
+        {
+            log.error("ERROR: Room API called with no authentication")
+            res.end("")
+            return
+        }
         
-        const filteredLists: Player[][] = usersForThisIP
-            .map(u => getFilteredConnectedUserList(u, roomId, areaId))
+        const userPrivateId = bearerHeader.split(" ")[1]
+        const user = getUserByPrivateId(userPrivateId)
 
-        const filteredListsIntersection = intersectionBy(...filteredLists, u => u.id)
+        if (!user)
+        {
+            log.error(`ERROR: User ${userPrivateId} doesn't exist`)
+            res.end("")
+            return
+        }
+
+        if (user.areaId != areaId || user.roomId != roomId)
+        {
+            log.error(`ERROR: User ${userPrivateId} tried to access room ${roomId} on ${areaId} but he's in room ${user.roomId} on ${user.areaId}`)
+            res.end("")
+            return
+        }
+
+        const filteredList: Player[] = getFilteredConnectedUserList(user, roomId, areaId)
 
         const dto: RoomStateDto = {
             currentRoom: rooms[roomId],
-            connectedUsers: filteredListsIntersection.map(toPlayerDto),
+            connectedUsers: filteredList.map(toPlayerDto),
             streams: [],
             chessboardState: buildChessboardStateDto(roomStates, areaId, roomId),
             coinCounter: roomStates[areaId][roomId].coinCounter,

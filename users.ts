@@ -105,7 +105,7 @@ export function getAllUsers(): Player[]
     return Object.values(users)
 }
 
-export function getLoginUser(privateId: string): Player | null
+export function getUserByPrivateId(privateId: string): Player | null
 {
     return Object.values(users)
         .find(u => u.privateId == privateId) || null
