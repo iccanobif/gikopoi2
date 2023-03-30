@@ -116,7 +116,7 @@
                                     </tr>
                                     <tr>
                                         <td>{{ $t("ui.infobox_label_user_name") }}</td>
-                                        <td>{{ myUserID && users && users[myUserID] ? toDisplayName(users[myUserID].name) : '-' }}</td>
+                                        <td>{{ myUserID && users && users[myUserID] ? users[myUserID].name : '-' }}</td>
                                     </tr>
                                     <tr>
                                         <td>{{ $t("ui.infobox_label_user_count") }}</td>
@@ -228,7 +228,7 @@
                                 v-if="streamSlot.isActive"
                                 class="stream-title active-stream-title"
                                 v-bind:class="{'highlighted-stream-title': streamSlot.userId && streamSlot.userId == highlightedUserId}"
-                                v-on:click="highlightUser(streamSlot.userId, streamSlot.title)">{{ toDisplayName(users[streamSlot.userId].name) }}
+                                v-on:click="highlightUser(streamSlot.userId, streamSlot.title)">{{ users[streamSlot.userId].name }}
                                 <span v-bind:title="$t('ui.visible_only_to_specific_users_stream')"
                                       v-if="streamSlot.isVisibleOnlyToSpecificUsers"
                                       class="fas fa-lock visible-only-to-specific-users-stream-icon"></span>
@@ -420,7 +420,7 @@
                                     <td>
                                         <span v-for="(stream, index) in room.streams">
                                             <span v-if="index !== 0">/</span>
-                                            {{ toDisplayName(stream.userName) }}
+                                            {{ stream.userName }}
                                             <span v-bind:title="$t('ui.visible_only_to_specific_users_stream')"
                                                   v-if="stream.isVisibleOnlyToSpecificUsers"
                                                   class="fas fa-lock visible-only-to-specific-users-stream-icon"></span>
@@ -479,7 +479,7 @@
                                                  class="enabled-disabled-listener-icon"
                                                  src="disabled-listener.svg"
                                                   ></img>
-                                            {{ u.name || $t("default_user_name") }}
+                                            {{ u.name }}
                                         </div>
                                         <button v-if="isStreaming()
                                                       && streamTarget == 'specific_users'
@@ -867,12 +867,12 @@
                 </div>
                 <span v-if="chessboardState.whiteUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'w'}">
                     {{ $t("ui.chess_white") }}{{ users[chessboardState.whiteUserID]
-                                                ? (users[chessboardState.whiteUserID].name || $t("default_user_name"))
+                                                ? users[chessboardState.whiteUserID].name
                                                 : "N/A" }}
                 </span>
                 <span v-if="chessboardState.blackUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'b'}">
                     {{ $t("ui.chess_black") }}{{ users[chessboardState.blackUserID]
-                                                 ? (users[chessboardState.blackUserID].name || $t("default_user_name"))
+                                                 ? users[chessboardState.blackUserID].name
                                                  : "N/A" }}
                 </span>
                 <div

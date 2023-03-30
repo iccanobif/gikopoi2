@@ -996,13 +996,13 @@ window.vueApp = Vue.createApp({
             })
 
             this.socket.on("server-chess-win", winnerUserId => {
-                const winnerUserName = this.toDisplayName(this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A")
+                const winnerUserName = this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A"
 
                 this.writeMessageToLog("SYSTEM", this.$t("msg.chess_win", {userName: winnerUserName}), null)
             })
 
             this.socket.on("server-chess-quit", winnerUserId => {
-                const winnerUserName = this.toDisplayName(this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A")
+                const winnerUserName = this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A"
 
                 this.writeMessageToLog("SYSTEM", this.$t("msg.chess_quit", {userName: winnerUserName}), null)
             })
@@ -1023,7 +1023,8 @@ window.vueApp = Vue.createApp({
             // Check that the characterId is valid (need to use hasOwnProperty() too to make sure that a characterId
             // like "toString" is not used). If not valid, default to giko
             const character = characters.hasOwnProperty(userDTO.characterId) ? characters[userDTO.characterId] : characters.giko;
-            const newUser = new User(userDTO.id, userDTO.name, character);
+            const name = userDTO.name != "" ? userDTO.name : this.$t("default_user_name");
+            const newUser = new User(userDTO.id, name, character);
             newUser.moveImmediatelyToPosition(
                 this.currentRoom,
                 userDTO.position.x,
@@ -1055,7 +1056,7 @@ window.vueApp = Vue.createApp({
             if (this.ignoredUserIds.has(userId))
                 messageDiv.classList.add("ignored-message")
 
-            const [displayName, tripcode] = this.toDisplayName(userName).split("◆")
+            const [displayName, tripcode] = userName.split("◆")
 
             const timestampSpan = document.createElement("span")
             timestampSpan.className = "message-timestamp"
@@ -1066,7 +1067,7 @@ window.vueApp = Vue.createApp({
             authorSpan.title = new Date()
             authorSpan.textContent = displayName;
             authorSpan.addEventListener("click", (ev) => {
-                this.highlightUser(userId, this.toDisplayName(userName))
+                this.highlightUser(userId, userName)
             })
 
             const tripcodeSpan = document.createElement("span");
@@ -1076,7 +1077,7 @@ window.vueApp = Vue.createApp({
                 tripcodeSpan.title = new Date()
                 tripcodeSpan.textContent = "◆" + tripcode;
                 tripcodeSpan.addEventListener("click", (ev) => {
-                    this.highlightUser(userId, this.toDisplayName(userName))
+                    this.highlightUser(userId, userName)
                 })
             }
 
@@ -1154,7 +1155,7 @@ window.vueApp = Vue.createApp({
             }
 
             if (user.id != this.myUserID)
-                await this.displayNotification(this.toDisplayName(user.name) + ": " + plainMsg, this.getAvatarSpriteForUser(user.id))
+                await this.displayNotification(user.name + ": " + plainMsg, this.getAvatarSpriteForUser(user.id))
 
             // write message to niconico style streams (if any)
             const niconicoMessageContainers = document.getElementsByClassName("nico-nico-messages-container")
@@ -1202,12 +1203,6 @@ window.vueApp = Vue.createApp({
 
             return null
         },
-        toDisplayName(name)
-        {
-            if (name == "")
-                return this.$t("default_user_name");
-            return name;
-        },
         clearLog()
         {
             this.confirm(this.$t("msg.are_you_sure_you_want_to_clear_log"), () =>
@@ -1228,7 +1223,7 @@ window.vueApp = Vue.createApp({
         },
         getNameImage(user, withBackground)
         {
-            const [displayName, tripcode] = this.toDisplayName(user.name).split("◆")
+            const [displayName, tripcode] = user.name.split("◆")
 
             const lineHeight = 13
             const height = lineHeight * (tripcode && displayName ? 2 : 1) + 3;
@@ -2534,7 +2529,7 @@ window.vueApp = Vue.createApp({
                     && newStream.userId != this.myUserID)
                 {
                     const streamUser = this.users[newStream.userId]
-                    const message = this.$t("msg.stream_start_notification", {userName: this.toDisplayName(streamUser.name)})
+                    const message = this.$t("msg.stream_start_notification", {userName: streamUser.name})
 
                     const notification = await this.displayNotification(message, this.getAvatarSpriteForUser(newStream.userId))
 
@@ -3331,7 +3326,7 @@ window.vueApp = Vue.createApp({
             this.usernameMentionRegexObject = null
             if (!(this.myUserID in this.users) || !this.isNameMentionSoundEnabled) return
             this.usernameMentionRegexObject = wordsToRegexObject(
-                this.toDisplayName(this.users[this.myUserID].name).split("◆"))
+                this.users[this.myUserID].name.split("◆"))
         },
         markMentions(msg)
         {
