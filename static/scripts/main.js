@@ -31,6 +31,7 @@ import { RenderCache } from "./rendercache.js";
 import { animateObjects, animateJizou } from "./animations.js";
 
 import ChessboardSlot from './chessboard-slot.js'
+import JankenSlot from './janken-slot.js'
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -124,7 +125,8 @@ const i18n = VueI18n.createI18n({
 
 window.vueApp = Vue.createApp({
     components: {
-        ChessboardSlot
+        ChessboardSlot,
+        JankenSlot,
     },
     data() {
         return {
@@ -139,7 +141,6 @@ window.vueApp = Vue.createApp({
                 id: null,
                 group: "gikopoi",
                 objects: [],
-                hasChessboard: false,
                 specialObjects: [],
             },
             myUserID: null,
@@ -286,6 +287,7 @@ window.vueApp = Vue.createApp({
             notificationPermissionsGranted: false,
             lastFrameTimestamp: null,
             chessboardState: {},
+            jankenState: {},
 
             canvasContainerResizeObserver: null,
 
@@ -676,6 +678,7 @@ window.vueApp = Vue.createApp({
             // this.hideStreams = localStorage.getItem("hideStreams") == "true";
 
             this.chessboardState = dto.chessboardState
+            this.jankenState = dto.jankenState
 
             this.isLoadingRoom = true;
             this.roomLoadId = this.roomLoadId + 1;
@@ -993,6 +996,10 @@ window.vueApp = Vue.createApp({
 
             this.socket.on("server-update-chessboard", (state) => {
                 this.chessboardState = state
+            })
+
+            this.socket.on("server-update-janken", (state) => {
+                this.jankenState = state
             })
 
             this.socket.on("server-chess-win", winnerUserId => {

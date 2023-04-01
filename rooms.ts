@@ -170,7 +170,7 @@ export const rooms: { [roomId: string]: Room } = {
             admin_jump: { x: 2, y: 7, direction: "left", target: { roomId: "admin_old", doorId: "down" } },
         },
         streamSlotCount: 0,
-        hasChessboard: true,
+        games: ["chess"],
     },
     basement: {
         id: "basement",
@@ -1148,7 +1148,7 @@ export const rooms: { [roomId: string]: Room } = {
             { name: 'donation-box', x: 3, y: 5, value: 0 },
         ],
         streamSlotCount: 4,
-        hasChessboard: true,
+        games: ["chess"],
     },
     busstop: {
         id: "busstop",
@@ -2952,6 +2952,7 @@ export const rooms: { [roomId: string]: Room } = {
             jungle: { x: 1, y: 1, direction: "down", target: null },
         },
         streamSlotCount: 0,
+        games: ["janken"],
     },
     kaidan: {
         id: "kaidan",

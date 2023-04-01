@@ -104,7 +104,7 @@ export interface Room
     forcedAnonymous?: boolean;
     blockWidth?: number;
     blockHeight?: number;
-    hasChessboard?: boolean;
+    games?: string[];
     specialObjects?: SpecialObjects[];
 }
 
@@ -130,6 +130,7 @@ export interface RoomState
 {
     streams: StreamSlot[],
     chess: ChessboardState,
+    janken: JankenState,
     coinCounter: number
 }
 
@@ -139,6 +140,7 @@ export interface RoomStateDto
     connectedUsers: PlayerDto[],
     streams: StreamSlotDto[],
     chessboardState: ChessboardStateDto,
+    jankenState: JankenState,
     coinCounter: number,
     hideStreams: boolean,
 }
@@ -195,6 +197,15 @@ export interface ChessboardStateDto
     blackUserID: string | null,
     whiteUserID: string | null,
     turn: "b" | "w" | null,
+}
+
+export interface JankenState {
+    stage: string,
+    namedPlayerId: string | null,
+    player1Id: string | null,
+    player2Id: string | null,
+    player1Hand: "rock" | "paper" | "scissors" | null,
+    player2Hand: "rock" | "paper" | "scissors" | null,
 }
 
 export interface PersistedState

@@ -864,10 +864,23 @@ button.checked {
 }
 
 .stream-buttons button.red-button,
-.chessboard-slot-wrapper button.red-button
+.chessboard-slot-wrapper button.red-button,
+.slot-button-highlight
 {
     background-color: #9f6161;
     color: white;
+}
+
+.janken-hands button
+{
+    font-size: 40px;
+    line-height: 40px;
+    width: 60px;
+    height: 60px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
 }
 
 .next-move-chess-player

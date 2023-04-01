@@ -147,6 +147,26 @@ export default
         chess_hide_game: "Hide game",
         chess_join_game: "Join game",
         chess_quit_game: "Quit game",
+        
+        slot_display: "Display",
+        slot_hide: "Hide",
+        slot_join: "Join",
+        slot_quit: "Quit",
+        
+        janken_title: "Rock Paper Scissors",
+        janken_versus: "{userName1} vs {userName2}",
+        janken_start_a_game: "Start a game!",
+        janken_waiting_for_opponent: "{userName} is waiting for an opponent to join...",
+        janken_choose_your_hand: "Choose your hand!",
+        janken_waiting_for_player: "Waiting for {userName} to choose a hand...",
+        janken_players_choosing: "The players are choosing their hands...",
+        janken_phrase: "Rock! Paper! Scissors!", // Janken PON!
+        janken_win: "{winningHand} beats {losingHand}. {userName} wins!",
+        janken_draw: "Both players chose {hand}. It's a draw!",
+        janken_quit: "{userName} quit the game...",
+        janken_hand_rock: "rock",
+        janken_hand_paper: "paper",
+        janken_hand_scissors: "scissors",
 
         visible_only_to_specific_users_stream: "Private stream",
         double_click_to_move_to_new_tab: "Double click to move to a new tab",

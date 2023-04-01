@@ -1,6 +1,6 @@
 import express, { Request } from "express"
 import { rooms, dynamicRooms } from "./rooms";
-import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, Room, DynamicRoom } from "./types";
+import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenState, Room, DynamicRoom } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getUserByPrivateId, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users";
 import got from "got";
 import log from "loglevel";
@@ -87,6 +87,14 @@ function initializeRoomStates()
                     whiteUserID: null,
                     lastMoveTime: null,
                     timer: null,
+                },
+                janken: {
+                    stage: "inactive",
+                    player1Id: null,
+                    player2Id: null,
+                    player1Hand: null,
+                    player2Hand: null,
+                    namedPlayerId: null,
                 },
                 coinCounter: 0,
             }
@@ -193,6 +201,7 @@ const sendRoomState = (socket: Socket, user: Player, currentRoom: Room) =>
         connectedUsers,
         streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams),
         chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId),
+        jankenState: buildJankenStateDto(roomStates, user.areaId, user.roomId),
         coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
         hideStreams: settings.noStreamIPs.some(noStreamIP => user.ips.some(ip => ip == noStreamIP)),
     }
@@ -228,6 +237,7 @@ io.on("connection", function (socket: Socket)
             await clearRoomListener(user)
             userRoomEmit(user, "server-user-left-room", user.id);
             stopChessGame(roomStates, user)
+            quitJanken(roomStates, user)
         }
         catch (exc)
         {
@@ -843,6 +853,7 @@ io.on("connection", function (socket: Socket)
             await clearStream(user)
             await clearRoomListener(user)
             stopChessGame(roomStates, user)
+            quitJanken(roomStates, user)
             userRoomEmit(user, "server-user-left-room", user.id)
             socket.leave(user.areaId + user.roomId)
 
@@ -1119,6 +1130,74 @@ io.on("connection", function (socket: Socket)
             }
 
             sendUpdatedChessboardState(roomStates, user.areaId, user.roomId)
+        }
+        catch (e)
+        {
+            logException(e, user)
+        }
+    })
+    
+    socket.on("user-want-to-join-janken", function()
+    {
+        try
+        {
+            const state = roomStates[user.areaId][user.roomId].janken
+            if(state.stage != "inactive") return
+            if(!state.player1Id)
+            {
+                state.player1Id = user.id
+            }
+            else
+            {
+                state.player2Id = user.id
+                state.stage = "choosing"
+            }
+            sendUpdatedJankenState(roomStates, user.areaId, user.roomId)
+        }
+        catch (e)
+        {
+            logException(e, user)
+        }
+    })
+    
+    socket.on("user-want-to-choose-janken-hand", function(hand: any)
+    {
+        try
+        {
+            const state = roomStates[user.areaId][user.roomId].janken
+            if(state.player1Id == user.id)
+                state.player1Hand = hand
+            else if(state.player2Id == user.id)
+                state.player2Hand = hand
+            if (state.player1Hand && state.player2Hand)
+            {
+                state.stage = "end"
+                if (state.player1Hand !== state.player2Hand)
+                {
+                    const winningHands = {
+                        rock: "scissors",
+                        paper: "rock",
+                        scissors: "paper",
+                    }
+                    state.namedPlayerId = (winningHands[state.player1Hand] == state.player2Hand
+                        ? state.player1Id
+                        : state.player2Id)
+                }
+                sendUpdatedJankenState(roomStates, user.areaId, user.roomId)
+                resetJanken(roomStates, user.areaId, user.roomId, true)
+            }
+        }
+        catch (e)
+        {
+            logException(e, user)
+        }
+    })
+    
+    socket.on("user-want-to-quit-janken", function()
+    {
+        try
+        {
+            quitJanken(roomStates, user)
         }
         catch (e)
         {
@@ -1436,6 +1515,7 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
             connectedUsers: filteredList.map(toPlayerDto),
             streams: [],
             chessboardState: buildChessboardStateDto(roomStates, areaId, roomId),
+            jankenState: buildJankenStateDto(roomStates, areaId, roomId),
             coinCounter: roomStates[areaId][roomId].coinCounter,
             hideStreams: false,
         }
@@ -1991,6 +2071,49 @@ async function clearRoomListener(user: Player)
     {
         logException(error, user)
     }
+}
+
+function buildJankenStateDto(roomStates: RoomStateCollection, areaId: string, roomId: string): JankenState
+{
+    const state = roomStates[areaId][roomId].janken
+    return {
+        stage: state.stage,
+        player1Id: state.player1Id,
+        player2Id: state.player2Id,
+        player1Hand: (state.stage == "end" ? state.player1Hand : null),
+        player2Hand: (state.stage == "end" ? state.player2Hand : null),
+        namedPlayerId: state.namedPlayerId,
+    }
+}
+
+function sendUpdatedJankenState(roomStates: RoomStateCollection, areaId: string, roomId: string)
+{
+    const stateDTO: JankenState = buildJankenStateDto(roomStates, areaId, roomId)
+    roomEmit(areaId, roomId, "server-update-janken", stateDTO);
+}
+
+function resetJanken(roomStates: RoomStateCollection, areaId: string, roomId: string, withoutEmit?: boolean)
+{
+    const state = roomStates[areaId][roomId].janken
+    state.stage = "inactive"
+    state.player1Id = null
+    state.player2Id = null
+    state.namedPlayerId = null
+    state.player1Hand = null
+    state.player2Hand = null
+    if (!withoutEmit)
+        sendUpdatedJankenState(roomStates, areaId, roomId)
+}
+
+function quitJanken(roomStates: RoomStateCollection, user: Player)
+{
+    const state = roomStates[user.areaId][user.roomId].janken
+    if (!(state.player1Id == user.id || state.player2Id == user.id))
+        return
+    state.stage = "quit"
+    state.namedPlayerId = user.id
+    sendUpdatedJankenState(roomStates, user.areaId, user.roomId)
+    resetJanken(roomStates, user.areaId, user.roomId, true)
 }
 
 function buildChessboardStateDto(roomStates: RoomStateCollection, areaId: string, roomId: string): ChessboardStateDto
