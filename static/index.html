@@ -937,6 +937,10 @@
                     <template v-else-if="state.stage == 'quit'">
                         <span>{{ $t("ui.janken_quit", {userName: namedPlayer.name}) }}</span>
                     </template>
+                    
+                    <template v-else-if="state.stage == 'timeout'">
+                        <span>{{ $t("ui.janken_timeout_reached") }}</span>
+                    </template>
                 </div>
                 <div class="janken-hands" v-if="isCurrentUserPlaying && state.stage == 'choosing' && !isHandChosen">
                     <button v-for="(symbol, hand) in handSymbols" @click="chooseHand(hand)">{{ symbol }}</button>

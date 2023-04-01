@@ -1,6 +1,6 @@
 import express, { Request } from "express"
 import { rooms, dynamicRooms } from "./rooms";
-import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenState, Room, DynamicRoom } from "./types";
+import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getUserByPrivateId, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users";
 import got from "got";
 import log from "loglevel";
@@ -95,6 +95,7 @@ function initializeRoomStates()
                     player1Hand: null,
                     player2Hand: null,
                     namedPlayerId: null,
+                    timeoutTimer: null,
                 },
                 coinCounter: 0,
             }
@@ -1151,6 +1152,12 @@ io.on("connection", function (socket: Socket)
             {
                 state.player2Id = user.id
                 state.stage = "choosing"
+                state.timeoutTimer = setTimeout(() =>
+                {
+                    state.stage = "timeout"
+                    sendUpdatedJankenState(roomStates, user.areaId, user.roomId)
+                    resetJanken(roomStates, user.areaId, user.roomId, true)
+                }, 20000)
             }
             sendUpdatedJankenState(roomStates, user.areaId, user.roomId)
         }
@@ -2076,7 +2083,7 @@ async function clearRoomListener(user: Player)
     }
 }
 
-function buildJankenStateDto(roomStates: RoomStateCollection, areaId: string, roomId: string): JankenState
+function buildJankenStateDto(roomStates: RoomStateCollection, areaId: string, roomId: string): JankenStateDto
 {
     const state = roomStates[areaId][roomId].janken
     return {
@@ -2091,7 +2098,7 @@ function buildJankenStateDto(roomStates: RoomStateCollection, areaId: string, ro
 
 function sendUpdatedJankenState(roomStates: RoomStateCollection, areaId: string, roomId: string)
 {
-    const stateDTO: JankenState = buildJankenStateDto(roomStates, areaId, roomId)
+    const stateDTO: JankenStateDto = buildJankenStateDto(roomStates, areaId, roomId)
     roomEmit(areaId, roomId, "server-update-janken", stateDTO);
 }
 
@@ -2104,6 +2111,11 @@ function resetJanken(roomStates: RoomStateCollection, areaId: string, roomId: st
     state.namedPlayerId = null
     state.player1Hand = null
     state.player2Hand = null
+    if (state.timeoutTimer)
+    {
+        clearTimeout(state.timeoutTimer)
+        state.timeoutTimer = null
+    }
     if (!withoutEmit)
         sendUpdatedJankenState(roomStates, areaId, roomId)
 }

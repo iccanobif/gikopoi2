@@ -164,6 +164,7 @@ export default
         janken_win: "{winningHand} beats {losingHand}. {userName} wins!",
         janken_draw: "Both players chose {hand}. It's a draw!",
         janken_quit: "{userName} quit the game...",
+        janken_timeout_reached: "The game has timed out...",
         janken_hand_rock: "rock",
         janken_hand_paper: "paper",
         janken_hand_scissors: "scissors",

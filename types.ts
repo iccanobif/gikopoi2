@@ -140,7 +140,7 @@ export interface RoomStateDto
     connectedUsers: PlayerDto[],
     streams: StreamSlotDto[],
     chessboardState: ChessboardStateDto,
-    jankenState: JankenState,
+    jankenState: JankenStateDto,
     coinCounter: number,
     hideStreams: boolean,
 }
@@ -200,6 +200,16 @@ export interface ChessboardStateDto
 }
 
 export interface JankenState {
+    stage: string,
+    namedPlayerId: string | null,
+    player1Id: string | null,
+    player2Id: string | null,
+    player1Hand: "rock" | "paper" | "scissors" | null,
+    player2Hand: "rock" | "paper" | "scissors" | null,
+    timeoutTimer: any,
+}
+
+export interface JankenStateDto {
     stage: string,
     namedPlayerId: string | null,
     player1Id: string | null,

@@ -50,7 +50,7 @@ export default {
         
         const capitalizeText = (str) => str.charAt(0).toUpperCase() + str.slice(1)
         
-        watch(state, () =>
+        const processState = () =>
         {
             player1.value = users.value[state.value.player1Id] || null
             player2.value = users.value[state.value.player2Id] || null
@@ -81,7 +81,9 @@ export default {
                 resetTime = 4000
             }
             
-            if (state.value.stage == "end" || state.value.stage == "quit")
+            if (state.value.stage == "end"
+                || state.value.stage == "quit"
+                || state.value.stage == "timeout")
             {
                 setTimeout(() => {
                     isActive.value = false
@@ -92,7 +94,10 @@ export default {
                     }
                 }, resetTime)
             }
-        })
+        }
+        
+        watch(state, processState)
+        processState()
         
         return {
             handSymbols,
