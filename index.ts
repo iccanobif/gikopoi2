@@ -1165,10 +1165,13 @@ io.on("connection", function (socket: Socket)
         try
         {
             const state = roomStates[user.areaId][user.roomId].janken
+            if (state.stage != "choosing") return
             if(state.player1Id == user.id)
                 state.player1Hand = hand
             else if(state.player2Id == user.id)
                 state.player2Hand = hand
+            else
+                return
             if (state.player1Hand && state.player2Hand)
             {
                 state.stage = "end"
