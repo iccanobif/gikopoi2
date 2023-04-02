@@ -852,7 +852,7 @@
     </div>
 
     <template id="chessboard-slot">
-        <div class="chessboard-slot-wrapper">
+        <div class="slot-wrapper chessboard-slot-wrapper">
             <div>{{ $t("ui.chess_slot_title") }}</div>
             <button v-on:click="wantToDisplayGame()"
                     v-if="!visible"
@@ -893,7 +893,7 @@
     </template>
     
     <template id="janken-slot">
-        <div class="janken-wrapper">
+        <div class="slot-wrapper janken-wrapper">
             <div class="slot-title">{{ $t("ui.janken_title") }}</div>
             <div class="slot-buttons">
                 <button
@@ -905,8 +905,10 @@
                 <button @click="quit" v-if="isCurrentUserPlaying && !hasRequestedToQuit">{{ $t("ui.game_quit") }}</button>
             </div>
             <div v-if="isVisible">
-                <div class="slot-message" v-if="player1 && player2">
-                    <span>{{ $t("ui.janken_versus", {userName1: player1.name, userName2: player2.name}) }}</span>
+                <div class="slot-message janken-versus" v-if="player1 && player2">
+                    <div class='janken-versus-player1'>{{ player1.name }}</div>
+                    <div>{{ $t("ui.janken_versus") }}</div>
+                    <div class='janken-versus-player2'>{{ player2.name }}</div>
                 </div>
                 <div class="slot-message">
                     <template v-if="state.stage == 'inactive'">

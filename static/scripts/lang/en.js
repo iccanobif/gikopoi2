@@ -150,8 +150,8 @@ export default
         chess_black: "Black: ",
         
         janken_title: "Rock Paper Scissors",
-        janken_versus: "{userName1} vs {userName2}",
-        janken_start_a_game: "Start a game!",
+        janken_versus: "VS",
+        janken_start_a_game: "Join to start a game!",
         janken_waiting_for_opponent: "{userName} is waiting for an opponent to join...",
         janken_choose_your_hand: "Choose your hand!",
         janken_waiting_for_player: "Waiting for {userName} to choose a hand...",

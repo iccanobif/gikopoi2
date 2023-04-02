@@ -31,7 +31,7 @@
 .theme-dark #login-page button,
 .theme-dark #toolbar button,
 .theme-dark .stream-buttons button,
-.theme-dark .chessboard-slot-wrapper button,
+.theme-dark .slot-wrapper button,
 .theme-dark .popup button {
     background-color: #38383b;
     color: #f0f0f0;
@@ -55,7 +55,8 @@
 }
 
 .theme-dark .stream-buttons button.red-button,
-.theme-dark .chessboard-slot-wrapper button.red-button
+.theme-dark .slot-wrapper button.red-button,
+.slot-button-highlight
 {
     background-color: #754848;
 }

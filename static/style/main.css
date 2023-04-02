@@ -356,7 +356,7 @@ video {
 #login-page button,
 #toolbar button,
 .stream-buttons button,
-.chessboard-slot-wrapper button,
+.slot-wrapper button,
 .popup button
 {
     border: 1px solid #959595;
@@ -371,7 +371,7 @@ video {
 #login-page button:hover:enabled,
 #toolbar button:hover:enabled,
 .stream-buttons button:hover:enabled,
-.chessboard-slot-wrapper button:hover:enabled,
+.slot-wrapper button:hover:enabled,
 .popup button:hover:enabled
 {
     border-color: black;
@@ -380,7 +380,7 @@ video {
 #login-page button:disabled,
 #toolbar button:disabled,
 .stream-buttons button:disabled,
-.chessboard-slot-wrapper button:disabled,
+.slot-wrapper button:disabled,
 .popup button:disabled
 {
     color :rgb(109, 109, 109);
@@ -857,18 +857,24 @@ button.checked {
 }
 
 .stream-buttons button,
-.chessboard-slot-wrapper button
+.slot-wrapper button
 {
     background-color: #4d4d9f;
     color: white;
 }
 
 .stream-buttons button.red-button,
-.chessboard-slot-wrapper button.red-button,
+.slot-wrapper button.red-button,
 .slot-button-highlight
 {
     background-color: #9f6161;
     color: white;
+}
+
+.next-move-chess-player
+{
+    text-decoration: underline;
+    font-weight: bold;
 }
 
 .slot-message
@@ -879,7 +885,40 @@ button.checked {
 
 .janken-wrapper
 {
-    width: 260px;
+    min-height: 200px;
+}
+
+@media (min-width: 947px)
+{
+    .janken-wrapper
+    {
+        width: 260px;
+    }
+}
+
+.janken-versus
+{
+    display: flex;
+}
+
+.janken-versus-player1,
+.janken-versus-player2
+{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.janken-versus-player1
+{
+    text-align: right;
+    margin-right: 5px;
+}
+
+.janken-versus-player2
+{
+    text-align: left;
+    margin-left: 5px;
 }
 
 .janken-hands button
@@ -892,12 +931,6 @@ button.checked {
     align-items: center;
     justify-content: center;
     flex-direction: row;
-}
-
-.next-move-chess-player
-{
-    text-decoration: underline;
-    font-weight: bold;
 }
 
 .system-message
