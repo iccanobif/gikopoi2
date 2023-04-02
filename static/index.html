@@ -857,16 +857,16 @@
             <button v-on:click="wantToDisplayGame()"
                     v-if="!visible"
                     v-bind:class="{'red-button': chessboardState.blackUserID || chessboardState.whiteUserID}">
-                {{ $t("ui.chess_display_game")}}
+                {{ $t("ui.game_display")}}
             </button>
             <button v-on:click="wantToHideGame()" v-if="visible">
-                {{ $t("ui.chess_hide_game")}}
+                {{ $t("ui.game_display ")}}
             </button>
             <button v-on:click="wantToJoinGame()" v-if="!amIPlaying() && !chessboardState.blackUserID">
-                {{ $t("ui.chess_join_game")}}
+                {{ $t("ui.game_join")}}
             </button>
             <button v-on:click="wantToQuitGame()" v-if="amIPlaying()">
-                {{ $t("ui.chess_quit_game")}}
+                {{ $t("ui.game_quit")}}
             </button>
             <div v-show="visible">
                 <div>
@@ -899,10 +899,10 @@
                 <button
                     v-bind:class="{'slot-button-highlight': player1}"
                     v-if="!isVisible && !isCurrentUserPlaying"
-                    @click="display">{{ $t("ui.slot_display") }}</button>
-                <button @click="hide" v-if="isVisible && !isCurrentUserPlaying">{{ $t("ui.slot_hide") }}</button>
-                <button @click="join" v-if="!isCurrentUserPlaying && !isActive">{{ $t("ui.slot_join") }}</button>
-                <button @click="quit" v-if="isCurrentUserPlaying">{{ $t("ui.slot_quit") }}</button>
+                    @click="display">{{ $t("ui.game_display") }}</button>
+                <button @click="hide" v-if="isVisible && !isCurrentUserPlaying">{{ $t("ui.game_hide") }}</button>
+                <button @click="join" v-if="!isCurrentUserPlaying && !isActive && !hasRequestedToJoin">{{ $t("ui.game_join") }}</button>
+                <button @click="quit" v-if="isCurrentUserPlaying && !hasRequestedToQuit">{{ $t("ui.game_quit") }}</button>
             </div>
             <div v-if="isVisible">
                 <div class="slot-message" v-if="player1 && player2">
@@ -916,7 +916,7 @@
                     
                     <template v-else-if="state.stage == 'choosing'">
                         <template v-if="isCurrentUserPlaying">
-                            <span v-if="!isHandChosen">{{ $t("ui.janken_choose_your_hand") }}</span>
+                            <span v-if="!hasChosenHand">{{ $t("ui.janken_choose_your_hand") }}</span>
                             <span v-else-if="isWaitingForOpponent">{{ $t("ui.janken_waiting_for_player",
                                 {userName: player1.id == myUserId ? player2.name : player1.name}) }}</span>
                         </template>
@@ -944,7 +944,7 @@
                         <span>{{ $t("ui.janken_timeout_reached") }}</span>
                     </template>
                 </div>
-                <div class="janken-hands" v-if="isCurrentUserPlaying && state.stage == 'choosing' && !isHandChosen">
+                <div class="janken-hands" v-if="isCurrentUserPlaying && state.stage == 'choosing' && !hasChosenHand">
                     <button v-for="(symbol, hand) in handSymbols" @click="chooseHand(hand)">{{ symbol }}</button>
                 </div>
             </div>

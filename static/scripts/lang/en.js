@@ -137,21 +137,17 @@ export default
         preferences_clear_log: "Clear chat log",
 
         back_to_homepage: "Go back to home page",
+        
+        game_display: "Display game",
+        game_hide: "Hide game",
+        game_join: "Join game",
+        game_quit: "Quit game",
 
         chess_slot_title: "Chess",
         chess_waiting_for_white: "Waiting for white to join...",
         chess_waiting_for_black: "Waiting for black to join...",
         chess_white: "White: ",
         chess_black: "Black: ",
-        chess_display_game: "Display game",
-        chess_hide_game: "Hide game",
-        chess_join_game: "Join game",
-        chess_quit_game: "Quit game",
-        
-        slot_display: "Display",
-        slot_hide: "Hide",
-        slot_join: "Join",
-        slot_quit: "Quit",
         
         janken_title: "Rock Paper Scissors",
         janken_versus: "{userName1} vs {userName2}",
@@ -163,8 +159,8 @@ export default
         janken_phrase: "Rock! Paper! Scissors!", // Janken PON!
         janken_win: "{winningHand} beats {losingHand}. {userName} wins!",
         janken_draw: "Both players chose {hand}. It's a draw!",
-        janken_quit: "{userName} quit the game...",
-        janken_timeout_reached: "The game has timed out...",
+        janken_quit: "{userName} quit the game.",
+        janken_timeout_reached: "The game has timed out.",
         janken_hand_rock: "rock",
         janken_hand_paper: "paper",
         janken_hand_scissors: "scissors",

@@ -199,16 +199,6 @@ export interface ChessboardStateDto
     turn: "b" | "w" | null,
 }
 
-export interface JankenState {
-    stage: string,
-    namedPlayerId: string | null,
-    player1Id: string | null,
-    player2Id: string | null,
-    player1Hand: "rock" | "paper" | "scissors" | null,
-    player2Hand: "rock" | "paper" | "scissors" | null,
-    timeoutTimer: any,
-}
-
 export interface JankenStateDto {
     stage: string,
     namedPlayerId: string | null,
@@ -216,6 +206,10 @@ export interface JankenStateDto {
     player2Id: string | null,
     player1Hand: "rock" | "paper" | "scissors" | null,
     player2Hand: "rock" | "paper" | "scissors" | null,
+}
+
+export interface JankenState extends JankenStateDto {
+    timeoutTimer: any,
 }
 
 export interface PersistedState

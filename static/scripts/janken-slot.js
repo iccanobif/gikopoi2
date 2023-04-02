@@ -21,24 +21,29 @@ export default {
         const player2 = ref(null)
         const isCurrentUserPlaying = ref(false)
         const showResults = ref(false)
-        const isHandChosen = ref(false)
         const isWaitingForOpponent = ref(false)
+        const hasRequestedToJoin = ref(false)
+        const hasRequestedToQuit = ref(false)
+        const hasChosenHand = ref(false)
         
         const display = () => isVisible.value = true
         const hide = () => isVisible.value = false
         
-        const join = () => {
-            if (!isCurrentUserPlaying.value && !isActive.value)
-                props.socket.emit("user-want-to-join-janken")
+        const join = () =>
+        {
+            hasRequestedToJoin.value = true
+            hasRequestedToQuit.value = false
+            props.socket.emit("user-want-to-join-janken")
         }
-        const quit = () => {
-            if (isCurrentUserPlaying.value)
-                props.socket.emit("user-want-to-quit-janken")
+        const quit = () =>
+        {
+            hasRequestedToQuit.value = true
+            props.socket.emit("user-want-to-quit-janken")
         }
         
         const chooseHand = (handKey) =>
         {
-            isHandChosen.value = true
+            hasChosenHand.value = true
             props.socket.emit("user-want-to-choose-janken-hand", handKey)
             setTimeout(() =>
             {
@@ -67,7 +72,7 @@ export default {
             
             if (state.value.stage == "choosing")
             {
-                isHandChosen.value = false
+                hasChosenHand.value = false
                 isWaitingForOpponent.value = false
                 
                 isActive.value = true
@@ -92,8 +97,10 @@ export default {
                         isVisible.value = true
                         isCurrentUserPlaying.value = false
                     }
+                    hasRequestedToQuit.value = false
                 }, resetTime)
             }
+            hasRequestedToJoin.value = false
         }
         
         watch(state, processState)
@@ -111,8 +118,10 @@ export default {
             player2,
             isCurrentUserPlaying,
             showResults,
-            isHandChosen,
             isWaitingForOpponent,
+            hasRequestedToJoin,
+            hasRequestedToQuit,
+            hasChosenHand,
             
             display,
             hide,
