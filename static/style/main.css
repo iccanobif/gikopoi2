@@ -871,6 +871,17 @@ button.checked {
     color: white;
 }
 
+.slot-message
+{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.janken-wrapper
+{
+    width: 260px;
+}
+
 .janken-hands button
 {
     font-size: 40px;
