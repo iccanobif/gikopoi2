@@ -366,20 +366,22 @@
                             </button>
                         </div>
                     </div>
-                    <hr v-if="streams.length && currentRoom.hasChessboard" />
-                    <chessboard-slot
-                        v-if="currentRoom.games && currentRoom.games.includes('chess')"
-                        v-bind:socket="socket"
-                        v-bind:chessboard-state="chessboardState"
-                        v-bind:users="users"
-                        ></chessboard-slot>
-                    <janken-slot
-                        v-if="currentRoom.games && currentRoom.games.includes('janken')"
-                        v-bind:socket="socket"
-                        v-bind:janken-state="jankenState"
-                        v-bind:users="users"
-                        v-bind:my-user-id="myUserID"
-                        ></janken-slot>
+                    <template v-if="currentRoom.games" v-for="(game, index) in currentRoom.games">
+                        <hr v-if="streams.length || index > 0" />
+                        <chessboard-slot
+                            v-if="game == 'chess'"
+                            v-bind:socket="socket"
+                            v-bind:chessboard-state="chessboardState"
+                            v-bind:users="users"
+                            ></chessboard-slot>
+                        <janken-slot
+                            v-if="game == 'janken'"
+                            v-bind:socket="socket"
+                            v-bind:janken-state="jankenState"
+                            v-bind:users="users"
+                            v-bind:my-user-id="myUserID"
+                            ></janken-slot>
+                    </template>
                 </div>
 
                 <div class="popup-overlay" v-if="isRulaPopupOpen" v-on:click="closeRulaPopup"></div>
