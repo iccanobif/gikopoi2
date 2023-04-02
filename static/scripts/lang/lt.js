@@ -137,16 +137,17 @@ export default
         preferences_clear_log: "Išvalyti pokalbio langą",
 
         back_to_homepage: "Grįžti į titulinį puslapį",
+        
+        game_display: "Stebėti",
+        game_hide: "Slėpti žaidimą",
+        game_join: "Žaisti",
+        game_quit: "Užbaigti",
 
         chess_slot_title: "Šachmatai",
         chess_waiting_for_white: "Laukiama baltųjų žaidėjo...",
         chess_waiting_for_black: "Laukiama juodųjų žaidėjo...",
         chess_white: "Balti: ",
         chess_black: "Juodi: ",
-        chess_display_game: "Stebėti",
-        chess_hide_game: "Slėpti žaidimą",
-        chess_join_game: "Žaisti",
-        chess_quit_game: "Užbaigti",
 
         visible_only_to_specific_users_stream: "Privati transliacija",
         double_click_to_move_to_new_tab: "Spustėlkite dukart, kad perkelti transliaciją į kitą skirtuką",

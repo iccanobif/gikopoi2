@@ -137,16 +137,17 @@ export default
         preferences_clear_log: "Napló törlése",
 
         back_to_homepage: "Vissza a kezdőlapra",
+        
+        game_display: "Játék mutatása",
+        game_hide: "Játék elrejtése",
+        game_join: "Csatlakozás játékhoz",
+        game_quit: "Kilépés játékból",
 
         chess_slot_title: "Sakk",
         chess_waiting_for_white: "Várakozás fehér csatlakozására...",
         chess_waiting_for_black: "Várakozás fekete csatlakozására...",
         chess_white: "Fehér: ",
         chess_black: "Fekete: ",
-        chess_display_game: "Játék mutatása",
-        chess_hide_game: "Játék elrejtése",
-        chess_join_game: "Csatlakozás játékhoz",
-        chess_quit_game: "Kilépés játékból",
 
         // visible_only_to_specific_users_stream: "",
         // double_click_to_move_to_new_tab: "",

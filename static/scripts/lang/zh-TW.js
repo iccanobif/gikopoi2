@@ -137,16 +137,17 @@ export default
         // preferences_clear_log: "",
 
         back_to_homepage: "回首頁",
+        
+        game_display: "顯示",
+        game_hide: "隱藏",
+        game_join: "參加",
+        game_quit: "投降",
 
         chess_slot_title: "西洋棋",
         chess_waiting_for_white: "正在等候白方加入",
         chess_waiting_for_black: "正在等候黑方加入",
         chess_white: "白：",
         chess_black: "黑：",
-        chess_display_game: "顯示",
-        chess_hide_game: "隱藏",
-        chess_join_game: "參加",
-        chess_quit_game: "投降",
 
         // visible_only_to_specific_users_stream: "",
         // double_click_to_move_to_new_tab: "",

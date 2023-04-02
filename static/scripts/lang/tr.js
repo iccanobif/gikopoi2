@@ -137,16 +137,17 @@ export default
         preferences_clear_log: "Sohbet defterini temizle",
 
         back_to_homepage: "Ana sayfaya geri dön",
+        
+        game_display: "Oyunu göster",
+        game_hide: "Oyunu gizle",
+        game_join: "Oyuna katıl",
+        game_quit: "Oyundan çık",
 
         chess_slot_title: "Satranç",
         chess_waiting_for_white: "Beyazın girmesi bekleniyor...",
         chess_waiting_for_black: "Siyahın girmesi bekleniyor...",
         chess_white: "Beyaz: ",
         chess_black: "Siyah: ",
-        chess_display_game: "Oyunu göster",
-        chess_hide_game: "Oyunu gizle",
-        chess_join_game: "Oyuna katıl",
-        chess_quit_game: "Oyundan çık",
 
         visible_only_to_specific_users_stream: "Özel yayın",
         double_click_to_move_to_new_tab: "Yeni sekmeye gitmek için çift tıklayın",

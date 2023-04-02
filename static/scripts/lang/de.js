@@ -137,16 +137,17 @@ export default
         preferences_clear_log: "Chat-Log löschen",
 
         back_to_homepage: "Zurück zur Startseite",
+        
+        game_display: "Spiel anzeigen",
+        game_hide: "Spiel ausblenden",
+        game_join: "Spiel beitreten",
+        game_quit: "Spiel verlassen",
 
         chess_slot_title: "Schach",
         chess_waiting_for_white: "Warten auf Spieler Weiß...",
         chess_waiting_for_black: "Warten auf Spieler Schwarz...",
         chess_white: "Weiß: ",
         chess_black: "Schwarz: ",
-        chess_display_game: "Spiel anzeigen",
-        chess_hide_game: "Spiel ausblenden",
-        chess_join_game: "Spiel beitreten",
-        chess_quit_game: "Spiel verlassen",
 
         visible_only_to_specific_users_stream: "Privater Stream",
         double_click_to_move_to_new_tab: "Doppelklicken, um zu einem neuen Tab zu wechseln",

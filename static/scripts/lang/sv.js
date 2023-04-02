@@ -137,16 +137,17 @@ export default
         preferences_clear_log: "Rensa chattlogg",
 
         back_to_homepage: "Gå tillbaka till hemsidan.",
+        
+        game_display: "Visa spel",
+        game_hide: "Dölj spel",
+        game_join: "Börja spela",
+        game_quit: "Sluta spela",
 
         chess_slot_title: "Schack",
         chess_waiting_for_white: "Väntar på vit spelare...",
         chess_waiting_for_black: "Väntar på svart spelare...",
         chess_white: "Vit: ",
         chess_black: "Svart: ",
-        chess_display_game: "Visa spel",
-        chess_hide_game: "Dölj spel",
-        chess_join_game: "Börja spela",
-        chess_quit_game: "Sluta spela",
 
         visible_only_to_specific_users_stream: "Privat strömma",
         double_click_to_move_to_new_tab: "Dubbelklicka för att flytta till en ny tabb",

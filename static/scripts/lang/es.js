@@ -137,16 +137,17 @@ export default
         // preferences_clear_log: "",
 
         back_to_homepage: "Volver a la página de inicio",
+        
+        game_display: "Mostrar juego",
+        game_hide: "Ocultar juego",
+        game_join: "Unirse al juego",
+        game_quit: "Salir del juego",
 
         chess_slot_title: "Ajedrez",
         chess_waiting_for_white: "Esperando que se una el jugador blanco...",
         chess_waiting_for_black: "Esperando que se una el jugador negro...",
         chess_white: "Blancas: ",
         chess_black: "Negras: ",
-        chess_display_game: "Mostrar juego",
-        chess_hide_game: "Ocultar juego",
-        chess_join_game: "Unirse al juego",
-        chess_quit_game: "Salir del juego",
 
         // visible_only_to_specific_users_stream: "",
         // double_click_to_move_to_new_tab: "",

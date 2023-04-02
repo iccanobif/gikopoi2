@@ -137,16 +137,17 @@ export default
         preferences_clear_log: "チャットログをクリア",
 
         back_to_homepage: "トップへ戻る",
+        
+        game_display: "表示",
+        game_hide: "非表示",
+        game_join: "参加",
+        game_quit: "投了",
 
         chess_slot_title: "チェス",
         chess_waiting_for_white: "白を待機中",
         chess_waiting_for_black: "黒を待機中",
         chess_white: "白：",
         chess_black: "黒：",
-        chess_display_game: "表示",
-        chess_hide_game: "非表示",
-        chess_join_game: "参加",
-        chess_quit_game: "投了",
 
         visible_only_to_specific_users_stream: "特定ユーザーのみに見える配信",
         double_click_to_move_to_new_tab: "ダブルクリックで動画配信を新しいタブで開く",

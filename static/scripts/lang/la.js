@@ -59,13 +59,14 @@ export default
         
         back_to_homepage: "Ad paginam prima redire",
         
+        game_display: "Ludum monstrare",
+        game_hide: "Ludum abscondere",
+        game_join: "Ludum participare",
+        game_quit: "Ludi exire",
+        
         chess_slot_title: "Scacci",
         chess_white: "Album: ",
         chess_black: "Nigrum: ",
-        chess_display_game: "Ludum monstrare",
-        chess_hide_game: "Ludum abscondere",
-        chess_join_game: "Ludum participare",
-        chess_quit_game: "Ludi exire",
 
         visible_only_to_specific_users_stream: "Transmissio privata",
         // double_click_to_move_to_new_tab: "",

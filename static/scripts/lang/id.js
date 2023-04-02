@@ -137,16 +137,17 @@ export default
         preferences_clear_log: "Hapus log obrolan",
 
         back_to_homepage: "Kembali ke Halaman Awal",
+        
+        game_display: "Tonton permainan",
+        game_hide: "Sembunyikan permainan",
+        game_join: "Bergabung ke permainan",
+        game_quit: "Keluar dari permainan",
 
         chess_slot_title: "Catur",
         chess_waiting_for_white: "Menunggu putih untuk bergabung...",
         chess_waiting_for_black: "Menunggu hitam untuk bergabung...",
         chess_white: "Putih: ",
         chess_black: "Hitam: ",
-        chess_display_game: "Tonton permainan",
-        chess_hide_game: "Sembunyikan permainan",
-        chess_join_game: "Bergabung ke permainan",
-        chess_quit_game: "Keluar dari permainan",
 
         visible_only_to_specific_users_stream: "Siaran privat",
         double_click_to_move_to_new_tab: "Klik dua kali untuk pindah ke tab baru",

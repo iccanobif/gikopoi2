@@ -137,16 +137,17 @@ export default
         // preferences_clear_log: "",
 
         back_to_homepage: "Torna all'home page",
+        
+        game_display: "Mostra partita",
+        game_hide: "Nascondi partita",
+        game_join: "Partecipa al gioco",
+        game_quit: "Esci dal gioco",
 
         chess_slot_title: "Scacchi",
         chess_waiting_for_white: "In attesa del giocatore bianco...",
         chess_waiting_for_black: "In attesa del giocatore nero...",
         chess_white: "Bianco: ",
         chess_black: "Nero: ",
-        chess_display_game: "Mostra partita",
-        chess_hide_game: "Nascondi partita",
-        chess_join_game: "Partecipa al gioco",
-        chess_quit_game: "Esci dal gioco",
 
         // visible_only_to_specific_users_stream: "",
         // double_click_to_move_to_new_tab: "",
