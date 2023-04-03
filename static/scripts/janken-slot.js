@@ -79,7 +79,6 @@ export default {
         
         const processState = () =>
         {
-            console.log(state.value)
             player1.value = users.value[state.value.player1Id] || null
             player2.value = users.value[state.value.player2Id] || null
             namedPlayer.value = users.value[state.value.namedPlayerId] || null
