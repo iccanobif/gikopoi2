@@ -1142,6 +1142,7 @@ io.on("connection", function (socket: Socket)
     {
         try
         {
+            log.info("user-want-to-join-janken", user.id)
             const state = roomStates[user.areaId][user.roomId].janken
             if(state.stage != "inactive") return
             if(!state.player1Id)
@@ -1166,6 +1167,7 @@ io.on("connection", function (socket: Socket)
     {
         try
         {
+            log.info("user-want-to-choose-janken-hand", user.id, hand)
             const state = roomStates[user.areaId][user.roomId].janken
             if (state.stage != "choosing") return
             if(state.player1Id == user.id)
@@ -1216,6 +1218,7 @@ io.on("connection", function (socket: Socket)
     {
         try
         {
+            log.info("user-want-to-quit-janken", user.id)
             quitJanken(roomStates, user)
         }
         catch (e)
