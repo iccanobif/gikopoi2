@@ -156,14 +156,12 @@ export default
         janken_choose_your_hand: "Choose your hand!",
         janken_waiting_for_player: "Waiting for {userName} to choose a hand...",
         janken_players_choosing: "The players are choosing their hands...",
-        janken_phrase: "Rock! Paper! Scissors!", // Janken PON!
-        janken_phrase_after_draw: "Rock! Paper! Scissors!", // aiko desho
+        janken_phrase: "Rock! Paper! Scissors!",
+        janken_phrase_after_draw: "@:ui.janken_phrase",
+        janken_phrase_after_draw_repeated: "@:ui.janken_phrase",
         janken_win: "{userName} wins!",
         janken_quit: "{userName} quit the game.",
         janken_timeout_reached: "The game has timed out.",
-        janken_hand_rock: "rock",
-        janken_hand_paper: "paper",
-        janken_hand_scissors: "scissors",
 
         visible_only_to_specific_users_stream: "Private stream",
         double_click_to_move_to_new_tab: "Double click to move to a new tab",

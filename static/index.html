@@ -934,8 +934,9 @@
                     
                     <template v-else-if="state.stage == 'win' || state.stage == 'draw'">
                         <template v-if="!showResults">
-                            <span v-if="!wasDraw">{{ $t("ui.janken_phrase") }}</span>
-                            <span v-else>{{ $t("ui.janken_phrase_after_draw") }}</span>
+                            <span v-if="drawCount == 0">{{ $t("ui.janken_phrase") }}</span>
+                            <span v-else-if="drawCount < 4">{{ $t("ui.janken_phrase_after_draw") }}</span>
+                            <span v-else>{{ $t("ui.janken_phrase_after_draw_repeated") }}</span>
                         </template>
                         <template v-else>
                             <span v-if="state.stage == 'win'">{{ $t("ui.janken_win", { userName: namedPlayer.name }) }}</span>
@@ -951,7 +952,7 @@
                     </template>
                 </div>
                 <div class="janken-hands" v-if="isCurrentUserPlaying && state.stage == 'choosing' && !hasChosenHand">
-                    <button v-for="(symbol, hand) in handSymbols" @click="chooseHand(hand)" :class="['janken-hand-' + hand]"></button>
+                    <button v-for="hand in hands" @click="chooseHand(hand)" :class="['janken-hand-' + hand]"></button>
                 </div>
             </div>
         </div>

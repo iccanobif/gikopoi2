@@ -1,10 +1,6 @@
 const { ref, toRef, watch } = Vue
 
-const handSymbols = {
-    rock: "🪨",
-    paper: "📄",
-    scissors: "✂"
-}
+const hands = [ "rock", "paper", "scissors" ]
 
 export default {
     props: ["socket", "jankenState", "users", "myUserId"],
@@ -25,7 +21,7 @@ export default {
         const hasRequestedToJoin = ref(false)
         const hasRequestedToQuit = ref(false)
         const hasChosenHand = ref(false)
-        const wasDraw = ref(false)
+        const drawCount = ref(0)
         
         const display = () => isVisible.value = true
         const hide = () => isVisible.value = false
@@ -68,7 +64,7 @@ export default {
         const resetGame = () =>
         {
             isActive.value = false
-            wasDraw.value = false
+            drawCount.value = 0
             if (isCurrentUserPlaying.value)
             {
                 isVisible.value = true
@@ -103,6 +99,7 @@ export default {
             }
             else if (state.value.stage == "draw")
             {
+                drawCount.value++
                 setTimeout(() =>
                 {
                     showResults.value = true
@@ -126,7 +123,7 @@ export default {
         processState()
         
         return {
-            handSymbols,
+            hands,
             myUserId: props.myUserId,
             
             isVisible,
@@ -141,7 +138,7 @@ export default {
             hasRequestedToJoin,
             hasRequestedToQuit,
             hasChosenHand,
-            wasDraw,
+            drawCount,
             
             display,
             hide,
