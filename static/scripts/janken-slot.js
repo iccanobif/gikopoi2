@@ -16,6 +16,7 @@ export default {
         const player1 = ref(null)
         const player2 = ref(null)
         const isCurrentUserPlaying = ref(false)
+        const showResults = ref(false)
         const isWaitingForOpponent = ref(false)
         const hasRequestedToJoin = ref(false)
         const hasRequestedToQuit = ref(false)
@@ -57,6 +58,7 @@ export default {
             isWaitingForOpponent.value = false
             
             isActive.value = true
+            showResults.value = false
             drawCount.value = 0
         }
         
@@ -90,15 +92,22 @@ export default {
             }
             else if (state.value.stage == "win")
             {
-                setTimeout(resetGame, 2000)
+                setTimeout(() => {
+                    showResults.value = true
+                    setTimeout(resetGame, 2000)
+                }, 2000)
             }
             else if (state.value.stage == "draw")
             {
                 setTimeout(() =>
                 {
-                    state.value.stage = "choosing"
-                    prepareGame()
-                    drawCount.value++
+                    showResults.value = true
+                    setTimeout(() =>
+                    {
+                        state.value.stage = "choosing"
+                        prepareGame()
+                        drawCount.value++
+                    }, 2000)
                 }, 2000)
             }
             else if (state.value.stage == "quit"
@@ -124,6 +133,7 @@ export default {
             player1,
             player2,
             isCurrentUserPlaying,
+            showResults,
             isWaitingForOpponent,
             hasRequestedToJoin,
             hasRequestedToQuit,

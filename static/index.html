@@ -910,6 +910,11 @@
                     <div>{{ $t("ui.janken_versus") }}</div>
                     <div class="janken-versus-player2">{{ player2.name }}</div>
                 </div>
+                <div v-if="showResults && (state.stage == 'win' || state.stage == 'draw')"
+                    class="janken-hand-results" :class="{ 'janken-hands-draw': state.stage == 'draw' }">
+                    <div class="janken-results-hand janken-hand-player1" :class="[{ 'janken-hand-winner': player1 == namedPlayer }, 'janken-hand-' + state.player1Hand]"></div>
+                    <div class="janken-results-hand janken-hand-player2" :class="[{ 'janken-hand-winner': player2 == namedPlayer }, 'janken-hand-' + state.player2Hand]"></div>
+                </div>
                 <div class="slot-message">
                     <template v-if="state.stage == 'inactive'">
                         <span v-if="!player1">{{ $t("ui.janken_start_a_game") }}</span>
@@ -928,9 +933,14 @@
                     </template>
                     
                     <template v-else-if="state.stage == 'win' || state.stage == 'draw'">
-                        <span v-if="drawCount == 0">{{ $t("ui.janken_phrase") }}</span>
-                        <span v-else-if="drawCount < 4">{{ $t("ui.janken_phrase_after_draw") }}</span>
-                        <span v-else>{{ $t("ui.janken_phrase_after_draw_repeated") }}</span>
+                        <template v-if="!showResults">
+                            <span v-if="drawCount == 0">{{ $t("ui.janken_phrase") }}</span>
+                            <span v-else-if="drawCount < 4">{{ $t("ui.janken_phrase_after_draw") }}</span>
+                            <span v-else>{{ $t("ui.janken_phrase_after_draw_repeated") }}</span>
+                        </template>
+                        <template v-else>
+                            <span v-if="state.stage == 'win'">{{ $t("ui.janken_win", { userName: namedPlayer.name }) }}</span>
+                        </template>
                     </template>
                     
                     <template v-else-if="state.stage == 'quit'">
@@ -940,14 +950,6 @@
                     <template v-else-if="state.stage == 'timeout'">
                         <span>{{ $t("ui.janken_timeout_reached") }}</span>
                     </template>
-                </div>
-                <div v-if="state.stage == 'win' || state.stage == 'draw'"
-                    class="janken-hand-results" :class="{ 'janken-hands-draw': state.stage == 'draw' }">
-                    <div class="janken-results-hand janken-hand-player1" :class="[{ 'janken-hand-winner': player1 == namedPlayer }, 'janken-hand-' + state.player1Hand]"></div>
-                    <div class="janken-results-hand janken-hand-player2" :class="[{ 'janken-hand-winner': player2 == namedPlayer }, 'janken-hand-' + state.player2Hand]"></div>
-                </div>
-                <div class="slot-message" v-if="state.stage == 'win'">
-                    <span>{{ $t("ui.janken_win", { userName: namedPlayer.name }) }}</span>
                 </div>
                 <div class="janken-hands" v-if="isCurrentUserPlaying && state.stage == 'choosing' && !hasChosenHand">
                     <button v-for="hand in hands" @click="chooseHand(hand)" :class="['janken-hand-' + hand]"></button>
