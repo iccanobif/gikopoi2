@@ -885,7 +885,7 @@ button.checked {
 
 .janken-wrapper
 {
-    min-height: 200px;
+    min-height: 260px;
 }
 
 @media (min-width: 947px)
@@ -927,11 +927,64 @@ button.checked {
     line-height: 40px;
     width: 60px;
     height: 60px;
+    background-size: 50px 50px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-direction: row;
 }
+
+.janken-hand-results
+{
+    display: flex;
+}
+
+.janken-results-hand
+{
+    width: 120px;
+    height: 120px;
+    color: black;
+    background-color: #ff3535;
+    margin-left: 10px;
+    background-size: 100px 100px;
+    border-radius: 40px;
+}
+
+.janken-hands-draw .janken-results-hand
+{
+    background-color: #efde0e;
+}
+
+.janken-results-hand.janken-hand-winner
+{
+    background-color: #82d328;
+}
+
+.janken-hand-player1
+{
+    transform: rotate(90deg);
+}
+
+.janken-hand-player2
+{
+    transform: rotate(-90deg);
+}
+
+.janken-hand-rock,
+.janken-hand-paper,
+.janken-hand-scissors
+{
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.janken-hand-rock { background-image: url("../images/hand-rock.svg"); }
+.janken-hand-paper { background-image: url("../images/hand-paper.svg"); }
+.janken-hand-scissors { background-image: url("../images/hand-scissors.svg"); }
+
+button.janken-hand-rock { background-image: url("../images/hand-rock.light.svg"); }
+button.janken-hand-paper { background-image: url("../images/hand-paper.light.svg"); }
+button.janken-hand-scissors { background-image: url("../images/hand-scissors.light.svg"); }
 
 .system-message
 {

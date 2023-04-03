@@ -1152,12 +1152,7 @@ io.on("connection", function (socket: Socket)
             {
                 state.player2Id = user.id
                 state.stage = "choosing"
-                state.timeoutTimer = setTimeout(() =>
-                {
-                    state.stage = "timeout"
-                    sendUpdatedJankenState(roomStates, user.areaId, user.roomId)
-                    resetJanken(roomStates, user.areaId, user.roomId, true)
-                }, 20000)
+                startJankenTimeout(roomStates, user.areaId, user.roomId, 20000)
             }
             sendUpdatedJankenState(roomStates, user.areaId, user.roomId)
         }
@@ -1181,9 +1176,9 @@ io.on("connection", function (socket: Socket)
                 return
             if (state.player1Hand && state.player2Hand)
             {
-                state.stage = "end"
                 if (state.player1Hand !== state.player2Hand)
                 {
+                    state.stage = "win"
                     const winningHands = {
                         rock: "scissors",
                         paper: "rock",
@@ -1193,8 +1188,22 @@ io.on("connection", function (socket: Socket)
                         ? state.player1Id
                         : state.player2Id)
                 }
+                else
+                {
+                    state.stage = "draw"
+                }
                 sendUpdatedJankenState(roomStates, user.areaId, user.roomId)
-                resetJanken(roomStates, user.areaId, user.roomId, true)
+                if (state.stage == "draw")
+                {
+                    state.stage = "choosing"
+                    state.player1Hand = null
+                    state.player2Hand = null
+                    startJankenTimeout(roomStates, user.areaId, user.roomId, 22000) // +2000 because of the displaying of the results
+                }
+                else
+                {
+                    resetJanken(roomStates, user.areaId, user.roomId, true)
+                }
             }
         }
         catch (e)
@@ -2090,8 +2099,8 @@ function buildJankenStateDto(roomStates: RoomStateCollection, areaId: string, ro
         stage: state.stage,
         player1Id: state.player1Id,
         player2Id: state.player2Id,
-        player1Hand: (state.stage == "end" ? state.player1Hand : null),
-        player2Hand: (state.stage == "end" ? state.player2Hand : null),
+        player1Hand: (state.stage == "win" || state.stage == "draw" ? state.player1Hand : null),
+        player2Hand: (state.stage == "win" || state.stage == "draw" ? state.player2Hand : null),
         namedPlayerId: state.namedPlayerId,
     }
 }
@@ -2100,6 +2109,18 @@ function sendUpdatedJankenState(roomStates: RoomStateCollection, areaId: string,
 {
     const stateDTO: JankenStateDto = buildJankenStateDto(roomStates, areaId, roomId)
     roomEmit(areaId, roomId, "server-update-janken", stateDTO);
+}
+
+function startJankenTimeout(roomStates: RoomStateCollection, areaId: string, roomId: string, length: number)
+{
+    const state = roomStates[areaId][roomId].janken
+    if (state.timeoutTimer) clearTimeout(state.timeoutTimer)
+    state.timeoutTimer = setTimeout(() =>
+    {
+        state.stage = "timeout"
+        sendUpdatedJankenState(roomStates, areaId, roomId)
+        resetJanken(roomStates, areaId, roomId, true)
+    }, length)
 }
 
 function resetJanken(roomStates: RoomStateCollection, areaId: string, roomId: string, withoutEmit?: boolean)
@@ -2111,11 +2132,8 @@ function resetJanken(roomStates: RoomStateCollection, areaId: string, roomId: st
     state.namedPlayerId = null
     state.player1Hand = null
     state.player2Hand = null
-    if (state.timeoutTimer)
-    {
-        clearTimeout(state.timeoutTimer)
-        state.timeoutTimer = null
-    }
+    if (state.timeoutTimer) clearTimeout(state.timeoutTimer)
+    state.timeoutTimer = null
     if (!withoutEmit)
         sendUpdatedJankenState(roomStates, areaId, roomId)
 }

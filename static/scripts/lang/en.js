@@ -157,8 +157,8 @@ export default
         janken_waiting_for_player: "Waiting for {userName} to choose a hand...",
         janken_players_choosing: "The players are choosing their hands...",
         janken_phrase: "Rock! Paper! Scissors!", // Janken PON!
-        janken_win: "{winningHand} beats {losingHand}. {userName} wins!",
-        janken_draw: "Both players chose {hand}. It's a draw!",
+        janken_phrase_after_draw: "Rock! Paper! Scissors!", // aiko desho
+        janken_win: "{userName} wins!",
         janken_quit: "{userName} quit the game.",
         janken_timeout_reached: "The game has timed out.",
         janken_hand_rock: "rock",

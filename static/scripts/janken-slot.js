@@ -25,6 +25,7 @@ export default {
         const hasRequestedToJoin = ref(false)
         const hasRequestedToQuit = ref(false)
         const hasChosenHand = ref(false)
+        const wasDraw = ref(false)
         
         const display = () => isVisible.value = true
         const hide = () => isVisible.value = false
@@ -55,8 +56,30 @@ export default {
         
         const capitalizeText = (str) => str.charAt(0).toUpperCase() + str.slice(1)
         
+        const prepareGame = () =>
+        {
+            hasChosenHand.value = false
+            isWaitingForOpponent.value = false
+            
+            isActive.value = true
+            showResults.value = false
+        }
+        
+        const resetGame = () =>
+        {
+            isActive.value = false
+            wasDraw.value = false
+            if (isCurrentUserPlaying.value)
+            {
+                isVisible.value = true
+                isCurrentUserPlaying.value = false
+            }
+            hasRequestedToQuit.value = false
+        }
+        
         const processState = () =>
         {
+            console.log(state.value)
             player1.value = users.value[state.value.player1Id] || null
             player2.value = users.value[state.value.player2Id] || null
             namedPlayer.value = users.value[state.value.namedPlayerId] || null
@@ -67,39 +90,36 @@ export default {
             
             if (isCurrentUserPlaying.value)
                 isVisible.value = true
-                
-            let resetTime = 2000
             
             if (state.value.stage == "choosing")
             {
-                hasChosenHand.value = false
-                isWaitingForOpponent.value = false
-                
-                isActive.value = true
-                showResults.value = false
+                prepareGame()
             }
-            else if (state.value.stage == "end")
+            else if (state.value.stage == "win")
             {
                 setTimeout(() => {
                     showResults.value = true
+                    setTimeout(resetGame, 2000)
                 }, 2000)
-                resetTime = 4000
             }
-            
-            if (state.value.stage == "end"
-                || state.value.stage == "quit"
+            else if (state.value.stage == "draw")
+            {
+                setTimeout(() =>
+                {
+                    showResults.value = true
+                    setTimeout(() =>
+                    {
+                        state.value.stage = "choosing"
+                        prepareGame()
+                    }, 2000)
+                }, 2000)
+            }
+            else if (state.value.stage == "quit"
                 || state.value.stage == "timeout")
             {
-                setTimeout(() => {
-                    isActive.value = false
-                    if (isCurrentUserPlaying.value)
-                    {
-                        isVisible.value = true
-                        isCurrentUserPlaying.value = false
-                    }
-                    hasRequestedToQuit.value = false
-                }, resetTime)
+                setTimeout(resetGame, 2000)
             }
+            
             hasRequestedToJoin.value = false
         }
         
@@ -122,6 +142,7 @@ export default {
             hasRequestedToJoin,
             hasRequestedToQuit,
             hasChosenHand,
+            wasDraw,
             
             display,
             hide,
