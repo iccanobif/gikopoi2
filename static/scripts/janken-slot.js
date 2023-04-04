@@ -77,11 +77,13 @@ export default {
         {
             if (state.value.stage == "inactive" && state.value.player1Id)
             {
-                player1.value = users.value[state.value.player1Id] || { id: null, name: "N/A" }
+                player1.value = users.value[state.value.player1Id]
+                    || { id: state.value.player1Id, name: "N/A" }
                 player2.value = null
             }
             if (player2.value == null && state.value.stage == "choosing" && state.value.player2Id)
-                player2.value = users.value[state.value.player2Id] || { id: null, name: "N/A" }
+                player2.value = users.value[state.value.player2Id]
+                    || { id: state.value.player2Id, name: "N/A" }
             
             if (state.value.namedPlayerId)
             {
