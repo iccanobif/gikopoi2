@@ -52,8 +52,6 @@ export default {
             }, 500)
         }
         
-        const capitalizeText = (str) => str.charAt(0).toUpperCase() + str.slice(1)
-        
         const prepareGame = () =>
         {
             hasChosenHand.value = false
