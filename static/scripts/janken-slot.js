@@ -1,13 +1,15 @@
-const { ref, toRef, watch } = Vue
+const { ref, toRef, watch, inject } = Vue
 
 const hands = [ "rock", "paper", "scissors" ]
 
 export default {
-    props: ["socket", "jankenState", "users", "myUserId"],
+    props: ["jankenState"],
     template: "#janken-slot",
     setup(props)
     {
-        const users = toRef(props, "users")
+        const socket = inject("socket")
+        const users = inject("users")
+        const myUserId = inject("myUserId")
         
         const isVisible = ref(false)
         const isActive = ref(false)
@@ -30,18 +32,18 @@ export default {
         {
             hasRequestedToJoin.value = true
             hasRequestedToQuit.value = false
-            props.socket.emit("user-want-to-join-janken")
+            socket.value.emit("user-want-to-join-janken")
         }
         const quit = () =>
         {
             hasRequestedToQuit.value = true
-            props.socket.emit("user-want-to-quit-janken")
+            socket.value.emit("user-want-to-quit-janken")
         }
         
         const chooseHand = (handKey) =>
         {
             hasChosenHand.value = true
-            props.socket.emit("user-want-to-choose-janken-hand", handKey)
+            socket.value.emit("user-want-to-choose-janken-hand", handKey)
             setTimeout(() =>
             {
                 // to avoid the flashing message of waiting for the other
@@ -80,8 +82,8 @@ export default {
             namedPlayer.value = users.value[state.value.namedPlayerId] || null
             
             isCurrentUserPlaying.value =
-                state.value.player1Id == props.myUserId
-                || state.value.player2Id == props.myUserId
+                state.value.player1Id == myUserId.value
+                || state.value.player2Id == myUserId.value
             
             if (isCurrentUserPlaying.value)
                 isVisible.value = true
@@ -124,7 +126,7 @@ export default {
         
         return {
             hands,
-            myUserId: props.myUserId,
+            myUserId,
             
             isVisible,
             isActive,

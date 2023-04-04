@@ -1,5 +1,6 @@
 export default {
-    props: ["socket", "chessboardState", "users"],
+    props: ["chessboardState"],
+    inject: ["socket", "users", "myUserId"],
     template: "#chessboard-slot",
     data()
     {
@@ -46,7 +47,7 @@ export default {
             this.chessboard = Chessboard(chessboardElement, {
                 pieceTheme: 'chess/img/chesspieces/wikipedia/{piece}.png',
                 position,
-                orientation: this.chessboardState.blackUserID == myUserID ? "black" : "white",
+                orientation: this.chessboardState.blackUserID == this.myUserId ? "black" : "white",
                 draggable: true,
                 onDragStart: (source, piece, position, orientation) =>
                 {
@@ -55,10 +56,10 @@ export default {
                         return false
 
                     // Don't move when it's not your turn
-                    if (this.chessboardState.turn == "w" && this.chessboardState.blackUserID == myUserID)
+                    if (this.chessboardState.turn == "w" && this.chessboardState.blackUserID == this.myUserId)
                         return false
 
-                    if (this.chessboardState.turn == "b" && this.chessboardState.whiteUserID == myUserID)
+                    if (this.chessboardState.turn == "b" && this.chessboardState.whiteUserID == this.myUserId)
                         return false
 
                     // Don't move the other player's pieces
@@ -69,8 +70,8 @@ export default {
                 },
                 onDrop: (source, target) =>
                 {
-                    if (this.chessboardState.blackUserID == myUserID
-                        || this.chessboardState.whiteUserID == myUserID)
+                    if (this.chessboardState.blackUserID == this.myUserId
+                        || this.chessboardState.whiteUserID == this.myUserId)
                     {
                         this.socket.emit("user-chess-move", source, target);
                     }
@@ -120,8 +121,8 @@ export default {
         },
         amIPlaying()
         {
-            return this.chessboardState.blackUserID == myUserID 
-                   || this.chessboardState.whiteUserID == myUserID
+            return this.chessboardState.blackUserID == this.myUserId 
+                   || this.chessboardState.whiteUserID == this.myUserId
         },
     },
 }

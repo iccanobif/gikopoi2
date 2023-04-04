@@ -161,13 +161,15 @@ video {
     margin-bottom: -4px;
 }
 
-.highlighted-stream-title
+.highlighted-stream-title,
+.highlighted-username
 {
     color: red;
     text-shadow: #939393 0px 0px 1px;
 }
 
-.active-stream-title
+.active-stream-title,
+.username
 {
     cursor: pointer;
 }

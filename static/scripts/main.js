@@ -32,6 +32,7 @@ import { animateObjects, animateJizou } from "./animations.js";
 
 import ChessboardSlot from './chessboard-slot.js'
 import JankenSlot from './janken-slot.js'
+import ComponentUsername from './component-username.js'
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -297,6 +298,17 @@ window.vueApp = Vue.createApp({
             // the key is the slot ID
             inboundAudioProcessors: {},
             outboundAudioProcessor: null,
+        }
+    },
+    provide()
+    {
+        return {
+            socket: Vue.computed(() => this.socket),
+            users: Vue.computed(() => this.users),
+            myUserId: Vue.computed(() => this.myUserID),
+            
+            highlightedUserId: Vue.computed(() => this.highlightedUserId),
+            highlightUser: this.highlightUser,
         }
     },
     mounted()
@@ -3668,6 +3680,8 @@ window.vueApp = Vue.createApp({
         },
     },
 });
+window.vueApp.config.unwrapInjectedRef = true // No longer required after Vue 3.3
+window.vueApp.component("username", ComponentUsername)
 window.vueApp.use(i18n)
 window.vueApp.mount("#vue-app")
 

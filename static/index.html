@@ -370,16 +370,11 @@
                         <hr v-if="streams.length || index > 0" />
                         <chessboard-slot
                             v-if="game == 'chess'"
-                            v-bind:socket="socket"
-                            v-bind:chessboard-state="chessboardState"
-                            v-bind:users="users"
+                            :chessboard-state="chessboardState"
                             ></chessboard-slot>
                         <janken-slot
                             v-if="game == 'janken'"
-                            v-bind:socket="socket"
-                            v-bind:janken-state="jankenState"
-                            v-bind:users="users"
-                            v-bind:my-user-id="myUserID"
+                            :janken-state="jankenState"
                             ></janken-slot>
                     </template>
                 </div>
@@ -860,7 +855,7 @@
                 {{ $t("ui.game_display")}}
             </button>
             <button v-on:click="wantToHideGame()" v-if="visible">
-                {{ $t("ui.game_display ")}}
+                {{ $t("ui.game_hide")}}
             </button>
             <button v-on:click="wantToJoinGame()" v-if="!amIPlaying() && !chessboardState.blackUserID">
                 {{ $t("ui.game_join")}}
@@ -906,9 +901,9 @@
             </div>
             <div v-if="isVisible">
                 <div class="slot-message janken-versus" v-if="player1 && player2">
-                    <div class="janken-versus-player1">{{ player1.name }}</div>
+                    <div class="janken-versus-player1"><username :user-id="player1.id" :user-name="player1.name"></username></div>
                     <div>{{ $t("ui.janken_versus") }}</div>
-                    <div class="janken-versus-player2">{{ player2.name }}</div>
+                    <div class="janken-versus-player2"><username :user-id="player2.id" :user-name="player2.name"></username></div>
                 </div>
                 <div v-if="showResults && (state.stage == 'win' || state.stage == 'draw')"
                     class="janken-hand-results" :class="{ 'janken-hands-draw': state.stage == 'draw' }">
@@ -918,14 +913,15 @@
                 <div class="slot-message">
                     <template v-if="state.stage == 'inactive'">
                         <span v-if="!player1">{{ $t("ui.janken_start_a_game") }}</span>
-                        <span v-else-if="!player2">{{ $t("ui.janken_waiting_for_opponent", {userName: player1.name}) }}</span>
+                        <i18n-t v-else-if="!player2" tag="span" keypath="ui.janken_waiting_for_opponent">
+                            <template v-slot:username><username :user-id="player1.id" :user-name="player1.name"></username></template>
+                        </i18n-t>
                     </template>
                     
                     <template v-else-if="state.stage == 'choosing'">
                         <template v-if="isCurrentUserPlaying">
                             <span v-if="!hasChosenHand">{{ $t("ui.janken_choose_your_hand") }}</span>
-                            <span v-else-if="isWaitingForOpponent">{{ $t("ui.janken_waiting_for_player",
-                                {userName: player1.id == myUserId ? player2.name : player1.name}) }}</span>
+                            <span v-else-if="isWaitingForOpponent">{{ $t("ui.janken_waiting_for_player") }}</span>
                         </template>
                         <template v-else>
                             <span>{{ $t("ui.janken_players_choosing") }}</span>
@@ -939,14 +935,18 @@
                             <span v-else>{{ $t("ui.janken_phrase_after_draw_repeated") }}</span>
                         </template>
                         <template v-else>
-                            <span v-if="state.stage == 'win'">{{ $t("ui.janken_win", { userName: namedPlayer.name }) }}</span>
+                            <i18n-t v-if="state.stage == 'win'" tag="span" keypath="ui.janken_win">
+                                <template v-slot:username><username :user-id="namedPlayer.id" :user-name="namedPlayer.name"></username></template>
+                            </i18n-t>
                         </template>
                     </template>
                     
                     <template v-else-if="state.stage == 'quit'">
-                        <span>{{ $t("ui.janken_quit", {userName: namedPlayer.name}) }}</span>
+                        <i18n-t tag="span" keypath="ui.janken_quit">
+                            <template v-slot:username><username :user-id="namedPlayer.id" :user-name="namedPlayer.name"></username></template>
+                        </i18n-t>
                     </template>
-                    
+                
                     <template v-else-if="state.stage == 'timeout'">
                         <span>{{ $t("ui.janken_timeout_reached") }}</span>
                     </template>
@@ -957,16 +957,20 @@
             </div>
         </div>
     </template>
+    
+    <template id="component-username">
+        <span class="username"
+            :class="{'highlighted-username': userId == highlightedUserId}"
+            @click="highlightUser(userId, userName)">{{ userName }}</span>
+    </template>
 
     <audio id="message-sound" src="message.mp3"></audio>
     <audio id="mention-sound" src="mention.mp3"></audio>
     <audio id="login-sound" src="login.mp3"></audio>
     <audio id="ka-ching-sound" src="ka-ching.mp3"></audio>
-
-    <script src="https://unpkg.com/vue@3"></script>
-    <script src="https://unpkg.com/vue-i18n@9"></script>
-    <!--script src="libraries/vue.js"></script> ########Production#######
-    <script src="libraries/vue-i18n.js"></script-->
+    
+    <script src="libraries/vue.js"></script>
+    <script src="libraries/vue-i18n.js"></script>
     <script src="libraries/jquery-1.12.4.js"></script>
     <script src="libraries/jquery-ui/jquery-ui.min.js"></script>
     <script src='scripts/jquery.ui.touch-punch.min.js'></script>
