@@ -78,7 +78,7 @@ export default {
         {
             if (state.value.player1Id != null)
             {
-                if (!player1.value && users.value[state.value.player1Id])
+                if (users.value[state.value.player1Id])
                 {
                     player1.value = users.value[state.value.player1Id]
                     players[state.value.player1Id] = users.value[state.value.player1Id]
@@ -91,7 +91,7 @@ export default {
             
             if (state.value.player2Id != null)
             {
-                if (!player2.value && users.value[state.value.player2Id])
+                if (users.value[state.value.player2Id])
                 {
                     player2.value = users.value[state.value.player2Id]
                     players[state.value.player2Id] = users.value[state.value.player2Id]
