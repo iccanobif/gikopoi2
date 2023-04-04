@@ -17,6 +17,7 @@ export default {
         const namedPlayer = ref(null)
         const player1 = ref(null)
         const player2 = ref(null)
+        const players = {}
         const isCurrentUserPlaying = ref(false)
         const showResults = ref(false)
         const isWaitingForOpponent = ref(false)
@@ -75,9 +76,36 @@ export default {
         
         const processState = () =>
         {
-            player1.value = users.value[state.value.player1Id] || null
-            player2.value = users.value[state.value.player2Id] || null
-            namedPlayer.value = users.value[state.value.namedPlayerId] || null
+            if (state.value.player1Id != null)
+            {
+                if (!player1.value && users.value[state.value.player1Id])
+                {
+                    player1.value = users.value[state.value.player1Id]
+                    players[state.value.player1Id] = users.value[state.value.player1Id]
+                }
+            }
+            else
+            {
+                player1.value = null
+            }
+            
+            if (state.value.player2Id != null)
+            {
+                if (!player2.value && users.value[state.value.player2Id])
+                {
+                    player2.value = users.value[state.value.player2Id]
+                    players[state.value.player2Id] = users.value[state.value.player2Id]
+                }
+            }
+            else
+            {
+                player2.value = null
+            }
+            
+            if (state.value.namedPlayerId)
+                namedPlayer.value = players[state.value.namedPlayerId]
+            else
+                namedPlayer.value = null
             
             isCurrentUserPlaying.value =
                 state.value.player1Id == myUserId.value
@@ -85,6 +113,8 @@ export default {
             
             if (isCurrentUserPlaying.value)
                 isVisible.value = true
+            
+            hasRequestedToJoin.value = false
             
             if (state.value.stage == "choosing")
             {
@@ -115,8 +145,6 @@ export default {
             {
                 setTimeout(resetGame, 2000)
             }
-            
-            hasRequestedToJoin.value = false
         }
         
         watch(state, processState)
@@ -147,8 +175,6 @@ export default {
             quit,
             
             chooseHand,
-            
-            capitalizeText,
         }
     },
     beforeUnmount()
