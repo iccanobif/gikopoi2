@@ -59,7 +59,6 @@ export default {
             
             isActive.value = true
             showResults.value = false
-            drawCount.value = 0
         }
         
         const resetGame = () =>
@@ -71,6 +70,7 @@ export default {
                 isCurrentUserPlaying.value = false
             }
             hasRequestedToQuit.value = false
+            drawCount.value = 0
         }
         
         const processState = () =>

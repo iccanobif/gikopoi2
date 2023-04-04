@@ -944,20 +944,21 @@ button.checked {
     width: 120px;
     height: 120px;
     color: black;
-    background-color: #ff3535;
+    background-color: #e16060;
     margin-left: 10px;
     background-size: 100px 100px;
-    border-radius: 40px;
+    border-radius: 5px;
+    outline: 1px solid #959595;
 }
 
 .janken-hands-draw .janken-results-hand
 {
-    background-color: #efde0e;
+    background-color: #ffd277;
 }
 
 .janken-results-hand.janken-hand-winner
 {
-    background-color: #82d328;
+    background-color: #b7df87;
 }
 
 .janken-hand-player1
