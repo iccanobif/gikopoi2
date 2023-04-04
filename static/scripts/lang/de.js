@@ -154,7 +154,7 @@ export default
         janken_start_a_game: "Trete bei um ein Spiel zu starten.",
         janken_waiting_for_opponent: "{username} wartet auf den Beitrit eines Gegners...",
         janken_choose_your_hand: "Wählen Sie Ihre Hand!",
-        janken_waiting_for_player: "Warten auf den Gegner eine Hand auszuwählen...",
+        janken_waiting_for_player: "Warten auf ihren Gegner eine Hand auszuwählen...",
         janken_players_choosing: "Die Spieler wählen ihre Hände...",
         janken_phrase: "Schere! Stein! Papier!",
         janken_phrase_after_draw: "Schnick! Schnack! Schnuck!",

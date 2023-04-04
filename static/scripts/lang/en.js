@@ -154,7 +154,7 @@ export default
         janken_start_a_game: "Join to start a game!",
         janken_waiting_for_opponent: "{username} is waiting for an opponent to join...",
         janken_choose_your_hand: "Choose your hand!",
-        janken_waiting_for_player: "Waiting for the opponent to choose a hand...",
+        janken_waiting_for_player: "Waiting for your opponent to choose a hand...",
         janken_players_choosing: "The players are choosing their hands...",
         janken_phrase: "Rock! Paper! Scissors!",
         janken_phrase_after_draw: "@:ui.janken_phrase",
