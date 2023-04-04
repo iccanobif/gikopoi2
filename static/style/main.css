@@ -867,7 +867,7 @@ button.checked {
 
 .stream-buttons button.red-button,
 .slot-wrapper button.red-button,
-.slot-button-highlight
+.slot-wrapper button.slot-button-highlight
 {
     background-color: #9f6161;
     color: white;

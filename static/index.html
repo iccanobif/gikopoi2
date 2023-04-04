@@ -892,12 +892,12 @@
             <div class="slot-title">{{ $t("ui.janken_title") }}</div>
             <div class="slot-buttons">
                 <button
-                    v-bind:class="{'slot-button-highlight': player1}"
+                    :class="{'slot-button-highlight': player1}"
                     v-if="!isVisible && !isCurrentUserPlaying"
                     @click="display">{{ $t("ui.game_display") }}</button>
                 <button @click="hide" v-if="isVisible && !isCurrentUserPlaying">{{ $t("ui.game_hide") }}</button>
                 <button @click="join" v-if="!isCurrentUserPlaying && !isActive && !hasRequestedToJoin">{{ $t("ui.game_join") }}</button>
-                <button @click="quit" v-if="isCurrentUserPlaying && !hasRequestedToQuit">{{ $t("ui.game_quit") }}</button>
+                <button @click="quit" v-if="isCurrentUserPlaying && !hasRequestedToQuit && state.stage != 'win'">{{ $t("ui.game_quit") }}</button>
             </div>
             <div v-if="isVisible">
                 <div class="slot-message janken-versus" v-if="player1 && player2">
