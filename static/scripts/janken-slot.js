@@ -17,7 +17,6 @@ export default {
         const namedPlayer = ref(null)
         const player1 = ref(null)
         const player2 = ref(null)
-        const players = {}
         const isCurrentUserPlaying = ref(false)
         const showResults = ref(false)
         const isWaitingForOpponent = ref(false)
@@ -76,34 +75,19 @@ export default {
         
         const processState = () =>
         {
-            if (state.value.player1Id != null)
+            if (state.value.stage == "inactive" && state.value.player1Id)
             {
-                if (users.value[state.value.player1Id])
-                {
-                    player1.value = users.value[state.value.player1Id]
-                    players[state.value.player1Id] = users.value[state.value.player1Id]
-                }
-            }
-            else
-            {
-                player1.value = null
-            }
-            
-            if (state.value.player2Id != null)
-            {
-                if (users.value[state.value.player2Id])
-                {
-                    player2.value = users.value[state.value.player2Id]
-                    players[state.value.player2Id] = users.value[state.value.player2Id]
-                }
-            }
-            else
-            {
+                player1.value = users.value[state.value.player1Id] || { id: null, name: "N/A" }
                 player2.value = null
             }
+            if (player2.value == null && state.value.stage == "choosing" && state.value.player2Id)
+                player2.value = users.value[state.value.player2Id] || { id: null, name: "N/A" }
             
             if (state.value.namedPlayerId)
-                namedPlayer.value = players[state.value.namedPlayerId]
+            {
+                namedPlayer.value = player1.value.id == state.value.namedPlayerId
+                    ? player1.value : player2.value
+            }
             else
                 namedPlayer.value = null
             
