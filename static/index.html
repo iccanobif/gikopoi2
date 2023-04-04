@@ -897,7 +897,7 @@
                     @click="display">{{ $t("ui.game_display") }}</button>
                 <button @click="hide" v-if="isVisible && !isCurrentUserPlaying">{{ $t("ui.game_hide") }}</button>
                 <button @click="join" v-if="!isCurrentUserPlaying && !isActive && !hasRequestedToJoin">{{ $t("ui.game_join") }}</button>
-                <button @click="quit" v-if="isCurrentUserPlaying && !hasRequestedToQuit && !(state.stage == 'win' || state.stage == 'draw')"
+                <button @click="quit" v-if="isCurrentUserPlaying && !hasRequestedToQuit && (state.stage == 'inactive' || state.stage == 'choosing')"
                     >{{ $t("ui.game_quit") }}</button>
             </div>
             <div v-if="isVisible">
