@@ -1352,6 +1352,7 @@ export const rooms: { [roomId: string]: Room } = {
             office: { x: 5, y: 17, direction: "down", target: { roomId: "nerd_office", doorId: "door"} },
         },
         streamSlotCount: 3,
+        games: ["janken"],
     },
     bar_giko2: {
         id: "bar_giko2",
@@ -1893,6 +1894,7 @@ export const rooms: { [roomId: string]: Room } = {
             right: { x: 8, y: 5, direction: "left", target: { roomId: "radio", doorId: "single_door" } },
         },
         streamSlotCount: 0,
+        games: ["janken"],
     },
     jinja_st: {
         id: "jinja_st",

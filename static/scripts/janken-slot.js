@@ -81,15 +81,13 @@ export default {
                     || { id: state.value.player1Id, name: "N/A" }
                 player2.value = null
             }
-            if (player2.value == null && state.value.stage == "choosing" && state.value.player2Id)
+            if (player2.value == null && state.value.player2Id)
                 player2.value = users.value[state.value.player2Id]
                     || { id: state.value.player2Id, name: "N/A" }
             
             if (state.value.namedPlayerId)
-            {
                 namedPlayer.value = player1.value.id == state.value.namedPlayerId
                     ? player1.value : player2.value
-            }
             else
                 namedPlayer.value = null
             
