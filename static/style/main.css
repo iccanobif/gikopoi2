@@ -135,6 +135,7 @@ input[type='range']
 .message .message-mention
 {
 	font-weight: bold;
+    text-decoration: underline;
 }
 
 .video-container
