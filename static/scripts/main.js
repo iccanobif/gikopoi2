@@ -968,7 +968,7 @@ window.vueApp = Vue.createApp({
                 roomList.forEach(r => {
                     r.sortName = this.$t("room." + r.id, {reading: true});
                     r.streamerCount = r.streams.length;
-                    r.streamerDisplayNames = r.streams.map(s => this.toDisplayName(s.userName))
+                    r.streamerDisplayNames = r.streams.map(s => s.userName)
                 })
                 this.roomList = roomList;
                 this.rulaRoomGroup = "all";
@@ -3627,7 +3627,7 @@ window.vueApp = Vue.createApp({
                 const tab = open(window.origin + '/video-tab.html');
                 this.detachedStreamTabs[slotId] = tab;
                 const streamSlot = this.streams[slotId];
-                const newTabTitle = this.$t("ui.label_stream", {index: slotId + 1}) + " " + this.toDisplayName(this.users[streamSlot.userId].name);
+                const newTabTitle = this.$t("ui.label_stream", {index: slotId + 1}) + " " + this.users[streamSlot.userId].name;
                 tab.onload = () => {
                     tab.document.title = newTabTitle;
                     tab.document.body.appendChild(videoContainer);
