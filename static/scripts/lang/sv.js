@@ -151,7 +151,7 @@ export default
 
         janken_title: "Sten Sax Påse",
         janken_versus: "mot",
-        janken_start_a_game: "Join to start a game!",
+        janken_start_a_game: "Påbörja ett spel!",
         janken_waiting_for_opponent: "{username} väntar på en motståndare...",
         janken_choose_your_hand: "Välj din hand!",
         janken_waiting_for_player: "Vänar på din motståndares hand...",
