@@ -1771,7 +1771,6 @@ app.post("/ban", async (req, res) => {
         }
 
         const userIdsToBan = Object.keys(req.body).filter(x => x != "pwd")
-        console.log(userIdsToBan)
         for (const id of userIdsToBan)
         {
             const user = getUser(id)
@@ -2278,7 +2277,7 @@ setInterval(async () =>
                 // Remove ghosts (that is, users for which there is no active websocket)
                 if (Date.now() - user.disconnectionTime > maxGhostRetention)
                 {
-                    log.info(user.id, Date.now(), user.disconnectionTime, Date.now() - user.disconnectionTime)
+                    log.info("Remove ghost without websocket", user.id, Date.now(), user.disconnectionTime, Date.now() - user.disconnectionTime)
                     await disconnectUser(user)
                 }
             }
@@ -2420,7 +2419,7 @@ dynamicRooms.forEach((dynamicRoom: DynamicRoom) =>
     let previousVariant: string | null = null
     subscribeToAnnualEvents(dynamicRoom.subscribedAnnualEvents, (current, added, removed) =>
     {
-        console.log("subscribed event", dynamicRoom)
+        log.info("subscribed event", dynamicRoom)
         const room = dynamicRoom.build(current, added, removed)
         if (previousVariant != room.variant)
         {
