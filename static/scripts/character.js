@@ -112,11 +112,12 @@ export class Character
     async loadImages(dto)
     {
         const rawImages = {}
-        const addImageString = (version, side, state, svgString) =>
+        const addImageString = async (version, side, state, svgString) =>
         {
             if (!rawImages[version])
                 rawImages[version] = { "front": {}, "back": {} }
-            return stringToImage(svgString, dto.isBase64).then(images => { rawImages[version][side][state] = images })
+            const images = await stringToImage(svgString, dto.isBase64);
+            rawImages[version][side][state] = images;
         }
         
         const promises = [

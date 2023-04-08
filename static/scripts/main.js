@@ -968,7 +968,7 @@ window.vueApp = Vue.createApp({
                 roomList.forEach(r => {
                     r.sortName = this.$t("room." + r.id, {reading: true});
                     r.streamerCount = r.streams.length;
-                    r.streamerDisplayNames = r.streams.map(s => s.userName)
+                    r.streams.forEach(s => s.userName = s.userName == "" ? this.$t("default_user_name") : s.userName)
                 })
                 this.roomList = roomList;
                 this.rulaRoomGroup = "all";
