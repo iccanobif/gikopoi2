@@ -89,10 +89,16 @@ export class Character
             props.state,
             props.isMirroredLeft
         ]
-        
-        if (rawImageLayers.find(o => o.tags && o.tags.includes("eyes_closed")))
+
+        // Not sure why, but rawImageLayers seems to have "undefined" elements sometimes.
+        // Maybe that happens when stringToImage() throws an exception? Logging some info
+        // so we can figure out what's going on next time it happens to someone
+        if (rawImageLayers.find(o => !o))
+            logToServer("ERROR! falsy element in rawImageLayers, " + this.characterName + " " + JSON.stringify(props))
+
+        if (rawImageLayers.find(o => o && o.tags && o.tags.includes("eyes_closed")))
             imageKeyArray.push(props.hasEyesClosed)
-        if (rawImageLayers.find(o => o.tags && o.tags.includes("mouth_closed")))
+        if (rawImageLayers.find(o => o && o.tags && o.tags.includes("mouth_closed")))
             imageKeyArray.push(props.hasMouthClosed)
         
         const imageKey = imageKeyArray.join(",")
