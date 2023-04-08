@@ -3519,11 +3519,13 @@ window.vueApp = Vue.createApp({
             {
                 case "ArrowDown":
                 case "KeyJ":
+                case "KeyS":
                     this.rulaRoomSelection = this.preparedRoomList[(previousIndex + 1) % this.preparedRoomList.length].id
                     document.getElementById("room-tr-" + this.rulaRoomSelection).scrollIntoView({ block: "nearest"})
                     break;
                 case "ArrowUp":
                 case "KeyK":
+                case "KeyW":
                     if (previousIndex <= 0)
                         this.rulaRoomSelection = this.preparedRoomList[this.preparedRoomList.length - 1].id
                     else
