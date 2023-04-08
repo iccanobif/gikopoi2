@@ -2554,7 +2554,7 @@ window.vueApp = Vue.createApp({
 
                     if (notification)
                         notification.addEventListener("click", (event) => {
-                            vueApp.wantToTakeStream(slotId);
+                            this.wantToTakeStream(slotId);
                             window.focus();
                         })
                 }
