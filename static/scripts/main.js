@@ -707,11 +707,11 @@ window.vueApp = Vue.createApp({
 
             this.users = {};
 
-            for (const u of usersDto)
+            for (const userDto of usersDto)
             {
-                this.addUser(u);
-                if(previousRoomId != this.currentRoom.id && this.users[u.id].message)
-                    this.displayUserMessage(u, this.users[u.id].message);
+                const user = this.addUser(userDto);
+                if(previousRoomId != this.currentRoom.id && user.message)
+                    this.displayUserMessage(user, user.message);
             }
             this.setMentionRegexObjects()
 
@@ -1058,6 +1058,8 @@ window.vueApp = Vue.createApp({
             newUser.isAlternateCharacter = userDTO.isAlternateCharacter
 
             this.users[userDTO.id] = newUser;
+
+            return newUser;
         },
         writeMessageToLog(userName, msg, userId)
         {
