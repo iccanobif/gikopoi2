@@ -228,7 +228,15 @@
                                 v-if="streamSlot.isActive"
                                 class="stream-title active-stream-title"
                                 v-bind:class="{'highlighted-stream-title': streamSlot.userId && streamSlot.userId == highlightedUserId}"
-                                v-on:click="highlightUser(streamSlot.userId, streamSlot.title)">{{ users[streamSlot.userId].name }}
+                                v-on:click="highlightUser(streamSlot.userId, streamSlot.title)">{{ users[streamSlot.userId]?.name }}
+                                <!-- NOTE: Above, I'm using the null propagator in the `users[streamSlot.userId]?.name` expression for
+                                           this regrettable reason: when changing room, updateRoomState() does a lot of stuff, among which
+                                           there is the updating of this.users and this.streams. Unfortunately, there are quite a lot of
+                                           asynchronous operations (using await) between those two updates, which means that after this.users
+                                           is updated with the users of the new room, this.streams still has the stream slots of the old room,
+                                           but vue3 still tries to rerender the stream slots, meaning that users[streamSlot.userId] will return
+                                           undefined. A better solution would be to make sure that stream slots are rerendered only if this.streams,
+                                           but for now this will have to do. -->
                                 <span v-bind:title="$t('ui.visible_only_to_specific_users_stream')"
                                       v-if="streamSlot.isVisibleOnlyToSpecificUsers"
                                       class="fas fa-lock visible-only-to-specific-users-stream-icon"></span>
