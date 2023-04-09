@@ -1,6 +1,6 @@
 import { RenderCache } from "./rendercache.js";
 import { annualEvent } from "./annualevents.js";
-import { stringToImage } from "./utils.js";
+import { stringToImageList } from "./utils.js";
 
 function isNum(num)
 {
@@ -82,7 +82,7 @@ export class Character
         
         const rawImageLayers = this._getRawImage(props)
         // Not sure why, but rawImageLayers seems to have "undefined" elements sometimes.
-        // Maybe that happens when stringToImage() throws an exception? Logging some info
+        // Maybe that happens when stringToImageList() throws an exception? Logging some info
         // so we can figure out what's going on next time it happens to someone
         const rawImagesLayersNoFalsyElements = rawImageLayers.filter(o => o)
         if (rawImagesLayersNoFalsyElements.length != rawImageLayers.length)
@@ -123,7 +123,7 @@ export class Character
         {
             if (!rawImages[version])
                 rawImages[version] = { "front": {}, "back": {} }
-            const images = await stringToImage(svgString, dto.isBase64);
+            const images = await stringToImageList(svgString, dto.isBase64);
             rawImages[version][side][state] = images;
         }
         

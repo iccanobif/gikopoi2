@@ -24,20 +24,40 @@ export function loadImage(url)
     })
 }
 
-export function stringToImage(imageString, isBase64)
+export function stringToImage(imageString, isPng)
 {
+    return new Promise((resolve, reject) => {
+        try
+        {
+            const img = new Image()
+            
+            if (isPng)
+               img.src = "data:image/png;base64," + imageString
+            else
+                img.src = "data:image/svg+xml;base64," + btoa(imageString)
+            
+            img.addEventListener("load", () => resolve(img))
+            img.addEventListener("error", reject)
+        }
+        catch (exc)
+        {
+            reject(exc)
+        }
+    })
+}
+
+export async function stringToImageList(imageString, isBase64)
+{
+    if (isBase64)
+    {
+        const img = await stringToImage(imageString, true);
+        return [{ image: img }];
+    }
+
     return new Promise((resolve, reject) =>
     {
         try
         {
-            if (isBase64)
-            {
-                const img = new Image()
-                img.src = "data:image/png;base64," + imageString
-                img.addEventListener("load", () => { resolve([{ image: img }]) })
-                return
-            }
-            
             const svgDoc = document.createElement("template")
             svgDoc.innerHTML = imageString
             
@@ -66,13 +86,13 @@ export function stringToImage(imageString, isBase64)
                     acc[lastIndex][1].push(el)
                 return acc
             }, [])
-                .map(([object, layerEls]) =>
+                .map(async ([object, layerEls]) =>
             {
                 elements.forEach(el => { el.style.display = layerEls.includes(el) ? "inline" : "none" })
-                
-                object.image = new Image()
-                object.image.src = "data:image/svg+xml;base64," + btoa(svgDoc.content.firstElementChild.outerHTML)
-                return new Promise(r => { object.image.addEventListener("load", () => r(object)) })
+
+                const img = await stringToImage(svgDoc.content.firstElementChild.outerHTML, false);
+                object.image = img;
+                return object;
             }))
                 .then(images => { resolve(images) })
                 .catch(reject)
