@@ -235,8 +235,8 @@
                                            asynchronous operations (using await) between those two updates, which means that after this.users
                                            is updated with the users of the new room, this.streams still has the stream slots of the old room,
                                            but vue3 still tries to rerender the stream slots, meaning that users[streamSlot.userId] will return
-                                           undefined. A better solution would be to make sure that stream slots are rerendered only if this.streams,
-                                           but for now this will have to do. -->
+                                           undefined. Maybe a better solution would be to make sure that stream slots are rerendered only if 
+                                           this.streams is updated? I'm not sure how to do that. -->
                                 <span v-bind:title="$t('ui.visible_only_to_specific_users_stream')"
                                       v-if="streamSlot.isVisibleOnlyToSpecificUsers"
                                       class="fas fa-lock visible-only-to-specific-users-stream-icon"></span>
