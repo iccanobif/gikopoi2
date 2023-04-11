@@ -24,14 +24,12 @@ export default {
         const player1 = ref()
         const setPlayer1 = () => { player1.value = (users.value[state.value.player1Id]
             || createFallbackUser(state.value.player1Id)) }
-        watch(() => state.value.player1Id, setPlayer1)
-        setPlayer1()
+        watch(() => state.value.player1Id, setPlayer1, { immediate: true })
         
         const player2 = ref()
         const setPlayer2 = () => { player2.value = (users.value[state.value.player2Id]
             || createFallbackUser(state.value.player2Id)) }
-        watch(() => state.value.player2Id, setPlayer2)
-        setPlayer2()
+        watch(() => state.value.player2Id, setPlayer2, { immediate: true })
         
         const namedPlayer = computed(() => player1.value.id == state.value.namedPlayerId ? player1.value
             : (player2.value.id == state.value.namedPlayerId ? player2.value : createFallbackUser(state.value.namedPlayerId)))

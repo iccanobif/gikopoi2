@@ -25,8 +25,8 @@ export default {
                 : properUserName
         }
                 
-        watch(ignoredUserIds, setUserName, { deep: true })
-        setUserName()
+        watch(ignoredUserIds, setUserName,
+            { immediate: true, deep: true })
         
         return {
             highlightedUserId,
