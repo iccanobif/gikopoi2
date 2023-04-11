@@ -1,6 +1,7 @@
-const { ref, toRef, watch, inject } = Vue
+const { ref, toRef, watch, inject, computed } = Vue
 
 const hands = [ "rock", "paper", "scissors" ]
+const createFallbackUser = (id) => ({ id, name: "N/A" })
 
 export default {
     props: ["jankenState"],
@@ -11,145 +12,109 @@ export default {
         const users = inject("users")
         const myUserId = inject("myUserId")
         
-        const isVisible = ref(false)
-        const isActive = ref(false)
         const state = toRef(props, "jankenState")
-        const namedPlayer = ref(null)
-        const player1 = ref(null)
-        const player2 = ref(null)
-        const isCurrentUserPlaying = ref(false)
-        const showResults = ref(false)
-        const isWaitingForOpponent = ref(false)
-        const hasRequestedToJoin = ref(false)
-        const hasRequestedToQuit = ref(false)
-        const hasChosenHand = ref(false)
-        const drawCount = ref(0)
         
+        const isActive = computed(() => state.value.stage == "choosing" || state.value.stage == "phrase" || state.value.stage == "draw")
+        const isJoinable = ref(!isActive.value) // becomes true 2 seconds after isActive becomes false, to allow the players to see the results
+        const isStageJoining = computed(() => state.value.stage == "joining")
+        const isStageChoosing = computed(() => state.value.stage == "choosing")
+        const isStageDraw = computed(() => state.value.stage == "draw")
+        const isStageResult = computed(() => state.value.stage == "win" || state.value.stage == "draw")
+        
+        const player1 = ref()
+        const setPlayer1 = () => { player1.value = (users.value[state.value.player1Id]
+            || createFallbackUser(state.value.player1Id)) }
+        watch(() => state.value.player1Id, setPlayer1)
+        setPlayer1()
+        
+        const player2 = ref()
+        const setPlayer2 = () => { player2.value = (users.value[state.value.player2Id]
+            || createFallbackUser(state.value.player2Id)) }
+        watch(() => state.value.player2Id, setPlayer2)
+        setPlayer2()
+        
+        const namedPlayer = computed(() => player1.value.id == state.value.namedPlayerId ? player1.value
+            : (player2.value.id == state.value.namedPlayerId ? player2.value : createFallbackUser(state.value.namedPlayerId)))
+        
+        const isCurrentUserPlaying = computed(() => (isActive.value || state.value.stage == "joining") &&
+            (state.value.player1Id == myUserId.value || state.value.player2Id == myUserId.value))
+        
+        const isVisible = ref(false)
         const display = () => isVisible.value = true
         const hide = () => isVisible.value = false
+        watch(isCurrentUserPlaying, () => { if (isCurrentUserPlaying.value) isVisible.value = true })
         
+        const waitForChoosing = ref(false)
         const join = () =>
         {
-            hasRequestedToJoin.value = true
-            hasRequestedToQuit.value = false
+            waitForChoosing.value = true
             socket.value.emit("user-want-to-join-janken")
         }
+        watch(isStageChoosing, () => { if (isStageChoosing.value) waitForChoosing.value = false })
+        
+        const waitForJoining = ref(false)
         const quit = () =>
         {
-            hasRequestedToQuit.value = true
+            waitForJoining.value = true
             socket.value.emit("user-want-to-quit-janken")
         }
+        watch(isStageJoining, () => { if (isStageJoining.value) waitForJoining.value = false })
         
+        const waitForResult = ref(false)
+        const isWaitingForOpponent = ref(false)
+        let waitingForOpponentTimer = null
         const chooseHand = (handKey) =>
         {
-            hasChosenHand.value = true
+            waitForResult.value = true
             socket.value.emit("user-want-to-choose-janken-hand", handKey)
-            setTimeout(() =>
-            {
-                // to avoid the flashing message of waiting for the other
-                // opponent if you're the last to pick
-                isWaitingForOpponent.value = true
-            }, 500)
+            
+            // to avoid the flashing message of waiting for the other
+            // opponent if you're the last to pick
+            waitingForOpponentTimer = setTimeout(
+                () => { isWaitingForOpponent.value = true }, 500)
         }
         
-        const prepareGame = () =>
+        watch(isStageResult, () =>
         {
-            hasChosenHand.value = false
+            if (!isStageResult.value) return
+            
+            waitForResult.value = false
+            clearTimeout(waitingForOpponentTimer)
             isWaitingForOpponent.value = false
-            
-            isActive.value = true
-            showResults.value = false
-        }
+        })
         
-        const resetGame = () =>
+        const drawCount = ref(0)
+        watch(isStageDraw, () => drawCount.value++)
+        let joinableTimer = null
+        watch(isActive, () =>
         {
-            isActive.value = false
-            if (isCurrentUserPlaying.value)
+            if (isActive.value)
             {
-                isVisible.value = true
-                isCurrentUserPlaying.value = false
+                clearTimeout(joinableTimer)
+                isJoinable.value = false
             }
-            hasRequestedToQuit.value = false
-            drawCount.value = 0
-        }
-        
-        const processState = () =>
-        {
-            if (state.value.stage == "inactive" && state.value.player1Id)
-            {
-                player1.value = users.value[state.value.player1Id]
-                    || { id: state.value.player1Id, name: "N/A" }
-                player2.value = null
-            }
-            if (player2.value == null && state.value.stage == "choosing" && state.value.player2Id)
-                player2.value = users.value[state.value.player2Id]
-                    || { id: state.value.player2Id, name: "N/A" }
-            
-            if (state.value.namedPlayerId)
-                namedPlayer.value = player1.value.id == state.value.namedPlayerId
-                    ? player1.value : player2.value
             else
-                namedPlayer.value = null
-            
-            isCurrentUserPlaying.value =
-                state.value.player1Id == myUserId.value
-                || state.value.player2Id == myUserId.value
-            
-            if (isCurrentUserPlaying.value)
-                isVisible.value = true
-            
-            hasRequestedToJoin.value = false
-            
-            if (state.value.stage == "choosing")
             {
-                prepareGame()
+                drawCount.value = 0
+                joinableTimer = setTimeout(() => isJoinable.value = true, 2000)
             }
-            else if (state.value.stage == "win")
-            {
-                setTimeout(() => {
-                    showResults.value = true
-                    setTimeout(resetGame, 2000)
-                }, 2000)
-            }
-            else if (state.value.stage == "draw")
-            {
-                setTimeout(() =>
-                {
-                    showResults.value = true
-                    setTimeout(() =>
-                    {
-                        state.value.stage = "choosing"
-                        prepareGame()
-                        drawCount.value++
-                    }, 2000)
-                }, 2000)
-            }
-            else if (state.value.stage == "quit"
-                || state.value.stage == "timeout")
-            {
-                setTimeout(resetGame, 2000)
-            }
-        }
-        
-        watch(state, processState)
-        processState()
+        })
         
         return {
             hands,
-            myUserId,
             
             isVisible,
             isActive,
+            isJoinable,
             state,
             namedPlayer,
             player1,
             player2,
             isCurrentUserPlaying,
-            showResults,
             isWaitingForOpponent,
-            hasRequestedToJoin,
-            hasRequestedToQuit,
-            hasChosenHand,
+            waitForChoosing,
+            waitForJoining,
+            waitForResult,
             drawCount,
             
             display,

@@ -89,7 +89,7 @@ function initializeRoomStates()
                     timer: null,
                 },
                 janken: {
-                    stage: "inactive",
+                    stage: "joining",
                     player1Id: null,
                     player2Id: null,
                     player1Hand: null,
@@ -202,7 +202,7 @@ const sendRoomState = (socket: Socket, user: Player, currentRoom: Room) =>
         connectedUsers,
         streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams),
         chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId),
-        jankenState: buildJankenStateDto(roomStates, user.areaId, user.roomId),
+        jankenState: buildJankenStateDto(user.areaId, user.roomId),
         coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
         hideStreams: settings.noStreamIPs.some(noStreamIP => user.ips.some(ip => ip == noStreamIP)),
     }
@@ -238,7 +238,7 @@ io.on("connection", function (socket: Socket)
             await clearRoomListener(user)
             userRoomEmit(user, "server-user-left-room", user.id);
             stopChessGame(roomStates, user)
-            quitJanken(roomStates, user)
+            quitJanken(user)
         }
         catch (exc)
         {
@@ -854,7 +854,7 @@ io.on("connection", function (socket: Socket)
             await clearStream(user)
             await clearRoomListener(user)
             stopChessGame(roomStates, user)
-            quitJanken(roomStates, user)
+            quitJanken(user)
             userRoomEmit(user, "server-user-left-room", user.id)
             socket.leave(user.areaId + user.roomId)
 
@@ -1144,18 +1144,18 @@ io.on("connection", function (socket: Socket)
         {
             log.info("user-want-to-join-janken", user.id)
             const state = roomStates[user.areaId][user.roomId].janken
-            if(state.stage != "inactive") return
+            if(state.stage != "joining") return
+            
             if(!state.player1Id)
             {
                 state.player1Id = user.id
+                sendUpdatedJankenState(user.areaId, user.roomId)
             }
-            else
+            else if(!state.player2Id)
             {
                 state.player2Id = user.id
-                state.stage = "choosing"
-                startJankenTimeout(roomStates, user.areaId, user.roomId, 20000)
+                setupJankenStageChoosing(user.areaId, user.roomId)
             }
-            sendUpdatedJankenState(roomStates, user.areaId, user.roomId)
         }
         catch (e)
         {
@@ -1170,43 +1170,17 @@ io.on("connection", function (socket: Socket)
             log.info("user-want-to-choose-janken-hand", user.id, hand)
             const state = roomStates[user.areaId][user.roomId].janken
             if (state.stage != "choosing") return
-            if(state.player1Id == user.id)
+            
+            if(state.player1Id == user.id && !state.player1Hand)
                 state.player1Hand = hand
-            else if(state.player2Id == user.id)
+            if(state.player2Id == user.id && !state.player2Hand)
                 state.player2Hand = hand
-            else
+            if (!state.player1Hand || !state.player2Hand)
                 return
+            state.stage = "phrase"
+            sendUpdatedJankenState(user.areaId, user.roomId)
             if (state.player1Hand && state.player2Hand)
-            {
-                if (state.player1Hand !== state.player2Hand)
-                {
-                    state.stage = "win"
-                    const winningHands = {
-                        rock: "scissors",
-                        paper: "rock",
-                        scissors: "paper",
-                    }
-                    state.namedPlayerId = (winningHands[state.player1Hand] == state.player2Hand
-                        ? state.player1Id
-                        : state.player2Id)
-                }
-                else
-                {
-                    state.stage = "draw"
-                }
-                sendUpdatedJankenState(roomStates, user.areaId, user.roomId)
-                if (state.stage == "draw")
-                {
-                    state.stage = "choosing"
-                    state.player1Hand = null
-                    state.player2Hand = null
-                    startJankenTimeout(roomStates, user.areaId, user.roomId, 22000) // +2000 because of the displaying of the results
-                }
-                else
-                {
-                    resetJanken(roomStates, user.areaId, user.roomId, true)
-                }
-            }
+                setTimeout(determineJankenResults, 2000, user.areaId, user.roomId)
         }
         catch (e)
         {
@@ -1219,7 +1193,7 @@ io.on("connection", function (socket: Socket)
         try
         {
             log.info("user-want-to-quit-janken", user.id)
-            quitJanken(roomStates, user)
+            quitJanken(user)
         }
         catch (e)
         {
@@ -1537,7 +1511,7 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
             connectedUsers: filteredList.map(toPlayerDto),
             streams: [],
             chessboardState: buildChessboardStateDto(roomStates, areaId, roomId),
-            jankenState: buildJankenStateDto(roomStates, areaId, roomId),
+            jankenState: buildJankenStateDto(areaId, roomId),
             coinCounter: roomStates[areaId][roomId].coinCounter,
             hideStreams: false,
         }
@@ -2094,7 +2068,7 @@ async function clearRoomListener(user: Player)
     }
 }
 
-function buildJankenStateDto(roomStates: RoomStateCollection, areaId: string, roomId: string): JankenStateDto
+function buildJankenStateDto(areaId: string, roomId: string): JankenStateDto
 {
     const state = roomStates[areaId][roomId].janken
     return {
@@ -2107,28 +2081,69 @@ function buildJankenStateDto(roomStates: RoomStateCollection, areaId: string, ro
     }
 }
 
-function sendUpdatedJankenState(roomStates: RoomStateCollection, areaId: string, roomId: string)
+function sendUpdatedJankenState(areaId: string, roomId: string)
 {
-    const stateDTO: JankenStateDto = buildJankenStateDto(roomStates, areaId, roomId)
+    const stateDTO: JankenStateDto = buildJankenStateDto(areaId, roomId)
     roomEmit(areaId, roomId, "server-update-janken", stateDTO);
 }
 
-function startJankenTimeout(roomStates: RoomStateCollection, areaId: string, roomId: string, length: number)
+function startJankenTimeout(areaId: string, roomId: string, length: number)
 {
     const state = roomStates[areaId][roomId].janken
     if (state.timeoutTimer) clearTimeout(state.timeoutTimer)
     state.timeoutTimer = setTimeout(() =>
     {
         state.stage = "timeout"
-        sendUpdatedJankenState(roomStates, areaId, roomId)
-        resetJanken(roomStates, areaId, roomId, true)
+        sendUpdatedJankenState(areaId, roomId)
+        resetJanken(areaId, roomId, true)
     }, length)
 }
 
-function resetJanken(roomStates: RoomStateCollection, areaId: string, roomId: string, withoutEmit?: boolean)
+function setupJankenStageChoosing(areaId: string, roomId: string)
 {
     const state = roomStates[areaId][roomId].janken
-    state.stage = "inactive"
+    state.stage = "choosing"
+    state.player1Hand = null
+    state.player2Hand = null
+    startJankenTimeout(areaId, roomId, 20000)
+    sendUpdatedJankenState(areaId, roomId)
+}
+
+function determineJankenResults(areaId: string, roomId: string)
+{
+    const state = roomStates[areaId][roomId].janken
+    if (state.player1Hand === null || state.player2Hand === null) return
+    if (state.player1Hand !== state.player2Hand)
+    {
+        state.stage = "win"
+        const winningHands = {
+            rock: "scissors",
+            paper: "rock",
+            scissors: "paper",
+        }
+        state.namedPlayerId = (winningHands[state.player1Hand] == state.player2Hand
+            ? state.player1Id
+            : state.player2Id)
+    }
+    else
+    {
+        state.stage = "draw"
+    }
+    sendUpdatedJankenState(areaId, roomId)
+    if (state.stage == "draw")
+    {
+        setTimeout(setupJankenStageChoosing, 2000, areaId, roomId)
+    }
+    else
+    {
+        resetJanken(areaId, roomId, true)
+    }
+}
+
+function resetJanken(areaId: string, roomId: string, withoutEmit?: boolean)
+{
+    const state = roomStates[areaId][roomId].janken
+    state.stage = "joining"
     state.player1Id = null
     state.player2Id = null
     state.namedPlayerId = null
@@ -2137,18 +2152,18 @@ function resetJanken(roomStates: RoomStateCollection, areaId: string, roomId: st
     if (state.timeoutTimer) clearTimeout(state.timeoutTimer)
     state.timeoutTimer = null
     if (!withoutEmit)
-        sendUpdatedJankenState(roomStates, areaId, roomId)
+        sendUpdatedJankenState(areaId, roomId)
 }
 
-function quitJanken(roomStates: RoomStateCollection, user: Player)
+function quitJanken(user: Player)
 {
     const state = roomStates[user.areaId][user.roomId].janken
     if (!(state.player1Id == user.id || state.player2Id == user.id))
         return
     state.stage = "quit"
     state.namedPlayerId = user.id
-    sendUpdatedJankenState(roomStates, user.areaId, user.roomId)
-    resetJanken(roomStates, user.areaId, user.roomId, true)
+    sendUpdatedJankenState(user.areaId, user.roomId)
+    resetJanken(user.areaId, user.roomId, true)
 }
 
 function buildChessboardStateDto(roomStates: RoomStateCollection, areaId: string, roomId: string): ChessboardStateDto
