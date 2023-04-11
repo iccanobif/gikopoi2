@@ -305,6 +305,7 @@ window.vueApp = Vue.createApp({
         return {
             socket: Vue.computed(() => this.socket),
             users: Vue.computed(() => this.users),
+            ignoredUserIds: Vue.computed(() => this.ignoredUserIds),
             myUserId: Vue.computed(() => this.myUserID),
             
             highlightedUserId: Vue.computed(() => this.highlightedUserId),
