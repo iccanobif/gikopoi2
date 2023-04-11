@@ -1382,7 +1382,7 @@ app.get("/", async (req, res) =>
             logException(e, null)
         }
 
-        data = data.replace("@EXPECTED_SERVER_VERSION@", appVersion.toString())
+        data = data.replace(/@EXPECTED_SERVER_VERSION@/g, appVersion.toString())
         data = data.replace("@ANNUAL_EVENTS@", JSON.stringify(annualEventDefinitions).replace(/\"/g, "\\\""))
         data = data.replace("@SITE_AREAS@", JSON.stringify(settings.siteAreas).replace(/\"/g, "\\\""))
         

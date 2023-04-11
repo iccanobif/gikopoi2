@@ -228,7 +228,15 @@
                                 v-if="streamSlot.isActive"
                                 class="stream-title active-stream-title"
                                 v-bind:class="{'highlighted-stream-title': streamSlot.userId && streamSlot.userId == highlightedUserId}"
-                                v-on:click="highlightUser(streamSlot.userId, streamSlot.title)">{{ users[streamSlot.userId].name }}
+                                v-on:click="highlightUser(streamSlot.userId, streamSlot.title)">{{ users[streamSlot.userId]?.name }}
+                                <!-- NOTE: Above, I'm using the null propagator in the `users[streamSlot.userId]?.name` expression for
+                                           this regrettable reason: when changing room, updateRoomState() does a lot of stuff, among which
+                                           there is the updating of this.users and this.streams. Unfortunately, there are quite a lot of
+                                           asynchronous operations (using await) between those two updates, which means that after this.users
+                                           is updated with the users of the new room, this.streams still has the stream slots of the old room,
+                                           but vue3 still tries to rerender the stream slots, meaning that users[streamSlot.userId] will return
+                                           undefined. Maybe a better solution would be to make sure that stream slots are rerendered only if 
+                                           this.streams is updated? I'm not sure how to do that. -->
                                 <span v-bind:title="$t('ui.visible_only_to_specific_users_stream')"
                                       v-if="streamSlot.isVisibleOnlyToSpecificUsers"
                                       class="fas fa-lock visible-only-to-specific-users-stream-icon"></span>
@@ -964,23 +972,21 @@
     <audio id="login-sound" src="login.mp3"></audio>
     <audio id="ka-ching-sound" src="ka-ching.mp3"></audio>
     
-    <script src="libraries/vue.js"></script>
-    <script src="libraries/vue-i18n.js"></script>
-    <script src="libraries/jquery-1.12.4.js"></script>
-    <script src="libraries/jquery-ui/jquery-ui.min.js"></script>
-    <script src='scripts/jquery.ui.touch-punch.min.js'></script>
-    <script src="libraries/dayjs.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src='scripts/webrtc-codec-support.min.js'></script>
-
-    <script src="scripts/riffwave.js"></script>
-    <script src="scripts/Blob.js"></script>
-    <script src="scripts/animalese.js"></script>
-    <script src="chess/js/chessboard-1.0.0.min.js"></script>
-    <script src="scripts/input-knobs.js"></script>
-
-    <script type="module" src='scripts/polyfills.js'></script>
-    <script type="module" src='scripts/main.js'></script>
+    <script src="/socket.io/socket.io.js?v=@EXPECTED_SERVER_VERSION@"></script>
+    <script src="libraries/vue.js?v=@EXPECTED_SERVER_VERSION@"></script>
+    <script src="libraries/vue-i18n.js?v=@EXPECTED_SERVER_VERSION@"></script>
+    <script src="libraries/jquery-1.12.4.js?v=@EXPECTED_SERVER_VERSION@"></script>
+    <script src="libraries/jquery-ui/jquery-ui.min.js?v=@EXPECTED_SERVER_VERSION@"></script>
+    <script src='scripts/jquery.ui.touch-punch.min.js?v=@EXPECTED_SERVER_VERSION@'></script>
+    <script src="libraries/dayjs.min.js?v=@EXPECTED_SERVER_VERSION@"></script>
+    <script src='scripts/webrtc-codec-support.min.js?v=@EXPECTED_SERVER_VERSION@'></script>
+    <script src="scripts/riffwave.js?v=@EXPECTED_SERVER_VERSION@"></script>
+    <script src="scripts/Blob.js?v=@EXPECTED_SERVER_VERSION@"></script>
+    <script src="scripts/animalese.js?v=@EXPECTED_SERVER_VERSION@"></script>
+    <script src="chess/js/chessboard-1.0.0.min.js?v=@EXPECTED_SERVER_VERSION@"></script>
+    <script src="scripts/input-knobs.js?v=@EXPECTED_SERVER_VERSION@"></script>
+    <script type="module" src='scripts/polyfills.js?v=@EXPECTED_SERVER_VERSION@'></script>
+    <script type="module" src='scripts/main.js?v=@EXPECTED_SERVER_VERSION@'></script>
 </body>
 
 </html>

@@ -1,6 +1,6 @@
 import { RenderCache } from "./rendercache.js";
 import { annualEvent } from "./annualevents.js";
-import { stringToImage } from "./utils.js";
+import { stringToImageList } from "./utils.js";
 
 function isNum(num)
 {
@@ -81,7 +81,14 @@ export class Character
         }
         
         const rawImageLayers = this._getRawImage(props)
-        if (!rawImageLayers) return []
+        // Not sure why, but rawImageLayers seems to have "undefined" elements sometimes.
+        // Maybe that happens when stringToImageList() throws an exception? Logging some info
+        // so we can figure out what's going on next time it happens to someone
+        const rawImagesLayersNoFalsyElements = rawImageLayers.filter(o => o)
+        if (rawImagesLayersNoFalsyElements.length != rawImageLayers.length)
+            logToServer("ERROR! falsy element in rawImageLayers, " + this.characterName + " " + JSON.stringify(props))
+
+        if (!rawImagesLayersNoFalsyElements) return []
         
         const imageKeyArray = [
             props.version,
@@ -89,17 +96,17 @@ export class Character
             props.state,
             props.isMirroredLeft
         ]
-        
-        if (rawImageLayers.find(o => o.tags && o.tags.includes("eyes_closed")))
+
+        if (rawImagesLayersNoFalsyElements.find(o => o.tags && o.tags.includes("eyes_closed")))
             imageKeyArray.push(props.hasEyesClosed)
-        if (rawImageLayers.find(o => o.tags && o.tags.includes("mouth_closed")))
+        if (rawImagesLayersNoFalsyElements.find(o => o.tags && o.tags.includes("mouth_closed")))
             imageKeyArray.push(props.hasMouthClosed)
         
         const imageKey = imageKeyArray.join(",")
         
         if (this.renderImages[imageKey]) return this.renderImages[imageKey]
         
-        const outputLayers = rawImageLayers.filter(o => (!o.tags
+        const outputLayers = rawImagesLayersNoFalsyElements.filter(o => (!o.tags
             || props.hasEyesClosed && o.tags.includes("eyes_closed")
             || !props.hasEyesClosed && o.tags.includes("eyes_open")
             || props.hasMouthClosed && o.tags.includes("mouth_closed")
@@ -112,11 +119,12 @@ export class Character
     async loadImages(dto)
     {
         const rawImages = {}
-        const addImageString = (version, side, state, svgString) =>
+        const addImageString = async (version, side, state, svgString) =>
         {
             if (!rawImages[version])
                 rawImages[version] = { "front": {}, "back": {} }
-            return stringToImage(svgString, dto.isBase64).then(images => { rawImages[version][side][state] = images })
+            const images = await stringToImageList(svgString, dto.isBase64);
+            rawImages[version][side][state] = images;
         }
         
         const promises = [

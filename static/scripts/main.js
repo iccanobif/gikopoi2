@@ -708,11 +708,11 @@ window.vueApp = Vue.createApp({
 
             this.users = {};
 
-            for (const u of usersDto)
+            for (const userDto of usersDto)
             {
-                this.addUser(u);
-                if(previousRoomId != this.currentRoom.id && this.users[u.id].message)
-                    this.displayUserMessage(u, this.users[u.id].message);
+                const user = this.addUser(userDto);
+                if(previousRoomId != this.currentRoom.id && user.message)
+                    this.displayUserMessage(user, user.message);
             }
             this.setMentionRegexObjects()
 
@@ -969,7 +969,7 @@ window.vueApp = Vue.createApp({
                 roomList.forEach(r => {
                     r.sortName = this.$t("room." + r.id, {reading: true});
                     r.streamerCount = r.streams.length;
-                    r.streamerDisplayNames = r.streams.map(s => s.userName)
+                    r.streams.forEach(s => s.userName = s.userName == "" ? this.$t("default_user_name") : s.userName)
                 })
                 this.roomList = roomList;
                 this.rulaRoomGroup = "all";
@@ -1059,6 +1059,8 @@ window.vueApp = Vue.createApp({
             newUser.isAlternateCharacter = userDTO.isAlternateCharacter
 
             this.users[userDTO.id] = newUser;
+
+            return newUser;
         },
         writeMessageToLog(userName, msg, userId)
         {
@@ -2555,7 +2557,7 @@ window.vueApp = Vue.createApp({
 
                     if (notification)
                         notification.addEventListener("click", (event) => {
-                            vueApp.wantToTakeStream(slotId);
+                            this.wantToTakeStream(slotId);
                             window.focus();
                         })
                 }
@@ -3518,11 +3520,13 @@ window.vueApp = Vue.createApp({
             {
                 case "ArrowDown":
                 case "KeyJ":
+                case "KeyS":
                     this.rulaRoomSelection = this.preparedRoomList[(previousIndex + 1) % this.preparedRoomList.length].id
                     document.getElementById("room-tr-" + this.rulaRoomSelection).scrollIntoView({ block: "nearest"})
                     break;
                 case "ArrowUp":
                 case "KeyK":
+                case "KeyW":
                     if (previousIndex <= 0)
                         this.rulaRoomSelection = this.preparedRoomList[this.preparedRoomList.length - 1].id
                     else
