@@ -535,7 +535,7 @@ window.vueApp = createApp({
         getLangEntries()
         {
             const topEntries = ["ja", "en"]
-            return Object.entries(this.$i18n.messages)
+            return Object.entries(i18n.global.messages.value)
                 .sort((a, b) =>
             {
                 const ta = topEntries.indexOf(a[0])

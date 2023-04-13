@@ -44,12 +44,11 @@
                     </div>
                 </header>
                 <form id="login-form">
-
                     <input v-if="passwordInputVisible" type="text" v-model="password"/>
                     <div id="area-selection">
                         <label v-for="(siteArea, index) in siteAreas" v-show="!siteArea.unlisted" :for="siteArea.id + '-selection'">
                             <input type="radio" :id="siteArea.id + '-selection'" :value="siteArea.id" v-model="areaId"
-                                v-on:click="setLocale((siteArea.restrictLanguage && siteArea.language) || language)" :disabled="isLoggingIn">
+                                v-on:click="setLocale((siteArea.language != 'any' && siteArea.language) || language)" :disabled="isLoggingIn">
                             {{ siteArea.name }} [{{ $t("ui.login_user_count") + siteAreasInfo[siteArea.id].userCount }}
                             {{ $t("ui.login_streamer_count") + siteAreasInfo[siteArea.id].streamerCount }}]</label>
                     </div>
