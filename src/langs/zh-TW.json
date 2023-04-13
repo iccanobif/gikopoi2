@@ -1,4 +1,3 @@
-export default
 {
     lang_name: "繁體中文（臺灣）",
     lang_sort_key: "繁體中文（臺灣）",
@@ -63,7 +62,7 @@ export default
         user_list_popup_unignore: "解除隱藏",
         user_list_popup_block: "封鎖",
         user_list_popup_close: "關閉",
-        user_list_popup_blurb: "隱藏：對方的訊息與角色不會出現在你的畫面中(註：對方仍可以看到你。)，對方重新登入後隱藏失效。<br>封鎖：雙方無法看到彼此的訊息與角色，解除封鎖需要重新啟動瀏覽器。",
+        user_list_popup_blurb: "隱藏：對方的訊息與角色不會出現在你的畫面中(註：對方仍可以看到你。)，對方重新登入後隱藏失效。\n封鎖：雙方無法看到彼此的訊息與角色，解除封鎖需要重新啟動瀏覽器。",
         // user_list_popup_give_stream: "",
         // user_list_popup_revoke_stream: "",
         

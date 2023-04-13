@@ -599,6 +599,7 @@ video {
 .popup-item
 {
     margin: 10px;
+    white-space: pre-line;
 }
 
 .popup-subsection

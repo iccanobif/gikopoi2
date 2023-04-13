@@ -1,4 +1,3 @@
-export default
 {
     lang_name: "Türkçe",
     lang_sort_key: "Türkçe",
@@ -63,7 +62,7 @@ export default
         user_list_popup_unignore: "Yoksaymayı Bırak",
         user_list_popup_block: "Engelle",
         user_list_popup_close: "Kapat",
-        user_list_popup_blurb: "Uyarı: Yoksayılan kullanıcıyı görmeyi bırakırsın fakat o seni görmeye devam eder. <br>Engellenen kullanıcı tekrar bağlansa bile engelli kalır.<br/>'Yayın kitlesi' eğer 'Yalnızca belirli kullanıcılar' olarak seçilirse hangi kullanıcıların yayını izleyececeğini 'Yayını göster' tuşuyla seçmek mümkündür.",
+        user_list_popup_blurb: "Uyarı: Yoksayılan kullanıcıyı görmeyi bırakırsın fakat o seni görmeye devam eder. \nEngellenen kullanıcı tekrar bağlansa bile engelli kalır.\n'Yayın kitlesi' eğer 'Yalnızca belirli kullanıcılar' olarak seçilirse hangi kullanıcıların yayını izleyececeğini 'Yayını göster' tuşuyla seçmek mümkündür.",
         user_list_popup_give_stream: "Yayını göster",
         user_list_popup_revoke_stream: "Yayını feshet",
         

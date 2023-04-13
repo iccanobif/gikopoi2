@@ -1,4 +1,3 @@
-export default
 {
     lang_name: "Svenska",
     lang_sort_key: "Svenska",
@@ -63,7 +62,7 @@ export default
         user_list_popup_unignore: "Avinignorera",
         user_list_popup_block: "Blockera",
         user_list_popup_close: "Stäng",
-        user_list_popup_blurb: "Varning: När du ignorerar användare kommer du inte se dem, men de kommer fortfarande att se dig.<br>En blockerad användare fortsätter vara blockerad även efter återanslutning.",
+        user_list_popup_blurb: "Varning: När du ignorerar användare kommer du inte se dem, men de kommer fortfarande att se dig.\nEn blockerad användare fortsätter vara blockerad även efter återanslutning.",
         user_list_popup_give_stream: "Tillåt strömning",
         user_list_popup_revoke_stream: "Återkalla strömningstillstånd",
         

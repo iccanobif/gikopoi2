@@ -1,16 +1,19 @@
-import { defineConfig } from "vite";
+import { defineConfig, splitVendorChunkPlugin } from "vite";
 import vue from "@vitejs/plugin-vue";
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
+import { resolve } from 'path'
 
-// https://vitejs.dev/config/
 export default defineConfig({
     resolve: {
         alias: {
-            vue: 'vue/dist/vue.esm-bundler'
+            vue: 'vue/dist/vue.esm-bundler',
         }
     },
     plugins: [
         vue(),
-        VueI18nPlugin(),
+        VueI18nPlugin({
+            include: resolve(__dirname, './src/langs/**'),
+        }),
+        splitVendorChunkPlugin(),
     ],
 });

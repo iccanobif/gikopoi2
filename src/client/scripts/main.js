@@ -26,7 +26,7 @@ import {
     removeControlChars,
     escapeHTML
 } from "./utils.js";
-import messages from "./lang.js";
+import messages from '@intlify/unplugin-vue-i18n/messages'
 import { speak } from "./tts.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
 import { RenderCache } from "./rendercache.js";
@@ -536,22 +536,23 @@ window.vueApp = createApp({
         getLangEntries()
         {
             const topEntries = ["ja", "en"]
-            return Object.entries(i18n.global.messages.value)
+            return this.$i18n.availableLocales
                 .sort((a, b) =>
             {
-                const ta = topEntries.indexOf(a[0])
-                const tb = topEntries.indexOf(b[0])
+                const ta = topEntries.indexOf(a)
+                const tb = topEntries.indexOf(b)
                 if(ta >= 0 || tb >= 0)
                 {
                     if (ta < 0) return 1
                     if (tb < 0) return -1
                     return ta < tb ? -1 : 1
                 }
-                return a[1].lang_sort_key.localeCompare(b[1].lang_sort_key)
+                
+                return this.$t("lang_sort_key", 1, { locale: a }).localeCompare(this.$t("lang_sort_key", 1, { locale: b }))
             })
-                .map(([id, obj]) =>
+                .map((id) =>
             {
-                return {id, name: obj.lang_name, endOfTopEntries: id == topEntries[topEntries.length-1]}
+                return {id, name: this.$t("lang_name", 1, { locale: id }), endOfTopEntries: id == topEntries[topEntries.length-1]}
             })
         },
         getSiteArea()
@@ -972,7 +973,7 @@ window.vueApp = createApp({
             this.socket.on("server-room-list", async (roomList) =>
             {
                 roomList.forEach(r => {
-                    r.sortName = this.$t("room." + r.id, {reading: true});
+                    r.sortName = this.$t("room." + r.id, 2);
                     r.streamerCount = r.streams.length;
                     r.streams.forEach(s => s.userName = s.userName == "" ? this.$t("default_user_name") : s.userName)
                 })

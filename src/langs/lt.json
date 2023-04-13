@@ -1,4 +1,3 @@
-export default
 {
     lang_name: "Lietuvių",
     lang_sort_key: "Lietuvių",
@@ -63,7 +62,7 @@ export default
         user_list_popup_unignore: "Nebeignoruoti",
         user_list_popup_block: "Blokuoti",
         user_list_popup_close: "Uždaryti",
-        user_list_popup_blurb: "ĮSPĖJIMAS: Ignoravus naudotoją jo daugiau nebematysite, tačiau jie vistiek matys jus.<br>Užblokavus naudotoją jis pasiliks užblokuotas net jam prisijungus iš naujo.<br/>'Transliacijos auditorija' skiltyje pasirinkus 'Tam tikri naudotojai' galite išsirinkti konkrečius asmenis kurie jus matys. Tam reikia ties jų vardais nuspausti 'Rodyti transliaciją'.",
+        user_list_popup_blurb: "ĮSPĖJIMAS: Ignoravus naudotoją jo daugiau nebematysite, tačiau jie vistiek matys jus.\nUžblokavus naudotoją jis pasiliks užblokuotas net jam prisijungus iš naujo.\n'Transliacijos auditorija' skiltyje pasirinkus 'Tam tikri naudotojai' galite išsirinkti konkrečius asmenis kurie jus matys. Tam reikia ties jų vardais nuspausti 'Rodyti transliaciją'.",
         user_list_popup_give_stream: "Rodyti transliaciją",
         user_list_popup_revoke_stream: "Neberodyti transliacijos",
         
