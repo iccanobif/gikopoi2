@@ -123,7 +123,7 @@ watch(isActive, () =>
             <div class="slot-message">
                 <template v-if="state.stage == 'joining'">
                     <span v-if="!player1.id">{{ $t("ui.janken_start_a_game") }}</span>
-                    <i18n-t v-else-if="!player2.id" tag="span" keypath="ui.janken_waiting_for_opponent">
+                    <i18n-t v-else-if="!player2.id" tag="span" keypath="ui.janken_waiting_for_opponent" scope="global">
                         <template v-slot:username><username :user-id="player1.id" :user-name="player1.name"></username></template>
                     </i18n-t>
                 </template>
@@ -144,12 +144,12 @@ watch(isActive, () =>
                     <span v-else>{{ $t("ui.janken_phrase_after_draw_repeated") }}</span>
                 </template>
                 
-                <i18n-t v-else-if="state.stage == 'win'" tag="span" keypath="ui.janken_win">
+                <i18n-t v-else-if="state.stage == 'win'" tag="span" keypath="ui.janken_win" scope="global">
                     <template v-slot:username><username :user-id="namedPlayer.id" :user-name="namedPlayer.name"></username></template>
                 </i18n-t>
                 
                 <template v-else-if="state.stage == 'quit'">
-                    <i18n-t tag="span" keypath="ui.janken_quit">
+                    <i18n-t tag="span" keypath="ui.janken_quit" scope="global">
                         <template v-slot:username><username :user-id="namedPlayer.id" :user-name="namedPlayer.name"></username></template>
                     </i18n-t>
                 </template>
