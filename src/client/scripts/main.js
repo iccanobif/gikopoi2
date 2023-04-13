@@ -34,7 +34,7 @@ import { animateObjects, animateJizou } from "./animations.js";
 
 import ChessboardSlot from './chessboard-slot.js'
 import JankenSlot from './janken-slot.js'
-import ComponentUsername from './component-username.js'
+import ComponentUsername from './username.vue'
 import Changelog from './changelog.vue'
 
 // I define myUserID here outside of the vue.js component to make it

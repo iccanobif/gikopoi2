@@ -955,12 +955,6 @@
             </div>
         </div>
     </template>
-    
-    <template id="component-username">
-        <span class="username"
-            :class="{'highlighted-username': userId && userId == highlightedUserId}"
-            @click="highlightUser(userId, userName)">{{ userName }}</span>
-    </template>
 
     <audio id="message-sound" src="message.mp3"></audio>
     <audio id="mention-sound" src="mention.mp3"></audio>
