@@ -2,7 +2,7 @@
 {
     background-color: #c0c0c0;
     /* background-image: url("../characters/ika/front-standing.svg"); */
-    background-image: url("../background.svg");
+    background-image: url("../images/background.svg");
     background-blend-mode: soft-light;
     background-size: 60vw;
     background-position-x: calc(100% - 50px);
@@ -138,7 +138,8 @@ input[type='range']
     text-decoration: underline;
 }
 
-.video-container
+.video-container,
+.audio-stream-controls-spinner
 {
     z-index: 150;
     width: 219px;
@@ -148,7 +149,7 @@ input[type='range']
        flexible in respect to the contained video's size */ 
     height: auto !important;
     background-color: #7e7e7e;
-    background-image: url("../spinner.svg");
+    background-image: url("/spinner.svg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: 50px;
@@ -479,19 +480,19 @@ video {
 }
 .arrow-button-left
 {
-    background-image: url("../north_west_black_24dp.svg");
+    background-image: url("../images/north_west_black_24dp.svg");
 }
 .arrow-button-up
 {
-    background-image: url("../north_east_black_24dp.svg");
+    background-image: url("../images/north_east_black_24dp.svg");
 }
 .arrow-button-down
 {
-    background-image: url("../south_west_black_24dp.svg");
+    background-image: url("../images/south_west_black_24dp.svg");
 }
 .arrow-button-right
 {
-    background-image: url("../south_east_black_24dp.svg");
+    background-image: url("../images/south_east_black_24dp.svg");
 }
 
 
