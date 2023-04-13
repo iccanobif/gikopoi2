@@ -33,7 +33,7 @@ import { RenderCache } from "./rendercache.js";
 import { animateObjects, animateJizou } from "./animations.js";
 
 import ChessboardSlot from './chessboard-slot.js'
-import JankenSlot from './janken-slot.js'
+import JankenSlot from './janken-slot.vue'
 import ComponentUsername from './username.vue'
 import Changelog from './changelog.vue'
 
