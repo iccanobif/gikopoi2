@@ -1,4 +1,5 @@
 import express, { Request } from "express"
+import ViteExpress from "vite-express";
 import { rooms, dynamicRooms } from "./rooms";
 import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getUserByPrivateId, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users";
@@ -13,9 +14,9 @@ import { Chess } from "chess.js";
 import { Socket } from "socket.io";
 import { annualEventDefinitions, subscribeToAnnualEvents } from "./annualevents";
 
-const app: express.Application = express()
-const http = require('http').Server(app);
-const io = require("socket.io")(http, {
+const app = express()
+const server = require('http').Server(app);
+const io = require("socket.io")(server, {
     pingInterval: 25 * 1000, // Heroku fails with "H15 Idle connection" if a socket is inactive for more than 55 seconds with
     pingTimeout: 60 * 1000
 });
@@ -1360,60 +1361,35 @@ function getRealIpWebSocket(socket: Socket): string
     return forwardedFor.split(",").map(x => x.trim()).pop()!
 }
 
-app.get("/", async (req, res) =>
+app.get("/server_data.js", async (req, res) =>
 {
-    log.info("Fetching root..." + getRealIp(req) + " " + req.rawHeaders.join("|"))
-
-    try
+    let data = ""
+    data += 'window.EXPECTED_SERVER_VERSION = Number.parseInt("' + appVersion.toString() + '")' + '\n'
+    data += 'window.annualEvents = JSON.parse("' + JSON.stringify(annualEventDefinitions).replace(/\"/g, "\\\"") + '")' + '\n'
+    data += 'window.siteAreas = JSON.parse("' + JSON.stringify(settings.siteAreas).replace(/\"/g, "\\\"") + '")' + '\n'
+    
+    const siteAreasInfo = Object.fromEntries(Object.keys(roomStates).map(areaId =>
     {
-        let data = await readFile("static/index.html", 'utf8')
+        const connectedUserIds: Set<string> = getConnectedUserList(null, areaId)
+            .filter((u) => !u.blockedIps.includes(getRealIp(req)))
+            .reduce((acc, val) => acc.add(val.id), new Set<string>())
 
-        try {
-            const { statusCode: loginFooterStatusCode, body: loginFooterBody } = await got(
-                'https://raw.githubusercontent.com/iccanobif/gikopoi2/master/external/login_footer.html')
+        return [areaId, {
+            userCount: connectedUserIds.size,
+            streamerCount: Object.values(roomStates[areaId])
+                .map(s => s.streams)
+                .flat()
+                .filter(s => s.publisher != null && s.publisher.user.id && connectedUserIds.has(s.publisher.user.id))
+                .length
+        }]
+    }))
+    data += 'window.siteAreasInfo = JSON.parse("' + JSON.stringify(siteAreasInfo).replace(/\"/g, "\\\"") + '")' + '\n'
 
-            // const loginFooterStatusCode = 200
-            // const loginFooterBody = ""
-
-            data = data.replace("@LOGIN_FOOTER@", loginFooterStatusCode === 200 ? loginFooterBody : "")
-        }
-        catch (e)
-        {
-            logException(e, null)
-        }
-
-        data = data.replace(/@EXPECTED_SERVER_VERSION@/g, appVersion.toString())
-        data = data.replace("@ANNUAL_EVENTS@", JSON.stringify(annualEventDefinitions).replace(/\"/g, "\\\""))
-        data = data.replace("@SITE_AREAS@", JSON.stringify(settings.siteAreas).replace(/\"/g, "\\\""))
-        
-        const siteAreasInfo = Object.fromEntries(Object.keys(roomStates).map(areaId =>
-        {
-            const connectedUserIds: Set<string> = getConnectedUserList(null, areaId)
-                .filter((u) => !u.blockedIps.includes(getRealIp(req)))
-                .reduce((acc, val) => acc.add(val.id), new Set<string>())
-
-            return [areaId, {
-                userCount: connectedUserIds.size,
-                streamerCount: Object.values(roomStates[areaId])
-                    .map(s => s.streams)
-                    .flat()
-                    .filter(s => s.publisher != null && s.publisher.user.id && connectedUserIds.has(s.publisher.user.id))
-                    .length
-            }]
-        }))
-        data = data.replace("@SITE_AREAS_INFO@", JSON.stringify(siteAreasInfo).replace(/\"/g, "\\\""))
-
-        res.set({
-            'Content-Type': 'text/html; charset=utf-8',
-            'Cache-Control': 'no-cache'
-        })
-        res.end(data)
-    }
-    catch (e)
-    {
-        res.end(stringifyException(e))
-    }
-
+    res.set({
+        'Content-Type': 'text/javascript; charset=utf-8',
+        'Cache-Control': 'no-cache'
+    })
+    res.end(data)
 })
 
 const svgCrispCache: { [path: string]: string } = {};
@@ -1440,7 +1416,7 @@ app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
             }
 
         log.info("Fetching svg: " + svgPath)
-        let data = await readFile("static" + svgPath, 'utf8')
+        let data = await readFile("public" + svgPath, 'utf8')
 
         data = data.replace('<svg', '<svg shape-rendering="crispEdges"');
 
@@ -1465,8 +1441,8 @@ const static_properties = {
     }
 };
 
-app.use(express.static('static', static_properties));
-app.use(express.static('static/favicons', static_properties));
+app.use(express.static('public', static_properties));
+app.use(express.static('public/favicons', static_properties));
 
 app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
 {
@@ -1526,7 +1502,7 @@ app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
 
 function getCharacterImages(crisp: boolean)
 {
-    const characterIds = readdirSync("static/characters")
+    const characterIds = readdirSync("public/characters")
 
     const output: { [characterId: string]: CharacterSvgDto} = {}
     for (const characterId of characterIds)
@@ -1534,7 +1510,7 @@ function getCharacterImages(crisp: boolean)
         const extension = characterId == "molgiko" ? "png" : "svg"
 
         const getCharacterImage = (path: string, crisp: boolean) => {
-            const completePath = "static/characters/" + path
+            const completePath = "public/characters/" + path
 
             if (!existsSync(completePath))
                 return null
@@ -2457,7 +2433,8 @@ const port = process.env.PORT == undefined
 restoreState()
     .then(() =>
     {
-        http.listen(port, "0.0.0.0");
-        log.info("Server running on http://localhost:" + port);
+        server.listen(port, "0.0.0.0")
+        ViteExpress.bind(app, server)
+        log.info("Server running on http://localhost:" + port)
     })
     .catch(log.error)

@@ -1,4 +1,4 @@
-const { inject, watch, ref } = Vue
+import { inject, watch, ref } from 'vue'
 
 const fallbackUserName = "N/A"
 

@@ -1,6 +1,8 @@
 //localStorage.debug = '*'; // socket.io debug
 localStorage.removeItem("debug");
 
+import { createApp, computed, nextTick } from 'vue'
+import { createI18n } from 'vue-i18n'
 import { characters, loadCharacters } from "./character.js";
 import User from "./user.js";
 import {
@@ -33,6 +35,7 @@ import { animateObjects, animateJizou } from "./animations.js";
 import ChessboardSlot from './chessboard-slot.js'
 import JankenSlot from './janken-slot.js'
 import ComponentUsername from './component-username.js'
+import Changelog from './changelog.vue'
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -117,17 +120,18 @@ function getAppState()
         return "login"
 }
 
-const i18n = VueI18n.createI18n({
+const i18n = createI18n({
     locale: "ja",
     fallbackLocale: "en",
     warnHtmlInMessage: "off",
     messages,
 });
 
-window.vueApp = Vue.createApp({
+window.vueApp = createApp({
     components: {
         ChessboardSlot,
         JankenSlot,
+        Changelog,
     },
     data() {
         return {
@@ -303,12 +307,12 @@ window.vueApp = Vue.createApp({
     provide()
     {
         return {
-            socket: Vue.computed(() => this.socket),
-            users: Vue.computed(() => this.users),
-            ignoredUserIds: Vue.computed(() => this.ignoredUserIds),
-            myUserId: Vue.computed(() => this.myUserID),
+            socket: computed(() => this.socket),
+            users: computed(() => this.users),
+            ignoredUserIds: computed(() => this.ignoredUserIds),
+            myUserId: computed(() => this.myUserID),
             
-            highlightedUserId: Vue.computed(() => this.highlightedUserId),
+            highlightedUserId: computed(() => this.highlightedUserId),
             highlightUser: this.highlightUser,
         }
     },
@@ -427,7 +431,7 @@ window.vueApp = Vue.createApp({
                 this.selectedCharacter = characters[this.characterId];
 
                 // wait next tick so that canvas-container gets rendered in the DOM
-                await Vue.nextTick()
+                await nextTick()
 
                 const canvasHeight = localStorage.getItem("canvasHeight")
                 if (canvasHeight)
@@ -587,7 +591,7 @@ window.vueApp = Vue.createApp({
                 this.$t("ui.warning_toast_title"),
                 [this.$t("ui.popup_button_ok")],
                 0);
-            await Vue.nextTick();
+            await nextTick();
             const firstButton = document.querySelector("#dialog-popup .popup-buttons button");
             firstButton.focus();
         },
@@ -977,7 +981,7 @@ window.vueApp = Vue.createApp({
                 this.isRulaPopupOpen = true;
                 this.rulaRoomSelection = this.currentRoom.id;
 
-                await Vue.nextTick()
+                await nextTick()
                 document.getElementById("rula-popup").focus()
             });
 
@@ -3069,7 +3073,7 @@ window.vueApp = Vue.createApp({
                 this.isUserListPopupOpen = true;
                 if (this.highlightedUserId)
                 {
-                    Vue.nextTick(() => {
+                    nextTick(() => {
                         const element = document.getElementById("user-list-element-" + this.highlightedUserId)
                         if (element) element.scrollIntoView({ block: "nearest" })
                     })
@@ -3254,7 +3258,7 @@ window.vueApp = Vue.createApp({
             
             // Need to wait for the next tick so that knobElement.refresh() is called
             // with uiTheme already updated to its new value.
-            await Vue.nextTick()
+            await nextTick()
             this.checkBackgroundColor();
             for (const knobElement of document.getElementsByClassName("input-knob"))
             {

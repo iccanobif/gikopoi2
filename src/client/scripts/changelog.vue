@@ -1,5 +1,6 @@
-<div v-show="$i18n.locale == 'ja'">
-<h3>更新ログ</h3>
+<template>
+    <div v-show="$i18n.locale == 'ja'">
+        <h3>更新ログ</h3>
 2023/04/06: 校庭と噴水広場と楽屋でじゃんけんを出来るようになりました。<br/>
 2023/03/19: ニコニコ動画モードを追加しました。<br/>
 2023/03/04: キャラが瞬くようになりました。<br/>
@@ -107,9 +108,9 @@
 2021/01/12: 「一般」と「国際」を分離しました。<br />
 2021/01/11: 配信機能を改善しました。<br />
 2021/01/09: #rulaコマンドを追加しました。
-</div>
-<div v-show="$i18n.locale != 'ja'">
-	<h3>Change Log</h3>
+    </div>
+    <div v-show="$i18n.locale != 'ja'">
+        <h3>Change Log</h3>
 2023/04/06: Added Rock Paper Scissors to Schoolyard, Fountain Plaza and Dressing Room.<br/>
 2023/03/19: Added Niconico mode.<br/>
 2023/03/04: Added blinking.<br/>
@@ -132,7 +133,7 @@
 2022/03/28: Removed the option for making "private streams" (streams are always private, now). Can now reset the zoom by pressing 0 on the keyboard.<br/>
 2022/03/13: Added new room.<br/>
 2022/02/27: Added setting for showing or hiding the VU meter for listeners. Added a knob for panning stream audio left and right.<br/>
-2022/02/26: Added VU meter for listeners.<br/>	
+2022/02/26: Added VU meter for listeners.<br/>  
 2022/02/14: Fixed the bug that appeared when a streamer left the room without stopping the stream. Added Hungarian translation.<br/>
 2021/12/27: Added a setting for choosing whether to automatically play streams or not after pressing "Get stream".<br/>
 2021/12/27: Made it possible to select which device to stream.<br/>
@@ -160,7 +161,7 @@
 2021/05/15: Added volume boost from the listener's side (experimental).<br/>
 2021/05/11: When copying the log to the clipboard, timestamps are included as well.<br/>
 2021/05/10: Fixed tripcode generation.<br/>
-2021/05/01: Added option for selecting the smartphone camera. Added "animalese" TTS voice.<br/>	
+2021/05/01: Added option for selecting the smartphone camera. Added "animalese" TTS voice.<br/> 
 2021/04/26: It's possible now to set the position of the speech bubbles with the UIOP keys.<br/>
 2021/04/25: Added button for turning on and off desktop notifications. Added setting for turning on and off the login notification sound.<br/>
 2021/04/24: It's now possible to press Ctrl+A to select the log (and only the log). Added "Low Quality" mode in the settings. <br/>
@@ -181,7 +182,7 @@
 2021/03/13: "Get stream" button is now red. When unpinning a video, it's possible to move it around the page.<br/>
 2021/03/08: New settings for text to speech and bugfixes.<br/>
 2021/03/07: New URL (https://gikopoipoi.net). Text to speech. New settings. Timestamps in log when hovering on user names with the mouse.<br/>
-2021/03/06: Logout button. Setting for turning browser notifications on and off.<br/>	
+2021/03/06: Logout button. Setting for turning browser notifications on and off.<br/>   
 2021/03/03: New character.<br/>
 2021/03/01: Silly walk.<br/>
 2021/02/27: Added "Screen Capture Audio" to the stream advanced settings (it's an experimental feature, and doesn't work on all OS or browsers)。<br/>
@@ -217,4 +218,5 @@
 2021/01/12: Split _gen and _for。<br />
 2021/01/11: Improved streaming.<br />
 2021/01/09: Added #rula command.
-</div>
+    </div>
+</template>

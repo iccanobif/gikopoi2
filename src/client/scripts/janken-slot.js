@@ -1,4 +1,4 @@
-const { ref, toRef, watch, inject, computed } = Vue
+import { ref, toRef, watch, inject, computed } from 'vue'
 
 const hands = [ "rock", "paper", "scissors" ]
 const createFallbackUser = (id) => ({ id, name: "N/A" })
