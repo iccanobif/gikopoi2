@@ -2,7 +2,7 @@
 {
     background-color: #c0c0c0;
     /* background-image: url("../characters/ika/front-standing.svg"); */
-    background-image: url("../images/background.svg");
+    background-image: url("/images/background.svg");
     background-blend-mode: soft-light;
     background-size: 60vw;
     background-position-x: calc(100% - 50px);
@@ -480,19 +480,19 @@ video {
 }
 .arrow-button-left
 {
-    background-image: url("../images/north_west_black_24dp.svg");
+    background-image: url("/images/north_west_black_24dp.svg");
 }
 .arrow-button-up
 {
-    background-image: url("../images/north_east_black_24dp.svg");
+    background-image: url("/images/north_east_black_24dp.svg");
 }
 .arrow-button-down
 {
-    background-image: url("../images/south_west_black_24dp.svg");
+    background-image: url("/images/south_west_black_24dp.svg");
 }
 .arrow-button-right
 {
-    background-image: url("../images/south_east_black_24dp.svg");
+    background-image: url("/images/south_east_black_24dp.svg");
 }
 
 
@@ -984,13 +984,13 @@ button.checked {
     background-position: center;
 }
 
-.janken-hand-rock { background-image: url("../images/hand-rock.svg"); }
-.janken-hand-paper { background-image: url("../images/hand-paper.svg"); }
-.janken-hand-scissors { background-image: url("../images/hand-scissors.svg"); }
+.janken-hand-rock { background-image: url("/images/hand-rock.svg"); }
+.janken-hand-paper { background-image: url("/images/hand-paper.svg"); }
+.janken-hand-scissors { background-image: url("/images/hand-scissors.svg"); }
 
-button.janken-hand-rock { background-image: url("../images/hand-rock.light.svg"); }
-button.janken-hand-paper { background-image: url("../images/hand-paper.light.svg"); }
-button.janken-hand-scissors { background-image: url("../images/hand-scissors.light.svg"); }
+button.janken-hand-rock { background-image: url("/images/hand-rock.light.svg"); }
+button.janken-hand-paper { background-image: url("/images/hand-paper.light.svg"); }
+button.janken-hand-scissors { background-image: url("/images/hand-scissors.light.svg"); }
 
 .system-message
 {

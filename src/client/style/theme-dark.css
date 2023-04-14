@@ -92,17 +92,17 @@
 
 .theme-dark .arrow-button-left
 {
-    background-image: url("../images/north_west_black_24dp.dark.svg");
+    background-image: url("/images/north_west_black_24dp.dark.svg");
 }
 .theme-dark .arrow-button-up
 {
-    background-image: url("../images/north_east_black_24dp.dark.svg");
+    background-image: url("/images/north_east_black_24dp.dark.svg");
 }
 .theme-dark .arrow-button-down
 {
-    background-image: url("../images/south_west_black_24dp.dark.svg");
+    background-image: url("/images/south_west_black_24dp.dark.svg");
 }
 .theme-dark .arrow-button-right
 {
-    background-image: url("../images/south_east_black_24dp.dark.svg");
+    background-image: url("/images/south_east_black_24dp.dark.svg");
 }
