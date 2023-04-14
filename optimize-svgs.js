@@ -2,8 +2,8 @@ const { optimize, loadConfig } = require('svgo');
 const fs = require("fs/promises")
 
 let svgoConfig
-const charactersDirectory = "static/characters"
-const roomsDirectory = "static/rooms"
+const charactersDirectory = "public/characters"
+const roomsDirectory = "public/rooms"
 
 async function optimizeFile(fileFullName)
 {
@@ -19,8 +19,8 @@ async function optimizeFile(fileFullName)
 
 async function optimizeAll()
 {
-    await optimizeFile("static/enabled-listener.svg")
-    await optimizeFile("static/disabled-listener.svg")
+    await optimizeFile("public/enabled-listener.svg")
+    await optimizeFile("public/disabled-listener.svg")
 
     const characterIds = await fs.readdir(charactersDirectory)
     for (const characterId of characterIds)

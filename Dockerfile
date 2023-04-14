@@ -9,9 +9,9 @@ RUN apk add git
 WORKDIR /gikopoipoi
 ADD package.json ./package.json
 ADD yarn.lock ./yarn.lock
-ADD tripcode ./tripcode
+ADD tripcode ./extra_modules/tripcode
 RUN yarn install
 
 ADD . .
 RUN yarn build
-CMD ["node", "build/index.js"]
+CMD ["node", "build/index.js"] # The server files are currently not built anywhere so not sure what this should be right now
