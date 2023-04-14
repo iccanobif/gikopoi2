@@ -540,6 +540,13 @@ io.on("connection", function (socket: Socket)
                      "streamIsVtuberMode:", streamIsVtuberMode,
                      JSON.stringify(info))
 
+            if (!getUser(user.id))
+            {
+                log.info("ERROR server-not-ok-to-stream", "start_stream_user_does_not_exist", user.id, user.roomId, streamSlotId)
+                socket.emit("server-not-ok-to-stream", "start_stream_user_does_not_exist")
+                return
+            }
+
             const roomState = roomStates[user.areaId][user.roomId];
             const stream = roomState.streams[streamSlotId]
 
