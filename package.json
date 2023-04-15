@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "nodemon src/server/main.ts -w src/server",
-    "start": "NODE_ENV=production ts-node src/server/main.ts",
+    "start": "cross-env NODE_ENV=production ts-node src/server/main.ts",
     "build": "vite build",
     
     "start-persistor": "cross-env PERSISTOR_SECRET=hello node state-persistor.js",
