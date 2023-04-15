@@ -3686,7 +3686,16 @@ window.vueApp = createApp({
         },
         getAvatarSpriteForUser(userId)
         {
-            const character = this.users[userId].character
+            const user = this.users[userId]
+            if (!user)
+            {
+                // I'm handling this case to fix a crash when a user that's streaming with vtuber mode on
+                // blocks another user. It would be better if vue didn't call getAvatarSpriteForUser() in
+                // the first place, but for some reason in the <img> element that refers to this function,
+                // :src seems to be evaluated before v-if? Maybe I'm missing something.
+                return ""
+            }
+            const character = user.character
             return "characters/" + character.characterName + "/front-standing." + character.format
         },
     },
