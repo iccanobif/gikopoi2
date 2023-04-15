@@ -1368,13 +1368,26 @@ function getRealIpWebSocket(socket: Socket): string
     return forwardedFor.split(",").map(x => x.trim()).pop()!
 }
 
-app.get("/server_data.js", async (req, res) =>
+const cachedJsBundle = (() => {
+    return ""
+      + readFileSync("public/libraries/jquery-1.12.4.js").toString() + '\n'
+      + readFileSync("public/libraries/jquery-ui/jquery-ui.min.js").toString() + '\n'
+      + readFileSync("public/scripts/jquery.ui.touch-punch.min.js").toString() + '\n'
+      + readFileSync("public/libraries/dayjs.min.js").toString() + '\n'
+      + readFileSync("public/scripts/webrtc-codec-support.min.js").toString() + '\n'
+      + readFileSync("public/scripts/riffwave.js").toString() + '\n'
+      + readFileSync("public/scripts/Blob.js").toString() + '\n'
+      + readFileSync("public/scripts/animalese.js").toString() + '\n'
+      + readFileSync("public/chess/js/chessboard-1.0.0.min.js").toString() + '\n'
+      + readFileSync("public/scripts/input-knobs.js").toString() + '\n'
+      + readFileSync("src/client/scripts/polyfills.js").toString() + '\n'
+      + 'window.EXPECTED_SERVER_VERSION = Number.parseInt("' + appVersion.toString() + '")' + '\n'
+      + 'window.annualEvents = JSON.parse("' + JSON.stringify(annualEventDefinitions).replace(/\"/g, "\\\"") + '")' + '\n'
+      + 'window.siteAreas = JSON.parse("' + JSON.stringify(settings.siteAreas).replace(/\"/g, "\\\"") + '")' + '\n'
+})()
+
+app.get("/server_generated_bundle.js", async (req, res) =>
 {
-    let data = ""
-    data += 'window.EXPECTED_SERVER_VERSION = Number.parseInt("' + appVersion.toString() + '")' + '\n'
-    data += 'window.annualEvents = JSON.parse("' + JSON.stringify(annualEventDefinitions).replace(/\"/g, "\\\"") + '")' + '\n'
-    data += 'window.siteAreas = JSON.parse("' + JSON.stringify(settings.siteAreas).replace(/\"/g, "\\\"") + '")' + '\n'
-    
     const siteAreasInfo = Object.fromEntries(Object.keys(roomStates).map(areaId =>
     {
         const connectedUserIds: Set<string> = getConnectedUserList(null, areaId)
@@ -1390,13 +1403,14 @@ app.get("/server_data.js", async (req, res) =>
                 .length
         }]
     }))
-    data += 'window.siteAreasInfo = JSON.parse("' + JSON.stringify(siteAreasInfo).replace(/\"/g, "\\\"") + '")' + '\n'
+
+    const fullJsBundle = cachedJsBundle + 'window.siteAreasInfo = JSON.parse("' + JSON.stringify(siteAreasInfo).replace(/\"/g, "\\\"") + '")' + '\n';
 
     res.set({
         'Content-Type': 'text/javascript; charset=utf-8',
         'Cache-Control': 'no-cache'
     })
-    res.end(data)
+    res.end(fullJsBundle)
 })
 
 const svgCrispCache: { [path: string]: string } = {};
