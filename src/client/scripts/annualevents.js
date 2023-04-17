@@ -1,6 +1,6 @@
 function parseEventString(eventString)
 {
-    return eval("dayjs()." + eventString);
+    return new Function("return dayjs()." + eventString)()
 }
 
 export class AnnualEvent

@@ -10,15 +10,9 @@ function getNow()
     return dayjs().tz("Asia/Tokyo")
 }
 
-// @ts-ignore
-function _evalDayjs()
-{
-    return getNow()
-}
-
 function parseEventString(eventString: string): dayjs.Dayjs
 {
-    return eval("_evalDayjs()." + eventString);
+    return new Function("getNow", "return getNow()." + eventString)(getNow)
 }
 
 export class AnnualEvent
