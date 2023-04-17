@@ -91,7 +91,12 @@ function getSpawnRoomId()
     }
 }
 
-function getDefaultAreaId()
+function getSiteArea(areaId)
+{
+    return window.siteAreas.find(area => area.id == areaId)
+}
+
+function getInitialAreaId()
 {
     let areaId = null
     try
@@ -111,6 +116,10 @@ function getDefaultAreaId()
     if (siteArea) return siteArea.id
     return window.siteAreas[0].id
 }
+const initialAreaId = getInitialAreaId()
+const initialArea = getSiteArea(initialAreaId)
+
+const initialLanguage = localStorage.getItem("language") || "en"
 
 function getAppState()
 {
@@ -127,6 +136,15 @@ const i18n = createI18n({
     legacy: false,
     messages,
 });
+
+function setAppLocale(code)
+{
+    i18n.global.locale.value = code
+    document.title = i18n.global.t("ui.title")
+    document.getElementsByTagName('meta')["description"].content = i18n.global.t("ui.subtitle")
+}
+
+setAppLocale((initialArea.restrictToLanguage && initialArea.language) || initialLanguage)
 
 window.vueApp = createApp({
     components: {
@@ -159,8 +177,8 @@ window.vueApp = createApp({
             soundEffectVolume: 0,
             characterId: localStorage.getItem("characterId") || "giko",
             isLoggingIn: false,
-            areaId: getDefaultAreaId(),
-            language: localStorage.getItem("language") || "en",
+            areaId: initialAreaId,
+            language: initialLanguage,
             uiBackgroundColor: null,
             isUiBackgroundDark: null,
 
@@ -366,8 +384,6 @@ window.vueApp = createApp({
         // the button.
         document.addEventListener("mouseup", () => this.setMovementDirection(null))
 
-        this.setLocale()
-
         loadCharacterImagesPromise = loadCharacters(this.isCrispModeEnabled);
 
         const charSelect = document.getElementById("character-selection")
@@ -526,10 +542,11 @@ window.vueApp = createApp({
             await (loadCharacters(this.getSVGMode()));
             this.isRedrawRequired = true;
         },
-        setLocale(code)
+        setLocale(siteArea)
         {
-            const siteArea = this.getSiteArea()
-            this.$i18n.locale = code || (siteArea.restrictLanguage && siteArea.language) || this.language
+            if (!siteArea)
+                siteArea = this.getSiteArea()
+            setAppLocale((siteArea.restrictToLanguage && siteArea.language) || this.language)
             document.title = this.$t("ui.title")
             document.getElementsByTagName('meta')["description"].content = this.$t("ui.subtitle")
         },
