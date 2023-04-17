@@ -1,5 +1,5 @@
 import { RenderCache } from "./rendercache.js";
-import { annualEvents } from "/src/shared/annualevents.ts";
+import { annualEvents } from "../shared/annualevents.ts";
 import { stringToImageList } from "./utils.js";
 
 function isNum(num)
