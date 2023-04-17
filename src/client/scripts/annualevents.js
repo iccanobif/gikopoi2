@@ -1,6 +1,8 @@
+import dayjs from 'dayjs'
+
 function parseEventString(eventString)
 {
-    return new Function("return dayjs()." + eventString)()
+    return new Function("getNow", "return getNow()." + eventString)(dayjs)
 }
 
 export class AnnualEvent
