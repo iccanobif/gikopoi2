@@ -242,14 +242,6 @@ export interface CharacterSvgDto
     backWalking2Alt: string | null
 }
 
-export interface AnnualEventObject
-{
-    from: string;
-    to: string;
-}
-
-export type AnnualEventCallback = (currentEvents: string[], addedEvents: string[], removedEvents: string[]) => void
-
 export type DynamicRoomBuildFunction = (currentAnnualEvents: string[], addedEvents: string[], removedEvents: string[]) => Room
 
 export interface DynamicRoom

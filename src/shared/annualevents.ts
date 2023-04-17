@@ -5,7 +5,7 @@ import timezone from 'dayjs/plugin/timezone'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-function getNow()
+function getNow(): dayjs.Dayjs
 {
     return dayjs().tz("Asia/Tokyo")
 }
@@ -97,6 +97,7 @@ export function getSoonestEventDate(): dayjs.Dayjs
 
 
 const eventObservers: {[eventName: string]: AnnualEventCallback[]} = {}
+let hasObserverStarted = false
 
 export function subscribeToAnnualEvents(annualEventNames: string[], callbackFunction: AnnualEventCallback)
 {
@@ -105,6 +106,11 @@ export function subscribeToAnnualEvents(annualEventNames: string[], callbackFunc
         if (!(name in eventObservers)) eventObservers[name] = []
         eventObservers[name].push(callbackFunction)
     })
+    if (!hasObserverStarted)
+    {
+        observeEvents()
+        hasObserverStarted = true
+    }
 }
 
 function observeEvents(previousAnnualEvents?: string[])
@@ -124,5 +130,3 @@ function observeEvents(previousAnnualEvents?: string[])
     }
     setTimeout(observeEvents, Math.min(getSoonestEventDate().diff(getNow()), 60*60*1000), currentAnnualEvents); // min every hour or time to next event date
 }
-
-observeEvents()

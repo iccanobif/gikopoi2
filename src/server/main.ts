@@ -12,7 +12,7 @@ import { existsSync, readdirSync, readFileSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import { Chess } from "chess.js";
 import { Socket } from "socket.io";
-import { annualEventDefinitions, subscribeToAnnualEvents } from "./annualevents";
+import { subscribeToAnnualEvents } from "../shared/annualevents";
 
 const app = express()
 const server = require('http').Server(app);
@@ -1381,7 +1381,6 @@ const cachedJsBundle = (() => {
       + readFileSync("public/scripts/input-knobs.js").toString() + '\n'
       + readFileSync("src/client/scripts/polyfills.js").toString() + '\n'
       + 'window.EXPECTED_SERVER_VERSION = Number.parseInt("' + appVersion.toString() + '")' + '\n'
-      + 'window.annualEvents = JSON.parse("' + JSON.stringify(annualEventDefinitions).replace(/\"/g, "\\\"") + '")' + '\n'
       + 'window.siteAreas = JSON.parse("' + JSON.stringify(settings.siteAreas).replace(/\"/g, "\\\"") + '")' + '\n'
 })()
 
