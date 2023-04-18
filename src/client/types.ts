@@ -1,4 +1,4 @@
-import User from './user.js'
+import type User from './user.js'
 
 export interface Users { [id: string]: User }
 export type IgnoredUserIds = Set<string>
