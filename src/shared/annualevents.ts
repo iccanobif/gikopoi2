@@ -1,9 +1,18 @@
-import { AnnualEventObject, AnnualEventCallback } from "./types";
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 dayjs.extend(utc)
 dayjs.extend(timezone)
+
+
+export interface AnnualEventObject
+{
+    from: string;
+    to: string;
+}
+
+export type AnnualEventCallback = (currentEvents: string[], addedEvents: string[], removedEvents: string[]) => void
+
 
 function getNow(): dayjs.Dayjs
 {
