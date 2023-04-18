@@ -1,3 +1,5 @@
+const isProduction = process.env.NODE_ENV == "production"
+
 import express, { Request } from "express"
 import ViteExpress from "vite-express";
 import { rooms, dynamicRooms } from "./rooms";
@@ -1449,19 +1451,22 @@ app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
     }
 })
 
-const static_properties = {
-    setHeaders: (res: any, path: any) => {
-        // Cache images for one week. I made the frontend append ?v=version to image URLs,
-        // so that it won't try to use the cached images when it's opening a new version of the website.
-        if (path.match(/\.(svg|png)$/i))
-            res.set("Cache-Control", "public, max-age=604800, immutable")
-        else
-            res.set("Cache-Control", "no-cache")
-    }
-};
+if (isProduction)
+{
+    const static_properties = {
+        setHeaders: (res: any, path: any) => {
+            // Cache images for one week. I made the frontend append ?v=version to image URLs,
+            // so that it won't try to use the cached images when it's opening a new version of the website.
+            if (path.match(/\.(svg|png)$/i))
+                res.set("Cache-Control", "public, max-age=604800, immutable")
+            else
+                res.set("Cache-Control", "no-cache")
+        }
+    };
 
-app.use(express.static('public', static_properties));
-app.use(express.static('public/favicons', static_properties));
+    app.use(express.static('dist', static_properties));
+    app.use(express.static('dist/favicons', static_properties));
+}
 
 app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
 {
@@ -2453,7 +2458,7 @@ restoreState()
     .then(() =>
     {
         server.listen(port, "0.0.0.0")
-        ViteExpress.bind(app, server)
+        if (!isProduction) ViteExpress.bind(app, server)
         log.info("Server running on http://localhost:" + port)
     })
     .catch(log.error)
