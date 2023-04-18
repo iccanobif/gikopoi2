@@ -1379,7 +1379,7 @@ const cachedJsBundle = (() => {
       + readFileSync("public/scripts/animalese.js").toString() + '\n'
       + readFileSync("public/chess/js/chessboard-1.0.0.min.js").toString() + '\n'
       + readFileSync("public/scripts/input-knobs.js").toString() + '\n'
-      + readFileSync("src/client/scripts/polyfills.js").toString() + '\n'
+      + readFileSync("src/client/polyfills.js").toString() + '\n'
       + 'window.EXPECTED_SERVER_VERSION = Number.parseInt("' + appVersion.toString() + '")' + '\n'
       + 'window.siteAreas = JSON.parse("' + JSON.stringify(settings.siteAreas).replace(/\"/g, "\\\"") + '")' + '\n'
 })()
