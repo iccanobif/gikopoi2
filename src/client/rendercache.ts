@@ -2,29 +2,23 @@ export type DrawFunction = (renderedImage: HTMLCanvasElement, scale: number) => 
 
 export class RenderCache
 {
-    drawFunction: DrawFunction
-    renderedImage: HTMLCanvasElement | null
-    renderedScale: number | null
-    width: number
-    height: number
+    private drawFunction: DrawFunction
+    public renderedImage: HTMLCanvasElement | null = null
+    public renderedScale: number | null = null
+    public width: number = 0
+    public height: number = 0
     
     constructor(drawFunction: DrawFunction)
     {
         this.drawFunction = drawFunction;
-        this.renderedImage = null;
-        this.renderedScale = null;
-        this.width = 0;
-        this.height = 0;
     }
     
-    static Image(image: HTMLImageElement, imageScale?: number, flipped?: boolean)
+    static Image(image: HTMLImageElement, imageScale: number = 1, flipped: boolean = false)
     {
         const renderCache = new RenderCache((renderedImage, scale) =>
         {
             if (!image.complete ||
                 image.naturalHeight === 0) return false;
-            if (typeof imageScale == "undefined")
-                imageScale = 1;
             
             const width = image.naturalWidth * imageScale
             const height = image.naturalHeight * imageScale;
@@ -53,9 +47,8 @@ export class RenderCache
         return renderCache;
     }
     
-    getImage(scale: number)
+    getImage(scale: number = 1)
     {
-        if (typeof scale == "undefined") scale = 1;
         if (this.renderedImage != null && this.renderedScale == scale)
             return this.renderedImage;
         
