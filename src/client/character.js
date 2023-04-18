@@ -1,4 +1,4 @@
-import { RenderCache } from "./rendercache.js";
+import { RenderCache } from "./rendercache.ts";
 import { annualEvents } from "../shared/annualevents.ts";
 import { stringToImageList } from "./utils.js";
 

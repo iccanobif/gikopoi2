@@ -1,5 +1,4 @@
 import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils.js";
-import { RenderCache } from "./rendercache.js";
 import { characters } from "./character.js";
 
 const blinkOpenMinLength = 6000
