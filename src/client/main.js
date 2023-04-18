@@ -145,7 +145,7 @@ function setAppLocale(code)
     document.getElementsByTagName('meta')["description"].content = i18n.global.t("ui.subtitle")
 }
 
-setAppLocale((initialArea.restrictToLanguage && initialArea.language) || initialLanguage)
+setAppLocale((initialArea.restrictLanguage && initialArea.language) || initialLanguage)
 
 window.vueApp = createApp({
     components: {
@@ -547,7 +547,7 @@ window.vueApp = createApp({
         {
             if (!siteArea)
                 siteArea = this.getSiteArea()
-            setAppLocale((siteArea.restrictToLanguage && siteArea.language) || this.language)
+            setAppLocale((siteArea.restrictLanguage && siteArea.language) || this.language)
             document.title = this.$t("ui.title")
             document.getElementsByTagName('meta')["description"].content = this.$t("ui.subtitle")
         },

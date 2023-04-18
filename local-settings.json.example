@@ -21,7 +21,8 @@
         {
             "id": "one",
             "name": "One",
-            "restrictToLanguage": "ja"
+            "language": "ja",
+            "restrictLanguage": true
         },
         {
             "id": "two",
