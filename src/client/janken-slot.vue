@@ -1,15 +1,21 @@
-<script setup>
-import { ref, toRef, watch, inject, computed, onBeforeUnmount } from 'vue'
+<script setup lang="ts">
+import { ref, toRef, watch, inject, computed, onBeforeUnmount, Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import { Users, JankenState } from './types'
+
+const { t } = useI18n()
 
 const hands = [ "rock", "paper", "scissors" ]
-const createFallbackUser = (id) => ({ id, name: "N/A" })
+const createFallbackUser = (id: string | null) => ({ id, name: "N/A" })
 
+const props = defineProps<{
+    jankenState: JankenState
+}>()
 
-const props = defineProps(['jankenState'])
-
-const socket = inject("socket")
-const users = inject("users")
-const myUserId = inject("myUserId")
+const socket = inject("socket") as Ref<any>
+const users = inject("users") as Ref<Users>
+const myUserId = inject("myUserId") as Ref<string>
 
 const state = toRef(props, "jankenState")
 
@@ -21,12 +27,12 @@ const isStageDraw = computed(() => state.value.stage == "draw")
 const isStageResult = computed(() => state.value.stage == "win" || state.value.stage == "draw")
 
 const player1 = ref()
-const setPlayer1 = () => { player1.value = (users.value[state.value.player1Id]
+const setPlayer1 = () => { player1.value = ((state.value.player1Id && users.value[state.value.player1Id])
     || createFallbackUser(state.value.player1Id)) }
 watch(() => state.value.player1Id, setPlayer1, { immediate: true })
 
 const player2 = ref()
-const setPlayer2 = () => { player2.value = (users.value[state.value.player2Id]
+const setPlayer2 = () => { player2.value = ((state.value.player2Id && users.value[state.value.player2Id])
     || createFallbackUser(state.value.player2Id)) }
 watch(() => state.value.player2Id, setPlayer2, { immediate: true })
 
@@ -60,8 +66,8 @@ onBeforeUnmount(quit)
 
 const waitForResult = ref(false)
 const isWaitingForOpponent = ref(false)
-let waitingForOpponentTimer = null
-const chooseHand = (handKey) =>
+let waitingForOpponentTimer: any = null
+const chooseHand = (handKey: string) =>
 {
     waitForResult.value = true
     socket.value.emit("user-want-to-choose-janken-hand", handKey)
@@ -83,7 +89,7 @@ watch(isStageResult, () =>
 
 const drawCount = ref(0)
 watch(isStageDraw, () => drawCount.value++)
-let joinableTimer = null
+let joinableTimer: any = null
 watch(isActive, () =>
 {
     if (isActive.value)
@@ -101,18 +107,18 @@ watch(isActive, () =>
 
 <template>
     <div class="slot-wrapper janken-wrapper">
-        <div class="slot-title">{{ $t("ui.janken_title") }}</div>
+        <div class="slot-title">{{ t("ui.janken_title") }}</div>
         <div class="slot-buttons">
             <button @click="display" v-if="!isVisible && !isCurrentUserPlaying"
-                :class="{'slot-button-highlight': (player1.id && state.stage == 'joining') || isActive}">{{ $t("ui.game_display") }}</button>
-            <button @click="hide" v-if="isVisible && !isCurrentUserPlaying">{{ $t("ui.game_hide") }}</button>
-            <button @click="join" v-if="!isCurrentUserPlaying && !waitForChoosing && isJoinable">{{ $t("ui.game_join") }}</button>
-            <button @click="quit" v-if="isCurrentUserPlaying && !waitForJoining && (state.stage == 'joining' || state.stage == 'choosing')">{{ $t("ui.game_quit") }}</button>
+                :class="{'slot-button-highlight': (player1.id && state.stage == 'joining') || isActive}">{{ t("ui.game_display") }}</button>
+            <button @click="hide" v-if="isVisible && !isCurrentUserPlaying">{{ t("ui.game_hide") }}</button>
+            <button @click="join" v-if="!isCurrentUserPlaying && !waitForChoosing && isJoinable">{{ t("ui.game_join") }}</button>
+            <button @click="quit" v-if="isCurrentUserPlaying && !waitForJoining && (state.stage == 'joining' || state.stage == 'choosing')">{{ t("ui.game_quit") }}</button>
         </div>
         <div v-if="isVisible">
             <div v-if="player1.id && player2.id" class="slot-message janken-versus">
                 <div class="janken-versus-player1"><username :user-id="player1.id" :user-name="player1.name"></username></div>
-                <div>{{ $t("ui.janken_versus") }}</div>
+                <div>{{ t("ui.janken_versus") }}</div>
                 <div class="janken-versus-player2"><username :user-id="player2.id" :user-name="player2.name"></username></div>
             </div>
             <div v-if="state.stage == 'win' || state.stage == 'draw'"
@@ -122,7 +128,7 @@ watch(isActive, () =>
             </div>
             <div class="slot-message">
                 <template v-if="state.stage == 'joining'">
-                    <span v-if="!player1.id">{{ $t("ui.janken_start_a_game") }}</span>
+                    <span v-if="!player1.id">{{ t("ui.janken_start_a_game") }}</span>
                     <i18n-t v-else-if="!player2.id" tag="span" keypath="ui.janken_waiting_for_opponent" scope="global">
                         <template v-slot:username><username :user-id="player1.id" :user-name="player1.name"></username></template>
                     </i18n-t>
@@ -130,18 +136,18 @@ watch(isActive, () =>
                 
                 <template v-else-if="state.stage == 'choosing'">
                     <template v-if="isCurrentUserPlaying">
-                        <span v-if="!waitForResult">{{ $t("ui.janken_choose_your_hand") }}</span>
-                        <span v-else-if="isWaitingForOpponent">{{ $t("ui.janken_waiting_for_player") }}</span>
+                        <span v-if="!waitForResult">{{ t("ui.janken_choose_your_hand") }}</span>
+                        <span v-else-if="isWaitingForOpponent">{{ t("ui.janken_waiting_for_player") }}</span>
                     </template>
                     <template v-else>
-                        <span>{{ $t("ui.janken_players_choosing") }}</span>
+                        <span>{{ t("ui.janken_players_choosing") }}</span>
                     </template>
                 </template>
                 
                 <template v-else-if="state.stage == 'phrase'">
-                    <span v-if="drawCount == 0">{{ $t("ui.janken_phrase") }}</span>
-                    <span v-else-if="drawCount < 4">{{ $t("ui.janken_phrase_after_draw") }}</span>
-                    <span v-else>{{ $t("ui.janken_phrase_after_draw_repeated") }}</span>
+                    <span v-if="drawCount == 0">{{ t("ui.janken_phrase") }}</span>
+                    <span v-else-if="drawCount < 4">{{ t("ui.janken_phrase_after_draw") }}</span>
+                    <span v-else>{{ t("ui.janken_phrase_after_draw_repeated") }}</span>
                 </template>
                 
                 <i18n-t v-else-if="state.stage == 'win'" tag="span" keypath="ui.janken_win" scope="global">
@@ -155,7 +161,7 @@ watch(isActive, () =>
                 </template>
             
                 <template v-else-if="state.stage == 'timeout'">
-                    <span>{{ $t("ui.janken_timeout_reached") }}</span>
+                    <span>{{ t("ui.janken_timeout_reached") }}</span>
                 </template>
             </div>
             <div v-if="isCurrentUserPlaying && state.stage == 'choosing' && !waitForResult" class="janken-hands">

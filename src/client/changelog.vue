@@ -1,5 +1,10 @@
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { locale } = useI18n()
+</script>
+
 <template>
-    <div v-show="$i18n.locale == 'ja'">
+    <div v-show="locale == 'ja'">
         <h3>更新ログ</h3>
 2023/04/06: 校庭と噴水広場と楽屋でじゃんけんを出来るようになりました。<br/>
 2023/03/19: ニコニコ動画モードを追加しました。<br/>
@@ -109,7 +114,7 @@
 2021/01/11: 配信機能を改善しました。<br />
 2021/01/09: #rulaコマンドを追加しました。
     </div>
-    <div v-show="$i18n.locale != 'ja'">
+    <div v-show="locale != 'ja'">
         <h3>Change Log</h3>
 2023/04/06: Added Rock Paper Scissors to Schoolyard, Fountain Plaza and Dressing Room.<br/>
 2023/03/19: Added Niconico mode.<br/>
