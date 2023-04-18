@@ -8,8 +8,8 @@
   },
   "scripts": {
     "dev": "nodemon src/server/main.ts -w src/server",
-    "start": "cross-env NODE_ENV=production ts-node src/server/main.ts",
-    "build": "vite build",
+    "start": "cross-env NODE_ENV=production node build/server/main.js",
+    "build": "vite build && npx tsc --project tsconfig.server.json",
     "start-persistor": "cross-env PERSISTOR_SECRET=hello node state-persistor.js",
     "deploy-prod": "git push origin master:CI-PROD",
     "deploy-test": "git push origin HEAD:CI-TEST -f",
@@ -38,7 +38,8 @@
     "uuid": "^8.3.2",
     "vite-express": "*",
     "vue": "^3.2.45",
-    "vue-i18n": "^9.2.2"
+    "vue-i18n": "^9.2.2",
+    "@vitejs/plugin-vue": "^4.0.0"
   },
   "devDependencies": {
     "@types/chess.js": "^0.11.0",
@@ -48,7 +49,6 @@
     "@types/lodash": "^4.14.168",
     "@types/node": "^18.11.18",
     "@types/uuid": "^8.3.0",
-    "@vitejs/plugin-vue": "^4.0.0",
     "jszip": "^3.10.0",
     "nodemon": "^2.0.6",
     "svgo": "^2.7.0",
