@@ -17,7 +17,7 @@ const highlightUser = inject('highlightUser') as any
 const ignoredUserIds = inject('ignoredUserIds') as Ref<IgnoredUserIds>
 
 const properUserName = props.userName
-    || (users.value[highlightedUserId.value] && users.value[highlightedUserId.value].name)
+    || users.value[props.userId].name
     || fallbackUserName
 
 const userName = ref(fallbackUserName)
