@@ -1,6 +1,7 @@
 //localStorage.debug = '*'; // socket.io debug
 localStorage.removeItem("debug");
 
+import { io } from 'socket.io-client'
 import { createApp, computed, nextTick } from 'vue'
 import { createI18n } from 'vue-i18n'
 import { characters, loadCharacters } from "./character.js";

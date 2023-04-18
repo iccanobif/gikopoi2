@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { inject, watch, ref, computed, Ref } from 'vue'
+import { inject, watch, ref, computed } from 'vue'
+import type { Ref } from 'vue'
 
-import { Users, IgnoredUserIds } from './types'
+import type { Users, IgnoredUserIds } from './types'
 
 const fallbackUserName = 'N/A'
 

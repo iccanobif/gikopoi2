@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, toRef, watch, inject, computed, onBeforeUnmount, Ref } from 'vue'
+import { ref, toRef, watch, inject, computed, onBeforeUnmount } from 'vue'
+import type { Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import type { Socket } from 'socket.io-client'
 
-import { Users, JankenState } from './types'
+import type { Users, JankenState } from './types'
 
 const { t } = useI18n()
 
@@ -13,7 +15,7 @@ const props = defineProps<{
     jankenState: JankenState
 }>()
 
-const socket = inject("socket") as Ref<any>
+const socket = inject("socket") as Ref<Socket>
 const users = inject("users") as Ref<Users>
 const myUserId = inject("myUserId") as Ref<string>
 
@@ -66,7 +68,7 @@ onBeforeUnmount(quit)
 
 const waitForResult = ref(false)
 const isWaitingForOpponent = ref(false)
-let waitingForOpponentTimer: any = null
+let waitingForOpponentTimer: number | null = null
 const chooseHand = (handKey: string) =>
 {
     waitForResult.value = true
@@ -74,7 +76,7 @@ const chooseHand = (handKey: string) =>
     
     // to avoid the flashing message of waiting for the other
     // opponent if you're the last to pick
-    waitingForOpponentTimer = setTimeout(
+    waitingForOpponentTimer = window.setTimeout(
         () => { isWaitingForOpponent.value = true }, 500)
 }
 
@@ -83,24 +85,26 @@ watch(isStageResult, () =>
     if (!isStageResult.value) return
     
     waitForResult.value = false
-    clearTimeout(waitingForOpponentTimer)
+    if (waitingForOpponentTimer)
+        window.clearTimeout(waitingForOpponentTimer)
     isWaitingForOpponent.value = false
 })
 
 const drawCount = ref(0)
 watch(isStageDraw, () => drawCount.value++)
-let joinableTimer: any = null
+let joinableTimer: number | null = null
 watch(isActive, () =>
 {
     if (isActive.value)
     {
-        clearTimeout(joinableTimer)
+        if (joinableTimer)
+            window.clearTimeout(joinableTimer)
         isJoinable.value = false
     }
     else
     {
         drawCount.value = 0
-        joinableTimer = setTimeout(() => isJoinable.value = true, 2000)
+        joinableTimer = window.setTimeout(() => isJoinable.value = true, 2000)
     }
 })
 </script>
