@@ -2,10 +2,10 @@ export class RTCPeer
 {
     constructor(iceConfig, sendCallback)
     {
-		if (iceConfig === undefined)
-			this.iceConfig = defaultIceConfig;
-		else
-			this.iceConfig = iceConfig
+        if (iceConfig === undefined)
+            this.iceConfig = defaultIceConfig;
+        else
+            this.iceConfig = iceConfig
         
         this.sendCallback = sendCallback
         this.errorCallback = (error, event) => console.error(error, event)
