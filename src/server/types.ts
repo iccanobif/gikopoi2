@@ -1,3 +1,6 @@
+export * from '../shared/shared_types'
+import type { JankenStateDto } from '../shared/shared_types'
+
 import { Player } from "./users";
 import { ChessInstance } from "chess.js"
 
@@ -197,15 +200,6 @@ export interface ChessboardStateDto
     blackUserID: string | null,
     whiteUserID: string | null,
     turn: "b" | "w" | null,
-}
-
-export interface JankenStateDto {
-    stage: string,
-    namedPlayerId: string | null,
-    player1Id: string | null,
-    player2Id: string | null,
-    player1Hand: "rock" | "paper" | "scissors" | null,
-    player2Hand: "rock" | "paper" | "scissors" | null,
 }
 
 export interface JankenState extends JankenStateDto {

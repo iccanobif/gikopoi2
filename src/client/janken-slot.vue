@@ -4,7 +4,7 @@ import type { Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Socket } from 'socket.io-client'
 
-import type { Users, JankenState } from './types'
+import type { Users, JankenStateDto } from './types'
 
 const { t } = useI18n()
 
@@ -12,7 +12,7 @@ const hands = [ "rock", "paper", "scissors" ]
 const createFallbackUser = (id: string | null) => ({ id, name: "N/A" })
 
 const props = defineProps<{
-    jankenState: JankenState
+    jankenState: JankenStateDto
 }>()
 
 const socket = inject("socket") as Ref<Socket>
