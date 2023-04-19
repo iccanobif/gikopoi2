@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "nodemon src/server/main.ts -w src/server",
     "start": "cross-env NODE_ENV=production node build/server/main.js",
-    "build": "vite build && npx tsc --project tsconfig.server.json",
+    "build": "vite build && npx tsc --listEmittedFiles --project tsconfig.server.json",
     "start-persistor": "cross-env PERSISTOR_SECRET=hello node state-persistor.js",
     "deploy-prod": "git push origin master:CI-PROD",
     "deploy-test": "git push origin HEAD:CI-TEST -f",
