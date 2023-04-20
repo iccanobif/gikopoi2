@@ -1,6 +1,6 @@
 import { RenderCache } from "./rendercache.ts";
 import { annualEvents } from "../shared/annualevents.ts";
-import { stringToImageList } from "./utils.js";
+import { stringToImageList } from "./utils.ts";
 
 function isNum(num)
 {
@@ -155,7 +155,7 @@ export class Character
 
 export const characters = {
     giko: new Character("giko", "svg", false, null, -0.5, 0.24, null),
-    naito: new Character("naito", "svg", false, null, -0.48, 0.13, null),
+/*    naito: new Character("naito", "svg", false, null, -0.48, 0.13, null),
     shii: new Character("shii", "svg", false, null, -0.5, 0.24, null),
     hikki: new Character("hikki", "svg", false, null, -0.44, -0.12, null),
     tinpopo: new Character("tinpopo", "svg", false, null, -0.5, 0.26, null),
@@ -201,7 +201,7 @@ export const characters = {
     youkanman: new Character("youkanman", "svg", true, null, -0.46, -0.5, 1.8),
     baba_shobon: new Character("baba_shobon", "svg", true, null, -0.5, -0.2, null),
     uzukumari: new Character("uzukumari", "svg", false, null, -0.98, -0.69, null),
-}
+*/}
 
 export const loadCharacters = async (crispMode) => {
 
