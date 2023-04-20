@@ -29,7 +29,7 @@ import {
 } from "./utils.js";
 import messages from '@intlify/unplugin-vue-i18n/messages'
 import { speak } from "./tts.js";
-import { RTCPeer, defaultIceConfig } from "./rtcpeer.js";
+import { RTCPeer, defaultIceConfig } from "./rtcpeer.ts";
 import { RenderCache } from "./rendercache.ts";
 import { animateObjects, animateJizou } from "./animations.js";
 
