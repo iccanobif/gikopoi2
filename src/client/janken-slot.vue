@@ -49,21 +49,18 @@ const display = () => isVisible.value = true
 const hide = () => isVisible.value = false
 watch(isCurrentUserPlaying, () => { if (isCurrentUserPlaying.value) isVisible.value = true })
 
-const waitForChoosing = ref(false)
+const waitForStateChange = ref(false)
 const join = () =>
 {
-    waitForChoosing.value = true
+    waitForStateChange.value = true
     socket.value.emit("user-want-to-join-janken")
 }
-watch(isStageChoosing, () => { if (isStageChoosing.value) waitForChoosing.value = false })
-
-const waitForJoining = ref(false)
 const quit = () =>
 {
-    waitForJoining.value = true
+    waitForStateChange.value = true
     socket.value.emit("user-want-to-quit-janken")
 }
-watch(isStageJoining, () => { if (isStageJoining.value) waitForJoining.value = false })
+watch(state, () => { waitForStateChange.value = false })
 onBeforeUnmount(quit)
 
 const waitForResult = ref(false)
@@ -84,7 +81,6 @@ watch(isStageResult, () =>
 {
     if (!isStageResult.value) return
     
-    waitForResult.value = false
     if (waitingForOpponentTimer)
         window.clearTimeout(waitingForOpponentTimer)
     isWaitingForOpponent.value = false
@@ -97,6 +93,7 @@ watch(isActive, () =>
 {
     if (isActive.value)
     {
+        waitForResult.value = false
         if (joinableTimer)
             window.clearTimeout(joinableTimer)
         isJoinable.value = false
@@ -116,8 +113,8 @@ watch(isActive, () =>
             <button @click="display" v-if="!isVisible && !isCurrentUserPlaying"
                 :class="{'slot-button-highlight': (player1.id && state.stage == 'joining') || isActive}">{{ t("ui.game_display") }}</button>
             <button @click="hide" v-if="isVisible && !isCurrentUserPlaying">{{ t("ui.game_hide") }}</button>
-            <button @click="join" v-if="!isCurrentUserPlaying && !waitForChoosing && isJoinable">{{ t("ui.game_join") }}</button>
-            <button @click="quit" v-if="isCurrentUserPlaying && !waitForJoining && (state.stage == 'joining' || state.stage == 'choosing')">{{ t("ui.game_quit") }}</button>
+            <button @click="join" v-if="!isCurrentUserPlaying && !waitForStateChange && isJoinable">{{ t("ui.game_join") }}</button>
+            <button @click="quit" v-if="isCurrentUserPlaying && !waitForStateChange && (state.stage == 'joining' || state.stage == 'choosing')">{{ t("ui.game_quit") }}</button>
         </div>
         <div v-if="isVisible">
             <div v-if="player1.id && player2.id" class="slot-message janken-versus">
