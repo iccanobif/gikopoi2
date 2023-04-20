@@ -1,8 +1,14 @@
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter.js'
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore.js'
+import objectSupport from 'dayjs/plugin/objectSupport'
 dayjs.extend(utc)
 dayjs.extend(timezone)
+dayjs.extend(isSameOrAfter)
+dayjs.extend(isSameOrBefore)
+dayjs.extend(objectSupport)
 
 type RangeDateDeterminer = (now: dayjs.Dayjs) => dayjs.Dayjs
 
@@ -12,16 +18,6 @@ export type AnnualEventCallback = (currentEvents: string[], addedEvents: string[
 function getNow(): dayjs.Dayjs
 {
     return dayjs().tz("Asia/Tokyo")
-}
-
-function isSameOrAfter(d1: dayjs.Dayjs, d2: dayjs.Dayjs): boolean
-{
-    return !d1.isBefore(d2)
-}
-
-function isSameOrBefore(d1: dayjs.Dayjs, d2: dayjs.Dayjs): boolean
-{
-    return !d1.isAfter(d2)
 }
 
 export class AnnualEvent
@@ -71,9 +67,9 @@ export class AnnualEvent
         const fromTime = this.determineFrom(checkDate)
         const toTime = this.determineTo(checkDate)
         if (this.areRangeDatesSameYear)
-            return isSameOrAfter(checkDate, fromTime) && isSameOrBefore(checkDate, toTime)
+            return checkDate.isSameOrAfter(fromTime) && checkDate.isSameOrBefore(toTime)
         else
-            return isSameOrBefore(checkDate, toTime) || isSameOrAfter(checkDate, fromTime)
+            return checkDate.isSameOrBefore(toTime) || checkDate.isSameOrAfter(fromTime)
     }
     
     public isNow(): boolean
@@ -85,21 +81,21 @@ export class AnnualEvent
 
 export const annualEvents: {[eventName: string]: AnnualEvent} =
 {
-    spring: new AnnualEvent((now) => now.month(2).date(21), (now) => now.month(4).endOf('month')), // starting with cherry blossoms blooming
-    summer: new AnnualEvent((now) => now.month(5).startOf('month'), (now) => now.month(7).endOf('month')), // sun
-    autumn: new AnnualEvent((now) => now.month(8).startOf('month'), (now) => now.month(10).endOf('month')), // orange/yellow/brown colors
-    winter: new AnnualEvent((now) => now.month(11).startOf('month'), (now) => now.month(2).date(20)), // snow
+    spring:     new AnnualEvent(d => d.set({month:  2, date: 21}), d => d.set({month:  4, date: 31})), // starting with cherry blossoms blooming
+    summer:     new AnnualEvent(d => d.set({month:  5, date:  1}), d => d.set({month:  7, date: 31})), // sun
+    autumn:     new AnnualEvent(d => d.set({month:  8, date:  1}), d => d.set({month: 10, date: 30})), // orange/yellow/brown colors
+    winter:     new AnnualEvent(d => d.set({month: 11, date:  1}), d => d.set({month:  2, date: 20})), // snow
     
-    sakura: new AnnualEvent((now) => now.month(2).date(21), (now) => now.month(3).endOf('month')), // cherry blossoms
-    goldenWeek: new AnnualEvent((now) => now.month(3).date(29), (now) => now.month(4).date(5)),
-    rainy: new AnnualEvent((now) => now.month(5).startOf('month'), (now) => now.month(5).endOf('month')), // tsuyu / rainy season
-    fireflies: new AnnualEvent((now) => now.month(6).date(1), (now) => now.month(6).date(9)), // ホタル観賞
-    akizakura: new AnnualEvent((now) => now.month(8).startOf('month'), (now) => now.month(8).endOf('month')), // cosmos flowers
-    spooktober: new AnnualEvent((now) => now.month(9).date(17), (now) => now.month(10).date(1)),
+    sakura:     new AnnualEvent(d => d.set({month:  2, date: 21}), d => d.set({month:  3, date: 30})), // cherry blossoms
+    goldenWeek: new AnnualEvent(d => d.set({month:  3, date: 29}), d => d.set({month:  4, date:  5})),
+    rainy:      new AnnualEvent(d => d.set({month:  5, date:  1}), d => d.set({month:  5, date: 30})), // tsuyu / rainy season
+    fireflies:  new AnnualEvent(d => d.set({month:  6, date:  1}), d => d.set({month:  6, date:  9})), // ホタル観賞
+    akizakura:  new AnnualEvent(d => d.set({month:  8, date:  1}), d => d.set({month:  8, date: 30})), // cosmos flowers
+    spooktober: new AnnualEvent(d => d.set({month:  9, date: 17}), d => d.set({month: 10, date:  1})),
     christmasTime: new AnnualEvent(
-        (now) => now.month(11).date(24).startOf('week').subtract(3, 'week'), // first advent
-        (now) => now.month(11).date(30)),
-    newYears: new AnnualEvent((now) => now.month(11).date(31), (now) => now.month(0).date(1)),
+        d => d.set({month: 11, date: 24}).startOf('week').subtract(3, 'week'), // first advent
+        d => d.set({month: 11, date: 30})),
+    newYears:   new AnnualEvent(d => d.set({month: 11, date: 31}), d => d.set({month:  0, date:  1})),
 }
 
 export function getCurrentAnnualEvents(): string[]
