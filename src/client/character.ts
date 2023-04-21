@@ -1,11 +1,8 @@
-import _ from 'lodash'
-
 import { RenderCache } from "./rendercache";
 import { annualEvents } from "../shared/annualevents";
 import { stringToImageList, logToServer } from "./utils";
 
 import type { ImageLayer, CharacterSvgDto } from './types'
-
 
 
 type CharacterFormat = "svg" | "png"
