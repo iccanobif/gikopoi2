@@ -1,18 +1,40 @@
+import _ from 'lodash'
+
 import { RenderCache } from "./rendercache";
 import { annualEvents } from "../shared/annualevents";
-import { stringToImageList } from "./utils";
+import { stringToImageList, logToServer } from "./utils";
 
-function isNum(num: any)
-{
-    return !isNaN(parseFloat(num))
+import type { ImageLayer, CharacterSvgDto } from './types'
+
+
+
+type CharacterFormat = "svg" | "png"
+const characterVersions = ["normal", "alt"] as const
+type CharacterVersion = typeof characterVersions[number]
+type CharacterSide = "front" | "back"
+const characterStates = ["stand", "sit", "walk1", "walk2"] as const
+type CharacterState = typeof characterStates[number]
+
+type RawImages = {
+    [version in CharacterVersion]?: {
+        [side in CharacterSide]?: {
+            [state in CharacterState]?: ImageLayer[]
+        }
+    }
 }
 
-const characterStates = [
-    "stand",
-    "sit",
-    "walk1",
-    "walk2"
-]
+type RenderImage = {
+    [key: string]: RenderCache[]
+}
+
+type ImageProps = {
+    version: CharacterVersion,
+    isShowingBack: boolean,
+    state: CharacterState,
+    isMirroredLeft: boolean,
+    hasEyesClosed: boolean,
+    hasMouthClosed: boolean,
+}
 
 const characterFeatureNames = [
     "eyes_open",
@@ -21,109 +43,108 @@ const characterFeatureNames = [
     "mouth_closed",
 ]
 
+type ConstructorObject = {
+    name: string,
+    format?: CharacterFormat,
+    isHidden?: boolean,
+    scale?: number,
+    portraitLeft?: number,
+    portraitTop?: number,
+    portraitScale?: number
+}
+
 export class Character
 {
-    constructor(name, format, isHidden, scale, portraitLeft, portraitTop, portraitScale)
+    public characterName: string
+    public format: CharacterFormat
+    public isHidden: boolean
+    private scale: number
+    private portraitLeft: number
+    private portraitTop: number
+    private portraitScale: number
+    
+    private rawImages: RawImages = {}
+    private renderImages: RenderImage = {}
+    
+    constructor({name,
+        format = "svg",
+        isHidden = false,
+        scale = 0.5,
+        portraitLeft = -0.5,
+        portraitTop = 0,
+        portraitScale = 1.9}: ConstructorObject)
     {
         this.characterName = name;
         this.format = format;
         
-        this.portraitLeft = isNum(portraitLeft) ? portraitLeft : -0.5;
-        this.portraitTop = isNum(portraitTop) ? portraitTop : 0;
-        this.portraitScale = isNum(portraitScale) ? portraitScale : 1.9;
+        this.portraitLeft = portraitLeft;
+        this.portraitTop = portraitTop;
+        this.portraitScale = portraitScale;
         
         // On new year's, all characters are visible
         this.isHidden = annualEvents["newYears"].isNow() ? false : isHidden
         
-        this.scale = isNum(scale) ? scale : 0.5;
-        
-        this.rawImages = {}
-        this.renderImages = {}
+        this.scale = scale
     }
     
-    _validateVersion(version)
+    private getRawImage(version: CharacterVersion, isShowingBack: boolean, state: CharacterState): ImageLayer[] | null
     {
-        return (version && this.rawImages[version]) ? version : "normal"
+        let side: CharacterSide = isShowingBack ? "back" : "front"
+        return _.get(this.rawImages, [version, side, state])
+            || _.get(this.rawImages, ["normal", side, state])
+            || _.get(this.rawImages, ["normal", side, "stand"])
+            || _.get(this.rawImages, ["normal", "front", "stand"],  null)
     }
     
-    _validateState(state)
-    {
-        return (state && characterStates.includes(state)) ? state : characterStates[0]
-    }
-    
-    _getRawImage(props)
-    {
-        let rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
-        if (rawImageObject) return rawImageObject
-        props.version = "normal"
-        rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
-        if (rawImageObject) return rawImageObject
-        props.state = "stand"
-        rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
-        if (rawImageObject) return rawImageObject
-        props.isShowingBack = false
-        rawImageObject = this.rawImages[props.version][props.isShowingBack ? "back" : "front"][props.state]
-        if (rawImageObject) return rawImageObject
-        return null
-    }
-    
-    getImage(props)
+    getImage({version, isShowingBack, state, isMirroredLeft, hasEyesClosed, hasMouthClosed}: ImageProps)
     {
         if (!this.rawImages["normal"]) return []
         
-        props = {
-            version: this._validateVersion(props.version),
-            isShowingBack: props.isShowingBack || false,
-            state: this._validateState(props.state),
-            isMirroredLeft: props.isMirroredLeft || false,
-            hasEyesClosed: props.hasEyesClosed || false,
-            hasMouthClosed: props.hasMouthClosed || false,
-        }
-        
-        const rawImageLayers = this._getRawImage(props)
+        const rawImageLayers = this.getRawImage(version, isShowingBack, state)
+        if (rawImageLayers == null) return []
         // Not sure why, but rawImageLayers seems to have "undefined" elements sometimes.
         // Maybe that happens when stringToImageList() throws an exception? Logging some info
         // so we can figure out what's going on next time it happens to someone
         const rawImagesLayersNoFalsyElements = rawImageLayers.filter(o => o)
         if (rawImagesLayersNoFalsyElements.length != rawImageLayers.length)
-            logToServer("ERROR! falsy element in rawImageLayers, " + this.characterName + " " + JSON.stringify(props))
+            logToServer("ERROR! falsy element in rawImageLayers, " + this.characterName + " " + JSON.stringify(
+                {version, isShowingBack, state, isMirroredLeft, hasEyesClosed, hasMouthClosed}))
 
         if (!rawImagesLayersNoFalsyElements) return []
         
         const imageKeyArray = [
-            props.version,
-            props.isShowingBack,
-            props.state,
-            props.isMirroredLeft
+            version,
+            isShowingBack,
+            state,
+            isMirroredLeft
         ]
 
         if (rawImagesLayersNoFalsyElements.find(o => o.tags && o.tags.includes("eyes_closed")))
-            imageKeyArray.push(props.hasEyesClosed)
+            imageKeyArray.push(hasEyesClosed)
         if (rawImagesLayersNoFalsyElements.find(o => o.tags && o.tags.includes("mouth_closed")))
-            imageKeyArray.push(props.hasMouthClosed)
+            imageKeyArray.push(hasMouthClosed)
         
         const imageKey = imageKeyArray.join(",")
         
         if (this.renderImages[imageKey]) return this.renderImages[imageKey]
         
         const outputLayers = rawImagesLayersNoFalsyElements.filter(o => (!o.tags
-            || props.hasEyesClosed && o.tags.includes("eyes_closed")
-            || !props.hasEyesClosed && o.tags.includes("eyes_open")
-            || props.hasMouthClosed && o.tags.includes("mouth_closed")
-            || !props.hasMouthClosed && o.tags.includes("mouth_open")))
+            || hasEyesClosed && o.tags.includes("eyes_closed")
+            || !hasEyesClosed && o.tags.includes("eyes_open")
+            || hasMouthClosed && o.tags.includes("mouth_closed")
+            || !hasMouthClosed && o.tags.includes("mouth_open")))
         
-        this.renderImages[imageKey] = outputLayers.map(o => RenderCache.Image(o.image, this.scale, props.isMirroredLeft))
+        this.renderImages[imageKey] = outputLayers.map(o => RenderCache.Image(o.image, this.scale, isMirroredLeft))
         return this.renderImages[imageKey]
     }
 
-    async loadImages(dto)
+    async loadImages(dto: CharacterSvgDto)
     {
-        const rawImages = {}
-        const addImageString = async (version, side, state, svgString) =>
+        const rawImages: RawImages = {}
+        const addImageString = async (version: CharacterVersion, side: CharacterSide, state: CharacterState, svgString: string) =>
         {
             if (!rawImages[version])
-                rawImages[version] = { "front": {}, "back": {} }
-            const images = await stringToImageList(svgString, dto.isBase64);
+                rawImages[version] = { front: {}, back: {} }
             rawImages[version][side][state] = images;
         }
         

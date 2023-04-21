@@ -1,4 +1,4 @@
-import type { ImageDescObject } from './types'
+import type { ImageLayer } from './types'
 
 export const BLOCK_WIDTH = 80
 export const BLOCK_HEIGHT = 40
@@ -92,7 +92,7 @@ export async function stringToImageList(imageString: string, isBase64: boolean)
                 else
                     acc[lastIndex][1].push(el)
                 return acc
-            }, [] as [ImageDescObject, Element[]][])
+            }, [] as [ImageLayer, Element[]][])
                 .map(async ([object, layerEls]) =>
             {
                 elements.forEach(el => { el.style.display = layerEls.includes(el) ? "inline" : "none" })
@@ -108,5 +108,17 @@ export async function stringToImageList(imageString: string, isBase64: boolean)
         {
             reject(exception)
         }
+    })
+}
+
+
+// further down
+
+export function logToServer(msg: string)
+{
+    return fetch("/client-log", {
+        method: "POST",
+        headers: { 'Content-Type': "text/plain"},
+        body: msg
     })
 }
