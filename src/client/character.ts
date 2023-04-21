@@ -1,8 +1,8 @@
-import { RenderCache } from "./rendercache.ts";
-import { annualEvents } from "../shared/annualevents.ts";
-import { stringToImageList } from "./utils.ts";
+import { RenderCache } from "./rendercache";
+import { annualEvents } from "../shared/annualevents";
+import { stringToImageList } from "./utils";
 
-function isNum(num)
+function isNum(num: any)
 {
     return !isNaN(parseFloat(num))
 }
