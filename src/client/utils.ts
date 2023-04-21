@@ -54,10 +54,11 @@ export async function stringToImageList(imageString: string, isBase64: boolean)
     if (isBase64)
     {
         const img = await stringToImage(imageString, true);
-        return [{ image: img }];
+        const imageLayers: ImageLayer[] = [{ image: img }]
+        return Promise.resolve(imageLayers)
     }
 
-    return new Promise((resolve, reject) =>
+    return new Promise<ImageLayer[]>((resolve, reject) =>
     {
         try
         {

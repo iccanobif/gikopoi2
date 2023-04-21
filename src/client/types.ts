@@ -6,6 +6,6 @@ export interface Users { [id: string]: User }
 export type IgnoredUserIds = Set<string>
 
 export interface ImageLayer {
-    tags: string[],
+    tags?: string[],
     image: HTMLImageElement
 }

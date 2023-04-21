@@ -15,12 +15,9 @@ type CharacterSide = "front" | "back"
 const characterStates = ["stand", "sit", "walk1", "walk2"] as const
 type CharacterState = typeof characterStates[number]
 
+
 type RawImages = {
-    [version in CharacterVersion]?: {
-        [side in CharacterSide]?: {
-            [state in CharacterState]?: ImageLayer[]
-        }
-    }
+    [key: string]: ImageLayer[]
 }
 
 type RenderImage = {
@@ -89,16 +86,17 @@ export class Character
     
     private getRawImage(version: CharacterVersion, isShowingBack: boolean, state: CharacterState): ImageLayer[] | null
     {
-        let side: CharacterSide = isShowingBack ? "back" : "front"
-        return _.get(this.rawImages, [version, side, state])
-            || _.get(this.rawImages, ["normal", side, state])
-            || _.get(this.rawImages, ["normal", side, "stand"])
-            || _.get(this.rawImages, ["normal", "front", "stand"],  null)
+        const side: CharacterSide = isShowingBack ? "back" : "front"
+        return this.rawImages[[version, side, state].join(",")]
+            || this.rawImages[["normal", side, state].join(",")]
+            || this.rawImages[["normal", side, "stand"].join(",")]
+            || this.rawImages[["normal", "front", "stand"].join(",")]
+            || null
     }
     
-    getImage({version, isShowingBack, state, isMirroredLeft, hasEyesClosed, hasMouthClosed}: ImageProps)
+    public getImage({version, isShowingBack, state, isMirroredLeft, hasEyesClosed, hasMouthClosed}: ImageProps)
     {
-        if (!this.rawImages["normal"]) return []
+        if (!this.rawImages["normal,front,stand"]) return []
         
         const rawImageLayers = this.getRawImage(version, isShowingBack, state)
         if (rawImageLayers == null) return []
@@ -138,14 +136,13 @@ export class Character
         return this.renderImages[imageKey]
     }
 
-    async loadImages(dto: CharacterSvgDto)
+    public async loadImages(dto: CharacterSvgDto)
     {
         const rawImages: RawImages = {}
         const addImageString = async (version: CharacterVersion, side: CharacterSide, state: CharacterState, svgString: string) =>
         {
-            if (!rawImages[version])
-                rawImages[version] = { front: {}, back: {} }
-            rawImages[version][side][state] = images;
+            rawImages[[version, side, state].join(",")] =
+                await stringToImageList(svgString, dto.isBase64)
         }
         
         const promises = [
@@ -174,59 +171,59 @@ export class Character
     }
 }
 
-export const characters = {
-    giko: new Character("giko", "svg", false, null, -0.5, 0.24, null),
-    naito: new Character("naito", "svg", false, null, -0.48, 0.13, null),
-    shii: new Character("shii", "svg", false, null, -0.5, 0.24, null),
-    hikki: new Character("hikki", "svg", false, null, -0.44, -0.12, null),
-    tinpopo: new Character("tinpopo", "svg", false, null, -0.5, 0.26, null),
-    shobon: new Character("shobon", "svg", false, null, -0.5, -0.2, null),
-    nida: new Character("nida", "svg", false, null, -0.5, 0.27, null),
-    salmon: new Character("salmon", "svg", false, null, 0.17, -0.54, null),
-    giko_hat: new Character("giko_hat", "svg", false, null, -0.5, 0.10, null),
-    shii_hat: new Character("shii_hat", "svg", false, null, -0.5, 0.10, null),
-    shobon_hat: new Character("shobon_hat", "svg", !annualEvents["christmasTime"].isNow(), null, -0.41, -0.2, null),
-    furoshiki: new Character("furoshiki", "svg", false, null, -0.5, 0.24, null),
-    golden_furoshiki: new Character("golden_furoshiki", "svg", !annualEvents["goldenWeek"].isNow(), null, -0.5, 0.24, null),
-    furoshiki_shii: new Character("furoshiki_shii", "svg", annualEvents["spring"].isNow(), null, -0.5, 0.24, null),
-    sakura_furoshiki_shii: new Character("sakura_furoshiki_shii", "svg", !annualEvents["spring"].isNow(), null, -0.5, 0.24, null),
-    furoshiki_shobon: new Character("furoshiki_shobon", "svg", false, null, -0.41, -0.2, null),
-    naitoapple: new Character("naitoapple", "svg", false, null, -0.5, 0.1, null),
-    shii_pianica: new Character("shii_pianica", "svg", false, null, -0.46, 0.24, null),
-    shii_uniform: new Character("shii_uniform", "svg", false, null, -0.5, 0.24, null),
-    hungry_giko: new Character("hungry_giko", "svg", true, null, -0.45, 0.15, null),
-    rikishi_naito: new Character("rikishi_naito", "svg", true, null, -0.30, -0.18, 1.7),
-    hentai_giko: new Character("hentai_giko", "svg", true, null, -0.45, 0.33, 1.7),
-    shar_naito: new Character("shar_naito", "svg", true, null, -0.48, 0.13, null),
-    dark_naito_walking: new Character("dark_naito_walking", "svg", true, null, -0.48, 0.13, null),
-    ika: new Character("ika", "svg", true, null, 0, 0.18, 1),
-    takenoko: new Character("takenoko", "svg", true, null, 0, 0, 1),
-    kaminarisama_naito: new Character("kaminarisama_naito", "svg", true, null, -0.48, 0.13, null),
-    panda_naito: new Character("panda_naito", "svg", false, null, -0.48, 0.13, null),
-    wild_panda_naito: new Character("wild_panda_naito", "svg", true, null, -0.48, 0.13, null),
-    funkynaito: new Character("funkynaito", "svg", true, null, -0.48, 0.13, null),
-    molgiko: new Character("molgiko", "png", true, null, -0.8, -0.7, null),
-    tikan_giko: new Character("tikan_giko", "svg", true, null, -0.5, 0.24, null),
-    hotsuma_giko: new Character("hotsuma_giko", "svg", false, null, -0.5, 0.24, null),
-    dokuo: new Character("dokuo", "svg", false, null, -0.58, -0.33, null),
-    onigiri: new Character("onigiri", "svg", false, null, -0.38, 0.20, 1.7),
-    tabako_dokuo: new Character("tabako_dokuo", "svg", true, null, -0.58, -0.33, null),
-    himawari: new Character("himawari", "svg", true, null, -0.47, 0, null),
-    zonu: new Character("zonu", "svg", false, null, -0.7, -0.46, null),
-    george: new Character("george", "svg", false, null, -0.48, 0.13, null),
-    chotto_toorimasu_yo: new Character("chotto_toorimasu_yo", "svg", false, null, -0.54, -0.34, null),
-    tokita_naito: new Character("tokita_naito", "svg", !annualEvents["spooktober"].isNow(), null, -0.40, 0.04, 1.7),
-    pumpkinhead: new Character("pumpkinhead", "svg", !annualEvents["spooktober"].isNow(), null, -0.74, 0.34, 2.3),
-    naito_yurei: new Character("naito_yurei", "svg", !annualEvents["spooktober"].isNow(), null, -0.48, 0.13, null),
-    shiinigami: new Character("shiinigami", "svg", !annualEvents["spooktober"].isNow(), null, -1, 0.02, 2.8),
-    youkanman: new Character("youkanman", "svg", true, null, -0.46, -0.5, 1.8),
-    baba_shobon: new Character("baba_shobon", "svg", true, null, -0.5, -0.2, null),
-    uzukumari: new Character("uzukumari", "svg", false, null, -0.98, -0.69, null),
+export const characters: { [characterId: string]: Character } = {
+    giko: new Character({ name: "giko", format: "svg", portraitLeft: -0.5, portraitTop: 0.24 }),
+    naito: new Character({ name: "naito", format: "svg", portraitLeft: -0.48, portraitTop: 0.13 }),
+    shii: new Character({ name: "shii", format: "svg", portraitLeft: -0.5, portraitTop: 0.24 }),
+    hikki: new Character({ name: "hikki", format: "svg", portraitLeft: -0.44, portraitTop: -0.12 }),
+    tinpopo: new Character({ name: "tinpopo", format: "svg", portraitLeft: -0.5, portraitTop: 0.26 }),
+    shobon: new Character({ name: "shobon", format: "svg", portraitLeft: -0.5, portraitTop: -0.2 }),
+    nida: new Character({ name: "nida", format: "svg", portraitLeft: -0.5, portraitTop: 0.27 }),
+    salmon: new Character({ name: "salmon", format: "svg", portraitLeft: 0.17, portraitTop: -0.54 }),
+    giko_hat: new Character({ name: "giko_hat", format: "svg", portraitLeft: -0.5, portraitTop: 0.10 }),
+    shii_hat: new Character({ name: "shii_hat", format: "svg", portraitLeft: -0.5, portraitTop: 0.10 }),
+    shobon_hat: new Character({ name: "shobon_hat", format: "svg", isHidden: !annualEvents["christmasTime"].isNow(), portraitLeft: -0.41, portraitTop: -0.2 }),
+    furoshiki: new Character({ name: "furoshiki", format: "svg", portraitLeft: -0.5, portraitTop: 0.24 }),
+    golden_furoshiki: new Character({ name: "golden_furoshiki", format: "svg", isHidden: !annualEvents["goldenWeek"].isNow(), portraitLeft: -0.5, portraitTop: 0.24 }),
+    furoshiki_shii: new Character({ name: "furoshiki_shii", format: "svg", isHidden: annualEvents["spring"].isNow(), portraitLeft: -0.5, portraitTop: 0.24 }),
+    sakura_furoshiki_shii: new Character({ name: "sakura_furoshiki_shii", format: "svg", isHidden: !annualEvents["spring"].isNow(), portraitLeft: -0.5, portraitTop: 0.24 }),
+    furoshiki_shobon: new Character({ name: "furoshiki_shobon", format: "svg", portraitLeft: -0.41, portraitTop: -0.2 }),
+    naitoapple: new Character({ name: "naitoapple", format: "svg", portraitLeft: -0.5, portraitTop: 0.1 }),
+    shii_pianica: new Character({ name: "shii_pianica", format: "svg", portraitLeft: -0.46, portraitTop: 0.24 }),
+    shii_uniform: new Character({ name: "shii_uniform", format: "svg", portraitLeft: -0.5, portraitTop: 0.24 }),
+    hungry_giko: new Character({ name: "hungry_giko", format: "svg", isHidden: true, portraitLeft: -0.45, portraitTop: 0.15 }),
+    rikishi_naito: new Character({ name: "rikishi_naito", format: "svg", isHidden: true, portraitLeft: -0.30, portraitTop: -0.18, portraitScale: 1.7 }),
+    hentai_giko: new Character({ name: "hentai_giko", format: "svg", isHidden: true, portraitLeft: -0.45, portraitTop: 0.33, portraitScale: 1.7 }),
+    shar_naito: new Character({ name: "shar_naito", format: "svg", isHidden: true, portraitLeft: -0.48, portraitTop: 0.13 }),
+    dark_naito_walking: new Character({ name: "dark_naito_walking", format: "svg", isHidden: true, portraitLeft: -0.48, portraitTop: 0.13 }),
+    ika: new Character({ name: "ika", format: "svg", isHidden: true, portraitLeft: 0, portraitTop: 0.18, portraitScale: 1 }),
+    takenoko: new Character({ name: "takenoko", format: "svg", isHidden: true, portraitLeft: 0, portraitTop: 0, portraitScale: 1 }),
+    kaminarisama_naito: new Character({ name: "kaminarisama_naito", format: "svg", isHidden: true, portraitLeft: -0.48, portraitTop: 0.13 }),
+    panda_naito: new Character({ name: "panda_naito", format: "svg", portraitLeft: -0.48, portraitTop: 0.13 }),
+    wild_panda_naito: new Character({ name: "wild_panda_naito", format: "svg", isHidden: true, portraitLeft: -0.48, portraitTop: 0.13 }),
+    funkynaito: new Character({ name: "funkynaito", format: "svg", isHidden: true, portraitLeft: -0.48, portraitTop: 0.13 }),
+    molgiko: new Character({ name: "molgiko", format: "png", isHidden: true, portraitLeft: -0.8, portraitTop: -0.7 }),
+    tikan_giko: new Character({ name: "tikan_giko", format: "svg", isHidden: true, portraitLeft: -0.5, portraitTop: 0.24 }),
+    hotsuma_giko: new Character({ name: "hotsuma_giko", format: "svg", portraitLeft: -0.5, portraitTop: 0.24 }),
+    dokuo: new Character({ name: "dokuo", format: "svg", portraitLeft: -0.58, portraitTop: -0.33 }),
+    onigiri: new Character({ name: "onigiri", format: "svg", portraitLeft: -0.38, portraitTop: 0.20, portraitScale: 1.7 }),
+    tabako_dokuo: new Character({ name: "tabako_dokuo", format: "svg", isHidden: true, portraitLeft: -0.58, portraitTop: -0.33 }),
+    himawari: new Character({ name: "himawari", format: "svg", isHidden: true, portraitLeft: -0.47, portraitTop: 0 }),
+    zonu: new Character({ name: "zonu", format: "svg", portraitLeft: -0.7, portraitTop: -0.46 }),
+    george: new Character({ name: "george", format: "svg", portraitLeft: -0.48, portraitTop: 0.13 }),
+    chotto_toorimasu_yo: new Character({ name: "chotto_toorimasu_yo", format: "svg", portraitLeft: -0.54, portraitTop: -0.34 }),
+    tokita_naito: new Character({ name: "tokita_naito", format: "svg", isHidden: !annualEvents["spooktober"].isNow(), portraitLeft: -0.40, portraitTop: 0.04, portraitScale: 1.7 }),
+    pumpkinhead: new Character({ name: "pumpkinhead", format: "svg", isHidden: !annualEvents["spooktober"].isNow(), portraitLeft: -0.74, portraitTop: 0.34, portraitScale: 2.3 }),
+    naito_yurei: new Character({ name: "naito_yurei", format: "svg", isHidden: !annualEvents["spooktober"].isNow(), portraitLeft: -0.48, portraitTop: 0.13 }),
+    shiinigami: new Character({ name: "shiinigami", format: "svg", isHidden: !annualEvents["spooktober"].isNow(), portraitLeft: -1, portraitTop: 0.02, portraitScale: 2.8 }),
+    youkanman: new Character({ name: "youkanman", format: "svg", isHidden: true, portraitLeft: -0.46, portraitTop: -0.5, portraitScale: 1.8 }),
+    baba_shobon: new Character({ name: "baba_shobon", format: "svg", isHidden: true, portraitLeft: -0.5, portraitTop: -0.2 }),
+    uzukumari: new Character({ name: "uzukumari", format: "svg", portraitLeft: -0.98, portraitTop: -0.69 }),
 }
 
-export const loadCharacters = async (crispMode) => {
+export const loadCharacters = async (crispMode: boolean) => {
 
-    const response = await fetch("/characters/" + (crispMode ? "crisp" : "regular") + "?v=" + window.EXPECTED_SERVER_VERSION)
+    const response = await fetch("/characters/" + (crispMode ? "crisp" : "regular") + "?v=" + (window as any).EXPECTED_SERVER_VERSION)
     const dto = await response.json()
 
     return Promise.all(Object.keys(characters).map(characterId => characters[characterId].loadImages(dto[characterId])))
