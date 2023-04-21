@@ -80,7 +80,7 @@ const chooseHand = (handKey: string) =>
 watch(isStageResult, () =>
 {
     if (!isStageResult.value) return
-    
+    waitForResult.value = false
     if (waitingForOpponentTimer)
         window.clearTimeout(waitingForOpponentTimer)
     isWaitingForOpponent.value = false
