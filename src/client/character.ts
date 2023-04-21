@@ -21,15 +21,6 @@ type RenderImage = {
     [key: string]: RenderCache[]
 }
 
-type ImageProps = {
-    version: CharacterVersion,
-    isShowingBack: boolean,
-    state: CharacterState,
-    isMirroredLeft: boolean,
-    hasEyesClosed: boolean,
-    hasMouthClosed: boolean,
-}
-
 const characterFeatureNames = [
     "eyes_open",
     "eyes_closed",
@@ -45,6 +36,15 @@ type ConstructorObject = {
     portraitLeft?: number,
     portraitTop?: number,
     portraitScale?: number
+}
+
+type ImageProps = {
+    version: CharacterVersion,
+    isShowingBack: boolean,
+    state: CharacterState,
+    isMirroredLeft: boolean,
+    hasEyesClosed: boolean,
+    hasMouthClosed: boolean,
 }
 
 export class Character
@@ -81,21 +81,14 @@ export class Character
         this.scale = scale
     }
     
-    private getRawImage(version: CharacterVersion, isShowingBack: boolean, state: CharacterState): ImageLayer[] | null
+    public getImage({version, isShowingBack, state, isMirroredLeft, hasEyesClosed, hasMouthClosed}: ImageProps)
     {
         const side: CharacterSide = isShowingBack ? "back" : "front"
-        return this.rawImages[[version, side, state].join(",")]
+        const rawImageLayers = this.rawImages[[version, side, state].join(",")]
             || this.rawImages[["normal", side, state].join(",")]
             || this.rawImages[["normal", side, "stand"].join(",")]
             || this.rawImages[["normal", "front", "stand"].join(",")]
             || null
-    }
-    
-    public getImage({version, isShowingBack, state, isMirroredLeft, hasEyesClosed, hasMouthClosed}: ImageProps)
-    {
-        if (!this.rawImages["normal,front,stand"]) return []
-        
-        const rawImageLayers = this.getRawImage(version, isShowingBack, state)
         if (rawImageLayers == null) return []
         // Not sure why, but rawImageLayers seems to have "undefined" elements sometimes.
         // Maybe that happens when stringToImageList() throws an exception? Logging some info
@@ -109,7 +102,7 @@ export class Character
         
         const imageKeyArray = [
             version,
-            isShowingBack,
+            side,
             state,
             isMirroredLeft
         ]
