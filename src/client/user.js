@@ -1,5 +1,5 @@
 import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils.js";
-import { characters } from "./character.js";
+import { characters } from "./character.ts";
 
 const blinkOpenMinLength = 6000
 const blinkOpenLengthVariation = 1000
