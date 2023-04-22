@@ -432,7 +432,6 @@ window.vueApp = createApp({
                     this.isRedrawRequired = true;
                 })
 
-                await loadCharacterImagesPromise;
                 enabledListenerIconImage = RenderCache.Image(await enabledListenerIconImagePromise, 0.8);
                 disabledListenerIconImage = RenderCache.Image(await disabledListenerIconImagePromise, 0.8);
 
@@ -464,6 +463,7 @@ window.vueApp = createApp({
                 this.checkBackgroundColor()
 
                 this.canvasContext = document.getElementById("room-canvas").getContext("2d");
+                await loadCharacterImagesPromise;
                 this.paintLoop();
 
                 this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
