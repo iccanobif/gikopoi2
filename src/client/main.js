@@ -5,7 +5,7 @@ import { io } from 'socket.io-client'
 import { createApp, computed, nextTick } from 'vue'
 import { createI18n } from 'vue-i18n'
 import { characters, loadCharacters } from "./character.ts";
-import User from "./user.js";
+import User from "./user.ts";
 import {
     loadImage,
     calculateRealCoordinates,
