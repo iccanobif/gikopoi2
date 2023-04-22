@@ -34,7 +34,7 @@ type PortraitProps = {
     scale?: number,
 }
 
-type ConstructorObject = {
+type CharacterObject = {
     name: string,
     format?: CharacterFormat,
     isHidden?: boolean,
@@ -70,7 +70,7 @@ export class Character
         format = "svg",
         isHidden = false,
         scale = 0.5,
-        portrait}: ConstructorObject)
+        portrait}: CharacterObject)
     {
         this.characterName = name;
         this.format = format;
@@ -170,55 +170,58 @@ export class Character
     }
 }
 
-export const characters: { [characterId: string]: Character } = {
-    giko: new Character({ name: "giko", portrait: { left: -0.5, top: 0.24 } }),
-    naito: new Character({ name: "naito", portrait: { left: -0.48, top: 0.13 } }),
-    shii: new Character({ name: "shii", portrait: { left: -0.5, top: 0.24 } }),
-    hikki: new Character({ name: "hikki", portrait: { left: -0.44, top: -0.12 } }),
-    tinpopo: new Character({ name: "tinpopo", portrait: { left: -0.5, top: 0.26 } }),
-    shobon: new Character({ name: "shobon", portrait: { left: -0.5, top: -0.2 } }),
-    nida: new Character({ name: "nida", portrait: { left: -0.5, top: 0.27 } }),
-    salmon: new Character({ name: "salmon", portrait: { left: 0.17, top: -0.54 } }),
-    giko_hat: new Character({ name: "giko_hat", portrait: { left: -0.5, top: 0.10 } }),
-    shii_hat: new Character({ name: "shii_hat", portrait: { left: -0.5, top: 0.10 } }),
-    shobon_hat: new Character({ name: "shobon_hat", isHidden: !annualEvents["christmasTime"].isNow(), portrait: { left: -0.41, top: -0.2 } }),
-    furoshiki: new Character({ name: "furoshiki", portrait: { left: -0.5, top: 0.24 } }),
-    golden_furoshiki: new Character({ name: "golden_furoshiki", isHidden: !annualEvents["goldenWeek"].isNow(), portrait: { left: -0.5, top: 0.24 } }),
-    furoshiki_shii: new Character({ name: "furoshiki_shii", isHidden: annualEvents["spring"].isNow(), portrait: { left: -0.5, top: 0.24 } }),
-    sakura_furoshiki_shii: new Character({ name: "sakura_furoshiki_shii", isHidden: !annualEvents["spring"].isNow(), portrait: { left: -0.5, top: 0.24 } }),
-    furoshiki_shobon: new Character({ name: "furoshiki_shobon", portrait: { left: -0.41, top: -0.2 } }),
-    naitoapple: new Character({ name: "naitoapple", portrait: { left: -0.5, top: 0.1 } }),
-    shii_pianica: new Character({ name: "shii_pianica", portrait: { left: -0.46, top: 0.24 } }),
-    shii_uniform: new Character({ name: "shii_uniform", portrait: { left: -0.5, top: 0.24 } }),
-    hungry_giko: new Character({ name: "hungry_giko", isHidden: true, portrait: { left: -0.45, top: 0.15 } }),
-    rikishi_naito: new Character({ name: "rikishi_naito", isHidden: true, portrait: { left: -0.30, top: -0.18, scale: 1.7 } }),
-    hentai_giko: new Character({ name: "hentai_giko", isHidden: true, portrait: { left: -0.45, top: 0.33, scale: 1.7 } }),
-    shar_naito: new Character({ name: "shar_naito", isHidden: true, portrait: { left: -0.48, top: 0.13 } }),
-    dark_naito_walking: new Character({ name: "dark_naito_walking", isHidden: true, portrait: { left: -0.48, top: 0.13 } }),
-    ika: new Character({ name: "ika", isHidden: true, portrait: { left: 0, top: 0.18, scale: 1 } }),
-    takenoko: new Character({ name: "takenoko", isHidden: true, portrait: { left: 0, top: 0, scale: 1 } }),
-    kaminarisama_naito: new Character({ name: "kaminarisama_naito", isHidden: true, portrait: { left: -0.48, top: 0.13 } }),
-    panda_naito: new Character({ name: "panda_naito", portrait: { left: -0.48, top: 0.13 } }),
-    wild_panda_naito: new Character({ name: "wild_panda_naito", isHidden: true, portrait: { left: -0.48, top: 0.13 } }),
-    funkynaito: new Character({ name: "funkynaito", isHidden: true, portrait: { left: -0.48, top: 0.13 } }),
-    molgiko: new Character({ name: "molgiko", format: "png", isHidden: true, portrait: { left: -0.8, top: -0.7 } }),
-    tikan_giko: new Character({ name: "tikan_giko", isHidden: true, portrait: { left: -0.5, top: 0.24 } }),
-    hotsuma_giko: new Character({ name: "hotsuma_giko", portrait: { left: -0.5, top: 0.24 } }),
-    dokuo: new Character({ name: "dokuo", portrait: { left: -0.58, top: -0.33 } }),
-    onigiri: new Character({ name: "onigiri", portrait: { left: -0.38, top: 0.20, scale: 1.7 } }),
-    tabako_dokuo: new Character({ name: "tabako_dokuo", isHidden: true, portrait: { left: -0.58, top: -0.33 } }),
-    himawari: new Character({ name: "himawari", isHidden: true, portrait: { left: -0.47, top: 0 } }),
-    zonu: new Character({ name: "zonu", portrait: { left: -0.7, top: -0.46 } }),
-    george: new Character({ name: "george", portrait: { left: -0.48, top: 0.13 } }),
-    chotto_toorimasu_yo: new Character({ name: "chotto_toorimasu_yo", portrait: { left: -0.54, top: -0.34 } }),
-    tokita_naito: new Character({ name: "tokita_naito", isHidden: !annualEvents["spooktober"].isNow(), portrait: { left: -0.40, top: 0.04, scale: 1.7 } }),
-    pumpkinhead: new Character({ name: "pumpkinhead", isHidden: !annualEvents["spooktober"].isNow(), portrait: { left: -0.74, top: 0.34, scale: 2.3 } }),
-    naito_yurei: new Character({ name: "naito_yurei", isHidden: !annualEvents["spooktober"].isNow(), portrait: { left: -0.48, top: 0.13 } }),
-    shiinigami: new Character({ name: "shiinigami", isHidden: !annualEvents["spooktober"].isNow(), portrait: { left: -1, top: 0.02, scale: 2.8 } }),
-    youkanman: new Character({ name: "youkanman", isHidden: true, portrait: { left: -0.46, top: -0.5, scale: 1.8 } }),
-    baba_shobon: new Character({ name: "baba_shobon", isHidden: true, portrait: { left: -0.5, top: -0.2 } }),
-    uzukumari: new Character({ name: "uzukumari", portrait: { left: -0.98, top: -0.69 } }),
-}
+const characterObjects: CharacterObject[] = [
+    { name: "giko", portrait: { left: -0.5, top: 0.24 } },
+    { name: "naito", portrait: { left: -0.48, top: 0.13 } },
+    { name: "shii", portrait: { left: -0.5, top: 0.24 } },
+    { name: "hikki", portrait: { left: -0.44, top: -0.12 } },
+    { name: "tinpopo", portrait: { left: -0.5, top: 0.26 } },
+    { name: "shobon", portrait: { left: -0.5, top: -0.2 } },
+    { name: "nida", portrait: { left: -0.5, top: 0.27 } },
+    { name: "salmon", portrait: { left: 0.17, top: -0.54 } },
+    { name: "giko_hat", portrait: { left: -0.5, top: 0.10 } },
+    { name: "shii_hat", portrait: { left: -0.5, top: 0.10 } },
+    { name: "shobon_hat", isHidden: !annualEvents["christmasTime"].isNow(), portrait: { left: -0.41, top: -0.2 } },
+    { name: "furoshiki", portrait: { left: -0.5, top: 0.24 } },
+    { name: "golden_furoshiki", isHidden: !annualEvents["goldenWeek"].isNow(), portrait: { left: -0.5, top: 0.24 } },
+    { name: "furoshiki_shii", isHidden: annualEvents["spring"].isNow(), portrait: { left: -0.5, top: 0.24 } },
+    { name: "sakura_furoshiki_shii", isHidden: !annualEvents["spring"].isNow(), portrait: { left: -0.5, top: 0.24 } },
+    { name: "furoshiki_shobon", portrait: { left: -0.41, top: -0.2 } },
+    { name: "naitoapple", portrait: { left: -0.5, top: 0.1 } },
+    { name: "shii_pianica", portrait: { left: -0.46, top: 0.24 } },
+    { name: "shii_uniform", portrait: { left: -0.5, top: 0.24 } },
+    { name: "hungry_giko", isHidden: true, portrait: { left: -0.45, top: 0.15 } },
+    { name: "rikishi_naito", isHidden: true, portrait: { left: -0.30, top: -0.18, scale: 1.7 } },
+    { name: "hentai_giko", isHidden: true, portrait: { left: -0.45, top: 0.33, scale: 1.7 } },
+    { name: "shar_naito", isHidden: true, portrait: { left: -0.48, top: 0.13 } },
+    { name: "dark_naito_walking", isHidden: true, portrait: { left: -0.48, top: 0.13 } },
+    { name: "ika", isHidden: true, portrait: { left: 0, top: 0.18, scale: 1 } },
+    { name: "takenoko", isHidden: true, portrait: { left: 0, top: 0, scale: 1 } },
+    { name: "kaminarisama_naito", isHidden: true, portrait: { left: -0.48, top: 0.13 } },
+    { name: "panda_naito", portrait: { left: -0.48, top: 0.13 } },
+    { name: "wild_panda_naito", isHidden: true, portrait: { left: -0.48, top: 0.13 } },
+    { name: "funkynaito", isHidden: true, portrait: { left: -0.48, top: 0.13 } },
+    { name: "molgiko", format: "png", isHidden: true, portrait: { left: -0.8, top: -0.7 } },
+    { name: "tikan_giko", isHidden: true, portrait: { left: -0.5, top: 0.24 } },
+    { name: "hotsuma_giko", portrait: { left: -0.5, top: 0.24 } },
+    { name: "dokuo", portrait: { left: -0.58, top: -0.33 } },
+    { name: "onigiri", portrait: { left: -0.38, top: 0.20, scale: 1.7 } },
+    { name: "tabako_dokuo", isHidden: true, portrait: { left: -0.58, top: -0.33 } },
+    { name: "himawari", isHidden: true, portrait: { left: -0.47, top: 0 } },
+    { name: "zonu", portrait: { left: -0.7, top: -0.46 } },
+    { name: "george", portrait: { left: -0.48, top: 0.13 } },
+    { name: "chotto_toorimasu_yo", portrait: { left: -0.54, top: -0.34 } },
+    { name: "tokita_naito", isHidden: !annualEvents["spooktober"].isNow(), portrait: { left: -0.40, top: 0.04, scale: 1.7 } },
+    { name: "pumpkinhead", isHidden: !annualEvents["spooktober"].isNow(), portrait: { left: -0.74, top: 0.34, scale: 2.3 } },
+    { name: "naito_yurei", isHidden: !annualEvents["spooktober"].isNow(), portrait: { left: -0.48, top: 0.13 } },
+    { name: "shiinigami", isHidden: !annualEvents["spooktober"].isNow(), portrait: { left: -1, top: 0.02, scale: 2.8 } },
+    { name: "youkanman", isHidden: true, portrait: { left: -0.46, top: -0.5, scale: 1.8 } },
+    { name: "baba_shobon", isHidden: true, portrait: { left: -0.5, top: -0.2 } },
+    { name: "uzukumari", portrait: { left: -0.98, top: -0.69 } },
+]
+
+export const characters: { [characterId: string]: Character } =
+    Object.fromEntries(characterObjects.map(o => [o.name, new Character(o)]))
 
 export const loadCharacters = async (crispMode: boolean) => {
 
