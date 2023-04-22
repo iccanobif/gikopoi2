@@ -1,5 +1,9 @@
-import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils.js";
-import { characters } from "./character.ts";
+import type { Direction, Room } from './types'
+import type { Character, CharacterVersion, CharacterState } from "./character";
+import type { RenderCache } from "./rendercache"
+
+import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils";
+import { characters } from "./character";
 
 const blinkOpenMinLength = 6000
 const blinkOpenLengthVariation = 1000
@@ -7,46 +11,58 @@ const blinkClosedLength = 1000
 
 export default class User
 {
-    constructor(id, name, character)
+    public id: string
+    public name: string
+    public character: Character 
+    
+    public logicalPositionX: number = 0
+    public logicalPositionY: number = 0
+    public currentPhysicalPositionX: number = 0
+    public currentPhysicalPositionY: number = 0
+    public isWalking: boolean = false
+    public isSpinning: boolean = false
+    public isMoved: boolean = true
+    public direction: Direction = "up"
+    public stepLength = (1000/60) * 8
+    public framesUntilNextStep: number
+    public frameCount: number = 0
+    public isInactive: boolean = false
+
+    public nameImage: RenderCache | null = null;
+
+    public message: string | null = null;
+    public lastMessage: string | null = null;
+    public lastMovement: any = null; // not sure about the type
+    public bubblePosition: Direction = "up";
+    public bubbleImage: RenderCache | null = null;
+    public voicePitch: number | null = null;
+
+    public isAlternateCharacter: boolean = false
+
+    public isBlinking: boolean = false
+    public blinkingPattern: number[]
+    public blinkingStartShift: number
+    
+    
+    constructor(id: string, name: string, character: Character)
     {
         this.id = id;
         this.name = name;
         // default to giko if the user has somehow set a non-existing character id
         this.character = character || characters.giko; 
         
+        if (this.character.characterName ==  "onigiri")
+            this.stepLength = (1000/60) * 10
+        this.framesUntilNextStep = this.stepLength;
+        
         const uniquePattern = id.slice(0, 8) + id.slice(9, 9+4) + id.slice(15, 15+3) + id.slice(20, 20+3) + id.slice(24, 24+12) // this needs an id in the uuid format
 
-        this.logicalPositionX = 0;
-        this.logicalPositionY = 0;
-        this.currentPhysicalPositionX = 0;
-        this.currentPhysicalPositionY = 0;
-        this.isWalking = false;
-        this.isSpinning = false;
-        this.isMoved = true;
-        this.direction = "up";
-        this.stepLength = this.character.characterName ==  "onigiri" ? (1000/60) * 10 : (1000/60) * 8;
-        this.framesUntilNextStep = this.stepLength;
-        this.frameCount = 0
-        this.isInactive = false;
-        
-        this.nameImage = null;
-        
-        this.message = null;
-        this.lastMessage = null;
-        this.lastMovement = null;
-        this.bubblePosition = "up";
-        this.bubbleImage = null;
-        this.voicePitch = null;
-        
-        this.isAlternateCharacter = false
-        
-        this.isBlinking = false
-        this.blinkingPattern = uniquePattern.slice(2).split("").map((value, index, values) =>
-            (values[index] = (values[index-1] || 0) + (blinkOpenMinLength + Math.floor((parseInt(value, 16)/16) * blinkOpenLengthVariation) + blinkClosedLength)))
+        this.blinkingPattern = uniquePattern.slice(2).split("").map(v => parseInt(v, 16)).map((value, index, values) =>
+            (values[index] = (values[index-1] || 0) + (blinkOpenMinLength + Math.floor((value/16) * blinkOpenLengthVariation) + blinkClosedLength)))
         this.blinkingStartShift = (parseInt(uniquePattern.slice(0, 2), 16) / 256) * this.blinkingPattern[this.blinkingPattern.length-1]
     }
 
-    moveImmediatelyToPosition(room, logicalPositionX, logicalPositionY, direction)
+    moveImmediatelyToPosition(room: Room, logicalPositionX: number, logicalPositionY: number, direction: Direction)
     {
         this.logicalPositionX = logicalPositionX;
         this.logicalPositionY = logicalPositionY;
@@ -59,7 +75,7 @@ export default class User
         this.isMoved = true;
     }
 
-    moveToPosition(logicalPositionX, logicalPositionY, direction)
+    moveToPosition(logicalPositionX: number, logicalPositionY: number, direction: Direction)
     {
         if (this.logicalPositionX != logicalPositionX || this.logicalPositionY != logicalPositionY)
         {
@@ -72,7 +88,7 @@ export default class User
         this.isMoved = true;
     }
     
-    calculatePhysicalPosition(room, delta)
+    calculatePhysicalPosition(room: Room, delta: number)
     {
         if (!this.isWalking)
             return
@@ -123,50 +139,57 @@ export default class User
             this.frameCount = 0
     }
 
-    getCurrentImage(room)
+    getCurrentImage(room: Room): RenderCache[]
     {
-        const charProps = {}
-        charProps.version = this.isAlternateCharacter ? "alt" : "normal"
+        const version: CharacterVersion = this.isAlternateCharacter ? "alt" : "normal"
+        let state: CharacterState
+        let isShowingBack: boolean
+        let isMirroredLeft: boolean
         
         if (this.isSpinning)
         {
             const spinCycle = Math.round((this.frameCount*60/1000) / 2) % 4
             
-            charProps.state = "walk1"
-            charProps.isShowingBack = spinCycle == 0 || spinCycle == 1 // direction up or left
-            charProps.isMirroredLeft = spinCycle == 1 || spinCycle == 2 // direction left or down
+            state = "walk1"
+            isShowingBack = spinCycle == 0 || spinCycle == 1 // direction up or left
+            isMirroredLeft = spinCycle == 1 || spinCycle == 2 // direction left or down
         }
         else
         {
-            charProps.isShowingBack = this.direction == "up" || this.direction == "left"
-            charProps.isMirroredLeft = this.direction == "left" || this.direction == "down"
+            isShowingBack = this.direction == "up" || this.direction == "left"
+            isMirroredLeft = this.direction == "left" || this.direction == "down"
             
             if (this.isWalking)
             {
                 const walkCycle = this.framesUntilNextStep > this.stepLength / 2
-                charProps.state = walkCycle ? "walk1" : "walk2"
+                state = walkCycle ? "walk1" : "walk2"
             }
             else
             {
                 const isSitting = !!room.sit.find(s => s.x == this.logicalPositionX && s.y == this.logicalPositionY)
-                charProps.state = isSitting ? "sit" : "stand"
+                state = isSitting ? "sit" : "stand"
             }
         }
         
-        charProps.hasEyesClosed = this.isBlinking || this.isSpinning || this.isInactive
-        
-        return this.character.getImage(charProps)
+        return this.character.getImage({
+            version,
+            isShowingBack,
+            state,
+            isMirroredLeft,
+            hasEyesClosed: this.isBlinking || this.isSpinning || this.isInactive
+        })
     }
     
-    animateBlinking(now)
+    animateBlinking(now: number): boolean
     {
         const currentCycleTime = (now+this.blinkingStartShift) % this.blinkingPattern[this.blinkingPattern.length-1]
-        const isBlinking = ((this.blinkingPattern.find(b => currentCycleTime < b) - currentCycleTime) - blinkClosedLength) <= 0
+        const isBlinking = ((this.blinkingPattern.find(b => currentCycleTime < b)! - currentCycleTime) - blinkClosedLength) <= 0
         if (this.isBlinking != isBlinking)
         {
             this.isBlinking = isBlinking
             return true
         }
+        return false
     }
     
     resetBlinking()
@@ -174,7 +197,7 @@ export default class User
         this.isBlinking = false
     }
     
-    checkIfRedrawRequired()
+    checkIfRedrawRequired(): boolean
     {
         if (this.isWalking) return true;
         if (this.isMoved)
@@ -182,6 +205,7 @@ export default class User
             this.isMoved = false;
             return true;
         }
+        return false
     }
 
     makeSpin()

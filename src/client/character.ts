@@ -1,16 +1,16 @@
+import type { ImageLayer, CharacterSvgDto } from './types'
+
 import { RenderCache } from "./rendercache";
 import { annualEvents } from "../shared/annualevents";
 import { stringToImageList, logToServer } from "./utils";
 
-import type { ImageLayer, CharacterSvgDto } from './types'
-
 
 type CharacterFormat = "svg" | "png"
 const characterVersions = ["normal", "alt"] as const
-type CharacterVersion = typeof characterVersions[number]
+export type CharacterVersion = typeof characterVersions[number]
 type CharacterSide = "front" | "back"
 const characterStates = ["stand", "sit", "walk1", "walk2"] as const
-type CharacterState = typeof characterStates[number]
+export type CharacterState = typeof characterStates[number]
 
 
 type RawImages = {
@@ -42,13 +42,13 @@ type CharacterObject = {
     portrait?: PortraitProps
 }
 
-type ImageProps = {
+type CharacterProps = {
     version: CharacterVersion,
     isShowingBack: boolean,
     state: CharacterState,
     isMirroredLeft: boolean,
-    hasEyesClosed: boolean,
-    hasMouthClosed: boolean,
+    hasEyesClosed?: boolean,
+    hasMouthClosed?: boolean,
 }
 
 export class Character
@@ -83,7 +83,7 @@ export class Character
         this.scale = scale
     }
     
-    public getImage({version, isShowingBack, state, isMirroredLeft, hasEyesClosed, hasMouthClosed}: ImageProps)
+    public getImage({version='normal', isShowingBack=false, state='stand', isMirroredLeft=false, hasEyesClosed=true, hasMouthClosed=true}: CharacterProps)
     {
         let side: CharacterSide = isShowingBack ? "back" : "front"
         // Fallback properties

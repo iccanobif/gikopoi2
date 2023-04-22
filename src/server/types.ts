@@ -1,18 +1,10 @@
 export * from '../shared/shared_types'
-import type { JankenStateDto } from '../shared/shared_types'
+import type { Direction, Room, JankenStateDto } from '../shared/shared_types'
 
 import { Player } from "./users";
 import { ChessInstance } from "chess.js"
 
 const JanusClient = require('janus-videoroom-client').Janus;
-
-export type Direction = 'up' | 'down' | 'left' | 'right'
-
-export interface Coordinates
-{
-    x: number;
-    y: number;
-}
 
 export interface Participant
 {
@@ -37,86 +29,6 @@ export interface StreamSlot
     allowedListenerIDs: string[],
     streamIsVtuberMode: boolean | null,
     isNicoNicoMode: boolean | null,
-}
-
-export interface Door
-{
-    x: number;
-    y: number;
-    direction: Direction | null;
-    target: {
-        roomId: string
-        doorId: string
-    } | string | null;
-}
-
-export interface Room
-{
-    id: string;
-    group: "bar_giko" | "gikopoi" | "gikopoipoi";
-    variant?: string;
-    scale: number;
-    size: Coordinates;
-    originCoordinates: Coordinates;
-    backgroundImageUrl: string;
-    backgroundColor?: string;
-    backgroundOffset?: Coordinates;
-    spawnPoint: string;
-    needsFixedCamera?: boolean;
-    isBackgroundImageOffsetEdge?: boolean;
-    objects: {
-        id?: string;
-        x: number;
-        y: number;
-        width?: number;
-        height?: number;
-        url: string | string[];
-        animation?:
-        {
-            type: string;
-            scenes: {
-                [sceneId: string]: {
-                    frames: {
-                        prefix: string;
-                        suffix: string;
-                        amount: number;
-                    } | (string | {
-                        url: string;
-                        frameDelay?: number;
-                    })[],
-                    frameDelay?: number;
-                }
-            }
-            frameDelay?: number;
-            cycleShift?: number;
-        }
-        scale?: number;
-        offset?: {
-            x: number;
-            y: number;
-        },
-    }[];
-    objectRenderSortMethod?: "diagonal_scan" | "priority";
-    sit: Coordinates[];
-    blocked: Coordinates[];
-    forbiddenMovements: { xFrom: number, yFrom: number, xTo: number, yTo: number }[],
-    doors: { [doorId: string]: Door };
-    worldSpawns?: Door[];
-    streamSlotCount: number;
-    secret?: boolean;
-    forcedAnonymous?: boolean;
-    blockWidth?: number;
-    blockHeight?: number;
-    games?: string[];
-    specialObjects?: SpecialObjects[];
-}
-
-export interface SpecialObjects
-{
-    name: string;
-    x: number;
-    y: number;
-    value?: number;
 }
 
 export interface JanusServer

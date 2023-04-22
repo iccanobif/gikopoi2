@@ -1,6 +1,6 @@
 export * from '../shared/shared_types'
 
-import type User from './user.js'
+import type User from './user'
 
 export interface Users { [id: string]: User }
 export type IgnoredUserIds = Set<string>

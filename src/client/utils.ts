@@ -1,4 +1,4 @@
-import type { ImageLayer } from './types'
+import type { Room, ImageLayer } from './types'
 
 export const BLOCK_WIDTH = 80
 export const BLOCK_HEIGHT = 40
@@ -112,6 +112,22 @@ export async function stringToImageList(imageString: string, isBase64: boolean)
     })
 }
 
+// returns "left" and "bottom" positions
+export function calculateRealCoordinates(room: Room, x: number, y: number): {x: number, y: number}
+{
+    const blockWidth = room.blockWidth ? room.blockWidth : BLOCK_WIDTH;
+    const blockHeight = room.blockHeight ? room.blockHeight : BLOCK_HEIGHT;
+    
+    let realX = room.originCoordinates.x
+        + x * blockWidth / 2
+        + y * blockWidth / 2
+
+    let realY = room.originCoordinates.y
+        + x * blockHeight / 2
+        - y * blockHeight / 2
+
+    return { x: realX, y: realY }
+}
 
 // further down
 
