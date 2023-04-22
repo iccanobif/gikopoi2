@@ -28,14 +28,14 @@ export default class User
     public frameCount: number = 0
     public isInactive: boolean = false
 
-    public nameImage: RenderCache | null = null;
+    public nameImage: RenderCache | null = null
 
-    public message: string | null = null;
-    public lastMessage: string | null = null;
-    public lastMovement: any = null; // not sure about the type
-    public bubblePosition: Direction = "up";
-    public bubbleImage: RenderCache | null = null;
-    public voicePitch: number | null = null;
+    public message: string | null = null
+    public lastMessage: string | null = null
+    public lastMovement: number | null = null
+    public bubblePosition: Direction = "up"
+    public bubbleImage: RenderCache | null = null
+    public voicePitch: number | null = null
 
     public isAlternateCharacter: boolean = false
 
