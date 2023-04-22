@@ -64,7 +64,7 @@
                             </template>
                             <input type="radio" :id="character.characterName + '-selection'" :disabled="isLoggingIn"
                                 :value="character.characterName" v-model="characterId">
-                            <img :style="{ top: (character.portraitTop*100) + '%', left: (character.portraitLeft*100) + '%', width: (character.portraitScale*100) + '%'}"
+                            <img :style="{ top: (character.portrait.top*100) + '%', left: (character.portrait.left*100) + '%', width: (character.portrait.scale*100) + '%'}"
                                 :src="'characters/' + character.characterName + '/front-standing.' + character.format"/>
                         </label>
                     </div>
