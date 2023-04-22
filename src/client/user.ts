@@ -20,12 +20,12 @@ export default class User
     public currentPhysicalPositionX: number = 0
     public currentPhysicalPositionY: number = 0
     public isWalking: boolean = false
-    public isSpinning: boolean = false
-    public isMoved: boolean = true
+    private isSpinning: boolean = false
+    private isMoved: boolean = true
     public direction: Direction = "up"
-    public stepLength = (1000/60) * 8
-    public framesUntilNextStep: number
-    public frameCount: number = 0
+    private stepLength = (1000/60) * 8
+    private framesUntilNextStep: number
+    private frameCount: number = 0
     public isInactive: boolean = false
 
     public nameImage: RenderCache | null = null
@@ -39,10 +39,9 @@ export default class User
 
     public isAlternateCharacter: boolean = false
 
-    public isBlinking: boolean = false
-    public blinkingPattern: number[]
-    public blinkingStartShift: number
-    
+    private isBlinking: boolean = false
+    private blinkingPattern: number[]
+    private blinkingStartShift: number
     
     constructor(id: string, name: string, character: Character)
     {
