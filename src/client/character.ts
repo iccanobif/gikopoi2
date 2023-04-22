@@ -83,12 +83,19 @@ export class Character
     
     public getImage({version, isShowingBack, state, isMirroredLeft, hasEyesClosed, hasMouthClosed}: ImageProps)
     {
-        const side: CharacterSide = isShowingBack ? "back" : "front"
+        let side: CharacterSide = isShowingBack ? "back" : "front"
+        // Fallback properties
+        if(!this.rawImages[[version, side, state].join(",")])
+        {
+            version = "normal"
+            if(!this.rawImages[[version, side, state].join(",")])
+            {
+                state = "stand"
+                if(!this.rawImages[[version, side, state].join(",")])
+                    side = "front"
+            }
+        }
         const rawImageLayers = this.rawImages[[version, side, state].join(",")]
-            || this.rawImages[["normal", side, state].join(",")]
-            || this.rawImages[["normal", side, "stand"].join(",")]
-            || this.rawImages[["normal", "front", "stand"].join(",")]
-            || null
         if (rawImageLayers == null) return []
         // Not sure why, but rawImageLayers seems to have "undefined" elements sometimes.
         // Maybe that happens when stringToImageList() throws an exception? Logging some info
