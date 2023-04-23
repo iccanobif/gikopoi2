@@ -217,8 +217,7 @@ const sendRoomState = (socket: Socket, user: Player, currentRoom: Room) =>
     socket.emit("server-update-current-room-state", state)
 }
 
-
-io.on("connection", function (socket: Socket)
+io.on("connection", function (socket)
 {
     let user: Player;
     
@@ -235,7 +234,14 @@ io.on("connection", function (socket: Socket)
         {
             if (!user) return;
 
-            log.info("disconnect", user.id)
+            log.info("disconnect", user.id, "socket id:", socket.id)
+
+            if (user.socketId != socket.id)
+            {
+                // No need to do anything because before we got this "disconnect" event, a new valid socket
+                // has already connected.
+                return;
+            }
 
             user.isGhost = true
             user.disconnectionTime = Date.now()
@@ -254,57 +260,78 @@ io.on("connection", function (socket: Socket)
         }
     })
 
-    // Initialize user
-    try
-    {
-        user = socket.data.user;
-        if (!user)
-        {
-            log.info(getRealIpWebSocket(socket), "tried to connect to websocket but failed authentication")
-            return
-        }
-        user.socketId = socket.id;
-
-        log.info("user-connect userId:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime);
-
-        socket.join(user.areaId)
-        socket.join(user.areaId + user.roomId)
-
-        user.isGhost = false
-        user.disconnectionTime = null
-
-        sendCurrentRoomState()
-
-        sendNewUserInfo()
-
-        emitServerStats(user.areaId)
-    }
-    catch (e)
-    {
-        logException(e, socket?.data?.user)
+    function handleNewSocketConnection() {
+        // NOTE: keep in mind that it's possible that another socket is still open (for example, because the old socket
+        //       is about to timeout, but the client has already opened a new one).
         try
         {
-            socket.emit("server-cant-log-you-in")
-            log.info("DISCONNECTING WEBSOCKET")
-            socket.disconnect(true)
+            user = socket.data.user;
+            if (!user)
+            {
+                log.info(getRealIpWebSocket(socket), "tried to connect to websocket but failed authentication")
+                return
+            }
+            user.socketId = socket.id;
+    
+            log.info("user-connect userId:", user.id, "name:", "<" + user.name + ">", "disconnectionTime:", user.disconnectionTime, "socket id:" , socket.id);
+    
+            socket.join(user.areaId)
+            socket.join(user.areaId + user.roomId)
+    
+            user.isGhost = false
+            user.disconnectionTime = null
+    
+            sendCurrentRoomState()
+    
+            sendNewUserInfo()
+    
+            emitServerStats(user.areaId)
         }
         catch (e)
         {
             logException(e, socket?.data?.user)
+            try
+            {
+                socket.emit("server-cant-log-you-in")
+                log.info("DISCONNECTING WEBSOCKET")
+                socket.disconnect(true)
+            }
+            catch (e)
+            {
+                logException(e, socket?.data?.user)
+            }
         }
     }
-
-    // Flood detection (no more than 50 events in the span of one second)
+    handleNewSocketConnection()
+    
     const lastEventDates: number[] = []
-    socket.onAny(() => {
-        lastEventDates.push(Date.now())
-        if (lastEventDates.length > 50)
-        {
-            const firstEventTime = lastEventDates.shift()!
-            if (Date.now() - firstEventTime < 1000)
+    socket.onAny((...params) => {
+        try {
+            // Flood detection (no more than 50 events in the span of one second)
+            lastEventDates.push(Date.now())
+            if (lastEventDates.length > 50)
             {
-                socket.disconnect()
+                const firstEventTime = lastEventDates.shift()!
+                if (Date.now() - firstEventTime < 1000)
+                {
+                    socket.disconnect(true)
+                }
             }
+
+            // It seems that sometimes (when network conditions are bad) the server receives a "disconnect"
+            // event (which removes the user from all clients) but, when the socket reconnects, a
+            // "connection" event is not raised again, leaving him as a ghost. To try to recover
+            // from this anomalous state, I execute here the code that should run when a socket connects
+            // or reconnects. It's possible that this problem won't happen anymore now that "disconnect" events
+            // don't do anything if the user's current socket id is different from the disconnecting socket's id.
+            if (user.isGhost)
+            {
+                log.info(`${getRealIpWebSocket(socket)} TRYING TO RECOVER FROM SOCKET ANOMALY. Received this event:`, ...params)
+                handleNewSocketConnection()
+            }
+        } catch (exc)
+        {
+            logException(exc, socket?.data?.user)
         }
     })
 
