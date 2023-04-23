@@ -18,10 +18,14 @@ import { subscribeToAnnualEvents } from "../shared/annualevents";
 
 const app = express()
 const server = require('http').Server(app);
-const io = require("socket.io")(server, {
+
+import { Server } from "socket.io"
+
+const io = new Server(server, {
     pingInterval: 25 * 1000, // Heroku fails with "H15 Idle connection" if a socket is inactive for more than 55 seconds with
     pingTimeout: 60 * 1000
-});
+})
+
 const tripcode = require('tripcode');
 const enforce = require('express-sslify');
 const JanusClient = require('janus-videoroom-client').Janus;
@@ -235,6 +239,7 @@ io.on("connection", function (socket: Socket)
 
             user.isGhost = true
             user.disconnectionTime = Date.now()
+            user.socketId = null
 
             await clearStream(user) // This also calls emitServerStats(), but only if the user was streaming...
             emitServerStats(user.areaId)
@@ -994,11 +999,15 @@ io.on("connection", function (socket: Socket)
     function createChessMoveTimeout() {
         return setTimeout(() => {
             const chessState = roomStates[user.areaId][user.roomId].chess
+            if (!chessState) return
 
-            if (chessState?.blackUserID)
-                io.to(getUser(chessState?.blackUserID).socketId).emit("server-system-message", "chess_timeout_reached")
-            if (chessState?.whiteUserID)
-                io.to(getUser(chessState?.whiteUserID).socketId).emit("server-system-message", "chess_timeout_reached")
+            const blackUserSocketId = chessState.blackUserID && getUser(chessState.blackUserID) && getUser(chessState.blackUserID).socketId
+            if (blackUserSocketId)
+                io.to(blackUserSocketId).emit("server-system-message", "chess_timeout_reached")
+            
+            const whiteUserSocketId = chessState.whiteUserID && getUser(chessState.whiteUserID) && getUser(chessState.whiteUserID).socketId
+            if (whiteUserSocketId)
+                io.to(whiteUserSocketId).emit("server-system-message", "chess_timeout_reached")
 
             stopChessGame(roomStates, user)
         }, maxWaitForChessMove)
@@ -1066,7 +1075,10 @@ io.on("connection", function (socket: Socket)
             {
                 // Notify only if the game was already started.
                 const usersToNotify = getUsersToNotifyAboutChessGame()
-                usersToNotify.forEach(u => io.to(u.socketId).emit("server-chess-quit", user.id))
+                usersToNotify.forEach(u => {
+                    if (u.socketId)
+                        io.to(u.socketId).emit("server-chess-quit", user.id)
+                })
             }
 
             stopChessGame(roomStates, user)
@@ -1135,7 +1147,10 @@ io.on("connection", function (socket: Socket)
                 log.info("game over", winnerUserID)
 
                 const usersToNotify = getUsersToNotifyAboutChessGame()
-                usersToNotify.forEach(u => io.to(u.socketId).emit("server-chess-win", winnerUserID))
+                usersToNotify.forEach(u => {
+                    if (u.socketId)
+                        io.to(u.socketId).emit("server-chess-win", winnerUserID)
+                })
 
                 stopChessGame(roomStates, user)
             }
@@ -1251,14 +1266,15 @@ function emitServerStats(areaId: string)
         const connectedUserIds: Set<string> = getFilteredConnectedUserList(u, null, areaId)
             .reduce((acc, val) => acc.add(val.id), new Set<string>())
 
-        io.to(u.socketId).emit("server-stats", {
-            userCount: connectedUserIds.size,
-            streamCount: Object.values(roomStates[areaId])
-                .map(s => s.streams)
-                .flat()
-                .filter(s => s.publisher !== null && s.publisher.user.id && connectedUserIds.has(s.publisher.user.id))
-                .length.toString()
-        })
+        if (u.socketId)
+            io.to(u.socketId).emit("server-stats", {
+                userCount: connectedUserIds.size,
+                streamCount: Object.values(roomStates[areaId])
+                    .map(s => s.streams)
+                    .flat()
+                    .filter(s => s.publisher !== null && s.publisher.user.id && connectedUserIds.has(s.publisher.user.id))
+                    .length.toString()
+            })
     });
 }
 
@@ -1273,17 +1289,17 @@ function changeCharacter(user: Player, characterId: string, isAlternateCharacter
     userRoomEmit(user, "server-character-changed", user.id, user.characterId, user.isAlternateCharacter)
 }
 
-function userRoomEmit(user: Player, ...msg: any[])
+function userRoomEmit(user: Player, event: string, ...params: any[])
 {
     for (const u of getFilteredConnectedUserList(user, user.roomId, user.areaId))
         if (u.socketId)
-            io.to(u.socketId).emit(...msg)
+            io.to(u.socketId).emit(event, ...params)
 }
 
-function roomEmit(areaId: string, roomId: string, ...msg: any[])
+function roomEmit(areaId: string, roomId: string, event: string, ...msg: any[])
 {
     getConnectedUserList(roomId, areaId)
-        .forEach((u) => u.socketId && io.to(u.socketId).emit(...msg));
+        .forEach((u) => u.socketId && io.to(u.socketId).emit(event, ...msg));
 }
 
 function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSlotDto[]
@@ -2229,7 +2245,7 @@ async function banIP(ip: string)
     {
         if (user.socketId)
         {
-            const socket = io.sockets.sockets[user.socketId]
+            const socket = io.sockets.sockets.get(user.socketId)
             if (socket)
                 socket.disconnect();
         }
@@ -2441,8 +2457,13 @@ dynamicRooms.forEach((dynamicRoom: DynamicRoom) =>
             rooms[dynamicRoom.roomId] = room
             settings.siteAreas.forEach(area =>
             {
-                for (const u of getConnectedUserList(dynamicRoom.roomId, area.id).filter(u => u.socketId))
-                    sendRoomState(io.to(u.socketId), u, rooms[dynamicRoom.roomId]);
+                for (const u of getConnectedUserList(dynamicRoom.roomId, area.id))
+                    if (u.socketId)
+                    {
+                        const socket = io.sockets.sockets.get(u.socketId)
+                        if (socket)
+                            sendRoomState(socket, u, rooms[dynamicRoom.roomId]);
+                    }
             })
             if (typeof room.variant === "string")
                 previousVariant = room.variant
