@@ -1,6 +1,8 @@
+import type { Users, CanvasObject, ClientRoomObject, AnimationFrame } from './types'
+
 // Make jizou turn around when a user is standing in front of it
 // return true if redraw is required
-export function animateJizou(jizouObject, users)
+export function animateJizou(jizouObject: ClientRoomObject, users: Users): boolean
 {
     // If the images have not been loaded yet, do nothing
     if (!jizouObject.allImages)
@@ -57,16 +59,17 @@ export function animateJizou(jizouObject, users)
     }
 
     // If the current frame was changed, set the new image. Return true if redraw is required.
-    if (jizouObject.image == jizouObject.allImages[jizouObject.currentFrame])
+    if (jizouObject.currentFrame && jizouObject.image == jizouObject.allImages[jizouObject.currentFrame])
         return false
     else
     {
-        jizouObject.image = jizouObject.allImages[jizouObject.currentFrame]
+        if (jizouObject.currentFrame)
+            jizouObject.image = jizouObject.allImages[jizouObject.currentFrame]
         return true
     }
 }
 
-export function animateObjects(canvasObjects, users)
+export function animateObjects(canvasObjects: CanvasObject[], users: Users): boolean
 {
     const now = Date.now();
     return canvasObjects
@@ -74,20 +77,25 @@ export function animateObjects(canvasObjects, users)
         .map(o => o.o)
         .map(object =>
     {
-        if (object.animation.type == "cycle")
+        if (object.animation && object.animation.type == "cycle")
         {
             if (!object.animation.scenes["main"]) return false
             const mainScene = object.animation.scenes["main"]
+            if (!mainScene.frames) return false
             if (mainScene.frames.length == 0 || typeof mainScene.frames[0] == "string" || !mainScene.frames[0].image) return false
             
-            const totalLength = mainScene.frames.reduce((accLength, frame) => accLength + frame.frameDelay , 0)
+            const getFrameDelay = (frame: AnimationFrame) => frame.frameDelay || mainScene.frameDelay || (object.animation && object.animation.frameDelay) || 0
+            
+            const totalLength = mainScene.frames.reduce((accLength, frame) => accLength + getFrameDelay(frame) , 0)
             const currentTime = (now+(object.animation.cycleShift || 0)) % totalLength
             let accLength = 0
             const currentFrame = mainScene.frames.find(frame =>
             {
-                accLength += frame.frameDelay
+                accLength += getFrameDelay(frame)
                 return currentTime < accLength
             })
+            
+            if (!currentFrame) return false
             
             const isDifferentFrame = object.animation.currentFrame != currentFrame
             object.animation.currentFrame = currentFrame

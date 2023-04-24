@@ -5,9 +5,9 @@ export const BLOCK_HEIGHT = 40
 
 export const urlRegex = /(https?:\/\/|www\.)[^\s]+/gi
 
-export function loadImage(url: string)
+export function loadImage(url: string): Promise<HTMLImageElement>
 {
-    return new Promise((resolve, reject) =>
+    return new Promise<HTMLImageElement>((resolve, reject) =>
     {
         try
         {
@@ -27,7 +27,7 @@ export function loadImage(url: string)
     })
 }
 
-export function stringToImage(imageString: string, isPng: boolean)
+export function stringToImage(imageString: string, isPng: boolean): Promise<HTMLImageElement>
 {
     return new Promise<HTMLImageElement>((resolve, reject) => {
         try

@@ -31,7 +31,7 @@ import messages from '@intlify/unplugin-vue-i18n/messages'
 import { speak } from "./tts.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.ts";
 import { RenderCache } from "./rendercache.ts";
-import { animateObjects, animateJizou } from "./animations.js";
+import { animateObjects, animateJizou } from "./animations.ts";
 
 import ChessboardSlot from './chessboard-slot.vue'
 import JankenSlot from './janken-slot.vue'
@@ -683,16 +683,11 @@ window.vueApp = createApp({
                         }),
                         Object.values(scenes).map(s =>
                         {
-                            if (!Array.isArray(s.frames))
-                            {
-                                s.frames = Array.from({length: s.frames.amount}, (v, i) => { return { url: s.frames.prefix + (i+1) + s.frames.suffix } })
-                            }
+                            if (s.framesUrlPattern)
+                                s.frames = Array.from({length: s.framesUrlPattern.amount},
+                                    (v, i) => { return { url: s.framesUrlPattern.prefix + (i+1) + s.framesUrlPattern.suffix } })
                             return s.frames.map((f, i) =>
-                            {
-                                s.frames[i] = typeof f == "string" ? { url: f } : f
-                                s.frames[i].frameDelay = s.frames[i].frameDelay || s.frameDelay || o.animation.frameDelay
-                                return loadRoomImage(s.frames[i].url).then(image => { s.frames[i].image = RenderCache.Image(image, scale) })
-                            })
+                                loadRoomImage(s.frames[i].url).then(image => { s.frames[i].image = RenderCache.Image(image, scale) }))
                         }).flat()
                     ])
                     this.isRedrawRequired = true;

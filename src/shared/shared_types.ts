@@ -1,3 +1,5 @@
+import type { RenderCache } from '../client/rendercache'
+
 export type Direction = 'up' | 'down' | 'left' | 'right'
 
 export interface Coordinates
@@ -25,6 +27,47 @@ export interface SpecialObjects
     value?: number;
 }
 
+export interface AnimationFrame
+{
+    url: string;
+    frameDelay?: number;
+    // frontend additions
+    image?: RenderCache
+}
+
+export interface RoomObject
+{
+    id?: string;
+    x: number;
+    y: number;
+    width?: number;
+    height?: number;
+    url: string | string[];
+    animation?:
+    {
+        type: string;
+        scenes: {
+            [sceneId: string]: {
+                frames?: AnimationFrame[],
+                framesUrlPattern?: {
+                    prefix: string;
+                    suffix: string;
+                    amount: number;
+                }
+                frameDelay?: number;
+            }
+        }
+        frameDelay?: number;
+        cycleShift?: number;
+        currentFrame?: AnimationFrame
+    }
+    scale?: number;
+    offset?: {
+        x: number;
+        y: number;
+    }
+}
+
 export interface Room
 {
     id: string;
@@ -39,38 +82,7 @@ export interface Room
     spawnPoint: string;
     needsFixedCamera?: boolean;
     isBackgroundImageOffsetEdge?: boolean;
-    objects: {
-        id?: string;
-        x: number;
-        y: number;
-        width?: number;
-        height?: number;
-        url: string | string[];
-        animation?:
-        {
-            type: string;
-            scenes: {
-                [sceneId: string]: {
-                    frames: {
-                        prefix: string;
-                        suffix: string;
-                        amount: number;
-                    } | (string | {
-                        url: string;
-                        frameDelay?: number;
-                    })[],
-                    frameDelay?: number;
-                }
-            }
-            frameDelay?: number;
-            cycleShift?: number;
-        }
-        scale?: number;
-        offset?: {
-            x: number;
-            y: number;
-        },
-    }[];
+    objects: RoomObject[];
     objectRenderSortMethod?: "diagonal_scan" | "priority";
     sit: Coordinates[];
     blocked: Coordinates[];
