@@ -21,7 +21,7 @@ export default defineComponent({
     },
     data()
     {
-        const chessboard: any | null = null // new version 2 is out with supposed import, couldn't get it working though so leaving as any for now
+        const chessboard: any | null = null
         return {
             chessboard,
             visible: false,
