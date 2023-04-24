@@ -1,4 +1,4 @@
-import { kanaToRomajiMap, kanjiToKanaMap, katakanaToHiragana } from "./japanese-tools.js";
+import { kanaToRomajiMap, kanjiToKanaMap, katakanaToHiragana } from "./japanese-tools.ts";
 import { urlRegex } from "./utils.ts";
 
 const synth = new Animalese('animalese.wav', function () { });
