@@ -238,8 +238,7 @@ export class AudioProcessor
         if (this.context.createStereoPanner)
         {
             this.pan = this.context.createStereoPanner();
-            // @ts-ignore
-            this.pan.value = 0
+            this.pan.pan.value = 0
         }
         else
         {
@@ -341,9 +340,7 @@ export class AudioProcessor
     setPan(value: number)
     {
         // Check that this is actually a pan node and not a dummy gain node (see comments in constructor)
-        // @ts-ignore
-        if (this.pan.pan)
-            // @ts-ignore
+        if ("pan" in this.pan)
             this.pan.pan.value = value
     }
 

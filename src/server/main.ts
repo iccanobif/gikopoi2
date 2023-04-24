@@ -268,7 +268,7 @@ io.on("connection", function (socket)
             user = socket.data.user;
             if (!user)
             {
-                log.info(getRealIpWebSocket(socket), "tried to connect to websocket but failed authentication")
+                log.info(getRealIpWebSocket(socket), "tried to connect to websocket but failed authentication", socket.id)
                 return
             }
             user.socketId = socket.id;
