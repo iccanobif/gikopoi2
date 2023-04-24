@@ -23,7 +23,7 @@ export default class User
     private isSpinning: boolean = false
     private isMoved: boolean = true
     public direction: Direction = "up"
-    private stepLength = (1000/60) * 8
+    private stepLength: number = (1000/60) * 8
     private framesUntilNextStep: number
     private frameCount: number = 0
     public isInactive: boolean = false
