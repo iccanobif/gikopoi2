@@ -167,10 +167,8 @@ export default defineComponent({
             {{ $t("ui.game_quit")}}
         </button>
         <div v-show="visible">
-            <div>
-            {{ !chessboardState.whiteUserID ? $t("ui.chess_waiting_for_white")
-                : !chessboardState.blackUserID ? $t("ui.chess_waiting_for_black")
-                : "" }}
+            <div v-if="!chessboardState.whiteUserID || !chessboardState.blackUserID">
+            {{ !chessboardState.whiteUserID ? $t("ui.chess_waiting_for_white") : $t("ui.chess_waiting_for_black") }}
             </div>
             <span v-if="chessboardState.whiteUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'w'}">
                 {{ $t("ui.chess_white") }}{{ users[chessboardState.whiteUserID]
