@@ -1,5 +1,5 @@
 export * from '../shared/shared_types'
-import type { Direction, Room, JankenStateDto } from '../shared/shared_types'
+import type { Direction, Room, JankenStateDto, ChessboardStateDto } from '../shared/shared_types'
 
 import { Player } from "./users";
 import { ChessInstance } from "chess.js"
@@ -104,14 +104,6 @@ export interface ChessboardState {
     whiteUserID: string | null,
     lastMoveTime: number | null,
     timer: any
-}
-
-export interface ChessboardStateDto
-{
-    fenString: string | null,
-    blackUserID: string | null,
-    whiteUserID: string | null,
-    turn: "b" | "w" | null,
 }
 
 export interface JankenState extends JankenStateDto {

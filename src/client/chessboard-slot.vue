@@ -1,12 +1,29 @@
-<script>
-export default {
-    props: ["chessboardState"],
-    inject: ["socket", "users", "myUserId"],
+<script lang="ts">
+import type { PropType } from 'vue'
+import type { Socket } from 'socket.io-client'
+
+import type { Users, ChessboardStateDto,  } from './types'
+
+import { defineComponent, inject, Ref } from 'vue'
+
+export default defineComponent({
+    props: {
+        chessboardState: { type: Object as PropType<ChessboardStateDto>, required: true }
+    },
     template: "#chessboard-slot",
-    data()
+    setup() // hacky way to make injects type safe, using composition API's setup method
     {
         return {
-            chessboard: null,
+            socket: inject('socket') as Ref<Socket>,
+            users: inject('users') as Ref<Users>,
+            myUserId: inject('myUserId') as Ref<string>
+        }
+    },
+    data()
+    {
+        const chessboard: any | null = null // new version 2 is out with supposed import, couldn't get it working though so leaving as any for now
+        return {
+            chessboard,
             visible: false,
         }
     },
@@ -39,21 +56,22 @@ export default {
     {
         buildChessboard()
         {
+            if (!this.chessboardState) return
             const chessboardElement = document.getElementById("chessboard")
 
             const position = this.chessboardState
                 ? (this.chessboardState.fenString || "start")
                 : "start"
 
-            this.chessboard = Chessboard(chessboardElement, {
+            this.chessboard = (window as any).Chessboard(chessboardElement, {
                 pieceTheme: 'chess/img/chesspieces/wikipedia/{piece}.png',
                 position,
                 orientation: this.chessboardState.blackUserID == this.myUserId ? "black" : "white",
                 draggable: true,
-                onDragStart: (source, piece, position, orientation) =>
+                onDragStart: () => // Not used so didn't add types: source, piece, position, orientation
                 {
                     // onDragStart prevents dragging if it returns false.
-                    if (!this.chessboardState.blackUserID)
+                    if (!this.chessboardState || !this.chessboardState.blackUserID)
                         return false
 
                     // Don't move when it's not your turn
@@ -69,8 +87,9 @@ export default {
                     // if (colorOfMovedPiece != this.chessboardState.turn)
                     //     return false
                 },
-                onDrop: (source, target) =>
+                onDrop: (source: any, target: any) =>
                 {
+                    if (!this.chessboardState) return
                     if (this.chessboardState.blackUserID == this.myUserId
                         || this.chessboardState.whiteUserID == this.myUserId)
                     {
@@ -122,11 +141,12 @@ export default {
         },
         amIPlaying()
         {
+            if (!this.chessboardState) return
             return this.chessboardState.blackUserID == this.myUserId 
                    || this.chessboardState.whiteUserID == this.myUserId
         },
     },
-}
+})
 </script>
 
 <template>
