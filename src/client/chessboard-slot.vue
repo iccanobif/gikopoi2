@@ -168,9 +168,9 @@ export default defineComponent({
         </button>
         <div v-show="visible">
             <div>
-            {{ $t(!chessboardState.whiteUserID ? "ui.chess_waiting_for_white"
-                : !chessboardState.blackUserID ? "ui.chess_waiting_for_black"
-                : "") }}
+            {{ !chessboardState.whiteUserID ? $t("ui.chess_waiting_for_white")
+                : !chessboardState.blackUserID ? $t("ui.chess_waiting_for_black")
+                : "" }}
             </div>
             <span v-if="chessboardState.whiteUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'w'}">
                 {{ $t("ui.chess_white") }}{{ users[chessboardState.whiteUserID]
