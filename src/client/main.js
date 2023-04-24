@@ -26,7 +26,7 @@ import {
     controlCharsToHtml,
     removeControlChars,
     escapeHTML
-} from "./utils.js";
+} from "./utils.ts";
 import messages from '@intlify/unplugin-vue-i18n/messages'
 import { speak } from "./tts.js";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.ts";
