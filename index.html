@@ -312,7 +312,8 @@
                                 <label :for="'enable-compression-' + index">{{ $t("ui.enable_compression") }}</label>
                                 <input type="checkbox"
                                     :id="'enable-compression-' + index"
-                                    :checked="inboundAudioProcessors[index] && inboundAudioProcessors[index].isBoostEnabled"
+                                    v-if="inboundAudioProcessors[index]"
+                                    v-model="inboundAudioProcessors[index].isBoostEnabled"
                                     v-on:change="onCompressionChanged(index)">
                             </div>
                         </div>
