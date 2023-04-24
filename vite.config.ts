@@ -19,4 +19,8 @@ export default defineConfig({
         }),
         splitVendorChunkPlugin(),
     ],
+    server: {
+        // disable hot reloading
+        hmr: false
+    }
 });
