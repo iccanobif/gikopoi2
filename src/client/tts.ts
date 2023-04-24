@@ -1,9 +1,9 @@
-import { kanaToRomajiMap, kanjiToKanaMap, katakanaToHiragana } from "./japanese-tools.ts";
-import { urlRegex } from "./utils.ts";
+import { kanaToRomajiMap, kanjiToKanaMap, katakanaToHiragana } from "./japanese-tools";
+import { urlRegex } from "./utils";
 
-const synth = new Animalese('animalese.wav', function () { });
+const synth = new (window as any).Animalese('animalese.wav', function () { });
 
-function speakAnimalese(text, pitch, volume) {
+function speakAnimalese(text: string, pitch: number, volume: number) {
     // replace every japanese character with a random roman letter
     // text = text
     //     .split("")
@@ -39,7 +39,7 @@ function speakAnimalese(text, pitch, volume) {
     audio.play();
 }
 
-function isJapaneseCharacter(character) {
+function isJapaneseCharacter(character: string): boolean {
     const charCode = character.charCodeAt(0)
     // CJK Unified Ideographs 
     if (charCode >= 0x4E00 && charCode <= 0x9FFF)
@@ -50,17 +50,17 @@ function isJapaneseCharacter(character) {
     // hankaku katakana
     if (charCode >= 0xFF66 && charCode <= 0xFF9F)
         return true
-}
-
-function isJapanese(text) {
-    // very simple heuristic, we just assume that if a sentence has at least one japanese character, then it must be japanese
-    for (let i = 0; i < text.length; i++)
-        if (isJapaneseCharacter(text.charAt(i))) return true
-
     return false
 }
 
-export function speak(message, voiceURI, volume, pitch) {
+function isJapanese(text: string): boolean {
+    // very simple heuristic, we just assume that if a sentence has at least one japanese character, then it must be japanese
+    for (let i = 0; i < text.length; i++)
+        if (isJapaneseCharacter(text.charAt(i))) return true
+    return false
+}
+
+export function speak(message: string, voiceURI: string, volume: number, pitch: number) {
     if (volume == 0)
         return
 

@@ -28,7 +28,7 @@ import {
     escapeHTML
 } from "./utils.ts";
 import messages from '@intlify/unplugin-vue-i18n/messages'
-import { speak } from "./tts.js";
+import { speak } from "./tts.ts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.ts";
 import { RenderCache } from "./rendercache.ts";
 import { animateObjects, animateJizou } from "./animations.ts";

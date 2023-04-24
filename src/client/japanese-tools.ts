@@ -15,7 +15,7 @@ export function katakanaToHiragana(str: string): string
     .join("")
 }
 
-export const kanaToRomajiMap = {
+export const kanaToRomajiMap: { [kana: string]: string } = {
   ゃ: 'ya',
   ゅ: 'yu',
   ょ: 'yo',
@@ -98,7 +98,7 @@ export const kanaToRomajiMap = {
   え: "e",
   お: "o"}
   
-export const kanjiToKanaMap = {
+export const kanjiToKanaMap: { [kanji: string]: string } = {
   亜: 'ア',
   唖: 'ア',
   娃: 'ア',
