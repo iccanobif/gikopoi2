@@ -15,7 +15,6 @@ export default defineComponent({
     {
         return {
             socket: inject('socket') as Ref<Socket>,
-            users: inject('users') as Ref<Users>,
             myUserId: inject('myUserId') as Ref<string>
         }
     },
