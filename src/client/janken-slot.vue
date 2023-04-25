@@ -29,15 +29,14 @@ const isStageDraw = computed(() => state.value.stage == "draw")
 const isStageResult = computed(() => state.value.stage == "win" || state.value.stage == "draw")
 
 const player1 = ref()
-const setPlayer1 = () => { player1.value = ((state.value.player1Id && users.value[state.value.player1Id])
-    || createFallbackUser(state.value.player1Id)) }
-watch(() => state.value.player1Id, setPlayer1, { immediate: true })
+watch(() => state.value.player1Id, () => { player1.value = ((state.value.player1Id && users.value[state.value.player1Id])
+    || createFallbackUser(state.value.player1Id)) }, { immediate: true })
 
 const player2 = ref()
-const setPlayer2 = () => { player2.value = ((state.value.player2Id && users.value[state.value.player2Id])
-    || createFallbackUser(state.value.player2Id)) }
-watch(() => state.value.player2Id, setPlayer2, { immediate: true })
+watch(() => state.value.player2Id, () => { player2.value = ((state.value.player2Id && users.value[state.value.player2Id])
+    || createFallbackUser(state.value.player2Id)) }, { immediate: true })
 
+// this is so that the named player, in cases like quitting, doesn't become N/A when the id is checked in the users list
 const namedPlayer = computed(() => player1.value.id == state.value.namedPlayerId ? player1.value
     : (player2.value.id == state.value.namedPlayerId ? player2.value : createFallbackUser(state.value.namedPlayerId)))
 
