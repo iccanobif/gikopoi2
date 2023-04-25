@@ -218,11 +218,10 @@
                         <hr v-if="index != 0" />
                         <div>
                             {{ $t("ui.label_stream", {index: index+1}) }}<span
-                                v-if="streamSlot.isActive"
-                                class="stream-title active-stream-title"
-                                v-bind:class="{'highlighted-stream-title': streamSlot.userId && streamSlot.userId == highlightedUserId}"
-                                v-on:click="highlightUser(streamSlot.userId, streamSlot.title)">{{ users[streamSlot.userId]?.name }}
-                                <!-- NOTE: Above, I'm using the null propagator in the `users[streamSlot.userId]?.name` expression for
+                                v-if="streamSlot.isActive" class="stream-title"><username :user-id="streamSlot.userId"></username>
+                                <!-- NOTE 2: username component handles cases where the user id is missing in users, but unsure if the ideas mentioned in the note
+                                    are still relevant or not.
+                                    NOTE: Above, I'm using the null propagator in the `users[streamSlot.userId]?.name` expression for
                                            this regrettable reason: when changing room, updateRoomState() does a lot of stuff, among which
                                            there is the updating of this.users and this.streams. Unfortunately, there are quite a lot of
                                            asynchronous operations (using await) between those two updates, which means that after this.users
