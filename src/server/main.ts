@@ -324,9 +324,9 @@ io.on("connection", function (socket)
             // from this anomalous state, I execute here the code that should run when a socket connects
             // or reconnects. It's possible that this problem won't happen anymore now that "disconnect" events
             // don't do anything if the user's current socket id is different from the disconnecting socket's id.
-            if (user.isGhost)
+            if (user && user.isGhost)
             {
-                log.info(`${getRealIpWebSocket(socket)} TRYING TO RECOVER FROM SOCKET ANOMALY. Received this event:`, ...params)
+                log.info(`${getRealIpWebSocket(socket)} ${user.id} TRYING TO RECOVER FROM SOCKET ANOMALY. Received this event:`, ...params)
                 handleNewSocketConnection()
             }
         } catch (exc)
