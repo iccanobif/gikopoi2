@@ -765,7 +765,7 @@ window.vueApp = createApp({
 
             if (!loginMessage.isLoginSuccessful) throw new UserException(loginMessage.error);
 
-            myUserID = this.myUserID = loginMessage.userId;
+            window.myUserID = this.myUserID = loginMessage.userId;
             this.myPrivateUserID = loginMessage.privateUserId;
 
             logToServer(new Date() + " " + this.myUserID
