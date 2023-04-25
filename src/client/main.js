@@ -1210,6 +1210,8 @@ window.vueApp = createApp({
         },
         addNiconicoMessageToVideoContainer(videoContainer, messageText, userID)
         {
+            if (!videoContainer) return;
+            
             const span = document.createElement("span")
             span.textContent = messageText
 
