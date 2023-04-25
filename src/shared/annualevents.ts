@@ -17,7 +17,10 @@ export type AnnualEventCallback = (currentEvents: string[], addedEvents: string[
 
 function getNow(): dayjs.Dayjs
 {
-    return dayjs().tz("Asia/Tokyo")
+    if (typeof window === 'undefined')
+        return dayjs().tz("Asia/Tokyo")
+    else
+        return dayjs()
 }
 
 export class AnnualEvent
