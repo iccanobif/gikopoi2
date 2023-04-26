@@ -142,8 +142,6 @@ export class Character
     {
         this.dto = dto
         this.isLoaded = false
-        this.rawImages = {}
-        this.renderImages = {}
     }
 
     // returns true to the first caller to load the character images, indicating a request to redraw
@@ -185,6 +183,7 @@ export class Character
         if (this.dto === null)
         {
             this.rawImages = rawImages
+            this.renderImages = {}
             this.isLoaded = true
             return true
         }
