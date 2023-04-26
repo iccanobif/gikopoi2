@@ -66,6 +66,9 @@ export class Character
     private rawImages: RawImages = {}
     private renderImages: RenderImage = {}
     
+    private dto: CharacterSvgDto | null = null
+    public isLoaded: boolean = false
+    
     constructor({name,
         format = "svg",
         isHidden = false,
@@ -134,9 +137,20 @@ export class Character
         this.renderImages[imageKey] = outputLayers.map(o => RenderCache.Image(o.image, this.scale, isMirroredLeft))
         return this.renderImages[imageKey]
     }
-
-    public async loadImages(dto: CharacterSvgDto)
+    
+    public setDto(dto: CharacterSvgDto)
     {
+        this.dto = dto
+        this.isLoaded = false
+    }
+
+    // returns true to the first caller to load the character images, indicating a request to redraw
+    public async load(): Promise<boolean>
+    {
+        if (!this.dto) return false
+        const dto = this.dto
+        this.dto = null
+        
         const rawImages: RawImages = {}
         const addImageString = async (version: CharacterVersion, side: CharacterSide, state: CharacterState, svgString: string) =>
         {
@@ -166,7 +180,16 @@ export class Character
         
         await Promise.all(promises)
         
-        this.rawImages = rawImages
+        if (this.dto === null)
+        {
+            this.rawImages = rawImages
+            this.isLoaded = true
+            return true
+        }
+        else
+        {
+            return false // in the meantime a new dto was set and will be loaded instead
+        }
     }
 }
 
@@ -227,6 +250,6 @@ export const loadCharacters = async (crispMode: boolean) => {
 
     const response = await fetch("/characters/" + (crispMode ? "crisp" : "regular") + "?v=" + (window as any).EXPECTED_SERVER_VERSION)
     const dto = await response.json()
-
-    return Promise.all(Object.keys(characters).map(characterId => characters[characterId].loadImages(dto[characterId])))
+    
+    return Promise.all(Object.keys(characters).map(characterId => characters[characterId].setDto(dto[characterId])))
 }

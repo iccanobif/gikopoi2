@@ -27,6 +27,7 @@ export default class User
     private framesUntilNextStep: number
     private frameCount: number = 0
     public isInactive: boolean = false
+    private isCharacterLoaded: boolean = false
 
     public nameImage: RenderCache | null = null
 
@@ -140,7 +141,9 @@ export default class User
 
     getCurrentImage(room: Room): RenderCache[]
     {
-        const version: CharacterVersion = this.isAlternateCharacter ? "alt" : "normal"
+        if (!this.character.isLoaded)
+            this.character.load().then((requestRedraw) => { if (requestRedraw) this.isCharacterLoaded = true })
+        
         let state: CharacterState
         let isShowingBack: boolean
         let isMirroredLeft: boolean
@@ -171,7 +174,7 @@ export default class User
         }
         
         return this.character.getImage({
-            version,
+            version: this.isAlternateCharacter ? "alt" : "normal",
             isShowingBack,
             state,
             isMirroredLeft,
@@ -198,6 +201,11 @@ export default class User
     
     checkIfRedrawRequired(): boolean
     {
+        if (this.isCharacterLoaded)
+        {
+            this.isCharacterLoaded = false
+            return true
+        }
         if (this.isWalking) return true;
         if (this.isMoved)
         {
