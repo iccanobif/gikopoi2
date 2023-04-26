@@ -6,6 +6,7 @@ const { locale } = useI18n()
 <template>
     <div v-show="locale == 'ja'">
         <h3>更新ログ</h3>
+2023/04/26: ログインの速度が上がりました。<br/>
 2023/04/06: 校庭と噴水広場と楽屋でじゃんけんを出来るようになりました。<br/>
 2023/03/19: ニコニコ動画モードを追加しました。<br/>
 2023/03/04: キャラが瞬くようになりました。<br/>
@@ -116,6 +117,7 @@ const { locale } = useI18n()
     </div>
     <div v-show="locale != 'ja'">
         <h3>Change Log</h3>
+2023/04/26: Improved login time.<br/>
 2023/04/06: Added Rock Paper Scissors to Schoolyard, Fountain Plaza and Dressing Room.<br/>
 2023/03/19: Added Niconico mode.<br/>
 2023/03/04: Added blinking.<br/>
