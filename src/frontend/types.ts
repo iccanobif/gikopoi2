@@ -1,9 +1,9 @@
-export * from '../shared/shared_types'
+export * from '../common/common_types'
 
 import type User from './user'
 import type { RenderCache } from './rendercache'
 
-import type { RoomObject } from '../shared/shared_types'
+import type { RoomObject } from '../common/common_types'
 
 export interface Users { [id: string]: User }
 export type IgnoredUserIds = Set<string>
