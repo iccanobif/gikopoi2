@@ -14,7 +14,7 @@ import { existsSync, readdirSync, readFileSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import { Chess } from "chess.js";
 import { Socket } from "socket.io";
-import { subscribeToAnnualEvents } from "../shared/annualevents";
+import { subscribeToAnnualEvents } from "../common/annualevents";
 
 const app = express()
 const server = require('http').Server(app);

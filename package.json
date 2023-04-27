@@ -7,8 +7,8 @@
     "node": "^16.17.0"
   },
   "scripts": {
-    "dev": "nodemon src/server/main.ts -w src/server",
-    "start": "cross-env NODE_ENV=production node build/server/main.js",
+    "dev": "nodemon src/backend/main.ts -w src/backend",
+    "start": "cross-env NODE_ENV=production node build/backend/main.js",
     "build": "vite build && npx tsc --listEmittedFiles --project tsconfig.server.json",
     "start-persistor": "cross-env PERSISTOR_SECRET=hello node state-persistor.js",
     "deploy-prod": "git push origin master:CI-PROD",

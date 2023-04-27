@@ -13,6 +13,6 @@
         "noUnusedLocals": true
     },
     "include": [
-        "src/server/main.ts"
+        "src/backend/main.ts"
     ]
 }

@@ -1,5 +1,5 @@
 import { Room, DynamicRoom  } from "./types";
-import { getCurrentAnnualEvents } from "../shared/annualevents";
+import { getCurrentAnnualEvents } from "../common/annualevents";
 
 export const rooms: { [roomId: string]: Room } = {
     bar: {

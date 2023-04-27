@@ -1,7 +1,7 @@
 import type { ImageLayer, CharacterSvgDto } from './types'
 
 import { RenderCache } from "./rendercache";
-import { annualEvents } from "../shared/annualevents";
+import { annualEvents } from "../common/annualevents";
 import { stringToImageList, logToServer } from "./utils";
 
 

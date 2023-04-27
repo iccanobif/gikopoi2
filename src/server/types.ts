@@ -1,5 +1,5 @@
-export * from '../shared/shared_types'
-import type { Direction, Room, JankenStateDto, ChessboardStateDto } from '../shared/shared_types'
+export * from '../common/common_types'
+import type { Direction, Room, JankenStateDto, ChessboardStateDto } from '../common/common_types'
 
 import { Player } from "./users";
 import { ChessInstance } from "chess.js"

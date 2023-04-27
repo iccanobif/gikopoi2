@@ -1,4 +1,4 @@
-import type { RenderCache } from '../client/rendercache'
+import type { RenderCache } from '../frontend/rendercache'
 
 export type Direction = 'up' | 'down' | 'left' | 'right'
 
