@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@intlify/unplugin-vue-i18n": "^0.10.0",
+    "@vitejs/plugin-vue": "^4.0.0",
     "chess.js": "^0.12.0",
     "compression": "^1.7.4",
     "cross-env": "^7.0.3",
@@ -32,14 +33,13 @@
     "loglevel": "^1.8.1",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
-    "tripcode": "file:./extra_modules/tripcode",
+    "tripcode": "https://github.com/2sh/tripcode.git",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.3",
     "uuid": "^8.3.2",
     "vite-express": "*",
     "vue": "^3.2.45",
-    "vue-i18n": "^9.2.2",
-    "@vitejs/plugin-vue": "^4.0.0"
+    "vue-i18n": "^9.2.2"
   },
   "devDependencies": {
     "@types/chess.js": "^0.11.0",

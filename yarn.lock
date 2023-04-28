@@ -1538,11 +1538,6 @@ lie@~3.3.0:
   dependencies:
     immediate "~3.0.5"
 
-lodash.foreach@^4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.foreach/-/lodash.foreach-4.5.0.tgz#1a6a35eace401280c7f06dddec35165ab27e3e53"
-  integrity sha512-aEXTF4d+m05rVOAUG3z4vZZ4xVexLKZGF0lIxuHZ1Hplpk/3B6Z1+/ICICYRLm7c41Z2xiejbkCkJoTlypoXhQ==
-
 lodash@4.17.20:
   version "4.17.20"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
@@ -1656,7 +1651,7 @@ minimatch@^6.1.6:
   dependencies:
     brace-expansion "^2.0.1"
 
-minimist@^1.2.5:
+minimist@^1.2.8:
   version "1.2.8"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
@@ -2188,11 +2183,11 @@ tr46@~0.0.3:
   resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
   integrity sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==
 
-"tripcode@file:./extra_modules/tripcode":
+"tripcode@https://github.com/2sh/tripcode.git":
   version "1.0.0"
+  resolved "https://github.com/2sh/tripcode.git#1e6752a755079db886ba1984011bb76bb72e0372"
   dependencies:
-    lodash.foreach "^4.5.0"
-    minimist "^1.2.5"
+    minimist "^1.2.8"
     split "^1.0.1"
 
 ts-node@^10.9.1:
