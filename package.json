@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "nodemon src/backend/main.ts -w src/backend",
     "start": "cross-env NODE_ENV=production node build/backend/main.js",
+    "start-with-socket-debug": "cross-env NODE_ENV=production DEBUG=engine,socket.io*,-socket.io-parser node build/backend/main.js",
     "build": "vite build && npx tsc --listEmittedFiles --project tsconfig.server.json",
     "start-persistor": "cross-env PERSISTOR_SECRET=hello node state-persistor.js",
     "deploy-prod": "git push origin master:CI-PROD",
