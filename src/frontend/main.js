@@ -4,6 +4,8 @@ localStorage.removeItem("debug");
 import { io } from 'socket.io-client'
 import { createApp, computed, nextTick } from 'vue'
 import { createI18n } from 'vue-i18n'
+import messages from '@intlify/unplugin-vue-i18n/messages'
+
 import { characters, loadCharacters } from "./character.ts";
 import User from "./user.ts";
 import {
@@ -27,7 +29,6 @@ import {
     removeControlChars,
     escapeHTML
 } from "./utils.ts";
-import messages from '@intlify/unplugin-vue-i18n/messages'
 import { speak } from "./tts.ts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer.ts";
 import { RenderCache } from "./rendercache.ts";
@@ -147,7 +148,7 @@ function setAppLocale(code)
 
 setAppLocale((initialArea.restrictLanguage && initialArea.language) || initialLanguage)
 
-window.vueApp = createApp({
+const vueApp = createApp({
     components: {
         ChessboardSlot,
         JankenSlot,
@@ -3715,10 +3716,13 @@ window.vueApp = createApp({
         },
     },
 });
-window.vueApp.config.unwrapInjectedRef = true // No longer required after Vue 3.3
-window.vueApp.component("username", ComponentUsername)
-window.vueApp.use(i18n)
-window.vueApp.mount("#vue-app")
+
+vueApp.config.unwrapInjectedRef = true // No longer required after Vue 3.3
+vueApp.component("username", ComponentUsername)
+vueApp.use(i18n)
+
+vueApp.mount("#vue-app")
+window.vueApp = vueApp
 
 const debouncedSpeakTest = debounceWithDelayedExecution((ttsVoiceURI, voiceVolume) => {
     if (window.speechSynthesis)
