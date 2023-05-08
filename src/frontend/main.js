@@ -732,7 +732,7 @@ const vueApp = createApp({
             {
                 const user = this.addUser(userDto);
                 if(previousRoomId != this.currentRoom.id && user.message)
-                    this.displayUserMessage(user, user.message);
+                    await this.displayUserMessage(user, user.message);
             }
             this.setMentionRegexObjects()
 
@@ -798,7 +798,7 @@ const vueApp = createApp({
             // currentRoom, streams etc... are all defined.
             const response = await fetch("/areas/" + this.areaId + "/rooms/" + getSpawnRoomId(),
                                          { headers: { "Authorization": "Bearer " + this.myPrivateUserID } })
-            this.updateRoomState(await response.json())
+            await this.updateRoomState(await response.json())
 
             logToServer(new Date() + " " + this.myUserID + " User agent: " + navigator.userAgent)
 
@@ -851,9 +851,9 @@ const vueApp = createApp({
                 this.connectionRefused = true;
             });
 
-            this.socket.on("server-update-current-room-state", (dto) =>
+            this.socket.on("server-update-current-room-state", async (dto) =>
             {
-                this.updateRoomState(dto);
+                await this.updateRoomState(dto);
             });
 
             this.socket.on("server-msg", (userId, msg) =>
