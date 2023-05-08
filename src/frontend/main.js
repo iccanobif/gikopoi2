@@ -67,6 +67,14 @@ window.onerror = function(message, source, lineno, colno, error) {
     return true
 }
 
+// Handle exceptions raised by promises
+window.addEventListener("unhandledrejection", ev => {
+    if (ev.reason.message)
+        logToServer(ev.reason.message + " " + ev.reason.stack)
+    else
+        logToServer("ERROR: " + ev.reason)
+});
+
 const enabledListenerIconImagePromise = loadImage("enabled-listener.svg")
 const disabledListenerIconImagePromise = loadImage("disabled-listener.svg")
 let enabledListenerIconImage = null;
