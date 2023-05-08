@@ -1205,8 +1205,11 @@ const vueApp = createApp({
                 this.addNiconicoMessageToVideoContainer(niconicoMessageContainers[i], plainMsg)
             for (const i of Object.keys(this.detachedStreamTabs))
             {
-                const container = this.detachedStreamTabs[i].document.getElementsByClassName("nico-nico-messages-container")[0]
-                this.addNiconicoMessageToVideoContainer(container, plainMsg, user.id)
+                if (this.detachedStreamTabs[i])
+                {
+                    const container = this.detachedStreamTabs[i].document.getElementsByClassName("nico-nico-messages-container")[0]
+                    this.addNiconicoMessageToVideoContainer(container, plainMsg, user.id)
+                }
             }
         },
         addNiconicoMessageToVideoContainer(videoContainer, messageText, userID)
