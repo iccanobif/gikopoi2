@@ -3689,8 +3689,11 @@ const vueApp = createApp({
                             // uses javascript to set its width equal to the one of the <video> element, but in 
                             // the main page we don't need that).
                             const niconicoMessagesContainer = videoContainer.getElementsByClassName("nico-nico-messages-container")[0]
-                            niconicoMessagesContainer.style.width = "100%"
-                            adjustNiconicoMessagesFontSize()
+                            if (niconicoMessagesContainer)
+                            {
+                                niconicoMessagesContainer.style.width = "100%"
+                                adjustNiconicoMessagesFontSize()
+                            }
                         }
                     };
                     tab.postMessage("adjust-niconico-stuff")
