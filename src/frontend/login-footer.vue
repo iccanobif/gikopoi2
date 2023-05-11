@@ -5,7 +5,11 @@ const { locale } = useI18n()
 
 <template>
     <div v-show="locale == 'ja'">
-        <h3>更新ログ</h3>
+        <div div="login-notice">
+18歳未満の立ち入りを禁止します。
+        </div>
+        <div id="changelog">
+            <h3>更新ログ</h3>
 2023/04/26: ログインの速度が上がりました。<br/>
 2023/04/06: 校庭と噴水広場と楽屋でじゃんけんを出来るようになりました。<br/>
 2023/03/19: ニコニコ動画モードを追加しました。<br/>
@@ -114,9 +118,14 @@ const { locale } = useI18n()
 2021/01/12: 「一般」と「国際」を分離しました。<br />
 2021/01/11: 配信機能を改善しました。<br />
 2021/01/09: #rulaコマンドを追加しました。
+        </div>
     </div>
     <div v-show="locale != 'ja'">
-        <h3>Change Log</h3>
+        <div div="login-notice">
+You must be at least 18 years of age to enter.
+        </div>
+        <div id="changelog">
+            <h3>Change Log</h3>
 2023/04/26: Improved login time.<br/>
 2023/04/06: Added Rock Paper Scissors to Schoolyard, Fountain Plaza and Dressing Room.<br/>
 2023/03/19: Added Niconico mode.<br/>
@@ -225,5 +234,6 @@ const { locale } = useI18n()
 2021/01/12: Split _gen and _for。<br />
 2021/01/11: Improved streaming.<br />
 2021/01/09: Added #rula command.
+        </div>
     </div>
 </template>

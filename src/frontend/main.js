@@ -36,8 +36,9 @@ import { animateObjects, animateJizou } from "./animations.ts";
 
 import ChessboardSlot from './chessboard-slot.vue'
 import JankenSlot from './janken-slot.vue'
+import LoginFooter from './login-footer.vue'
+
 import ComponentUsername from './username.vue'
-import Changelog from './changelog.vue'
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -160,7 +161,7 @@ const vueApp = createApp({
     components: {
         ChessboardSlot,
         JankenSlot,
-        Changelog,
+        LoginFooter,
     },
     data() {
         return {
