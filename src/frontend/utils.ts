@@ -131,7 +131,7 @@ export function calculateRealCoordinates(room: Room, x: number, y: number): {x: 
 
 export const sleep = (milliseconds: number) => new Promise(resolve => setTimeout(resolve, milliseconds));
 
-export function postJson(url: string, data: any): Promise<any>
+export function postJson(url: string, data: any): Promise<Response>
 {
     return fetch(url, {
         method: "POST",
@@ -140,7 +140,7 @@ export function postJson(url: string, data: any): Promise<any>
     })
 }
 
-export function logToServer(msg: string): Promise<any>
+export function logToServer(msg: string): Promise<Response>
 {
     return fetch("/client-log", {
         method: "POST",

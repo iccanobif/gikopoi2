@@ -71,7 +71,7 @@ window.onerror = function(message, source, lineno, colno, error) {
 // Handle exceptions raised by promises
 window.addEventListener("unhandledrejection", ev => {
     if (ev.reason.message)
-        logToServer(ev.reason.message + " " + ev.reason.stack)
+        logToServer("ERROR: " + ev.reason.message + " " + ev.reason.stack)
     else
         logToServer("ERROR: " + ev.reason)
 });
