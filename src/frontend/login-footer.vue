@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { locale } = useI18n()
+import { useTranslation } from 'i18next-vue'
+const { i18next } = useTranslation()
 </script>
 
 <template>
-    <div v-show="locale == 'ja'">
+    <div v-show="i18next.language == 'ja'">
         <div div="login-notice">
 18歳未満の立ち入りを禁止します。
         </div>
@@ -120,7 +120,7 @@ const { locale } = useI18n()
 2021/01/09: #rulaコマンドを追加しました。
         </div>
     </div>
-    <div v-show="locale != 'ja'">
+    <div v-show="i18next.language != 'ja'">
         <div div="login-notice">
 You must be at least 18 years of age to enter.
         </div>

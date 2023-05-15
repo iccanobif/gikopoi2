@@ -1,7 +1,6 @@
 import { defineConfig, splitVendorChunkPlugin } from "vite";
 import vue from "@vitejs/plugin-vue";
-import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
-import { resolve } from 'path'
+import json5Plugin from 'vite-plugin-json5'
 
 export default defineConfig({
     resolve: {
@@ -14,10 +13,8 @@ export default defineConfig({
     },
     plugins: [
         vue(),
-        VueI18nPlugin({
-            include: resolve(__dirname, './src/langs/**'),
-        }),
         splitVendorChunkPlugin(),
+        json5Plugin(),
     ],
     server: {
         // disable hot reloading

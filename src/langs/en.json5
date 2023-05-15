@@ -19,7 +19,7 @@
         infobox_label_stream_count: "Streams:",
         
         label_username: "User name:",
-        label_stream: "Channel {index}: ",
+        label_stream: "Channel {{index}}: ",
         label_input: "Input:",
         label_log: "Log:",
 
@@ -54,7 +54,7 @@
         rula_menu_label_group: "Area",
         rula_menu_group_option_all: "All",
 
-        user_list_popup_title: "User List (total: {userCount})",
+        user_list_popup_title: "User List (total: {{userCount}})",
         user_list_popup_column_user_name: "User name",
         user_not_in_room: "This user is not in this room.",
         user_inactive: "This user is inactive.",
@@ -156,8 +156,8 @@
         janken_waiting_for_player: "Waiting for your opponent to choose a hand...",
         janken_players_choosing: "The players are choosing their hands...",
         janken_phrase: "Rock! Paper! Scissors!",
-        janken_phrase_after_draw: "@:ui.janken_phrase",
-        janken_phrase_after_draw_repeated: "@:ui.janken_phrase",
+        janken_phrase_after_draw: "$(ui.janken_phrase)",
+        janken_phrase_after_draw_repeated: "$(ui.janken_phrase)",
         janken_win: "{username} wins!",
         janken_quit: "{username} quit the game.",
         janken_timeout_reached: "The game has timed out.",
@@ -191,12 +191,12 @@
         goodbye: "See you soon!",
         flood_warning: "Hey, aren't you talking a bit too fast? Undelivered message: ",
         chess_timeout_reached: "The chess game is over: timeout reached.",
-        chess_win: "The chess game is over: the winner is {userName}.",
-        chess_quit: "The chess game is over: {userName} quit the game.",
+        chess_win: "The chess game is over: the winner is {{userName}}.",
+        chess_quit: "The chess game is over: {{userName}} quit the game.",
         
         are_you_sure_you_want_to_clear_log: "Are you sure you want to clear the chat log?",
         chat_log_cleared: "The chat log has been cleared.",
-        stream_start_notification: "{userName} has started a stream.",
+        stream_start_notification: "{{userName}} has started a stream.",
     },
     room:
     {

@@ -3,8 +3,9 @@ localStorage.removeItem("debug");
 
 import { io } from 'socket.io-client'
 import { createApp, computed, nextTick } from 'vue'
-import { createI18n } from 'vue-i18n'
-import messages from '@intlify/unplugin-vue-i18n/messages'
+import i18next from 'i18next'
+import I18NextVue from 'i18next-vue'
+import languages from './lang.ts'
 
 import { characters, loadCharacters } from "./character.ts";
 import User from "./user.ts";
@@ -140,22 +141,26 @@ function getAppState()
         return "login"
 }
 
-const i18n = createI18n({
-    locale: "ja",
-    fallbackLocale: "en",
-    warnHtmlInMessage: "off",
-    legacy: false,
-    messages,
-});
-
-function setAppLocale(code)
+i18next.init(
 {
-    i18n.global.locale.value = code
-    document.title = i18n.global.t("ui.title")
-    document.getElementsByTagName('meta')["description"].content = i18n.global.t("ui.subtitle")
-}
+    ns: ['common'],
+    defaultNS: 'common',
+    lng: (initialArea.restrictLanguage && initialArea.language) || initialLanguage,
+    fallbackLng: 'en',
+    resources: languages
+})
 
-setAppLocale((initialArea.restrictLanguage && initialArea.language) || initialLanguage)
+function setPageMetadata()
+{
+    document.title = i18next.t("ui.title")
+    document.getElementsByTagName('meta')["description"].content = i18next.t("ui.subtitle")
+}
+setPageMetadata()
+
+function setAppLanguage(code)
+{
+    i18next.changeLanguage(code, setPageMetadata)
+}
 
 const vueApp = createApp({
     components: {
@@ -553,18 +558,18 @@ const vueApp = createApp({
             await (loadCharacters(this.getSVGMode()));
             this.isRedrawRequired = true;
         },
-        setLocale(siteArea)
+        setLanguage(siteArea)
         {
             if (!siteArea)
                 siteArea = this.getSiteArea()
-            setAppLocale((siteArea.restrictLanguage && siteArea.language) || this.language)
+            setAppLanguage((siteArea.restrictLanguage && siteArea.language) || this.language)
             document.title = this.$t("ui.title")
             document.getElementsByTagName('meta')["description"].content = this.$t("ui.subtitle")
         },
         getLangEntries()
         {
             const topEntries = ["ja", "en"]
-            return this.$i18n.availableLocales
+            return Object.keys(languages)
                 .sort((a, b) =>
             {
                 const ta = topEntries.indexOf(a)
@@ -576,11 +581,11 @@ const vueApp = createApp({
                     return ta < tb ? -1 : 1
                 }
                 
-                return this.$t("lang_sort_key", 1, { locale: a }).localeCompare(this.$t("lang_sort_key", 1, { locale: b }))
+                return this.$t("lang_sort_key", { lng: a }).localeCompare(this.$t("lang_sort_key", { lng: b }))
             })
                 .map((id) =>
             {
-                return {id, name: this.$t("lang_name", 1, { locale: id }), endOfTopEntries: id == topEntries[topEntries.length-1]}
+                return {id, name: this.$t("lang_name", { lng: id }), endOfTopEntries: id == topEntries[topEntries.length-1]}
             })
         },
         getSiteArea()
@@ -996,7 +1001,7 @@ const vueApp = createApp({
             this.socket.on("server-room-list", async (roomList) =>
             {
                 roomList.forEach(r => {
-                    r.sortName = this.$t("room." + r.id, 2);
+                    r.sortName = this.$t("room." + r.id, { context: "sort_key"});
                     r.streamerCount = r.streams.length;
                     r.streams.forEach(s => s.userName = s.userName == "" ? this.$t("default_user_name") : s.userName)
                 })
@@ -3188,7 +3193,7 @@ const vueApp = createApp({
             {
                 let sort;
                 if (key == "sortName")
-                    sort = a[key].localeCompare(b[key], this.$i18n.locale);
+                    sort = a[key].localeCompare(b[key], this.$i18next.language);
                 else if(key == "streamers")
                     sort = b[key].length - a[key].length;
                 else
@@ -3303,7 +3308,7 @@ const vueApp = createApp({
         handleLanguageChange()
         {
             this.storeSet('language');
-            this.setLocale();
+            this.setLanguage();
         },
         storeSet(itemName, value)
         {
@@ -3734,7 +3739,8 @@ const vueApp = createApp({
 
 vueApp.config.unwrapInjectedRef = true // No longer required after Vue 3.3
 vueApp.component("username", ComponentUsername)
-vueApp.use(i18n)
+
+vueApp.use(I18NextVue, { i18next })
 
 vueApp.mount("#vue-app")
 window.vueApp = vueApp
@@ -3743,7 +3749,7 @@ const debouncedSpeakTest = debounceWithDelayedExecution((ttsVoiceURI, voiceVolum
     if (window.speechSynthesis)
     {
         speechSynthesis.cancel()
-        speak(i18n.global.t("test"), ttsVoiceURI, voiceVolume)
+        speak(i18next.t("test"), ttsVoiceURI, voiceVolume)
     }
 }, 150)
 

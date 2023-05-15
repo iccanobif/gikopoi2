@@ -34,7 +34,7 @@
 
 <body>
     <div id="vue-app">
-        <div id="page-container" ref="page-container" v-cloak :class="['theme-' + uiTheme]" v-bind:lang="$i18n.locale">
+        <div id="page-container" ref="page-container" v-cloak :class="['theme-' + uiTheme]" v-bind:lang="$i18next.language">
             <div id="login-page" v-if="appState == 'login'">
                 <header>
                     <div>

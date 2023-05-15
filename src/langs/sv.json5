@@ -19,7 +19,7 @@
         infobox_label_stream_count: "Strömmare:",
         
         label_username: "Användarnamn:",
-        label_stream: "Kanal {index}: ",
+        label_stream: "Kanal {{index}}: ",
         label_input: "Inlägg:",
         label_log: "Logg:",
 
@@ -54,7 +54,7 @@
         rula_menu_label_group: "Område",
         rula_menu_group_option_all: "Alla",
 
-        user_list_popup_title: "Användarlista (totalt: {userCount})",
+        user_list_popup_title: "Användarlista (totalt: {{userCount}})",
         user_list_popup_column_user_name: "Användarnamn",
         user_not_in_room: "Användaren är inte i det här rummet.",
         user_inactive: "Användaren är inaktiv.",
@@ -156,8 +156,8 @@
         janken_waiting_for_player: "Vänar på din motståndares hand...",
         janken_players_choosing: "Spelarna väljer händer...",
         janken_phrase: "Sten! Sax! Påse!",
-        janken_phrase_after_draw: "@:ui.janken_phrase",
-        janken_phrase_after_draw_repeated: "@:ui.janken_phrase",
+        janken_phrase_after_draw: "$t(ui.janken_phrase)",
+        janken_phrase_after_draw_repeated: "$t(ui.janken_phrase)",
         janken_win: "{username} vinner!",
         janken_quit: "{username} lämnade spelet.",
         janken_timeout_reached: "Spelet har utgått.",
@@ -191,12 +191,12 @@
         goodbye: "På återseende!",
         flood_warning: "Hörru, snackar du inte lite fort nu? Olevererat meddelande: ",
         chess_timeout_reached: "Schackspelet är över: timeout uppnådd.",
-        chess_win: "Schackspelet är över: segraren är {userName}.",
-        chess_quit: "Schackspelet är över: {userName} lämnade spelet.",
+        chess_win: "Schackspelet är över: segraren är {{userName}}.",
+        chess_quit: "Schackspelet är över: {{userName}} lämnade spelet.",
         
         are_you_sure_you_want_to_clear_log: "Vill du verkligen rensa chattloggen",
         chat_log_cleared: "Chattloggen har rensats.",
-        stream_start_notification: "{userName} har börjat strömma.",
+        stream_start_notification: "{{userName}} har börjat strömma.",
     },
     room:
     {

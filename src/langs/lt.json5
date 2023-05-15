@@ -19,7 +19,7 @@
         infobox_label_stream_count: "Transliuoja:",
         
         label_username: "Vardas:",
-        label_stream: "Kanalas {index}: ",
+        label_stream: "Kanalas {{index}}: ",
         label_input: "Įvestis:",
         label_log: "Pokalbis:",
 
@@ -54,7 +54,7 @@
         rula_menu_label_group: "Vietovė ",
         rula_menu_group_option_all: "Visos",
 
-        user_list_popup_title: "Naudotojų sąrašas (iš viso kambaryje: {userCount})",
+        user_list_popup_title: "Naudotojų sąrašas (iš viso kambaryje: {{userCount}})",
         user_list_popup_column_user_name: "Vardas",
         user_not_in_room: "Šio naudotojo nėra kambaryje.",
         user_inactive: "Šis naudotojas nėra aktyvus.",
@@ -177,12 +177,12 @@
         goodbye: "Iki kito karto!",
         flood_warning: "Sustok, ar ne per greitai rašai? Neišsiųsta žinutė: ",
         chess_timeout_reached: "Šachmatų žaidimas baigtas: Išsęko laikas.",
-        chess_win: "Šachmatų žaidimas baigtas: Laimėjo {userName}.",
-        chess_quit: "Šachmatų žaidimas baigtas: {userName} paliko žaidimą.",
+        chess_win: "Šachmatų žaidimas baigtas: Laimėjo {{userName}}.",
+        chess_quit: "Šachmatų žaidimas baigtas: {{userName}} paliko žaidimą.",
         
         are_you_sure_you_want_to_clear_log: "Ar tikrai norite išvalyti pokalbio langą?",
         chat_log_cleared: "Pokalbio langas išvalytas.",
-        stream_start_notification: "{userName} pradėjo transliaciją.",
+        stream_start_notification: "{{userName}} pradėjo transliaciją.",
     },
     room:
     {
