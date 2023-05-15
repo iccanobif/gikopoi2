@@ -66,6 +66,10 @@
         chess_slot_title: "Scacci",
         chess_white: "Album: ",
         chess_black: "Nigrum: ",
+        
+        janken_title: "Micatio Sinensis",
+        janken_versus: "contra",
+        janken_phrase: "Saxum! Forfex! Charta!",
 
         visible_only_to_specific_users_stream: "Transmissio privata",
         // double_click_to_move_to_new_tab: "",

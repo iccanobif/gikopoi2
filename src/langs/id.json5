@@ -147,6 +147,20 @@
         chess_waiting_for_black: "Menunggu hitam untuk bergabung...",
         chess_white: "Putih: ",
         chess_black: "Hitam: ",
+        
+        // janken_title: "Rock Paper Scissors",
+        // janken_versus: "VS",
+        // janken_start_a_game: "Join to start a game!",
+        // janken_waiting_for_opponent: "{username} is waiting for an opponent to join...",
+        // janken_choose_your_hand: "Choose your hand!",
+        // janken_waiting_for_player: "Waiting for your opponent to choose a hand...",
+        // janken_players_choosing: "The players are choosing their hands...",
+        // janken_phrase: "Rock! Paper! Scissors!",
+        // janken_phrase_after_draw: "$(ui.janken_phrase)",
+        // janken_phrase_after_draw_repeated: "$(ui.janken_phrase)",
+        // janken_win: "{username} wins!",
+        // janken_quit: "{username} quit the game.",
+        // janken_timeout_reached: "The game has timed out.",
 
         visible_only_to_specific_users_stream: "Siaran privat",
         double_click_to_move_to_new_tab: "Klik dua kali untuk pindah ke tab baru",
@@ -165,6 +179,7 @@
         no_webrtc: "Maaf, browser Anda tidak mendukung WebRTC. ",
         error_didnt_select_device: "Maaf, Anda harus memilih perangkat terlebih dahulu",
         unknown_error: "Koneksi gagal karena error yang tidak dikenal.",
+        
         invalid_username: "Nama pengguna salah.",
         ip_restricted: "Anda sudah masuk dengan menggunakan alamat IP dua kali.",
         start_stream_stream_slot_already_taken: "Orang lain sudah siaran di slot ini.",
