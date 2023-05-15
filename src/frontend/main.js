@@ -563,8 +563,6 @@ const vueApp = createApp({
             if (!siteArea)
                 siteArea = this.getSiteArea()
             setAppLanguage((siteArea.restrictLanguage && siteArea.language) || this.language)
-            document.title = this.$t("ui.title")
-            document.getElementsByTagName('meta')["description"].content = this.$t("ui.subtitle")
         },
         getLangEntries()
         {
