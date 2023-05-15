@@ -72,7 +72,7 @@ window.onerror = function(message, source, lineno, colno, error) {
 // Handle exceptions raised by promises
 window.addEventListener("unhandledrejection", ev => {
     if (ev.reason.message)
-        logToServer(ev.reason.message + " " + ev.reason.stack)
+        logToServer("ERROR: " + ev.reason.message + " " + ev.reason.stack)
     else
         logToServer("ERROR: " + ev.reason)
 });
@@ -3035,6 +3035,9 @@ const vueApp = createApp({
                             // Disable sound from the video element so that we let sound be handled
                             // only by the AudioProcessor
                             videoElement.volume = 0
+                            // Turns out that on iphones, HTMLMediaElement.prototype.volume is read only and we have to use "muted".
+                            // Maybe the muted property works on all browsers, but to be on the safe side, I'll both set muted to true and volume to 0
+                            videoElement.muted = true
                             this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId], true, (level) => {
                                 const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + streamSlotId)
                                 const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + streamSlotId)
