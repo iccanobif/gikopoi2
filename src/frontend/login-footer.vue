@@ -10,6 +10,7 @@ const { i18next } = useTranslation()
         </div>
         <div class="changelog">
             <h3>更新ログ</h3>
+2023/05/16: iphoneで配信が聞こえなくなったバグを修正しました。<br/>
 2023/04/26: ログインの速度が上がりました。<br/>
 2023/04/06: 校庭と噴水広場と楽屋でじゃんけんを出来るようになりました。<br/>
 2023/03/19: ニコニコ動画モードを追加しました。<br/>
@@ -126,6 +127,7 @@ You must be at least 16 years of age to enter.
         </div>
         <div class="changelog">
             <h3>Change Log</h3>
+2023/05/16: Fixed bug that made streams inaudible on iphones.<br/>
 2023/04/26: Improved login time.<br/>
 2023/04/06: Added Rock Paper Scissors to Schoolyard, Fountain Plaza and Dressing Room.<br/>
 2023/03/19: Added Niconico mode.<br/>
