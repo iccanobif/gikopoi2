@@ -147,7 +147,11 @@ i18next.init(
     defaultNS: 'common',
     lng: (initialArea.restrictLanguage && initialArea.language) || initialLanguage,
     fallbackLng: 'en',
-    resources: languages
+    resources: languages,
+    
+    returnedObjectHandler: (key, value, options) => value.t,
+    pluralSeperator: '.',
+    contextSeparator: '.',
 })
 
 function setPageMetadata()
