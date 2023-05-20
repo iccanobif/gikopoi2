@@ -3198,14 +3198,17 @@ const vueApp = createApp({
 
             this.preparedRoomList.sort((a, b) =>
             {
-                let sort;
-                if (key == "sortName")
-                    sort = a[key].localeCompare(b[key], this.$i18next.language);
-                else if(key == "streamers")
-                    sort = b[key].length - a[key].length;
-                else
-                    sort = b[key] - a[key];
-                return sort * direction;
+                let sort = 0
+                
+                if (key === 'streamerCount')
+                    sort = b.streamerCount - a.streamerCount
+                if (key === 'userCount'
+                    || (key === 'streamerCount' && sort === 0))
+                    sort = b.userCount - a.userCount
+                if (sort === 0)
+                    sort = a.sortName.localeCompare(b.sortName, this.$i18next.language)
+                
+                return sort * direction
             })
         },
         openStreamPopup(streamSlotId)
