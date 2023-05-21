@@ -49,7 +49,7 @@
                             <input type="radio" :id="siteArea.id + '-selection'" :value="siteArea.id" v-model="areaId"
                                 v-on:click="setLanguage(siteArea)" :disabled="isLoggingIn">
                             {{ siteArea.name }} [{{ $t("ui.login_user_count") + siteAreasInfo[siteArea.id].userCount }}
-                            {{ $t("ui.login_streamer_count") + siteAreasInfo[siteArea.id].streamerCount }}]</label>
+                            {{ $t("ui.login_streamer_count") + siteAreasInfo[siteArea.id].streamCount }}]</label>
                     </div>
                     <div>
                         <label>{{ $t("ui.label_username") }}</label>
@@ -74,7 +74,7 @@
                     <login-footer></login-footer>
                 </div>
             </div>
-            <div id="stage" v-if="appState == 'stage'">
+            <div id="stage" v-if="appState == 'stage' && currentRoom !== null">
                 <h2 class="big-red-alert" v-if="connectionLost && !connectionRefused">
                     {{ $t("msg.connection_lost") }}
                 </h2>
@@ -370,11 +370,11 @@
                     <template v-if="currentRoom.games" v-for="(game, index) in currentRoom.games">
                         <hr v-if="streams.length || index > 0" />
                         <chessboard-slot
-                            v-if="game == 'chess'"
+                            v-if="game == 'chess' && chessboardState"
                             :chessboard-state="chessboardState"
                             ></chessboard-slot>
                         <janken-slot
-                            v-if="game == 'janken'"
+                            v-if="game == 'janken' && jankenState"
                             :janken-state="jankenState"
                             ></janken-slot>
                     </template>

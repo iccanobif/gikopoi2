@@ -1,4 +1,4 @@
-import type { Room, ImageLayer } from './types'
+import type { Room, ImageLayer, DeviceInfo } from './types'
 
 export const BLOCK_WIDTH = 80
 export const BLOCK_HEIGHT = 40
@@ -375,12 +375,6 @@ export function requestNotificationPermission(): Promise<string>
         if (promise)
             promise.then(resolve)
     })
-}
-
-export type DeviceInfo = {
-    id: string
-    name: string
-    type: MediaDeviceKind
 }
 
 export async function getDeviceList(includeAudioDevices: boolean, includeVideoDevices: boolean): Promise<DeviceInfo[]>

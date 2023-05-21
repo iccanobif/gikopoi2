@@ -1,5 +1,5 @@
 export * from '../common/common_types'
-import type { Direction, Room, JankenStateDto, ChessboardStateDto } from '../common/common_types'
+import type { Direction, Room, StreamSlotDto, JankenStateDto, ChessboardStateDto } from '../common/common_types'
 
 import { Player } from "./users";
 import { ChessInstance } from "chess.js"
@@ -83,19 +83,6 @@ export interface PlayerDto
     lastRoomMessage: string,
     isAlternateCharacter: boolean,
     lastMovement: number,
-}
-
-export interface StreamSlotDto
-{
-    isActive: boolean,
-    isReady: boolean,
-    withSound: boolean | null,
-    withVideo: boolean | null,
-    userId: string | null,
-    isAllowed: boolean | null,
-    isVisibleOnlyToSpecificUsers: boolean | null,
-    streamIsVtuberMode: boolean | null,
-    isNicoNicoMode: boolean | null,
 }
 
 export interface ChessboardState {

@@ -1,3 +1,4 @@
+import type { SiteArea } from './types'
 import { readFileSync } from "fs"
 import log from "loglevel"
 
@@ -16,13 +17,7 @@ interface PoiPoiSettings
     adminKey: string
     censoredWordsRegex: string
     noStreamIPs: string[],
-    siteAreas: {
-        id: string,
-        name: string,
-        language?: string,
-        restrictLanguage?: boolean,
-        unlisted?: boolean 
-    }[]
+    siteAreas: SiteArea[]
 }
 
 let jsonContents: PoiPoiSettings;

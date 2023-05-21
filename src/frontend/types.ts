@@ -32,3 +32,16 @@ export interface CanvasObject
     x?: number
     y?: number
 }
+
+export type DeviceInfo = {
+    id: string
+    name: string
+    type: MediaDeviceKind
+}
+
+export interface PopupUserList {
+    id: string
+    name: string | null
+    isInRoom: boolean
+    isInactive: boolean
+}

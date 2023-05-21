@@ -3,7 +3,7 @@ import { urlRegex } from "./utils";
 
 const synth = new (window as any).Animalese('animalese.wav', function () { });
 
-function speakAnimalese(text: string, pitch: number, volume: number) {
+function speakAnimalese(text: string, pitch: number | null, volume: number) {
     // replace every japanese character with a random roman letter
     // text = text
     //     .split("")
@@ -26,7 +26,7 @@ function speakAnimalese(text: string, pitch: number, volume: number) {
         .join("")
 
     // scale pitch so that it's within the range 0.2 - 2.0
-    if (pitch === null || pitch === undefined)
+    if (pitch === null)
         pitch = 1
     else
         pitch = (pitch / 2) * 1.3 + 0.7
@@ -60,7 +60,7 @@ function isJapanese(text: string): boolean {
     return false
 }
 
-export function speak(message: string, voiceURI: string, volume: number, pitch: number) {
+export function speak(message: string, voiceURI: string, volume: number, pitch: number | null = null) {
     if (volume == 0)
         return
 
@@ -87,7 +87,7 @@ export function speak(message: string, voiceURI: string, volume: number, pitch: 
 
     utterance.volume = volume / 100
 
-    if (pitch !== undefined && pitch !== null)
+    if (pitch !== null)
         utterance.pitch = pitch // range between 0 (lowest) and 2 (highest), with 1 being the default pitch 
 
     if (voiceURI == "automatic") {

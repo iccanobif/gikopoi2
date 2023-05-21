@@ -17,7 +17,7 @@ export class RTCPeer
     private sendCallback: SendCallback
     private errorCallback: ErrorCallback
     
-    private conn: RTCPeerConnection | null = null
+    public conn: RTCPeerConnection | null = null
     private offerSdp: string | null = null
     
     constructor(

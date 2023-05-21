@@ -3,7 +3,7 @@ const isProduction = process.env.NODE_ENV == "production"
 import express, { Request } from "express"
 import ViteExpress from "vite-express";
 import { rooms, dynamicRooms } from "./rooms";
-import { RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom } from "./types";
+import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom, ListedRoom } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getUserByPrivateId, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users";
 import got from "got";
 import log from "loglevel";
@@ -881,7 +881,7 @@ io.on("connection", function (socket)
         }
     })
 
-    socket.on("user-change-room", async function (data: { targetRoomId: string, targetDoorId: string })
+    socket.on("user-change-room", async function (data: { targetRoomId: string, targetDoorId?: string })
     {
         try
         {
@@ -932,13 +932,7 @@ io.on("connection", function (socket)
     {
         try
         {
-            const roomList: { 
-                id: string, 
-                group: string, 
-                userCount: number, 
-                streamers: string[],
-                streams: { userName: string, isVisibleOnlyToSpecificUsers: boolean }[],
-             }[] =
+            const roomList: ListedRoom[] =
                 Object.values(rooms)
                 .filter(room => !room.secret)
                 .map(room => ({
@@ -1431,7 +1425,7 @@ const cachedJsBundle = (() => {
 
 app.get("/server_generated_bundle.js", async (req, res) =>
 {
-    const siteAreasInfo = Object.fromEntries(Object.keys(roomStates).map(areaId =>
+    const siteAreasInfo: SiteAreasInfo = Object.fromEntries(Object.keys(roomStates).map(areaId =>
     {
         const connectedUserIds: Set<string> = getConnectedUserList(null, areaId)
             .filter((u) => !u.blockedIps.includes(getRealIp(req)))
@@ -1439,7 +1433,7 @@ app.get("/server_generated_bundle.js", async (req, res) =>
 
         return [areaId, {
             userCount: connectedUserIds.size,
-            streamerCount: Object.values(roomStates[areaId])
+            streamCount: Object.values(roomStates[areaId])
                 .map(s => s.streams)
                 .flat()
                 .filter(s => s.publisher != null && s.publisher.user.id && connectedUserIds.has(s.publisher.user.id))
