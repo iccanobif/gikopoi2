@@ -1161,7 +1161,7 @@ const vueApp = createApp(defineComponent({
         },
         writeMessageToLog(userName: string, msg: string, userId: string | null = null)
         {
-            const chatLog = document.getElementById("chatLog") as HTMLTextAreaElement;
+            const chatLog = document.getElementById("chatLog") as HTMLTextAreaElement
             const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
 
             const messageDiv = document.createElement("div");
@@ -1785,7 +1785,11 @@ const vueApp = createApp(defineComponent({
                         if (aPriority > bPriority) return 1;
 
                         if (a.type == "user" && b.type == "user")
-                            return compareUserObjects(a.o, b.o)
+                        {
+                            const aUser = a.o as User
+                            const bUser = b.o as User
+                            return compareUserObjects(aUser, bUser)
+                        }
                         
                         return 0
                     })
@@ -1898,15 +1902,18 @@ const vueApp = createApp(defineComponent({
         },
         drawBubbles()
         {
-            for (const o of this.canvasObjects.filter(o => o.type == "user" && !this.ignoredUserIds.has(o.o.id)))
+            this.canvasObjects
+                .filter(o => o.type == "user")
+                .map(o => o.o as User)
+                .filter(o => !this.ignoredUserIds.has(o.id))
+                .forEach(user =>
             {
-                const user = o.o;
-
-                if (!user.message) continue;
-
+                if (!user.message) return
+                
                 if (user.bubbleImage == null)
                     user.bubbleImage = this.getBubbleImage(user)
-
+                if (!user.bubbleImage) return
+                
                 const image = user.bubbleImage.getImage(this.getCanvasScale())
 
                 const pos = [
@@ -1921,7 +1928,7 @@ const vueApp = createApp(defineComponent({
                     user.currentPhysicalPositionY
                     - (pos[1] ? 62 : 70 + user.bubbleImage.height)
                 );
-            }
+            })
         },
         drawPrivateStreamIcons()
         {
@@ -1930,24 +1937,22 @@ const vueApp = createApp(defineComponent({
                 return
 
             const users = this.canvasObjects
-                .filter(o => o.type == "user"
-                             && !this.ignoredUserIds.has(o.o.id)
-                             && o.o.id != this.myUserID)
-                .map(o => o.o)
-
-            for (const o of users)
-            {
-                const renderImage = this.allowedListenerIDs.has(o.id) ? enabledListenerIconImage : disabledListenerIconImage
-                if (!renderImage) continue
-                const image = renderImage.getImage(this.getCanvasScale());
-
-                this.drawImage(
-                    this.canvasContext!, // TS quick fix
-                    image,
-                    o.currentPhysicalPositionX + 60,
-                    o.currentPhysicalPositionY - 100
-                );
-            }
+                .filter(o => o.type == "user")
+                .map(o => o.o as User)
+                .filter(o => !this.ignoredUserIds.has(o.id) && o.id != this.myUserID)
+                .forEach(o =>
+                {
+                    const renderImage = this.allowedListenerIDs.has(o.id) ? enabledListenerIconImage : disabledListenerIconImage
+                    if (!renderImage) return
+                    const image = renderImage.getImage(this.getCanvasScale());
+    
+                    this.drawImage(
+                        this.canvasContext!, // TS quick fix
+                        image,
+                        o.currentPhysicalPositionX + 60,
+                        o.currentPhysicalPositionY - 100
+                    );
+                })
         },
         drawOriginLines()
         {
