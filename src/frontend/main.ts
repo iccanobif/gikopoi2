@@ -36,6 +36,7 @@ declare global {
 }
 
 import { io } from 'socket.io-client'
+import { isWebrtcReceiveCodecSupported, isWebrtcPublishCodecSupported, WebrtcCodec } from 'webrtc-codec-support'
 import { createApp, defineComponent, computed, nextTick, App } from 'vue'
 import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'

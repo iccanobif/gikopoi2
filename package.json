@@ -41,7 +41,8 @@
     "uuid": "^8.3.2",
     "vite-express": "*",
     "vite-plugin-json5": "^1.0.5",
-    "vue": "^3.2.45"
+    "vue": "^3.2.45",
+    "webrtc-codec-support": "^1.0.1"
   },
   "devDependencies": {
     "@types/chess.js": "^0.11.0",

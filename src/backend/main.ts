@@ -1412,7 +1412,6 @@ const cachedJsBundle = (() => {
       + readFileSync("public/libraries/jquery-1.12.4.js").toString() + '\n'
       + readFileSync("public/libraries/jquery-ui/jquery-ui.min.js").toString() + '\n'
       + readFileSync("public/scripts/jquery.ui.touch-punch.min.js").toString() + '\n'
-      + readFileSync("public/scripts/webrtc-codec-support.min.js").toString() + '\n'
       + readFileSync("public/scripts/riffwave.js").toString() + '\n'
       + readFileSync("public/scripts/Blob.js").toString() + '\n'
       + readFileSync("public/scripts/animalese.js").toString() + '\n'
