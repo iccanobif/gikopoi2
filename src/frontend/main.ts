@@ -2117,7 +2117,8 @@ const vueApp = createApp(defineComponent({
                 // apply animation logic
                 const furimukuJizou = this.canvasObjects.find(o => o.o.id == "moving_jizou")
                 if (furimukuJizou)
-                {   const object = furimukuJizou.o as ClientRoomObject
+                {
+                    const object = furimukuJizou.o as ClientRoomObject
                     if (animateJizou(object, this.users))
                         this.isRedrawRequired = true
                 }
