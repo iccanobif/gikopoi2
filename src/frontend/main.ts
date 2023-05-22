@@ -1866,20 +1866,24 @@ const vueApp = createApp(defineComponent({
 
         drawUsernames()
         {
-            for (const o of this.canvasObjects.filter(o => o.type == "user" && !this.ignoredUserIds.has(o.o.id)))
+            this.canvasObjects
+                .filter(o => o.type == "user")
+                .map(o => o.o as User)
+                .filter(o => !this.ignoredUserIds.has(o.id))
+                .forEach(userObject =>
             {
-                if (o.o.nameImage == null || this.isUsernameRedrawRequired)
-                    o.o.nameImage = this.getNameImage(o.o, this.showUsernameBackground);
+                if (userObject.nameImage == null || this.isUsernameRedrawRequired)
+                    userObject.nameImage = this.getNameImage(userObject, this.showUsernameBackground);
 
-                const image = o.o.nameImage.getImage(this.getCanvasScale())
+                const image = userObject.nameImage.getImage(this.getCanvasScale())
 
                 this.drawImage(
                     this.canvasContext!, // TS quick fix
                     image,
-                    o.o.currentPhysicalPositionX + this.blockWidth/2 - o.o.nameImage.width/2,
-                    o.o.currentPhysicalPositionY - 120
+                    userObject.currentPhysicalPositionX + this.blockWidth/2 - userObject.nameImage.width/2,
+                    userObject.currentPhysicalPositionY - 120
                 );
-            }
+            })
             if (this.isUsernameRedrawRequired)
                 this.isUsernameRedrawRequired = false;
         },
