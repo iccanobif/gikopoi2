@@ -125,8 +125,12 @@ let disabledListenerIconImage: RenderCache | null = null;
 // I forgot why I defined rtcPeerSlots in the window object, but I remember it was important...
 window.rtcPeerSlots = [];
 
-function UserException(message: string) {
-    this.message = message;
+class UserException extends Error
+{
+    constructor(message: string)
+    {
+        super(message);
+    }
 }
 
 let loadCharacterImagesPromise: Promise<void> | null = null
@@ -898,7 +902,7 @@ const vueApp = createApp(defineComponent({
                 // Check if there's a new version
                 const response = await fetch("/version");
                 if (!response.ok)
-                    throw new Error(response)
+                    throw new Error(response.toString())
                 const newVersion = await response.json();
                 if (newVersion > window.EXPECTED_SERVER_VERSION)
                     this.pageRefreshRequired = true
