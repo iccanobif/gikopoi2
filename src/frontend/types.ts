@@ -31,13 +31,23 @@ export interface ClientRoom extends Room
     backgroundImage?: RenderCache
 }
 
-export interface CanvasObject
+interface RoomObjectCanvasObject
 {
-    o: ClientRoomObject | User
-    type: "room-object" | "user"
+    o: ClientRoomObject
+    type: "room-object"
     x?: number
     y?: number
 }
+
+interface UserCanvasObject
+{
+    o: User
+    type: "user"
+    x?: number
+    y?: number
+}
+
+export type CanvasObject = RoomObjectCanvasObject | UserCanvasObject
 
 export type DeviceInfo = {
     id: string

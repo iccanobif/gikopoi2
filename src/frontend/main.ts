@@ -1666,21 +1666,13 @@ const vueApp = createApp(defineComponent({
                         // scan for background objects to push
                         // before pushing the current objects
                         const widthOfObjects = cell.objects.reduce((w, o) =>
-                        {
-                            const roomObject = o.o as ClientRoomObject
-                            if (!roomObject.width) return w
-                            return roomObject.width > 1 ? Math.max(w, roomObject.width) : w
-                        }, 1)
+                            o.type === "room-object" && o.o.width && o.o.width > 1 ? Math.max(w, o.o.width) : w, 1)
                         if (widthOfObjects > 1)
                             scanCanvasObjects(canvasObjects, objectsByPosition,
                                 x+1, (x+1)+(widthOfObjects-2), y+1, toY);
 
                         const heightOfObjects = cell.objects.reduce((h, o) =>
-                        {
-                            const roomObject = o.o as ClientRoomObject
-                            if (!roomObject.height) return h
-                            return roomObject.height > 1 ? Math.max(h, roomObject.height) : h
-                        }, 1)
+                            o.type === "room-object" && o.o.height && o.o.height > 1 ? Math.max(h, o.o.height) : h, 1)
                         if (heightOfObjects > 1)
                             scanCanvasObjects(canvasObjects, objectsByPosition,
                                 fromX, x-1, (y-1)-(heightOfObjects-2), y-1);
@@ -1773,13 +1765,11 @@ const vueApp = createApp(defineComponent({
                         {
                             if (o.type == "room-object")
                             {
-                                const roomObject = o.o as ClientRoomObject
-                                return roomObject.x + 1 + (this.currentRoom!.size.y - roomObject.y)
+                                return o.o.x + 1 + (this.currentRoom!.size.y - o.o.y)
                             }
                             else
                             {
-                                const userObject = o.o as User
-                                return userObject.logicalPositionX + 1 + (this.currentRoom!.size.y - userObject.logicalPositionY)
+                                return o.o.logicalPositionX + 1 + (this.currentRoom!.size.y - o.o.logicalPositionY)
                             }
                         }
 
@@ -1791,9 +1781,7 @@ const vueApp = createApp(defineComponent({
 
                         if (a.type == "user" && b.type == "user")
                         {
-                            const aUser = a.o as User
-                            const bUser = b.o as User
-                            return compareUserObjects(aUser, bUser)
+                            return compareUserObjects(a.o, b.o)
                         }
                         
                         return 0
