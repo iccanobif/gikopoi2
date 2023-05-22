@@ -2906,7 +2906,8 @@ const vueApp = createApp(defineComponent({
                 this.isDeviceSelectionOpen = false;
                 this.isStreamPopupOpen = false;
 
-                if (promiseResults.find(r => r.status == "rejected"))
+                const rejectedResult = promiseResults.find(r => r.status == "rejected") as PromiseRejectedResult // type needed for typescript to know about the reason property
+                if (rejectedResult)
                 {
                     // Close the devices that were successfully opened
                     for (const mediaStream of promiseResults)
@@ -2919,22 +2920,22 @@ const vueApp = createApp(defineComponent({
                         }
                     }
 
-                    throw new Error(promiseResults.find(r => r.status == "rejected").reason)
+                    throw new Error(rejectedResult.reason)
                 }
 
-                const userMedia = promiseResults[0].value
-                const screenMedia = promiseResults[1].value
+                const userMedia = (promiseResults[0] as PromiseFulfilledResult<MediaStream | null>).value // type needed for typescript to know about the value property
+                const screenMedia = (promiseResults[1] as PromiseFulfilledResult<MediaStream | null>).value
 
                 this.mediaStream = new MediaStream()
                 // Populate this.mediaStream (video)
                 if (withVideo)
                 {
                     const videoTrack = withScreenCapture
-                        ? screenMedia.getVideoTracks()[0]
-                        : userMedia.getVideoTracks()[0];
+                        ? screenMedia
+                        : userMedia
 
                     if (videoTrack)
-                        this.mediaStream.addTrack(videoTrack)
+                        this.mediaStream.addTrack(videoTrack.getVideoTracks()[0])
                 }
                 // Populate this.mediaStream (audio)
                 if (withSound)
@@ -2942,29 +2943,32 @@ const vueApp = createApp(defineComponent({
                     const audioStream = withScreenCaptureAudio
                         ? screenMedia
                         : userMedia;
+                    
+                    if (audioStream) // audioStream may end up being null here?
+                    {
+                        this.outboundAudioProcessor = new AudioProcessor(audioStream, 1, false, (level) => {
+                            if (!this.streamSlotIdInWhichIWantToStream) return
+                            const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream) as HTMLElement
+                            const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream) as HTMLElement
 
-                    this.outboundAudioProcessor = new AudioProcessor(audioStream, 1, false, (level) => {
-                        if (!this.streamSlotIdInWhichIWantToStream) return
-                        const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream) as HTMLElement
-                        const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream) as HTMLElement
+                            vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
+                            vuMeterBarPrimary.style.width = level * 100 + "%"
+                            
+                            if (level > 0.2)
+                                this.streams[this.streamSlotIdInWhichIWantToStream].isJumping = true
+                            else
+                                setTimeout(() => {
+                                    const stream = this.streamSlotIdInWhichIWantToStream && this.streams[this.streamSlotIdInWhichIWantToStream]
+                                    // handle the case where before this 100 ms delay the stream was closed
+                                    if (stream)
+                                        stream.isJumping = false
+                                }, 100)
+                        });
 
-                        vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
-                        vuMeterBarPrimary.style.width = level * 100 + "%"
-                        
-                        if (level > 0.2)
-                            this.streams[this.streamSlotIdInWhichIWantToStream].isJumping = true
-                        else
-                            setTimeout(() => {
-                                const stream = this.streamSlotIdInWhichIWantToStream && this.streams[this.streamSlotIdInWhichIWantToStream]
-                                // handle the case where before this 100 ms delay the stream was closed
-                                if (stream)
-                                    stream.isJumping = false
-                            }, 100)
-                    });
+                        const audioTrack = this.outboundAudioProcessor.destination.stream.getAudioTracks()[0]
 
-                    const audioTrack = this.outboundAudioProcessor.destination.stream.getAudioTracks()[0]
-
-                    this.mediaStream.addTrack(audioTrack)
+                        this.mediaStream.addTrack(audioTrack)
+                    }
                 }
 
                 // Log supported codecs
