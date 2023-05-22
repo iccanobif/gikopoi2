@@ -3731,7 +3731,7 @@ const vueApp = createApp(defineComponent({
         async onVideoDoubleClick(event: MouseEvent, slotId: number)
         {
             const video = event.target as HTMLVideoElement;
-            const videoContainer = video.parentElement!
+            const videoContainer = video.parentElement as HTMLElement
             const stream = this.streams[slotId];
 
             // If this video was already moved to another tab, doubleclicking on it
@@ -3759,7 +3759,7 @@ const vueApp = createApp(defineComponent({
                 if (!tab) return // TS quick fix
                 this.detachedStreamTabs[slotId] = tab;
                 const streamSlot = this.streams[slotId];
-                const newTabTitle = this.$t("ui.label_stream", {index: slotId + 1}) + " " + this.users[streamSlot.userId].name;
+                const newTabTitle = this.$t("ui.label_stream", {index: slotId + 1}) + " " + this.users[streamSlot.userId!].name;
                 tab.onload = () => {
                     tab.document.title = newTabTitle;
                     tab.document.body.appendChild(videoContainer);
@@ -3782,7 +3782,7 @@ const vueApp = createApp(defineComponent({
                             // Restore original width for the niconico messages container (the detached tab
                             // uses javascript to set its width equal to the one of the <video> element, but in 
                             // the main page we don't need that).
-                            const niconicoMessagesContainer = videoContainer.getElementsByClassName("nico-nico-messages-container")[0]
+                            const niconicoMessagesContainer = videoContainer.getElementsByClassName("nico-nico-messages-container")[0] as HTMLElement
                             if (niconicoMessagesContainer)
                             {
                                 niconicoMessagesContainer.style.width = "100%"
@@ -3796,15 +3796,16 @@ const vueApp = createApp(defineComponent({
         },
         reattachVideoFromOtherTabIfDetached(slotId: number)
         {
-            if (this.detachedStreamTabs[slotId])
+            const tab = this.detachedStreamTabs[slotId]
+            if (tab)
             {
-                const videoContainer = this.detachedStreamTabs[slotId].document.getElementById("video-container-" + slotId);
+                const videoContainer = tab.document.getElementById("video-container-" + slotId) as HTMLElement
                 const stream = this.streams[slotId];
 
                 this.clientSideStreamData[slotId].isSeparateTab = false;
                 videoContainer.originalPreviousSibling.after(videoContainer);
                 videoContainer.originalPreviousSibling = null;
-                this.detachedStreamTabs[slotId].close();
+                tab.close();
                 this.detachedStreamTabs[slotId] = null;
             }
         },
