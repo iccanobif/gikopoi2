@@ -218,8 +218,6 @@ function setAppLanguage(code: string)
     i18next.changeLanguage(code, setPageMetadata)
 }
 
-function Data<Type>(value: Type){return value}
-
 const vueApp = createApp(defineComponent({
     components: {
         ChessboardSlot,
@@ -231,13 +229,13 @@ const vueApp = createApp(defineComponent({
             siteAreas: siteAreas,
             siteAreasInfo: siteAreasInfo,
             
-            selectedCharacter: Data<Character | null>(null),
-            socket: Data<Socket | null>(null),
-            users: Data<Users>({}),
+            selectedCharacter: null as Character | null,
+            socket: null as Socket | null,
+            users: {} as Users,
             roomLoadId: 0,
-            currentRoom: Data<ClientRoom | null>(null),
-            myUserID: Data<string | null>(null),
-            myPrivateUserID: Data<string | null>(null),
+            currentRoom: null as ClientRoom | null,
+            myUserID: null as string | null,
+            myPrivateUserID: null as string | null,
             isWaitingForServerResponseOnMovement: false,
             justSpawnedToThisRoom: true,
             isLoadingRoom: false,
@@ -248,42 +246,42 @@ const vueApp = createApp(defineComponent({
             isLoggingIn: false,
             areaId: initialAreaId,
             language: initialLanguage,
-            uiBackgroundColor: Data<number[] | null>(null),
+            uiBackgroundColor: null as number[] | null,
             isUiBackgroundDark: false,
 
             // canvas
-            canvasContext: Data<CanvasRenderingContext2D | null>(null),
+            canvasContext: null as CanvasRenderingContext2D | null,
             isRedrawRequired: false,
             isUsernameRedrawRequired: false,
             isDraggingCanvas: false,
             isCanvasPointerDown: false,
-            canvasPointerStartState: Data<PointerState | null>(null),
-            canvasDragStartOffset: Data<Coordinates | null>(null),
-            canvasManualOffset: Data<Coordinates>({ x: 0, y: 0 }),
-            canvasGlobalOffset: Data<Coordinates>({ x: 0, y: 0 }),
-            canvasDimensions: Data<Size>({ w: 0, h: 0 }),
+            canvasPointerStartState: null as PointerState | null,
+            canvasDragStartOffset: null as Coordinates | null,
+            canvasManualOffset: { x: 0, y: 0 } as Coordinates,
+            canvasGlobalOffset: { x: 0, y: 0 } as Coordinates,
+            canvasDimensions: { w: 0, h: 0 } as Size,
             userCanvasScale: 1,
-            userCanvasScaleStart: Data<number | null>(null),
+            userCanvasScaleStart: null as number | null,
             isLowQualityEnabled: localStorage.getItem("isLowQualityEnabled") == "true",
             isCrispModeEnabled: localStorage.getItem("isCrispModeEnabled") == "true",
             isIdleAnimationDisabled: localStorage.getItem("isIdleAnimationDisabled") == "true",
             blockWidth: BLOCK_WIDTH,
             blockHeight: BLOCK_HEIGHT,
-            devicePixelRatio: Data<number>(1),
-            canvasObjects: Data<CanvasObject[]>([]),
+            devicePixelRatio: 1 as number,
+            canvasObjects: [] as CanvasObject[],
 
             // rula stuff
             isRulaPopupOpen: false,
-            roomList: Data<ListedRoom[]>([]),
-            preparedRoomList: Data<ListedRoom[]>([]),
+            roomList: [] as ListedRoom[],
+            preparedRoomList: [] as ListedRoom[],
             rulaRoomGroup: "all",
-            rulaRoomListSortKey: Data<RulaRoomListSortKey>((localStorage.getItem("rulaRoomListSortKey") as RulaRoomListSortKey) || "sortName"),
-            rulaRoomListSortDirection: Data<1 | -1>(localStorage.getItem("rulaRoomListSortDirection") == "1" ? 1 : -1),
-            rulaRoomSelection: Data<string | null>(null),
+            rulaRoomListSortKey: (localStorage.getItem("rulaRoomListSortKey") as RulaRoomListSortKey) || "sortName" as RulaRoomListSortKey,
+            rulaRoomListSortDirection: (localStorage.getItem("rulaRoomListSortDirection") == "1" ? 1 : -1) as 1 | -1,
+            rulaRoomSelection: null as string | null,
 
             // user list stuff
             isUserListPopupOpen: false,
-            ignoredUserIds: Data<Set<string>>(new Set()),
+            ignoredUserIds: new Set() as Set<string>,
 
             // preferences stuff
             isPreferencesPopupOpen: false,
@@ -299,13 +297,13 @@ const vueApp = createApp(defineComponent({
             enableTextToSpeech: localStorage.getItem("enableTextToSpeech") == "true",
             ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
             voiceVolume: parseInt(localStorage.getItem("voiceVolume") || '100'),
-            availableTTSVoices: Data<SpeechSynthesisVoice[]>([]),
+            availableTTSVoices: [] as SpeechSynthesisVoice[],
             isMessageSoundEnabled: localStorage.getItem("isMessageSoundEnabled") != "false",
             isLoginSoundEnabled: localStorage.getItem("isLoginSoundEnabled") != "false",
             isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
             customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
-            customMentionRegexObject: Data<RegExp | null>(null),
-            usernameMentionRegexObject: Data<RegExp | null>(null),
+            customMentionRegexObject: null as RegExp | null,
+            usernameMentionRegexObject: null as RegExp | null,
             isCoinSoundEnabled: localStorage.getItem("isCoinSoundEnabled") != "false",
             isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
             isStreamInboundVuMeterEnabled: localStorage.getItem("isStreamInboundVuMeterEnabled") != "false",
@@ -313,14 +311,14 @@ const vueApp = createApp(defineComponent({
             showLogDividers: localStorage.getItem("showLogDividers") == "true",
 
             // streaming 
-            streams: Data<StreamSlotDto[]>([]),
-            clientSideStreamData: Data<{ isListenerConnected: boolean, isSeparateTab: boolean }[]>([]),
-            mediaStream: Data<MediaStream | null>(null),
-            streamSlotIdInWhichIWantToStream: Data<number | null>(null),
-            takenStreams: Data<boolean[]>([]), // streams taken by me
-            slotVolume: Data<{[slotId: number]: number}>(JSON.parse(localStorage.getItem("slotVolume") || '{}')), // key: slot Id / value: volume
-            detachedStreamTabs: Data<{[slotId: number]: Window | null}>({}), // key: slot Id
-            slotIsVtuberCharacterJumping: Data<{[slotId: number]: boolean}>({}), // key: slot Id / value: boolean
+            streams: [] as StreamSlotDto[],
+            clientSideStreamData: [] as { isListenerConnected: boolean, isSeparateTab: boolean }[],
+            mediaStream: null as MediaStream | null,
+            streamSlotIdInWhichIWantToStream: null as number | null,
+            takenStreams: [] as boolean[], // streams taken by me
+            slotVolume: JSON.parse(localStorage.getItem("slotVolume") || '{}') as {[slotId: number]: number}, // key: slot Id / value: volume
+            detachedStreamTabs: {} as {[slotId: number]: Window | null}, // key: slot Id
+            slotIsVtuberCharacterJumping: {} as {[slotId: number]: boolean}, // key: slot Id / value: boolean
 
             // stream settings
             isStreamPopupOpen: false,
@@ -331,36 +329,36 @@ const vueApp = createApp(defineComponent({
             streamAutoGain: localStorage.getItem("streamAutoGain") == "true",
             streamScreenCapture: localStorage.getItem("streamScreenCapture") == "true",
             streamScreenCaptureAudio: localStorage.getItem("streamScreenCaptureAudio") == "true",
-            streamTarget: Data<"all_room" | "specific_users">("all_room"),
-            allowedListenerIDs: Data<Set<string>>(new Set()),
+            streamTarget: "all_room" as "all_room" | "specific_users",
+            allowedListenerIDs: new Set() as Set<string>,
             streamIsVtuberMode: false,
             isNicoNicoMode: false,
 
             // Device selection popup
             isDeviceSelectionOpen: false,
-            deviceList: Data<DeviceInfo[]>([]),
-            selectedAudioDeviceId: Data<string | null>(null),
-            selectedVideoDeviceId: Data<string | null>(null),
+            deviceList: [] as DeviceInfo[],
+            selectedAudioDeviceId: null as string | null,
+            selectedVideoDeviceId: null as string | null,
             waitingForDevicePermission: false,
             
             // Dialog Popup
             dialogPopupMessage: '',
             dialogPopupTitle: '',
-            dialogPopupButtons: Data<string[]>([]),
-            dialogPopupCallback: Data<PopupCallback | null>(null),
-            dialogPopupButtonIndex: Data<number | null>(null),
+            dialogPopupButtons: [] as string[],
+            dialogPopupCallback: null as PopupCallback | null,
+            dialogPopupButtonIndex: null as number | null,
             isDialogPopupOpen: false,
             
-            appState: Data<'login' | 'stage' | 'logout' | 'redirect_notice' | 'poop'>(getAppState()),
+            appState: getAppState() as 'login' | 'stage' | 'logout' | 'redirect_notice' | 'poop',
 
             enableGridNumbers: false,
             username: localStorage.getItem("username") || "",
 
             // Possibly redundant data:
-            serverStats: Data<Stats>({
+            serverStats: {
                 userCount: 0,
                 streamCount: 0,
-            }),
+            } as Stats,
             wantToStream: false,
             connectionLost: false,
             connectionRefused: false,
@@ -371,27 +369,27 @@ const vueApp = createApp(defineComponent({
 
             allCharacters: Object.values(characters),
 
-            vuMeterTimer: Data<number | null>(null),
-            highlightedUserId: Data<string | null>(null),
-            highlightedUserName: Data<string | null>(null),
-            movementDirection: Data<Direction | null>(null),
+            vuMeterTimer: null as number | null,
+            highlightedUserId: null as string | null,
+            highlightedUserName: null as string | null,
+            movementDirection: null as Direction | null,
             lastSetMovementDirectionTime: 0, // Found in code but not in data
             underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
             timestampsInCopiedLog: localStorage.getItem("timestampsInCopiedLog") != "false",
             showIgnoreIndicatorInLog: localStorage.getItem("showIgnoreIndicatorInLog") == "true",
             notificationPermissionsGranted: false,
-            lastFrameTimestamp: Data<number | null>(null),
-            chessboardState: Data<ChessboardStateDto | null>(null),
-            jankenState: Data<JankenStateDto | null>(null),
+            lastFrameTimestamp: null as number | null,
+            chessboardState: null as ChessboardStateDto | null,
+            jankenState: null as JankenStateDto | null,
 
-            canvasContainerResizeObserver: Data<ResizeObserver | null>(null),
+            canvasContainerResizeObserver: null as ResizeObserver | null,
 
             lastCoinTossTime: 0, // unix timestamp
 
             // hideStreams: false,
             // the key is the slot ID
-            inboundAudioProcessors: Data<{[slotId: number]: AudioProcessor}>({}),
-            outboundAudioProcessor: Data<AudioProcessor | null>(null),
+            inboundAudioProcessors: {} as {[slotId: number]: AudioProcessor},
+            outboundAudioProcessor: null as AudioProcessor | null,
         }
     },
     provide()
@@ -1758,7 +1756,7 @@ const vueApp = createApp(defineComponent({
 
             const getObjectsByPrioritySort = (): CanvasObject[] =>
             {
-                return Data<CanvasObject[]>([]).concat(
+                return ([] as CanvasObject[]).concat(
                     this.currentRoom!.objects
                         .map(o => ({
                             o,
