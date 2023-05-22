@@ -600,10 +600,14 @@ const vueApp = createApp(defineComponent({
             await (loadCharacters(this.isCrispModeEnabled));
             this.isRedrawRequired = true;
         },
+        getSiteArea()
+        {
+            return getSiteArea(this.areaId)
+        },
         setLanguage(siteArea?: SiteArea)
         {
             if (!siteArea)
-                siteArea = getSiteArea(this.areaId)
+                siteArea = this.getSiteArea()
             setAppLanguage((siteArea.restrictLanguage && siteArea.language) || this.language)
         },
         getLangEntries()
