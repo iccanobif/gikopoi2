@@ -3622,7 +3622,7 @@ const vueApp = createApp(defineComponent({
             debouncedSpeakTest(this.ttsVoiceURI, this.voiceVolume)
         },
         toggleVideoSlotPinStatus(slotId: number) {
-            const videoContainer = document.getElementById('video-container-' + slotId) as HTMLVideoElement
+            const videoContainer = document.getElementById('video-container-' + slotId) as HTMLElement
             videoContainer.classList.toggle("pinned-video")
             videoContainer.classList.toggle("unpinned-video")
 
@@ -3636,7 +3636,7 @@ const vueApp = createApp(defineComponent({
                 // @ts-ignore
                 $(videoContainer).draggable("destroy")
                 // Reset 'top' and 'left' styles to snap the container back to its original position
-                videoContainer.style = ""
+                videoContainer.setAttribute("style", "")
             }
         },
         highlightUser(userId: string, userName: string)
