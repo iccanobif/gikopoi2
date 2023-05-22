@@ -27,13 +27,13 @@ export interface ClientRoomObject extends RoomObject
 
 export interface ClientRoom extends Room
 {
-    objects: ClientRoomObject[];
+    objects: ClientRoomObject[]
     backgroundImage?: RenderCache
 }
 
 export interface CanvasObject
 {
-    o: ClientRoomObject
+    o: ClientRoomObject | User
     type: "room-object" | "user"
     x?: number
     y?: number
@@ -53,8 +53,21 @@ export interface PopupUserList {
 }
 
 export interface PointerState {
-    dist: number
+    dist: number | null
     pos: Coordinates
 }
 
 export type PopupCallback = (buttonIndex: number) => void
+
+export type RulaRoomListSortKey = 'sortName' | 'userCount' | 'streamerCount'
+
+import type { RTCPeer } from "./rtcpeer";
+export interface RTCPeerSlot {
+    attempts: number
+    rtcPeer: RTCPeer | null
+}
+
+export interface VideoContainer extends HTMLElement
+{
+    originalPreviousSibling: HTMLElement | null
+}

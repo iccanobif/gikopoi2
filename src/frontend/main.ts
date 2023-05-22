@@ -27,6 +27,7 @@ import type {
     RTCPeerSlot,
     ClientRoomObject,
     CanvasObject,
+    VideoContainer,
 } from './types'
 import type { Character } from './character'
 
@@ -3780,7 +3781,7 @@ const vueApp = createApp(defineComponent({
         async onVideoDoubleClick(event: MouseEvent, slotId: number)
         {
             const video = event.target as HTMLVideoElement;
-            const videoContainer = video.parentElement as HTMLElement
+            const videoContainer = video.parentElement as VideoContainer
             const stream = this.streams[slotId];
 
             // If this video was already moved to another tab, doubleclicking on it
@@ -3803,7 +3804,7 @@ const vueApp = createApp(defineComponent({
                 // before it can be started again... Make sure to test for that everytime a change is made to this code.
                 this.clientSideStreamData[slotId].isSeparateTab = true;
                 this.$forceUpdate() // HACK: this is to force vue to rebind the title attribute of the <video> element
-                videoContainer.originalPreviousSibling = videoContainer.previousElementSibling;
+                videoContainer.originalPreviousSibling = videoContainer.previousElementSibling as HTMLElement;
                 const tab = open(window.origin + '/video-tab.html');
                 if (!tab) return // TS quick fix
                 this.detachedStreamTabs[slotId] = tab;
@@ -3824,7 +3825,8 @@ const vueApp = createApp(defineComponent({
                         {
                             this.clientSideStreamData[slotId].isSeparateTab = false;
                             this.$forceUpdate() // HACK: this is to force vue to rebind the title attribute of the <video> element
-                            videoContainer.originalPreviousSibling.after(videoContainer);
+                            if (videoContainer.originalPreviousSibling)
+                                videoContainer.originalPreviousSibling.after(videoContainer);
                             videoContainer.originalPreviousSibling = null;
                             this.detachedStreamTabs[slotId] = null;
 
@@ -3848,11 +3850,12 @@ const vueApp = createApp(defineComponent({
             const tab = this.detachedStreamTabs[slotId]
             if (tab)
             {
-                const videoContainer = tab.document.getElementById("video-container-" + slotId) as HTMLElement
+                const videoContainer = tab.document.getElementById("video-container-" + slotId) as VideoContainer
                 const stream = this.streams[slotId];
 
                 this.clientSideStreamData[slotId].isSeparateTab = false;
-                videoContainer.originalPreviousSibling.after(videoContainer);
+                if (videoContainer.originalPreviousSibling)
+                    videoContainer.originalPreviousSibling.after(videoContainer);
                 videoContainer.originalPreviousSibling = null;
                 tab.close();
                 this.detachedStreamTabs[slotId] = null;
