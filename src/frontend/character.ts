@@ -61,12 +61,12 @@ export class Character
         top: 0,
         scale: 1.9
     }
-    private scale: number
+    public scale: number // private
     
-    private rawImages: RawImages = {}
-    private renderImages: RenderImage = {}
+    public rawImages: RawImages = {} // private
+    public renderImages: RenderImage = {} // private
     
-    private dto: CharacterSvgDto | null = null
+    public dto: CharacterSvgDto | null = null // private
     public isLoaded: boolean = false
     
     constructor({name,
