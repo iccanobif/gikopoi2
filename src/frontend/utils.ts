@@ -208,7 +208,7 @@ export class AudioProcessor
     
     private context: AudioContext
     private source: MediaStreamAudioSourceNode
-    private destination: MediaStreamAudioDestinationNode
+    public destination: MediaStreamAudioDestinationNode
     private compressor: DynamicsCompressorNode
     private gain: GainNode
     private pan: StereoPannerNode | GainNode
