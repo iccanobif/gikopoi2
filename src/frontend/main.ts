@@ -275,7 +275,7 @@ const vueApp = createApp(defineComponent({
             roomList: [] as ListedRoom[],
             preparedRoomList: [] as ListedRoom[],
             rulaRoomGroup: "all",
-            rulaRoomListSortKey: (localStorage.getItem("rulaRoomListSortKey") as RulaRoomListSortKey) || "sortName" as RulaRoomListSortKey,
+            rulaRoomListSortKey: (localStorage.getItem("rulaRoomListSortKey") || "sortName") as RulaRoomListSortKey,
             rulaRoomListSortDirection: (localStorage.getItem("rulaRoomListSortDirection") == "1" ? 1 : -1) as 1 | -1,
             rulaRoomSelection: null as string | null,
 
