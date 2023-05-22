@@ -2117,8 +2117,10 @@ const vueApp = createApp(defineComponent({
                 // apply animation logic
                 const furimukuJizou = this.canvasObjects.find(o => o.o.id == "moving_jizou")
                 if (furimukuJizou)
-                    if (animateJizou(furimukuJizou.o, this.users))
+                {   const object = furimukuJizou.o as ClientRoomObject
+                    if (animateJizou(object, this.users))
                         this.isRedrawRequired = true
+                }
             }
             
             const usersRequiringRedraw = new Set()
@@ -3626,7 +3628,6 @@ const vueApp = createApp(defineComponent({
                 // @ts-ignore
                 $(videoContainer).draggable("destroy")
                 // Reset 'top' and 'left' styles to snap the container back to its original position
-                // @ts-ignore read-only property style
                 videoContainer.style = ""
             }
         },

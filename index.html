@@ -74,14 +74,14 @@
                     <login-footer></login-footer>
                 </div>
             </div>
-            <div id="stage" v-if="appState == 'stage' && currentRoom !== null">
+            <div id="stage" v-if="appState == 'stage'">
                 <h2 class="big-red-alert" v-if="connectionLost && !connectionRefused">
                     {{ $t("msg.connection_lost") }}
                 </h2>
                 <h2 class="big-red-alert" v-if="pageRefreshRequired">
                     {{ $t("msg.page_refresh_required") }}
                 </h2>
-                <h2 v-if="connectionRefused">
+                <h2 v-if="covnnectionRefused">
                     {{ $t("msg.connection_refused") }}
                     <a href="/">{{ $t("ui.back_to_homepage") }}</a>
                 </h2>
@@ -97,7 +97,7 @@
                             v-on:click="canvasClick"
                             ></canvas>
                         <div id="infobox-container">
-                            <div id="infobox" v-show="isInfoboxVisible">
+                            <div id="infobox" v-if="isInfoboxVisible && currentRoom !== null">
                                 <table>
                                     <tr>
                                         <td>{{ $t("ui.infobox_label_area") }}</td>
@@ -367,7 +367,7 @@
                             </button>
                         </div>
                     </div>
-                    <template v-if="currentRoom.games" v-for="(game, index) in currentRoom.games">
+                    <template v-if="currentRoom !== null && currentRoom.games" v-for="(game, index) in currentRoom.games">
                         <hr v-if="streams.length || index > 0" />
                         <chessboard-slot
                             v-if="game == 'chess' && chessboardState"
