@@ -25,6 +25,8 @@ import type {
     PlayerDto,
     MoveDto,
     RTCPeerSlot,
+    ClientRoomObject,
+    CanvasObject,
 } from './types'
 import type { Character } from './character'
 
@@ -261,7 +263,7 @@ const vueApp = createApp(defineComponent({
             blockWidth: BLOCK_WIDTH,
             blockHeight: BLOCK_HEIGHT,
             devicePixelRatio: Data<number>(1),
-            canvasObjects: Data<any[]>([]),
+            canvasObjects: Data<CanvasObject[]>([]),
 
             // rula stuff
             isRulaPopupOpen: false,
@@ -1621,8 +1623,15 @@ const vueApp = createApp(defineComponent({
 
         updateCanvasObjects()
         {
-            const scanCanvasObjects =
-                (canvasObjects, objectsByPosition, fromX, toX, fromY, toY) =>
+            interface ObjectsByPosition {
+                [key: string]: {
+                    objects: CanvasObject[]
+                    isDone: boolean
+                }
+            }
+
+            const scanCanvasObjects = (canvasObjects: CanvasObject[], objectsByPosition: ObjectsByPosition,
+                    fromX: number, toX: number, fromY: number, toY: number) =>
             {
                 const width = (toX-fromX)+1;
                 const height = (toY-fromY)+1;
@@ -1647,16 +1656,26 @@ const vueApp = createApp(defineComponent({
                         const cell = objectsByPosition[key];
                         if (cell.isDone) continue;
 
+                        
+
                         // scan for background objects to push
                         // before pushing the current objects
                         const widthOfObjects = cell.objects.reduce((w, o) =>
-                            (o.o.width > 1 ? Math.max(w, o.o.width) : w), 1);
+                        {
+                            const roomObject = o.o as ClientRoomObject
+                            if (!roomObject.width) return w
+                            return roomObject.width > 1 ? Math.max(w, roomObject.width) : w
+                        }, 1)
                         if (widthOfObjects > 1)
                             scanCanvasObjects(canvasObjects, objectsByPosition,
                                 x+1, (x+1)+(widthOfObjects-2), y+1, toY);
 
-                        const heightOfObjects = cell.objects.reduce((w, o) =>
-                            (o.o.height > 1 ? Math.max(w, o.o.height) : w), 1);
+                        const heightOfObjects = cell.objects.reduce((h, o) =>
+                        {
+                            const roomObject = o.o as ClientRoomObject
+                            if (!roomObject.height) return h
+                            return roomObject.height > 1 ? Math.max(h, roomObject.height) : h
+                        }, 1)
                         if (heightOfObjects > 1)
                             scanCanvasObjects(canvasObjects, objectsByPosition,
                                 fromX, x-1, (y-1)-(heightOfObjects-2), y-1);
@@ -1668,7 +1687,7 @@ const vueApp = createApp(defineComponent({
                 }
             }
 
-            const addObject = (o, objectsByPosition) =>
+            const addObject = (o: CanvasObject, objectsByPosition: ObjectsByPosition) =>
             {
                 const key = o.x + "," + o.y;
                 if (key in objectsByPosition)
@@ -1685,7 +1704,7 @@ const vueApp = createApp(defineComponent({
                 }
             }
 
-            const compareUserObjects = (a,b) =>
+            const compareUserObjects = (a: User, b: User) =>
             {
                 // A highlighted user will always be on top.
                 if (a.id == this.highlightedUserId)
@@ -1693,6 +1712,8 @@ const vueApp = createApp(defineComponent({
                 if (b.id == this.highlightedUserId)
                     return -1
                 // The user that moved last will be underneath
+                if (a.lastMovement === null|| b.lastMovement === null)
+                    return 0
                 if (a.lastMovement < b.lastMovement)
                     return 1
                 if (a.lastMovement > b.lastMovement)
@@ -1700,11 +1721,11 @@ const vueApp = createApp(defineComponent({
                 return a.id.localeCompare(b.id);
             }
 
-            const getObjectsByDiagonalScanSort = () =>
+            const getObjectsByDiagonalScanSort = (): CanvasObject[] =>
             {
-                const objectsByPosition = {};
+                const objectsByPosition: ObjectsByPosition = {};
 
-                this.currentRoom.objects.forEach(o => addObject({
+                this.currentRoom!.objects.forEach(o => addObject({
                     o,
                     type: "room-object",
                     x: o.x,
@@ -1720,18 +1741,18 @@ const vueApp = createApp(defineComponent({
                         y: o.logicalPositionY
                     }, objectsByPosition));
 
-                const canvasObjects = [];
+                const canvasObjects: CanvasObject[] = [];
                 scanCanvasObjects(canvasObjects, objectsByPosition,
-                    0, this.currentRoom.size.x, -1, this.currentRoom.size.y-1);
+                    0, this.currentRoom!.size.x, -1, this.currentRoom!.size.y-1);
                 // x to room size.x and y from -1 to allow for foreground objects
 
                 return canvasObjects;
             }
 
-            const getObjectsByPrioritySort = () =>
+            const getObjectsByPrioritySort = (): CanvasObject[] =>
             {
-                return [].concat(
-                    this.currentRoom.objects
+                return Data<CanvasObject[]>([]).concat(
+                    this.currentRoom!.objects
                         .map(o => ({
                             o,
                             type: "room-object",
@@ -1743,9 +1764,19 @@ const vueApp = createApp(defineComponent({
                 )
                     .sort((a, b) =>
                     {
-                        const calculatePriority = (o) => o.type == "room-object"
-                            ? o.o.x + 1 + (this.currentRoom.size.y - o.o.y)
-                            : o.o.logicalPositionX + 1 + (this.currentRoom.size.y - o.o.logicalPositionY)
+                        const calculatePriority = (o: CanvasObject) =>
+                        {
+                            if (o.type == "room-object")
+                            {
+                                const roomObject = o.o as ClientRoomObject
+                                return roomObject.x + 1 + (this.currentRoom!.size.y - roomObject.y)
+                            }
+                            else
+                            {
+                                const userObject = o.o as User
+                                return userObject.logicalPositionX + 1 + (this.currentRoom!.size.y - userObject.logicalPositionY)
+                            }
+                        }
 
                         const aPriority = calculatePriority(a)
                         const bPriority = calculatePriority(b)
@@ -1757,10 +1788,10 @@ const vueApp = createApp(defineComponent({
                             return compareUserObjects(a.o, b.o)
                         
                         return 0
-                    });
+                    })
             }
             
-            if (this.currentRoom.objectRenderSortMethod == "diagonal_scan")
+            if (this.currentRoom!.objectRenderSortMethod == "diagonal_scan")
             {
                 this.canvasObjects = getObjectsByDiagonalScanSort();
             }
@@ -1797,32 +1828,34 @@ const vueApp = createApp(defineComponent({
             {
                 if (o.type == "room-object")
                 {
-                    if (!o.o.image) continue;
+                    const roomObject = o.o as ClientRoomObject
+                    if (!roomObject.image) continue;
 
                     this.drawImage(
                         context,
-                        o.o.image.getImage(this.getCanvasScale()),
-                        o.o.physicalPositionX,
-                        o.o.physicalPositionY
+                        roomObject.image.getImage(this.getCanvasScale()),
+                        roomObject.physicalPositionX,
+                        roomObject.physicalPositionY
                     );
                 } // o.type == "user"
                 else
                 {
+                    const userObject = o.o as User
                     // Don't draw ignored users
-                    if (this.ignoredUserIds.has(o.o.id)) continue
+                    if (this.ignoredUserIds.has(userObject.id)) continue
 
                     context.save();
 
-                    if (o.o.isInactive)
+                    if (userObject.isInactive)
                         context.globalAlpha = 0.5
                     
-                    o.o.getCurrentImage(this.currentRoom).forEach(renderImage =>
+                    userObject.getCurrentImage(this.currentRoom!).forEach(renderImage =>
                     {
                         this.drawImage(
                             context,
                             renderImage.getImage(this.getCanvasScale()),
-                            o.o.currentPhysicalPositionX + this.blockWidth/2 - renderImage.width/2,
-                            o.o.currentPhysicalPositionY - renderImage.height
+                            userObject.currentPhysicalPositionX + this.blockWidth/2 - renderImage.width/2,
+                            userObject.currentPhysicalPositionY - renderImage.height
                         )
                     })
 
