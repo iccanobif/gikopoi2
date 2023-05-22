@@ -36,6 +36,7 @@ export interface StreamSlotDto
     isVisibleOnlyToSpecificUsers: boolean | null,
     streamIsVtuberMode: boolean | null,
     isNicoNicoMode: boolean | null,
+    isJumping: boolean
 }
 
 export interface SpecialObjects

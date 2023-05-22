@@ -113,8 +113,8 @@ window.addEventListener("unhandledrejection", ev => {
 
 const enabledListenerIconImagePromise = loadImage("enabled-listener.svg")
 const disabledListenerIconImagePromise = loadImage("disabled-listener.svg")
-let enabledListenerIconImage = null;
-let disabledListenerIconImage = null;
+let enabledListenerIconImage: RenderCache | null = null;
+let disabledListenerIconImage: RenderCache | null = null;
 // I forgot why I defined rtcPeerSlots in the window object, but I remember it was important...
 window.rtcPeerSlots = [];
 
@@ -1898,8 +1898,9 @@ const vueApp = createApp(defineComponent({
 
             for (const o of users)
             {
-                const image = (this.allowedListenerIDs.has(o.id) ? enabledListenerIconImage : disabledListenerIconImage)
-                    .getImage(this.getCanvasScale());
+                const renderImage = this.allowedListenerIDs.has(o.id) ? enabledListenerIconImage : disabledListenerIconImage
+                if (!renderImage) continue
+                const image = renderImage.getImage(this.getCanvasScale());
 
                 this.drawImage(
                     this.canvasContext!, // TS quick fix
@@ -2889,17 +2890,18 @@ const vueApp = createApp(defineComponent({
                         : userMedia;
 
                     this.outboundAudioProcessor = new AudioProcessor(audioStream, 1, false, (level) => {
-                        const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream)
-                        const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream)
+                        if (!this.streamSlotIdInWhichIWantToStream) return
+                        const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream) as HTMLElement
+                        const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream) as HTMLElement
 
                         vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
                         vuMeterBarPrimary.style.width = level * 100 + "%"
-
+                        
                         if (level > 0.2)
                             this.streams[this.streamSlotIdInWhichIWantToStream].isJumping = true
                         else
                             setTimeout(() => {
-                                const stream = this.streams[this.streamSlotIdInWhichIWantToStream]
+                                const stream = this.streamSlotIdInWhichIWantToStream && this.streams[this.streamSlotIdInWhichIWantToStream]
                                 // handle the case where before this 100 ms delay the stream was closed
                                 if (stream)
                                     stream.isJumping = false
@@ -3112,8 +3114,8 @@ const vueApp = createApp(defineComponent({
                             // out of the AudioProcessor... Needs further investigation.
                             // videoElement.muted = true
                             this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId], true, (level) => {
-                                const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + streamSlotId)
-                                const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + streamSlotId)
+                                const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + streamSlotId) as HTMLElement
+                                const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + streamSlotId) as HTMLElement
         
                                 vuMeterBarSecondary.style.width = vuMeterBarPrimary.style.width
                                 vuMeterBarPrimary.style.width = level * 100 + "%"
@@ -3146,7 +3148,7 @@ const vueApp = createApp(defineComponent({
 
             this.reattachVideoFromOtherTabIfDetached(streamSlotId);
             
-            this.socket.emit("user-want-to-drop-stream", streamSlotId);
+            this.socket!.emit("user-want-to-drop-stream", streamSlotId);
 
             if (this.inboundAudioProcessors[streamSlotId])
             {
@@ -3752,6 +3754,7 @@ const vueApp = createApp(defineComponent({
                 this.$forceUpdate() // HACK: this is to force vue to rebind the title attribute of the <video> element
                 videoContainer.originalPreviousSibling = videoContainer.previousElementSibling;
                 const tab = open(window.origin + '/video-tab.html');
+                if (!tab) return // TS quick fix
                 this.detachedStreamTabs[slotId] = tab;
                 const streamSlot = this.streams[slotId];
                 const newTabTitle = this.$t("ui.label_stream", {index: slotId + 1}) + " " + this.users[streamSlot.userId].name;

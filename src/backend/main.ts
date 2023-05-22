@@ -3,7 +3,7 @@ const isProduction = process.env.NODE_ENV == "production"
 import express, { Request } from "express"
 import ViteExpress from "vite-express";
 import { rooms, dynamicRooms } from "./rooms";
-import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom, ListedRoom } from "./types";
+import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom, ListedRoom, MoveDto } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getUserByPrivateId, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users";
 import got from "got";
 import log from "loglevel";
@@ -513,16 +513,16 @@ io.on("connection", function (socket)
 
             }
 
-            userRoomEmit(user, "server-move",
-                {
-                    userId: user.id,
-                    x: user.position.x,
-                    y: user.position.y,
-                    direction: user.direction,
-                    lastMovement: user.lastMovement,
-                    isInstant: false,
-                    shouldSpinwalk,
-                });
+            const move: MoveDto = {
+                userId: user.id,
+                x: user.position.x,
+                y: user.position.y,
+                direction: user.direction,
+                lastMovement: user.lastMovement,
+                isInstant: false,
+                shouldSpinwalk,
+            }
+            userRoomEmit(user, "server-move", move);
         }
         catch (e)
         {
@@ -1346,6 +1346,7 @@ function toStreamSlotDtoArray(user: Player, streamSlots: StreamSlot[]): StreamSl
                        || s.publisher?.user.id == user.id,
             streamIsVtuberMode: isInactive ? null : s.streamIsVtuberMode,
             isNicoNicoMode: isInactive ? null : s.isNicoNicoMode,
+            isJumping: false,
         }
     })
 }
