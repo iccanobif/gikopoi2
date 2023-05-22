@@ -2955,23 +2955,17 @@ const vueApp = createApp(defineComponent({
                 }
 
                 this.socket!.emit("user-want-to-stream", {
-                    streamSlotId: this.streamSlotIdInWhichIWantToStream,
-                    withVideo: withVideo,
-                    withSound: withSound,
-                    isVisibleOnlyToSpecificUsers: this.streamTarget == "specific_users",
-                    streamIsVtuberMode: withVideo && this.streamIsVtuberMode,
+                    streamSlotIdoh: this.streamSlotIdInWhichIWantToStream,
+                    withVideooh: withVideo,
+                    withSoundoh: withSound,
+                    isVisibleOnlyToSpecificUsersoh: this.streamTarget == "specific_users",
+                    streamIsVtuberModeoh: withVideo && this.streamIsVtuberMode,
                     isNicoNicoMode: withVideo && this.isNicoNicoMode,
-                    info: []
-                        .concat(this.mediaStream.getAudioTracks().map(t => ({
-                            constraints: t.getConstraints && t.getConstraints(),
-                            settings: t.getSettings && t.getSettings(),
-                            capabilities: t.getCapabilities && t.getCapabilities(),
-                        })))
-                        .concat(this.mediaStream.getVideoTracks().map(t => ({
-                            constraints: t.getConstraints && t.getConstraints(),
-                            settings: t.getSettings && t.getSettings(),
-                            capabilities: t.getCapabilities && t.getCapabilities(),
-                        })))
+                    info: this.mediaStream.getAudioTracks().concat(this.mediaStream.getVideoTracks()).map(t => ({
+                        constraints: t.getConstraints && t.getConstraints(),
+                        settings: t.getSettings && t.getSettings(),
+                        capabilities: t.getCapabilities && t.getCapabilities(),
+                    }))
                 });
 
                 // On small screens, displaying the <video> element seems to cause a reflow in a way that
