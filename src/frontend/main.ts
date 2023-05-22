@@ -2,6 +2,8 @@
 localStorage.removeItem("debug");
 
 import type { Socket } from 'socket.io-client'
+import type { App } from 'vue'
+
 import type {
     SiteArea,
     SiteAreasInfo,
@@ -37,7 +39,7 @@ declare global {
 
 import { io } from 'socket.io-client'
 import { isWebrtcReceiveCodecSupported, isWebrtcPublishCodecSupported, WebrtcCodec } from 'webrtc-codec-support'
-import { createApp, defineComponent, computed, nextTick, App } from 'vue'
+import { createApp, defineComponent, computed, nextTick } from 'vue'
 import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'
 import languages from './lang'
@@ -752,9 +754,10 @@ const vueApp = createApp(defineComponent({
                         {
                             if (s.framesUrlPattern)
                                 s.frames = Array.from({length: s.framesUrlPattern.amount},
-                                    (v, i) => { return { url: s.framesUrlPattern.prefix + (i+1) + s.framesUrlPattern.suffix } })
-                            return s.frames.map((f, i) =>
-                                loadRoomImage(s.frames[i].url).then(image => { s.frames[i].image = RenderCache.Image(image, scale) }))
+                                    (v, i) => { return { url: s.framesUrlPattern!.prefix + (i+1) + s.framesUrlPattern!.suffix } })
+                            if (s.frames)
+                                return s.frames.map((f, i) =>
+                                    loadRoomImage(f.url).then(image => { f.image = RenderCache.Image(image, scale) }))
                         }).flat()
                     ])
                     this.isRedrawRequired = true;
@@ -1138,7 +1141,7 @@ const vueApp = createApp(defineComponent({
             const name = userDTO.name != "" ? userDTO.name : this.$t("default_user_name");
             const newUser = new User(userDTO.id, name, character);
             newUser.moveImmediatelyToPosition(
-                this.currentRoom,
+                this.currentRoom!,
                 userDTO.position.x,
                 userDTO.position.y,
                 userDTO.direction
@@ -1612,7 +1615,7 @@ const vueApp = createApp(defineComponent({
         {
             for (const id in this.users)
             {
-                this.users[id].calculatePhysicalPosition(this.currentRoom, delta);
+                this.users[id].calculatePhysicalPosition(this.currentRoom!, delta);
             }
         },
 
@@ -1987,13 +1990,13 @@ const vueApp = createApp(defineComponent({
                     context.fillStyle = "yellow";
                     
                     //draw and redraw the coin donation box
-                    const specialObjectShrineText = this.currentRoom.specialObjects.find(o => o.name == "donation-text");
-                    const specialObjectDonationBox = this.currentRoom.specialObjects.find(o => o.name == "donation-box");
+                    const specialObjectShrineText = this.currentRoom.specialObjects!.find(o => o.name == "donation-text");
+                    const specialObjectDonationBox = this.currentRoom.specialObjects!.find(o => o.name == "donation-box");
                     
-                    const realTextCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectShrineText.x, specialObjectShrineText.y);
+                    const realTextCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectShrineText!.x, specialObjectShrineText!.y);
                     
                     context.fillText(
-                        "¥" + specialObjectDonationBox.value,
+                        "¥" + specialObjectDonationBox!.value,
                         (realTextCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x,
                         (realTextCoordinates.y * this.getCanvasScale()) + this.canvasGlobalOffset.y
                     );
@@ -2003,9 +2006,9 @@ const vueApp = createApp(defineComponent({
 
         canvasClick(clickEvent: MouseEvent)
         {
-            if (this.currentRoom.id === 'jinja') {
-                const specialObjectDonationBox = this.currentRoom.specialObjects.find(o => o.name == "donation-box");
-                const realDonationBoxCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectDonationBox.x, specialObjectDonationBox.y)
+            if (this.currentRoom!.id === 'jinja') {
+                const specialObjectDonationBox = this.currentRoom!.specialObjects!.find(o => o.name == "donation-box");
+                const realDonationBoxCoordinates = calculateRealCoordinates(this.currentRoom!, specialObjectDonationBox!.x, specialObjectDonationBox!.y)
 
                 realDonationBoxCoordinates.x = (realDonationBoxCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x;
                 realDonationBoxCoordinates.y = (realDonationBoxCoordinates.y * this.getCanvasScale()) + this.canvasGlobalOffset.y;
@@ -2164,7 +2167,7 @@ const vueApp = createApp(defineComponent({
         {
             for (const u of Object.values(this.users))
                 u.moveImmediatelyToPosition(
-                    this.currentRoom,
+                    this.currentRoom!,
                     u.logicalPositionX,
                     u.logicalPositionY,
                     u.direction
