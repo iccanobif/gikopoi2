@@ -939,7 +939,6 @@ io.on("connection", function (socket)
                     id: room.id,
                     group: room.group,
                     userCount: getFilteredConnectedUserList(user, room.id, user.areaId).length,
-                    streamers: [],
                     streams: toStreamSlotDtoArray(user, roomStates[user.areaId][room.id].streams)
                         .filter(stream => stream.isActive && stream.userId != null)
                         .map(stream => {

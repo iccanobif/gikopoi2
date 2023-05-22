@@ -1,14 +1,48 @@
 //localStorage.debug = '*'; // socket.io debug
 localStorage.removeItem("debug");
 
+import type { Socket } from 'socket.io-client'
+import type {
+    SiteArea,
+    SiteAreasInfo,
+    Direction,
+    Coordinates,
+    Size,
+    Users,
+    ClientRoom,
+    StreamSlotDto,
+    JankenStateDto,
+    PointerState,
+    ListedRoom,
+    DeviceInfo,
+    Stats,
+    ChessboardStateDto,
+    PopupCallback,
+    RoomStateDto,
+    RulaRoomListSortKey,
+    PlayerDto,
+    MoveDto,
+    RTCPeerSlot,
+} from './types'
+import type { Character } from './character'
+
+declare global {
+    interface Window {
+        myUserID: string | null
+        vueApp: App
+        rtcPeerSlots: RTCPeerSlot[]
+        EXPECTED_SERVER_VERSION: number
+    }
+}
+
 import { io } from 'socket.io-client'
-import { createApp, computed, nextTick } from 'vue'
+import { createApp, defineComponent, computed, nextTick, VueElement, App } from 'vue'
 import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'
-import languages from './lang.ts'
+import languages from './lang'
 
-import { characters, loadCharacters } from "./character.ts";
-import User from "./user.ts";
+import { characters, loadCharacters } from "./character";
+import User from "./user";
 import {
     loadImage,
     calculateRealCoordinates,
@@ -29,11 +63,11 @@ import {
     controlCharsToHtml,
     removeControlChars,
     escapeHTML
-} from "./utils.ts";
-import { speak } from "./tts.ts";
-import { RTCPeer, defaultIceConfig } from "./rtcpeer.ts";
-import { RenderCache } from "./rendercache.ts";
-import { animateObjects, animateJizou } from "./animations.ts";
+} from "./utils";
+import { speak } from "./tts";
+import { RTCPeer, defaultIceConfig } from "./rtcpeer";
+import { RenderCache } from "./rendercache";
+import { animateObjects, animateJizou } from "./animations";
 
 import ChessboardSlot from './chessboard-slot.vue'
 import JankenSlot from './janken-slot.vue'
@@ -47,7 +81,7 @@ window.myUserID = null;
 
 const originalConsoleError = console.error
 console.error = function() {
-    let allArgs = myUserID + " ERROR " + new Date()
+    let allArgs = window.myUserID + " ERROR " + new Date()
     for (let i = 0; i < arguments.length; i++)
     {
         const arg = arguments[i]
@@ -84,11 +118,11 @@ let disabledListenerIconImage = null;
 // I forgot why I defined rtcPeerSlots in the window object, but I remember it was important...
 window.rtcPeerSlots = [];
 
-function UserException(message) {
+function UserException(message: string) {
     this.message = message;
 }
 
-let loadCharacterImagesPromise = null
+let loadCharacterImagesPromise: Promise<void> | null = null
 
 function getSpawnRoomId()
 {
@@ -103,14 +137,17 @@ function getSpawnRoomId()
     }
 }
 
-function getSiteArea(areaId)
+const siteAreas: SiteArea[] = (window as any).siteAreas
+const siteAreasInfo: SiteAreasInfo = (window as any).siteAreasInfo
+
+function getSiteArea(areaId: string): SiteArea
 {
-    return window.siteAreas.find(area => area.id == areaId)
+    return siteAreas.find(area => area.id == areaId) || siteAreas[0]
 }
 
-function getInitialAreaId()
+function getInitialAreaId(): string
 {
-    let areaId = null
+    let areaId: string | null = null
     try
     {
         const urlSearchParams = new URLSearchParams(window.location.search);
@@ -119,14 +156,15 @@ function getInitialAreaId()
     catch
     {}
     areaId = areaId || localStorage.getItem("areaId")
-    if (window.siteAreas.find(area => area.id == areaId))
-        return areaId
+    const foundArea = siteAreas.find(area => area.id == areaId)
+    if (foundArea)
+        return foundArea.id
     
     const siteArea =
-        window.siteAreas.find(area => area.language != "any" && (new RegExp("^" + area.language + "\\b")).test(navigator.language))
-        || window.siteAreas.find(area => area.language == "any")
+        siteAreas.find(area => area.language != "any" && (new RegExp("^" + area.language + "\\b")).test(navigator.language))
+        || siteAreas.find(area => area.language == "any")
     if (siteArea) return siteArea.id
-    return window.siteAreas[0].id
+    return siteAreas[0].id
 }
 const initialAreaId = getInitialAreaId()
 const initialArea = getSiteArea(initialAreaId)
@@ -147,11 +185,7 @@ i18next.init(
     defaultNS: 'common',
     lng: (initialArea.restrictLanguage && initialArea.language) || initialLanguage,
     fallbackLng: 'en',
-    resources: languages,
-    
-    returnedObjectHandler: (key, value, options) => value.t,
-    pluralSeperator: '.',
-    contextSeparator: '.',
+    resources: languages
 })
 
 function setPageMetadata()
@@ -161,12 +195,14 @@ function setPageMetadata()
 }
 setPageMetadata()
 
-function setAppLanguage(code)
+function setAppLanguage(code: string)
 {
     i18next.changeLanguage(code, setPageMetadata)
 }
 
-const vueApp = createApp({
+function Data<Type>(value: Type){return value}
+
+const vueApp = createApp(defineComponent({
     components: {
         ChessboardSlot,
         JankenSlot,
@@ -174,21 +210,16 @@ const vueApp = createApp({
     },
     data() {
         return {
-            siteAreas: window.siteAreas,
-            siteAreasInfo: window.siteAreasInfo,
+            siteAreas: siteAreas,
+            siteAreasInfo: siteAreasInfo,
             
-            selectedCharacter: null,
-            socket: null,
-            users: {},
+            selectedCharacter: Data<Character | null>(null),
+            socket: Data<Socket | null>(null),
+            users: Data<Users>({}),
             roomLoadId: 0,
-            currentRoom: {
-                id: null,
-                group: "gikopoi",
-                objects: [],
-                specialObjects: [],
-            },
-            myUserID: null,
-            myPrivateUserID: null,
+            currentRoom: Data<ClientRoom | null>(null),
+            myUserID: Data<string | null>(null),
+            myPrivateUserID: Data<string | null>(null),
             isWaitingForServerResponseOnMovement: false,
             justSpawnedToThisRoom: true,
             isLoadingRoom: false,
@@ -199,47 +230,48 @@ const vueApp = createApp({
             isLoggingIn: false,
             areaId: initialAreaId,
             language: initialLanguage,
-            uiBackgroundColor: null,
-            isUiBackgroundDark: null,
+            uiBackgroundColor: Data<number[] | null>(null),
+            isUiBackgroundDark: false,
 
             // canvas
-            canvasContext: null,
+            canvasContext: Data<CanvasRenderingContext2D | null>(null),
             isRedrawRequired: false,
             isUsernameRedrawRequired: false,
             isDraggingCanvas: false,
-            canvasPointerStartState: null,
-            canvasDragStartOffset: null,
-            canvasManualOffset: { x: 0, y: 0 },
-            canvasGlobalOffset: { x: 0, y: 0 },
-            canvasDimensions: { w: 0, h: 0 },
+            isCanvasPointerDown: false,
+            canvasPointerStartState: Data<PointerState | null>(null),
+            canvasDragStartOffset: Data<Coordinates | null>(null),
+            canvasManualOffset: Data<Coordinates>({ x: 0, y: 0 }),
+            canvasGlobalOffset: Data<Coordinates>({ x: 0, y: 0 }),
+            canvasDimensions: Data<Size>({ w: 0, h: 0 }),
             userCanvasScale: 1,
-            userCanvasScaleStart: null,
+            userCanvasScaleStart: Data<number | null>(null),
             isLowQualityEnabled: localStorage.getItem("isLowQualityEnabled") == "true",
             isCrispModeEnabled: localStorage.getItem("isCrispModeEnabled") == "true",
             isIdleAnimationDisabled: localStorage.getItem("isIdleAnimationDisabled") == "true",
             blockWidth: BLOCK_WIDTH,
             blockHeight: BLOCK_HEIGHT,
-            devicePixelRatio: null,
-            canvasObjects: [],
+            devicePixelRatio: Data<number>(1),
+            canvasObjects: Data<any[]>([]),
 
             // rula stuff
             isRulaPopupOpen: false,
-            roomList: [],
-            preparedRoomList: [],
+            roomList: Data<ListedRoom[]>([]),
+            preparedRoomList: Data<ListedRoom[]>([]),
             rulaRoomGroup: "all",
             rulaRoomListSortKey: localStorage.getItem("rulaRoomListSortKey") || "sortName",
-            rulaRoomListSortDirection: localStorage.getItem("rulaRoomListSortDirection") || 1,
-            rulaRoomSelection: null,
+            rulaRoomListSortDirection: Data<1 | -1>(localStorage.getItem("rulaRoomListSortDirection") == "1" ? 1 : -1),
+            rulaRoomSelection: Data<string | null>(null),
 
             // user list stuff
             isUserListPopupOpen: false,
-            ignoredUserIds: new Set(),
+            ignoredUserIds: Data<Set<string>>(new Set()),
 
             // preferences stuff
             isPreferencesPopupOpen: false,
             showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
             isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") != "false",
-            bubbleOpacity: localStorage.getItem("bubbleOpacity") || 100,
+            bubbleOpacity: parseInt(localStorage.getItem("bubbleOpacity") || '100'),
             isCommandSectionVisible: localStorage.getItem("isCommandSectionVisible") != "false",
             isMoveSectionVisible: localStorage.getItem("isMoveSectionVisible") != "false",
             isBubbleSectionVisible: localStorage.getItem("isBubbleSectionVisible") != "false",
@@ -248,29 +280,29 @@ const vueApp = createApp({
             showNotifications: localStorage.getItem("showNotifications") != "false",
             enableTextToSpeech: localStorage.getItem("enableTextToSpeech") == "true",
             ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
-            voiceVolume: localStorage.getItem("voiceVolume") || 100,
-            availableTTSVoices: [],
+            voiceVolume: parseInt(localStorage.getItem("voiceVolume") || '100'),
+            availableTTSVoices: Data<SpeechSynthesisVoice[]>([]),
             isMessageSoundEnabled: localStorage.getItem("isMessageSoundEnabled") != "false",
             isLoginSoundEnabled: localStorage.getItem("isLoginSoundEnabled") != "false",
             isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
             customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
-            customMentionRegexObject: null,
-            usernameMentionRegexObject: null,
+            customMentionRegexObject: Data<RegExp | null>(null),
+            usernameMentionRegexObject: Data<RegExp | null>(null),
             isCoinSoundEnabled: localStorage.getItem("isCoinSoundEnabled") != "false",
             isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
             isStreamInboundVuMeterEnabled: localStorage.getItem("isStreamInboundVuMeterEnabled") != "false",
             showLogAboveToolbar: localStorage.getItem("showLogAboveToolbar") == "true",
             showLogDividers: localStorage.getItem("showLogDividers") == "true",
 
-            // streaming
-            streams: [],
-            clientSideStreamData: [],
-            mediaStream: null,
-            streamSlotIdInWhichIWantToStream: null,
-            takenStreams: [], // streams taken by me
-            slotVolume: JSON.parse(localStorage.getItem("slotVolume")) || {}, // key: slot Id / value: volume
-            detachedStreamTabs: {}, // key: slot Id
-            slotIsVtuberCharacterJumping: {}, // key: slot Id / value: boolean
+            // streaming 
+            streams: Data<StreamSlotDto[]>([]),
+            clientSideStreamData: Data<{ isListenerConnected: boolean, isSeparateTab: boolean }[]>([]),
+            mediaStream: Data<MediaStream | null>(null),
+            streamSlotIdInWhichIWantToStream: Data<number | null>(null),
+            takenStreams: Data<boolean[]>([]), // streams taken by me
+            slotVolume: Data<{[slotId: number]: number}>(JSON.parse(localStorage.getItem("slotVolume") || '{}')), // key: slot Id / value: volume
+            detachedStreamTabs: Data<{[slotId: number]: Window | null}>({}), // key: slot Id
+            slotIsVtuberCharacterJumping: Data<{[slotId: number]: boolean}>({}), // key: slot Id / value: boolean
 
             // stream settings
             isStreamPopupOpen: false,
@@ -281,36 +313,36 @@ const vueApp = createApp({
             streamAutoGain: localStorage.getItem("streamAutoGain") == "true",
             streamScreenCapture: localStorage.getItem("streamScreenCapture") == "true",
             streamScreenCaptureAudio: localStorage.getItem("streamScreenCaptureAudio") == "true",
-            streamTarget: "all_room",
-            allowedListenerIDs: new Set(),
+            streamTarget: Data<"all_room" | "specific_users">("all_room"),
+            allowedListenerIDs: Data<Set<string>>(new Set()),
             streamIsVtuberMode: false,
             isNicoNicoMode: false,
 
             // Device selection popup
             isDeviceSelectionOpen: false,
-            deviceList: [],
-            selectedAudioDeviceId: null,
-            selectedVideoDeviceId: null,
+            deviceList: Data<DeviceInfo[]>([]),
+            selectedAudioDeviceId: Data<string | null>(null),
+            selectedVideoDeviceId: Data<string | null>(null),
             waitingForDevicePermission: false,
             
             // Dialog Popup
             dialogPopupMessage: '',
             dialogPopupTitle: '',
-            dialogPopupButtons: [],
-            dialogPopupCallback: null,
-            dialogPopupButtonIndex: null,
+            dialogPopupButtons: Data<string[]>([]),
+            dialogPopupCallback: Data<PopupCallback | null>(null),
+            dialogPopupButtonIndex: Data<number | null>(null),
             isDialogPopupOpen: false,
             
-            appState: getAppState(),
+            appState: Data<'login' | 'stage' | 'logout' | 'redirect_notice' | 'poop'>(getAppState()),
 
             enableGridNumbers: false,
             username: localStorage.getItem("username") || "",
 
             // Possibly redundant data:
-            serverStats: {
+            serverStats: Data<Stats>({
                 userCount: 0,
                 streamCount: 0,
-            },
+            }),
             wantToStream: false,
             connectionLost: false,
             connectionRefused: false,
@@ -321,26 +353,27 @@ const vueApp = createApp({
 
             allCharacters: Object.values(characters),
 
-            vuMeterTimer: null,
-            highlightedUserId: null,
-            highlightedUserName: null,
-            movementDirection: null,
+            vuMeterTimer: Data<number | null>(null),
+            highlightedUserId: Data<string | null>(null),
+            highlightedUserName: Data<string | null>(null),
+            movementDirection: Data<Direction | null>(null),
+            lastSetMovementDirectionTime: 0, // Found in code but not in data
             underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
             timestampsInCopiedLog: localStorage.getItem("timestampsInCopiedLog") != "false",
             showIgnoreIndicatorInLog: localStorage.getItem("showIgnoreIndicatorInLog") == "true",
             notificationPermissionsGranted: false,
-            lastFrameTimestamp: null,
-            chessboardState: {},
-            jankenState: {},
+            lastFrameTimestamp: Data<number | null>(null),
+            chessboardState: Data<ChessboardStateDto | null>(null),
+            jankenState: Data<JankenStateDto | null>(null),
 
-            canvasContainerResizeObserver: null,
+            canvasContainerResizeObserver: Data<ResizeObserver | null>(null),
 
             lastCoinTossTime: 0, // unix timestamp
 
             // hideStreams: false,
             // the key is the slot ID
-            inboundAudioProcessors: {},
-            outboundAudioProcessor: null,
+            inboundAudioProcessors: Data<{[slotId: number]: AudioProcessor}>({}),
+            outboundAudioProcessor: Data<AudioProcessor | null>(null),
         }
     },
     provide()
@@ -388,13 +421,13 @@ const vueApp = createApp({
             if (ev.code == "KeyG" && ev.ctrlKey)
             {
                 ev.preventDefault()
-                document.getElementById("input-textbox").focus()
+                document.getElementById("input-textbox")!.focus()
                 return
             }
             if (ev.code == "KeyL" && ev.ctrlKey)
             {
                 ev.preventDefault()
-                document.getElementById("chatLog").focus()
+                document.getElementById("chatLog")!.focus()
                 return
             }
         })
@@ -402,16 +435,16 @@ const vueApp = createApp({
         // Listening to this event from document because the user could stop pressing the movement button after
         // having moved the mouse outside of it, so "mouseup" would be fired on god knows what element other than
         // the button.
-        document.addEventListener("mouseup", () => this.setMovementDirection(null))
+        document.addEventListener("mouseup", () => this.setMovementDirection())
 
         loadCharacterImagesPromise = loadCharacters(this.isCrispModeEnabled);
 
         const charSelect = document.getElementById("character-selection")
-        const charactersSelected = charSelect.getElementsByClassName("character-selected")
+        const charactersSelected = charSelect!.getElementsByClassName("character-selected")
         if (charactersSelected.length)
             charactersSelected[0].scrollIntoView({block: "nearest"})
             
-        document.getElementById("username-textbox").focus()
+        document.getElementById("username-textbox")!.focus()
 
         if (window.speechSynthesis)
         {
@@ -427,7 +460,7 @@ const vueApp = createApp({
         this.devicePixelRatio = this.getDevicePixelRatio();
     },
     methods: {
-        async login(ev)
+        async login(ev: MouseEvent)
         {
             try {
                 // Workaround for making TTS work on iphone, since it needs to be activated on a user interaction
@@ -440,7 +473,7 @@ const vueApp = createApp({
                 // This is to make sure that the browser doesn't attempt to show the
                 // "autocomplete" drop down list when pressing the arrow keys on the keyboard,
                 // even when the textbox isn't visibile anymore (dunno why this happens, a firefox bug maybe).
-                document.getElementById("username-textbox").blur()
+                document.getElementById("username-textbox")!.blur()
 
                 localStorage.setItem("username", this.username)
                 localStorage.setItem("characterId", this.characterId)
@@ -471,21 +504,23 @@ const vueApp = createApp({
 
                 const canvasHeight = localStorage.getItem("canvasHeight")
                 if (canvasHeight)
-                    document.getElementById("canvas-container").style.height = canvasHeight;
+                    document.getElementById("canvas-container")!.style.height = canvasHeight;
 
-                await this.connectToServer(this.username);
+                await this.connectToServer();
 
                 this.registerKeybindings();
 
                 this.isLoggingIn = false;
                 
                 this.checkBackgroundColor()
-
-                this.canvasContext = document.getElementById("room-canvas").getContext("2d");
+                
+                const roomCanvas = document.getElementById("room-canvas") as HTMLCanvasElement
+                if (roomCanvas)
+                    this.canvasContext = roomCanvas.getContext("2d");
                 await loadCharacterImagesPromise;
                 this.paintLoop();
 
-                this.soundEffectVolume = localStorage.getItem(this.areaId + "soundEffectVolume") || 0
+                this.soundEffectVolume = parseInt(localStorage.getItem(this.areaId + "soundEffectVolume") || '0')
 
                 this.updateAudioElementsVolume()
 
@@ -501,6 +536,7 @@ const vueApp = createApp({
                     }
                 }
 
+                // @ts-ignore
                 $( "#sound-effect-volume" ).slider({
                     orientation: "vertical",
                     range: "min",
@@ -508,10 +544,11 @@ const vueApp = createApp({
                     max: 1,
                     step: 0.01,
                     value: this.soundEffectVolume,
-                    slide: ( event, ui ) => {
+                    slide: ( event: any, ui: any ) => {
                         this.changeSoundEffectVolume(ui.value);
                     }
                 });
+                // @ts-ignore
                 $( "#voice-volume" ).slider({
                     orientation: "vertical",
                     range: "min",
@@ -519,11 +556,12 @@ const vueApp = createApp({
                     max: 100,
                     step: 1,
                     value: this.voiceVolume,
-                    slide: ( event, ui ) => {
+                    slide: ( event: any, ui: any ) => {
                         this.changeVoiceVolume(ui.value);
                     }
                 });
 
+                // @ts-ignore
                 $( "#main-section" ).resizable({
                     handles: "e"
                 })
@@ -550,7 +588,7 @@ const vueApp = createApp({
                 window.location.reload();
             }
         },
-        getSVGMode()
+        getSVGMode(): string | null
         {
             return this.isCrispModeEnabled ? "crisp" : null;
         },
@@ -559,13 +597,13 @@ const vueApp = createApp({
             this.loadRoomBackground();
             this.loadRoomObjects();
 
-            await (loadCharacters(this.getSVGMode()));
+            await (loadCharacters(this.isCrispModeEnabled));
             this.isRedrawRequired = true;
         },
-        setLanguage(siteArea)
+        setLanguage(siteArea?: SiteArea)
         {
             if (!siteArea)
-                siteArea = this.getSiteArea()
+                siteArea = getSiteArea(this.areaId)
             setAppLanguage((siteArea.restrictLanguage && siteArea.language) || this.language)
         },
         getLangEntries()
@@ -590,11 +628,7 @@ const vueApp = createApp({
                 return {id, name: this.$t("lang_name", { lng: id }), endOfTopEntries: id == topEntries[topEntries.length-1]}
             })
         },
-        getSiteArea()
-        {
-            return this.siteAreas.find(area => area.id == this.areaId)
-        },
-        openDialog(text, title, buttons, cancelButtonIndex, callback)
+        openDialog(text: string, title: string, buttons: string[], cancelButtonIndex: number, callback: PopupCallback | null = null)
         {
             this.dialogPopupMessage = text;
             this.dialogPopupTitle = title;
@@ -603,12 +637,12 @@ const vueApp = createApp({
             this.dialogPopupCallback = callback;
             this.isDialogPopupOpen = true;
         },
-        closeDialog(buttonIndex)
+        closeDialog(buttonIndex?: number)
         {
             if (!this.isDialogPopupOpen) return null;
-            if (!(buttonIndex >= 0))
+            if (buttonIndex === undefined)
             {
-                if (this.dialogPopupButtonIndex >= 0)
+                if (this.dialogPopupButtonIndex !== null && this.dialogPopupButtonIndex >= 0)
                     buttonIndex = this.dialogPopupButtonIndex;
                 else
                     return false;
@@ -622,17 +656,17 @@ const vueApp = createApp({
             }
             return true;
         },
-        async showWarningToast(text)
+        async showWarningToast(text: string)
         {
             this.openDialog(text,
                 this.$t("ui.warning_toast_title"),
                 [this.$t("ui.popup_button_ok")],
                 0);
             await nextTick();
-            const firstButton = document.querySelector("#dialog-popup .popup-buttons button");
+            const firstButton = document.querySelector("#dialog-popup .popup-buttons button") as HTMLButtonElement
             firstButton.focus();
         },
-        confirm(text, okCallback, cancelCallback, button)
+        confirm(text: string, okCallback: ()=>void, cancelCallback?: ()=>void, button?: string[] | string)
         {
             // button param can be an array of two strings for confirm and cancel,
             // or one string to be used for confirm
@@ -645,7 +679,7 @@ const vueApp = createApp({
             {
                 button = [button, this.$t("ui.popup_button_cancel")];
             }
-            this.openDialog(text, null, button, 1, buttonIndex =>
+            this.openDialog(text, '', button, 1, buttonIndex =>
             {
                 if(buttonIndex == 0)
                     okCallback();
@@ -655,6 +689,8 @@ const vueApp = createApp({
         },
         async loadRoomBackground()
         {
+            if (!this.currentRoom) return // TS quick fix
+            
             const urlMode = (!this.getSVGMode() ? "" : "." + this.getSVGMode());
 
             const roomLoadId = this.roomLoadId;
@@ -665,21 +701,24 @@ const vueApp = createApp({
             this.currentRoom.backgroundImage = RenderCache.Image(image, this.currentRoom.scale);
             this.isRedrawRequired = true;
         },
-        async loadRoomObjects(mode)
+        async loadRoomObjects()
         {
+            if (!this.currentRoom) return // TS quick fix
+            const currentRoom = this.currentRoom
+
             const urlMode = (!this.getSVGMode() ? "" : "." + this.getSVGMode());
 
             const roomLoadId = this.roomLoadId;
 
             const promises = Object
-                .values(this.currentRoom.objects)
+                .values(currentRoom.objects)
                 .map(async o => {
                     if (this.roomLoadId != roomLoadId)
                         return;
                     
-                    const loadRoomImage = async (url) =>
+                    const loadRoomImage = async (url: string) =>
                     {
-                        return loadImage("rooms/" + this.currentRoom.id + "/" + url.replace(".svg", urlMode + ".svg"))
+                        return loadImage("rooms/" + currentRoom.id + "/" + url.replace(".svg", urlMode + ".svg"))
                     }
                     
                     const scale = o.scale ? o.scale : 1;
@@ -713,7 +752,7 @@ const vueApp = createApp({
 
             await Promise.all(promises)
         },
-        async updateRoomState(dto)
+        async updateRoomState(dto: RoomStateDto)
         {
             const roomDto = dto.currentRoom
             const usersDto = dto.connectedUsers
@@ -732,13 +771,13 @@ const vueApp = createApp({
             this.isLoadingRoom = true;
             this.roomLoadId = this.roomLoadId + 1;
 
-            if (this.currentRoom.needsFixedCamera)
+            if (this.currentRoom && this.currentRoom.needsFixedCamera) // why is this before the room is set?
                 this.canvasManualOffset = { x: 0, y: 0 }
 
             const previousRoomId = this.currentRoom && this.currentRoom.id
             this.currentRoom = roomDto;
 
-            if (this.currentRoom.id === 'jinja') {
+            if (this.currentRoom.id === 'jinja' && this.currentRoom.specialObjects) {
                 this.currentRoom.specialObjects[1].value = dto.coinCounter;
             }
 
@@ -764,7 +803,7 @@ const vueApp = createApp({
             // Force update of user coordinates using the current room's logics (origin coordinates, etc)
             this.forcePhysicalPositionRefresh();
 
-            document.getElementById("room-canvas").focus();
+            document.getElementById("room-canvas")!.focus();
             this.justSpawnedToThisRoom = true;
             this.isLoadingRoom = false;
             this.requestedRoomChange = false;
@@ -822,6 +861,7 @@ const vueApp = createApp({
         },
         initializeSocket()
         {
+            // @ts-ignore
             this.socket = io({
                 extraHeaders: {"private-user-id": this.myPrivateUserID},
                 closeOnBeforeunload: false,
@@ -867,12 +907,12 @@ const vueApp = createApp({
                 this.connectionRefused = true;
             });
 
-            this.socket.on("server-update-current-room-state", async (dto) =>
+            this.socket.on("server-update-current-room-state", async (dto: RoomStateDto) =>
             {
                 await this.updateRoomState(dto);
             });
 
-            this.socket.on("server-msg", (userId, msg) =>
+            this.socket.on("server-msg", (userId: string, msg: string) =>
             {
                 const user = this.users[userId]
                 if (user)
@@ -886,7 +926,7 @@ const vueApp = createApp({
                 }
             });
 
-            this.socket.on("server-system-message", (messageCode, extra) =>
+            this.socket.on("server-system-message", (messageCode: string, extra: string) =>
             {
                 let message = this.$t("msg." + messageCode);
                 if (messageCode == "flood_warning")
@@ -895,13 +935,14 @@ const vueApp = createApp({
                 this.writeMessageToLog("SYSTEM", message, null)
             });
 
-            this.socket.on("server-stats", (serverStats) =>
+            this.socket.on("server-stats", (serverStats: Stats) =>
             {
                 this.serverStats = serverStats;
             });
 
-            this.socket.on("server-move", (dto) =>
+            this.socket.on("server-move", (dto: MoveDto) =>
             {
+                if (!this.currentRoom) return // TS quick fix
                 const { userId, x, y, direction, lastMovement, isInstant, shouldSpinwalk } = dto
 
                 const user = this.users[userId];
@@ -926,7 +967,7 @@ const vueApp = createApp({
                 this.updateCanvasObjects();
             });
 
-            this.socket.on("server-bubble-position", (userId, position) =>
+            this.socket.on("server-bubble-position", (userId: string, position: Direction) =>
             {
                 const user = this.users[userId];
 
@@ -940,23 +981,23 @@ const vueApp = createApp({
                 () => (this.isWaitingForServerResponseOnMovement = false)
             );
 
-            this.socket.on("server-user-joined-room", async (user) =>
+            this.socket.on("server-user-joined-room", async (user: PlayerDto) =>
             {
                 if (this.isLoginSoundEnabled && this.soundEffectVolume > 0)
-                    document.getElementById("login-sound").play();
+                    (document.getElementById("login-sound") as HTMLAudioElement).play();
                 this.addUser(user);
                 this.updateCanvasObjects();
                 this.isRedrawRequired = true;
             });
 
-            this.socket.on("server-user-left-room", (userId) =>
+            this.socket.on("server-user-left-room", (userId: string) =>
             {
                 if (userId != this.myUserID) delete this.users[userId];
                 this.updateCanvasObjects();
                 this.isRedrawRequired = true;
             });
 
-            this.socket.on("server-user-inactive", (userId) =>
+            this.socket.on("server-user-inactive", (userId: string) =>
             {
                 if (!this.users[userId])
                 {
@@ -968,7 +1009,7 @@ const vueApp = createApp({
                 this.isRedrawRequired = true;
             });
 
-            this.socket.on("server-user-active", (userId) =>
+            this.socket.on("server-user-active", (userId: string) =>
             {
                 if (!this.users[userId])
                 {
@@ -980,13 +1021,13 @@ const vueApp = createApp({
                 this.isRedrawRequired = true;
             });
 
-            this.socket.on("server-not-ok-to-stream", (reason) =>
+            this.socket.on("server-not-ok-to-stream", (reason: string) =>
             {
                 this.wantToStream = false;
                 this.stopStreaming();
                 this.showWarningToast(this.$t("msg." + reason));
             });
-            this.socket.on("server-not-ok-to-take-stream", (streamSlotId) =>
+            this.socket.on("server-not-ok-to-take-stream", (streamSlotId: number) =>
             {
                 this.wantToDropStream(streamSlotId);
             });
@@ -995,41 +1036,44 @@ const vueApp = createApp({
                 this.wantToStream = false;
                 this.startStreaming();
             });
-            this.socket.on("server-update-current-room-streams", async (streams) =>
+            this.socket.on("server-update-current-room-streams", async (streams: StreamSlotDto[]) =>
             {
                 await this.updateCurrentRoomStreams(streams);
             });
 
-            this.socket.on("server-room-list", async (roomList) =>
+            this.socket.on("server-room-list", async (roomList: ListedRoom[]) =>
             {
-                roomList.forEach(r => {
-                    r.sortName = this.$t("room." + r.id, { context: "sort_key"});
-                    r.streamerCount = r.streams.length;
-                    r.streams.forEach(s => s.userName = s.userName == "" ? this.$t("default_user_name") : s.userName)
+                if (!this.currentRoom) return // TS quick fix
+                this.roomList = roomList.map(r => {
+                    r.sortName = this.$t("room." + r.id, { context: "sort_key"}) || ''
+                    r.streams.forEach(s => s.userName = s.userName == "" ? this.$t("default_user_name") || '' : s.userName)
+                    return r
                 })
-                this.roomList = roomList;
                 this.rulaRoomGroup = "all";
                 this.prepareRulaRoomList();
                 this.isRulaPopupOpen = true;
                 this.rulaRoomSelection = this.currentRoom.id;
 
                 await nextTick()
-                document.getElementById("rula-popup").focus()
+                document.getElementById("rula-popup")!.focus()
             });
 
-            this.socket.on("server-rtc-message", async (streamSlotId, type, msg) =>
+            this.socket.on("server-rtc-message", async (streamSlotId: number, type: string, msg: string | RTCIceCandidate) =>
             {
-                const rtcPeer = rtcPeerSlots[streamSlotId].rtcPeer;
+                const rtcPeer = window.rtcPeerSlots[streamSlotId].rtcPeer;
                 if (rtcPeer === null) return;
-                if(type == "offer")
+                if (typeof msg === "string")
                 {
-                    rtcPeer.acceptOffer(msg);
-                }
-                else if(type == "answer")
-                {
-                    // msg = msg.replace(/\r\n.*candidate.*udp.*\r\n/g, "\r\n");
-                    // console.log(msg)
-                    rtcPeer.acceptAnswer(msg);
+                    if(type == "offer")
+                    {
+                        rtcPeer.acceptOffer(msg);
+                    }
+                    else if(type == "answer")
+                    {
+                        // msg = msg.replace(/\r\n.*candidate.*udp.*\r\n/g, "\r\n");
+                        // console.log(msg)
+                        rtcPeer.acceptAnswer(msg);
+                    }
                 }
                 else if(type == "candidate")
                 {
@@ -1037,44 +1081,45 @@ const vueApp = createApp({
                 }
             });
 
-            this.socket.on("server-character-changed", (userId, characterId, isAlternateCharacter) => {
+            this.socket.on("server-character-changed", (userId: string, characterId: string, isAlternateCharacter: boolean) => {
                 this.users[userId].character = characters[characterId]
                 this.users[userId].isAlternateCharacter = isAlternateCharacter
                 this.isRedrawRequired = true
             })
 
-            this.socket.on("server-update-chessboard", (state) => {
+            this.socket.on("server-update-chessboard", (state: ChessboardStateDto) => {
                 this.chessboardState = state
             })
 
-            this.socket.on("server-update-janken", (state) => {
+            this.socket.on("server-update-janken", (state: JankenStateDto) => {
                 this.jankenState = state
             })
 
-            this.socket.on("server-chess-win", winnerUserId => {
+            this.socket.on("server-chess-win", (winnerUserId: string) => {
                 const winnerUserName = this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A"
 
                 this.writeMessageToLog("SYSTEM", this.$t("msg.chess_win", {userName: winnerUserName}), null)
             })
 
-            this.socket.on("server-chess-quit", winnerUserId => {
-                const winnerUserName = this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A"
+            this.socket.on("server-chess-quit", (quitterUserId: string)  => {
+                const winnerUserName = this.users[quitterUserId] ? this.users[quitterUserId].name : "N/A"
 
                 this.writeMessageToLog("SYSTEM", this.$t("msg.chess_quit", {userName: winnerUserName}), null)
             })
-            this.socket.on("special-events:server-add-shrine-coin", donationBoxValue => {
+            this.socket.on("special-events:server-add-shrine-coin", (donationBoxValue: number) => {
+                if (!this.currentRoom || !this.currentRoom.specialObjects) return // TS quick fix
                 this.currentRoom.specialObjects[1].value = donationBoxValue;
                 this.lastCoinTossTime = Date.now();
                 this.isRedrawRequired = true;
                 if (this.soundEffectVolume > 0 && this.isCoinSoundEnabled) {
-                    document.getElementById("ka-ching-sound").play();
+                    (document.getElementById("ka-ching-sound") as HTMLAudioElement).play();
                 }
                 setTimeout(() => {
                     this.isRedrawRequired = true;
                 }, 1200)
             })
         },
-        addUser(userDTO)
+        addUser(userDTO: PlayerDto)
         {
             // Check that the characterId is valid (need to use hasOwnProperty() too to make sure that a characterId
             // like "toString" is not used). If not valid, default to giko
@@ -1098,20 +1143,21 @@ const vueApp = createApp({
 
             return newUser;
         },
-        writeMessageToLog(userName, msg, userId)
+        writeMessageToLog(userName: string, msg: string, userId: string | null = null)
         {
-            const chatLog = document.getElementById("chatLog");
+            const chatLog = document.getElementById("chatLog") as HTMLTextAreaElement;
             const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
 
             const messageDiv = document.createElement("div");
             messageDiv.classList.add("message");
 
-            messageDiv.dataset.userId = userId
+            if (userId)
+                messageDiv.dataset.userId = userId
 
             if (!userId && userName == "SYSTEM")
                 messageDiv.classList.add("system-message")
 
-            if (this.ignoredUserIds.has(userId))
+            if (userId && this.ignoredUserIds.has(userId))
                 messageDiv.classList.add("ignored-message")
 
             const [displayName, tripcode] = userName.split("◆")
@@ -1122,35 +1168,37 @@ const vueApp = createApp({
 
             const authorSpan = document.createElement("span");
             authorSpan.className = "message-author";
-            authorSpan.title = new Date()
+            authorSpan.title = (new Date()).toString()
             authorSpan.textContent = displayName;
-            authorSpan.addEventListener("click", (ev) => {
-                this.highlightUser(userId, userName)
-            })
+            if (userId)
+                authorSpan.addEventListener("click", (ev) => {
+                    this.highlightUser(userId, userName)
+                })
 
             const tripcodeSpan = document.createElement("span");
             if (tripcode)
             {
                 tripcodeSpan.className = "message-author";
-                tripcodeSpan.title = new Date()
+                tripcodeSpan.title = (new Date()).toString()
                 tripcodeSpan.textContent = "◆" + tripcode;
-                tripcodeSpan.addEventListener("click", (ev) => {
-                    this.highlightUser(userId, userName)
-                })
+                if (userId)
+                    tripcodeSpan.addEventListener("click", (ev) => {
+                        this.highlightUser(userId, userName)
+                    })
             }
 
             const bodySpan = document.createElement("span");
             bodySpan.className = "message-body";
             bodySpan.textContent = msg;
             bodySpan.innerHTML = bodySpan.innerHTML
-                .replace(urlRegex, (htmlUrl, prefix) =>
+                .replace(urlRegex, (htmlUrl: string, prefix: string) =>
                 {
                     const anchor = document.createElement('a');
                     anchor.target = '_blank';
                     anchor.setAttribute('tabindex', '-1');
                     anchor.innerHTML = htmlUrl;
                     const url = anchor.textContent;
-                    anchor.href = (prefix == 'www.' ? 'http://' + url : url);
+                    if (url) anchor.href = (prefix == 'www.' ? 'http://' + url : url);
                     anchor.rel = "noopener noreferrer";
                     return anchor.outerHTML;
                 })
@@ -1159,9 +1207,9 @@ const vueApp = createApp({
                 {
                     let el = node.nodeType == 3
                         ? document.createElement("span")
-                        : node
+                        : (node as HTMLElement)
                         
-                    el.innerHTML = controlCharsToHtml(escapeHTML(this.markMentions(removeControlChars(node.textContent))))
+                    el.innerHTML = controlCharsToHtml(escapeHTML(this.markMentions(removeControlChars(node.textContent || ''))))
                     if (node.nodeType == 3)
                         bodySpan.replaceChild(el, node)
                 })
@@ -1178,7 +1226,7 @@ const vueApp = createApp({
                 chatLog.scrollTop = chatLog.scrollHeight -
                     chatLog.clientHeight;
         },
-        async displayUserMessage(user, msg)
+        async displayUserMessage(user: User, msg: string)
         {
             const isIgnored = this.ignoredUserIds.has(user.id);
 
@@ -1202,9 +1250,9 @@ const vueApp = createApp({
             if (this.soundEffectVolume > 0)
             {
                 if (this.checkIfMentioned(plainMsg))
-                    document.getElementById("mention-sound").play();
+                    (document.getElementById("mention-sound") as HTMLAudioElement).play()
                 else if (this.isMessageSoundEnabled)
-                    document.getElementById("message-sound").play();
+                    (document.getElementById("message-sound") as HTMLAudioElement).play()
             }
 
             if (this.enableTextToSpeech)
@@ -1219,16 +1267,14 @@ const vueApp = createApp({
             const niconicoMessageContainers = document.getElementsByClassName("nico-nico-messages-container")
             for (let i = 0; i < niconicoMessageContainers.length; i++)
                 this.addNiconicoMessageToVideoContainer(niconicoMessageContainers[i], plainMsg)
-            for (const i of Object.keys(this.detachedStreamTabs))
+            Object.values(this.detachedStreamTabs).forEach(tab =>
             {
-                if (this.detachedStreamTabs[i])
-                {
-                    const container = this.detachedStreamTabs[i].document.getElementsByClassName("nico-nico-messages-container")[0]
-                    this.addNiconicoMessageToVideoContainer(container, plainMsg, user.id)
-                }
-            }
+                if (!tab) return
+                const container = tab.document.getElementsByClassName("nico-nico-messages-container")[0]
+                this.addNiconicoMessageToVideoContainer(container, plainMsg, user.id)
+            })
         },
-        addNiconicoMessageToVideoContainer(videoContainer, messageText, userID)
+        addNiconicoMessageToVideoContainer(videoContainer: Element, messageText: string, userID: string = '')
         {
             if (!videoContainer) return;
             
@@ -1248,7 +1294,7 @@ const vueApp = createApp({
                 videoContainer.removeChild(span)
             }, 5200)
         },
-        async displayNotification(message, icon)
+        async displayNotification(message: string, icon: string)
         {
             if (window.Notification)
             {
@@ -1270,11 +1316,11 @@ const vueApp = createApp({
         {
             this.confirm(this.$t("msg.are_you_sure_you_want_to_clear_log"), () =>
             {
-                document.getElementById("chatLog").innerHTML = '';
+                document.getElementById("chatLog")!.innerHTML = '';
                 this.showWarningToast(this.$t("msg.chat_log_cleared"));
             });
         },
-        drawImage(context, image, x, y)
+        drawImage(context: CanvasRenderingContext2D, image: CanvasImageSource, x?: number, y?: number)
         {
             if (!x) x = 0;
             if (!y) y = 0;
@@ -1284,7 +1330,7 @@ const vueApp = createApp({
                 Math.round(this.getCanvasScale() * y + this.canvasGlobalOffset.y)
             );
         },
-        getNameImage(user, withBackground)
+        getNameImage(user: User, withBackground: boolean): RenderCache
         {
             const [displayName, tripcode] = user.name.split("◆")
 
@@ -1299,6 +1345,7 @@ const vueApp = createApp({
             return new RenderCache(function(canvas, scale)
             {
                 const context = canvas.getContext('2d');
+                if (!context) return [1, 1] // TS quick fix
                 context.font = fontPrefix + lineHeight + fontSuffix;
 
                 const width = Math.max(
@@ -1339,8 +1386,9 @@ const vueApp = createApp({
                 return [width, height];
             });
         },
-        getBubbleImage(user)
+        getBubbleImage(user: User): RenderCache | null
         {
+            if (!user.message) return null
             const maxLineWidth = 250;
             const lineHeight = 15;
             const fontHeight = 13;
@@ -1350,9 +1398,9 @@ const vueApp = createApp({
             const boxMargin = 6;
             const boxPadding = [5, 3];
 
-            let messageLines = user.message.split(/\r\n|\n\r|\n|\r/);
-            let preparedLines = null;
-            let textWidth = null;
+            let messageLines: string[] | null = user.message.split(/\r\n|\n\r|\n|\r/);
+            let preparedLines: string[] | null = null;
+            let textWidth: number | null = null;
 
             const arrowCorner = [
                 ["down", "left"].includes(user.bubblePosition),
@@ -1361,16 +1409,17 @@ const vueApp = createApp({
             return new RenderCache((canvas, scale) =>
             {
                 const context = canvas.getContext('2d');
+                if (!context) return // TS quick fix
                 context.font = fontHeight + fontSuffix;
 
-                if (preparedLines === null)
+                if (preparedLines === null && messageLines)
                 {
                     preparedLines = [];
                     textWidth = 0;
 
                     while (messageLines.length && preparedLines.length < 5)
                     {
-                        const line = messageLines.shift()
+                        const line = messageLines.shift() || ''
                         let lastPreparedLine = "";
                         let lastLineWidth = 0;
                         for (let i=0; i<line.length; i++)
@@ -1396,6 +1445,10 @@ const vueApp = createApp({
                     }
                     messageLines = null;
                 }
+                else if (!textWidth || !preparedLines) // TS quick fix
+                {
+                    return
+                }
 
                 const boxWidth = textWidth + 2 * boxPadding[0];
                 const boxHeight = preparedLines.length * lineHeight + 2 * boxPadding[1];
@@ -1414,7 +1467,7 @@ const vueApp = createApp({
                 canvas.width = sBoxWidth + sBoxMargin;
                 canvas.height = sBoxHeight + sBoxMargin;
 
-                context.fillStyle = 'rgba(255, 255, 255, ' + (this.bubbleOpacity/100) +　')';
+                context.fillStyle = 'rgba(255, 255, 255, ' + (this.bubbleOpacity/100) + ')';
 
                 context.beginPath();
 
@@ -1423,8 +1476,8 @@ const vueApp = createApp({
                     (arrowCorner[0] ? sBoxWidth : sBoxMargin),
                     (arrowCorner[1] ? sBoxHeight - sBoxArrowOffset : sBoxMargin + sBoxArrowOffset));
                 context.lineTo(
-                    arrowCorner[0] * canvas.width,
-                    arrowCorner[1] * canvas.height);
+                    (arrowCorner[0] ? 1 : 0) * canvas.width,
+                    (arrowCorner[1] ? 1 : 0) * canvas.height);
                 context.lineTo(
                     (arrowCorner[0] ? sBoxWidth - sBoxArrowOffset : sBoxMargin + sBoxArrowOffset),
                     (arrowCorner[1] ? sBoxHeight : sBoxMargin));
@@ -1451,8 +1504,8 @@ const vueApp = createApp({
                 for (let i=0; i<preparedLines.length; i++)
                 {
                     context.fillText(preparedLines[i],
-                        !arrowCorner[0] * sBoxMargin + sBoxPadding[0],
-                        !arrowCorner[1] * sBoxMargin + sBoxPadding[1] + (i*sLineHeight) + (sLineHeight/2));
+                        (arrowCorner[0] ? 0 : 1) * sBoxMargin + sBoxPadding[0],
+                        (arrowCorner[1] ? 0 : 1) * sBoxMargin + sBoxPadding[1] + (i*sLineHeight) + (sLineHeight/2));
                 }
 
                 return [boxWidth + boxMargin, boxHeight + boxMargin]
@@ -1460,6 +1513,7 @@ const vueApp = createApp({
         },
         detectCanvasResize()
         {
+            if (!this.canvasContext) return // TS quick fix
             const devicePixelRatio = this.getDevicePixelRatio();
 
             const offsetWidth = this.canvasContext.canvas.offsetWidth * devicePixelRatio;
@@ -1480,6 +1534,7 @@ const vueApp = createApp({
         },
         setCanvasGlobalOffset()
         {
+            if (!this.currentRoom || !this.currentRoom.backgroundImage) return // TS quick fix
             if (this.currentRoom.needsFixedCamera)
             {
                 const fixedCameraOffset = this.currentRoom.backgroundOffset ||
@@ -1490,7 +1545,7 @@ const vueApp = createApp({
             }
 
             const userOffset = { x: 0, y: 0 };
-            if (this.myUserID in this.users)
+            if (this.myUserID && this.myUserID in this.users)
             {
                 const user = this.users[this.myUserID]
 
@@ -1542,7 +1597,7 @@ const vueApp = createApp({
             this.canvasGlobalOffset.y = canvasOffset.y;
         },
 
-        calculateUserPhysicalPositions(delta)
+        calculateUserPhysicalPositions(delta: number)
         {
             for (const id in this.users)
             {
@@ -1552,7 +1607,7 @@ const vueApp = createApp({
 
         updateCanvasObjects: (() =>
         {
-            let self;
+            let self: any;
 
             function scanCanvasObjects (canvasObjects, objectsByPosition,
                                         fromX, toX, fromY, toY)
@@ -1711,11 +1766,12 @@ const vueApp = createApp({
         paintBackground()
         {
             const context = this.canvasContext;
+            if (!context || !this.currentRoom || !this.currentRoom.backgroundImage) return // TS quick fix
             if (this.currentRoom.backgroundColor)
             {
                 context.fillStyle = this.currentRoom.backgroundColor;
             }
-            else
+            else if (this.uiBackgroundColor !== null) // TS quick fix
             {
                 context.fillStyle = "rgb(" + this.uiBackgroundColor.map(c => Math.max(Math.min(this.isUiBackgroundDark ? c+16 : c-16, 255), 0)).join(", ") + ")";
             }
@@ -1730,7 +1786,7 @@ const vueApp = createApp({
         drawObjects()
         {
             const context = this.canvasContext;
-
+            if (!context) return // TS quick fix
             for (const o of this.canvasObjects)
             {
                 if (o.type == "room-object")
@@ -1779,7 +1835,7 @@ const vueApp = createApp({
                 const image = o.o.nameImage.getImage(this.getCanvasScale())
 
                 this.drawImage(
-                    this.canvasContext,
+                    this.canvasContext!, // TS quick fix
                     image,
                     o.o.currentPhysicalPositionX + this.blockWidth/2 - o.o.nameImage.width/2,
                     o.o.currentPhysicalPositionY - 120
@@ -1815,7 +1871,7 @@ const vueApp = createApp({
                     ["down", "right"].includes(user.bubblePosition)];
 
                 this.drawImage(
-                    this.canvasContext,
+                    this.canvasContext!, // TS quick fix
                     image,
                     user.currentPhysicalPositionX + this.blockWidth/2
                     + (pos[0] ? 21 : -21 - user.bubbleImage.width),
@@ -1833,7 +1889,7 @@ const vueApp = createApp({
             const users = this.canvasObjects
                 .filter(o => o.type == "user"
                              && !this.ignoredUserIds.has(o.o.id)
-                             && o.o.id != myUserID)
+                             && o.o.id != this.myUserID)
                 .map(o => o.o)
 
             for (const o of users)
@@ -1842,7 +1898,7 @@ const vueApp = createApp({
                     .getImage(this.getCanvasScale());
 
                 this.drawImage(
-                    this.canvasContext,
+                    this.canvasContext!, // TS quick fix
                     image,
                     o.currentPhysicalPositionX + 60,
                     o.currentPhysicalPositionY - 100
@@ -1852,7 +1908,7 @@ const vueApp = createApp({
         drawOriginLines()
         {
             const context = this.canvasContext;
-
+            if (!context || !this.currentRoom) return // TS quick fix
             context.strokeStyle = "#ff0000";
 
             const co = this.canvasGlobalOffset;
@@ -1914,11 +1970,13 @@ const vueApp = createApp({
 
         },
 
-        drawSpecialObjects() {
+        drawSpecialObjects()
+        {
+            const context = this.canvasContext;
+            if (!context || !this.currentRoom) return // TS quick fix
             if (this.currentRoom.id === 'jinja') {
                 if (Date.now() - this.lastCoinTossTime < 1000)
                 {
-                    const context = this.canvasContext;
                     context.font = "bold 16px Arial, Helvetica, sans-serif";
                     context.textBaseline = "bottom";
                     context.textAlign = "right";
@@ -1939,7 +1997,7 @@ const vueApp = createApp({
             }
         },
 
-        canvasClick(clickEvent)
+        canvasClick(clickEvent: MouseEvent)
         {
             if (this.currentRoom.id === 'jinja') {
                 const specialObjectDonationBox = this.currentRoom.specialObjects.find(o => o.name == "donation-box");
@@ -1948,7 +2006,7 @@ const vueApp = createApp({
                 realDonationBoxCoordinates.x = (realDonationBoxCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x;
                 realDonationBoxCoordinates.y = (realDonationBoxCoordinates.y * this.getCanvasScale()) + this.canvasGlobalOffset.y;
                 
-                const mouseCursor = getClickCoordinatesWithinCanvas(document.getElementById("room-canvas"), clickEvent, this.devicePixelRatio)
+                const mouseCursor = getClickCoordinatesWithinCanvas(document.getElementById("room-canvas") as HTMLCanvasElement, clickEvent, this.devicePixelRatio)
 
                 //add some margin of error for the event area
                 if (
@@ -1965,7 +2023,7 @@ const vueApp = createApp({
         drawGridNumbers()
         {
             const context = this.canvasContext;
-
+            if (!context || !this.currentRoom) return // TS quick fix
             context.font = "bold 13px Arial, Helvetica, sans-serif";
             context.textBaseline = "bottom";
             context.textAlign = "center";
@@ -1993,9 +2051,9 @@ const vueApp = createApp({
                 }
         },
 
-        paint(delta)
+        paint(delta: number)
         {
-            if (this.isLoadingRoom || !this.currentRoom.backgroundImage)
+            if (this.isLoadingRoom || !this.currentRoom || !this.currentRoom.backgroundImage)
                 return;
             
             this.detectCanvasResize();
@@ -2050,9 +2108,9 @@ const vueApp = createApp({
             this.changeRoomIfSteppingOnDoor();
         },
 
-        paintLoop(timestamp)
+        paintLoop(timestamp: EpochTimeStamp | null = null)
         {
-            const delta = this.lastFrameTimestamp === null ? 0 : timestamp - this.lastFrameTimestamp;
+            const delta = this.lastFrameTimestamp === null || timestamp === null ? 0 : timestamp - this.lastFrameTimestamp;
 
             this.lastFrameTimestamp = timestamp
 
@@ -2066,6 +2124,8 @@ const vueApp = createApp({
             if (this.isWaitingForServerResponseOnMovement) return;
             if (this.requestedRoomChange) return;
 
+            if (!this.myUserID || !this.currentRoom) return // TS quick fix
+
             const currentUser = this.users[this.myUserID];
 
             if (currentUser.isWalking) return;
@@ -2077,14 +2137,16 @@ const vueApp = createApp({
                     d.y == currentUser.logicalPositionY
             );
 
-            if (!door) return;
+            if (!door || !door.target) return;
 
             const { roomId, doorId } = door.target;
 
             this.changeRoom(roomId, doorId);
         },
-        async changeRoom(targetRoomId, targetDoorId)
+        async changeRoom(targetRoomId: string, targetDoorId?: string)
         {
+            if (!this.socket) return // TS quick fix
+
             if (this.mediaStream) this.stopStreaming();
             for (let i = 0; i < this.takenStreams.length; i++)
             {
@@ -2110,8 +2172,9 @@ const vueApp = createApp({
             this.updateCanvasObjects();
             this.isRedrawRequired = true;
         },
-        sendNewPositionToServer(direction)
+        sendNewPositionToServer(direction: Direction)
         {
+            if (!this.socket || !this.myUserID) return // TS quick fix
             if (
                 this.isLoadingRoom ||
                 this.isWaitingForServerResponseOnMovement ||
@@ -2122,13 +2185,15 @@ const vueApp = createApp({
             this.isWaitingForServerResponseOnMovement = true;
             this.socket.emit("user-move", direction);
         },
-        sendNewBubblePositionToServer(position)
+        sendNewBubblePositionToServer(position: Direction)
         {
+            if (!this.socket) return // TS quick fix
             this.socket.emit("user-bubble-position", position);
         },
         sendMessageToServer()
         {
-            const inputTextbox = document.getElementById("input-textbox");
+            if (!this.socket || !this.myUserID) return // TS quick fix
+            const inputTextbox = document.getElementById("input-textbox") as HTMLInputElement
 
             let message = inputTextbox.value.substr(0, 500);
             
@@ -2164,6 +2229,7 @@ const vueApp = createApp({
             const debouncedPing = debounceWithImmediateExecution(() => {
                 if (!this.connectionLost && !this.connectionRefused && this.appState != "logout")
                 {
+                    if (!this.socket) return // TS quick fix
                     this.socket.emit("user-ping");
                 }
             }, 10 * 60 * 1000)
@@ -2180,7 +2246,7 @@ const vueApp = createApp({
                 debouncedPing()
             });
 
-            const pointerEnd = (e) =>
+            const pointerEnd = () =>
             {
                 this.isDraggingCanvas = false;
                 this.isCanvasPointerDown = false;
@@ -2211,25 +2277,25 @@ const vueApp = createApp({
                     localStorage.setItem("canvasHeight", height);
                     this.paint(0)
                 });
-                this.canvasContainerResizeObserver.observe(document.getElementById("canvas-container"));
+                this.canvasContainerResizeObserver.observe(document.getElementById("canvas-container")!);
             }
         },
         toggleInfobox()
         {
             localStorage.setItem(
                 "isInfoboxVisible",
-                (this.isInfoboxVisible = !this.isInfoboxVisible)
+                (this.isInfoboxVisible = !this.isInfoboxVisible).toString()
             );
         },
         toggleUsernameBackground() {
             localStorage.setItem(
                 "showUsernameBackground",
-                (this.showUsernameBackground = !this.showUsernameBackground)
+                (this.showUsernameBackground = !this.showUsernameBackground).toString()
             );
             this.isUsernameRedrawRequired = true;
             this.isRedrawRequired = true;
         },
-        handleCanvasKeydown(event)
+        handleCanvasKeydown(event: KeyboardEvent)
         {
             if (event.code == "KeyG" && event.ctrlKey)
             {
@@ -2237,7 +2303,7 @@ const vueApp = createApp({
                 // (which would always focus the input-textbox)
                 event.stopPropagation()
                 event.preventDefault()
-                document.getElementById("input-textbox").focus()
+                document.getElementById("input-textbox")!.focus()
                 return
             }
 
@@ -2336,7 +2402,7 @@ const vueApp = createApp({
                 }
             }
         },
-        setMovementDirection(ev, direction)
+        setMovementDirection(ev: MouseEvent | TouchEvent | null = null, direction: Direction | null = null)
         {
             // this preventDefault() is a workaround needed for iOS: longpress on a button selects it as text (and the "user-select: none" css
             // doesn't work since it just prevents the button from being selected and selects the next selectable element instead...)
@@ -2354,7 +2420,7 @@ const vueApp = createApp({
                     this.sendNewPositionToServer(this.movementDirection)
             }
         },
-        getPointerState(event)
+        getPointerState(event: MouseEvent | TouchEvent): PointerState | null
         {
             if ("targetTouches" in event)
             {
@@ -2382,7 +2448,7 @@ const vueApp = createApp({
                 }
             }
         },
-        handleCanvasPointerDown(event)
+        handleCanvasPointerDown(event: MouseEvent | TouchEvent)
         {
             const state = this.getPointerState(event);
             if (!state) return;
@@ -2393,11 +2459,12 @@ const vueApp = createApp({
             this.userCanvasScaleStart = null;
 
             event.preventDefault();
-            event.target.focus()
+            (event.target as HTMLElement).focus()
         },
-        handleCanvasPointerMove(event)
+        handleCanvasPointerMove(event: MouseEvent | TouchEvent)
         {
-            if (!this.isCanvasPointerDown) return;
+            if (!this.isCanvasPointerDown) return
+            if (!this.canvasPointerStartState) return // TS quick fix
 
             const state = this.getPointerState(event);
             if (!state) return;
@@ -2407,7 +2474,7 @@ const vueApp = createApp({
                 y: -(this.canvasPointerStartState.pos.y - state.pos.y)
             };
 
-            if (state.dist)
+            if (this.canvasPointerStartState.dist && state.dist)  // TS quick fix
             {
                 const distDiff = this.canvasPointerStartState.dist - state.dist;
 
@@ -2424,7 +2491,7 @@ const vueApp = createApp({
                 this.isDraggingCanvas = true;
             }
 
-            if (this.isDraggingCanvas)
+            if (this.isDraggingCanvas && this.canvasDragStartOffset) // TS quick fix
             {
                 this.canvasManualOffset.x = this.canvasDragStartOffset.x + dragOffset.x / this.userCanvasScale
                 this.canvasManualOffset.y = this.canvasDragStartOffset.y + dragOffset.y / this.userCanvasScale;
@@ -2432,7 +2499,7 @@ const vueApp = createApp({
 
             event.preventDefault();
         },
-        handleMessageInputKeydown(event)
+        handleMessageInputKeydown(event: KeyboardEvent)
         {
             if (event.code == "KeyG" && event.ctrlKey)
             {
@@ -2440,11 +2507,11 @@ const vueApp = createApp({
                 // (which would always focus the input-textbox)
                 event.stopPropagation();
                 event.preventDefault();
-                document.getElementById("room-canvas").focus()
+                document.getElementById("room-canvas")!.focus()
                 return
             }
         },
-        handleMessageInputKeypress(event)
+        handleMessageInputKeypress(event: KeyboardEvent)
         {
             if (event.key != "Enter"
                 || (this.isNewlineOnShiftEnter && event.shiftKey)
@@ -2467,7 +2534,7 @@ const vueApp = createApp({
         {
             this.setCanvasScale(this.userCanvasScale - 0.1);
         },
-        handleCanvasWheel(event)
+        handleCanvasWheel(event: WheelEvent)
         {
             if (event.deltaY < 0)
                 this.zoomIn()
@@ -2477,7 +2544,7 @@ const vueApp = createApp({
             event.preventDefault();
             return false;
         },
-        setCanvasScale(canvasScale)
+        setCanvasScale(canvasScale: number)
         {
             if(canvasScale > 3)
                 canvasScale = 3;
@@ -2488,21 +2555,22 @@ const vueApp = createApp({
             this.isRedrawRequired = true;
         },
 
-        getCanvasScale()
+        getCanvasScale(): number
         {
             return this.userCanvasScale * this.devicePixelRatio;
         },
 
-        getDevicePixelRatio()
+        getDevicePixelRatio(): number
         {
             if (this.isLowQualityEnabled) return 1;
             return Math.round(window.devicePixelRatio*100)/100;
         },
 
-        setupRTCConnection(slotId)
+        setupRTCConnection(slotId: number)
         {
             const rtcPeer = new RTCPeer(defaultIceConfig, (type, msg) =>
             {
+                if (!this.socket) return // TS quick fix
                 // TODO figure out if keeping this line causes issues.
                 // More privacy with candidates not being sent.
                 if(type == "candidate") return;
@@ -2538,8 +2606,10 @@ const vueApp = createApp({
             };
 
             rtcPeer.open();
-            rtcPeer.conn.addEventListener("icecandidateerror", (ev) =>
+            if (!rtcPeer.conn) return // TS quick fix
+            rtcPeer.conn.addEventListener("icecandidateerror", (event: Event) =>
             {
+                const ev = event as RTCPeerConnectionIceErrorEvent // typescript is seeing RTCPeerConnectionIceErrorEvent and Event as incompatible
                 console.error("icecandidateerror", ev, ev.errorCode, ev.errorText, ev.address, ev.url, ev.port)
             })
 
@@ -2547,21 +2617,22 @@ const vueApp = createApp({
             // which in theory are a combination of the state of the ICE agent and DTLS agent.
             rtcPeer.conn.addEventListener("iceconnectionstatechange", (ev) =>
             {
+                if (!rtcPeer.conn) return // TS quick fix
                 const state = rtcPeer.conn.iceConnectionState;
                 console.log("RTC Connection state", state)
                 logToServer(new Date() + " " + this.myUserID + " RTC Connection state " + state)
 
                 if (state == "connected")
                 {
-                    if (rtcPeerSlots[slotId])
-                        rtcPeerSlots[slotId].attempts = 0;
+                    if (window.rtcPeerSlots[slotId])
+                        window.rtcPeerSlots[slotId].attempts = 0;
                 }
                 // else if (["failed", "disconnected", "closed"].includes(state))
                 else if (["failed", "closed"].includes(state))
                 {
                     rtcPeer.close();
-                    if (!rtcPeerSlots[slotId]) return;
-                    if (rtcPeerSlots[slotId].attempts > 4)
+                    if (!window.rtcPeerSlots[slotId]) return;
+                    if (window.rtcPeerSlots[slotId].attempts > 4)
                     {
                         terminate()
                     }
@@ -2569,16 +2640,16 @@ const vueApp = createApp({
                     {
                         setTimeout(reconnect,
                             Math.max(this.takenStreams[slotId] ? 1000 : 0,
-                                rtcPeerSlots[slotId].attempts * 1000));
+                                window.rtcPeerSlots[slotId].attempts * 1000));
                     }
 
-                    rtcPeerSlots[slotId].attempts++;
+                    window.rtcPeerSlots[slotId].attempts++;
                 }
             });
             return rtcPeer;
         },
 
-        async updateCurrentRoomStreams(updatedStreams)
+        async updateCurrentRoomStreams(updatedStreams: StreamSlotDto[])
         {
             // Compare old stream slots with updated ones, to send a notification if
             // a new stream started
@@ -2589,6 +2660,7 @@ const vueApp = createApp({
                 if (oldStream
                     && !oldStream.isActive
                     && newStream.isActive
+                    && newStream.userId
                     && newStream.userId != this.myUserID)
                 {
                     const streamUser = this.users[newStream.userId]
@@ -2613,20 +2685,20 @@ const vueApp = createApp({
             });
 
             // update rtcPeerSlots (keep the ones that were already established, drop the ones for streams that were just stopped by the streamer)
-            const newRtcPeerSlotsList = [];
+            const newRtcPeerSlotsList: RTCPeerSlot[] = [];
             for (let slotId = 0; slotId < updatedStreams.length; slotId++)
             {
-                if (!rtcPeerSlots[slotId])
-                    newRtcPeerSlotsList.push(null)
+                if (!window.rtcPeerSlots[slotId])
+                    newRtcPeerSlotsList.push({attempts: 0, rtcPeer: null})
                 else if (this.takenStreams[slotId] || this.streamSlotIdInWhichIWantToStream == slotId)
-                    newRtcPeerSlotsList.push(rtcPeerSlots[slotId])
+                    newRtcPeerSlotsList.push(window.rtcPeerSlots[slotId])
                 else
                 {
                     await this.dropStream(slotId);
-                    newRtcPeerSlotsList.push(null)
+                    newRtcPeerSlotsList.push({attempts: 0, rtcPeer: null})
                 }
             }
-            rtcPeerSlots = newRtcPeerSlotsList;
+            window.rtcPeerSlots = newRtcPeerSlotsList;
 
             this.clientSideStreamData = updatedStreams.map((s, slotId) => {
                 if (this.clientSideStreamData[slotId])
@@ -2639,7 +2711,7 @@ const vueApp = createApp({
 
             this.streamSlotIdInWhichIWantToStream = null;
 
-            for (const slotId in updatedStreams)
+            for (let slotId=0; slotId<updatedStreams.length; slotId++)
             {
                 const stream = updatedStreams[slotId];
                 if (stream.isActive)
@@ -2651,6 +2723,7 @@ const vueApp = createApp({
                     else
                         this.takeStream(slotId);
 
+                // @ts-ignore
                 $( "#video-container-" + slotId ).resizable({
                     aspectRatio: true,
                     resize: adjustNiconicoMessagesFontSize
@@ -2700,7 +2773,7 @@ const vueApp = createApp({
             {
                 console.error(err)
                 this.showWarningToast(this.$t("msg.error_obtaining_media"));
-                this.mediaStream = false;
+                this.mediaStream = null;
                 this.waitingForDevicePermission = false;
                 this.isStreamPopupOpen = true;
             }
@@ -2917,18 +2990,22 @@ const vueApp = createApp({
                     this.showWarningToast(this.$t("msg.error_obtaining_media"));
                 }
                 this.wantToStream = false;
-                this.mediaStream = false;
+                this.mediaStream = null;
                 this.streamSlotIdInWhichIWantToStream = null;
                 this.waitingForDevicePermission = false;
             }
         },
-        setupRtcPeerSlot(slotId)
+        setupRtcPeerSlot(slotId: number)
         {
-            if (!rtcPeerSlots[slotId]) rtcPeerSlots[slotId] = {
-                attempts: 0
-            }
-            rtcPeerSlots[slotId].rtcPeer = this.setupRTCConnection(slotId)
-            return rtcPeerSlots[slotId]
+            window.rtcPeerSlots[slotId].rtcPeer = this.setupRTCConnection(slotId)
+            return window.rtcPeerSlots[slotId]
+        },
+        resetRtcPeerSlot(slotId: number)
+        {
+            if (window.rtcPeerSlots[slotId].rtcPeer)
+                window.rtcPeerSlots[slotId].rtcPeer.close()
+            window.rtcPeerSlots[slotId].rtcPeer = null
+            window.rtcPeerSlots[slotId].attempts = 0
         },
         async startStreaming()
         {
@@ -2972,17 +3049,13 @@ const vueApp = createApp({
 
             this.streamSlotIdInWhichIWantToStream = null;
 
-            if (rtcPeerSlots[streamSlotId])
-            {
-                rtcPeerSlots[streamSlotId].rtcPeer.close()
-                rtcPeerSlots[streamSlotId] = null;
-            }
+            resetRtcPeerSlot(streamSlotId)
 
             // On small screens, displaying the <video> element seems to cause a reflow in a way that
             // makes the canvas completely gray, so i force a redraw. Also needed to hide private stream icons.
             this.isRedrawRequired = true;
         },
-        wantToTakeStream(streamSlotId)
+        wantToTakeStream(streamSlotId: number)
         {
             if (!window.RTCPeerConnection)
             {
@@ -2994,9 +3067,9 @@ const vueApp = createApp({
             if (streamSlotId in this.streams && this.streams[streamSlotId].isReady)
                 this.takeStream(streamSlotId);
         },
-        takeStream(streamSlotId)
+        takeStream(streamSlotId: number)
         {
-            if (rtcPeerSlots[streamSlotId]) return // no need to attempt again to take this stream
+            if (window.rtcPeerSlots[streamSlotId].rtcPeer) return // no need to attempt again to take this stream
 
             const rtcPeer = this.setupRtcPeerSlot(streamSlotId).rtcPeer;
 
@@ -3065,11 +3138,10 @@ const vueApp = createApp({
             );
             this.socket.emit("user-want-to-take-stream", streamSlotId);
         },
-        async dropStream(streamSlotId)
+        async dropStream(streamSlotId: number)
         {
-            if(!rtcPeerSlots[streamSlotId]) return;
-            rtcPeerSlots[streamSlotId].rtcPeer.close()
-            rtcPeerSlots[streamSlotId] = null;
+            if(!window.rtcPeerSlots[streamSlotId].rtcPeer) return;
+            resetRtcPeerSlot(streamSlotId)
             
             if (!this.isStreamAutoResumeEnabled)
                 this.takenStreams[streamSlotId] = false
@@ -3086,12 +3158,12 @@ const vueApp = createApp({
                 delete this.inboundAudioProcessors[streamSlotId]
             }
         },
-        async wantToDropStream(streamSlotId)
+        async wantToDropStream(streamSlotId: number)
         {
             this.takenStreams[streamSlotId] = false
             await this.dropStream(streamSlotId);
         },
-        rula(roomId)
+        rula(roomId: string | null)
         {
             if (!roomId) return;
             this.canvasManualOffset = { x: 0, y: 0 };
@@ -3134,7 +3206,7 @@ const vueApp = createApp({
         {
             this.isPreferencesPopupOpen = false;
         },
-        ignoreUser(userId)
+        ignoreUser(userId: string)
         {
             this.ignoredUserIds.add(userId)
 
@@ -3147,7 +3219,7 @@ const vueApp = createApp({
             this.isRedrawRequired = true
             this.$forceUpdate() // HACK: the v-if for the ignore and unignore buttons doesn't get automatically re-evaluated
         },
-        unignoreUser(userId)
+        unignoreUser(userId: string)
         {
             this.ignoredUserIds.delete(userId)
 
@@ -3164,14 +3236,14 @@ const vueApp = createApp({
             this.isUsernameRedrawRequired = true
             this.$forceUpdate() // HACK: the v-if for the ignore and unignore buttons doesn't get automatically re-evaluated
         },
-        blockUser(userId)
+        blockUser(userId: string)
         {
             this.confirm(this.$t("msg.are_you_sure_you_want_to_block"), () =>
             {
                 this.socket.emit("user-block", userId);
             });
         },
-        setRulaRoomListSortKey(key)
+        setRulaRoomListSortKey(key: RulaRoomListSortKey)
         {
             if (this.rulaRoomListSortKey != key)
                 this.rulaRoomListSortDirection = 1;
@@ -3182,7 +3254,7 @@ const vueApp = createApp({
             
             localStorage.setItem("rulaRoomListSortKey", this.rulaRoomListSortKey)
 
-            localStorage.setItem("rulaRoomListSortDirection", this.rulaRoomListSortDirection)
+            localStorage.setItem("rulaRoomListSortDirection", this.rulaRoomListSortDirection.toString())
 
             this.prepareRulaRoomList();
         },
@@ -3198,20 +3270,17 @@ const vueApp = createApp({
 
             this.preparedRoomList.sort((a, b) =>
             {
-                let sort = 0
-                
-                if (key === 'streamerCount')
-                    sort = b.streamerCount - a.streamerCount
-                if (key === 'userCount'
-                    || (key === 'streamerCount' && sort === 0))
+                let sort = 0;
+                if (key == "streamers")
+                    sort = b.streams.length - a.streams.length
+                if (key == "userCount" || (key == "streamers" && sort === 0))
                     sort = b.userCount - a.userCount
-                if (sort === 0)
-                    sort = a.sortName.localeCompare(b.sortName, this.$i18next.language)
-                
-                return sort * direction
+                if (sort === 0 && a.sortName && b.sortName)
+                    sort = a.sortName.localeCompare(b.sortName, this.$i18next.language);
+                return sort * direction;
             })
         },
-        openStreamPopup(streamSlotId)
+        openStreamPopup(streamSlotId: number)
         {
             if (!window.RTCPeerConnection)
             {
@@ -3238,7 +3307,7 @@ const vueApp = createApp({
             this.wantToStream = false;
             this.streamSlotIdInWhichIWantToStream = null;
         },
-        changeStreamVolume(streamSlotId)
+        changeStreamVolume(streamSlotId: number)
         {
             const volumeSlider = document.getElementById("volume-" + streamSlotId);
 
@@ -3247,7 +3316,7 @@ const vueApp = createApp({
             this.slotVolume[streamSlotId] = volumeSlider.value;
             localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
         },
-        changeSoundEffectVolume(newVolume)
+        changeSoundEffectVolume(newVolume: number)
         {
             debouncedLogSoundVolume(this.myUserID, newVolume)
             this.soundEffectVolume = newVolume
@@ -3271,7 +3340,7 @@ const vueApp = createApp({
             if (this.socket)
                 this.socket.emit("user-room-list");
         },
-        selectRoomForRula(roomId)
+        selectRoomForRula(roomId: string)
         {
             this.rulaRoomSelection = roomId;
         },
@@ -3320,8 +3389,9 @@ const vueApp = createApp({
             this.storeSet('language');
             this.setLanguage();
         },
-        storeSet(itemName, value)
+        storeSet(itemName: string, value?: any)
         {
+            // @ts-ignore
             if (value != undefined) this[itemName] = value;
             localStorage.setItem(itemName, this[itemName]);
         },
@@ -3368,7 +3438,7 @@ const vueApp = createApp({
         },
         setMentionRegexObjects()
         {
-            function wordsToRegexObject(words)
+            function wordsToRegexObject(words: string[])
             {
                 return new RegExp(
                     "("
@@ -3399,9 +3469,9 @@ const vueApp = createApp({
             this.usernameMentionRegexObject = wordsToRegexObject(
                 this.users[this.myUserID].name.split("◆"))
         },
-        markMentions(msg)
+        markMentions(msg: string)
         {
-            function regexReplace(stringArray, regex, replacement)
+            function regexReplace(stringArray: string[], regex?: RegExp, replacement: string | ((match: string) => string) = ''): (string | string[])[]
             {
                 // function could be used later for other formatting things.
                 // skips arrays within the array, and puts replaced parts of the
@@ -3431,7 +3501,7 @@ const vueApp = createApp({
                     return rs
                 }).flat()
             }
-            function replacementFunction(word)
+            function replacementFunction(word: string)
             {
                 return htmlToControlChars("<span class='message-mention'>" + word + "</span>")
             }
@@ -3440,9 +3510,9 @@ const vueApp = createApp({
             msg = regexReplace(msg, this.usernameMentionRegexObject, replacementFunction)
             return msg.flat().join("")
         },
-        checkIfMentioned(msg)
+        checkIfMentioned(msg: string)
         {
-            function test(ro, s)
+            function test(ro: RegExp | null, s: string)
             {
                 if (!ro) return false
                 const isMatch = ro.test(s)
@@ -3488,17 +3558,17 @@ const vueApp = createApp({
             this.storeSet('ttsVoiceURI')
         },
         // I think this getVoices() function isn't called anywhere, might be okay to remove
-        getVoices() {
+        getVoices(): SpeechSynthesisVoice[] {
             if (!window.speechSynthesis)
                 return []
             return speechSynthesis.getVoices()
         },
-        changeVoiceVolume(newValue) {
+        changeVoiceVolume(newValue: number) {
             this.voiceVolume = newValue
             this.storeSet('voiceVolume')
             debouncedSpeakTest(this.ttsVoiceURI, this.voiceVolume)
         },
-        toggleVideoSlotPinStatus(slotId) {
+        toggleVideoSlotPinStatus(slotId: number) {
             const videoContainer = document.getElementById('video-container-' + slotId)
             videoContainer.classList.toggle("pinned-video")
             videoContainer.classList.toggle("unpinned-video")
@@ -3514,9 +3584,9 @@ const vueApp = createApp({
                 videoContainer.style = ""
             }
         },
-        highlightUser(userId, userName)
+        highlightUser(userId: string, userName: string)
         {
-            const highlightedUserStyle = document.getElementById("highlighted-user-style")
+            const highlightedUserStyle = document.getElementById("highlighted-user-style") as HTMLStyleElement
 
             if (this.highlightedUserId == userId)
             {
@@ -3554,14 +3624,14 @@ const vueApp = createApp({
             if (this.highlightedUserId && !this.users[this.highlightedUserId])
                 output.unshift({
                     id: this.highlightedUserId,
-                    name: this.highlightedUserName,
+                    name: this.highlightedUserName || '',
                     isInRoom: false,
                     isInactive: false,
                 })
 
             return output
         },
-        handleRulaPopupKeydown(event)
+        handleRulaPopupKeydown(event: KeyboardEvent)
         {
             const previousIndex = this.preparedRoomList.findIndex(r => r.id == this.rulaRoomSelection)
 
@@ -3571,7 +3641,7 @@ const vueApp = createApp({
                 case "KeyJ":
                 case "KeyS":
                     this.rulaRoomSelection = this.preparedRoomList[(previousIndex + 1) % this.preparedRoomList.length].id
-                    document.getElementById("room-tr-" + this.rulaRoomSelection).scrollIntoView({ block: "nearest"})
+                    document.getElementById("room-tr-" + this.rulaRoomSelection)!.scrollIntoView({ block: "nearest"})
                     break;
                 case "ArrowUp":
                 case "KeyK":
@@ -3580,14 +3650,14 @@ const vueApp = createApp({
                         this.rulaRoomSelection = this.preparedRoomList[this.preparedRoomList.length - 1].id
                     else
                         this.rulaRoomSelection = this.preparedRoomList[previousIndex - 1].id
-                    document.getElementById("room-tr-" + this.rulaRoomSelection).scrollIntoView({ block: "nearest"})
+                    document.getElementById("room-tr-" + this.rulaRoomSelection)!.scrollIntoView({ block: "nearest"})
                     break;
                 case "Enter":
                     this.rula(this.rulaRoomSelection)
                     break;
             }
         },
-        handlechatLogKeydown(ev) {
+        handlechatLogKeydown(ev: KeyboardEvent) {
             // hitting ctrl+a when the log is focused selects only the text in the log
             if (ev.code == "KeyA" && ev.ctrlKey)
             {
@@ -3600,16 +3670,16 @@ const vueApp = createApp({
             this.showNotifications = !this.showNotifications
             this.handleShowNotifications()
         },
-        onCompressionChanged(streamSlotID)
+        onCompressionChanged(streamSlotID: number)
         {
             this.inboundAudioProcessors[streamSlotID].onCompressionChanged()
         },
-        onPanChanged(streamSlotID, event)
+        onPanChanged(streamSlotID: number, event: KeyboardEvent)
         {
             const value = event.target.value
             this.inboundAudioProcessors[streamSlotID].setPan(value)
         },
-        resetPan(streamSlotID)
+        resetPan(streamSlotID: number)
         {
             const panKnobElement = document.getElementById("pan-knob-" + streamSlotID);
             panKnobElement.value = 0;
@@ -3623,27 +3693,27 @@ const vueApp = createApp({
         {
             this.outboundAudioProcessor.unmute()
         },
-        isStreaming()
+        isStreaming(): boolean
         {
             // Not correct, because streamSlotIdInWhichIWantToStream is different from null also when
             // the stream settings popup is open but the stream hasn't started yet
             return this.streamSlotIdInWhichIWantToStream != null
         },
-        giveStreamToUser(userID)
+        giveStreamToUser(userID: string)
         {
             this.allowedListenerIDs.add(userID)
             this.$forceUpdate()
             this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
             this.isRedrawRequired = true;
         },
-        revokeStreamToUser(userID)
+        revokeStreamToUser(userID: string)
         {
             this.allowedListenerIDs.delete(userID)
             this.$forceUpdate()
             this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
             this.isRedrawRequired = true;
         },
-        playVideo(event)
+        playVideo(event: MouseEvent)
         {
             // When moving the video element to a new tab, chromium based browsers will
             // automatically pause it and wait for a user interaction. With this function
@@ -3651,7 +3721,7 @@ const vueApp = createApp({
             const video = event.target;
             video.play();
         },
-        async onVideoDoubleClick(event, slotId)
+        async onVideoDoubleClick(event: MouseEvent, slotId: number)
         {
             const video = event.target;
             const videoContainer = video.parentElement
@@ -3716,7 +3786,7 @@ const vueApp = createApp({
                 }
             }
         },
-        reattachVideoFromOtherTabIfDetached(slotId)
+        reattachVideoFromOtherTabIfDetached(slotId: number)
         {
             if (this.detachedStreamTabs[slotId])
             {
@@ -3730,7 +3800,7 @@ const vueApp = createApp({
                 this.detachedStreamTabs[slotId] = null;
             }
         },
-        getAvatarSpriteForUser(userId)
+        getAvatarSpriteForUser(userId: string)
         {
             const user = this.users[userId]
             if (!user)
@@ -3745,7 +3815,7 @@ const vueApp = createApp({
             return "characters/" + character.characterName + "/front-standing." + character.format
         },
     },
-});
+}))
 
 vueApp.config.unwrapInjectedRef = true // No longer required after Vue 3.3
 vueApp.component("username", ComponentUsername)
@@ -3755,7 +3825,7 @@ vueApp.use(I18NextVue, { i18next })
 vueApp.mount("#vue-app")
 window.vueApp = vueApp
 
-const debouncedSpeakTest = debounceWithDelayedExecution((ttsVoiceURI, voiceVolume) => {
+const debouncedSpeakTest = debounceWithDelayedExecution((ttsVoiceURI: string, voiceVolume: number) => {
     if (window.speechSynthesis)
     {
         speechSynthesis.cancel()
@@ -3763,7 +3833,7 @@ const debouncedSpeakTest = debounceWithDelayedExecution((ttsVoiceURI, voiceVolum
     }
 }, 150)
 
-const debouncedLogSoundVolume = debounceWithDelayedExecution((myUserID, volume) => {
+const debouncedLogSoundVolume = debounceWithDelayedExecution((myUserID: string, volume: number) => {
     logToServer(myUserID + " SFX volume: " + volume)
 }, 150)
 
@@ -3771,12 +3841,12 @@ const debouncedLogSoundVolume = debounceWithDelayedExecution((myUserID, volume) 
 //       can be done with a ResizeObserver, maybe
 function adjustNiconicoMessagesFontSize()
 {
-    const videoElements = document.getElementsByClassName("video-being-played")
+    const videoElements = document.getElementsByClassName("video-being-played") as HTMLCollectionOf<HTMLVideoElement>
     for (const videoElement of videoElements)
     {
         const width = (videoElement.videoWidth / videoElement.videoHeight) * videoElement.clientHeight
         const fontsize = Math.round(width / 15)
-        const niconicoMessagesContainer = videoElement.parentElement.getElementsByClassName("nico-nico-messages-container")[0]
+        const niconicoMessagesContainer = videoElement.parentElement!.getElementsByClassName("nico-nico-messages-container")[0] as HTMLElement
         if (niconicoMessagesContainer)
             niconicoMessagesContainer.style.fontSize = fontsize + "px"
     }

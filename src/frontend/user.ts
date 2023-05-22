@@ -1,4 +1,4 @@
-import type { Direction, Room } from './types'
+import type { Direction, ClientRoom } from './types'
 import type { Character, CharacterVersion, CharacterState } from "./character";
 import type { RenderCache } from "./rendercache"
 
@@ -62,7 +62,7 @@ export default class User
         this.blinkingStartShift = (parseInt(uniquePattern.slice(0, 2), 16) / 256) * this.blinkingPattern[this.blinkingPattern.length-1]
     }
 
-    moveImmediatelyToPosition(room: Room, logicalPositionX: number, logicalPositionY: number, direction: Direction)
+    moveImmediatelyToPosition(room: ClientRoom, logicalPositionX: number, logicalPositionY: number, direction: Direction)
     {
         this.logicalPositionX = logicalPositionX;
         this.logicalPositionY = logicalPositionY;
@@ -88,7 +88,7 @@ export default class User
         this.isMoved = true;
     }
     
-    calculatePhysicalPosition(room: Room, delta: number)
+    calculatePhysicalPosition(room: ClientRoom, delta: number)
     {
         if (!this.isWalking)
             return
@@ -139,7 +139,7 @@ export default class User
             this.frameCount = 0
     }
 
-    getCurrentImage(room: Room): RenderCache[]
+    getCurrentImage(room: ClientRoom): RenderCache[]
     {
         if (!this.character.isLoaded)
             this.character.load().then((requestRedraw) => { if (requestRedraw) this.isCharacterLoaded = true })

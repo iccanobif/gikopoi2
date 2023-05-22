@@ -3,7 +3,7 @@ export * from '../common/common_types'
 import type User from './user'
 import type { RenderCache } from './rendercache'
 
-import type { RoomObject } from '../common/common_types'
+import type { Coordinates, Room, RoomObject } from '../common/common_types'
 
 export interface Users { [id: string]: User }
 export type IgnoredUserIds = Set<string>
@@ -23,6 +23,12 @@ export interface ClientRoomObject extends RoomObject
     lastUserCameOrLeftTime?: number
     currentFrame?: number
     needToTurnAround?: boolean
+}
+
+export interface ClientRoom extends Room
+{
+    objects: ClientRoomObject[];
+    backgroundImage?: RenderCache
 }
 
 export interface CanvasObject
@@ -45,3 +51,10 @@ export interface PopupUserList {
     isInRoom: boolean
     isInactive: boolean
 }
+
+export interface PointerState {
+    dist: number
+    pos: Coordinates
+}
+
+export type PopupCallback = (buttonIndex: number) => void

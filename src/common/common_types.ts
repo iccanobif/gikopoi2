@@ -22,24 +22,20 @@ export interface Door
     target: {
         roomId: string
         doorId: string
-    } | string | null;
+    } | null;
 }
 
-export interface SiteArea {
-    id: string,
-    name: string,
-    language?: string,
-    restrictLanguage?: boolean,
-    unlisted?: boolean 
-}
-
-export interface Stats {
-    userCount: number
-    streamCount: number
-}
-
-export interface SiteAreasInfo {
-    [areaId: string]: Stats
+export interface StreamSlotDto
+{
+    isActive: boolean,
+    isReady: boolean,
+    withSound: boolean | null,
+    withVideo: boolean | null,
+    userId: string | null,
+    isAllowed: boolean | null,
+    isVisibleOnlyToSpecificUsers: boolean | null,
+    streamIsVtuberMode: boolean | null,
+    isNicoNicoMode: boolean | null,
 }
 
 export interface SpecialObjects
@@ -121,17 +117,54 @@ export interface Room
     specialObjects?: SpecialObjects[];
 }
 
-export interface StreamSlotDto
+export interface PlayerDto
 {
-    isActive: boolean,
-    isReady: boolean,
-    withSound: boolean | null,
-    withVideo: boolean | null,
-    userId: string | null,
-    isAllowed: boolean | null,
-    isVisibleOnlyToSpecificUsers: boolean | null,
-    streamIsVtuberMode: boolean | null,
-    isNicoNicoMode: boolean | null,
+    id: string,
+    name: string,
+    position: { x: number, y: number },
+    direction: Direction,
+    roomId: string,
+    characterId: string,
+    isInactive: boolean,
+    bubblePosition: Direction,
+    voicePitch: number,
+    lastRoomMessage: string,
+    isAlternateCharacter: boolean,
+    lastMovement: number,
+}
+
+export interface RoomStateDto
+{
+    currentRoom: Room,
+    connectedUsers: PlayerDto[],
+    streams: StreamSlotDto[],
+    chessboardState: ChessboardStateDto,
+    jankenState: JankenStateDto,
+    coinCounter: number,
+    hideStreams: boolean,
+}
+
+export interface MoveDto
+{
+    userId: string
+    x: number
+    y: number
+    direction: Direction
+    lastMovement: number
+    isInstant: boolean
+    shouldSpinwalk: boolean
+}
+
+export interface ListedRoom
+{
+    id: string
+    group: string
+    userCount: number
+    streams: {
+        userName: string
+        isVisibleOnlyToSpecificUsers: boolean
+    }[]
+    sortName?: string
 }
 
 export interface CharacterSvgDto
@@ -172,12 +205,19 @@ export interface ChessboardStateDto
     turn: "b" | "w" | null,
 }
 
-export interface ListedRoom
-{
-    id: string
-    sortName?: string
-    group: string
+export interface SiteArea {
+    id: string,
+    name: string,
+    language?: string,
+    restrictLanguage?: boolean,
+    unlisted?: boolean 
+}
+
+export interface Stats {
     userCount: number
-    streamers: string[]
-    streams: { userName: string, isVisibleOnlyToSpecificUsers: boolean }[]
+    streamCount: number
+}
+
+export interface SiteAreasInfo {
+    [areaId: string]: Stats
 }
