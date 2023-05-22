@@ -49,17 +49,6 @@ export interface RoomState
     coinCounter: number
 }
 
-export interface RoomStateDto
-{
-    currentRoom: Room,
-    connectedUsers: PlayerDto[],
-    streams: StreamSlotDto[],
-    chessboardState: ChessboardStateDto,
-    jankenState: JankenStateDto,
-    coinCounter: number,
-    hideStreams: boolean,
-}
-
 export interface LoginResponseDto
 {
     appVersion: number,
@@ -67,22 +56,6 @@ export interface LoginResponseDto
     error?: "invalid_username" | "ip_restricted",
     userId?: string,
     privateUserId?: string,
-}
-
-export interface PlayerDto
-{
-    id: string,
-    name: string,
-    position: { x: number, y: number },
-    direction: Direction,
-    roomId: string,
-    characterId: string,
-    isInactive: boolean,
-    bubblePosition: Direction,
-    voicePitch: number,
-    lastRoomMessage: string,
-    isAlternateCharacter: boolean,
-    lastMovement: number,
 }
 
 export interface ChessboardState {
