@@ -36,6 +36,8 @@ declare global {
         vueApp: App
         rtcPeerSlots: RTCPeerSlot[]
         EXPECTED_SERVER_VERSION: number
+        siteAreas: SiteArea[]
+        siteAreasInfo: SiteAreasInfo
     }
 }
 
@@ -142,8 +144,8 @@ function getSpawnRoomId()
     }
 }
 
-const siteAreas: SiteArea[] = (window as any).siteAreas
-const siteAreasInfo: SiteAreasInfo = (window as any).siteAreasInfo
+const siteAreas = window.siteAreas
+const siteAreasInfo = window.siteAreasInfo
 
 function getSiteArea(areaId: string): SiteArea
 {
