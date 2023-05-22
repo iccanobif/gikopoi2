@@ -191,7 +191,9 @@ i18next.init(
 function setPageMetadata()
 {
     document.title = i18next.t("ui.title")
-    document.getElementsByTagName('meta')["description"].content = i18next.t("ui.subtitle")
+    const descriptionElement = document.querySelector("meta[name='description']")
+    if (descriptionElement)
+        descriptionElement.setAttribute("content", i18next.t("ui.subtitle"))
 }
 setPageMetadata()
 
