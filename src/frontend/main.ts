@@ -259,7 +259,7 @@ const vueApp = createApp(defineComponent({
             roomList: Data<ListedRoom[]>([]),
             preparedRoomList: Data<ListedRoom[]>([]),
             rulaRoomGroup: "all",
-            rulaRoomListSortKey: localStorage.getItem("rulaRoomListSortKey") || "sortName",
+            rulaRoomListSortKey: Data<RulaRoomListSortKey>((localStorage.getItem("rulaRoomListSortKey") as RulaRoomListSortKey) || "sortName"),
             rulaRoomListSortDirection: Data<1 | -1>(localStorage.getItem("rulaRoomListSortDirection") == "1" ? 1 : -1),
             rulaRoomSelection: Data<string | null>(null),
 
@@ -1345,7 +1345,7 @@ const vueApp = createApp(defineComponent({
             return new RenderCache(function(canvas, scale)
             {
                 const context = canvas.getContext('2d');
-                if (!context) return [1, 1] // TS quick fix
+                if (!context) return // TS quick fix
                 context.font = fontPrefix + lineHeight + fontSuffix;
 
                 const width = Math.max(
@@ -2015,7 +2015,7 @@ const vueApp = createApp(defineComponent({
                     mouseCursor.y >= realDonationBoxCoordinates.y - this.blockHeight * this.getCanvasScale() - 20 * this.getCanvasScale() &&
                     mouseCursor.y <= realDonationBoxCoordinates.y
                 ) {
-                    this.socket.emit("special-events:client-add-shrine-coin");
+                    this.socket!.emit("special-events:client-add-shrine-coin");
                 }
             }
         },
@@ -2124,13 +2124,11 @@ const vueApp = createApp(defineComponent({
             if (this.isWaitingForServerResponseOnMovement) return;
             if (this.requestedRoomChange) return;
 
-            if (!this.myUserID || !this.currentRoom) return // TS quick fix
-
-            const currentUser = this.users[this.myUserID];
+            const currentUser = this.users[this.myUserID!];
 
             if (currentUser.isWalking) return;
 
-            const door = Object.values(this.currentRoom.doors).find(
+            const door = Object.values(this.currentRoom!.doors).find(
                 (d) =>
                     d.target !== null &&
                     d.x == currentUser.logicalPositionX &&
@@ -2145,8 +2143,6 @@ const vueApp = createApp(defineComponent({
         },
         async changeRoom(targetRoomId: string, targetDoorId?: string)
         {
-            if (!this.socket) return // TS quick fix
-
             if (this.mediaStream) this.stopStreaming();
             for (let i = 0; i < this.takenStreams.length; i++)
             {
@@ -2158,7 +2154,7 @@ const vueApp = createApp(defineComponent({
             if (window.speechSynthesis)
                 speechSynthesis.cancel();
             this.requestedRoomChange = true;
-            this.socket.emit("user-change-room", { targetRoomId, targetDoorId });
+            this.socket!.emit("user-change-room", { targetRoomId, targetDoorId });
         },
         forcePhysicalPositionRefresh()
         {
@@ -2174,25 +2170,22 @@ const vueApp = createApp(defineComponent({
         },
         sendNewPositionToServer(direction: Direction)
         {
-            if (!this.socket || !this.myUserID) return // TS quick fix
             if (
                 this.isLoadingRoom ||
                 this.isWaitingForServerResponseOnMovement ||
-                (this.users[this.myUserID] && this.users[this.myUserID].isWalking)
+                (this.users[this.myUserID!] && this.users[this.myUserID!].isWalking)
             )
                 return;
 
             this.isWaitingForServerResponseOnMovement = true;
-            this.socket.emit("user-move", direction);
+            this.socket!.emit("user-move", direction);
         },
         sendNewBubblePositionToServer(position: Direction)
         {
-            if (!this.socket) return // TS quick fix
-            this.socket.emit("user-bubble-position", position);
+            this.socket!.emit("user-bubble-position", position);
         },
         sendMessageToServer()
         {
-            if (!this.socket || !this.myUserID) return // TS quick fix
             const inputTextbox = document.getElementById("input-textbox") as HTMLInputElement
 
             let message = inputTextbox.value.substr(0, 500);
@@ -2216,8 +2209,8 @@ const vueApp = createApp(defineComponent({
             else
             {
                 // If the user has already cleared their bubble, avoid sending any more empty messages.
-                if (message || this.users[this.myUserID].message)
-                    this.socket.emit("user-msg", message);
+                if (message || this.users[this.myUserID!].message)
+                    this.socket!.emit("user-msg", message);
             }
             inputTextbox.value = "";
             inputTextbox.focus()
@@ -2229,8 +2222,7 @@ const vueApp = createApp(defineComponent({
             const debouncedPing = debounceWithImmediateExecution(() => {
                 if (!this.connectionLost && !this.connectionRefused && this.appState != "logout")
                 {
-                    if (!this.socket) return // TS quick fix
-                    this.socket.emit("user-ping");
+                    this.socket!.emit("user-ping");
                 }
             }, 10 * 60 * 1000)
 
@@ -2474,9 +2466,9 @@ const vueApp = createApp(defineComponent({
                 y: -(this.canvasPointerStartState.pos.y - state.pos.y)
             };
 
-            if (this.canvasPointerStartState.dist && state.dist)  // TS quick fix
+            if (state.dist)
             {
-                const distDiff = this.canvasPointerStartState.dist - state.dist;
+                const distDiff = this.canvasPointerStartState.dist! - state.dist;
 
                 if (!this.userCanvasScaleStart && Math.abs(distDiff) > 40)
                     this.userCanvasScaleStart = this.userCanvasScale;
@@ -2491,10 +2483,10 @@ const vueApp = createApp(defineComponent({
                 this.isDraggingCanvas = true;
             }
 
-            if (this.isDraggingCanvas && this.canvasDragStartOffset) // TS quick fix
+            if (this.isDraggingCanvas)
             {
-                this.canvasManualOffset.x = this.canvasDragStartOffset.x + dragOffset.x / this.userCanvasScale
-                this.canvasManualOffset.y = this.canvasDragStartOffset.y + dragOffset.y / this.userCanvasScale;
+                this.canvasManualOffset.x = this.canvasDragStartOffset!.x + dragOffset.x / this.userCanvasScale
+                this.canvasManualOffset.y = this.canvasDragStartOffset!.y + dragOffset.y / this.userCanvasScale;
             }
 
             event.preventDefault();
@@ -2566,15 +2558,14 @@ const vueApp = createApp(defineComponent({
             return Math.round(window.devicePixelRatio*100)/100;
         },
 
-        setupRTCConnection(slotId: number)
+        setupRTCConnection(slotId: number): RTCPeer
         {
             const rtcPeer = new RTCPeer(defaultIceConfig, (type, msg) =>
             {
-                if (!this.socket) return // TS quick fix
                 // TODO figure out if keeping this line causes issues.
                 // More privacy with candidates not being sent.
                 if(type == "candidate") return;
-                this.socket.emit("user-rtc-message", {
+                this.socket!.emit("user-rtc-message", {
                     streamSlotId: slotId, type, msg})
             });
 
@@ -2606,7 +2597,7 @@ const vueApp = createApp(defineComponent({
             };
 
             rtcPeer.open();
-            if (!rtcPeer.conn) return // TS quick fix
+            if (!rtcPeer.conn) throw 'RTCPeer not opened'
             rtcPeer.conn.addEventListener("icecandidateerror", (event: Event) =>
             {
                 const ev = event as RTCPeerConnectionIceErrorEvent // typescript is seeing RTCPeerConnectionIceErrorEvent and Event as incompatible
@@ -2617,8 +2608,7 @@ const vueApp = createApp(defineComponent({
             // which in theory are a combination of the state of the ICE agent and DTLS agent.
             rtcPeer.conn.addEventListener("iceconnectionstatechange", (ev) =>
             {
-                if (!rtcPeer.conn) return // TS quick fix
-                const state = rtcPeer.conn.iceConnectionState;
+                const state = rtcPeer.conn!.iceConnectionState;
                 console.log("RTC Connection state", state)
                 logToServer(new Date() + " " + this.myUserID + " RTC Connection state " + state)
 
@@ -2823,7 +2813,7 @@ const vueApp = createApp(defineComponent({
                     echoCancellation: this.streamEchoCancellation,
                     noiseSuppression: this.streamNoiseSuppression,
                     autoGainControl: this.streamAutoGain,
-                    deviceId: withScreenCaptureAudio ? undefined : { exact: this.selectedAudioDeviceId },
+                    deviceId: withScreenCaptureAudio ? undefined : { exact: this.selectedAudioDeviceId! },
                 }
 
                 let userMediaPromise = null
@@ -2831,7 +2821,7 @@ const vueApp = createApp(defineComponent({
                     userMediaPromise = navigator.mediaDevices.getUserMedia(
                         {
                             video: (!withVideo || withScreenCapture) ? undefined : {
-                                deviceId: { exact: this.selectedVideoDeviceId },
+                                deviceId: { exact: this.selectedVideoDeviceId! },
                             },
                             audio: !withSound ? undefined : audioConstraints
                         }
@@ -2955,7 +2945,7 @@ const vueApp = createApp(defineComponent({
                     }
                 }
 
-                this.socket.emit("user-want-to-stream", {
+                this.socket!.emit("user-want-to-stream", {
                     streamSlotId: this.streamSlotIdInWhichIWantToStream,
                     withVideo: withVideo,
                     withSound: withSound,
@@ -3002,31 +2992,32 @@ const vueApp = createApp(defineComponent({
         },
         resetRtcPeerSlot(slotId: number)
         {
-            if (window.rtcPeerSlots[slotId].rtcPeer)
-                window.rtcPeerSlots[slotId].rtcPeer.close()
+            const rtcPeer = window.rtcPeerSlots[slotId].rtcPeer
+            if (rtcPeer) rtcPeer.close()
             window.rtcPeerSlots[slotId].rtcPeer = null
             window.rtcPeerSlots[slotId].attempts = 0
         },
         async startStreaming()
         {
             const slotId = this.streamSlotIdInWhichIWantToStream;
+            if (slotId === null) return
             const rtcPeer = this.setupRtcPeerSlot(slotId).rtcPeer;
 
             this.takenStreams[slotId] = false
-            this.mediaStream
+            this.mediaStream!
                 .getTracks()
                 .forEach((track) =>
-                    rtcPeer.conn.addTrack(track, this.mediaStream)
+                    rtcPeer!.conn!.addTrack(track, this.mediaStream!)
                 );
 
-            document.getElementById("local-video-" + slotId).srcObject = this.mediaStream;
+            (document.getElementById("local-video-" + slotId) as HTMLVideoElement).srcObject = this.mediaStream;
         },
         async stopStreaming()
         {
             // Note that when streaming audio, the audio track in this.mediaStream is the
             // output of the outboundAudioProcessor. The "raw" input track is stopped
             // by outboundAudioProcessor.dispose()
-            for (const track of this.mediaStream.getTracks()) track.stop()
+            for (const track of this.mediaStream!.getTracks()) track.stop()
 
             if (this.outboundAudioProcessor)
             {
@@ -3035,12 +3026,12 @@ const vueApp = createApp(defineComponent({
             }
 
             const streamSlotId = this.streamSlotIdInWhichIWantToStream;
-
+            if (!streamSlotId) return
             this.reattachVideoFromOtherTabIfDetached(streamSlotId);
 
-            document.getElementById("local-video-" + streamSlotId).srcObject = this.mediaStream = null;
+            (document.getElementById("local-video-" + streamSlotId) as HTMLVideoElement).srcObject = this.mediaStream = null;
 
-            this.socket.emit("user-want-to-stop-stream");
+            this.socket!.emit("user-want-to-stop-stream");
 
             this.allowedListenerIDs = new Set()
 
@@ -3049,7 +3040,7 @@ const vueApp = createApp(defineComponent({
 
             this.streamSlotIdInWhichIWantToStream = null;
 
-            resetRtcPeerSlot(streamSlotId)
+            this.resetRtcPeerSlot(streamSlotId)
 
             // On small screens, displaying the <video> element seems to cause a reflow in a way that
             // makes the canvas completely gray, so i force a redraw. Also needed to hide private stream icons.
@@ -3077,10 +3068,10 @@ const vueApp = createApp(defineComponent({
             // It's important that this "videoElement.play()" is executed in the same tick as a user
             // interaction event, otherwise iphones will refuse to play the media.
             // This is why videoElement.play() is ran before the "track" event of the rtcPeer's connection.
-            const videoElement = document.getElementById("received-video-" + streamSlotId)
+            const videoElement = document.getElementById("received-video-" + streamSlotId) as HTMLVideoElement
             videoElement.play();
 
-            rtcPeer.conn.addEventListener(
+            rtcPeer!.conn!.addEventListener(
                 "track",
                 async (event) =>
                 {
@@ -3094,6 +3085,7 @@ const vueApp = createApp(defineComponent({
                         const stream = event.streams[0]
                         videoElement.srcObject = stream;
                         
+                        // @ts-ignore
                         $( "#video-container-" + streamSlotId ).resizable({
                             aspectRatio: true,
                             resize: adjustNiconicoMessagesFontSize
@@ -3136,12 +3128,12 @@ const vueApp = createApp(defineComponent({
                 },
                 { once: true }
             );
-            this.socket.emit("user-want-to-take-stream", streamSlotId);
+            this.socket!.emit("user-want-to-take-stream", streamSlotId);
         },
         async dropStream(streamSlotId: number)
         {
             if(!window.rtcPeerSlots[streamSlotId].rtcPeer) return;
-            resetRtcPeerSlot(streamSlotId)
+            this.resetRtcPeerSlot(streamSlotId)
             
             if (!this.isStreamAutoResumeEnabled)
                 this.takenStreams[streamSlotId] = false
@@ -3210,7 +3202,7 @@ const vueApp = createApp(defineComponent({
         {
             this.ignoredUserIds.add(userId)
 
-            for (const messageElement of document.getElementsByClassName("message"))
+            for (const messageElement of (document.getElementsByClassName("message") as HTMLCollectionOf<HTMLElement>))
             {
                 if (messageElement.dataset.userId == userId)
                     messageElement.classList.add("ignored-message")
@@ -3223,7 +3215,7 @@ const vueApp = createApp(defineComponent({
         {
             this.ignoredUserIds.delete(userId)
 
-            for (const messageElement of document.getElementsByClassName("message"))
+            for (const messageElement of (document.getElementsByClassName("message") as HTMLCollectionOf<HTMLElement>))
             {
                 if (messageElement.dataset.userId == userId)
                     messageElement.classList.remove("ignored-message")
@@ -3240,7 +3232,7 @@ const vueApp = createApp(defineComponent({
         {
             this.confirm(this.$t("msg.are_you_sure_you_want_to_block"), () =>
             {
-                this.socket.emit("user-block", userId);
+                this.socket!.emit("user-block", userId);
             });
         },
         setRulaRoomListSortKey(key: RulaRoomListSortKey)
@@ -3271,9 +3263,9 @@ const vueApp = createApp(defineComponent({
             this.preparedRoomList.sort((a, b) =>
             {
                 let sort = 0;
-                if (key == "streamers")
+                if (key == "streamerCount")
                     sort = b.streams.length - a.streams.length
-                if (key == "userCount" || (key == "streamers" && sort === 0))
+                if (key == "userCount" || (key == "streamerCount" && sort === 0))
                     sort = b.userCount - a.userCount
                 if (sort === 0 && a.sortName && b.sortName)
                     sort = a.sortName.localeCompare(b.sortName, this.$i18next.language);
@@ -3309,11 +3301,11 @@ const vueApp = createApp(defineComponent({
         },
         changeStreamVolume(streamSlotId: number)
         {
-            const volumeSlider = document.getElementById("volume-" + streamSlotId);
+            const volumeSlider = document.getElementById("volume-" + streamSlotId) as HTMLInputElement
+            const volume = parseInt(volumeSlider.value)
+            this.inboundAudioProcessors[streamSlotId].setVolume(volume)
 
-            this.inboundAudioProcessors[streamSlotId].setVolume(volumeSlider.value)
-
-            this.slotVolume[streamSlotId] = volumeSlider.value;
+            this.slotVolume[streamSlotId] = volume;
             localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
         },
         changeSoundEffectVolume(newVolume: number)
@@ -3322,14 +3314,14 @@ const vueApp = createApp(defineComponent({
             this.soundEffectVolume = newVolume
 
             this.updateAudioElementsVolume()
-            document.getElementById("message-sound").play()
-            localStorage.setItem(this.areaId + "soundEffectVolume", this.soundEffectVolume);
+            ;(document.getElementById("message-sound") as HTMLAudioElement).play()
+            localStorage.setItem(this.areaId + "soundEffectVolume", this.soundEffectVolume.toString());
         },
         updateAudioElementsVolume()
         {
             for (const elementId of ["message-sound", "login-sound", "mention-sound"])
             {
-                const el = document.getElementById(elementId)
+                const el = document.getElementById(elementId) as HTMLAudioElement
                 el.volume = this.soundEffectVolume
             }
         },
@@ -3350,22 +3342,23 @@ const vueApp = createApp(defineComponent({
         },
         checkBackgroundColor()
         {
-            this.uiBackgroundColor = getComputedStyle(this.$refs["page-container"]).getPropertyValue("background-color").match(/\d+/g).slice(0, 3).map(c => parseInt(c));
+            this.uiBackgroundColor = getComputedStyle(this.$refs["page-container"] as HTMLElement).getPropertyValue("background-color").match(/\d+/g)!.slice(0, 3).map(c => parseInt(c));
             this.isUiBackgroundDark = Math.round(this.uiBackgroundColor.reduce((p, c) => p + c) / this.uiBackgroundColor.length) <= 127
         },
         async handleUiTheme()
         {
             this.isRedrawRequired = true
             
-            const chatLog = document.getElementById("chatLog");
-            if (chatLog.lastChild)
+            const chatLog = document.getElementById("chatLog") as HTMLElement;
+            if (chatLog.lastElementChild)
             {
                 const observer = new ResizeObserver((mutationsList, observer) =>
                 {
-                    chatLog.lastChild.scrollIntoView({ block: "end" })
-                    observer.unobserve(chatLog.lastChild);
+                    if (!chatLog.lastElementChild) return
+                    chatLog.lastElementChild.scrollIntoView({ block: "end" })
+                    observer.unobserve(chatLog.lastElementChild);
                 });
-                observer.observe(chatLog.lastChild);
+                observer.observe(chatLog.lastElementChild);
             }
 
             this.storeSet("uiTheme");
@@ -3374,8 +3367,9 @@ const vueApp = createApp(defineComponent({
             // with uiTheme already updated to its new value.
             await nextTick()
             this.checkBackgroundColor();
-            for (const knobElement of document.getElementsByClassName("input-knob"))
+            for (const knobElement of (document.getElementsByClassName("input-knob") as HTMLCollectionOf<HTMLInputElement>))
             {
+                // @ts-ignore what's refresh from? can't find it in docs
                 knobElement.refresh()
             }
             this.isRedrawRequired = true
@@ -3413,7 +3407,7 @@ const vueApp = createApp(defineComponent({
 
                 this.appState = "logout";
 
-                this.socket.close()
+                this.socket!.close()
 
                 for (let i = 0; i < this.takenStreams.length; i++)
                     if (this.takenStreams[i])
@@ -3465,13 +3459,13 @@ const vueApp = createApp(defineComponent({
             }
             
             this.usernameMentionRegexObject = null
-            if (!(this.myUserID in this.users) || !this.isNameMentionSoundEnabled) return
+            if (!(this.myUserID! in this.users) || !this.isNameMentionSoundEnabled) return
             this.usernameMentionRegexObject = wordsToRegexObject(
-                this.users[this.myUserID].name.split("◆"))
+                this.users[this.myUserID!].name.split("◆"))
         },
-        markMentions(msg: string)
+        markMentions(message: string)
         {
-            function regexReplace(stringArray: string[], regex?: RegExp, replacement: string | ((match: string) => string) = ''): (string | string[])[]
+            function regexReplace(stringArray: (string | string[])[], regex: RegExp | null, replacement: string | ((match: string) => string) = ''): (string | string[])[]
             {
                 // function could be used later for other formatting things.
                 // skips arrays within the array, and puts replaced parts of the
@@ -3505,7 +3499,7 @@ const vueApp = createApp(defineComponent({
             {
                 return htmlToControlChars("<span class='message-mention'>" + word + "</span>")
             }
-            msg = [msg]
+            let msg: (string | string[])[] = [message]
             msg = regexReplace(msg, this.customMentionRegexObject, replacementFunction)
             msg = regexReplace(msg, this.usernameMentionRegexObject, replacementFunction)
             return msg.flat().join("")
@@ -3569,18 +3563,21 @@ const vueApp = createApp(defineComponent({
             debouncedSpeakTest(this.ttsVoiceURI, this.voiceVolume)
         },
         toggleVideoSlotPinStatus(slotId: number) {
-            const videoContainer = document.getElementById('video-container-' + slotId)
+            const videoContainer = document.getElementById('video-container-' + slotId) as HTMLVideoElement
             videoContainer.classList.toggle("pinned-video")
             videoContainer.classList.toggle("unpinned-video")
 
             if (videoContainer.classList.contains("unpinned-video"))
             {
+                // @ts-ignore
                 $(videoContainer).draggable()
             }
             else
             {
+                // @ts-ignore
                 $(videoContainer).draggable("destroy")
                 // Reset 'top' and 'left' styles to snap the container back to its original position
+                // @ts-ignore read-only property style
                 videoContainer.style = ""
             }
         },
@@ -3662,8 +3659,8 @@ const vueApp = createApp(defineComponent({
             if (ev.code == "KeyA" && ev.ctrlKey)
             {
                 ev.preventDefault()
-                const chatLog = document.getElementById("chatLog")
-                document.getSelection().setBaseAndExtent(chatLog, 0, chatLog.nextSibling, 0);
+                const chatLog = document.getElementById("chatLog")!
+                document.getSelection()!.setBaseAndExtent(chatLog, 0, chatLog.nextSibling!, 0);
             }
         },
         toggleDesktopNotifications() {
@@ -3676,22 +3673,24 @@ const vueApp = createApp(defineComponent({
         },
         onPanChanged(streamSlotID: number, event: KeyboardEvent)
         {
-            const value = event.target.value
+            const value = parseInt((event.target as HTMLInputElement).value)
             this.inboundAudioProcessors[streamSlotID].setPan(value)
         },
         resetPan(streamSlotID: number)
         {
-            const panKnobElement = document.getElementById("pan-knob-" + streamSlotID);
-            panKnobElement.value = 0;
+            const panKnobElement = document.getElementById("pan-knob-" + streamSlotID) as HTMLInputElement
+            panKnobElement.value = "0";
             this.inboundAudioProcessors[streamSlotID].setPan(0);
         },
         mute()
         {
-            this.outboundAudioProcessor.mute()
+            if (this.outboundAudioProcessor)
+                this.outboundAudioProcessor.mute()
         },
         unmute()
         {
-            this.outboundAudioProcessor.unmute()
+            if (this.outboundAudioProcessor)
+                this.outboundAudioProcessor.unmute()
         },
         isStreaming(): boolean
         {
@@ -3703,14 +3702,14 @@ const vueApp = createApp(defineComponent({
         {
             this.allowedListenerIDs.add(userID)
             this.$forceUpdate()
-            this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
+            this.socket!.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
             this.isRedrawRequired = true;
         },
         revokeStreamToUser(userID: string)
         {
             this.allowedListenerIDs.delete(userID)
             this.$forceUpdate()
-            this.socket.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
+            this.socket!.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
             this.isRedrawRequired = true;
         },
         playVideo(event: MouseEvent)
@@ -3718,13 +3717,13 @@ const vueApp = createApp(defineComponent({
             // When moving the video element to a new tab, chromium based browsers will
             // automatically pause it and wait for a user interaction. With this function
             // it's enough to click on the video to make it play again.
-            const video = event.target;
+            const video = event.target as HTMLVideoElement;
             video.play();
         },
         async onVideoDoubleClick(event: MouseEvent, slotId: number)
         {
-            const video = event.target;
-            const videoContainer = video.parentElement
+            const video = event.target as HTMLVideoElement;
+            const videoContainer = video.parentElement!
             const stream = this.streams[slotId];
 
             // If this video was already moved to another tab, doubleclicking on it
