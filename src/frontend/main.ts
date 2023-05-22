@@ -1612,12 +1612,10 @@ const vueApp = createApp(defineComponent({
             }
         },
 
-        updateCanvasObjects: (() =>
+        updateCanvasObjects()
         {
-            let self: any;
-
-            function scanCanvasObjects (canvasObjects, objectsByPosition,
-                                        fromX, toX, fromY, toY)
+            const scanCanvasObjects =
+                (canvasObjects, objectsByPosition, fromX, toX, fromY, toY) =>
             {
                 const width = (toX-fromX)+1;
                 const height = (toY-fromY)+1;
@@ -1663,7 +1661,7 @@ const vueApp = createApp(defineComponent({
                 }
             }
 
-            function addObject (o, objectsByPosition)
+            const addObject = (o, objectsByPosition) =>
             {
                 const key = o.x + "," + o.y;
                 if (key in objectsByPosition)
@@ -1680,12 +1678,12 @@ const vueApp = createApp(defineComponent({
                 }
             }
 
-            function compareUserObjects(a,b)
+            const compareUserObjects = (a,b) =>
             {
                 // A highlighted user will always be on top.
-                if (a.id == self.highlightedUserId)
+                if (a.id == this.highlightedUserId)
                     return 1
-                if (b.id == self.highlightedUserId)
+                if (b.id == this.highlightedUserId)
                     return -1
                 // The user that moved last will be underneath
                 if (a.lastMovement < b.lastMovement)
@@ -1695,18 +1693,18 @@ const vueApp = createApp(defineComponent({
                 return a.id.localeCompare(b.id);
             }
 
-            function getObjectsByDiagonalScanSort()
+            const getObjectsByDiagonalScanSort = () =>
             {
                 const objectsByPosition = {};
 
-                self.currentRoom.objects.forEach(o => addObject({
+                this.currentRoom.objects.forEach(o => addObject({
                     o,
                     type: "room-object",
                     x: o.x,
                     y: o.y
                 }, objectsByPosition));
 
-                Object.values(self.users)
+                Object.values(this.users)
                     .sort(compareUserObjects)
                     .forEach(o => addObject({
                         o,
@@ -1717,21 +1715,21 @@ const vueApp = createApp(defineComponent({
 
                 const canvasObjects = [];
                 scanCanvasObjects(canvasObjects, objectsByPosition,
-                    0, self.currentRoom.size.x, -1, self.currentRoom.size.y-1);
+                    0, this.currentRoom.size.x, -1, this.currentRoom.size.y-1);
                 // x to room size.x and y from -1 to allow for foreground objects
 
                 return canvasObjects;
             }
 
-            function getObjectsByPrioritySort()
+            const getObjectsByPrioritySort = () =>
             {
                 return [].concat(
-                    self.currentRoom.objects
+                    this.currentRoom.objects
                         .map(o => ({
                             o,
                             type: "room-object",
                         })),
-                    Object.values(self.users).map(o => ({
+                    Object.values(this.users).map(o => ({
                         o,
                         type: "user",
                     })),
@@ -1739,8 +1737,8 @@ const vueApp = createApp(defineComponent({
                     .sort((a, b) =>
                     {
                         const calculatePriority = (o) => o.type == "room-object"
-                            ? o.o.x + 1 + (self.currentRoom.size.y - o.o.y)
-                            : o.o.logicalPositionX + 1 + (self.currentRoom.size.y - o.o.logicalPositionY)
+                            ? o.o.x + 1 + (this.currentRoom.size.y - o.o.y)
+                            : o.o.logicalPositionX + 1 + (this.currentRoom.size.y - o.o.logicalPositionY)
 
                         const aPriority = calculatePriority(a)
                         const bPriority = calculatePriority(b)
@@ -1754,22 +1752,16 @@ const vueApp = createApp(defineComponent({
                         return 0
                     });
             }
-
-            return function ()
+            
+            if (this.currentRoom.objectRenderSortMethod == "diagonal_scan")
             {
-                self = this;
-
-                if (this.currentRoom.objectRenderSortMethod == "diagonal_scan")
-                {
-                    this.canvasObjects = getObjectsByDiagonalScanSort();
-                }
-                else
-                {
-                    this.canvasObjects = getObjectsByPrioritySort();
-                }
-            };
-        })(),
-
+                this.canvasObjects = getObjectsByDiagonalScanSort();
+            }
+            else
+            {
+                this.canvasObjects = getObjectsByPrioritySort();
+            }
+        },
         paintBackground()
         {
             const context = this.canvasContext;
