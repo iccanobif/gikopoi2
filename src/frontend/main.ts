@@ -1466,7 +1466,7 @@ const vueApp = createApp(defineComponent({
                     }
                     messageLines = null;
                 }
-                else if (!textWidth || !preparedLines) // TS quick fix
+                else if (textWidth === null || preparedLines === null) // TS quick fix
                 {
                     return
                 }
@@ -2933,7 +2933,7 @@ const vueApp = createApp(defineComponent({
                     if (audioStream) // audioStream may end up being null here?
                     {
                         this.outboundAudioProcessor = new AudioProcessor(audioStream, 1, false, (level) => {
-                            if (!this.streamSlotIdInWhichIWantToStream) return
+                            if (this.streamSlotIdInWhichIWantToStream === null) return // TS quick fix
                             const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + this.streamSlotIdInWhichIWantToStream) as HTMLElement
                             const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + this.streamSlotIdInWhichIWantToStream) as HTMLElement
 
@@ -2996,11 +2996,11 @@ const vueApp = createApp(defineComponent({
                 }
 
                 this.socket!.emit("user-want-to-stream", {
-                    streamSlotIdoh: this.streamSlotIdInWhichIWantToStream,
-                    withVideooh: withVideo,
-                    withSoundoh: withSound,
-                    isVisibleOnlyToSpecificUsersoh: this.streamTarget == "specific_users",
-                    streamIsVtuberModeoh: withVideo && this.streamIsVtuberMode,
+                    streamSlotId: this.streamSlotIdInWhichIWantToStream,
+                    withVideo: withVideo,
+                    withSound: withSound,
+                    isVisibleOnlyToSpecificUsers: this.streamTarget == "specific_users",
+                    streamIsVtuberMode: withVideo && this.streamIsVtuberMode,
                     isNicoNicoMode: withVideo && this.isNicoNicoMode,
                     info: this.mediaStream.getAudioTracks().map(t => ({
                             constraints: t.getConstraints && t.getConstraints(),
@@ -3075,7 +3075,7 @@ const vueApp = createApp(defineComponent({
             }
 
             const streamSlotId = this.streamSlotIdInWhichIWantToStream;
-            if (!streamSlotId) return
+            if (streamSlotId === null) return // TS quick fix
             this.reattachVideoFromOtherTabIfDetached(streamSlotId);
 
             (document.getElementById("local-video-" + streamSlotId) as HTMLVideoElement).srcObject = this.mediaStream = null;
