@@ -34,8 +34,6 @@ function speakAnimalese(text: string, pitch: number | null, volume: number) {
     audio.src = synth.Animalese(text, false, pitch).dataURI;
     audio.volume = volume / 100
 
-    console.log(pitch)
-
     audio.play();
 }
 
