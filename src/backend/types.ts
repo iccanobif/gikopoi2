@@ -1,5 +1,5 @@
 export * from '../common/common_types'
-import type { Direction, Room, StreamSlotDto, JankenStateDto, ChessboardStateDto } from '../common/common_types'
+import type { Room, JankenStateDto } from '../common/common_types'
 
 import { Player } from "./users";
 import { ChessInstance } from "chess.js"
