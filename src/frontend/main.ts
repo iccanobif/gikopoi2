@@ -536,7 +536,7 @@ const vueApp = createApp(defineComponent({
                 await loadCharacterImagesPromise;
                 this.paintLoop();
 
-                this.soundEffectVolume = parseInt(localStorage.getItem(this.areaId + "soundEffectVolume") || '0')
+                this.soundEffectVolume = parseFloat(localStorage.getItem(this.areaId + "soundEffectVolume") || '0')
 
                 this.updateAudioElementsVolume()
 
@@ -3351,10 +3351,11 @@ const vueApp = createApp(defineComponent({
         changeStreamVolume(streamSlotId: number)
         {
             const volumeSlider = document.getElementById("volume-" + streamSlotId) as HTMLInputElement
-            const volume = parseInt(volumeSlider.value)
-            this.inboundAudioProcessors[streamSlotId].setVolume(volume)
+            const volume = parseFloat(volumeSlider.value)
 
-            this.slotVolume[streamSlotId] = volume;
+            this.inboundAudioProcessors[streamSlotId].setVolume(volume)
+            console.log(this.inboundAudioProcessors[streamSlotId], volume)
+
             localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
         },
         changeSoundEffectVolume(newVolume: number)
@@ -3721,7 +3722,7 @@ const vueApp = createApp(defineComponent({
         },
         onPanChanged(streamSlotID: number, event: KeyboardEvent)
         {
-            const value = parseInt((event.target as HTMLInputElement).value)
+            const value = parseFloat((event.target as HTMLInputElement).value)
             this.inboundAudioProcessors[streamSlotID].setPan(value)
         },
         resetPan(streamSlotID: number)
