@@ -17,7 +17,6 @@ export function loadImage(url: string): Promise<HTMLImageElement>
                 resolve(img)
             })
             img.addEventListener("error", reject)
-            // @ts-ignore
             img.src = url + "?v=" + window.EXPECTED_SERVER_VERSION
         }
         catch (err)
