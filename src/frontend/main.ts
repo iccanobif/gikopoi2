@@ -3107,7 +3107,7 @@ const vueApp = createApp(defineComponent({
             if (streamSlotId in this.streams && this.streams[streamSlotId].isReady)
                 this.takeStream(streamSlotId);
         },
-        takeStream(streamSlotId: number)
+        async takeStream(streamSlotId: number)
         {
             if (window.rtcPeerSlots[streamSlotId].rtcPeer) return // no need to attempt again to take this stream
 
@@ -3118,7 +3118,7 @@ const vueApp = createApp(defineComponent({
             // interaction event, otherwise iphones will refuse to play the media.
             // This is why videoElement.play() is ran before the "track" event of the rtcPeer's connection.
             const videoElement = document.getElementById("received-video-" + streamSlotId) as HTMLVideoElement
-            videoElement.play();
+            const playPromise = videoElement.play();
 
             rtcPeer!.conn!.addEventListener(
                 "track",
@@ -3151,12 +3151,18 @@ const vueApp = createApp(defineComponent({
                             // Disable sound from the video element so that we let sound be handled
                             // only by the AudioProcessor
                             videoElement.volume = 0
-                            // Turns out that on iphones, HTMLMediaElement.prototype.volume is read only and we have to use "muted".
-                            // Maybe the muted property works on all browsers, but to be on the safe side, I'll both set muted to true and volume to 0.
-                            // EDIT: Too bad that setting muted to true actually mutes the stream entirely, even the sound that's supposed to come
-                            // out of the AudioProcessor... Needs further investigation.
-                            // videoElement.muted = true
-                            this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId], true, (level) => {
+
+                            // But! On iphones (thank you, Apple!) HTMLMediaElement.prototype.volume is read only and apparently
+                            // there's no way to mute the video element, so the user will hear sound coming from both the video element
+                            // and the audio processor at the same time. As a workaround:
+                            // - I check if videoElement.volume is still equal to 1: in that case I can tell that we're on an iphone.
+                            // - Only if iphone, I set the AudioProcessor so that it doesn't play audio by itself, it only processes it
+                            // - Only if iphone, I take the AudioProcessor's output and use it to create a new MediaStream so that the
+                            //   video element can play that instead of the original MediaStream we get from WebRTC.
+                            // Unfortunately we can't use this workaround on all browsers because it breaks Chrome (thank you, Google!).
+                            const isIphone = !!videoElement.volume
+
+                            this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId], !isIphone, (level) => {
                                 const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + streamSlotId) as HTMLElement
                                 const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + streamSlotId) as HTMLElement
         
@@ -3168,6 +3174,15 @@ const vueApp = createApp(defineComponent({
                                 else
                                     setTimeout(() => {this.streams[streamSlotId].isJumping = false}, 100)
                             })
+
+                            if (isIphone)
+                            {
+                                // Before changing the srcObject, I make sure that play() stopped executing (Chrome complains if we change the srcObject
+                                // before play()'s promise has resolved, so I do it on Safari too just in case).
+                                await playPromise;
+                                const audioProcessorOutputTracks = this.inboundAudioProcessors[streamSlotId].destination.stream.getTracks()
+                                videoElement.srcObject = new MediaStream(stream.getVideoTracks().concat(audioProcessorOutputTracks));
+                            }
                         }
                     }
                     catch (exc)
@@ -3362,8 +3377,8 @@ const vueApp = createApp(defineComponent({
             debouncedLogSoundVolume(this.myUserID, newVolume)
             this.soundEffectVolume = newVolume
 
-            this.updateAudioElementsVolume()
-            ;(document.getElementById("message-sound") as HTMLAudioElement).play()
+            this.updateAudioElementsVolume();
+            (document.getElementById("message-sound") as HTMLAudioElement).play()
             localStorage.setItem(this.areaId + "soundEffectVolume", this.soundEffectVolume.toString());
         },
         updateAudioElementsVolume()

@@ -199,11 +199,9 @@ export class AudioProcessor
 {
     private stream: MediaStream
     private volume: number = 0
-    private isInbound: boolean
-    private vuMeterCallback: VuMeterCallback
+    private playAudioOnContextDestination: boolean
     
     public isBoostEnabled: boolean = false // set by v-model
-    private isMute: boolean = false
     
     private context: AudioContext
     private source: MediaStreamAudioSourceNode
@@ -215,12 +213,10 @@ export class AudioProcessor
     
     private vuMeterTimer: number
     
-    constructor(stream: MediaStream, volume: number, isInbound: boolean, vuMeterCallback: VuMeterCallback)
+    constructor(stream: MediaStream, volume: number, playAudioOnContextDestination: boolean, vuMeterCallback: VuMeterCallback)
     {
         this.stream = stream
-        this.isInbound = isInbound
-        this.vuMeterCallback = vuMeterCallback
-
+        this.playAudioOnContextDestination = playAudioOnContextDestination
         this.context = new AudioContext();
         this.source = this.context.createMediaStreamSource(stream);
         this.destination = this.context.createMediaStreamDestination()
@@ -308,9 +304,9 @@ export class AudioProcessor
 
         this.gain.connect(this.pan)
 
-        if (this.isInbound)
+        if (this.playAudioOnContextDestination)
             this.pan.connect(this.context.destination)
-        
+
         this.pan.connect(this.destination)
         this.pan.connect(this.analyser)
     }
@@ -327,13 +323,11 @@ export class AudioProcessor
     mute()
     {
         this.gain.gain.value = 0
-        this.isMute = true
     }
 
     unmute()
     {
         this.gain.gain.value = this.volume
-        this.isMute = false
     }
 
     setPan(value: number)
