@@ -390,7 +390,6 @@ const vueApp = createApp(defineComponent({
             // the key is the slot ID
             inboundAudioProcessors: {} as {[slotId: number]: AudioProcessor},
             outboundAudioProcessor: null as AudioProcessor | null,
-            isIphone: false,
         }
     },
     provide()
@@ -3161,9 +3160,9 @@ const vueApp = createApp(defineComponent({
                             // - Only if iphone, I take the AudioProcessor's output and use it to create a new MediaStream so that the
                             //   video element can play that instead of the original MediaStream we get from WebRTC.
                             // Unfortunately we can't use this workaround on all browsers because it breaks Chrome (thank you, Google!).
-                            this.isIphone = !!videoElement.volume
+                            const isIphone = !!videoElement.volume
 
-                            this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId], !this.isIphone, (level) => {
+                            this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId], !isIphone, (level) => {
                                 const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + streamSlotId) as HTMLElement
                                 const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + streamSlotId) as HTMLElement
         
@@ -3176,7 +3175,7 @@ const vueApp = createApp(defineComponent({
                                     setTimeout(() => {this.streams[streamSlotId].isJumping = false}, 100)
                             })
 
-                            if (this.isIphone)
+                            if (isIphone)
                             {
                                 // Before changing the srcObject, I make sure that play() stopped executing (Chrome complains if we change the srcObject
                                 // before play()'s promise has resolved, so I do it on Safari too just in case).
@@ -3370,12 +3369,6 @@ const vueApp = createApp(defineComponent({
             const volume = parseFloat(volumeSlider.value)
 
             this.inboundAudioProcessors[streamSlotId].setVolume(volume)
-
-            if (this.isIphone)
-            {
-                const videoElement = document.getElementById("received-video-" + streamSlotId) as HTMLVideoElement
-                videoElement.volume = volume
-            }
 
             localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
         },
