@@ -3354,7 +3354,6 @@ const vueApp = createApp(defineComponent({
             const volume = parseFloat(volumeSlider.value)
 
             this.inboundAudioProcessors[streamSlotId].setVolume(volume)
-            console.log(this.inboundAudioProcessors[streamSlotId], volume)
 
             localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
         },
