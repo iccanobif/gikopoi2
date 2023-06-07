@@ -3163,7 +3163,7 @@ const vueApp = createApp(defineComponent({
                             // Unfortunately we can't use this workaround on all browsers because it breaks Chrome (thank you, Google!).
                             this.isIphone = !!videoElement.volume
 
-                            this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId], !isIphone, (level) => {
+                            this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId], !this.isIphone, (level) => {
                                 const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + streamSlotId) as HTMLElement
                                 const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + streamSlotId) as HTMLElement
         
