@@ -70,7 +70,8 @@ import {
     htmlToControlChars,
     controlCharsToHtml,
     removeControlChars,
-    escapeHTML
+    escapeHTML,
+    sleep
 } from "./utils";
 import { speak } from "./tts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
@@ -3160,6 +3161,8 @@ const vueApp = createApp(defineComponent({
                             // - Only if iphone, I take the AudioProcessor's output and use it to create a new MediaStream so that the
                             //   video element can play that instead of the original MediaStream we get from WebRTC.
                             // Unfortunately we can't use this workaround on all browsers because it breaks Chrome (thank you, Google!).
+                            // By the way, iphones make videoElement.volume go back to 1 only in the next tick, so we also have sleep...
+                            await sleep(0)
                             const isIphone = !!videoElement.volume
 
                             this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId], !isIphone, (level) => {
