@@ -3183,7 +3183,8 @@ const vueApp = createApp(defineComponent({
                             {
                                 // Before changing the srcObject, I make sure that play() stopped executing (Chrome complains if we change the srcObject
                                 // before play()'s promise has resolved, so I do it on Safari too just in case).
-                                await playPromise;
+                                // await playPromise;
+                                await sleep(0)
                                 const audioProcessorOutputTracks = this.inboundAudioProcessors[streamSlotId].destination.stream.getTracks()
                                 videoElement.srcObject = new MediaStream(stream.getVideoTracks().concat(audioProcessorOutputTracks));
                             }
