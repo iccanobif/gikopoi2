@@ -3164,6 +3164,7 @@ const vueApp = createApp(defineComponent({
                             // By the way, iphones make videoElement.volume go back to 1 only in the next tick, so we also have sleep...
                             await sleep(0)
                             const isIphone = !!videoElement.volume
+                            alert(isIphone)
 
                             this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId], !isIphone, (level) => {
                                 const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + streamSlotId) as HTMLElement
