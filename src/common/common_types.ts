@@ -8,6 +8,12 @@ export interface Coordinates
     y: number;
 }
 
+export interface Size
+{
+    w: number
+    h: number
+}
+
 export interface Door
 {
     x: number;
@@ -16,7 +22,21 @@ export interface Door
     target: {
         roomId: string
         doorId: string
-    } | string | null;
+    } | null;
+}
+
+export interface StreamSlotDto
+{
+    isActive: boolean,
+    isReady: boolean,
+    withSound: boolean | null,
+    withVideo: boolean | null,
+    userId: string | null,
+    isAllowed: boolean | null,
+    isVisibleOnlyToSpecificUsers: boolean | null,
+    streamIsVtuberMode: boolean | null,
+    isNicoNicoMode: boolean | null,
+    isJumping: boolean
 }
 
 export interface SpecialObjects
@@ -98,6 +118,56 @@ export interface Room
     specialObjects?: SpecialObjects[];
 }
 
+export interface PlayerDto
+{
+    id: string,
+    name: string,
+    position: { x: number, y: number },
+    direction: Direction,
+    roomId: string,
+    characterId: string,
+    isInactive: boolean,
+    bubblePosition: Direction,
+    voicePitch: number,
+    lastRoomMessage: string,
+    isAlternateCharacter: boolean,
+    lastMovement: number,
+}
+
+export interface RoomStateDto
+{
+    currentRoom: Room,
+    connectedUsers: PlayerDto[],
+    streams: StreamSlotDto[],
+    chessboardState: ChessboardStateDto,
+    jankenState: JankenStateDto,
+    coinCounter: number,
+    hideStreams: boolean,
+}
+
+export interface MoveDto
+{
+    userId: string
+    x: number
+    y: number
+    direction: Direction
+    lastMovement: number
+    isInstant: boolean
+    shouldSpinwalk: boolean
+}
+
+export interface ListedRoom
+{
+    id: string
+    group: string
+    userCount: number
+    streams: {
+        userName: string
+        isVisibleOnlyToSpecificUsers: boolean
+    }[]
+    sortName?: string
+}
+
 export interface CharacterSvgDto
 {
     isBase64: boolean
@@ -134,4 +204,21 @@ export interface ChessboardStateDto
     blackUserID: string | null,
     whiteUserID: string | null,
     turn: "b" | "w" | null,
+}
+
+export interface SiteArea {
+    id: string,
+    name: string,
+    language?: string,
+    restrictLanguage?: boolean,
+    unlisted?: boolean 
+}
+
+export interface Stats {
+    userCount: number
+    streamCount: number
+}
+
+export interface SiteAreasInfo {
+    [areaId: string]: Stats
 }

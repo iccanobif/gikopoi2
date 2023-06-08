@@ -1,4 +1,4 @@
-import type { Room, ImageLayer } from './types'
+import type { ClientRoom, ImageLayer, DeviceInfo } from './types'
 
 export const BLOCK_WIDTH = 80
 export const BLOCK_HEIGHT = 40
@@ -17,7 +17,6 @@ export function loadImage(url: string): Promise<HTMLImageElement>
                 resolve(img)
             })
             img.addEventListener("error", reject)
-            // @ts-ignore
             img.src = url + "?v=" + window.EXPECTED_SERVER_VERSION
         }
         catch (err)
@@ -113,7 +112,7 @@ export async function stringToImageList(imageString: string, isBase64: boolean)
 }
 
 // returns "left" and "bottom" positions
-export function calculateRealCoordinates(room: Room, x: number, y: number): {x: number, y: number}
+export function calculateRealCoordinates(room: ClientRoom, x: number, y: number): {x: number, y: number}
 {
     const blockWidth = room.blockWidth ? room.blockWidth : BLOCK_WIDTH;
     const blockHeight = room.blockHeight ? room.blockHeight : BLOCK_HEIGHT;
@@ -208,7 +207,7 @@ export class AudioProcessor
     
     private context: AudioContext
     private source: MediaStreamAudioSourceNode
-    private destination: MediaStreamAudioDestinationNode
+    public destination: MediaStreamAudioDestinationNode
     private compressor: DynamicsCompressorNode
     private gain: GainNode
     private pan: StereoPannerNode | GainNode
@@ -375,12 +374,6 @@ export function requestNotificationPermission(): Promise<string>
         if (promise)
             promise.then(resolve)
     })
-}
-
-export type DeviceInfo = {
-    id: string
-    name: string
-    type: MediaDeviceKind
 }
 
 export async function getDeviceList(includeAudioDevices: boolean, includeVideoDevices: boolean): Promise<DeviceInfo[]>

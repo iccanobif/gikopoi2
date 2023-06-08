@@ -49,7 +49,7 @@
                             <input type="radio" :id="siteArea.id + '-selection'" :value="siteArea.id" v-model="areaId"
                                 v-on:click="setLanguage(siteArea)" :disabled="isLoggingIn">
                             {{ siteArea.name }} [{{ $t("ui.login_user_count") + siteAreasInfo[siteArea.id].userCount }}
-                            {{ $t("ui.login_streamer_count") + siteAreasInfo[siteArea.id].streamerCount }}]</label>
+                            {{ $t("ui.login_streamer_count") + siteAreasInfo[siteArea.id].streamCount }}]</label>
                     </div>
                     <div>
                         <label>{{ $t("ui.label_username") }}</label>
@@ -97,7 +97,7 @@
                             v-on:click="canvasClick"
                             ></canvas>
                         <div id="infobox-container">
-                            <div id="infobox" v-show="isInfoboxVisible">
+                            <div id="infobox" v-if="isInfoboxVisible && currentRoom !== null">
                                 <table>
                                     <tr>
                                         <td>{{ $t("ui.infobox_label_area") }}</td>
@@ -292,7 +292,7 @@
                             <div class="audio-stream-controls">
                                 <label for="stream-volume">{{ $t("ui.volume") }}</label>
                                 <input type="range" :id="'volume-' + index" v-on:change="changeStreamVolume(index)"
-                                    name="stream-volume" min="0" max="1" step="0.01" :value="slotVolume[index]">
+                                    name="stream-volume" min="0" max="1" step="0.01" v-model="slotVolume[index]">
                                 <input
                                     :id="'pan-knob-' + index"
                                     type="range"
@@ -367,14 +367,14 @@
                             </button>
                         </div>
                     </div>
-                    <template v-if="currentRoom.games" v-for="(game, index) in currentRoom.games">
+                    <template v-if="currentRoom !== null && currentRoom.games" v-for="(game, index) in currentRoom.games">
                         <hr v-if="streams.length || index > 0" />
                         <chessboard-slot
-                            v-if="game == 'chess'"
+                            v-if="game == 'chess' && chessboardState"
                             :chessboard-state="chessboardState"
                             ></chessboard-slot>
                         <janken-slot
-                            v-if="game == 'janken'"
+                            v-if="game == 'janken' && jankenState"
                             :janken-state="jankenState"
                             ></janken-slot>
                     </template>
@@ -853,7 +853,7 @@
     <audio id="ka-ching-sound" src="ka-ching.mp3"></audio>
     
     <script src="/server_generated_bundle.js"></script>
-    <script type="module" src="/src/frontend/main.js"></script>
+    <script type="module" src="/src/frontend/main.ts"></script>
 </body>
 
 </html>

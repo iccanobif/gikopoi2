@@ -1,5 +1,5 @@
 export * from '../common/common_types'
-import type { Direction, Room, JankenStateDto, ChessboardStateDto } from '../common/common_types'
+import type { Room, JankenStateDto } from '../common/common_types'
 
 import { Player } from "./users";
 import { ChessInstance } from "chess.js"
@@ -49,17 +49,6 @@ export interface RoomState
     coinCounter: number
 }
 
-export interface RoomStateDto
-{
-    currentRoom: Room,
-    connectedUsers: PlayerDto[],
-    streams: StreamSlotDto[],
-    chessboardState: ChessboardStateDto,
-    jankenState: JankenStateDto,
-    coinCounter: number,
-    hideStreams: boolean,
-}
-
 export interface LoginResponseDto
 {
     appVersion: number,
@@ -67,35 +56,6 @@ export interface LoginResponseDto
     error?: "invalid_username" | "ip_restricted",
     userId?: string,
     privateUserId?: string,
-}
-
-export interface PlayerDto
-{
-    id: string,
-    name: string,
-    position: { x: number, y: number },
-    direction: Direction,
-    roomId: string,
-    characterId: string,
-    isInactive: boolean,
-    bubblePosition: Direction,
-    voicePitch: number,
-    lastRoomMessage: string,
-    isAlternateCharacter: boolean,
-    lastMovement: number,
-}
-
-export interface StreamSlotDto
-{
-    isActive: boolean,
-    isReady: boolean,
-    withSound: boolean | null,
-    withVideo: boolean | null,
-    userId: string | null,
-    isAllowed: boolean | null,
-    isVisibleOnlyToSpecificUsers: boolean | null,
-    streamIsVtuberMode: boolean | null,
-    isNicoNicoMode: boolean | null,
 }
 
 export interface ChessboardState {

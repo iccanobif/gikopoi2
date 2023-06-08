@@ -273,6 +273,13 @@
   resolved "https://registry.yarnpkg.com/@types/http-cache-semantics/-/http-cache-semantics-4.0.1.tgz#0ea7b61496902b95890dc4c3a116b60cb8dae812"
   integrity sha512-SZs7ekbP8CN0txVG2xVRH6EgKmEm31BOxA07vkFaETzZz1xh+cbt8BcI0slpymvwhx5dlFnQG2rTlPVQn+iRPQ==
 
+"@types/jquery@^3.5.16":
+  version "3.5.16"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.16.tgz#632131baf30951915b0317d48c98e9890bdf051d"
+  integrity sha512-bsI7y4ZgeMkmpG9OM710RRzDFp+w4P1RGiIt30C1mSBT+ExCleeh4HObwgArnDFELmRrOpXgSYN9VF1hj+f1lw==
+  dependencies:
+    "@types/sizzle" "*"
+
 "@types/keyv@^3.1.4":
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/@types/keyv/-/keyv-3.1.4.tgz#3ccdb1c6751b0c7e52300bcdacd5bcbf8faa75b6"
@@ -319,6 +326,11 @@
   dependencies:
     "@types/mime" "*"
     "@types/node" "*"
+
+"@types/sizzle@*":
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.3.tgz#ff5e2f1902969d305225a047c8a0fd5c915cebef"
+  integrity sha512-JYM8x9EGF163bEyhdJBpR2QX1R5naCJHC8ucJylJ3w9/CVBaskdQ8WqBf8MmQrd1kRvp/a4TS8HJ+bxzR7ZJYQ==
 
 "@types/tough-cookie@*":
   version "4.0.2"
@@ -1695,6 +1707,11 @@ safe-buffer@5.2.1:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
+sdp-jingle-json@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/sdp-jingle-json/-/sdp-jingle-json-3.1.0.tgz#7067d5d998ef0be754c3a01a551ef0052a0ffbfb"
+  integrity sha512-Uu+FelZD/edNoOc64NwQP8jjbBVMggAaErGU+2cSxPZgyReJTtqtp5287p2vu7bHubERxEbiW0H1pC2fnH5GEA==
+
 semver@^5.7.1:
   version "5.7.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.1.tgz#a954f931aeba508d307bbf069eff0c01c96116f7"
@@ -2049,6 +2066,13 @@ webidl-conversions@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-3.0.1.tgz#24534275e2a7bc6be7bc86611cc16ae0a5654871"
   integrity sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==
+
+webrtc-codec-support@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/webrtc-codec-support/-/webrtc-codec-support-1.0.1.tgz#fe6fb7a7d4bcd196e1971d836bf11adebea4516d"
+  integrity sha512-GC0aYh7hmGym9YVS3YtPJrHhAT44HenGvYb0qFNy+rYsP7jCN30koUwri7HEqS1gF1s5N52NMFrrJc8YoK2ElQ==
+  dependencies:
+    sdp-jingle-json "^3.1.0"
 
 whatwg-url@^5.0.0:
   version "5.0.0"

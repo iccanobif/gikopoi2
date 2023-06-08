@@ -61,12 +61,12 @@ export class Character
         top: 0,
         scale: 1.9
     }
-    private scale: number
+    public scale: number // private
     
-    private rawImages: RawImages = {}
-    private renderImages: RenderImage = {}
+    public rawImages: RawImages = {} // private
+    public renderImages: RenderImage = {} // private
     
-    private dto: CharacterSvgDto | null = null
+    public dto: CharacterSvgDto | null = null // private
     public isLoaded: boolean = false
     
     constructor({name,
@@ -252,5 +252,5 @@ export const loadCharacters = async (crispMode: boolean) => {
     const response = await fetch("/characters/" + (crispMode ? "crisp" : "regular") + "?v=" + (window as any).EXPECTED_SERVER_VERSION)
     const dto = await response.json()
     
-    return Promise.all(Object.keys(characters).map(characterId => characters[characterId].setDto(dto[characterId])))
+    Object.keys(characters).forEach(characterId => characters[characterId].setDto(dto[characterId]))
 }

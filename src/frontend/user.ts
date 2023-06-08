@@ -1,4 +1,4 @@
-import type { Direction, Room } from './types'
+import type { Direction, ClientRoom } from './types'
 import type { Character, CharacterVersion, CharacterState } from "./character";
 import type { RenderCache } from "./rendercache"
 
@@ -20,14 +20,14 @@ export default class User
     public currentPhysicalPositionX: number = 0
     public currentPhysicalPositionY: number = 0
     public isWalking: boolean = false
-    private isSpinning: boolean = false
-    private isMoved: boolean = true
+    public isSpinning: boolean = false // private
+    public isMoved: boolean = true // private
     public direction: Direction = "up"
-    private stepLength: number = (1000/60) * 8
-    private framesUntilNextStep: number
-    private frameCount: number = 0
+    public stepLength: number = (1000/60) * 8 // private
+    public framesUntilNextStep: number // private
+    public frameCount: number = 0 // private
     public isInactive: boolean = false
-    private isCharacterLoaded: boolean = false
+    public isCharacterLoaded: boolean = false // private
 
     public nameImage: RenderCache | null = null
 
@@ -40,9 +40,9 @@ export default class User
 
     public isAlternateCharacter: boolean = false
 
-    private isBlinking: boolean = false
-    private blinkingPattern: number[]
-    private blinkingStartShift: number
+    public isBlinking: boolean = false // private
+    public blinkingPattern: number[] // private
+    public blinkingStartShift: number // private
     
     constructor(id: string, name: string, character: Character)
     {
@@ -62,7 +62,7 @@ export default class User
         this.blinkingStartShift = (parseInt(uniquePattern.slice(0, 2), 16) / 256) * this.blinkingPattern[this.blinkingPattern.length-1]
     }
 
-    moveImmediatelyToPosition(room: Room, logicalPositionX: number, logicalPositionY: number, direction: Direction)
+    moveImmediatelyToPosition(room: ClientRoom, logicalPositionX: number, logicalPositionY: number, direction: Direction)
     {
         this.logicalPositionX = logicalPositionX;
         this.logicalPositionY = logicalPositionY;
@@ -88,7 +88,7 @@ export default class User
         this.isMoved = true;
     }
     
-    calculatePhysicalPosition(room: Room, delta: number)
+    calculatePhysicalPosition(room: ClientRoom, delta: number)
     {
         if (!this.isWalking)
             return
@@ -139,7 +139,7 @@ export default class User
             this.frameCount = 0
     }
 
-    getCurrentImage(room: Room): RenderCache[]
+    getCurrentImage(room: ClientRoom): RenderCache[]
     {
         if (!this.character.isLoaded)
             this.character.load().then((requestRedraw) => { if (requestRedraw) this.isCharacterLoaded = true })

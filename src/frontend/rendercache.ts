@@ -1,8 +1,8 @@
-export type DrawFunction = (renderedImage: HTMLCanvasElement, scale: number) => [number, number] | false
+export type DrawFunction = (renderedImage: HTMLCanvasElement, scale: number) => [number, number] | void
 
 export class RenderCache
 {
-    private drawFunction: DrawFunction
+    readonly drawFunction: DrawFunction
     public renderedImage: HTMLCanvasElement | null = null
     public renderedScale: number | null = null
     public width: number = 0
@@ -18,7 +18,7 @@ export class RenderCache
         const renderCache = new RenderCache((renderedImage, scale) =>
         {
             if (!image.complete ||
-                image.naturalHeight === 0) return false;
+                image.naturalHeight === 0) return
             
             const width = image.naturalWidth * imageScale
             const height = image.naturalHeight * imageScale;
@@ -30,7 +30,7 @@ export class RenderCache
             renderedImage.height = Math.ceil(scaledHeight);
             
             const context = renderedImage.getContext('2d');
-            if (!context) return false
+            if (!context) return
             
             let x = 0;
             if (flipped)

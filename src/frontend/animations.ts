@@ -1,3 +1,4 @@
+import { Client } from 'socket.io/dist/client';
 import type { Users, CanvasObject, ClientRoomObject, AnimationFrame } from './types'
 
 // Make jizou turn around when a user is standing in front of it
@@ -73,8 +74,9 @@ export function animateObjects(canvasObjects: CanvasObject[], users: Users): boo
 {
     const now = Date.now();
     return canvasObjects
-        .filter(o => o.o.animation)
-        .map(o => o.o)
+        .filter(o => o.type == "room-object")
+        .map(o => o.o as ClientRoomObject)
+        .filter(o => o.animation)
         .map(object =>
     {
         if (object.animation && object.animation.type == "cycle")

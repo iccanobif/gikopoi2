@@ -1,5 +1,5 @@
 {
-  "name": "Gikopoipoi",
+  "name": "gikopoipoi",
   "version": "0.0.1",
   "description": "Gikopoipoi",
   "license": "Beerware",
@@ -41,13 +41,15 @@
     "uuid": "^8.3.2",
     "vite-express": "*",
     "vite-plugin-json5": "^1.0.5",
-    "vue": "^3.2.45"
+    "vue": "^3.2.45",
+    "webrtc-codec-support": "^1.0.1"
   },
   "devDependencies": {
     "@types/chess.js": "^0.11.0",
     "@types/compression": "^1.7.0",
     "@types/express": "^4.17.15",
     "@types/got": "^9.6.11",
+    "@types/jquery": "^3.5.16",
     "@types/lodash": "^4.14.168",
     "@types/node": "^18.11.18",
     "@types/uuid": "^8.3.0",
