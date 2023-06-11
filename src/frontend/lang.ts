@@ -1,5 +1,3 @@
-// @ts-nocheck
-// nocheck until allowArbitraryExtensions compiler option is available
 import ja from "../langs/ja.json5";
 import en from "../langs/en.json5";
 import de from "../langs/de.json5";
