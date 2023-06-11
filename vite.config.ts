@@ -18,7 +18,7 @@ export default defineConfig({
         json5Plugin(),
     ],
     server: {
-        // disable hot reloading
+        // Hot reloading
         hmr: true
     }
 });
