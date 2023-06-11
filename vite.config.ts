@@ -19,6 +19,6 @@ export default defineConfig({
     ],
     server: {
         // disable hot reloading
-        hmr: false
+        hmr: true
     }
 });
