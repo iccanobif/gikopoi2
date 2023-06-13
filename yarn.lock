@@ -2017,9 +2017,9 @@ vite-express@*:
     picocolors "^1.0.0"
 
 vite-plugin-json5@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/vite-plugin-json5/-/vite-plugin-json5-1.0.5.tgz#3eff0ab9c70434db157ed983918004da19a5ca08"
-  integrity sha512-DgIbwa28o8IUnRXe3sDXizKQ6mLA9TIzD+EFiUYQeunvmBv1ciApgrkDBatxFO7pbeQ1DBjdm9qnRomTd+RqnA==
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/vite-plugin-json5/-/vite-plugin-json5-1.0.7.tgz#74b858eb1090d2c0936eb4c7863e692eedbf3524"
+  integrity sha512-k7tL11MhlRUSZsM9GrvvC1RVLiOMNXOWWDroNjTY+ACfor7m/w9fQ1Y7TLj6KW76HFJ2OYsWfNurSj8GxI9Ptg==
   dependencies:
     json5 "^2.2.3"
 
