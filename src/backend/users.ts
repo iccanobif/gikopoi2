@@ -32,6 +32,7 @@ export class Player
     public isInactive = false;
     public bubblePosition: Direction = "up";
     public lastRoomMessage: string = "";
+    public lastRoomMessageDate: number | null = null;
     // I would have liked ips to be a Set<string>, but we need Player objects to be serializable
     public ips: string[];
     public voicePitch: number;

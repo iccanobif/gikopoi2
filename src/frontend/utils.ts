@@ -349,8 +349,9 @@ export class AudioProcessor
     }
 }
 
-export function getFormattedCurrentDate(): string {
-    const date = new Date()
+export function getFormattedDate(dateNum: number | null): string {
+    const date = dateNum ? new Date(dateNum) : new Date()
+
     return [date.getFullYear(),
             "-",
             (date.getMonth() + 1).toString().padStart(2, '0'),
@@ -363,6 +364,10 @@ export function getFormattedCurrentDate(): string {
             ":",
             date.getSeconds().toString().padStart(2, '0'),
            ].join('');
+  };
+
+export function getFormattedCurrentDate(): string {
+    return getFormattedDate(null);
   };
 
 // On normal god-fearing browsers requestPermission() returns a Promise, while

@@ -33,6 +33,7 @@ export default class User
 
     public message: string | null = null
     public lastMessage: string | null = null
+    public lastMessageDate: number | null = null
     public lastMovement: number | null = null
     public bubblePosition: Direction = "up"
     public bubbleImage: RenderCache | null = null

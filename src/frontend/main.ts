@@ -63,7 +63,7 @@ import {
     debounceWithImmediateExecution,
     urlRegex,
     AudioProcessor,
-    getFormattedCurrentDate,
+    getFormattedDate,
     requestNotificationPermission,
     getDeviceList,
     getClickCoordinatesWithinCanvas,
@@ -777,6 +777,12 @@ const vueApp = createApp(defineComponent({
         {
             const roomDto = dto.currentRoom
             const usersDto = dto.connectedUsers
+              .sort((a, b) => {
+                const aDate = a.lastRoomMessageDate ?? Number.MAX_VALUE;
+                const bDate = b.lastRoomMessageDate ?? Number.MAX_VALUE;
+
+                return aDate - bDate;
+              })
             const streamsDto = dto.streams
 
             // if (!this.hideStreams && (dto.hideStreams || localStorage.getItem("hideStreams")))
@@ -933,12 +939,13 @@ const vueApp = createApp(defineComponent({
                 await this.updateRoomState(dto);
             });
 
-            this.socket.on("server-msg", (userId: string, msg: string) =>
+            this.socket.on("server-msg", (userId: string, msg: string, msgDate: number) =>
             {
                 const user = this.users[userId]
                 if (user)
                 {
                     user.isInactive = false;
+                    user.lastMessageDate = msgDate;
                     this.displayUserMessage(user, msg);
                 }
                 else
@@ -953,7 +960,7 @@ const vueApp = createApp(defineComponent({
                 if (messageCode == "flood_warning")
                     message += extra;
                 
-                this.writeMessageToLog("SYSTEM", message, null)
+                this.writeMessageToLog("SYSTEM", message, null, null)
             });
 
             this.socket.on("server-stats", (serverStats: Stats) =>
@@ -1119,13 +1126,13 @@ const vueApp = createApp(defineComponent({
             this.socket.on("server-chess-win", (winnerUserId: string) => {
                 const winnerUserName = this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A"
 
-                this.writeMessageToLog("SYSTEM", this.$t("msg.chess_win", {userName: winnerUserName}), null)
+                this.writeMessageToLog("SYSTEM", this.$t("msg.chess_win", {userName: winnerUserName}), null, null)
             })
 
             this.socket.on("server-chess-quit", (quitterUserId: string)  => {
                 const winnerUserName = this.users[quitterUserId] ? this.users[quitterUserId].name : "N/A"
 
-                this.writeMessageToLog("SYSTEM", this.$t("msg.chess_quit", {userName: winnerUserName}), null)
+                this.writeMessageToLog("SYSTEM", this.$t("msg.chess_quit", {userName: winnerUserName}), null, null)
             })
             this.socket.on("special-events:server-add-shrine-coin", (donationBoxValue: number) => {
                 if (!this.currentRoom || !this.currentRoom.specialObjects) return // TS quick fix
@@ -1156,6 +1163,7 @@ const vueApp = createApp(defineComponent({
             newUser.lastMovement = userDTO.lastMovement;
             newUser.isInactive = userDTO.isInactive;
             newUser.message = userDTO.lastRoomMessage;
+            newUser.lastMessageDate = userDTO.lastRoomMessageDate;
             newUser.bubblePosition = userDTO.bubblePosition;
             newUser.voicePitch = userDTO.voicePitch
             newUser.isAlternateCharacter = userDTO.isAlternateCharacter
@@ -1164,7 +1172,7 @@ const vueApp = createApp(defineComponent({
 
             return newUser;
         },
-        writeMessageToLog(userName: string, msg: string, userId: string | null = null)
+        writeMessageToLog(userName: string, msg: string, userId: string | null = null, msgDate: number | null = Date.now())
         {
             const chatLog = document.getElementById("chatLog") as HTMLTextAreaElement
             const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
@@ -1183,13 +1191,15 @@ const vueApp = createApp(defineComponent({
 
             const [displayName, tripcode] = userName.split("◆")
 
+            const lastMessageDate = msgDate || Date.now()
+
             const timestampSpan = document.createElement("span")
             timestampSpan.className = "message-timestamp"
-            timestampSpan.innerHTML = "[" + getFormattedCurrentDate() + "]&nbsp;"
+            timestampSpan.innerHTML = "[" + getFormattedDate(lastMessageDate) + "]&nbsp;"
 
             const authorSpan = document.createElement("span");
             authorSpan.className = "message-author";
-            authorSpan.title = (new Date()).toString()
+            authorSpan.title = (new Date(lastMessageDate)).toString()
             authorSpan.textContent = displayName;
             if (userId)
                 authorSpan.addEventListener("click", (ev) => {
@@ -1264,7 +1274,7 @@ const vueApp = createApp(defineComponent({
 
             if(!user.message) return;
 
-            this.writeMessageToLog(user.name, msg, user.id)
+            this.writeMessageToLog(user.name, msg, user.id, user.lastMessageDate)
 
             if (isIgnored) return;
 

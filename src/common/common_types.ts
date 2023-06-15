@@ -130,6 +130,7 @@ export interface PlayerDto
     bubblePosition: Direction,
     voicePitch: number,
     lastRoomMessage: string,
+    lastRoomMessageDate: number | null,
     isAlternateCharacter: boolean,
     lastMovement: number,
 }

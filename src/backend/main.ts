@@ -398,6 +398,8 @@ io.on("connection", function (socket)
                 msg = msg.replace(/◆/g, "◇")
                 
                 msg = msg.substr(0, 500)
+            } else {
+              user.lastRoomMessageDate = null;
             }
 
             user.lastRoomMessage = msg;
@@ -408,10 +410,13 @@ io.on("connection", function (socket)
 
             user.lastAction = Date.now()
 
-            if (msg.toLowerCase().match(settings.censoredWordsRegex))
-                socket.emit("server-msg", user.id, msg) // if there's a bad word, show the message only to the guy who wrote it
-            else
-                userRoomEmit(user, "server-msg", user.id, msg);
+            if (msg.toLowerCase().match(settings.censoredWordsRegex)) {
+                user.lastRoomMessageDate = null;
+                socket.emit("server-msg", user.id, msg, Date.now()); // if there's a bad word, show the message only to the guy who wrote it
+            } else {
+                user.lastRoomMessageDate = user.lastMessageDates[user.lastMessageDates.length - 1];
+                userRoomEmit(user, "server-msg", user.id, msg, user.lastRoomMessageDate);
+            }
         }
         catch (e)
         {
@@ -1364,6 +1369,7 @@ function toPlayerDto(player: Player): PlayerDto
         bubblePosition: player.bubblePosition,
         voicePitch: player.voicePitch,
         lastRoomMessage: player.lastRoomMessage?.toLocaleLowerCase().match(settings.censoredWordsRegex) ? "" : player.lastRoomMessage,
+        lastRoomMessageDate: player.lastRoomMessageDate,
         isAlternateCharacter: player.isAlternateCharacter,
         lastMovement: player.lastMovement,
     };
