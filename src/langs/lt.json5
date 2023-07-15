@@ -124,6 +124,7 @@
         preferences_crisp_mode: "Aštrūs kontūrai",
         preferences_timestamps_in_copied_log: "Prikabinti datas prie nukopijuotų žinučių",
         preferences_ignore_indicator_in_log: "Rodyti ignoruotų naudotojų žinučių vietą pokalbio lange",
+        // preferences_ignore_on_block: "",
         preferences_language: "Kalba",
         preferences_enable_coin_sound: "Efektų garsai",
         preferences_show_log_above_toolbar: "Rodyti pokalbių langą virš įrankių juostos",

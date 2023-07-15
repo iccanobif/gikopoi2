@@ -124,6 +124,7 @@
         preferences_disable_idle_animations: "待機アニメーションを無効化",
         preferences_timestamps_in_copied_log: "コピーしたログに時刻を含む",
         preferences_ignore_indicator_in_log: "一方あぼーんされたユーザーからのログの代わりにインジケーターを表示",
+        // preferences_ignore_on_block: "",
         preferences_language: "言語",
         preferences_enable_coin_sound: "効果音",
         preferences_show_log_above_toolbar: "ツールバーの上にログを表示",

@@ -124,6 +124,7 @@
         preferences_disable_idle_animations: "Idle-Animationen deaktivieren",
         preferences_timestamps_in_copied_log: "Zeitstempel in den kopierten Logs aufnehmen",
         preferences_ignore_indicator_in_log: "Einen Indikator anstelle der Nachrichten ignorierter Benutzer im log anzeigen",
+        preferences_ignore_on_block: "Die Nachrichten eines blockierten Benutzers ausblenden",
         preferences_language: "Sprache",
         preferences_enable_coin_sound: "Münzton aktivieren",
         preferences_show_log_above_toolbar: "Log über der Toolbar anzeigen",

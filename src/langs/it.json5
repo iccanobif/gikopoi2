@@ -124,6 +124,7 @@
         // preferences_disable_idle_animations: "",
         preferences_timestamps_in_copied_log: "Includi timestamp nei log copiati",
         preferences_ignore_indicator_in_log: "Mostra nel log un indicatore per i messaggi di utenti ignorati",
+        // preferences_ignore_on_block: "",
         preferences_language: "Lingua",
         // preferences_enable_coin_sound: "Enable coin sound",
         // preferences_show_log_above_toolbar: "",

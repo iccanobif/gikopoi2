@@ -664,6 +664,11 @@
                                     for="preferences-ignore-indicator-in-log">{{ $t("ui.preferences_ignore_indicator_in_log") }}</label>
                             </div>
                             <div class='popup-item'>
+                                <input type="checkbox" id="preferences-ignore-on-block"
+                                    v-model="isIgnoreOnBlock" v-on:change="storeSet('isIgnoreOnBlock')"><label
+                                    for="preferences-ignore-on-block">{{ $t("ui.preferences_ignore_on_block") }}</label>
+                            </div>
+                            <div class='popup-item'>
                                 <input type="checkbox" id="preferences-show-log-above-toolbar"
                                     v-model="showLogAboveToolbar" v-on:change="storeSet('showLogAboveToolbar')"><label
                                     for="preferences-show-log-above-toolbar">{{ $t("ui.preferences_show_log_above_toolbar") }}</label>

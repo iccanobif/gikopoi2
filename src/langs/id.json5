@@ -124,6 +124,7 @@
         // preferences_disable_idle_animations: "",
         preferences_timestamps_in_copied_log: "Sertakan waktu dalam log yang disalin",
         preferences_ignore_indicator_in_log: "Tampilan pesan pengganti di dalam log yang menggantikan pesan dari pengguna yang diabaikan.",
+        // preferences_ignore_on_block: "",
         preferences_language: "Bahasa",
         preferences_enable_coin_sound: "SFX Hidup",
         preferences_show_log_above_toolbar: "Tampilkan log di atas toolbar",

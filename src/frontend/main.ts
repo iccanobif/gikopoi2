@@ -309,6 +309,7 @@ const vueApp = createApp(defineComponent({
             isStreamInboundVuMeterEnabled: localStorage.getItem("isStreamInboundVuMeterEnabled") != "false",
             showLogAboveToolbar: localStorage.getItem("showLogAboveToolbar") == "true",
             showLogDividers: localStorage.getItem("showLogDividers") == "true",
+            isIgnoreOnBlock: localStorage.getItem("isIgnoreOnBlock") == "true",
 
             // streaming 
             streams: [] as StreamSlotDto[],
@@ -3281,6 +3282,8 @@ const vueApp = createApp(defineComponent({
         {
             this.confirm(this.$t("msg.are_you_sure_you_want_to_block"), () =>
             {
+                if(this.isIgnoreOnBlock)
+                    this.ignoreUser(userId)
                 this.socket!.emit("user-block", userId);
             });
         },

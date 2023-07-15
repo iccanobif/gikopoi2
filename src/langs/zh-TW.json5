@@ -124,6 +124,7 @@
         // preferences_disable_idle_animations: "",
         preferences_timestamps_in_copied_log: "在複製的聊天紀錄中包含時間標記",
         preferences_ignore_indicator_in_log: "在聊天紀錄中以紅點標記隱藏用戶之訊息位置",
+        // preferences_ignore_on_block: "",
         preferences_language: "語言",
         // preferences_enable_coin_sound: "Enable coin sound",
         // preferences_show_log_above_toolbar: "",

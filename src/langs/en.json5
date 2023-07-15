@@ -124,6 +124,7 @@
         preferences_disable_idle_animations: "Disable idle animations",
         preferences_timestamps_in_copied_log: "Include timestamps in copied logs",
         preferences_ignore_indicator_in_log: "Show in the log an indicator in place of the messages by ignored users",
+        preferences_ignore_on_block: "Hide the messages of a blocked user",
         preferences_language: "Language",
         preferences_enable_coin_sound: "SFX Sounds",
         preferences_show_log_above_toolbar: "Show log above toolbar",
