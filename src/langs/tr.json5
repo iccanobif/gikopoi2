@@ -124,7 +124,7 @@
         preferences_disable_idle_animations: "Oyalanma animasyonlarını kapat",
         preferences_timestamps_in_copied_log: "Kopyalanan defterler zaman bilgisini içerir",
         preferences_ignore_indicator_in_log: "Defterde yoksayılan kullanıcıların gönderdiği mesajların yerine bir ibre gösterilir",
-        // preferences_ignore_on_block: "",
+        preferences_ignore_on_block: "Engellenen kullanıcının mesajlarını gizle",
         preferences_language: "Dil",
         preferences_enable_coin_sound: "Ses efektleri",
         preferences_show_log_above_toolbar: "Sobhet defterini araç çubuğunun üzerinde göster",
