@@ -11,6 +11,7 @@ async function optimizeFile(fileFullName)
         svgoConfig = await loadConfig(); // loads svgo.config.js from the cwd
     
     const svgString = await fs.readFile(fileFullName)
+    if (!/\r|\n/.exec(svgString)) return
     const result = optimize(svgString, { path: fileFullName, ...svgoConfig });
 
     await fs.writeFile(fileFullName, result.data)
