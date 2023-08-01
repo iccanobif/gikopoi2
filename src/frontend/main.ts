@@ -1710,11 +1710,11 @@ const vueApp = createApp(defineComponent({
                 if (b.id == this.highlightedUserId)
                     return -1
                 // The user that moved last will be underneath
-                if (a.lastMovement === null|| b.lastMovement === null)
-                    return 0
-                if (a.lastMovement < b.lastMovement)
+                const aLastMovement = a.lastMovement || 0
+                const bLastMovement = b.lastMovement || 0
+                if (aLastMovement < bLastMovement)
                     return 1
-                if (a.lastMovement > b.lastMovement)
+                if (aLastMovement > bLastMovement)
                     return -1
                 return a.id.localeCompare(b.id);
             }
