@@ -3871,7 +3871,7 @@ dynamicRooms.push({
                 "rooms/konbini/background.svg",
             objects: [],
             objectRenderSortMethod: "diagonal_scan",
-            sit: currentAnnualEvents.includes("summer") ? [{ x:  0, y:  0 },] : [],
+            sit: !currentAnnualEvents.includes("summer") ? [{ x:  0, y:  0 },] : [],
             blocked: [
                 // register
                 { x:  4, y:  6 },
