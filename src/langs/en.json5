@@ -163,6 +163,8 @@
         janken_quit: "{username} quit the game.",
         janken_timeout_reached: "The game has timed out.",
 
+        roll_die: "{username} rolled a {die} and got {result}!",
+
         visible_only_to_specific_users_stream: "Private stream",
         double_click_to_move_to_new_tab: "Double click to move to a new tab",
         double_click_to_toggle_fullscreen: "Double click to toggle fullscreen",
