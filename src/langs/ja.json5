@@ -194,6 +194,8 @@
         chess_timeout_reached: "チェス対局が終わりました：時間切れ",
         chess_win: "チェス対局が終わりました：{{userName}}の勝利。",
         chess_quit: "チェス対局が終わりました：{{userName}}が投了した。",
+
+        roll_die: "{{userName}}が{{sideCount}}面ダイスを振って{{result}}が出た!",
         
         are_you_sure_you_want_to_clear_log: "チャットログをクリアしますか？",
         chat_log_cleared: "チャットログがクリアされました。",

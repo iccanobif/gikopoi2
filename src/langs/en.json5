@@ -195,7 +195,7 @@
         chess_win: "The chess game is over: the winner is {{userName}}.",
         chess_quit: "The chess game is over: {{userName}} quit the game.",
 
-        roll_die: "{{userName}} rolled a {{die}} and got {{result}}!",
+        roll_die: "{{userName}} rolled a d{{sideCount}} and got {{result}}!",
 
         are_you_sure_you_want_to_clear_log: "Are you sure you want to clear the chat log?",
         chat_log_cleared: "The chat log has been cleared.",

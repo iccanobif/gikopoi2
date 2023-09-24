@@ -379,82 +379,12 @@ io.on("connection", function (socket)
                     return;
                 }
 
-                if (msg == "#d4")
+                if (msg.match("#d(4|6|8|10|12|20)"))
                 {
-                    const result = Math.floor(Math.random() * 4) + 1
-
-                    const usersToNotify = getFilteredConnectedUserList(user, user.roomId, user.areaId)
-                
-                    usersToNotify.forEach(u => {
-                    if (u.socketId)
-                        io.to(u.socketId).emit("server-roll-die", user.id, "d4", result)
-                    })
-                    return; 
-                }
-
-                if (msg == "#d6")
-                {
-                    const result = Math.floor(Math.random() * 6) + 1
-
-                    const usersToNotify = getFilteredConnectedUserList(user, user.roomId, user.areaId)
-                
-                    usersToNotify.forEach(u => {
-                    if (u.socketId)
-                        io.to(u.socketId).emit("server-roll-die", user.id, "d6", result)
-                    })
-                    return; 
-                }
-
-                if (msg == "#d8")
-                {
-                    const result = Math.floor(Math.random() * 8) + 1
-
-                    const usersToNotify = getFilteredConnectedUserList(user, user.roomId, user.areaId)
-                
-                    usersToNotify.forEach(u => {
-                    if (u.socketId)
-                        io.to(u.socketId).emit("server-roll-die", user.id, "d8", result)
-                    })
-                    return; 
-                }
-
-                if (msg == "#d10")
-                {
-                    const result = Math.floor(Math.random() * 10) + 1
-
-                    const usersToNotify = getFilteredConnectedUserList(user, user.roomId, user.areaId)
-                
-                    usersToNotify.forEach(u => {
-                    if (u.socketId)
-                        io.to(u.socketId).emit("server-roll-die", user.id, "d10", result)
-                    })
-                    return; 
-                }
-
-                if (msg == "#d12")
-                {
-                    const result = Math.floor(Math.random() * 12) + 1
-
-                    const usersToNotify = getFilteredConnectedUserList(user, user.roomId, user.areaId)
-                
-                    usersToNotify.forEach(u => {
-                    if (u.socketId)
-                        io.to(u.socketId).emit("server-roll-die", user.id, "d12", result)
-                    })
-                    return; 
-                }
-
-                if (msg == "#d20")
-                {
-                    const result = Math.floor(Math.random() * 20) + 1
-
-                    const usersToNotify = getFilteredConnectedUserList(user, user.roomId, user.areaId)
-                
-                    usersToNotify.forEach(u => {
-                    if (u.socketId)
-                        io.to(u.socketId).emit("server-roll-die", user.id, "d20", result)
-                    })
-                    return; 
+                    const sideCount = Number.parseInt(msg.substring(2))
+                    const result = Math.floor(Math.random() * sideCount) + 1
+                    userRoomEmit(user, "server-roll-die", user.id, sideCount, result);
+                    return;
                 }
                 
                 msg = msg.replace(/(vod)(k)(a)/gi, "$1$3$2")

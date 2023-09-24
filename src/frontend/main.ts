@@ -1117,10 +1117,10 @@ const vueApp = createApp(defineComponent({
                 this.jankenState = state
             })
 
-            this.socket.on("server-roll-die", (userId: string, die: string, result: number) => {
+            this.socket.on("server-roll-die", (userId: string, sideCount: number, result: number) => {
                 const userName = this.users[userId] ? this.users[userId].name : "N/A"
 
-                this.writeMessageToLog("SYSTEM", this.$t("msg.roll_die", {userName: userName, die: die, result: result}), null)
+                this.writeMessageToLog("SYSTEM", this.$t("msg.roll_die", {userName: userName, sideCount: sideCount, result: result}), null)
             })
 
             this.socket.on("server-chess-win", (winnerUserId: string) => {
