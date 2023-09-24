@@ -381,6 +381,13 @@ io.on("connection", function (socket)
 
                 if (msg.match("#d(4|6|8|10|12|20)"))
                 {
+                    // No more than one die roll every 10 seconds
+                    if (Date.now() - user.lastDieRollDate < 10000)
+                    {
+                        socket.emit("server-system-message", "flood_warning", msg)
+                        return;
+                    }
+                    user.lastDieRollDate = Date.now()
                     const sideCount = Number.parseInt(msg.substring(2))
                     const result = Math.floor(Math.random() * sideCount) + 1
                     userRoomEmit(user, "server-roll-die", user.id, sideCount, result);
