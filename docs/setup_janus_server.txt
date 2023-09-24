@@ -22,9 +22,9 @@ server {
 
     # Useful for the info page at http://<DOMAIN NAME>/janus/info
     # Otherwise unused by poipoi
-#    location / {
-#        proxy_pass http://localhost:8088;
-#    }
+    #    location / {
+    #        proxy_pass http://localhost:8088;
+    #    }
 
     location /ws {
         proxy_pass http://localhost:8188;
@@ -101,7 +101,7 @@ LimitSIGPENDING=500000
 TasksMax=500000
 ---
 
-# To increase thread limit:
+# To increase thread limit, create this file:
 --- /etc/cron.d/increase_threads ---
 @reboot root echo 100000 > /proc/sys/kernel/threads-max
 ---
