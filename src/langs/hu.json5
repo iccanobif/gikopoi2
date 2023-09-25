@@ -194,8 +194,6 @@
         chess_timeout_reached: "A sakkjátszma véget ért: időkorlát elérése.",
         chess_win: "A sakkjátszma véget ért: a győztes {{userName}} lett.",
         chess_quit: "A sakkjátszma véget ért: {{userName}} kilépett a játékból.",
-
-        // roll_die: "{{userName}} rolled a d{{sideCount}} and got {{result}}!",
         
         are_you_sure_you_want_to_clear_log: "Biztosan törölni akarod a naplót?",
         chat_log_cleared: "A napló törlésre került.",

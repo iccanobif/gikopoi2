@@ -194,8 +194,6 @@
         chess_timeout_reached: "Satranç oyun sona serdi: zaman aşımına uğradı.",
         chess_win: "Satranç oyun sona serdi: kazanan {{userName}}.",
         chess_quit: "Satranç oyun sona serdi: {{userName}} oyundan çıktı.",
-
-        // roll_die: "{{userName}} rolled a d{{sideCount}} and got {{result}}!",
         
         are_you_sure_you_want_to_clear_log: "Sohbet defterini temizlemek istediğine emin misin?",
         chat_log_cleared: "Sohbet defteri temizlendi.",

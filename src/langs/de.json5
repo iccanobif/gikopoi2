@@ -194,8 +194,6 @@
         chess_timeout_reached: "Das Schachspiel ist vorbei: Bedenkzeit überschreitet.",
         chess_win: "Das Schachspiel ist vorbei: Der Gewinner ist {{userName}}.",
         chess_quit: "Das Schachspiel ist vorbei: {{userName}} hat das Spiel verlassen.",
-
-        // roll_die: "{{userName}} rolled a d{{sideCount}} and got {{result}}!",
         
         are_you_sure_you_want_to_clear_log: "Sind sie sicher, dass Sie das Chat-Log löschen möchten?",
         chat_log_cleared: "Das Chat-Log wurde gelöscht.",

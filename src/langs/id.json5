@@ -194,8 +194,6 @@
         chess_timeout_reached: "Game catur sudah berakhir : waktu telah habis.",
         chess_win: "Game catur sudah berakhir: Pemenangnya {{userName}}.",
         chess_quit: "Game catur berakhir: {{userName}} berhenti main.",
-
-        // roll_die: "{{userName}} rolled a d{{sideCount}} and got {{result}}!",
         
         are_you_sure_you_want_to_clear_log: "Apakah Anda ingin menghapus log obrolan?",
         chat_log_cleared: "Log obrolan telah dihapus.",
