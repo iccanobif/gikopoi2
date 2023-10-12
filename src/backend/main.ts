@@ -1833,6 +1833,7 @@ app.post("/unban", (req, res) => {
         const userIPsToUnban = Object.keys(req.body).filter(x => x != "pwd")
         for (const ip of userIPsToUnban)
         {
+            log.info("UNBANNING " + ip)
             bannedIPs.delete(ip)
         }
         res.end("done")
