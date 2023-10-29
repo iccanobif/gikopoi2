@@ -29,6 +29,7 @@ const io = new Server(server, {
 const tripcode = require('tripcode');
 const enforce = require('express-sslify');
 const JanusClient = require('janus-videoroom-client').Janus;
+const cookieParser = require("cookie-parser");
 
 const persistInterval = 5 * 1000
 const maxGhostRetention = 30 * 60 * 1000
@@ -1639,12 +1640,20 @@ app.get("/version", (req, res) =>
     res.json(appVersion)
 })
 
-app.get("/admin", (req, res) => {
+// not sure if it's okay to have the secret in the URL. where could it be leaked?
+// it could be leaked on heroku's logs...
+app.get(`/admin`, (req, res) => {
     try 
     {
-        const output = "<form action='user-list' method='post'><input type='text' name='pwd'><input type='submit' value='user-list'></form>"
-                    + "<form action='banned-ip-list' method='post'><input type='text' name='pwd'><input type='submit' value='unban'></form>"
-                    + "<form action='ban-ip-entry' method='post'><input type='text' name='pwd'><input type='submit' value='ban'></form>"
+        const output = `<p>
+                            <a href='/admin/user-list'>user-list</a>
+                            <a href='/admin/banned-ip-list'>banned-ip-list</a>
+                            <a href='/admin/ban-ip-entry'>ban-ip-entry</a>
+                        </p>
+                        <form action='/admin/admin-login' method='post'>
+                            <input type='text' name='key'><br/>
+                            <input type='submit' value='login'>
+                        </form>`
 
         res.set({
             'Content-Type': 'text/html; charset=utf-8',
@@ -1660,14 +1669,27 @@ app.get("/admin", (req, res) => {
     }
 })
 
-app.post("/user-list", (req, res) => {
+app.post("/admin/admin-login", (req, res) => {
     try 
     {
-        const pwd = req.body.pwd
+        res.cookie("admin-key", req.body.key, { httpOnly: true, secure: true })
+        res.redirect(301, "/admin")
+    }
+    catch (exc)
+    {
+        logException(exc, null)
+        res.end("error")
+    }
+})
 
-        if (pwd != settings.adminKey)
+app.use(cookieParser());
+
+app.get(`/admin/user-list`, (req, res) => {
+    try 
+    {
+        if (req.cookies["admin-key"] != settings.adminKey)
         {
-            res.end("nope")
+            res.end("no")
             return
         }
 
@@ -1689,42 +1711,9 @@ app.post("/user-list", (req, res) => {
                                                     + " " + user.ips
                                                     + "</label>").join("</br>")
 
-        const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
-        const banButton = "<br/><input type='submit'>"
+        const banButton = "<br/><input type='submit' value='ban'>"
 
-        const output = "<form action='ban' method='post'>" + pwdInput + userList + banButton + "</form>"
-
-        res.set({
-            'Content-Type': 'text/html; charset=utf-8',
-            'Cache-Control': 'no-store'
-        })
-
-        res.end(output)
-    }
-    catch (exc)
-    {
-        logException(exc, null)
-        res.end("error")
-    }
-})
-
-app.post("/banned-ip-list", (req, res) => {
-    try 
-    {
-        const pwd = req.body.pwd
-
-        if (pwd != settings.adminKey)
-        {
-            res.end("nope")
-            return
-        }
-
-        const userList: string = Array.from(bannedIPs).map(ip => "<input type='checkbox' name='" + ip + "' id='" + ip + "'><label for='" + ip + "'>" + ip + "</label>").join("</br>")
-
-        const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
-        const banButton = "<br/><input type='submit'>"
-
-        const output = "<form action='unban' method='post'>" + pwdInput + userList + banButton + "</form>"
+        const output = "<form action='/admin/ban' method='post'>" + userList + banButton + "</form>"
 
         res.set({
             'Content-Type': 'text/html; charset=utf-8',
@@ -1740,22 +1729,44 @@ app.post("/banned-ip-list", (req, res) => {
     }
 })
 
-app.post("/ban-ip-entry", (req, res) => {
+app.get(`/admin/banned-ip-list`, (req, res) => {
     try 
     {
-        const pwd = req.body.pwd
-
-        if (pwd != settings.adminKey)
+        if (req.cookies["admin-key"] != settings.adminKey)
         {
-            res.end("nope")
+            res.end("no")
             return
         }
-        
-        const ipInput = "<input type='text' name='ip'>"
-        const pwdInput = "<input type='hidden' name='pwd' value='" + pwd + "'>"
-        const banButton = "<br/><input type='submit'>"
 
-        const output = "<form action='ban-ip' method='post'>" + pwdInput + ipInput + banButton + "</form>"
+        const userList: string = Array.from(bannedIPs).map(ip => `<input type='checkbox' name='${ip}' id='${ip}'><label for='${ip}'>${ip}</label>`).join("</br>")
+        const banButton = "<br/><input type='submit' value='unban'>"
+        const output = "<form action='/admin/unban' method='post'>" + userList + banButton + "</form>"
+        res.set({
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-store'
+        })
+        res.end(output)
+    }
+    catch (exc)
+    {
+        logException(exc, null)
+        res.end("error")
+    }
+})
+
+app.get(`/admin/ban-ip-entry`, (req, res) => {
+    try 
+    {
+        if (req.cookies["admin-key"] != settings.adminKey)
+        {
+            res.end("no")
+            return
+        }
+
+        const output = `<form action='/admin/ban-ip' method='post'>
+                            <input type='text' name='ip'><br/>
+                            <input type='submit' value='ban'>
+                        </form>`
 
         res.set({
             'Content-Type': 'text/html; charset=utf-8',
@@ -1771,18 +1782,16 @@ app.post("/ban-ip-entry", (req, res) => {
     }
 })
 
-app.post("/ban", async (req, res) => {
+app.post(`/admin/ban`, async (req, res) => {
     try 
     {
-        const pwd = req.body.pwd
-
-        if (pwd != settings.adminKey)
+        if (req.cookies["admin-key"] != settings.adminKey)
         {
-            res.end("nope")
+            res.end("no")
             return
         }
 
-        const userIdsToBan = Object.keys(req.body).filter(x => x != "pwd")
+        const userIdsToBan = Object.keys(req.body)
         for (const id of userIdsToBan)
         {
             const user = getUser(id)
@@ -1798,17 +1807,15 @@ app.post("/ban", async (req, res) => {
     }
 })
 
-app.post("/ban-ip", async (req, res) => {
+app.post(`/admin/ban-ip`, async (req, res) => {
     try 
     {
-        const pwd = req.body.pwd
-
-        if (pwd != settings.adminKey)
+        if (req.cookies["admin-key"] != settings.adminKey)
         {
-            res.end("nope")
+            res.end("no")
             return
         }
-        
+
         await banIP(req.body.ip)
         res.end("done")
     }
@@ -1819,18 +1826,16 @@ app.post("/ban-ip", async (req, res) => {
     }
 })
 
-app.post("/unban", (req, res) => {
+app.post(`/admin/unban`, async (req, res) => {
     try 
     {
-        const pwd = req.body.pwd
-
-        if (pwd != settings.adminKey)
+        if (req.cookies["admin-key"] != settings.adminKey)
         {
-            res.end("nope")
+            res.end("no")
             return
         }
 
-        const userIPsToUnban = Object.keys(req.body).filter(x => x != "pwd")
+        const userIPsToUnban = Object.keys(req.body)
         for (const ip of userIPsToUnban)
         {
             log.info("UNBANNING " + ip)
