@@ -1490,6 +1490,12 @@ app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
     }
 })
 
+app.use(function (req, res, next) {
+    if (req.path == "/")
+        log.info("Fetching root..." + getRealIp(req) + " " + req.rawHeaders.filter(h => !h.startsWith(adminKeyName)).join("|"))
+    next()
+})
+
 if (isProduction)
 {
     const static_properties = {
@@ -1669,10 +1675,12 @@ app.get(`/admin`, (req, res) => {
     }
 })
 
+const adminKeyName = "gikopoipoi-admin-key"
+
 app.post("/admin/admin-login", (req, res) => {
     try 
     {
-        res.cookie("admin-key", req.body.key, { httpOnly: true, secure: true })
+        res.cookie(adminKeyName, req.body.key, { httpOnly: true, secure: true })
         res.redirect(301, "/admin")
     }
     catch (exc)
@@ -1687,7 +1695,7 @@ app.use(cookieParser());
 app.get(`/admin/user-list`, (req, res) => {
     try 
     {
-        if (req.cookies["admin-key"] != settings.adminKey)
+        if (req.cookies[adminKeyName] != settings.adminKey)
         {
             res.end("no")
             return
@@ -1732,7 +1740,7 @@ app.get(`/admin/user-list`, (req, res) => {
 app.get(`/admin/banned-ip-list`, (req, res) => {
     try 
     {
-        if (req.cookies["admin-key"] != settings.adminKey)
+        if (req.cookies[adminKeyName] != settings.adminKey)
         {
             res.end("no")
             return
@@ -1757,7 +1765,7 @@ app.get(`/admin/banned-ip-list`, (req, res) => {
 app.get(`/admin/ban-ip-entry`, (req, res) => {
     try 
     {
-        if (req.cookies["admin-key"] != settings.adminKey)
+        if (req.cookies[adminKeyName] != settings.adminKey)
         {
             res.end("no")
             return
@@ -1785,7 +1793,7 @@ app.get(`/admin/ban-ip-entry`, (req, res) => {
 app.post(`/admin/ban`, async (req, res) => {
     try 
     {
-        if (req.cookies["admin-key"] != settings.adminKey)
+        if (req.cookies[adminKeyName] != settings.adminKey)
         {
             res.end("no")
             return
@@ -1810,7 +1818,7 @@ app.post(`/admin/ban`, async (req, res) => {
 app.post(`/admin/ban-ip`, async (req, res) => {
     try 
     {
-        if (req.cookies["admin-key"] != settings.adminKey)
+        if (req.cookies[adminKeyName] != settings.adminKey)
         {
             res.end("no")
             return
@@ -1829,7 +1837,7 @@ app.post(`/admin/ban-ip`, async (req, res) => {
 app.post(`/admin/unban`, async (req, res) => {
     try 
     {
-        if (req.cookies["admin-key"] != settings.adminKey)
+        if (req.cookies[adminKeyName] != settings.adminKey)
         {
             res.end("no")
             return
