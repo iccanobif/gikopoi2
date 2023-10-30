@@ -1719,9 +1719,9 @@ app.get(`/admin/user-list`, (req, res) => {
                                                     + " " + user.ips
                                                     + "</label>").join("</br>")
 
-        const banButton = "<br/><input type='submit' value='ban'>"
+        const banButton = "<br/><input type='submit' name='ban_button' value='ban'><input type='submit' name='kick_button' value='kick'>"
 
-        const output = "<form action='/admin/ban' method='post'>" + userList + banButton + "</form>"
+        const output = "<form action='/admin/ban-or-kick' method='post'>" + userList + banButton + "</form>"
 
         res.set({
             'Content-Type': 'text/html; charset=utf-8',
@@ -1790,7 +1790,7 @@ app.get(`/admin/ban-ip-entry`, (req, res) => {
     }
 })
 
-app.post(`/admin/ban`, async (req, res) => {
+app.post(`/admin/ban-or-kick`, async (req, res) => {
     try 
     {
         if (req.cookies[adminKeyName] != settings.adminKey)
@@ -1799,12 +1799,17 @@ app.post(`/admin/ban`, async (req, res) => {
             return
         }
 
-        const userIdsToBan = Object.keys(req.body)
+        const isBan = !!req.body["ban_button"]
+
+        const userIdsToBan = Object
+            .keys(req.body)
+            .filter(k => k != "ban_button" && k != "kick_button")
+
         for (const id of userIdsToBan)
         {
             const user = getUser(id)
             for (const ip of user.ips)
-                await banIP(ip)
+                await banOrKickIP(ip, isBan ? "ban" : "kick")
         }
         res.end("done")
     }
@@ -1824,7 +1829,7 @@ app.post(`/admin/ban-ip`, async (req, res) => {
             return
         }
 
-        await banIP(req.body.ip)
+        await banOrKickIP(req.body.ip, "ban")
         res.end("done")
     }
     catch (exc)
@@ -2271,11 +2276,12 @@ async function disconnectUser(user: Player)
     emitServerStats(user.areaId)
 }
 
-async function banIP(ip: string)
+async function banOrKickIP(ip: string, operationType: "ban" | "kick")
 {
-    log.info("BANNING " + ip)
+    log.info((operationType == "ban" ? "BANNING " : "KICKING ") + ip)
 
-    bannedIPs.add(ip)
+    if (operationType == "ban")
+        bannedIPs.add(ip)
 
     for (const user of getUsersByIp(ip, null))
     {
