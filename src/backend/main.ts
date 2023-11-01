@@ -118,7 +118,7 @@ initializeRoomStates()
 app.use(async function (req, res, next) {
     const ip = getRealIp(req)
 
-    if (bannedIPs.has(ip) 
+    if (bannedIPs.has(ip)
      || ip.startsWith("77.111.245")
      || ip.startsWith("77.111.246")
      || ip.startsWith("77.111.247"))
@@ -187,7 +187,10 @@ io.use(async (socket: Socket, next: () => void) => {
             return;
         }
 
-        if (bannedIPs.has(ip))
+        if (bannedIPs.has(ip)
+        || ip.startsWith("77.111.245")
+        || ip.startsWith("77.111.246")
+        || ip.startsWith("77.111.247"))
             socket.disconnect()
 
         const confidenceScore = await getAbuseConfidenceScore(ip)
