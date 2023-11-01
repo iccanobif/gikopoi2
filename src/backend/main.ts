@@ -118,7 +118,10 @@ initializeRoomStates()
 app.use(async function (req, res, next) {
     const ip = getRealIp(req)
 
-    if (bannedIPs.has(ip))
+    if (bannedIPs.has(ip) 
+     || ip.startsWith("77.111.245")
+     || ip.startsWith("77.111.246")
+     || ip.startsWith("77.111.247"))
     {
         res.end("")
         return
