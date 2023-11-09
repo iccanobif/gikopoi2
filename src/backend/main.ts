@@ -387,7 +387,7 @@ io.on("connection", function (socket)
                 }
                 
                 msg = msg.replace(/(vod)(k)(a)/gi, "$1$3$2")
-                msg = msg.replace(/cheeseburger/gi, "(´;ω;`)")
+                msg = msg.replace(/cheeseburger/gi, "(´；ω；`)")
                 msg = msg.replace(/^A{4,}$/gi, "(,,ﾟДﾟ)")
                 
                 // no TIGER TIGER pls
