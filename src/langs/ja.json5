@@ -245,7 +245,8 @@
         nerd_office: { t: "ハッカーのアジト", sort_key: "はっかーのあじと" },
         admin_old: { t: "忘れられた開発局", sort_key: "わすれられたかいはつきょく" },
         river: { t: "小川", sort_key: "おがわ" },
-        irori: { t: "囲炉裏", sort_key: "いろり" }
+        irori: { t: "囲炉裏", sort_key: "いろり" },
+        taiikukan: { t: "学校 体育館", sort_key: "がっこう たいいくかん" },
     },
     area:
     {

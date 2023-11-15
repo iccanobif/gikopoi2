@@ -246,6 +246,7 @@
         admin_old: "Elveszett csarnok",
         river: "Folyó",
         irori: "Kandalló",
+        // yaneura: "",
     },
     area:
     {
