@@ -4121,10 +4121,10 @@ dynamicRooms.push({
 
 dynamicRooms.push({
     roomId: "monachat",
-    subscribedAnnualEvents: ["christmas"],
+    subscribedAnnualEvents: ["christmasTime"],
     build: (currentAnnualEvents: string[]) =>
     {
-        const variant = currentAnnualEvents.includes("christmas") ? "christmas" : "normal"
+        const variant = currentAnnualEvents.includes("christmasTime") ? "christmas" : "normal"
         console.log(`rooms/monachat/background.${variant}.svg`)
         return {
             id: "monachat",
