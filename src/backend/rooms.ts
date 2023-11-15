@@ -1,5 +1,19 @@
-import { Room, DynamicRoom  } from "./types";
+import { Room, DynamicRoom, Coordinates } from "./types";
 import { getCurrentAnnualEvents } from "../common/annualevents";
+
+
+function coordRange(from: Coordinates, to: Coordinates): Coordinates[]
+{
+    const coords = []
+    for (let x=from.x; x<to.x+1; x+=(from.x<=to.x?1:-1))
+    {
+        for (let y=from.y; y<to.y+1; y+=(from.y<=to.y?1:-1))
+        {
+            coords.push({x, y})
+        }
+    }
+    return coords
+}
 
 export const rooms: { [roomId: string]: Room } = {
     bar: {
