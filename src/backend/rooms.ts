@@ -3157,46 +3157,6 @@ export const rooms: { [roomId: string]: Room } = {
         },
         streamSlotCount: 1,
     },
-    monachat: {
-        id: "monachat",
-        group: "gikopoipoi",
-        scale: 1,
-        size: { x: 7, y: 8 },
-        originCoordinates: { x: 4, y: 332 },
-        spawnPoint: "door",
-        backgroundImageUrl: "rooms/monachat/background.svg",
-        objects: [
-            { x:  1, y:  0, offset: { x: 40, y: 250 }, url: "torikomi.svg" },
-            { x:  2, y:  5, offset: { x: 290, y: 150 }, url: "matari.svg" },
-        ],
-        sit: [
-            { x:  4, y:  1 },
-            { x:  4, y:  2 },
-            { x:  4, y:  3 },
-            { x:  4, y:  4 },
-            { x:  4, y:  5 },
-            { x:  4, y:  6 },
-        ],
-        blocked: [
-            { x:  1, y:  0 },
-            { x:  2, y:  5 },
-            { x:  3, y:  1 },
-            { x:  3, y:  2 },
-            { x:  3, y:  3 },
-            { x:  3, y:  4 },
-            { x:  3, y:  5 },
-            { x:  3, y:  6 },
-            { x:  4, y:  0 },
-            { x:  5, y:  0 },
-            { x:  6, y:  0 },
-            { x:  6, y:  1 },
-        ],
-        forbiddenMovements: [],
-        doors: {
-            door: { x: 6, y: 6, direction: "left", target: { roomId: "bar_giko_square", doorId: "left" } },
-        },
-        streamSlotCount: 3,
-    },
     labyrinth: {
         id: "labyrinth",
         group: "gikopoipoi",
@@ -4239,6 +4199,57 @@ dynamicRooms.push({
         return room
     }
 })
+
+dynamicRooms.push({
+    roomId: "monachat",
+    subscribedAnnualEvents: ["christmasTime"],
+    build: (currentAnnualEvents: string[]) =>
+    {
+        const variant = currentAnnualEvents.includes("christmasTime") ? "christmas" : "normal"
+        console.log(`rooms/monachat/background.${variant}.svg`)
+        return {
+            id: "monachat",
+            group: "gikopoipoi",
+            variant: variant,
+            scale: 1,
+            size: { x: 7, y: 8 },
+            originCoordinates: { x: 4, y: 332 },
+            spawnPoint: "door",
+            backgroundImageUrl: `rooms/monachat/background.${variant}.svg`,
+            objects: [
+                { x:  1, y:  0, offset: { x: 40, y: 250 }, url: "torikomi.svg" },
+                { x:  2, y:  5, offset: { x: 290, y: 150 }, url: "matari.svg" },
+            ],
+            sit: [
+                { x:  4, y:  1 },
+                { x:  4, y:  2 },
+                { x:  4, y:  3 },
+                { x:  4, y:  4 },
+                { x:  4, y:  5 },
+                { x:  4, y:  6 },
+            ],
+            blocked: [
+                { x:  1, y:  0 },
+                { x:  2, y:  5 },
+                { x:  3, y:  1 },
+                { x:  3, y:  2 },
+                { x:  3, y:  3 },
+                { x:  3, y:  4 },
+                { x:  3, y:  5 },
+                { x:  3, y:  6 },
+                { x:  4, y:  0 },
+                { x:  5, y:  0 },
+                { x:  6, y:  0 },
+                { x:  6, y:  1 },
+            ],
+            forbiddenMovements: [],
+            doors: {
+                door: { x: 6, y: 6, direction: "left", target: { roomId: "bar_giko_square", doorId: "left" } },
+            },
+            streamSlotCount: 3,
+        }
+    }
+});
 
 const currentAnnualEvents = getCurrentAnnualEvents()
 dynamicRooms.forEach((dynamicRoom: DynamicRoom) => rooms[dynamicRoom.roomId] = dynamicRoom.build(currentAnnualEvents, currentAnnualEvents, []))
