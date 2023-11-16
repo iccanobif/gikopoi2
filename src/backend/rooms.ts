@@ -2152,7 +2152,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  6, y:  1 },
             { x: 10, y:  7 },
         ],
-        blocked: [
+        blocked: ([
             // studio
             { x:  1, y:  1 },
             
@@ -2163,44 +2163,12 @@ export const rooms: { [roomId: string]: Room } = {
             { x:  4, y: 12 },
             
             
-            // lower wall
-            { x:  0, y: 15 },
-            { x:  1, y: 15 },
-            { x:  2, y: 15 },
-            { x:  3, y: 15 },
-            { x:  4, y: 15 },
-            { x:  5, y: 15 },
-            { x:  6, y: 15 },
-            { x:  7, y: 15 },
-            { x:  8, y: 15 },
-            { x:  9, y: 15 },
-            { x: 10, y: 15 },
-            { x: 11, y: 15 },
-            { x: 12, y: 15 },
-            { x: 13, y: 15 },
-            { x: 14, y: 15 },
-            { x: 15, y: 15 },
-            { x: 16, y: 15 },
-            { x: 17, y: 15 },
-            { x: 18, y: 15 },
+            // ends of upper floor
             { x: 19, y: 16 },
             { x: 20, y: 16 },
             
-            // upper wall
+            // entrance to upper floor
             { x:  1, y: 18 },
-            { x:  2, y: 17 },
-            { x:  3, y: 17 },
-            { x:  4, y: 17 },
-            { x:  5, y: 17 },
-            { x:  6, y: 17 },
-            { x:  7, y: 17 },
-            { x:  8, y: 17 },
-            { x:  9, y: 17 },
-            { x: 10, y: 17 },
-            { x: 11, y: 17 },
-            { x: 12, y: 17 },
-            { x: 13, y: 17 },
-            { x: 14, y: 17 },
             { x: 15, y: 18 },
         
             // tables
@@ -2258,7 +2226,11 @@ export const rooms: { [roomId: string]: Room } = {
             
             { x: 16, y:  3 },
             { x: 17, y:  3 },
-        ],
+        ] as Coordinates[])
+            // lower wall
+            .concat(coordRange({ x:  0, y: 15 }, { x: 18, y: 15 }))
+            // upper wall
+            .concat(coordRange({ x:  2, y: 17 }, { x: 14, y: 17 })),
         forbiddenMovements: [
             // stage front
             { xFrom:  4, yFrom:  4, xTo:  5, yTo:  4 }, { xFrom:  5, yFrom:  4, xTo:  4, yTo:  4 },
