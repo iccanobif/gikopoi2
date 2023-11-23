@@ -123,7 +123,7 @@ app.use(async function (req, res, next) {
      || ip.startsWith("77.111.246")
      || ip.startsWith("77.111.247")
      || ip.startsWith("49.9")
-     || ip.startsWith("1.73.1")
+     || ip.startsWith("1.73.")
        )
     {
         res.end("")
