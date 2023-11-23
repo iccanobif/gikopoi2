@@ -121,7 +121,10 @@ app.use(async function (req, res, next) {
     if (bannedIPs.has(ip)
      || ip.startsWith("77.111.245")
      || ip.startsWith("77.111.246")
-     || ip.startsWith("77.111.247"))
+     || ip.startsWith("77.111.247")
+     || ip.startsWith("49.9")
+     || ip.startsWith("1.73.1")
+       )
     {
         res.end("")
         return
