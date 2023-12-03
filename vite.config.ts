@@ -18,7 +18,13 @@ export default defineConfig({
         json5Plugin(),
     ],
     server: {
-        // Hot reloading
-        hmr: true
-    }
+        hmr: false, // Hot reloading
+        proxy: {
+          "/api": "http://localhost:8085",
+          "/socket.io": {
+            target: "ws://localhost:8085",
+            ws: true,
+          }
+        }
+      }
 });

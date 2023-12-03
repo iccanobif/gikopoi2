@@ -249,7 +249,7 @@ export const characters: { [characterId: string]: Character } =
 
 export const loadCharacters = async (crispMode: boolean) => {
 
-    const response = await fetch("/characters/" + (crispMode ? "crisp" : "regular") + "?v=" + (window as any).EXPECTED_SERVER_VERSION)
+    const response = await fetch("/api/characters/" + (crispMode ? "crisp" : "regular") + "?v=" + (window as any).EXPECTED_SERVER_VERSION)
     const dto = await response.json()
     
     Object.keys(characters).forEach(characterId => characters[characterId].setDto(dto[characterId]))

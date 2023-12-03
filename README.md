@@ -6,8 +6,9 @@ to start server, run:
 ``$ yarn build``
 ``$ yarn start``
 
-for local debugging:
-``$ yarn dev``
+for local debugging, run in two separate terminals:
+``$ yarn dev-backend``
+``$ yarn dev-frontend``
 
 to enable automatic version bump run:
 

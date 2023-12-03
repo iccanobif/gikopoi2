@@ -141,7 +141,7 @@ export function postJson(url: string, data: any): Promise<Response>
 
 export function logToServer(msg: string): Promise<Response>
 {
-    return fetch("/client-log", {
+    return fetch("/api/client-log", {
         method: "POST",
         headers: { 'Content-Type': "text/plain"},
         body: msg

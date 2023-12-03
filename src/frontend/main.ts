@@ -832,7 +832,7 @@ const vueApp = createApp(defineComponent({
         },
         async connectToServer()
         {
-            const loginResponse = await postJson("/login", {
+            const loginResponse = await postJson("/api/login", {
                 userName: this.username,
                 characterId: this.characterId,
                 areaId: this.areaId,
@@ -873,7 +873,7 @@ const vueApp = createApp(defineComponent({
             // Load the room state before connecting the websocket, so that all
             // code handling websocket events (and paint() events) can assume that
             // currentRoom, streams etc... are all defined.
-            const response = await fetch("/areas/" + this.areaId + "/rooms/" + getSpawnRoomId(),
+            const response = await fetch("/api/areas/" + this.areaId + "/rooms/" + getSpawnRoomId(),
                                          { headers: { "Authorization": "Bearer " + this.myPrivateUserID } })
             await this.updateRoomState(await response.json())
 
@@ -900,7 +900,7 @@ const vueApp = createApp(defineComponent({
                 this.connectionLost = false;
 
                 // Check if there's a new version
-                const response = await fetch("/version");
+                const response = await fetch("/api/version");
                 if (!response.ok)
                     throw new Error(response.toString())
                 const newVersion = await response.json();

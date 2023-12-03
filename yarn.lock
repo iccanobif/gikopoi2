@@ -1469,13 +1469,6 @@ negotiator@0.6.3:
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.3.tgz#58e323a72fedc0d6f9cd4d31fe49f51479590ccd"
   integrity sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==
 
-node-fetch@^2.0.0:
-  version "2.6.9"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.9.tgz#7c7f744b5cc6eb5fd404e0c7a9fec630a55657e6"
-  integrity sha512-DJm/CJkZkRjKKj4Zi4BsKVZh3ValV5IR5s7LVZnW+6YMh0W1BfNA8XSs6DLMGYlId5F3KnA70uu2qepcR08Qqg==
-  dependencies:
-    whatwg-url "^5.0.0"
-
 nodemon@^2.0.6:
   version "2.0.22"
   resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-2.0.22.tgz#182c45c3a78da486f673d6c1702e00728daf5258"
@@ -1927,11 +1920,6 @@ touch@^3.1.0:
   dependencies:
     nopt "~1.0.10"
 
-tr46@~0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
-  integrity sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==
-
 "tripcode@https://github.com/2sh/tripcode.git":
   version "1.0.0"
   resolved "https://github.com/2sh/tripcode.git#1e6752a755079db886ba1984011bb76bb72e0372"
@@ -2021,14 +2009,6 @@ vary@^1, vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
-vite-express@*:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/vite-express/-/vite-express-0.5.2.tgz#9f5085deb4b2a3452d007e85b25444515784d35b"
-  integrity sha512-BH0XFS1XBIkkNKz3bZw8pw4tKdjvczUq5y6DpTgtCKXgv+t7vdE1u6jSyxLGCj0dGriNKCEkT63gFGutjEYuqQ==
-  dependencies:
-    node-fetch "^2.0.0"
-    picocolors "^1.0.0"
-
 vite-plugin-json5@^1.0.5:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/vite-plugin-json5/-/vite-plugin-json5-1.0.7.tgz#74b858eb1090d2c0936eb4c7863e692eedbf3524"
@@ -2075,25 +2055,12 @@ vue@^3.2.45:
     "@vue/server-renderer" "3.2.47"
     "@vue/shared" "3.2.47"
 
-webidl-conversions@^3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-3.0.1.tgz#24534275e2a7bc6be7bc86611cc16ae0a5654871"
-  integrity sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==
-
 webrtc-codec-support@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/webrtc-codec-support/-/webrtc-codec-support-1.0.1.tgz#fe6fb7a7d4bcd196e1971d836bf11adebea4516d"
   integrity sha512-GC0aYh7hmGym9YVS3YtPJrHhAT44HenGvYb0qFNy+rYsP7jCN30koUwri7HEqS1gF1s5N52NMFrrJc8YoK2ElQ==
   dependencies:
     sdp-jingle-json "^3.1.0"
-
-whatwg-url@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-5.0.0.tgz#966454e8765462e37644d3626f6742ce8b70965d"
-  integrity sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==
-  dependencies:
-    tr46 "~0.0.3"
-    webidl-conversions "^3.0.0"
 
 which@^2.0.1:
   version "2.0.2"

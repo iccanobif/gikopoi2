@@ -1,7 +1,6 @@
 const isProduction = process.env.NODE_ENV == "production"
 
 import express, { Request } from "express"
-import ViteExpress from "vite-express";
 import { rooms, dynamicRooms } from "./rooms";
 import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom, ListedRoom, MoveDto } from "./types";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getUserByPrivateId, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users";
@@ -1434,7 +1433,7 @@ const cachedJsBundle = (() => {
       + 'window.siteAreas = JSON.parse("' + JSON.stringify(settings.siteAreas).replace(/\"/g, "\\\"") + '")' + '\n'
 })()
 
-app.get("/server_generated_bundle.js", async (req, res) =>
+app.get("/api/server_generated_bundle.js", async (req, res) =>
 {
     const siteAreasInfo: SiteAreasInfo = Object.fromEntries(Object.keys(roomStates).map(areaId =>
     {
@@ -1522,7 +1521,7 @@ if (isProduction)
     app.use(express.static('dist/favicons', static_properties));
 }
 
-app.get("/areas/:areaId/rooms/:roomId", (req, res) =>
+app.get("/api/areas/:areaId/rooms/:roomId", (req, res) =>
 {
     try
     {
@@ -1625,7 +1624,7 @@ function getCharacterImages(crisp: boolean)
 }
 
 const regularCharacterImages = getCharacterImages(false)
-app.get("/characters/regular", async (req, res) =>
+app.get("/api/characters/regular", async (req, res) =>
 {
     try
     {
@@ -1636,7 +1635,7 @@ app.get("/characters/regular", async (req, res) =>
 })
 
 const crispCharacterImages = getCharacterImages(true)
-app.get("/characters/crisp", async (req, res) =>
+app.get("/api/characters/crisp", async (req, res) =>
 {
     try
     {
@@ -1650,7 +1649,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.json());
 app.use(express.text());
 
-app.get("/version", (req, res) =>
+app.get("/api/version", (req, res) =>
 {
     res.json(appVersion)
 })
@@ -1872,7 +1871,7 @@ app.post(`/admin/unban`, async (req, res) => {
     }
 })
 
-app.post("/client-log", (req, res) =>
+app.post("/api/client-log", (req, res) =>
 {
     try
     {
@@ -1886,7 +1885,7 @@ app.post("/client-log", (req, res) =>
     }
 })
 
-app.post("/login", async (req, res) =>
+app.post("/api/login", async (req, res) =>
 {
     try
     {
@@ -2530,7 +2529,6 @@ restoreState()
     .then(() =>
     {
         server.listen(port, "0.0.0.0")
-        if (!isProduction) ViteExpress.bind(app, server)
         log.info("Server running on http://localhost:" + port)
     })
     .catch(log.error)
