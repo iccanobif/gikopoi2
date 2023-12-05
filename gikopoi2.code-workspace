@@ -15,5 +15,11 @@
             "dist": true,
             "build": true
         }
-    }
+    },
+    "extensions": {
+        "recommendations": [
+            "vue.vscode-typescript-vue-plugin",
+            "vue.volar"
+        ]
+    },
 }
