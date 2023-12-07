@@ -1348,11 +1348,9 @@ const vueApp = createApp(defineComponent({
             if (!this.currentRoom || !this.currentRoom.backgroundImage) return // TS quick fix
             if (x === undefined) x = 0
             if (y === undefined) y = 0
-
-            const backgroundImage = this.currentRoom.backgroundImage.getImage(this.getCanvasScale())
             
-            const bgW = backgroundImage.width
-            const bgH = backgroundImage.height
+            const bgW = this.backgroundImageDimensions.w
+            const bgH = this.backgroundImageDimensions.h
 
             const isCropped = this.currentRoom.onlyDrawOverBackgroundImage
 
