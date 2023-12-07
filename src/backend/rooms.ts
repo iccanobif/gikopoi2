@@ -442,7 +442,7 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 870-320, y: 1165-300 },
         spawnPoint: "left",
         backgroundImageUrl: "rooms/takadai/background.svg",
-        isBackgroundImageOffsetEdge: true,
+        onlyDrawOverBackgroundImage: true,
         objects: [
             { x:  9, y:  0, offset: { x:  176-320, y:  849-300 }, url: "fences_and_thicket.svg" },
 
@@ -568,7 +568,7 @@ export const rooms: { [roomId: string]: Room } = {
         originCoordinates: { x: 740-345, y: 1310-393 },
         spawnPoint: "spawn",
         backgroundImageUrl: "rooms/silo/silo.svg",
-        isBackgroundImageOffsetEdge: true,
+        onlyDrawOverBackgroundImage: true,
         objects: [
             { x: 4, y: 6, url: "piano.svg", scale: 1, offset: { x: 1092-345, y: 1192-393 } },
         ],
@@ -2997,7 +2997,7 @@ export const rooms: { [roomId: string]: Room } = {
         blockHeight: 15,
         spawnPoint: "right",
         backgroundImageUrl: "rooms/seashore/background.svg",
-        isBackgroundImageOffsetEdge: true,
+        onlyDrawOverBackgroundImage: true,
         objects: [
             { x:  2, y:  6, offset: { x:  851, y:  486 }, url: 'seat.svg' },
             { x:  2, y:  7, offset: { x:  890, y:  479 }, url: 'seat.svg' },

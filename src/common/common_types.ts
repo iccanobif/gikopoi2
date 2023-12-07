@@ -101,7 +101,7 @@ export interface Room
     backgroundOffset?: Coordinates;
     spawnPoint: string;
     needsFixedCamera?: boolean;
-    isBackgroundImageOffsetEdge?: boolean;
+    onlyDrawOverBackgroundImage?: boolean;
     objects: RoomObject[];
     objectRenderSortMethod?: "diagonal_scan" | "priority";
     sit: Coordinates[];

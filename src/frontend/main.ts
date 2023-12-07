@@ -260,6 +260,7 @@ const vueApp = createApp(defineComponent({
             canvasManualOffset: { x: 0, y: 0 } as Coordinates,
             canvasGlobalOffset: { x: 0, y: 0 } as Coordinates,
             canvasDimensions: { w: 0, h: 0 } as Size,
+            backgroundImageDimensions: { w: 0, h: 0 } as Size,
             userCanvasScale: 1,
             userCanvasScaleStart: null as number | null,
             isLowQualityEnabled: localStorage.getItem("isLowQualityEnabled") == "true",
@@ -1342,14 +1343,45 @@ const vueApp = createApp(defineComponent({
                 this.showWarningToast(this.$t("msg.chat_log_cleared"));
             });
         },
-        drawImage(context: CanvasRenderingContext2D, image: CanvasImageSource, x?: number, y?: number)
+        drawImage(context: CanvasRenderingContext2D, image: HTMLCanvasElement|OffscreenCanvas, x?: number, y?: number)
         {
-            if (!x) x = 0;
-            if (!y) y = 0;
+            if (!this.currentRoom || !this.currentRoom.backgroundImage) return // TS quick fix
+            if (x === undefined) x = 0
+            if (y === undefined) y = 0
+
+            const backgroundImage = this.currentRoom.backgroundImage.getImage(this.getCanvasScale())
+            
+            const bgW = backgroundImage.width
+            const bgH = backgroundImage.height
+
+            const isCropped = this.currentRoom.onlyDrawOverBackgroundImage
+
+            const scaledX = this.getCanvasScale() * x
+            const scaledY = this.getCanvasScale() * y
+
+            const sX = isCropped
+                ? Math.abs(Math.min(0, scaledX))
+                : 0
+            const sY = isCropped
+                ? Math.abs(Math.min(0, scaledY))
+                : 0
+
+            const w = isCropped
+                ? ((image.width - sX)
+                    - Math.max(0, image.width - (bgW - scaledX)))
+                : image.width
+            const h = isCropped
+                ? ((image.height - sY)
+                    - Math.max(0, image.height - (bgH - scaledY)))
+                : image.height
+            
             context.drawImage(
                 image,
-                Math.round(this.getCanvasScale() * x + this.canvasGlobalOffset.x),
-                Math.round(this.getCanvasScale() * y + this.canvasGlobalOffset.y)
+                sX, sY,
+                w, h,
+                Math.round(scaledX + sX + this.canvasGlobalOffset.x),
+                Math.round(scaledY + sY + this.canvasGlobalOffset.y),
+                w, h
             );
         },
         getNameImage(user: User, withBackground: boolean): RenderCache
@@ -1585,36 +1617,6 @@ const vueApp = createApp(defineComponent({
                 y: manualOffset.y + userOffset.y
             };
 
-            const backgroundImage = this.currentRoom.backgroundImage.getImage(this.getCanvasScale())
-
-            const bcDiff =
-                {
-                    w: backgroundImage.width - this.canvasDimensions.w,
-                    h: backgroundImage.height - this.canvasDimensions.h
-                }
-
-            const margin = (this.currentRoom.isBackgroundImageOffsetEdge ?
-                {w: 0, h: 0} : this.canvasDimensions);
-
-            let isAtEdge = false;
-
-            if (canvasOffset.x > margin.w)
-            {isAtEdge = true; manualOffset.x = margin.w - userOffset.x}
-            else if(canvasOffset.x < -margin.w - bcDiff.w)
-            {isAtEdge = true; manualOffset.x = -margin.w - (bcDiff.w + userOffset.x)}
-
-            if (canvasOffset.y > margin.h)
-            {isAtEdge = true; manualOffset.y = margin.h - userOffset.y}
-            else if(canvasOffset.y < -margin.h - bcDiff.h)
-            {isAtEdge = true; manualOffset.y = -margin.h - (bcDiff.h + userOffset.y)}
-
-            if (isAtEdge)
-            {
-                canvasOffset.x = manualOffset.x + userOffset.x
-                canvasOffset.y = manualOffset.y + userOffset.y
-                this.isCanvasPointerDown = false;
-            }
-
             this.canvasGlobalOffset.x = canvasOffset.x;
             this.canvasGlobalOffset.y = canvasOffset.y;
         },
@@ -1812,9 +1814,12 @@ const vueApp = createApp(defineComponent({
             }
             context.fillRect(0, 0, this.canvasDimensions.w, this.canvasDimensions.h);
 
+            const renderedBackgroundImage = this.currentRoom.backgroundImage.getImage(this.getCanvasScale())
+            this.backgroundImageDimensions.w = renderedBackgroundImage.width
+            this.backgroundImageDimensions.h = renderedBackgroundImage.height
             this.drawImage(
                 context,
-                this.currentRoom.backgroundImage.getImage(this.getCanvasScale())
+                renderedBackgroundImage
             );
         },
 
