@@ -242,7 +242,7 @@ const characterObjects: CharacterObject[] = [
     { name: "youkanman", isHidden: true, portrait: { left: -0.46, top: -0.5, scale: 1.8 } },
     { name: "baba_shobon", isHidden: true, portrait: { left: -0.5, top: -0.2 } },
     { name: "uzukumari", portrait: { left: -0.98, top: -0.69 } },
-    { name: "giko_basketball", portrait: { left: -0.5, top: 0.24 } },
+    { name: "giko_basketball", isHidden: true, portrait: { left: -0.5, top: 0.24 } },
 ]
 
 export const characters: { [characterId: string]: Character } =
