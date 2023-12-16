@@ -1653,6 +1653,10 @@ app.get("/api/version", (req, res) =>
 {
     res.json(appVersion)
 })
+app.get("/version", (req, res) =>
+{
+    res.json(appVersion)
+})
 
 // not sure if it's okay to have the secret in the URL. where could it be leaked?
 // it could be leaked on heroku's logs...
