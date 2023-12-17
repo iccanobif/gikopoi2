@@ -2095,9 +2095,12 @@ const vueApp = createApp(defineComponent({
 
         canvasClick(clickEvent: MouseEvent)
         {
-            if (this.currentRoom!.id === 'jinja') {
-                const specialObjectDonationBox = this.currentRoom!.specialObjects!.find(o => o.name == "donation-box");
-                const realDonationBoxCoordinates = calculateRealCoordinates(this.currentRoom!, specialObjectDonationBox!.x, specialObjectDonationBox!.y)
+            // This can (and did) happen when someone clicks the canvas before the room is loaded.
+            if (!this.currentRoom) return 
+                
+            if (this.currentRoom.id === 'jinja') {
+                const specialObjectDonationBox = this.currentRoom.specialObjects!.find(o => o.name == "donation-box");
+                const realDonationBoxCoordinates = calculateRealCoordinates(this.currentRoom, specialObjectDonationBox!.x, specialObjectDonationBox!.y)
 
                 realDonationBoxCoordinates.x = (realDonationBoxCoordinates.x * this.getCanvasScale()) + this.canvasGlobalOffset.x;
                 realDonationBoxCoordinates.y = (realDonationBoxCoordinates.y * this.getCanvasScale()) + this.canvasGlobalOffset.y;
