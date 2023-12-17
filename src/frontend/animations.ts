@@ -1,4 +1,3 @@
-import { Client } from 'socket.io/dist/client';
 import type { Users, CanvasObject, ClientRoomObject, AnimationFrame } from './types'
 
 // Make jizou turn around when a user is standing in front of it

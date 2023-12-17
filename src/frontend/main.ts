@@ -528,15 +528,15 @@ const vueApp = createApp(defineComponent({
 
                 await this.connectToServer();
 
+                const roomCanvas = document.getElementById("room-canvas") as HTMLCanvasElement
+                this.canvasContext = roomCanvas.getContext("2d");
+
                 this.registerKeybindings();
 
                 this.isLoggingIn = false;
                 
                 this.checkBackgroundColor()
                 
-                const roomCanvas = document.getElementById("room-canvas") as HTMLCanvasElement
-                if (roomCanvas)
-                    this.canvasContext = roomCanvas.getContext("2d");
                 await loadCharacterImagesPromise;
                 this.paintLoop();
 
@@ -1893,11 +1893,15 @@ const vueApp = createApp(defineComponent({
 
         drawUsernames()
         {
-            this.canvasObjects
+            if (!this.canvasContext)
+                return;
+
+            const userObjects = this.canvasObjects
                 .filter(o => o.type == "user")
                 .map(o => o.o as User)
                 .filter(o => !this.ignoredUserIds.has(o.id))
-                .forEach(userObject =>
+
+            for (const userObject of userObjects)
             {
                 if (userObject.nameImage == null || this.isUsernameRedrawRequired)
                     userObject.nameImage = this.getNameImage(userObject, this.showUsernameBackground);
@@ -1905,12 +1909,13 @@ const vueApp = createApp(defineComponent({
                 const image = userObject.nameImage.getImage(this.getCanvasScale())
 
                 this.drawImage(
-                    this.canvasContext!, // TS quick fix
+                    this.canvasContext,
                     image,
                     userObject.currentPhysicalPositionX + this.blockWidth/2 - userObject.nameImage.width/2,
                     userObject.currentPhysicalPositionY - 120
                 );
-            })
+           }
+
             if (this.isUsernameRedrawRequired)
                 this.isUsernameRedrawRequired = false;
         },
@@ -1925,11 +1930,14 @@ const vueApp = createApp(defineComponent({
         },
         drawBubbles()
         {
-            this.canvasObjects
+            if (!this.canvasContext) return
+
+            const users = this.canvasObjects
                 .filter(o => o.type == "user")
                 .map(o => o.o as User)
                 .filter(o => !this.ignoredUserIds.has(o.id))
-                .forEach(user =>
+
+            for (const user of users)
             {
                 if (!user.message) return
                 
@@ -1944,14 +1952,14 @@ const vueApp = createApp(defineComponent({
                     ["down", "right"].includes(user.bubblePosition)];
 
                 this.drawImage(
-                    this.canvasContext!, // TS quick fix
+                    this.canvasContext,
                     image,
                     user.currentPhysicalPositionX + this.blockWidth/2
                     + (pos[0] ? 21 : -21 - user.bubbleImage.width),
                     user.currentPhysicalPositionY
                     - (pos[1] ? 62 : 70 + user.bubbleImage.height)
                 );
-            })
+            }
         },
         drawPrivateStreamIcons()
         {
@@ -1959,23 +1967,26 @@ const vueApp = createApp(defineComponent({
             if (!this.isStreaming() || this.streamTarget == "all_room")
                 return
 
+            if (!this.canvasContext) return
+
             const users = this.canvasObjects
                 .filter(o => o.type == "user")
                 .map(o => o.o as User)
                 .filter(o => !this.ignoredUserIds.has(o.id) && o.id != this.myUserID)
-                .forEach(o =>
-                {
-                    const renderImage = this.allowedListenerIDs.has(o.id) ? enabledListenerIconImage : disabledListenerIconImage
-                    if (!renderImage) return
-                    const image = renderImage.getImage(this.getCanvasScale());
-    
-                    this.drawImage(
-                        this.canvasContext!, // TS quick fix
-                        image,
-                        o.currentPhysicalPositionX + 60,
-                        o.currentPhysicalPositionY - 100
-                    );
-                })
+
+            for (const user of users)
+            {
+                const renderImage = this.allowedListenerIDs.has(user.id) ? enabledListenerIconImage : disabledListenerIconImage
+                if (!renderImage) return
+                const image = renderImage.getImage(this.getCanvasScale());
+
+                this.drawImage(
+                    this.canvasContext,
+                    image,
+                    user.currentPhysicalPositionX + 60,
+                    user.currentPhysicalPositionY - 100
+                );
+            }
         },
         drawOriginLines()
         {
