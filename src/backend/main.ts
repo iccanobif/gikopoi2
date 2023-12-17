@@ -231,11 +231,7 @@ io.on("connection", function (socket)
     let user: Player;
     
     const sendCurrentRoomState = () => sendRoomState(socket, user, rooms[user.roomId]);
-
-    const sendNewUserInfo = () =>
-    {
-        userRoomEmit(user, "server-user-joined-room", toPlayerDto(user));
-    }
+    const sendNewUserInfo = () => userRoomEmit(user, "server-user-joined-room", toPlayerDto(user))
 
     socket.on("disconnect", async function ()
     {
