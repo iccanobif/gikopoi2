@@ -1952,11 +1952,11 @@ const vueApp = createApp(defineComponent({
 
             for (const user of users)
             {
-                if (!user.message) return
+                if (!user.message) continue
                 
                 if (user.bubbleImage == null)
                     user.bubbleImage = this.getBubbleImage(user)
-                if (!user.bubbleImage) return
+                if (!user.bubbleImage) continue
                 
                 const image = user.bubbleImage.getImage(this.getCanvasScale())
 
@@ -1990,7 +1990,7 @@ const vueApp = createApp(defineComponent({
             for (const user of users)
             {
                 const renderImage = this.allowedListenerIDs.has(user.id) ? enabledListenerIconImage : disabledListenerIconImage
-                if (!renderImage) return
+                if (!renderImage) continue
                 const image = renderImage.getImage(this.getCanvasScale());
 
                 this.drawImage(
