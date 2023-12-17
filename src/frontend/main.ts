@@ -248,6 +248,8 @@ const vueApp = createApp(defineComponent({
             language: initialLanguage,
             uiBackgroundColor: null as number[] | null,
             isUiBackgroundDark: false,
+            currentCanvasVerticalMovement: "none" as "none" | "up" | "down",
+            currentCanvasHorizontalMovement: "none" as "none" | "left" | "right",
 
             // canvas
             canvasContext: null as CanvasRenderingContext2D | null,
@@ -1584,6 +1586,30 @@ const vueApp = createApp(defineComponent({
                 this.devicePixelRatio = devicePixelRatio
             }
         },
+        detectCanvasMove(delta: number)
+        {
+            if (this.currentCanvasVerticalMovement != "none" || this.currentCanvasHorizontalMovement != "none")
+                this.isRedrawRequired = true
+
+            switch (this.currentCanvasVerticalMovement)
+            {
+                case "up":
+                    this.canvasManualOffset.y += delta / 3 / this.getCanvasScale();
+                    break;
+                case "down":
+                    this.canvasManualOffset.y -= delta / 3 / this.getCanvasScale();
+                    break;
+            }
+            switch (this.currentCanvasHorizontalMovement)
+            {
+                case "left":
+                    this.canvasManualOffset.x += delta / 3 / this.getCanvasScale();
+                    break;
+                case "right":
+                    this.canvasManualOffset.x -= delta / 3 / this.getCanvasScale();
+                    break;
+            }
+        },
         setCanvasGlobalOffset()
         {
             if (!this.currentRoom || !this.currentRoom.backgroundImage) return // TS quick fix
@@ -2103,6 +2129,7 @@ const vueApp = createApp(defineComponent({
                 return;
             
             this.detectCanvasResize();
+            this.detectCanvasMove(delta);
             
             const now = Date.now()
             
@@ -2348,44 +2375,41 @@ const vueApp = createApp(defineComponent({
                 return
             }
 
+            // Move camera
             if (event.shiftKey && !event.altKey && !event.ctrlKey)
             {
-                // Move camera
                 switch (event.code)
                 {
                     case "ArrowLeft":
                     case "KeyA":
                     case "KeyH":
+                        this.currentCanvasHorizontalMovement = "left"
                         event.preventDefault()
-                        this.canvasManualOffset.x += 10 / this.getCanvasScale()
-                        this.isRedrawRequired = true
                         break;
                     case "ArrowRight":
                     case "KeyD":
                     case "KeyL":
+                        this.currentCanvasHorizontalMovement = "right"
                         event.preventDefault()
-                        this.canvasManualOffset.x -= 10 / this.getCanvasScale()
-                        this.isRedrawRequired = true
                         break;
                     case "ArrowUp":
                     case "KeyW":
                     case "KeyK":
+                        this.currentCanvasVerticalMovement = "up"
                         event.preventDefault()
-                        this.canvasManualOffset.y += 10 / this.getCanvasScale()
-                        this.isRedrawRequired = true
                         break;
                     case "ArrowDown":
                     case "KeyS":
                     case "KeyJ":
+                        this.currentCanvasVerticalMovement = "down"
                         event.preventDefault()
-                        this.canvasManualOffset.y -= 10 / this.getCanvasScale()
-                        this.isRedrawRequired = true
                         break;
                 }
             }
+
+            // Move avatar
             if (!event.shiftKey && !event.altKey && !event.ctrlKey)
             {
-                // Move avatar
                 switch (event.code)
                 {
                     case "ArrowLeft":
@@ -2442,6 +2466,31 @@ const vueApp = createApp(defineComponent({
                         break;
                 }
             }
+        },
+        handleCanvasKeyup(event: KeyboardEvent)
+        {
+            switch (event.code)
+            {
+                case "ArrowLeft":
+                case "KeyA":
+                case "KeyH":
+                case "ArrowRight":
+                case "KeyD":
+                case "KeyL":
+                    this.currentCanvasHorizontalMovement = "none"
+                    break;
+                case "ArrowUp":
+                case "KeyW":
+                case "KeyK":
+                case "ArrowDown":
+                case "KeyS":
+                case "KeyJ":
+                    this.currentCanvasVerticalMovement = "none"
+                    break;
+            }
+        },
+        handleCanvasBlur() {
+            this.currentCanvasVerticalMovement = "none"
         },
         setMovementDirection(ev: MouseEvent | TouchEvent | null = null, direction: Direction | null = null)
         {
