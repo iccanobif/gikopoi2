@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev-frontend": "vite",
-    "dev-backend": "nodemon src/backend/main.ts -w src/backend",
+    "dev-backend": "nodemon src/backend/main.ts -w src/backend -w public/characters -e ts,svg",
     "start": "cross-env NODE_ENV=production node build/backend/main.js",
     "start-with-socket-debug": "cross-env NODE_ENV=production DEBUG=engine,socket.io*,-socket.io-parser node build/backend/main.js",
     "build": "vite build && npx tsc --listEmittedFiles --project tsconfig.server.json",

@@ -4180,7 +4180,6 @@ dynamicRooms.push({
     build: (currentAnnualEvents: string[]) =>
     {
         const variant = currentAnnualEvents.includes("christmasTime") ? "christmas" : "normal"
-        console.log(`rooms/monachat/background.${variant}.svg`)
         return {
             id: "monachat",
             group: "gikopoipoi",
