@@ -1339,7 +1339,6 @@ const vueApp = createApp(defineComponent({
             }
             catch (exc: any)
             {
-                logToServer("Chrome doesn't support notifications")
                 if (exc.name == 'TypeError')
                 {
                     // This can happen on chrome, where new Notification() is not supported (and maybe never will?).
