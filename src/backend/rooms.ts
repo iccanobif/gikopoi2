@@ -3659,7 +3659,9 @@ export const rooms: { [roomId: string]: Room } = {
             // stools
             { x: 27, y: 14 },
             { x: 27, y: 15 },
-        ],
+        ]
+            // back wall
+            .concat(coordRange({x: 11, y:  0}, {x: 26, y:  0})),
         blocked: ([
             {x: 28, y: 10},
             {x:  7, y:  7},
