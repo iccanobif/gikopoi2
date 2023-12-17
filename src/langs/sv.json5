@@ -124,7 +124,7 @@
         preferences_disable_idle_animations: "Avaktivera vänteanimationer",
         preferences_timestamps_in_copied_log: "Inkludera tidsstämplar i kopierad logg",
         preferences_ignore_indicator_in_log: "Ersätt meddelanden från ignorerade användare med en indikator i loggen.",
-        // preferences_ignore_on_block: "",
+        preferences_ignore_on_block: "Dölj meddelandena från en blockerad användare",
         preferences_language: "Språk",
         preferences_enable_coin_sound: "Ljudeffekter",
         preferences_show_log_above_toolbar: "Placera loggen ovanför verktygsraden",
@@ -246,7 +246,7 @@
         admin_old: "Vinden",
         river: "Ån",
         irori: "Stugan",
-        // taiikukan: "",
+        taiikukan: "Skolan: Gymnastiksal",
     },
     area:
     {
