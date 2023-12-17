@@ -1286,7 +1286,7 @@ const vueApp = createApp(defineComponent({
             }
 
             if (user.id != this.myUserID)
-                await this.displayNotification(user.name + ": " + plainMsg, this.getAvatarSpriteForUser(user.id))
+                await this.displayNotification(user.name + ": " + plainMsg, this.getAvatarSpriteForUser(user.id), user.id)
 
             // write message to niconico style streams (if any)
             const niconicoMessageContainers = document.getElementsByClassName("nico-nico-messages-container")
@@ -1319,20 +1319,34 @@ const vueApp = createApp(defineComponent({
                 videoContainer.removeChild(span)
             }, 5200)
         },
-        async displayNotification(message: string, icon: string)
+        async displayNotification(message: string, icon: string, userId: string): Promise<Notification | null>
         {
-            if (window.Notification)
-            {
-                if (!this.showNotifications
-                    || document.visibilityState == "visible") return;
+            // TODO: should get directly a user object and get the username and userid from there
 
-                const permission = await requestNotificationPermission()
-                if (permission != "granted") return;
+            if (!window.Notification) return null
 
+            if (!this.showNotifications
+                || document.visibilityState == "visible") return null;
+
+            const permission = await requestNotificationPermission()
+            if (permission != "granted") return null;
+
+            try {
                 return new Notification(message,
                     {
                         icon: icon
                     })
+            }
+            catch (exc: any)
+            {
+                logToServer("Chrome doesn't support notifications")
+                if (exc.name == 'TypeError')
+                {
+                    // This can happen on chrome, where new Notification() is not supported (and maybe never will?).
+                    // It seems that the "right" way to do this is to use Service Workers... maybe the Chrome guys can just
+                    // fuck off instead? https://stackoverflow.com/a/29915743
+                }
+                else { throw exc }
             }
 
             return null
@@ -2765,7 +2779,7 @@ const vueApp = createApp(defineComponent({
                     const streamUser = this.users[newStream.userId]
                     const message = this.$t("msg.stream_start_notification", {userName: streamUser.name})
 
-                    const notification = await this.displayNotification(message, this.getAvatarSpriteForUser(newStream.userId))
+                    const notification = await this.displayNotification(message, this.getAvatarSpriteForUser(newStream.userId), newStream.userId)
 
                     if (notification)
                         notification.addEventListener("click", (event) => {
