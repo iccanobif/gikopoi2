@@ -247,6 +247,7 @@
         river: { t: "小川", sort_key: "おがわ" },
         irori: { t: "囲炉裏", sort_key: "いろり" },
         taiikukan: { t: "学校 体育館", sort_key: "がっこう たいいくかん" },
+        yaneura: { t: "屋根裏", sort_key: "やねうら" },
     },
     area:
     {

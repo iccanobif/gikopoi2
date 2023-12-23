@@ -14,7 +14,7 @@
         
         infobox_label_area: "Vietovė:",
         infobox_label_room: "Vieta:",
-        infobox_label_user_name: "Vardas:",
+        infobox_lael_user_name: "Vardas:",
         infobox_label_user_count: "Naudotojų:",
         infobox_label_stream_count: "Transliuoja:",
         
@@ -247,6 +247,7 @@
         river: "Upė",
         irori: "Laužas",
         // taiikukan: "",
+        // yaneura: "",
     },
     area:
     {
