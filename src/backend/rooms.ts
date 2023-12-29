@@ -4290,7 +4290,7 @@ dynamicRooms.push({
                 steps_bottom: { x: 4, y: 4, direction: "down", target: { roomId: "yaneura", doorId: "steps_top" } },
                 steps_top: { x: 2, y: 6, direction: "left", target: { roomId: "yaneura", doorId: "steps_bottom" } },
             },
-            streamSlotCount: 0,
+            streamSlotCount: 2,
         }
     }
 });
