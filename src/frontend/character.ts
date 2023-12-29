@@ -243,6 +243,10 @@ const characterObjects: CharacterObject[] = [
     { name: "baba_shobon", isHidden: true, portrait: { left: -0.5, top: -0.2 } },
     { name: "uzukumari", portrait: { left: -0.98, top: -0.69 } },
     { name: "giko_basketball", isHidden: true, portrait: { left: -0.5, top: 0.24 } },
+    { name: "mikan_naito", isHidden: true, portrait: { left: -0.48, top: 0.13 } },
+    { name: "giko_shamisen", isHidden: true, portrait: { left: -0.5, top: 0.24 } },
+    { name: "shii_syakuhati", isHidden: false, portrait: { left: -0.5, top: 0.24 } },
+    { name: "taiko_naito", isHidden: true, portrait: { left: -0.48, top: 0.13 } },
 ]
 
 export const characters: { [characterId: string]: Character } =
