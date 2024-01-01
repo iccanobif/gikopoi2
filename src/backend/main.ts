@@ -121,10 +121,12 @@ app.use(async function (req, res, next) {
      || ip.startsWith("77.111.245")
      || ip.startsWith("77.111.246")
      || ip.startsWith("77.111.247")
-     || ip.startsWith("49.9")
-     || ip.startsWith("1.73.")
+     // DOCOMO addresses used by spammers but also by normal (albeit rude) users...
+     // || ip.startsWith("49.9")  
+     // || ip.startsWith("1.73.")
        )
     {
+        log.info(`Rejected HTTP connection from ip [${ip}] (banned)`)
         res.end("")
         return
     }
@@ -133,7 +135,7 @@ app.use(async function (req, res, next) {
 
     if (confidenceScore > maximumAbuseConfidenceScore)
     {
-        log.info("Rejected " + ip)
+        log.info(`Rejected HTTP connection from ip [${ip}] (score ${confidenceScore})`)
         res.setHeader("Content-Type", "text/html; charset=utf-8")
 
         const abuseIPDBURL = "https://www.abuseipdb.com/check/" + ip
