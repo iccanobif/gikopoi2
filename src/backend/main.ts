@@ -1488,6 +1488,8 @@ app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
 })
 
 app.use(function (req, res, next) {
+    // This middleware only works in production because when using `yarn dev-frontend`, the frontend
+    // is served by vite and not by express.
     if (req.path == "/")
         log.info("Fetching root..." + getRealIp(req) + " " + req.rawHeaders.filter(h => !h.startsWith(adminKeyName)).join("|"))
     next()

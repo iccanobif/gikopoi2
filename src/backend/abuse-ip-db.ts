@@ -3,8 +3,11 @@ import log from "loglevel";
 import { settings } from "./settings";
 import dns from "dns"
 
+// By caching promises instead of directly their output, we're handling the case of multiple HTTP requests
+// from the same IP that come at the same time, making it so that we perform a reverse lookup or an abuseipdb
+// api call only once per IP.
 const abuseIpDBabuseConfidenceScoreCache: { [ip: string]: number } = {};
-const reverseDnsLookupCache: { [ip: string]: string[] } = {};
+const reverseDnsLookupCache: { [ip: string]: Promise<string[]> } = {};
 
 async function getAbuseConfidenceScore(ip: string): Promise<number>
 {
@@ -54,7 +57,7 @@ async function reverseDnsLookup(ip: string): Promise<string[]>
     if (ip in reverseDnsLookupCache)
         return reverseDnsLookupCache[ip]
 
-    return new Promise((resolve, reject) =>
+    const promise = new Promise<string[]>((resolve, reject) =>
     {
         const startTime = Date.now()
 
@@ -63,9 +66,8 @@ async function reverseDnsLookup(ip: string): Promise<string[]>
         setTimeout(() => {
             if (alreadyResolved) return
 
-            log.info("reverse dns lookup timeout")
+            log.info(ip, "reverse dns lookup timeout for ip")
             alreadyResolved = true
-            reverseDnsLookupCache[ip] = []
             resolve([])
         }, 1000)
 
@@ -74,21 +76,17 @@ async function reverseDnsLookup(ip: string): Promise<string[]>
             if (alreadyResolved) return
 
             alreadyResolved = true
-            // Todo, set a timeout or resolve if an answer doesn't come within a second
             const elapsedTime = Date.now() - startTime
             log.info("reverse dns lookup:", elapsedTime, hostnames, err?.code)
             if (err)
-            {
-                reverseDnsLookupCache[ip] = []
                 resolve([])
-            }
             else
-            {
-                reverseDnsLookupCache[ip] = hostnames
                 resolve(hostnames)
-            }
         })
     })
+
+    reverseDnsLookupCache[ip] = promise
+    return promise
 }
 
 export async function checkIfBadIp(ip: string, bannedIPs: Set<string>): Promise<{ status: "ok" | "banned" | "abusedb" | "vpn", abuseDbConfidenceScore?: number }>
