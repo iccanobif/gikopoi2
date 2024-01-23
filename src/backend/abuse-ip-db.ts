@@ -6,20 +6,11 @@ import dns from "dns"
 // By caching promises instead of directly their output, we're handling the case of multiple HTTP requests
 // from the same IP that come at the same time, making it so that we perform a reverse lookup or an abuseipdb
 // api call only once per IP.
-const abuseIpDBabuseConfidenceScoreCache: { [ip: string]: number } = {};
+const abuseIpDBabuseConfidenceScoreCache: { [ip: string]: Promise<number> } = {};
 const reverseDnsLookupCache: { [ip: string]: Promise<string[]> } = {};
 
-async function getAbuseConfidenceScore(ip: string): Promise<number>
+async function callAbuseIpApi(ip: string): Promise<number>
 {
-    if (!settings.abuseIpDBApiKey)
-        return 0
-
-    if (ip in abuseIpDBabuseConfidenceScoreCache)
-    {
-        // log.info("Cached confidence score " + ip + ": " + abuseIpDBabuseConfidenceScoreCache[ip])
-        return abuseIpDBabuseConfidenceScoreCache[ip]
-    }
-
     try
     {
         const baseUrl = 'https://api.abuseipdb.com/api/v2/check'
@@ -45,11 +36,21 @@ async function getAbuseConfidenceScore(ip: string): Promise<number>
     catch (exc)
     {
         log.error(exc)
-        // caching the result because if for some reason the api is slow, ALL http requests to poipoi will
+        // the result will be cached because if for some reason the api is slow, ALL http requests to poipoi will
         // become slow. If the API is broken, abuse checking is also broken anyway.
-        abuseIpDBabuseConfidenceScoreCache[ip] = 0
         return 0
     }
+}
+
+function getAbuseConfidenceScore(ip: string): Promise<number>
+{
+    if (!settings.abuseIpDBApiKey)
+        return Promise.resolve(0)
+
+    if (ip in abuseIpDBabuseConfidenceScoreCache)
+        return abuseIpDBabuseConfidenceScoreCache[ip]
+
+    return abuseIpDBabuseConfidenceScoreCache[ip] = callAbuseIpApi(ip)
 }
 
 async function reverseDnsLookup(ip: string): Promise<string[]>
