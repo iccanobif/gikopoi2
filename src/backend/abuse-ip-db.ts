@@ -78,7 +78,7 @@ async function reverseDnsLookup(ip: string): Promise<string[]>
 
             alreadyResolved = true
             const elapsedTime = Date.now() - startTime
-            log.info("reverse dns lookup:", elapsedTime, hostnames, err?.code)
+            log.info("reverse dns lookup:", ip, elapsedTime, hostnames, err?.code)
             if (err)
                 resolve([])
             else
