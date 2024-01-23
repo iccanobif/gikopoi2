@@ -104,7 +104,8 @@ export async function checkIfBadIp(ip: string, bannedIPs: Set<string>): Promise<
         return { status: "abusedb", abuseDbConfidenceScore: confidenceScore }
 
     // Apparently datapacket.com is a large cloud provider for VPNs
-    const hostnames = await reverseDnsLookup(ip)
+    await reverseDnsLookup(ip)
+    // const hostnames = await reverseDnsLookup(ip)
     // Comment this for now, until I get a better idea of how many users would be affected
     // if (hostnames.find(h => h.toLowerCase().endsWith("datapacket.com")))
     //     return { status: "vpn" }
