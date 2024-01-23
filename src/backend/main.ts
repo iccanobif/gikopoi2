@@ -8,7 +8,7 @@ import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
 import compression from 'compression';
-import { getAbuseConfidenceScore } from "./abuse-ip-db";
+import { checkIfBadIp } from "./abuse-ip-db";
 import { existsSync, readdirSync, readFileSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import { Chess } from "chess.js";
@@ -35,7 +35,6 @@ const maxGhostRetention = 30 * 60 * 1000
 const inactivityTimeout = 30 * 60 * 1000
 const maxWaitForChessMove = 1000 * 60 * 5
 const maximumUsersPerIpPerArea = 2
-const maximumAbuseConfidenceScore = 50
 
 const appVersion = Number.parseInt(readFileSync("version").toString())
 
@@ -117,25 +116,22 @@ initializeRoomStates()
 app.use(async function (req, res, next) {
     const ip = getRealIp(req)
 
-    if (bannedIPs.has(ip)
-     || ip.startsWith("77.111.245")
-     || ip.startsWith("77.111.246")
-     || ip.startsWith("77.111.247")
-     // DOCOMO addresses used by spammers but also by normal (albeit rude) users...
-     // || ip.startsWith("49.9")  
-     // || ip.startsWith("1.73.")
-       )
+    const { status, abuseDbConfidenceScore } = await checkIfBadIp(ip, bannedIPs)
+
+    if (status == "banned")
     {
         log.info(`Rejected HTTP connection from ip [${ip}] (banned)`)
         res.end("")
         return
     }
-
-    const confidenceScore = await getAbuseConfidenceScore(ip)
-
-    if (confidenceScore > maximumAbuseConfidenceScore)
+    
+    if (status == "abusedb" || status == "vpn")
     {
-        log.info(`Rejected HTTP connection from ip [${ip}] (score ${confidenceScore})`)
+        const logText = `Rejected HTTP connection from ip [${ip}] ${status}`
+            + status == "abuse" 
+                ? `score ${abuseDbConfidenceScore}`
+                : ""
+        log.info(logText)
         res.setHeader("Content-Type", "text/html; charset=utf-8")
 
         const abuseIPDBURL = "https://www.abuseipdb.com/check/" + ip
@@ -191,14 +187,9 @@ io.use(async (socket: Socket, next: () => void) => {
             return;
         }
 
-        if (bannedIPs.has(ip)
-        || ip.startsWith("77.111.245")
-        || ip.startsWith("77.111.246")
-        || ip.startsWith("77.111.247"))
-            socket.disconnect()
+        const ipCheckResult = await checkIfBadIp(ip, bannedIPs)
 
-        const confidenceScore = await getAbuseConfidenceScore(ip)
-        if (confidenceScore > maximumAbuseConfidenceScore)
+        if (ipCheckResult.status != "ok")
             socket.disconnect()
         else
             next()

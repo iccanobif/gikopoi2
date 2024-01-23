@@ -1,10 +1,12 @@
 import got from "got";
 import log from "loglevel";
 import { settings } from "./settings";
+import dns from "dns"
 
 const abuseIpDBabuseConfidenceScoreCache: { [ip: string]: number } = {};
+const reverseDnsLookupCache: { [ip: string]: string[] } = {};
 
-export async function getAbuseConfidenceScore(ip: string): Promise<number>
+async function getAbuseConfidenceScore(ip: string): Promise<number>
 {
     if (!settings.abuseIpDBApiKey)
         return 0
@@ -45,4 +47,49 @@ export async function getAbuseConfidenceScore(ip: string): Promise<number>
         abuseIpDBabuseConfidenceScoreCache[ip] = 0
         return 0
     }
+}
+
+async function reverseDnsLookup(ip: string): Promise<string[]>
+{
+    if (ip in reverseDnsLookupCache)
+        return reverseDnsLookupCache[ip]
+
+    return new Promise((resolve, reject) =>
+    {
+        dns.reverse(ip, (err, hostnames) =>
+        {
+            log.info("reverse dns lookup:", hostnames, err)
+            if (err)
+            {
+                reverseDnsLookupCache[ip] = []
+                reject(err)
+            }
+            else
+            {
+                reverseDnsLookupCache[ip] = hostnames
+                resolve(hostnames)
+            }
+        })
+    })
+}
+
+export async function checkIfBadIp(ip: string, bannedIPs: Set<string>): Promise<{ status: "ok" | "banned" | "abusedb" | "vpn", abuseDbConfidenceScore?: number }>
+{
+    if (bannedIPs.has(ip)
+        || ip.startsWith("77.111.245")
+        || ip.startsWith("77.111.246")
+        || ip.startsWith("77.111.247"))
+        return { status: "banned" }
+
+    const confidenceScore = await getAbuseConfidenceScore(ip)
+
+    if (confidenceScore > 50)
+        return { status: "abusedb", abuseDbConfidenceScore: confidenceScore }
+
+    // Apparently datapacket.com is a large cloud provider for VPNs
+    const hostnames = await reverseDnsLookup(ip)
+    if (hostnames.find(h => h.toLowerCase().endsWith("datapacket.com")))
+        return { status: "vpn" }
+
+    return { status: "ok" }
 }
