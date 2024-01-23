@@ -62,7 +62,7 @@ async function reverseDnsLookup(ip: string): Promise<string[]>
             if (err)
             {
                 reverseDnsLookupCache[ip] = []
-                reject(err)
+                resolve([])
             }
             else
             {
