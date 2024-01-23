@@ -56,9 +56,27 @@ async function reverseDnsLookup(ip: string): Promise<string[]>
 
     return new Promise((resolve, reject) =>
     {
+        const startTime = Date.now()
+
+        // If dns.reverse() doesn't finish in less than one second, let's resolve immediately
+        let alreadyResolved = false
+        setTimeout(() => {
+            if (alreadyResolved) return
+
+            log.info("reverse dns lookup timeout")
+            alreadyResolved = true
+            reverseDnsLookupCache[ip] = []
+            resolve([])
+        }, 1000)
+
         dns.reverse(ip, (err, hostnames) =>
         {
-            log.info("reverse dns lookup:", hostnames, err)
+            if (alreadyResolved) return
+
+            alreadyResolved = true
+            // Todo, set a timeout or resolve if an answer doesn't come within a second
+            const elapsedTime = Date.now() - startTime
+            log.info("reverse dns lookup:", elapsedTime, hostnames, err?.code)
             if (err)
             {
                 reverseDnsLookupCache[ip] = []
