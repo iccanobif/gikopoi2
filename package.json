@@ -42,7 +42,7 @@
     "typescript": "^4.9.3",
     "uuid": "^8.3.2",
     "vite-plugin-json5": "^1.0.5",
-    "vue": "^3.2.45",
+    "vue": "^3.4.26",
     "webrtc-codec-support": "^1.0.1"
   },
   "devDependencies": {
