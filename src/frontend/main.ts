@@ -3948,7 +3948,6 @@ const vueApp = createApp(defineComponent({
     },
 }))
 
-vueApp.config.unwrapInjectedRef = true // No longer required after Vue 3.3
 vueApp.component("username", ComponentUsername)
 vueApp.component("login-page", LoginPage)
 
