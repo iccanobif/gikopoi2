@@ -35,45 +35,17 @@
 <body>
     <div id="vue-app">
         <div id="page-container" ref="page-container" v-cloak :class="['theme-' + uiTheme]" v-bind:lang="$i18next.language">
-            <div id="login-page" v-if="appState == 'login'">
-                <header>
-                    <div>
-                        <h1><a href="/">{{ $t("ui.title") }}</a></h1>
-                        <h2>{{ $t("ui.subtitle") }}</h2>
-                    </div>
-                </header>
-                <form id="login-form">
-                    <input v-if="passwordInputVisible" type="text" v-model="password"/>
-                    <div id="area-selection">
-                        <label v-for="(siteArea, index) in siteAreas" v-show="!siteArea.unlisted" :for="siteArea.id + '-selection'">
-                            <input type="radio" :id="siteArea.id + '-selection'" :value="siteArea.id" v-model="areaId"
-                                v-on:click="setLanguage(siteArea)" :disabled="isLoggingIn">
-                            {{ siteArea.name }} [{{ $t("ui.login_user_count") + siteAreasInfo[siteArea.id].userCount }}
-                            {{ $t("ui.login_streamer_count") + siteAreasInfo[siteArea.id].streamCount }}]</label>
-                    </div>
-                    <div>
-                        <label>{{ $t("ui.label_username") }}</label>
-                        <input id="username-textbox" type="text" v-model="username" maxlength="20" v-bind:placeholder="$t('default_user_name')" :disabled="isLoggingIn" />
-                    </div>
-                    <div id="character-selection">
-                        <label v-for="character in allCharacters" :for="character.characterName + '-selection'"
-                            v-show="!character.isHidden"
-                            v-bind:class="{'character-selected': character.characterName == characterId}">
-                            <template v-if="character.isHidden">
-                                This is a secret, please don't tell anyone. これは秘密です、誰にも言わないでください。
-                            </template>
-                            <input type="radio" :id="character.characterName + '-selection'" :disabled="isLoggingIn"
-                                :value="character.characterName" v-model="characterId">
-                            <img :style="{ top: (character.portrait.top*100) + '%', left: (character.portrait.left*100) + '%', width: (character.portrait.scale*100) + '%'}"
-                                :src="'characters/' + character.characterName + '/front-standing.' + character.format"/>
-                        </label>
-                    </div>
-                    <button id="login-button" v-on:click="login" :disabled="isLoggingIn">Login</button>
-                </form>
-                <div id="login-footer" translate="no" class="notranslate">
-                    <login-footer></login-footer>
-                </div>
-            </div>
+            <login-page
+                v-if="appState == 'login'"
+                :password-input-visible="passwordInputVisible"
+                :is-logging-in="isLoggingIn"
+                :area-id="areaId"
+                :site-areas="siteAreas"
+                :site-areas-info="siteAreasInfo"
+                @login="login"
+                @setLanguage="setLanguage"
+            >
+            </login-page>
             <div id="stage" v-if="appState == 'stage'">
                 <h2 class="big-red-alert" v-if="connectionLost && !connectionRefused">
                     {{ $t("msg.connection_lost") }}
