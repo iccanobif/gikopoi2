@@ -82,6 +82,7 @@ import JankenSlot from './janken-slot.vue'
 import LoginFooter from './login-footer.vue'
 
 import ComponentUsername from './username.vue'
+import LoginPage from './pages/login.vue'
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -242,7 +243,6 @@ const vueApp = createApp(defineComponent({
             requestedRoomChange: false,
             isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
             soundEffectVolume: 0,
-            characterId: localStorage.getItem("characterId") || "giko",
             isLoggingIn: false,
             areaId: initialAreaId,
             language: initialLanguage,
@@ -356,7 +356,6 @@ const vueApp = createApp(defineComponent({
             appState: getAppState() as 'login' | 'stage' | 'logout' | 'redirect_notice' | 'poop',
 
             enableGridNumbers: false,
-            username: localStorage.getItem("username") || "",
 
             // Possibly redundant data:
             serverStats: {
@@ -369,7 +368,6 @@ const vueApp = createApp(defineComponent({
 
             pageRefreshRequired: false,
             passwordInputVisible: false,
-            password: "",
 
             allCharacters: Object.values(characters),
 
@@ -480,24 +478,24 @@ const vueApp = createApp(defineComponent({
         this.devicePixelRatio = this.getDevicePixelRatio();
     },
     methods: {
-        async login(ev: MouseEvent)
+        async login(username: string, password: string, areaId: string, characterId: string)
         {
             try {
                 // Workaround for making TTS work on iphone, since it needs to be activated on a user interaction
                 if (window.speechSynthesis)
                     speechSynthesis.speak(new SpeechSynthesisUtterance(""));
 
-                ev.preventDefault();
                 this.isLoggingIn = true;
+                this.areaId = areaId;
 
                 // This is to make sure that the browser doesn't attempt to show the
                 // "autocomplete" drop down list when pressing the arrow keys on the keyboard,
                 // even when the textbox isn't visibile anymore (dunno why this happens, a firefox bug maybe).
                 document.getElementById("username-textbox")!.blur()
 
-                localStorage.setItem("username", this.username)
-                localStorage.setItem("characterId", this.characterId)
-                localStorage.setItem("areaId", this.areaId)
+                localStorage.setItem("username", username)
+                localStorage.setItem("characterId", characterId)
+                localStorage.setItem("areaId", areaId)
 
                 window.addEventListener("resize", () =>
                 {
@@ -508,16 +506,16 @@ const vueApp = createApp(defineComponent({
                 disabledListenerIconImage = RenderCache.Image(await disabledListenerIconImagePromise, 0.8);
 
                 const die = Math.random()
-                if (this.characterId === "naito" && die < 0.25)
-                    this.characterId = "funkynaito"
-                if (this.characterId === "dokuo" && die < 0.15)
-                    this.characterId = "tabako_dokuo"
+                if (characterId === "naito" && die < 0.25)
+                    characterId = "funkynaito"
+                if (characterId === "dokuo" && die < 0.15)
+                    characterId = "tabako_dokuo"
 
-                if (this.password == "iapetus56")
-                    this.characterId = "shar_naito"
+                if (password == "iapetus56")
+                    characterId = "shar_naito"
 
                 this.appState = "stage";
-                this.selectedCharacter = characters[this.characterId];
+                this.selectedCharacter = characters[characterId];
 
                 // wait next tick so that canvas-container gets rendered in the DOM
                 await nextTick()
@@ -526,7 +524,7 @@ const vueApp = createApp(defineComponent({
                 if (canvasHeight)
                     document.getElementById("canvas-container")!.style.height = canvasHeight;
 
-                await this.connectToServer();
+                await this.connectToServer(username, areaId, characterId);
 
                 const roomCanvas = document.getElementById("room-canvas") as HTMLCanvasElement
                 this.canvasContext = roomCanvas.getContext("2d");
@@ -540,7 +538,7 @@ const vueApp = createApp(defineComponent({
                 await loadCharacterImagesPromise;
                 this.paintLoop();
 
-                this.soundEffectVolume = parseFloat(localStorage.getItem(this.areaId + "soundEffectVolume") || '0')
+                this.soundEffectVolume = parseFloat(localStorage.getItem(areaId + "soundEffectVolume") || '0')
 
                 this.updateAudioElementsVolume()
 
@@ -833,12 +831,12 @@ const vueApp = createApp(defineComponent({
             this.isLoadingRoom = false;
             this.requestedRoomChange = false;
         },
-        async connectToServer()
+        async connectToServer(username: string, areaId: string, characterId: string)
         {
             const loginResponse = await postJson("/api/login", {
-                userName: this.username,
-                characterId: this.characterId,
-                areaId: this.areaId,
+                userName: username,
+                characterId,
+                areaId,
                 roomId: getSpawnRoomId(),
             });
 
@@ -3952,6 +3950,7 @@ const vueApp = createApp(defineComponent({
 
 vueApp.config.unwrapInjectedRef = true // No longer required after Vue 3.3
 vueApp.component("username", ComponentUsername)
+vueApp.component("login-page", LoginPage)
 
 vueApp.use(I18NextVue, { i18next })
 
