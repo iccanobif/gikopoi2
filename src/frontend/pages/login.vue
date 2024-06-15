@@ -74,7 +74,7 @@ const emit = defineEmits<{
         areaId: string,
         characterId: string
     ];
-    setLanguage: [siteArea: SiteArea];
+    setlanguage: [siteArea: SiteArea];
 }>();
 
 const props = defineProps({
@@ -102,8 +102,8 @@ const handleLoginClick = () => {
     );
 };
 
-const handleLanguageChange = (siteArea: SiteArea) => () => {
-    emit("setLanguage", siteArea);
+const handleLanguageChange = (siteArea: SiteArea) => {
+    emit("setlanguage", siteArea);
 };
 </script>
 
