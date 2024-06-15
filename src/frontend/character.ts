@@ -81,7 +81,7 @@ export class Character
         Object.assign(this.portrait, portrait)
         
         // On new year's, all characters are visible
-        this.isHidden = annualEvents["newYears"].isNow() ? false : isHidden
+        this.isHidden = annualEvents.newYears.isNow() ? false : isHidden
         
         this.scale = scale
     }
@@ -205,11 +205,11 @@ const characterObjects: CharacterObject[] = [
     { name: "salmon", portrait: { left: 0.17, top: -0.54 } },
     { name: "giko_hat", portrait: { left: -0.5, top: 0.10 } },
     { name: "shii_hat", portrait: { left: -0.5, top: 0.10 } },
-    { name: "shobon_hat", isHidden: !annualEvents["christmasTime"].isNow(), portrait: { left: -0.41, top: -0.2 } },
+    { name: "shobon_hat", isHidden: !annualEvents.christmasTime.isNow(), portrait: { left: -0.41, top: -0.2 } },
     { name: "furoshiki", portrait: { left: -0.5, top: 0.24 } },
-    { name: "golden_furoshiki", isHidden: !annualEvents["goldenWeek"].isNow(), portrait: { left: -0.5, top: 0.24 } },
-    { name: "furoshiki_shii", isHidden: annualEvents["spring"].isNow(), portrait: { left: -0.5, top: 0.24 } },
-    { name: "sakura_furoshiki_shii", isHidden: !annualEvents["spring"].isNow(), portrait: { left: -0.5, top: 0.24 } },
+    { name: "golden_furoshiki", isHidden: !annualEvents.goldenWeek.isNow(), portrait: { left: -0.5, top: 0.24 } },
+    { name: "furoshiki_shii", isHidden: annualEvents.spring.isNow(), portrait: { left: -0.5, top: 0.24 } },
+    { name: "sakura_furoshiki_shii", isHidden: !annualEvents.spring.isNow(), portrait: { left: -0.5, top: 0.24 } },
     { name: "furoshiki_shobon", portrait: { left: -0.41, top: -0.2 } },
     { name: "naitoapple", portrait: { left: -0.5, top: 0.1 } },
     { name: "shii_pianica", portrait: { left: -0.46, top: 0.24 } },
@@ -235,10 +235,10 @@ const characterObjects: CharacterObject[] = [
     { name: "zonu", portrait: { left: -0.7, top: -0.46 } },
     { name: "george", portrait: { left: -0.48, top: 0.13 } },
     { name: "chotto_toorimasu_yo", portrait: { left: -0.54, top: -0.34 } },
-    { name: "tokita_naito", isHidden: !annualEvents["spooktober"].isNow(), portrait: { left: -0.40, top: 0.04, scale: 1.7 } },
-    { name: "pumpkinhead", isHidden: !annualEvents["spooktober"].isNow(), portrait: { left: -0.74, top: 0.34, scale: 2.3 } },
-    { name: "naito_yurei", isHidden: !annualEvents["spooktober"].isNow(), portrait: { left: -0.48, top: 0.13 } },
-    { name: "shiinigami", isHidden: !annualEvents["spooktober"].isNow(), portrait: { left: -1, top: 0.02, scale: 2.8 } },
+    { name: "tokita_naito", isHidden: !annualEvents.spooktober.isNow(), portrait: { left: -0.40, top: 0.04, scale: 1.7 } },
+    { name: "pumpkinhead", isHidden: !annualEvents.spooktober.isNow(), portrait: { left: -0.74, top: 0.34, scale: 2.3 } },
+    { name: "naito_yurei", isHidden: !annualEvents.spooktober.isNow(), portrait: { left: -0.48, top: 0.13 } },
+    { name: "shiinigami", isHidden: !annualEvents.spooktober.isNow(), portrait: { left: -1, top: 0.02, scale: 2.8 } },
     { name: "youkanman", isHidden: true, portrait: { left: -0.46, top: -0.5, scale: 1.8 } },
     { name: "baba_shobon", isHidden: true, portrait: { left: -0.5, top: -0.2 } },
     { name: "uzukumari", portrait: { left: -0.98, top: -0.69 } },
@@ -247,6 +247,8 @@ const characterObjects: CharacterObject[] = [
     { name: "giko_shamisen", isHidden: true, portrait: { left: -0.5, top: 0.24 } },
     { name: "shii_syakuhati", isHidden: true, portrait: { left: -0.5, top: 0.24 } },
     { name: "taiko_naito", isHidden: true, portrait: { left: -0.48, top: 0.13 } },
+    { name: "shobon_raincoat", isHidden: !annualEvents.rainy.isNow(), portrait: { left: -0.41, top: -0.2 } },
+    { name: "shii_raincoat", isHidden: !annualEvents.rainy.isNow(), portrait: { left: -0.46, top: 0.24 } },
 ]
 
 export const characters: { [characterId: string]: Character } =
