@@ -3704,6 +3704,37 @@ export const rooms: { [roomId: string]: Room } = {
         },
         streamSlotCount: 3,
     },
+    gyougijou: {
+        // 元　　 -> 五輪　 -> 戻
+        // 872929 -> 8A83CE -> 872929
+        // A04C49 -> C4A8D3 -> A04C49
+        // 835754 -> 665483 -> 835754
+        // B55E5A -> E3C6F3 -> A04C49
+        id: "gyougijou",
+        group: "gikopoipoi",
+        scale: 0.35,// (10.5 * 80)/1202,
+        size: { x: 9, y: 28 },
+        originCoordinates: { x: 200, y: 680 },
+        spawnPoint: "door",
+        backgroundImageUrl: "rooms/gyougijou/background.svg",
+        objects: [
+        ],
+        sit: coordRange({x: 2, y:  5}, {x:  5, y:  5})
+            .concat(coordRange({x: 2, y: 7 }, {x: 5, y: 7}))
+            .concat(coordRange({x: 2, y: 9 }, {x: 5, y: 9}))
+            .concat(coordRange({x: 2, y: 11 }, {x: 5, y: 11}))
+            .concat(coordRange({x: 2, y: 13 }, {x: 5, y: 13}))
+            .concat(coordRange({x: 2, y: 15 }, {x: 5, y: 15}))
+            .concat(coordRange({x: 2, y: 17 }, {x: 5, y: 17}))
+            .concat(coordRange({x: 2, y: 19 }, {x: 5, y: 19}))
+        ,
+        blocked: [],
+        forbiddenMovements: [],
+        doors: {
+            door: { x: 0, y: 0, direction: "down", target: { roomId: "gyougijou", doorId: "door" } },
+        },
+        streamSlotCount: 1,
+    }
 };
 
 
