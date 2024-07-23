@@ -18,14 +18,20 @@ async function optimizeFile(fileFullName)
     console.log(Math.round((result.data.length / svgString.length) * 100, 2) + "%", fileFullName, result.data.length + " bytes, was " + svgString.length + " bytes")
 }
 
-async function optimizeAll()
+async function optimizeAll(filter)
 {
-    await optimizeFile("public/enabled-listener.svg")
-    await optimizeFile("public/disabled-listener.svg")
+    if (!filter)
+    {
+        await optimizeFile("public/enabled-listener.svg")
+        await optimizeFile("public/disabled-listener.svg")
+    }
 
     const characterIds = await fs.readdir(charactersDirectory)
     for (const characterId of characterIds)
     {
+        if (filter && !characterId.includes(filter))
+            continue
+
         const spriteFiles = await fs.readdir(charactersDirectory + "/" + characterId)
         for (const spriteFile of spriteFiles)
         {
@@ -38,6 +44,9 @@ async function optimizeAll()
     const roomIds = await fs.readdir(roomsDirectory, { })
     for (const roomId of roomIds.filter(roomId => !roomId.match(/\.svg$/)))
     {
+        if (filter && !roomId.includes(filter))
+            continue
+
         const spriteFiles = await fs.readdir(roomsDirectory + "/" + roomId)
         for (const spriteFile of spriteFiles)
         {
@@ -52,6 +61,6 @@ async function optimizeAll()
 
 const args = process.argv.slice(2);
 if (args.length > 0)
-    optimizeFile(args[0]).catch(console.error)
+    optimizeAll(args[0]).catch(console.error)
 else
-    optimizeAll().catch(console.error)
+    optimizeAll("").catch(console.error)
