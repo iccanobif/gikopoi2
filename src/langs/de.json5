@@ -248,6 +248,7 @@
         irori: "Feuerstelle",
         taiikukan: "Schulturnhalle",
         yaneura: "Dachboden",
+        // kyougijou: "Track",
     },
     area:
     {
