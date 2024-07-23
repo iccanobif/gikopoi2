@@ -1,7 +1,35 @@
-<svg width="6500px" height="4000px" version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
-    xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="6415.75"
+   height="3201.1599"
+   version="1.1"
+   xml:space="preserve"
+   style="clip-rule:evenodd;fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5"
+   id="svg545"
+   sodipodi:docname="background.svg"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+   id="namedview547"
+   pagecolor="#505050"
+   bordercolor="#eeeeee"
+   borderopacity="1"
+   inkscape:showpageshadow="0"
+   inkscape:pageopacity="0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#505050"
+   showgrid="false"
+   inkscape:zoom="0.13152186"
+   inkscape:cx="2319.0061"
+   inkscape:cy="2497.6836"
+   inkscape:window-width="1920"
+   inkscape:window-height="996"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg545" />
     <path
    id="トラック外側"
    d="M 415.254,3005 3.474,3200.66 4,2924.41 4468.98,5 h 1946.27 z"
@@ -2130,4 +2158,18 @@
      style="stop-color:rgb(46,46,46);stop-opacity:1"
      id="stop1070" /></radialGradient>
     </defs>
-</svg>
+<g
+   id="g2757"
+   transform="matrix(2.8399778,0,0,-2.8240294,921.33879,3744.5873)"><path
+     d="m 347.792,528.038 -20,10 7.65,3.8 -34.9,0.25 v -17.4 l 7.45,3.45 19.95,-10 19.85,9.9"
+     fill="#ffcc66"
+     fill-opacity="0.6"
+     id="path2621" /><path
+     d="m 327.942,518.138 -19.95,10 -7.45,-3.45 v 17.4 l 34.9,-0.25 -7.65,-3.8 20,-10 z"
+     fill="none"
+     stroke="#ff6600"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-miterlimit="3"
+     stroke-opacity="0.6"
+     id="path2623" /></g></svg>

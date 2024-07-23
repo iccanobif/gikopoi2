@@ -3714,7 +3714,7 @@ export const rooms: { [roomId: string]: Room } = {
         group: "gikopoipoi",
         scale: 0.35,// (10.5 * 80)/1202,
         size: { x: 9, y: 28 },
-        originCoordinates: { x: 200, y: 680 },
+        originCoordinates: { x: 203, y: 684 },
         spawnPoint: "door",
         backgroundImageUrl: "rooms/gyougijou/background.svg",
         objects: [
