@@ -3727,10 +3727,13 @@ export const rooms: { [roomId: string]: Room } = {
             .concat(coordRange({x: 2, y: 13 }, {x: 5, y: 13}))
             .concat(coordRange({x: 2, y: 15 }, {x: 5, y: 15}))
             .concat(coordRange({x: 2, y: 17 }, {x: 5, y: 17}))
-            .concat(coordRange({x: 2, y: 19 }, {x: 5, y: 19}))
-        ,
+            .concat(coordRange({x: 2, y: 19 }, {x: 5, y: 19})),
         blocked: [
             { x: 8, y: 25 },
+            { x: 0, y: 1 },
+            { x: 0, y: 2 },
+            { x: 0, y: 3 },
+            { x: 0, y: 27 },
         ],
         forbiddenMovements: [],
         doors: {
