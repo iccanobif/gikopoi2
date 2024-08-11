@@ -2932,10 +2932,12 @@ const vueApp = createApp(defineComponent({
                 const withScreenCapture = this.streamScreenCapture && withVideo
                 const withScreenCaptureAudio = this.streamScreenCaptureAudio && withScreenCapture && withSound
 
+                // Force all the other advanced settings if desktop audio sharing is enabled.
+                // Can't remember why, but the UI hides those settings when sharing desktop audio.
                 const audioConstraints = {
-                    echoCancellation: this.streamEchoCancellation,
-                    noiseSuppression: this.streamNoiseSuppression,
-                    autoGainControl: this.streamAutoGain,
+                    echoCancellation: withScreenCaptureAudio && this.streamEchoCancellation,
+                    noiseSuppression: withScreenCaptureAudio && this.streamNoiseSuppression,
+                    autoGainControl: withScreenCaptureAudio && this.streamAutoGain,
                     deviceId: withScreenCaptureAudio ? undefined : { exact: this.selectedAudioDeviceId! },
                 }
 
