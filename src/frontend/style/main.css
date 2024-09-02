@@ -1066,6 +1066,7 @@ button
     display: flex;
     align-items: center;
     width: 219px;
+    flex-wrap: wrap;
 }
 
 .audio-stream-controls-container.listener-connected > .audio-stream-controls
@@ -1170,7 +1171,7 @@ button
     color: #F3EFE0;
     border-radius: 3px;
     border: 1px solid #959595;
-    display: flex; /* seems to be necessary only for safari */
+    display: inline-block;
 }
 
 .stream-gain-control button
