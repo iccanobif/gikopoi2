@@ -10,6 +10,7 @@ const { i18next } = useTranslation()
         </div>
         <div class="changelog">
             <h3>更新ログ</h3>
+2024/09/02: 無制限に音声配信のゲインを上げるようになりました。<br/>
 2024/08/11: 新しいキャラを追加しました。<br/>
 2024/07/26: 新しいステージを追加しました。<br/>
 2023/12/30: 新しいキャラを追加しました。<br/>
@@ -132,6 +133,7 @@ You must be at least 16 years of age to enter.
         </div>
         <div class="changelog">
             <h3>Change Log</h3>
+2024/09/02: Added buttons to increase the gain of audio streams with no limit.<br/>
 2024/08/11: Added a new character.<br/>
 2024/07/26: Added new room.<br/>
 2023/12/30: Added a new character.<br/>
