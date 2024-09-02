@@ -40,7 +40,8 @@
 .theme-shaddox #toolbar button,
 .theme-shaddox .stream-buttons button,
 .theme-shaddox .slot-wrapper button
-.theme-shaddox .popup button {
+.theme-shaddox .popup button,
+.theme-shaddox .stream-gain-control button {
     background-color: #2F3E46;
     color: #CAD2C5;
 }

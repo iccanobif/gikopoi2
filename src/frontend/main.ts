@@ -84,6 +84,8 @@ import LoginFooter from './login-footer.vue'
 import ComponentUsername from './username.vue'
 import LoginPage from './pages/login.vue'
 
+import StreamGainControl from './stream-gain-control.vue'
+
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
 window.myUserID = null;
@@ -224,6 +226,7 @@ const vueApp = createApp(defineComponent({
         ChessboardSlot,
         JankenSlot,
         LoginFooter,
+        StreamGainControl,
     },
     data() {
         return {
@@ -3800,6 +3803,10 @@ const vueApp = createApp(defineComponent({
         onCompressionChanged(streamSlotID: number)
         {
             this.inboundAudioProcessors[streamSlotID].onCompressionChanged()
+        },
+        onGainChanged(streamSlotID: number, gain: number)
+        {
+            this.inboundAudioProcessors[streamSlotID].setGain(gain)
         },
         onPanChanged(streamSlotID: number, event: KeyboardEvent)
         {

@@ -1065,6 +1065,7 @@ button
     visibility: hidden;
     display: flex;
     align-items: center;
+    width: 219px;
 }
 
 .audio-stream-controls-container.listener-connected > .audio-stream-controls
@@ -1161,4 +1162,53 @@ button
 
 #niconico-message-template {
     display: none;
+}
+
+.stream-gain-control
+{
+    background-color: #4d4d9f;
+    color: #F3EFE0;
+    border-radius: 3px;
+    border: 1px solid #959595;
+    display: flex; /* seems to be necessary only for safari */
+}
+
+.stream-gain-control button
+{
+    padding: 0;
+    margin: 0;
+    min-width: 20px; /* min width because the number can be more than 2 digits */
+    height: 20px;
+    font-size: 14px;
+    border-right: 1px solid gray;
+    border-top: none;
+    border-bottom: none;
+    border-left: none;
+    background: none;
+    color: #F3EFE0;
+    cursor: pointer;
+    vertical-align: top;
+}
+
+/* no border on the last button */
+.stream-gain-control button:last-child
+{
+    border-right: none;
+}
+
+.stream-gain-control button.disabled {
+    color: gray;
+    pointer-events: none;
+}
+
+.stream-gain-control button.decrement
+{
+    background-image: url("/images/minus.svg");
+    background-size: 100%;
+}
+
+.stream-gain-control button.increment
+{
+    background-image: url("/images/plus.svg");
+    background-size: 100%;
 }

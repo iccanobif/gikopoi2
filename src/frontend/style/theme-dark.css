@@ -32,7 +32,8 @@
 .theme-dark #toolbar button,
 .theme-dark .stream-buttons button,
 .theme-dark .slot-wrapper button,
-.theme-dark .popup button {
+.theme-dark .popup button,
+.theme-dark .stream-gain-control button {
     background-color: #38383b;
     color: #f0f0f0;
     border: 1px solid #686868;

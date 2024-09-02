@@ -36,6 +36,7 @@
         button_logout: "Logout",
         volume: "Lautstärke: ",
         enable_compression: "Verstärken: ",
+        // gain: "Gain: ",
         sound_effect: "Lauts.",
         tts_volume: "TTS Ls.",
         label_move: "Bewegen",

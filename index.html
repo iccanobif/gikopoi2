@@ -288,6 +288,10 @@
                                     v-if="inboundAudioProcessors[index]"
                                     v-model="inboundAudioProcessors[index].isBoostEnabled"
                                     v-on:change="onCompressionChanged(index)">
+                                <label :for="'stream-gain-control-' + index">{{ $t("ui.gain") }}</label>
+                                <stream-gain-control
+                                    :id="'stream-gain-control-' + index"
+                                    @gain-changed="gain => onGainChanged(index, gain)"></stream-gain-control>
                             </div>
                         </div>
                         <div v-if="streamSlotIdInWhichIWantToStream == index">

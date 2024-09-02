@@ -36,6 +36,7 @@
         button_logout: "登出",
         volume: "音量：",
         enable_compression: "增強：",
+        // gain: "Gain: ",
         sound_effect: "提示音",
         tts_volume: "TTS",
         label_move: "移動",

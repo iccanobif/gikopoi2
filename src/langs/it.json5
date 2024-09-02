@@ -36,6 +36,7 @@
         button_logout: "Logout",
         volume: "Volume: ",
         enable_compression: "Boost: ",
+        // gain: "Gain: ",
         sound_effect: "Volume",
         tts_volume: "Vol. TTS",
         label_move: "Muovi",

@@ -36,6 +36,7 @@
         button_logout: "Çıkış yap",
         volume: "Ses: ",
         enable_compression: "Boost: ",
+        // gain: "Gain: ",
         sound_effect: "Ses",
         tts_volume: "SYS Sesi",
         label_move: "Yürü",

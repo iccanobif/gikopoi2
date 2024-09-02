@@ -188,8 +188,6 @@ export const debounceWithImmediateExecution = (func: any, wait: number) => {
     };
   };
 
-const maxGain = 1.3
-
 var AudioContext = window.AudioContext          // Default
                  || (window as any).webkitAudioContext;  // Safari and old versions of Chrome
 
@@ -199,19 +197,18 @@ export class AudioProcessor
 {
     private stream: MediaStream
     private volume: number = 0
+    private gain: number = 0
     private isInbound: boolean
-    private vuMeterCallback: VuMeterCallback
     
     public isBoostEnabled: boolean = false // set by v-model
-    private isMute: boolean = false
     
     private context: AudioContext
     private source: MediaStreamAudioSourceNode
     public destination: MediaStreamAudioDestinationNode
-    private compressor: DynamicsCompressorNode
-    private gain: GainNode
-    private pan: StereoPannerNode | GainNode
-    private analyser: AnalyserNode
+    private compressorNode: DynamicsCompressorNode
+    private gainNode: GainNode
+    private panNode: StereoPannerNode | GainNode
+    private analyserNode: AnalyserNode
     
     private vuMeterTimer: number
     
@@ -219,49 +216,48 @@ export class AudioProcessor
     {
         this.stream = stream
         this.isInbound = isInbound
-        this.vuMeterCallback = vuMeterCallback
 
         this.context = new AudioContext();
         this.source = this.context.createMediaStreamSource(stream);
         this.destination = this.context.createMediaStreamDestination()
-        this.compressor = this.context.createDynamicsCompressor();
-        this.compressor.threshold.value = -50;
-        this.compressor.knee.value = 40;
-        this.compressor.ratio.value = 12;
-        this.compressor.attack.value = 0;
-        this.compressor.release.value = 0.25;
-        this.gain = this.context.createGain();
+        this.compressorNode = this.context.createDynamicsCompressor();
+        this.compressorNode.threshold.value = -50;
+        this.compressorNode.knee.value = 40;
+        this.compressorNode.ratio.value = 12;
+        this.compressorNode.attack.value = 0;
+        this.compressorNode.release.value = 0.25;
+        this.gainNode = this.context.createGain();
 
         // To support old safari versions that people still seem to use, check that createStereoPanner
         // is available, and if not, use a dummy gain node instead.
         if (this.context.createStereoPanner)
         {
-            this.pan = this.context.createStereoPanner();
-            this.pan.pan.value = 0
+            this.panNode = this.context.createStereoPanner();
+            this.panNode.pan.value = 0
         }
         else
         {
-            this.pan = this.context.createGain();
+            this.panNode = this.context.createGain();
         }
 
-        this.analyser = this.context.createAnalyser()
+        this.analyserNode = this.context.createAnalyser()
 
         this.connectNodes()
 
         this.setVolume(volume)
 
         // Vu meter
-        this.analyser.minDecibels = -60;
-        this.analyser.maxDecibels = 0;
-        this.analyser.smoothingTimeConstant = 0.01;
+        this.analyserNode.minDecibels = -60;
+        this.analyserNode.maxDecibels = 0;
+        this.analyserNode.smoothingTimeConstant = 0.01;
         // fftSize must be 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, or 32768
-        this.analyser.fftSize = 32
-        const bufferLengthAlt = this.analyser.frequencyBinCount;
+        this.analyserNode.fftSize = 32
+        const bufferLengthAlt = this.analyserNode.frequencyBinCount;
         const dataArrayAlt = new Uint8Array(bufferLengthAlt);
 
         this.vuMeterTimer = window.setInterval(() => {
             try {
-                this.analyser.getByteFrequencyData(dataArrayAlt)
+                this.analyserNode.getByteFrequencyData(dataArrayAlt)
 
                 const max = dataArrayAlt.reduce((acc, val) => Math.max(acc, val))
 
@@ -282,65 +278,81 @@ export class AudioProcessor
         }, 100)
     }
 
-    dispose(): Promise<void>
+    async dispose(): Promise<void>
     {
         for (const track of this.stream.getTracks()) track.stop();
         window.clearInterval(this.vuMeterTimer)
-        return this.context.close().catch(console.error)
+        try {
+            return await this.context.close()
+        } catch (message) {
+            return console.error(message)
+        }
     }
 
     connectNodes()
     {
         this.source.disconnect()
-        this.compressor.disconnect()
-        this.gain.disconnect()
-        this.pan.disconnect()
+        this.compressorNode.disconnect()
+        this.gainNode.disconnect()
+        this.panNode.disconnect()
 
         if (this.isBoostEnabled)
         {
-            this.source.connect(this.compressor)
-            this.compressor.connect(this.gain)
+            this.source.connect(this.compressorNode)
+            this.compressorNode.connect(this.gainNode)
         }
         else
         {
-            this.source.connect(this.gain)
+            this.source.connect(this.gainNode)
         }
 
-        this.gain.connect(this.pan)
+        this.gainNode.connect(this.panNode)
 
         if (this.isInbound)
-            this.pan.connect(this.context.destination)
+            this.panNode.connect(this.context.destination)
         
-        this.pan.connect(this.destination)
-        this.pan.connect(this.analyser)
+        this.panNode.connect(this.destination)
+        this.panNode.connect(this.analyserNode)
+    }
+
+    updateGainNodeGain()
+    {
+        const adjustedGain = this.gain * 0.25
+
+        this.gainNode.gain.value = this.isBoostEnabled
+            ? this.volume * 1.3 + adjustedGain
+            : this.volume + adjustedGain
+
+        console.log("gain", this.gainNode.gain.value)
     }
 
     setVolume(volume: number)
     {
         this.volume = volume
+        this.updateGainNodeGain()
+    }
 
-        this.gain.gain.value = this.isBoostEnabled
-            ? volume * maxGain
-            : volume
+    setGain(gain: number)
+    {
+        this.gain = gain
+        this.updateGainNodeGain()
     }
 
     mute()
     {
-        this.gain.gain.value = 0
-        this.isMute = true
+        this.gainNode.gain.value = 0
     }
 
     unmute()
     {
-        this.gain.gain.value = this.volume
-        this.isMute = false
+        this.gainNode.gain.value = this.volume
     }
 
     setPan(value: number)
     {
         // Check that this is actually a pan node and not a dummy gain node (see comments in constructor)
-        if ("pan" in this.pan)
-            this.pan.pan.value = value
+        if ("pan" in this.panNode)
+            this.panNode.pan.value = value
     }
 
     onCompressionChanged()

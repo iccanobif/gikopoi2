@@ -31,6 +31,7 @@
         button_logout: "Secedere",
         volume: "Sonus: ",
         enable_compression: "Amplificare: ",
+        // gain: "Gain: ",
         sound_effect: "Sonus",
         tts_volume: "TTS",
         label_move: "Movere",
