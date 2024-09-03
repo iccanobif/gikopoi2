@@ -10,6 +10,7 @@ import hu from "../langs/hu.json5";
 import la from "../langs/la.json5";
 import tr from "../langs/tr.json5";
 import lt from "../langs/lt.json5";
+import fr from "../langs/fr.json5";
 
 export default
 {
@@ -25,4 +26,5 @@ export default
     la: { common: la },
     tr: { common: tr },
     lt: { common: lt },
+    fr: { common: fr },
 }
