@@ -322,13 +322,13 @@ export class AudioProcessor
         this.gain.gain.value = this.isBoostEnabled
             ? this.volume * 1.3 + adjustedGain
             : this.volume + adjustedGain
-
-        console.log("gain", this.gain.gain.value)
     }
 
     setVolume(volume: number)
     {
-        this.volume = volume
+        // Coerce "volume" to number, since in some case it's populated with a value that's
+        // read from the local storage and because of previous bugs it might be a string.
+        this.volume = +volume 
         this.updateGainNodeGain()
     }
 
