@@ -199,6 +199,7 @@ export class AudioProcessor
     private volume: number = 0
     private gainValue: number = 0
     private isInbound: boolean
+    public isMute: boolean = false // used in the html template
     
     public isBoostEnabled: boolean = false // set by v-model
     
@@ -317,11 +318,18 @@ export class AudioProcessor
 
     updateGainNodeGain()
     {
-        const adjustedGain = this.gainValue * 0.25
-
-        this.gain.gain.value = this.isBoostEnabled
-            ? this.volume * 1.3 + adjustedGain
-            : this.volume + adjustedGain
+        if (this.isMute)
+        {
+            this.gain.gain.value = 0
+        }
+        else 
+        {
+            const adjustedGain = this.gainValue * 0.25
+            
+            this.gain.gain.value = this.isBoostEnabled
+                ? this.volume * 1.3 + adjustedGain
+                : this.volume + adjustedGain
+        }
     }
 
     setVolume(volume: number)
@@ -340,12 +348,14 @@ export class AudioProcessor
 
     mute()
     {
-        this.gain.gain.value = 0
+        this.isMute = true
+        this.updateGainNodeGain()
     }
 
     unmute()
     {
-        this.gain.gain.value = this.volume
+        this.isMute = false
+        this.updateGainNodeGain()
     }
 
     setPan(value: number)
