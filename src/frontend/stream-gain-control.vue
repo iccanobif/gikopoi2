@@ -59,6 +59,8 @@ const handleKeyUp = (type: "increment" | "decrement") => {
     type === 'increment' ? stopIncrement() : stopDecrement()
 }
 
+// TODO: handle touch events (touchstart, touchend, touchcancel)
+
 onMounted(() => {
     window.addEventListener('mouseup', stopIncrement)
     window.addEventListener('mouseup', stopDecrement)
