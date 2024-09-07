@@ -5,7 +5,7 @@ const { i18next } = useTranslation()
 
 <template>
     <div v-show="i18next.language == 'ja'">
-        <div div="login-notice">
+        <div id="login-notice">
 16歳未満の立ち入りを禁止します。
         </div>
         <div class="changelog">
@@ -130,7 +130,7 @@ const { i18next } = useTranslation()
         </div>
     </div>
     <div v-show="i18next.language != 'ja'">
-        <div div="login-notice">
+        <div id="login-notice">
 You must be at least 16 years of age to enter.
         </div>
         <div class="changelog">
