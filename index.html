@@ -130,7 +130,7 @@
                                         class="fas"
                                         v-bind:class="{'fa-bell': showNotifications, 'fa-bell-slash': !showNotifications}"></button>
                             </div>
-                            <div class="tooltip-section" v-if="isMoveSectionVisible">
+                            <div class="tooltip-section tooltip-movement-section" v-if="isMoveSectionVisible">
                                 <div class='tooltip-section-title'>
                                     <div>{{ $t("ui.label_move") }}</div>
                                 </div>
@@ -159,7 +159,7 @@
                                             v-on:touchend="setMovementDirection($event, null)">&nbsp;</button>
                                 </div>
                             </div>
-                            <div class="tooltip-section" v-if="isBubbleSectionVisible">
+                            <div class="tooltip-section tooltip-bubble-position-section" v-if="isBubbleSectionVisible">
                                 <div class='tooltip-section-title'>
                                     <div>{{ $t("ui.label_bubble") }}</div>
                                 </div>
@@ -266,7 +266,7 @@
                             <div class="audio-stream-controls">
                                 <label for="stream-volume">{{ $t("ui.volume") }}</label>
                                 <input type="range" :id="'volume-' + index" v-on:change="changeStreamVolume(index)"
-                                    name="stream-volume" min="0" max="1" step="0.01" v-model="slotVolume[index]">
+                                    name="stream-volume" min="0" max="1" step="0.01" v-model.number="slotVolume[index]">
                                 <input
                                     :id="'pan-knob-' + index"
                                     type="range"
