@@ -1975,7 +1975,7 @@ app.post("/api/login", async (req, res) =>
     }
 })
 
-async function janusClientConnect(client: typeof JanusClient): Promise<void>
+function janusClientConnect(client: typeof JanusClient): Promise<void>
 {
     return new Promise((resolve, reject) =>
     {
@@ -1987,8 +1987,8 @@ async function janusClientConnect(client: typeof JanusClient): Promise<void>
             }
             else
             {
-                client.onError((error: any) => reject(error))
-                client.onConnected(() => resolve())
+                client.onError(reject)
+                client.onConnected(resolve)
                 client.connect()
             }
         }
