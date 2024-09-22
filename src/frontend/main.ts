@@ -3033,6 +3033,7 @@ const vueApp = createApp(defineComponent({
                                         stream.isJumping = false
                                 }, 100)
                         });
+                        await this.outboundAudioProcessor.initialize()
 
                         const audioTrack = this.outboundAudioProcessor.destination.stream.getAudioTracks()[0]
 
@@ -3251,6 +3252,7 @@ const vueApp = createApp(defineComponent({
                                 else
                                     setTimeout(() => {this.streams[streamSlotId].isJumping = false}, 100)
                             })
+                            await this.inboundAudioProcessors[streamSlotId].initialize()
                         }
                     }
                     catch (exc)
