@@ -207,6 +207,8 @@ export class AudioProcessor
     
     public isBoostEnabled: boolean = false // set by v-model
     public isFeedbackEnabled: boolean = false // set by v-model
+
+    public pitchFactor: number = 1
     
     private context: AudioContext
     private source: MediaStreamAudioSourceNode
@@ -215,16 +217,20 @@ export class AudioProcessor
     private gain: GainNode
     private pan: StereoPannerNode | GainNode
     private analyser: AnalyserNode
+    private phaseVocoderNode: AudioWorkletNode | null = null
     
-    private vuMeterTimer: number
+    private vuMeterCallback: VuMeterCallback
+    private vuMeterTimer: number | null = null
     
     constructor(stream: MediaStream, volume: number, isInbound: boolean, vuMeterCallback: VuMeterCallback)
     {
         this.stream = stream
         this.isInbound = isInbound
+        this.volume = volume;
+        this.vuMeterCallback = vuMeterCallback
 
         this.context = new AudioContext();
-        this.source = this.context.createMediaStreamSource(stream);
+        this.source = this.context.createMediaStreamSource(this.stream);
         this.destination = this.context.createMediaStreamDestination()
         this.compressor = this.context.createDynamicsCompressor();
         this.compressor.threshold.value = -50;
@@ -247,10 +253,21 @@ export class AudioProcessor
         }
 
         this.analyser = this.context.createAnalyser()
+    }
+
+    async initialize(): Promise<void>
+    {
+        await this.context.audioWorklet.addModule('scripts/phase-vocoder.min.js');
+
+        this.phaseVocoderNode = new AudioWorkletNode(this.context, 'phase-vocoder-processor');
+
+        let pitchFactorParam = this.phaseVocoderNode.parameters.get('pitchFactor')
+        if (pitchFactorParam)
+            pitchFactorParam.value = 2;
 
         this.connectNodes()
 
-        this.setVolume(volume)
+        this.setVolume(this.volume)
 
         // Vu meter
         this.analyser.minDecibels = -60;
@@ -274,12 +291,13 @@ export class AudioProcessor
                 const sensitivity = 50
                 const logarithmicLevel = Math.log(linearLevel * sensitivity + 1) / Math.log(sensitivity + 1)
 
-                vuMeterCallback(logarithmicLevel)
+                this.vuMeterCallback(logarithmicLevel)
             }
             catch (exc)
             {
                 console.error(exc)
-                window.clearInterval(this.vuMeterTimer)
+                if (this.vuMeterTimer)
+                    window.clearInterval(this.vuMeterTimer)
             }
         }, 100)
     }
@@ -287,13 +305,16 @@ export class AudioProcessor
     async dispose(): Promise<void>
     {
         for (const track of this.stream.getTracks()) track.stop();
-        window.clearInterval(this.vuMeterTimer)
+        if (this.vuMeterTimer)
+            window.clearInterval(this.vuMeterTimer)
         try {
             return await this.context.close()
         } catch (message) {
             return console.error(message)
         }
     }
+
+    isPitchShiftEnabled = () => this.pitchFactor != 1
 
     connectNodes()
     {
@@ -312,7 +333,15 @@ export class AudioProcessor
             this.source.connect(this.gain)
         }
 
-        this.gain.connect(this.pan)
+        if (this.phaseVocoderNode && this.isPitchShiftEnabled())
+        {
+            this.gain.connect(this.phaseVocoderNode)
+            this.phaseVocoderNode.connect(this.pan)
+        }
+        else
+        {
+            this.gain.connect(this.pan)
+        }
 
         if (this.isInbound || this.isFeedbackEnabled)
             this.pan.connect(this.context.destination)
@@ -374,6 +403,23 @@ export class AudioProcessor
         // Check that this is actually a pan node and not a dummy gain node (see comments in constructor)
         if ("pan" in this.pan)
             this.pan.pan.value = value
+    }
+
+    setPitchFactor(value: number) {
+        const previousPitchFactor = this.pitchFactor;
+        this.pitchFactor = value;
+    
+        if (!this.phaseVocoderNode) return;
+        const pitchFactorParam = this.phaseVocoderNode.parameters.get('pitchFactor');
+        if (!pitchFactorParam) return;
+    
+        pitchFactorParam.value = value;
+    
+        // If pitch factor was 0 and now it's not, or vice versa, we reconnect the nodes, so that the phase vocoder
+        // doesn't consume CPU when it's not needed.
+        if ((previousPitchFactor === 0 && value !== 0) || (previousPitchFactor !== 0 && value === 0)) {
+            this.connectNodes();
+        }
     }
 
     onCompressionChanged()
