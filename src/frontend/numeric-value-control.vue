@@ -11,30 +11,39 @@ import { defineEmits, onMounted, onBeforeUnmount } from 'vue'
 const props = defineProps({
     minValue: {
         type: Number,
-        default: Number.MIN_VALUE
+        default: 0
     },
     maxValue: {
         type: Number,
-        default: Number.MAX_VALUE
-    }
+        default: 100
+    },
+    defaultValue: {
+        type: Number,
+        default: 0
+    },
 })
 
-const count = ref(0)
+const count = ref(props.defaultValue)
 const emit = defineEmits(['value-changed'])
 
 const emitValueChanged = () => {
     emit('value-changed', count.value)
 }
 const increment = () => {
-    count.value++
-    emitValueChanged()
+    if (count.value < props.maxValue) {
+        count.value++
+        emitValueChanged()
+    }
 }
+
 const decrement = () => {
-    count.value > 0 && count.value--
-    emitValueChanged()
+    if (count.value > props.minValue) {
+        count.value--
+        emitValueChanged()
+    }
 }
 const reset = () => {
-    count.value = 0
+    count.value = props.defaultValue
     emitValueChanged()
 }
 
@@ -112,7 +121,7 @@ onBeforeUnmount(() => {
             @keyup="event => handleKeyUp(event, 'decrement')"
             @touchstart="event => startDecrement(event)"
             @touchend="event => stopDecrement(event)"
-            :class="{ disabled: count === 0, decrement: true }"></button>
+            :class="{ disabled: count === props.minValue, decrement: true }"></button>
         <button
             @mousedown="event => startIncrement(event)"
             @mouseup="event => stopIncrement(event)"
@@ -120,7 +129,7 @@ onBeforeUnmount(() => {
             @keyup="event => handleKeyUp(event, 'increment')"
             @touchstart="event => startIncrement(event)"
             @touchend="event => stopIncrement(event)"
-            class="increment"></button>
+            :class="{ disabled: count === props.maxValue, increment: true }"></button>
         <button @click="reset">{{ count }}</button>
     </div>
 </template>
