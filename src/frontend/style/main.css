@@ -1167,7 +1167,7 @@ button
     display: none;
 }
 
-.stream-gain-control
+.numeric-value-control
 {
     background-color: #4d4d9f;
     color: #F3EFE0;
@@ -1176,7 +1176,7 @@ button
     display: inline-block;
 }
 
-.stream-gain-control button
+.numeric-value-control button
 {
     padding: 0;
     margin: 0;
@@ -1194,23 +1194,23 @@ button
 }
 
 /* no border on the last button */
-.stream-gain-control button:last-child
+.numeric-value-control button:last-child
 {
     border-right: none;
 }
 
-.stream-gain-control button.disabled {
+.numeric-value-control button.disabled {
     color: gray;
     pointer-events: none;
 }
 
-.stream-gain-control button.decrement
+.numeric-value-control button.decrement
 {
     background-image: url("/images/minus.svg");
     background-size: 100%;
 }
 
-.stream-gain-control button.increment
+.numeric-value-control button.increment
 {
     background-image: url("/images/plus.svg");
     background-size: 100%;

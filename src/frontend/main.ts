@@ -84,7 +84,7 @@ import LoginFooter from './login-footer.vue'
 import ComponentUsername from './username.vue'
 import LoginPage from './pages/login.vue'
 
-import StreamGainControl from './stream-gain-control.vue'
+import NumericValueControl from './numeric-value-control.vue'
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -226,7 +226,7 @@ const vueApp = createApp(defineComponent({
         ChessboardSlot,
         JankenSlot,
         LoginFooter,
-        StreamGainControl,
+        NumericValueControl,
     },
     data() {
         return {
