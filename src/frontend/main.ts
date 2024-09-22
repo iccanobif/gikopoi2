@@ -3829,6 +3829,14 @@ const vueApp = createApp(defineComponent({
             if (this.outboundAudioProcessor)
                 this.outboundAudioProcessor.unmute()
         },
+        enableFeedback()
+        {
+            this.outboundAudioProcessor?.setFeedback(true)
+        },
+        disableFeedback()
+        {
+            this.outboundAudioProcessor?.setFeedback(false)
+        },
         isStreaming(): boolean
         {
             // Not correct, because streamSlotIdInWhichIWantToStream is different from null also when

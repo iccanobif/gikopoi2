@@ -31,6 +31,8 @@
         button_stream_drop: "Stream schließen",
         button_stream_mute: "Stummschalten",
         button_stream_unmute: "Stummschaltung aufheben",
+        // buttom_stream_enable_feedback: "Enable feedback",
+        // buttom_stream_disable_feedback: "Disable feedback",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Einstellungen",

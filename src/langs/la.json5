@@ -26,6 +26,8 @@
         button_stream_drop: "Transmissionem interrumpere",
         button_stream_mute: "Silentium facere",
         button_stream_unmute: "Silentium interrumpere",
+        // buttom_stream_enable_feedback: "Enable feedback",
+        // buttom_stream_disable_feedback: "Disable feedback",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Praeferentiae",

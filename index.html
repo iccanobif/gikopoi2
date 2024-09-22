@@ -329,6 +329,28 @@
                                 v-on:click="stopStreaming">
                                 {{ $t("ui.button_stream_stop") }}
                             </button>
+
+                            <!-- enable/disable feedback buttons -->
+                            <button
+                                v-if="streamSlotIdInWhichIWantToStream == index
+                                    && streamSlot.withSound
+                                    && !outboundAudioProcessor?.isFeedbackEnabled"
+                                v-on:click="enableFeedback"
+                                class="feedback-button"
+                                v-bind:title="$t('ui.button_stream_enable_feedback')">
+                                <span class="fas fa-volume-mute"></span>
+                            </button>
+                            <button
+                                v-if="streamSlotIdInWhichIWantToStream == index
+                                    && streamSlot.withSound
+                                    && outboundAudioProcessor?.isFeedbackEnabled"
+                                v-on:click="disableFeedback"
+                                class="feedback-button red-button"
+                                v-bind:title="$t('ui.button_stream_disable_feedback')">
+                                <span class="fas fa-volume-up"></span>
+                            </button>
+
+                            <!-- mute/unmute buttons-->
                             <button
                                 v-if="streamSlotIdInWhichIWantToStream == index
                                     && streamSlot.withSound

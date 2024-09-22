@@ -31,6 +31,8 @@
         button_stream_drop: "Berhenti menonton",
         button_stream_mute: "Hening",
         button_stream_unmute: "Hidup",
+        // buttom_stream_enable_feedback: "Enable feedback",
+        // buttom_stream_disable_feedback: "Disable feedback",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Konfigurasi",
