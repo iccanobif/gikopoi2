@@ -30,6 +30,8 @@
         button_stream_drop: "İzlemeyi bırak",
         button_stream_mute: "Sessize al",
         button_stream_unmute: "Sessizden çıkar",
+        // buttom_stream_enable_feedback: "Enable feedback",
+        // buttom_stream_disable_feedback: "Disable feedback",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Seçenekler",

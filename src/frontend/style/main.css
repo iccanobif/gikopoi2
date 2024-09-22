@@ -853,10 +853,12 @@ button.checked {
 
 .stream-buttons {
     width: 219px;
+    display: flex;
 }
 
-.stream-buttons .mute-unmute-button {
-    float: right;
+.stream-buttons .feedback-button {
+    /* push the button to the right */
+    margin-left: auto;
 }
 
 .stream-buttons button,

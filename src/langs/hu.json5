@@ -30,6 +30,8 @@
         button_stream_drop: "Közvetítés leállítása",
         button_stream_mute: "Némítás",
         button_stream_unmute: "Némítás megszüntetése",
+        // buttom_stream_enable_feedback: "Enable feedback",
+        // buttom_stream_disable_feedback: "Disable feedback",
         button_rula: "#rula",
         button_list: "#lista",
         button_preferences: "Beállítások",

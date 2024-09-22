@@ -202,6 +202,7 @@ export class AudioProcessor
     public isMute: boolean = false // used in the html template
     
     public isBoostEnabled: boolean = false // set by v-model
+    public isFeedbackEnabled: boolean = false // set by v-model
     
     private context: AudioContext
     private source: MediaStreamAudioSourceNode
@@ -309,7 +310,7 @@ export class AudioProcessor
 
         this.gain.connect(this.pan)
 
-        if (this.isInbound)
+        if (this.isInbound || this.isFeedbackEnabled)
             this.pan.connect(this.context.destination)
         
         this.pan.connect(this.destination)
@@ -344,6 +345,12 @@ export class AudioProcessor
     {
         this.gainValue = gain
         this.updateGainNodeGain()
+    }
+
+    setFeedback(feedback: boolean)
+    {
+        this.isFeedbackEnabled = feedback
+        this.connectNodes()
     }
 
     mute()
