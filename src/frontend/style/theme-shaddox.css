@@ -41,7 +41,7 @@
 .theme-shaddox .stream-buttons button,
 .theme-shaddox .slot-wrapper button
 .theme-shaddox .popup button,
-.theme-shaddox .stream-gain-control button {
+.theme-shaddox .numeric-value-control button {
     background-color: #2F3E46;
     color: #CAD2C5;
 }

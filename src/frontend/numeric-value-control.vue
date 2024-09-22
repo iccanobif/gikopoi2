@@ -8,23 +8,34 @@
 import { ref } from 'vue'
 import { defineEmits, onMounted, onBeforeUnmount } from 'vue'
 
-const count = ref(0)
-const emit = defineEmits(['gain-changed'])
+const props = defineProps({
+    minValue: {
+        type: Number,
+        default: Number.MIN_VALUE
+    },
+    maxValue: {
+        type: Number,
+        default: Number.MAX_VALUE
+    }
+})
 
-const emitGainChanged = () => {
-    emit('gain-changed', count.value)
+const count = ref(0)
+const emit = defineEmits(['value-changed'])
+
+const emitValueChanged = () => {
+    emit('value-changed', count.value)
 }
 const increment = () => {
     count.value++
-    emitGainChanged()
+    emitValueChanged()
 }
 const decrement = () => {
     count.value > 0 && count.value--
-    emitGainChanged()
+    emitValueChanged()
 }
 const reset = () => {
     count.value = 0
-    emitGainChanged()
+    emitValueChanged()
 }
 
 const intervalMilliseconds = 200
@@ -93,7 +104,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="stream-gain-control">
+    <div class="numeric-value-control">
         <button
             @mousedown="event => startDecrement(event)"
             @mouseup="event => stopDecrement(event)"

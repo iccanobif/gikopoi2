@@ -291,10 +291,10 @@
                                         v-on:change="onCompressionChanged(index)">
                                 </div>
                                 <div>
-                                    <label :for="'stream-gain-control-' + index">{{ $t("ui.gain") }}</label>
-                                    <stream-gain-control
-                                        :id="'stream-gain-control-' + index"
-                                        @gain-changed="gain => onGainChanged(index, gain)"></stream-gain-control>
+                                    <label :for="'numeric-value-control-' + index">{{ $t("ui.gain") }}</label>
+                                    <numeric-value-control
+                                        :id="'numeric-value-control-' + index"
+                                        @value-changed="gain => onGainChanged(index, gain)"></numeric-value-control>
                                 </div>
                             </div>
                         </div>
