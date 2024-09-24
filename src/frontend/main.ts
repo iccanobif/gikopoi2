@@ -3839,6 +3839,12 @@ const vueApp = createApp(defineComponent({
         {
             this.outboundAudioProcessor?.setFeedback(false)
         },
+        onPitchShiftChanged(value: number)
+        {
+            // convert value (-100~100) to pitch factor (0.5~1.5)
+            const pitchFactor = 0.5 + (value + 100) / 200
+            this.outboundAudioProcessor?.setPitchFactor(pitchFactor)
+        },
         isStreaming(): boolean
         {
             // Not correct, because streamSlotIdInWhichIWantToStream is different from null also when
