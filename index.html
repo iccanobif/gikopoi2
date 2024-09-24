@@ -333,6 +333,15 @@
                                 {{ $t("ui.button_stream_stop") }}
                             </button>
 
+                            <numeric-value-control
+                                v-if="streamSlotIdInWhichIWantToStream == index
+                                        && streamSlot.withSound"
+                                :id="'pitch-shift-' + index"
+                                :min="-100"
+                                :max="100"
+                                :default="0"
+                                @value-changed="value => onPitchShiftChanged(value)"></numeric-value-control>
+
                             <!-- enable/disable feedback buttons -->
                             <button
                                 v-if="streamSlotIdInWhichIWantToStream == index
