@@ -218,6 +218,7 @@ export class AudioProcessor
     private pan: StereoPannerNode | GainNode
     private analyser: AnalyserNode
     private phaseVocoderNode: AudioWorkletNode | null = null
+    private lowPassFilter: BiquadFilterNode
     
     private vuMeterCallback: VuMeterCallback
     private vuMeterTimer: number | null = null
@@ -253,6 +254,9 @@ export class AudioProcessor
         }
 
         this.analyser = this.context.createAnalyser()
+
+        this.lowPassFilter = this.context.createBiquadFilter()
+        this.lowPassFilter.type = "lowpass"
     }
 
     async initialize(): Promise<void>
@@ -322,6 +326,8 @@ export class AudioProcessor
         this.compressor.disconnect()
         this.gain.disconnect()
         this.pan.disconnect()
+        this.phaseVocoderNode?.disconnect()
+        this.lowPassFilter?.disconnect()
 
         if (this.isBoostEnabled)
         {
@@ -333,10 +339,11 @@ export class AudioProcessor
             this.source.connect(this.gain)
         }
 
-        if (this.phaseVocoderNode && this.isPitchShiftEnabled())
+        if (this.isPitchShiftEnabled() && this.phaseVocoderNode) 
         {
             this.gain.connect(this.phaseVocoderNode)
-            this.phaseVocoderNode.connect(this.pan)
+            this.phaseVocoderNode.connect(this.lowPassFilter)
+            this.lowPassFilter.connect(this.pan)
         }
         else
         {
@@ -414,12 +421,20 @@ export class AudioProcessor
         if (!pitchFactorParam) return;
     
         pitchFactorParam.value = value;
-    
-        // If pitch factor was 0 and now it's not, or vice versa, we reconnect the nodes, so that the phase vocoder
-        // doesn't consume CPU when it's not needed.
-        if ((previousPitchFactor === 0 && value !== 0) || (previousPitchFactor !== 0 && value === 0)) {
-            this.connectNodes();
-        }
+
+        // Set low pass filter frequency so that:
+        // - if pitch factor is close to 0.5, the low pass filter goes to close to 4000 Hz
+        // - if pitch factor is close to 1, the treshold is close to maxFrequency
+        // This is to avoid aliasing when pitch shifting. These values were chosen empirically
+        // with my own microphone and voice, so they might not be perfect for all cases.
+        const maxFrequency = this.context.sampleRate / 2;        
+        const frequency = value > 1
+                        ? maxFrequency
+                        : 4000 + (maxFrequency - 4000) * (value - 0.5) * 2;
+        this.lowPassFilter.frequency.value = frequency;
+        this.lowPassFilter.frequency.value = 4000;
+
+        this.connectNodes();
     }
 
     onCompressionChanged()

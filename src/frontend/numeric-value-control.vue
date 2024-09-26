@@ -3,7 +3,6 @@
 
 <!-- It's still not working on android. why? -->
 
-
 <script setup lang="ts">
 import { ref } from 'vue'
 import { defineEmits, onMounted, onBeforeUnmount } from 'vue'
