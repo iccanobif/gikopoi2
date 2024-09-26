@@ -869,6 +869,7 @@ button.checked {
 .stream-buttons {
     width: 219px;
     display: flex;
+    align-items: center;
 }
 
 .stream-buttons .feedback-button {
@@ -1197,6 +1198,7 @@ button
     margin: 0;
     min-width: 20px; /* min width because the number can be more than 2 digits */
     height: 20px;
+    min-height: auto; /* reset min-height set by the ".stream-buttons button" rule */
     font-size: 14px;
     border-right: 1px solid gray;
     border-top: none;
