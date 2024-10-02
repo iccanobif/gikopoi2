@@ -129,6 +129,8 @@ onBeforeUnmount(() => {
             @touchstart="event => startIncrement(event)"
             @touchend="event => stopIncrement(event)"
             :class="{ disabled: count === props.max, increment: true }"></button>
-        <button @click="reset">{{ count }}</button>
+        <button
+            class="value"
+            @click="reset">{{ count }}</button>
     </div>
 </template>

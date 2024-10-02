@@ -33,6 +33,7 @@
         button_logout: "Secedere",
         volume: "Sonus: ",
         enable_compression: "Amplificare: ",
+        // voice_changer: "Voice Changer: ",
         // gain: "Gain: ",
         sound_effect: "Sonus",
         tts_volume: "TTS",

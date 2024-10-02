@@ -38,6 +38,7 @@
         button_logout: "Çıkış yap",
         volume: "Ses: ",
         enable_compression: "Boost: ",
+        // voice_changer: "Voice Changer: ",
         // gain: "Gain: ",
         sound_effect: "Ses",
         tts_volume: "SYS Sesi",

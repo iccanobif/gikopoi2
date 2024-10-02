@@ -333,19 +333,6 @@
                                 {{ $t("ui.button_stream_stop") }}
                             </button>
 
-                            <!-- TODO -->
-                            <!-- fare una checkbox per abilitare/disabilitare pitch shift -->
-                            <!-- se abilitato, mostrare in una riga a parte una textbox numerica -->
-
-                            <numeric-value-control
-                                v-if="streamSlotIdInWhichIWantToStream == index
-                                        && streamSlot.withSound"
-                                :id="'pitch-shift-' + index"
-                                :min="-100"
-                                :max="200"
-                                :default="0"
-                                @value-changed="value => onPitchShiftChanged(value)"></numeric-value-control>
-
                             <!-- enable/disable feedback buttons -->
                             <button
                                 v-if="streamSlotIdInWhichIWantToStream == index
@@ -385,6 +372,17 @@
                                 v-bind:title="$t('ui.button_stream_unmute')">
                                 <span class="fas fa-microphone-slash"></span>
                             </button>
+                        </div>
+                        <div class="stream-buttons" v-if="streamSlotIdInWhichIWantToStream == index">
+                            <label>{{ $t("ui.voice_changer") }}</label>
+                            <numeric-value-control
+                                v-if="streamSlotIdInWhichIWantToStream == index
+                                        && streamSlot.withSound"
+                                :id="'pitch-shift-' + index"
+                                :min="-100"
+                                :max="200"
+                                :default="0"
+                                @value-changed="value => onPitchShiftChanged(value)"></numeric-value-control>
                         </div>
                     </div>
                     <template v-if="currentRoom !== null && currentRoom.games" v-for="(game, index) in currentRoom.games">

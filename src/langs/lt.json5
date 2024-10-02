@@ -38,6 +38,7 @@
         button_logout: "Atsijungti",
         volume: "Garsas: ",
         enable_compression: "Garsiau: ",
+        // voice_changer: "Voice Changer: ",
         // gain: "Gain: ",
         sound_effect: "Garsumas",
         tts_volume: "TTS Gars.",

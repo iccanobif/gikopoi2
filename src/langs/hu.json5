@@ -38,6 +38,7 @@
         button_logout: "Kijelentkezés",
         volume: "Hangerő: ",
         enable_compression: "Hangosítás: ",
+        // voice_changer: "Voice Changer: ",
         // gain: "Gain: ",
         sound_effect: "Hangerő",
         tts_volume: "Felolvasás hangerő",

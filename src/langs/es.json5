@@ -38,6 +38,7 @@
         button_logout: "Cerrar sesión",
         volume: "Volumen: ",
         enable_compression: "Boost: ",
+        // voice_changer: "Voice Changer: ",
         // gain: "Gain: ",
         sound_effect: "Volumen",
         tts_volume: "Vol. TTS",
