@@ -39,6 +39,7 @@
         button_logout: "Logga ut",
         volume: "Volym: ",
         enable_compression: "Förstärkning: ",
+        // voice_changer: "Voice Changer: ",
         gain: "Öka: ",
         sound_effect: "Volym",
         tts_volume: "Talsyntesvolym.",

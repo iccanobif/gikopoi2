@@ -40,6 +40,7 @@
         volume: "Garsas: ",
         enable_compression: "Garsiau: ",
         gain: "Pagarsinti: ",
+        // voice_changer: "Voice Changer: ",
         sound_effect: "Garsumas",
         tts_volume: "TTS Gars.",
         label_move: "Judėti",

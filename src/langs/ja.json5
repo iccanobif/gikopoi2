@@ -39,6 +39,7 @@
         button_logout: "ログアウト",
         volume: "音量：",
         enable_compression: "ﾌﾞｰｽﾄ：",
+        voice_changer: "ﾎﾞｲｽﾁｪﾝｼﾞｬｰ：",
         gain: "ｹﾞｲﾝ：",
         sound_effect: "効果音",
         tts_volume: "TTS音量",

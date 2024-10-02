@@ -1232,3 +1232,7 @@ button
     background-image: url("/images/plus.svg");
     background-size: 100%;
 }
+
+.numeric-value-control button.value {
+    padding: 0 4px;
+}
