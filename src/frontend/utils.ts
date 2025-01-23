@@ -139,15 +139,19 @@ export function postJson(url: string, data: any): Promise<Response>
     })
 }
 
-export function logToServer(msg: string): Promise<Response>
+export async function logToServer(msg: string)
 {
-    return fetch("/api/client-log", {
-        method: "POST",
-        headers: { 'Content-Type': "text/plain"},
-        body: msg
-    })
+    try {
+        await fetch("/api/client-log", {
+            method: "POST",
+            headers: { 'Content-Type': "text/plain" },
+            body: msg
+        })
+    } catch {
+        // Ignore errors to prevent infinite loops and increased CPU usage when the network is down.
+        // Nothing particularly important is logged here anyway.
+    } 
 }
-
 
 // Some websites don't seem to realize that URL encoded strings should decode to UTF-8 and not to SHIFT-JIS.
 // example: https://seesaawiki.jp/your_heart/d/%A4%C8%A4%AD%A4%E1%A4%AD%A5%BB%A5%F3%A5%B5%A1%BC%A4%CB%A4%C4%A4%A4%A4%C6
