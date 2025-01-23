@@ -127,10 +127,8 @@ app.use(async function (req, res, next) {
     
     if (status == "abusedb" || status == "vpn")
     {
-        const logText = `Rejected HTTP connection from ip [${ip}] ${status}`
-            + status == "abuse" 
-                ? `score ${abuseDbConfidenceScore}`
-                : ""
+        const logText = `Rejected HTTP connection from ip [${ip}] (${status})` + 
+            (status == "abusedb" ? ` score ${abuseDbConfidenceScore}` : "")
         log.info(logText)
         res.setHeader("Content-Type", "text/html; charset=utf-8")
 

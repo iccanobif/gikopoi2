@@ -55,6 +55,9 @@ function getAbuseConfidenceScore(ip: string): Promise<number>
 
 async function reverseDnsLookup(ip: string): Promise<string[]>
 {
+    if (ip == "127.0.0.1")
+        return ["localhost"] // needed only to test the domain block feature
+
     if (ip in reverseDnsLookupCache)
         return reverseDnsLookupCache[ip]
 
@@ -103,12 +106,12 @@ export async function checkIfBadIp(ip: string, bannedIPs: Set<string>): Promise<
     if (confidenceScore > 50)
         return { status: "abusedb", abuseDbConfidenceScore: confidenceScore }
 
-    // Apparently datapacket.com is a large cloud provider for VPNs
-    await reverseDnsLookup(ip)
-    // const hostnames = await reverseDnsLookup(ip)
-    // Comment this for now, until I get a better idea of how many users would be affected
-    // if (hostnames.find(h => h.toLowerCase().endsWith("datapacket.com")))
-    //     return { status: "vpn" }
+    const hostnames = await reverseDnsLookup(ip)
+
+    const blockedVpnDomainRegex = new RegExp(settings.blockedVpnDomainRegex, "i")
+
+    if (hostnames.find(h => blockedVpnDomainRegex.test(h)))
+        return { status: "vpn" }
 
     return { status: "ok" }
 }

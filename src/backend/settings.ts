@@ -17,7 +17,8 @@ interface PoiPoiSettings
     adminKey: string
     censoredWordsRegex: string
     noStreamIPs: string[],
-    siteAreas: SiteArea[]
+    siteAreas: SiteArea[],
+    blockedVpnDomainRegex: string,
 }
 
 let jsonContents: PoiPoiSettings;
@@ -53,4 +54,5 @@ export const settings: PoiPoiSettings = {
         {"id": "gen", "name": "一般 (_gen)", "language": "ja", "restrictLanguage": true},
         {"id": "for", "name": "International (_for)", "language": "any"}
     ],
+    blockedVpnDomainRegex: jsonContents.blockedVpnDomainRegex || "$-^",
 }
