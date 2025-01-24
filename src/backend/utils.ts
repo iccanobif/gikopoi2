@@ -14,6 +14,7 @@ function calculateTripcode(key: string) {
 
 // Trim username and calculate tripcode
 export function elaborateUserName(userName: string) {
+    if (!userName) return "";
     const n = userName.indexOf("#");
     const userNamePart = userName
         .substring(0, n >= 0 ? n : 20) // Don't allow the user to have a name longer than 20 characters
