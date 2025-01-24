@@ -22,6 +22,7 @@
         label_stream: "Canal {{index}}: ",
         label_input: "Input:",
         label_log: "Log:",
+        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
 
         button_send: "Enviar",
         button_stream_start: "Empezar stream",

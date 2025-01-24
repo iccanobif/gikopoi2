@@ -22,6 +22,7 @@
         label_stream: "Csatorna {{index}}: ",
         label_input: "Bevitel:",
         label_log: "Napló:",
+        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
 
         button_send: "Küldés",
         button_stream_start: "Közvetítés indítása",

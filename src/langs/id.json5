@@ -22,6 +22,7 @@
         label_stream: "Siaran {{index}}: ",
         label_input: "Memasukkan:",
         label_log: "Catatan:",
+        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
 
         button_send: "Mengirim",
         button_stream_start: "Mulai siaran",

@@ -22,6 +22,7 @@
         label_stream: "Kanal {{index}}: ",
         label_input: "Inlägg:",
         label_log: "Logg:",
+        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
 
         button_send: "Skriv",
         button_stream_start: "Börja strömma",

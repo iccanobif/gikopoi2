@@ -22,6 +22,7 @@
         label_stream: "Kanal {{index}}: ",
         label_input: "Girdi:",
         label_log: "Defter:",
+        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
 
         button_send: "Gönder",
         button_stream_start: "Yayını başlat",

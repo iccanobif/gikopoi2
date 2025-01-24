@@ -22,6 +22,7 @@
         label_stream: "Canale {{index}}: ",
         label_input: "Input:",
         label_log: "Log:",
+        error_invalid_username: "I nomi utente più lunghi di 20 caratteri non sono ammessi.",
 
         button_send: "Invia",
         button_stream_start: "Inizia stream",

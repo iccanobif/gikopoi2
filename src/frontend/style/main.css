@@ -61,6 +61,14 @@ input[type='range']
     margin-right: 3px;
 }
 
+#username-selection span.error {
+    margin-left: 5px;
+}
+
+#login-form span.error {
+    color: #b11030;
+}
+
 #login-footer {
     font-family: 'Courier New', Courier, monospace;
     margin: 12px;

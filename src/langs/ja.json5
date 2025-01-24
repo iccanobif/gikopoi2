@@ -22,6 +22,7 @@
         label_stream: "ﾁｬﾝﾈﾙ{{index}}：",
         label_input: "入力：",
         label_log: "ログ：",
+        error_invalid_username: "ユーザー名は20文字以内で入力してください。",
 
         button_send: "発言",
         button_stream_start: "配信開始",

@@ -22,6 +22,7 @@
         label_stream: "Kanalas {{index}}: ",
         label_input: "Įvestis:",
         label_log: "Pokalbis:",
+        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
 
         button_send: "Siųsti",
         button_stream_start: "Pradėti transliaciją",

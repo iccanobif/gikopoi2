@@ -17,6 +17,7 @@
         label_stream: "Canalis {{index}}: ",
         label_input: "Immissio:",
         label_log: "Libellus:",
+        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
 
         button_send: "Mittere",
         button_stream_start: "Transmissionem initiare",

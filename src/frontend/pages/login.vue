@@ -24,10 +24,11 @@
                         props.siteAreasInfo[siteArea.id].streamCount
                     }}]</label>
             </div>
-            <div>
+            <div id="username-selection">
                 <label>{{ $t("ui.label_username") }}</label>
-                <input id="username-textbox" type="text" v-model="username" maxlength="20"
+                <input id="username-textbox" type="text" v-model="username"
                     v-bind:placeholder="$t('default_user_name')!" :disabled="isLoggingIn" />
+                <span v-if="!isValidUsername" class="error">{{ $t("ui.error_invalid_username") }}</span>
             </div>
             <div id="character-selection">
                 <label v-for="character in allCharacters" :for="character.characterName + '-selection'"
@@ -51,7 +52,7 @@
                 " />
                 </label>
             </div>
-            <button id="login-button" v-on:click.prevent="handleLoginClick" :disabled="isLoggingIn">
+            <button id="login-button" v-on:click.prevent="handleLoginClick" :disabled="isLoggingIn || !isValidUsername">
                 Login
             </button>
         </form>
@@ -62,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { characters } from "../character";
 import { SiteArea, SiteAreasInfo } from "../types";
 import LoginFooter from "../login-footer.vue";
@@ -92,7 +93,16 @@ const password = ref("");
 const areaId = ref(props.areaId);
 const characterId = ref(localStorage.getItem("characterId") || "giko");
 
+const isValidUsername = computed(() => {
+    // Allow usernames up to 20 characters, excluding the tripcode
+    return /^.{0,20}(#.*){0,1}$/.test(username.value);
+});
+
 const handleLoginClick = () => {
+    if (!isValidUsername.value) {
+        return;
+    }
+
     emit(
         "login",
         username.value,
@@ -101,9 +111,6 @@ const handleLoginClick = () => {
         characterId.value
     );
 };
-
-// TODO: Add username validation in js with this regex
-// ^.{0,20}(#.*){0,1}$
 
 const handleLanguageChange = (siteArea: SiteArea) => {
     emit("setlanguage", siteArea);

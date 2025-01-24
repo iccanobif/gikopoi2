@@ -22,6 +22,7 @@
         label_stream: "頻道{{index}}：",
         label_input: "輸入：",
         label_log: "聊天紀錄：",
+        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
 
         button_send: "送出",
         button_stream_start: "開始直播",
