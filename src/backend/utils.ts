@@ -1,5 +1,4 @@
 import { createTripByKey } from "2ch-trip";
-import log from "loglevel";
 
 export async function sleep(ms: number) {
     return new Promise(res => setTimeout(res, ms))
@@ -14,7 +13,7 @@ export function indexOfMulti(array: Uint8Array, searchElements: number[], fromIn
         return index;
     }
 
-    for (var i = index, j = 0; j < searchElements.length && i < array.length; i++, j++) {
+    for (const i = index, j = 0; j < searchElements.length && i < array.length; i++, j++) {
         if (array[i] !== searchElements[j]) {
             return indexOfMulti(array, searchElements, index + 1);
         }

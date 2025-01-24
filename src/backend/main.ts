@@ -1900,7 +1900,7 @@ app.post("/api/login", async (req, res) =>
             return
         }
 
-        let { userName, characterId, areaId, roomId } = req.body
+        const { userName, characterId, areaId, roomId } = req.body
 
         if (typeof userName !== "string")
         {

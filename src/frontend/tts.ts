@@ -30,7 +30,7 @@ function speakAnimalese(text: string, pitch: number | null, volume: number) {
         pitch = 1
     else
         pitch = (pitch / 2) * 1.3 + 0.7
-    var audio = new Audio();
+    const audio = new Audio();
     audio.src = synth.Animalese(text, false, pitch).dataURI;
     audio.volume = volume / 100
 

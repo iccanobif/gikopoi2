@@ -117,11 +117,11 @@ export function calculateRealCoordinates(room: ClientRoom, x: number, y: number)
     const blockWidth = room.blockWidth ? room.blockWidth : BLOCK_WIDTH;
     const blockHeight = room.blockHeight ? room.blockHeight : BLOCK_HEIGHT;
     
-    let realX = room.originCoordinates.x
+    const realX = room.originCoordinates.x
         + x * blockWidth / 2
         + y * blockWidth / 2
 
-    let realY = room.originCoordinates.y
+    const realY = room.originCoordinates.y
         + x * blockHeight / 2
         - y * blockHeight / 2
 
@@ -192,8 +192,8 @@ export const debounceWithImmediateExecution = (func: any, wait: number) => {
     };
   };
 
-var AudioContext = window.AudioContext          // Default
-                 || (window as any).webkitAudioContext;  // Safari and old versions of Chrome
+const AudioContext = window.AudioContext          // Default
+                   || (window as any).webkitAudioContext;  // Safari and old versions of Chrome
 
 export type VuMeterCallback = (level: number) => void
 

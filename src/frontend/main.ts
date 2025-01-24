@@ -1231,7 +1231,7 @@ const vueApp = createApp(defineComponent({
             if (userId) // Only mark mentions in user messages
                 bodySpan.childNodes.forEach(node =>
                 {
-                    let el = node.nodeType == 3
+                    const el = node.nodeType == 3
                         ? document.createElement("span")
                         : (node as HTMLElement)
                         
