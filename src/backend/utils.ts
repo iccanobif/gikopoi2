@@ -19,6 +19,6 @@ export function elaborateUserName(userName: string) {
     const userNamePart = userName
         .substring(0, n >= 0 ? n : 20) // Don't allow the user to have a name longer than 20 characters
         .replace(/[◆⯁♦⬥]/g, "◇");
-    const tripcode = n < 0 ? "" : calculateTripcode(userName.substring(n + 1));
-    return userNamePart + "◆" + tripcode;
+    const tripcode = n < 0 ? "" : "◆" + calculateTripcode(userName.substring(n + 1));
+    return userNamePart + tripcode;
 }
