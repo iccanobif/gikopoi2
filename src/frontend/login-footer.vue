@@ -10,6 +10,7 @@ const { i18next } = useTranslation()
         </div>
         <div class="changelog">
             <h3>更新ログ</h3>
+2025/01/24: 2ch風の12桁トリップを使えるようになりました。<br/>
 2024/09/05: ミュートボタンのバグが修正されました。<br/>
 2024/09/03: 配信の音が急にでかくなるバグが修正されました。<br/>
 2024/09/02: 無制限に音声配信のゲインを上げるようになりました。<br/>
@@ -135,6 +136,7 @@ You must be at least 16 years of age to enter.
         </div>
         <div class="changelog">
             <h3>Change Log</h3>
+2025/01/24: Allow 2channel-compatible 12-character tripcodes.<br/>
 2024/09/05: Fixed bug in the mute button.<br/>
 2024/09/03: Fixed bug that caused stream audio to suddenly get very loud.<br/>
 2024/09/02: Added buttons to increase the gain of audio streams with no limit.<br/>

@@ -1,4 +1,4 @@
-import { createTrip } from "2ch-trip";
+import { createTripByKey } from "2ch-trip";
 import log from "loglevel";
 
 export async function sleep(ms: number) {
@@ -25,11 +25,10 @@ export function indexOfMulti(array: Uint8Array, searchElements: number[], fromIn
 
 // Expect key to start with # or ##
 function calculateTripcode(key: string) {
-    if (!key) return "";
     // for gikopoi compatibility, empty keys return ◆fnkquv7jY2 instead of ◆8NBuQ4l6uQ
-    if (key == "#") return "◆fnkquv7jY2"
+    if (!key) return "fnkquv7jY2";
 
-    return createTrip(key, { hideWhitespace: true });
+    return createTripByKey(key);
 }
 
 // Trim username and calculate tripcode
@@ -38,11 +37,6 @@ export function elaborateUserName(userName: string) {
     const userNamePart = userName
         .substring(0, n >= 0 ? n : 20) // Don't allow the user to have a name longer than 20 characters
         .replace(/[◆⯁♦⬥]/g, "◇");
-    const tripcodeKeyPart = n >= 0 ? userName.substring(n) : ""; // Include the # or ##, so that 2ch-trip can decide whether it's a raw key or a 10/12 character key
-    const tripcode = tripcodeKeyPart ? calculateTripcode(tripcodeKeyPart) : "";
-    const processedUserName = userNamePart + tripcode;
-
-    log.error(`userNamePart: ${userNamePart}, tripcodeKeyPart: ${tripcodeKeyPart}, tripcode: ${tripcode}, processedUserName: ${processedUserName}`);
-
-    return processedUserName;
+    const tripcode = n < 0 ? "" : calculateTripcode(userName.substring(n + 1));
+    return userNamePart + "◆" + tripcode;
 }
