@@ -19,13 +19,13 @@ const app = express()
 const server = require('http').Server(app);
 
 import { Server } from "socket.io"
+import { elaborateUserName } from "./utils";
 
 const io = new Server(server, {
     pingInterval: 25 * 1000, // Heroku fails with "H15 Idle connection" if a socket is inactive for more than 55 seconds with
     pingTimeout: 60 * 1000
 })
 
-const tripcode = require('tripcode');
 const enforce = require('express-sslify');
 const JanusClient = require('janus-videoroom-client').Janus;
 const cookieParser = require("cookie-parser");
@@ -1947,14 +1947,8 @@ app.post("/api/login", async (req, res) =>
             }
         }
 
-        if (userName.length > 20)
-            userName = userName.substr(0, 20)
-
-        const n = userName.indexOf("#");
-        let processedUserName = (n >= 0 ? userName.substr(0, n) : userName)
-            .replace(/[◆⯁♦⬥]/g, "◇");
-        if (n >= 0)
-            processedUserName = processedUserName + "◆" + (tripcode(userName.substr(n + 1)) || "fnkquv7jY2");
+        // Calculate tripcode and trim excessively long names
+        const processedUserName = elaborateUserName(userName);
 
         const user = addNewUser(processedUserName, characterId, areaId, roomId, getRealIp(req));
 

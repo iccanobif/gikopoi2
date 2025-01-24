@@ -102,6 +102,9 @@ const handleLoginClick = () => {
     );
 };
 
+// TODO: Add username validation in js with this regex
+// ^.{0,20}(#.*){0,1}$
+
 const handleLanguageChange = (siteArea: SiteArea) => {
     emit("setlanguage", siteArea);
 };
