@@ -23,7 +23,7 @@
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
      inkscape:zoom="4.8241758"
-     inkscape:cx="80.117312"
+     inkscape:cx="55.553531"
      inkscape:cy="91"
      inkscape:window-width="1888"
      inkscape:window-height="1044"
@@ -52,12 +52,12 @@
      style="fill:none;stroke:#000000;stroke-width:2px"
      id="path10" />
   <path
-     d="M103.535 70.904c2.012.598 4.169.324 5.246-.469"
+     d="m 103.535,60.904035 c 2.012,0.598 4.169,0.324 5.246,-0.469"
      stroke-width="3"
      id="gikopoipoi_eyes_closed"
      style="display:none;stroke-width:2.14607;stroke-dasharray:none"
      fill="none"
-     stroke="#000"
+     stroke="#000000"
      stroke-linecap="round"
      stroke-linejoin="round" />
   <circle

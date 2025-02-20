@@ -23,7 +23,7 @@
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
      inkscape:zoom="4.8241758"
-     inkscape:cx="80.117312"
+     inkscape:cx="55.553531"
      inkscape:cy="91"
      inkscape:window-width="1888"
      inkscape:window-height="1044"
@@ -85,12 +85,12 @@
        id="circle22" />
   </g>
   <path
-     d="M98.833 72.756a5.22 5.22 0 0 0 5.267-.024m-38.731.024a5.22 5.22 0 0 0 5.267-.024"
+     d="m 98.833,62.756035 a 5.22,5.22 0 0 0 5.267,-0.024 m -38.731,0.024 a 5.22,5.22 0 0 0 5.267,-0.024"
      style="display:none;stroke-width:2.14607;stroke-dasharray:none"
      id="gikopoipoi_eyes_closed"
      stroke-width="3"
      fill="none"
-     stroke="#000"
+     stroke="#000000"
      stroke-linecap="round"
      stroke-linejoin="round" />
 </svg>
