@@ -22,7 +22,7 @@
         label_stream: "Kanalas {{index}}: ",
         label_input: "Įvestis:",
         label_log: "Pokalbis:",
-        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
+        error_invalid_username: "Nėra leidžiama naudoti vardų, ilgesnių nei 20 simbolių.",
 
         button_send: "Siųsti",
         button_stream_start: "Pradėti transliaciją",
@@ -37,7 +37,7 @@
         button_logout: "Atsijungti",
         volume: "Garsas: ",
         enable_compression: "Garsiau: ",
-        // gain: "Gain: ",
+        gain: "Pagarsinti: ",
         sound_effect: "Garsumas",
         tts_volume: "TTS Gars.",
         label_move: "Judėti",
@@ -188,7 +188,7 @@
         start_stream_stream_slot_already_taken: "Šis kanalas jau užimtas.",
         start_stream_stream_slot_already_taken_by_blocked_streamer: "Kažkas, ką esate užblokavę, jau transliuoja šiuo kanalu.",
         start_stream_stream_slot_already_taken_by_blocking_streamer: "Kažkas, kas yra jus užblokavęs, jau transliuoja šiuo kanalu.",
-        start_stream_unknown_error: "Nepavyko pradėti transliaciją.",
+        start_stream_unknown_error: "Nepavyko pradėti transliacijos.",
         are_you_sure_you_want_to_logout: "Ar tikrai norite atsijungti?",
         are_you_sure_you_want_to_block: "Ar tikrai norite užblokuoti šį naudotoją?",
         goodbye: "Iki kito karto!",
@@ -199,7 +199,7 @@
         
         are_you_sure_you_want_to_clear_log: "Ar tikrai norite išvalyti pokalbio langą?",
         chat_log_cleared: "Pokalbio langas išvalytas.",
-        stream_start_notification: "{{userName}} pradėjo transliaciją.",
+        stream_start_notification: "Naudotojas {{userName}} pradėjo transliaciją",
     },
     room:
     {
@@ -250,7 +250,7 @@
         irori: "Laužas",
         taiikukan: "Sporto Salė",
         yaneura: "Palėpė",
-        // kyougijou: "Track",
+        kyougijou: "Trasa",
     },
     area:
     {
