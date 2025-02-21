@@ -131,7 +131,7 @@
 .theme-nostalgic .popup {
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.29);
   border-radius: 3px;
-  color: #053146;
+  color: #0e4864;
 }
 
 .theme-nostalgic .popup-table th{
@@ -143,6 +143,7 @@
 .theme-nostalgic .popup-titlebar{
   box-shadow: inset 0px 5px 3px rgb(255, 255, 255);
   background-color: #eaeaea;
+  font-weight: bold;
 }
 
 .theme-nostalgic .popup-buttons button{
