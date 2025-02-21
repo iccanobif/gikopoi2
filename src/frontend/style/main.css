@@ -457,6 +457,7 @@ video {
 .non-wrappable-buttons
 {
     display: flex;
+    align-self: center;
 }
 
 .tooltip-section-title
