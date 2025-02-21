@@ -1,0 +1,169 @@
+.theme-nostalgic #toolbar {
+  background: url("/images/background.svg"), linear-gradient(to right, #F1F3E8, #8AD6EE);
+  background-position-x: calc(100% - 50px),0;
+  background-repeat: no-repeat;
+  background-blend-mode: soft-light;
+  padding: 16px;
+  box-shadow: inset 0 0 25px rgba(255, 255, 255, 0.42);
+}
+
+.theme-nostalgic #toolbar-text-input {
+  font-size: 0;
+}
+
+.theme-nostalgic #toolbar button{
+  background-color: transparent;
+  color: #2d2d2d;
+  border-radius: 5px;
+  box-shadow: 1px 1px 1px rgb(255, 255, 255), inset 1px 1px 1px rgb(255, 255, 255);
+}
+
+
+.theme-nostalgic #toolbar button:hover:enabled {
+  color: white;
+  border-top-color: gray;
+  border-right-color: white;
+  border-bottom-color: white;
+  border-left-color: gray;
+  box-shadow: inset 0 0 1px rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+.theme-nostalgic #textbox {
+  background-color: rgba(0, 0, 0, 0.11);
+  text-shadow: none;
+}
+
+.theme-nostalgic .tooltip-section {
+  padding: 3px;
+}
+
+.theme-nostalgic .tooltip-section > label {
+  color: #2d2d2d;
+  background: rgb(255, 255, 255);
+  border: 1px solid #848484;
+  border-radius: 3px;
+  padding-inline: 5px;
+}
+
+.theme-nostalgic .tooltip-section-title div{
+  color: #2d2d2d;
+  background: rgb(255, 255, 255);
+  border: 1px solid #848484;
+  border-radius: 3px;
+  flex-grow: inherit;
+  text-align: center;
+}
+
+.theme-nostalgic #infobox {
+  text-shadow: none;
+  font-family: IPAMonaPGothic,'IPA モナー Pゴシック',Monapo,Mona,'MS PGothic','ＭＳ Ｐゴシック',submona,sans-serif;
+}
+
+.theme-nostalgic #chat-log-label {
+  font-size: 0;
+}
+
+.theme-nostalgic #chat-log-label::before {
+  content: "Message Log:";
+  font-size: 16px;
+}
+
+.theme-nostalgic .arrow-button-left {
+  background-image: none;
+}
+
+.theme-nostalgic .arrow-button-left::before {
+  content:"⭦";
+  flex-grow: 1;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+
+.theme-nostalgic .arrow-button-up {
+  background-image: none;
+}
+
+.theme-nostalgic .arrow-button-up::before {
+  content:"⭧";
+  flex-grow: 1;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+
+.theme-nostalgic .arrow-button-down {
+  background-image: none;
+}
+
+.theme-nostalgic .arrow-button-down::before {
+  content:"⭩";
+  flex-grow: 1;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+.theme-nostalgic .arrow-button-right
+{
+    background-image: none;
+}
+.theme-nostalgic .arrow-button-right::before{
+  content:"⭨";
+  flex-grow: 1;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+
+.theme-nostalgic #rula-popup {
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.29);
+  border-radius: 3px;
+  color: #053146;
+}
+
+.theme-nostalgic #user-list-popup {
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.29);
+  border-radius: 3px;
+  color: #053146;
+}
+
+.theme-nostalgic .popup {
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.29);
+  border-radius: 3px;
+  color: #053146;
+}
+
+.theme-nostalgic .popup-table th{
+  background: linear-gradient(to bottom, #ACACAC, #FFF);
+  border-bottom: 2px solid #757575;
+  font-weight:bold;
+}
+
+.theme-nostalgic .popup-titlebar{
+  box-shadow: inset 0px 5px 3px rgb(255, 255, 255);
+  background-color: #eaeaea;
+}
+
+.theme-nostalgic .popup-buttons button{
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.39);
+  border-radius: 5px;
+}
+
+.theme-nostalgic .popup button:hover:enabled{
+  border: 1px solid #4cbf4c;
+  background-color: #b6f9b6;
+  box-shadow: inset 0 0 3px green;
+}
+
+.theme-nostalgic #page-container .ui-corner-all {
+  border-radius: 5px;
+}
+
+.theme-nostalgic .ui-slider .ui-slider-handle {
+  height: 0.8em;
+}
+
+.theme-nostalgic .tooltip-section .ui-slider {
+  margin: 8px 0;
+}
