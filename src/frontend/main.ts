@@ -3364,7 +3364,7 @@ const vueApp = createApp(defineComponent({
         {
             this.confirm(this.$t("msg.are_you_sure_you_want_to_block"), () =>
             {
-                if(this.isIgnoreOnBlock)
+                if (this.isIgnoreOnBlock)
                     this.ignoreUser(userId)
                 this.socket!.emit("user-block", userId);
             });
