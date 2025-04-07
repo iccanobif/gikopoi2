@@ -29,5 +29,6 @@
             "name": "Two",
             "unlisted": true
         }
-    ]
+    ],
+    "blockedVpnDomainRegex": "$^"
 }
