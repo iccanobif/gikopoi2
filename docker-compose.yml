@@ -1,0 +1,24 @@
+services:
+  backend:
+    image: node:20
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules # Prevents node_modules from being overwritten by empty host folders
+    command: sh -c "yarn install && yarn dev-backend"
+    ports:
+      - "8085:8085"
+
+  frontend:
+    image: node:20
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules # Prevents node_modules from being overwritten by empty host folders
+    command: sh -c "yarn install && yarn dev-frontend"
+    ports:
+      - "5173:5173"
+    environment:
+      - IS_DEV_DOCKER_CONTAINER=true
+    depends_on:
+      - backend

@@ -2,6 +2,10 @@ import { defineConfig, splitVendorChunkPlugin } from "vite";
 import vue from "@vitejs/plugin-vue";
 import json5Plugin from 'vite-plugin-json5'
 
+const backendHostname = process.env.IS_DEV_DOCKER_CONTAINER == "true"
+                      ? "backend"
+                      : "localhost";
+
 export default defineConfig({
     resolve: {
         alias: {
@@ -20,9 +24,9 @@ export default defineConfig({
     server: {
         hmr: false, // Hot reloading
         proxy: {
-          "/api": "http://localhost:8085",
+          "/api": `http://${backendHostname}:8085`,
           "/socket.io": {
-            target: "ws://localhost:8085",
+            target: `ws://${backendHostname}:8085`,
             ws: true,
           }
         }
