@@ -46,6 +46,13 @@ input[type='range']
     font-size: 18px;
 }
 
+input
+{
+    /* This is the default accent color on firefox and chrome, I'm setting it explicitly here
+       so that edge also uses it instead of its default gray color. */
+    accent-color: #0075ff; 
+}
+
 #login-page
 {
     padding: 5px;
