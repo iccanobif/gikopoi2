@@ -18,17 +18,8 @@
     "censoredWordsRegex": "(poop|peepee)",
     "noStreamIPs": [],
     "siteAreas": [
-        {
-            "id": "one",
-            "name": "One",
-            "language": "ja",
-            "restrictLanguage": true
-        },
-        {
-            "id": "two",
-            "name": "Two",
-            "unlisted": true
-        }
+        {"id": "gen", "name": "一般 (_gen)", "language": "ja", "restrictLanguage": true},
+        {"id": "for", "name": "International (_for)", "language": "any"}
     ],
     "blockedVpnDomainRegex": "$^"
 }
