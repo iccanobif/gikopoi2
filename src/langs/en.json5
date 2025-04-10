@@ -100,6 +100,7 @@
         preferences_ui_theme_gikopoi: "Gikopoi",
         preferences_ui_theme_shaddox: "Shaddox Mode",
         preferences_ui_theme_dark: "Dark",
+        preferences_ui_theme_nostalgic: "Nostalgic",
         preferences_command_section_visible: "Display Command Buttons",
         preferences_move_section_visible: "Display Move Buttons",
         preferences_bubble_section_visible: "Display Bubble Buttons",
