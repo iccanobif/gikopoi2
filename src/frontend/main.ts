@@ -81,7 +81,7 @@ import ChessboardSlot from './chessboard-slot.vue'
 import JankenSlot from './janken-slot.vue'
 import LoginFooter from './login-footer.vue'
 
-import ComponentUsername from './username.vue'
+import ComponentUsername from './username-label.vue'
 import LoginPage from './pages/login.vue'
 
 import NumericValueControl from './numeric-value-control.vue'
@@ -3973,7 +3973,7 @@ const vueApp = createApp(defineComponent({
     },
 }))
 
-vueApp.component("username", ComponentUsername)
+vueApp.component("username-label", ComponentUsername)
 vueApp.component("login-page", LoginPage)
 
 vueApp.use(I18NextVue, { i18next })

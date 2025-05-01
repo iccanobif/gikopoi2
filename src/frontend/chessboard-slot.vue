@@ -170,10 +170,10 @@ export default defineComponent({
             {{ !chessboardState.whiteUserID ? $t("ui.chess_waiting_for_white") : $t("ui.chess_waiting_for_black") }}
             </div>
             <span v-if="chessboardState.whiteUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'w'}">
-                {{ $t("ui.chess_white") }}<username :user-id="chessboardState.whiteUserID"></username>
+                {{ $t("ui.chess_white") }}<username-label :user-id="chessboardState.whiteUserID"></username-label>
             </span>
             <span v-if="chessboardState.blackUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'b'}">
-                {{ $t("ui.chess_black") }}<username :user-id="chessboardState.blackUserID"></username>
+                {{ $t("ui.chess_black") }}<username-label :user-id="chessboardState.blackUserID"></username-label>
             </span>
             <div
                 id="chessboard"

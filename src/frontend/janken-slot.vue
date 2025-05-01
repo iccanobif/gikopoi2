@@ -118,9 +118,9 @@ watch(isActive, () =>
         </div>
         <div v-if="isVisible">
             <div v-if="player1.id && player2.id" class="slot-message janken-versus">
-                <div class="janken-versus-player1"><username :user-id="player1.id" :user-name="player1.name"></username></div>
+                <div class="janken-versus-player1"><username-label :user-id="player1.id" :user-name="player1.name"></username-label></div>
                 <div>{{ t("ui.janken_versus") }}</div>
-                <div class="janken-versus-player2"><username :user-id="player2.id" :user-name="player2.name"></username></div>
+                <div class="janken-versus-player2"><username-label :user-id="player2.id" :user-name="player2.name"></username-label></div>
             </div>
             <div v-if="state.stage == 'win' || state.stage == 'draw'"
                 class="janken-hand-results" :class="{ 'janken-hands-draw': state.stage == 'draw' }">
@@ -132,7 +132,7 @@ watch(isActive, () =>
                     <span v-if="!player1.id">{{ t("ui.janken_start_a_game") }}</span>
                     <span v-else-if="!player2.id">
                         <i18next :translation="$t('ui.janken_waiting_for_opponent')">
-                            <template #username><username :user-id="player1.id" :user-name="player1.name"></username></template>
+                            <template #username><username-label :user-id="player1.id" :user-name="player1.name"></username-label></template>
                         </i18next>
                     </span>
                 </template>
@@ -155,14 +155,14 @@ watch(isActive, () =>
                 
                 <span v-else-if="state.stage == 'win'">
                     <i18next :translation="$t('ui.janken_win')">
-                        <template #username><username :user-id="namedPlayer.id" :user-name="namedPlayer.name"></username></template>
+                        <template #username><username-label :user-id="namedPlayer.id" :user-name="namedPlayer.name"></username-label></template>
                     </i18next>
                 </span>
                 
                 <template v-else-if="state.stage == 'quit'">
                     <span>
                         <i18next :translation="$t('ui.janken_quit')">
-                            <template #username><username :user-id="namedPlayer.id" :user-name="namedPlayer.name"></username></template>
+                            <template #username><username-label :user-id="namedPlayer.id" :user-name="namedPlayer.name"></username-label></template>
                         </i18next>
                     </span>
                 </template>

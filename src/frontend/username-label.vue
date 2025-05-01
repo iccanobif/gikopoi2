@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const users = inject('users') as Ref<Users>
 const highlightedUserId = inject('highlightedUserId') as Ref<string>
-const highlightUser = inject('highlightUser') as any
+const highlightUser = inject('highlightUser') as (userId: string, userName: string) => void
 const ignoredUserIds = inject('ignoredUserIds') as Ref<IgnoredUserIds>
 
 const properUserName = ref(fallbackUserName)

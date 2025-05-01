@@ -192,7 +192,7 @@
                         <hr v-if="index != 0" />
                         <div>
                             {{ $t("ui.label_stream", {index: index+1}) }}<span
-                                v-if="streamSlot.isActive" class="stream-title"><username :user-id="streamSlot.userId"></username>
+                                v-if="streamSlot.isActive" class="stream-title"><username-label :user-id="streamSlot.userId"></username-label>
                                 <!-- NOTE 2: username component handles cases where the user id is missing in users, but unsure if the ideas mentioned in the note
                                     are still relevant or not.
                                     NOTE: Above, I'm using the null propagator in the `users[streamSlot.userId]?.name` expression for
