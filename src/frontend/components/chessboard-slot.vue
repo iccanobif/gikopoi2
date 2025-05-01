@@ -2,7 +2,7 @@
 import type { PropType } from 'vue'
 import type { Socket } from 'socket.io-client'
 
-import type { ChessboardStateDto,  } from './types'
+import type { ChessboardStateDto,  } from '../types'
 
 import { defineComponent, inject, Ref } from 'vue'
 

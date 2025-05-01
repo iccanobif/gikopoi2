@@ -77,14 +77,14 @@ import { RTCPeer, defaultIceConfig } from "./rtcpeer";
 import { RenderCache } from "./rendercache";
 import { animateObjects, animateJizou } from "./animations";
 
-import ChessboardSlot from './chessboard-slot.vue'
-import JankenSlot from './janken-slot.vue'
-import LoginFooter from './login-footer.vue'
+import ChessboardSlot from './components/chessboard-slot.vue'
+import JankenSlot from './components/janken-slot.vue'
+import LoginFooter from './components/login-footer.vue'
+import UsernameLabel from './components/username-label.vue'
 
-import ComponentUsername from './username-label.vue'
 import LoginPage from './pages/login.vue'
 
-import NumericValueControl from './numeric-value-control.vue'
+import NumericValueControl from './components/numeric-value-control.vue'
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -3973,7 +3973,7 @@ const vueApp = createApp(defineComponent({
     },
 }))
 
-vueApp.component("username-label", ComponentUsername)
+vueApp.component("username-label", UsernameLabel)
 vueApp.component("login-page", LoginPage)
 
 vueApp.use(I18NextVue, { i18next })

@@ -2,7 +2,7 @@
 import { inject, watch, onUnmounted, ref, computed } from 'vue'
 import type { Ref, WatchStopHandle } from 'vue'
 
-import type { Users, IgnoredUserIds } from './types'
+import type { Users, IgnoredUserIds } from '../types'
 
 const fallbackUserName = 'N/A'
 

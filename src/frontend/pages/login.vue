@@ -66,7 +66,7 @@
 import { computed, ref } from "vue";
 import { characters } from "../character";
 import { SiteArea, SiteAreasInfo } from "../types";
-import LoginFooter from "../login-footer.vue";
+import LoginFooter from "../components/login-footer.vue";
 
 const emit = defineEmits<{
     login: [

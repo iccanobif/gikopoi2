@@ -5,7 +5,7 @@ import type { Ref } from 'vue'
 import { ref, toRef, watch, inject, computed, onBeforeUnmount } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import type { Users, JankenStateDto } from './types'
+import type { Users, JankenStateDto } from '../types'
 
 const { t } = useTranslation()
 
@@ -24,8 +24,6 @@ const state = toRef(props, "jankenState")
 
 const isActive = computed(() => state.value.stage == "choosing" || state.value.stage == "phrase" || state.value.stage == "draw")
 const isJoinable = ref(!isActive.value) // becomes true 2 seconds after isActive becomes false, to allow the players to see the results
-const isStageJoining = computed(() => state.value.stage == "joining")
-const isStageChoosing = computed(() => state.value.stage == "choosing")
 const isStageDraw = computed(() => state.value.stage == "draw")
 const isStageResult = computed(() => state.value.stage == "win" || state.value.stage == "draw")
 
@@ -172,7 +170,11 @@ watch(isActive, () =>
                 </template>
             </div>
             <div v-if="isCurrentUserPlaying && state.stage == 'choosing' && !waitForResult" class="janken-hands">
-                <button v-for="hand in hands" @click="chooseHand(hand)" :class="['janken-hand-' + hand]"></button>
+                <button
+                    v-for="hand in hands"
+                    v-bind:key="hand"
+                    @click="chooseHand(hand)"
+                    :class="['janken-hand-' + hand]"></button>
             </div>
         </div>
     </div>
