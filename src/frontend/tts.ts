@@ -1,5 +1,6 @@
+import { i18n } from "i18next";
 import { kanaToRomajiMap, kanjiToKanaMap, katakanaToHiragana } from "./japanese-tools";
-import { urlRegex } from "./utils";
+import { debounceWithDelayedExecution, urlRegex } from "./utils";
 
 const synth = new (window as any).Animalese('animalese.wav', function () { });
 
@@ -115,3 +116,13 @@ export function speak(message: string, voiceURI: string, volume: number, pitch: 
 //         }
 //     }, 14 * 1000)
 // }
+
+export const debouncedSpeakTest = debounceWithDelayedExecution((ttsVoiceURI: string, voiceVolume: number, i18next: i18n) => {
+    if (window.speechSynthesis)
+    {
+        speechSynthesis.cancel()
+        speak(i18next.t("test"), ttsVoiceURI, voiceVolume)
+    }
+}, 150)
+
+

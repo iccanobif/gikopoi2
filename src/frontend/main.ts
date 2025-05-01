@@ -70,9 +70,11 @@ import {
     htmlToControlChars,
     controlCharsToHtml,
     removeControlChars,
-    escapeHTML
+    escapeHTML,
+    adjustNiconicoMessagesFontSize,
+    debouncedLogSoundVolume
 } from "./utils";
-import { speak } from "./tts";
+import { debouncedSpeakTest, speak } from "./tts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
 import { RenderCache } from "./rendercache";
 import { animateObjects, animateJizou } from "./animations";
@@ -3696,7 +3698,7 @@ const vueApp = createApp(defineComponent({
         changeVoiceVolume(newValue: number) {
             this.voiceVolume = newValue
             this.storeSet('voiceVolume')
-            debouncedSpeakTest(this.ttsVoiceURI, this.voiceVolume)
+            debouncedSpeakTest(this.ttsVoiceURI, this.voiceVolume, i18next)
         },
         toggleVideoSlotPinStatus(slotId: number) {
             const videoContainer = document.getElementById('video-container-' + slotId) as HTMLElement
@@ -3877,7 +3879,6 @@ const vueApp = createApp(defineComponent({
         {
             const video = event.target as HTMLVideoElement;
             const videoContainer = video.parentElement as VideoContainer
-            const stream = this.streams[slotId];
 
             // If this video was already moved to another tab, doubleclicking on it
             // will make it fullscreen. Otherwise, move it to a new tab.
@@ -3946,7 +3947,6 @@ const vueApp = createApp(defineComponent({
             if (tab)
             {
                 const videoContainer = tab.document.getElementById("video-container-" + slotId) as VideoContainer
-                const stream = this.streams[slotId];
 
                 this.clientSideStreamData[slotId].isSeparateTab = false;
                 if (videoContainer.originalPreviousSibling)
@@ -3981,29 +3981,4 @@ vueApp.use(I18NextVue, { i18next })
 vueApp.mount("#vue-app")
 window.vueApp = vueApp
 
-const debouncedSpeakTest = debounceWithDelayedExecution((ttsVoiceURI: string, voiceVolume: number) => {
-    if (window.speechSynthesis)
-    {
-        speechSynthesis.cancel()
-        speak(i18next.t("test"), ttsVoiceURI, voiceVolume)
-    }
-}, 150)
 
-const debouncedLogSoundVolume = debounceWithDelayedExecution((myUserID: string, volume: number) => {
-    logToServer(myUserID + " SFX volume: " + volume)
-}, 150)
-
-// TODO: handle cases where the geometry of the <video> element changes during the stream,
-//       can be done with a ResizeObserver, maybe
-function adjustNiconicoMessagesFontSize()
-{
-    const videoElements = document.getElementsByClassName("video-being-played") as HTMLCollectionOf<HTMLVideoElement>
-    for (const videoElement of videoElements)
-    {
-        const width = (videoElement.videoWidth / videoElement.videoHeight) * videoElement.clientHeight
-        const fontsize = Math.round(width / 15)
-        const niconicoMessagesContainer = videoElement.parentElement!.getElementsByClassName("nico-nico-messages-container")[0] as HTMLElement
-        if (niconicoMessagesContainer)
-            niconicoMessagesContainer.style.fontSize = fontsize + "px"
-    }
-}
