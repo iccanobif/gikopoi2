@@ -124,11 +124,6 @@ export function removeUser(user: Player)
 export function restoreUserState(persistedUsers: Player[])
 {
     users = persistedUsers.reduce((acc, val) => {
-        // code that needs to be run only the first time the switch from "ip" to "ips" goes to production
-        const ip = (val as any).ip
-        if (ip)
-            val.ips = [ip]
-        
         acc[val.id] = val;
         return acc;
     }, {} as { [id: string]: Player; })

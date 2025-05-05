@@ -59,7 +59,6 @@ import {
     BLOCK_HEIGHT,
     logToServer,
     safeDecodeURI,
-    debounceWithDelayedExecution,
     debounceWithImmediateExecution,
     urlRegex,
     AudioProcessor,

@@ -1,5 +1,5 @@
 import type { Direction, ClientRoom } from './types'
-import type { Character, CharacterVersion, CharacterState } from "./character";
+import type { Character, CharacterState } from "./character";
 import type { RenderCache } from "./rendercache"
 
 import { calculateRealCoordinates, BLOCK_HEIGHT, BLOCK_WIDTH } from "./utils";

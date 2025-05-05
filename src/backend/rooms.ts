@@ -3706,7 +3706,7 @@ export const rooms: { [roomId: string]: Room } = {
         streamSlotCount: 3,
     },
     kyougijou: {
-        // 元　　 -> 五輪　 -> 戻
+        // 元     -> 五輪    -> 戻
         // 872929 -> 8A83CE -> 872929
         // A04C49 -> C4A8D3 -> A04C49
         // 835754 -> 665483 -> 835754
