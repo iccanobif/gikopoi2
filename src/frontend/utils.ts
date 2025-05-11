@@ -415,7 +415,6 @@ export class AudioProcessor
     }
 
     setPitchFactor(value: number) {
-        const previousPitchFactor = this.pitchFactor;
         this.pitchFactor = value;
     
         if (!this.phaseVocoderNode) return;
