@@ -373,7 +373,7 @@
                                 <span class="fas fa-microphone-slash"></span>
                             </button>
                         </div>
-                        <div class="stream-buttons" v-if="streamSlotIdInWhichIWantToStream == index">
+                        <div class="stream-buttons" v-if="streamSlotIdInWhichIWantToStream == index && streamSlot.withSound">
                             <label>{{ $t("ui.voice_changer") }}</label>
                             <voice-changer-control
                                 :id="'pitch-shift-' + index"
