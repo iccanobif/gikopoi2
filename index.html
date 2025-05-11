@@ -375,14 +375,11 @@
                         </div>
                         <div class="stream-buttons" v-if="streamSlotIdInWhichIWantToStream == index">
                             <label>{{ $t("ui.voice_changer") }}</label>
-                            <numeric-value-control
-                                v-if="streamSlotIdInWhichIWantToStream == index
-                                        && streamSlot.withSound"
+                            <voice-changer-control
                                 :id="'pitch-shift-' + index"
-                                :min="-100"
-                                :max="200"
-                                :default="0"
-                                @value-changed="value => onPitchShiftChanged(value)"></numeric-value-control>
+                                :audioProcessor="outboundAudioProcessor"
+                                :cacca="1234">
+                            </voice-changer-control>
                         </div>
                     </div>
                     <template v-if="currentRoom !== null && currentRoom.games" v-for="(game, index) in currentRoom.games">

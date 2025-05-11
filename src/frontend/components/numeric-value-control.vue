@@ -11,16 +11,23 @@ const props = defineProps({
         type: Number,
         default: 100
     },
+    // initialValue is the value that will be set when the component is created
+    initialValue: {
+        type: Number,
+        default: 0
+    },
+    // default is the value that will be set when the reset button is clicked
     default: {
         type: Number,
         default: 0
     },
 })
 
-const count = ref(props.default)
+const count = ref(props.initialValue)
 const emit = defineEmits(['value-changed'])
 
 const emitValueChanged = () => {
+    console.log('emitValueChanged', count.value)
     emit('value-changed', count.value)
 }
 const increment = () => {

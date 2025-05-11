@@ -414,6 +414,11 @@ export class AudioProcessor
             this.pan.pan.value = value
     }
 
+    getPitchFactor()
+    {
+        return this.pitchFactor
+    }
+
     setPitchFactor(value: number) {
         this.pitchFactor = value;
     
