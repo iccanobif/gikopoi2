@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, Ref } from 'vue';
 import { AudioProcessor } from '../utils';
-import NumericValueControl from './numeric-value-control.vue'
+import NumericValueControl from './numeric-value-control.vue';
 
 const outboundAudioProcessor = inject('outboundAudioProcessor') as Ref<AudioProcessor>
 
@@ -21,6 +21,6 @@ function onPitchShiftChanged(value: number) {
 </script>
 
 <template>
-    <numeric-value-control :min="-100" :max="200" :default="0" :initialValue="initialValue"
-        @value-changed="value => onPitchShiftChanged(value)"></numeric-value-control>
+    <NumericValueControl :min="-100" :max="200" :default="0" :initialValue="initialValue"
+        @value-changed="value => onPitchShiftChanged(value)"></NumericValueControl>
 </template>

@@ -81,7 +81,7 @@ import { animateObjects, animateJizou } from "./animations";
 
 import ChessboardSlot from './components/chessboard-slot.vue'
 import JankenSlot from './components/janken-slot.vue'
-import LoginFooter from './components/login-footer.vue'
+import LoginFooter from './components/change-log.vue'
 import UsernameLabel from './components/username-label.vue'
 
 import LoginPage from './pages/login.vue'
