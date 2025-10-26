@@ -28,6 +28,7 @@ import type {
     ClientRoomObject,
     CanvasObject,
     VideoContainer,
+    IgnoredUserIds,
 } from './types'
 import type { Character } from './character'
 
@@ -80,12 +81,13 @@ import { animateObjects, animateJizou } from "./animations";
 
 import ChessboardSlot from './components/chessboard-slot.vue'
 import JankenSlot from './components/janken-slot.vue'
-import LoginFooter from './components/login-footer.vue'
+import LoginFooter from './components/change-log.vue'
 import UsernameLabel from './components/username-label.vue'
 
 import LoginPage from './pages/login.vue'
 
 import NumericValueControl from './components/numeric-value-control.vue'
+import VoiceChangerControl from './components/voice-changer-control.vue';
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -228,6 +230,7 @@ const vueApp = createApp(defineComponent({
         JankenSlot,
         LoginFooter,
         NumericValueControl,
+        VoiceChangerControl,
     },
     data() {
         return {
@@ -288,7 +291,7 @@ const vueApp = createApp(defineComponent({
 
             // user list stuff
             isUserListPopupOpen: false,
-            ignoredUserIds: new Set() as Set<string>,
+            ignoredUserIds: new Set() as IgnoredUserIds,
 
             // preferences stuff
             isPreferencesPopupOpen: false,
@@ -405,6 +408,7 @@ const vueApp = createApp(defineComponent({
             users: computed(() => this.users),
             ignoredUserIds: computed(() => this.ignoredUserIds),
             myUserId: computed(() => this.myUserID),
+            outboundAudioProcessor: computed(() => this.outboundAudioProcessor),
             
             highlightedUserId: computed(() => this.highlightedUserId),
             highlightUser: this.highlightUser,
@@ -3839,12 +3843,6 @@ const vueApp = createApp(defineComponent({
         disableFeedback()
         {
             this.outboundAudioProcessor?.setFeedback(false)
-        },
-        onPitchShiftChanged(value: number)
-        {
-            // convert value (-100~100) to pitch factor (0.5~1.5)
-            const pitchFactor = 0.5 + (value + 100) / 200
-            this.outboundAudioProcessor?.setPitchFactor(pitchFactor)
         },
         isStreaming(): boolean
         {

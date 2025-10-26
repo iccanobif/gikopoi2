@@ -11,6 +11,7 @@ const { i18next } = useTranslation()
         <div class="changelog">
             <h3>更新ログ</h3>
 2025/10/26: 新しいキャラを追加しました。<br/>
+2025/05/11: ボイスチェンジャーのバグを修正しました。<br/>
 2025/05/01: ボイスチェンジャーを追加しました。<br/>
 2025/01/24: 2ch風の12桁トリップを使えるようになりました。<br/>
 2024/09/05: ミュートボタンのバグが修正されました。<br/>
@@ -139,6 +140,7 @@ You must be at least 16 years of age to enter.
         <div class="changelog">
             <h3>Change Log</h3>
 2025/10/26: Added a new character.<br/>
+2025/05/11: Fixed bug with the voice changer.<br/>
 2025/05/01: Add voice changer.<br/>
 2025/01/24: Allow 2channel-compatible 12-character tripcodes.<br/>
 2024/09/05: Fixed bug in the mute button.<br/>

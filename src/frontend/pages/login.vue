@@ -57,7 +57,7 @@
             </button>
         </form>
         <div id="login-footer" translate="no" class="notranslate">
-            <login-footer></login-footer>
+            <Changelog></changelog>
         </div>
     </div>
 </template>
@@ -66,7 +66,7 @@
 import { computed, ref } from "vue";
 import { characters } from "../character";
 import { SiteArea, SiteAreasInfo } from "../types";
-import LoginFooter from "../components/login-footer.vue";
+import Changelog from "../components/change-log.vue";
 
 const emit = defineEmits<{
     login: [
