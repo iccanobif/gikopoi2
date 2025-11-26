@@ -4331,6 +4331,67 @@ dynamicRooms.push({
         }
     }
 });
+dynamicRooms.push({
+    roomId: "yojouhan",
+    subscribedAnnualEvents: ["noKotatsu", "yesKotatsu"],
+    build: (currentAnnualEvents: string[]) =>
+    {
+        const variant = currentAnnualEvents.includes("noKotatsu") ? "no_kotatsu" : "yes_kotatsu";
+
+        const scale = 1.6
+        return {
+            id: "yojouhan",
+            group: "gikopoipoi",
+            variant: variant,
+            scale: scale,
+            backgroundColor: "#000000",
+            size: { x: 6, y: 6 },
+            originCoordinates: { x: 0, y: 260 },
+            spawnPoint: "door",
+            backgroundImageUrl: `rooms/yojouhan/background.${variant}.svg`,
+            objects: [
+                { x: 4, y: 1, scale: 0.7, offset: { x: 190, y: 280 }, url: "kotatsu.svg" },
+            ],
+            sit: [
+                // around kotatsu
+                { x: 5, y: 1 },
+                { x: 5, y: 2 },
+                { x: 3, y: 0 },
+                { x: 4, y: 0 },
+                { x: 4, y: 3 },
+                { x: 3, y: 3 },
+                { x: 2, y: 2 },
+                { x: 2, y: 3 },
+            ],
+            blocked: [
+                // furniture
+                { x: 0, y: 0 },
+                { x: 0, y: 1 },
+                { x: 0, y: 2 },
+                { x: 0, y: 3 },
+                { x: 0, y: 4 },
+                { x: 0, y: 5 },
+                { x: 1, y: 5 },
+                { x: 2, y: 5 },
+                { x: 3, y: 5 },
+
+                // kotatsu
+                
+                { x: 3, y: 1 },
+                { x: 3, y: 2 },
+                { x: 4, y: 1 },
+                { x: 4, y: 2 },
+            ],
+            forbiddenMovements: [],
+            doors: {
+                door: { x: 5, y: 5, direction: "down", target: { roomId: "irori", doorId: "stairs" } },
+                // steps_bottom: { x: 4, y: 4, direction: "down", target: { roomId: "yaneura", doorId: "steps_top" } },
+                // steps_top: { x: 2, y: 6, direction: "left", target: { roomId: "yaneura", doorId: "steps_bottom" } },
+            },
+            streamSlotCount: 0,
+        }
+    }
+});
 
 const currentAnnualEvents = getCurrentAnnualEvents()
 dynamicRooms.forEach((dynamicRoom: DynamicRoom) => rooms[dynamicRoom.roomId] = dynamicRoom.build(currentAnnualEvents, currentAnnualEvents, []))

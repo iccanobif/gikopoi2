@@ -89,6 +89,9 @@ export const annualEvents: {[eventName: string]: AnnualEvent} =
     autumn:     new AnnualEvent(d => d.set({month:  8, date:  1}), d => d.set({month: 10, date: 30})), // orange/yellow/brown colors
     winter:     new AnnualEvent(d => d.set({month: 11, date:  1}), d => d.set({month:  2, date: 20})), // snow
     
+    noKotatsu:  new AnnualEvent(d => d.set({month: 4,  date:  1}), d => d.set({month:  9, date: 30})),
+    yesKotatsu: new AnnualEvent(d => d.set({month: 10, date:  1}), d => d.set({month:  3, date: 31})),
+    
     sakura:     new AnnualEvent(d => d.set({month:  2, date: 21}), d => d.set({month:  3, date: 30})), // cherry blossoms
     goldenWeek: new AnnualEvent(d => d.set({month:  3, date: 29}), d => d.set({month:  4, date:  5})),
     rainy:      new AnnualEvent(d => d.set({month:  5, date:  1}), d => d.set({month:  5, date: 30})), // tsuyu / rainy season
