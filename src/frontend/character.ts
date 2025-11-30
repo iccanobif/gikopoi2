@@ -252,6 +252,7 @@ const characterObjects: CharacterObject[] = [
     { name: "shii_shintaisou", isHidden: false, portrait: { left: -0.46, top: 0.24 } },
     { name: "shii_toast", isHidden: false, portrait: { left: -0.46, top: 0.24 } },
     { name: "pumpkin_shobon", isHidden: !annualEvents.spooktober.isNow(), portrait: { left: -0.5, top: -0.2 } },
+    { name: "furoshiki_chotto", portrait: { left: -0.54, top: -0.34 } },
 ]
 
 export const characters: { [characterId: string]: Character } =
