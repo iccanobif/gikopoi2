@@ -4339,7 +4339,7 @@ dynamicRooms.push({
     {
         const variant = currentAnnualEvents.includes("noKotatsu") ? "no_kotatsu" : "yes_kotatsu";
 
-        const scale = 1.6
+        const scale = 0.7
         const room: Room = {
             id: "yojouhan",
             group: "gikopoipoi",
