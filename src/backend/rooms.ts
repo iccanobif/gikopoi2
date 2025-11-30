@@ -1365,6 +1365,7 @@ export const rooms: { [roomId: string]: Room } = {
             right: { x: 23, y: 11, direction: "left", target: { roomId: "konbini", doorId: "door" } },
             office: { x: 5, y: 17, direction: "down", target: { roomId: "nerd_office", doorId: "door"} },
             very_left: { x: 9, y: 0, direction: "right", target: { roomId: "kyougijou", doorId: "door"} },
+            next_to_light: { x: 18, y: 4, direction: "up", target: { roomId: "yojouhan", doorId: "door"} },
         },
         streamSlotCount: 3,
         games: ["janken"],
@@ -4339,7 +4340,7 @@ dynamicRooms.push({
         const variant = currentAnnualEvents.includes("noKotatsu") ? "no_kotatsu" : "yes_kotatsu";
 
         const scale = 1.6
-        return {
+        const room: Room = {
             id: "yojouhan",
             group: "gikopoipoi",
             variant: variant,
@@ -4349,20 +4350,8 @@ dynamicRooms.push({
             originCoordinates: { x: 0, y: 260 },
             spawnPoint: "door",
             backgroundImageUrl: `rooms/yojouhan/background.${variant}.svg`,
-            objects: [
-                { x: 4, y: 1, scale: 0.7, offset: { x: 190, y: 280 }, url: "kotatsu.svg" },
-            ],
-            sit: [
-                // around kotatsu
-                { x: 5, y: 1 },
-                { x: 5, y: 2 },
-                { x: 3, y: 0 },
-                { x: 4, y: 0 },
-                { x: 4, y: 3 },
-                { x: 3, y: 3 },
-                { x: 2, y: 2 },
-                { x: 2, y: 3 },
-            ],
+            objects: [],
+            sit: [],
             blocked: [
                 // furniture
                 { x: 0, y: 0 },
@@ -4374,22 +4363,55 @@ dynamicRooms.push({
                 { x: 1, y: 5 },
                 { x: 2, y: 5 },
                 { x: 3, y: 5 },
+            ],
+            forbiddenMovements: [],
+            doors: {
+                door: { x: 5, y: 5, direction: "down", target: { roomId: "bar_giko_square", doorId: "next_to_light" } },
+            },
+            streamSlotCount: 0,
+        }
 
-                // kotatsu
-                
+        if (variant === "yes_kotatsu")
+        {
+            room.objects.push({ x: 4, y: 1, scale: 0.7, offset: { x: 190, y: 280 }, url: "kotatsu.svg" })
+
+            // kotatsu
+            room.blocked = room.blocked.concat([
                 { x: 3, y: 1 },
                 { x: 3, y: 2 },
                 { x: 4, y: 1 },
                 { x: 4, y: 2 },
-            ],
-            forbiddenMovements: [],
-            doors: {
-                door: { x: 5, y: 5, direction: "down", target: { roomId: "irori", doorId: "stairs" } },
-                // steps_bottom: { x: 4, y: 4, direction: "down", target: { roomId: "yaneura", doorId: "steps_top" } },
-                // steps_top: { x: 2, y: 6, direction: "left", target: { roomId: "yaneura", doorId: "steps_bottom" } },
-            },
-            streamSlotCount: 0,
+            ]);
+
+            room.sit = room.sit.concat([
+                // around kotatsu
+                { x: 5, y: 1 },
+                { x: 5, y: 2 },
+                { x: 3, y: 0 },
+                { x: 4, y: 0 },
+                { x: 4, y: 3 },
+                { x: 3, y: 3 },
+                { x: 2, y: 2 },
+                { x: 2, y: 3 },
+            ])
         }
+        else
+        {
+            room.sit = room.sit.concat([
+                // in the middle of the room
+                { x: 2, y: 1 },
+                { x: 3, y: 1 },
+                { x: 4, y: 1 },
+                { x: 2, y: 2 },
+                { x: 3, y: 2 },
+                { x: 4, y: 2 },
+                { x: 2, y: 3 },
+                { x: 3, y: 3 },
+                { x: 4, y: 3 },
+            ])
+        }
+
+        return room
     }
 });
 

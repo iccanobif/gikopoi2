@@ -521,4 +521,10 @@
         <linearGradient id="_Linear34" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(8.25196,-16.3095,16.3095,8.25196,520.034,211.376)"><stop offset="0" style="stop-color:#f0b1b1;stop-opacity:1"/><stop offset="0.3" style="stop-color:#fbb;stop-opacity:1"/><stop offset="0.38" style="stop-color:#d3d3d3;stop-opacity:1"/><stop offset="0.7" style="stop-color:#dbb;stop-opacity:1"/><stop offset="1" style="stop-color:#ff6c6c;stop-opacity:1"/></linearGradient>
         <linearGradient id="_Linear35" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(7.85074,-15.9142,15.9142,7.85074,520.034,189.332)"><stop offset="0" style="stop-color:#a3979a;stop-opacity:1"/><stop offset="0.13" style="stop-color:#a89ea3;stop-opacity:1"/><stop offset="0.18" style="stop-color:#b4aeb8;stop-opacity:1"/><stop offset="0.22" style="stop-color:#c1c0ce;stop-opacity:1"/><stop offset="0.63" style="stop-color:#acb2c0;stop-opacity:1"/><stop offset="1" style="stop-color:#638490;stop-opacity:1"/></linearGradient>
     </defs>
+    <g transform="scale(1.1) translate(-63 -31)">
+    <path d="m652.466 344.58-19.95 10-19.85-9.9 20-10-7.6-3.8 34.85-.25v17.4l-7.45-3.45" fill="#fc6"
+        fill-opacity=".6" />
+    <path d="M659.916 348.03v-17.4l-34.85.25 7.6 3.8-20 10 19.85 9.9 19.95-10z" fill="none" stroke="#f60"
+        stroke-miterlimit="3" stroke-opacity=".6" />
+    </g>
 </svg>
