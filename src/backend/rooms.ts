@@ -4368,7 +4368,7 @@ dynamicRooms.push({
             doors: {
                 door: { x: 5, y: 5, direction: "down", target: { roomId: "bar_giko_square", doorId: "next_to_light" } },
             },
-            streamSlotCount: 0,
+            streamSlotCount: 2,
         }
 
         if (variant === "yes_kotatsu")
