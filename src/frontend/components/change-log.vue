@@ -10,6 +10,7 @@ const { i18next } = useTranslation()
         </div>
         <div class="changelog">
             <h3>更新ログ</h3>
+2025/11/30: 新しいキャラと部屋を追加しました。<br/>
 2025/10/26: 新しいキャラを追加しました。<br/>
 2025/05/11: ボイスチェンジャーのバグを修正しました。<br/>
 2025/05/01: ボイスチェンジャーを追加しました。<br/>
@@ -139,6 +140,7 @@ You must be at least 16 years of age to enter.
         </div>
         <div class="changelog">
             <h3>Change Log</h3>
+2025/11/30: Added a new character and room.<br/>
 2025/10/26: Added a new character.<br/>
 2025/05/11: Fixed bug with the voice changer.<br/>
 2025/05/01: Add voice changer.<br/>
