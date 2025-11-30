@@ -254,7 +254,7 @@
         taiikukan: { t: "学校 体育館", sort_key: "がっこう たいいくかん" },
         yaneura: { t: "屋根裏", sort_key: "やねうら" },
         kyougijou: { t: "競技場", sort_key: "きょうぎじょう" },
-        yojouhan: { t: "四畳半部屋", sort_key: "よじょうはんへや" },
+        yojouhan: { t: "四畳半", sort_key: "よじょうはん" },
     },
     area:
     {
