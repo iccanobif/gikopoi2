@@ -248,7 +248,8 @@
         river: "Rivière",
         irori: "Foyer",
         yaneura: "Grenier",
-	taiikukan: "Gymnase",
+        taiikukan: "Gymnase",
+        // yojouhan: "Tatami Room",
     },
     area:
     {
