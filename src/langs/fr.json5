@@ -99,6 +99,7 @@
         preferences_ui_theme_gikopoi: "Gikopoi",
         preferences_ui_theme_shaddox: "Mode Shaddox",
         // preferences_ui_theme_dark: "Dark",
+        // preferences_ui_theme_nostalgic: "Nostalgic",
         preferences_command_section_visible: "Afficher boutons de commande",
         preferences_move_section_visible: "Afficher boutons de déplacement",
         preferences_bubble_section_visible: "Afficher boutons de contrôle de la bulle",
