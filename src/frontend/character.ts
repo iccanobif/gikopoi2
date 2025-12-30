@@ -254,7 +254,6 @@ const characterObjects: CharacterObject[] = [
     { name: "pumpkin_shobon", isHidden: !annualEvents.spooktober.isNow(), portrait: { left: -0.5, top: -0.2 } },
     { name: "furoshiki_chotto", portrait: { left: -0.54, top: -0.34 } },
     { name: "chindonnya_shobon", portrait: { left: -0.5, top: -0.2 }, isHidden: false }, // all characters are visibile on new year's
-    { name: "banana_naito", portrait: { left: -0.48, top: 0.13 } },
 ]
 
 export const characters: { [characterId: string]: Character } =
