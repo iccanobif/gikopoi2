@@ -3647,11 +3647,14 @@ export const rooms: { [roomId: string]: Room } = {
         size: { x: 18, y: 16 },
         originCoordinates: { x: 5, y: 982*(((10.5 * 80)/1202)/2) },
         spawnPoint: "top_right",
-        backgroundImageUrl: "rooms/meganeya/background.svg",
+        backgroundImageUrl: "rooms/meganeya/background.svg", 
         objects: [
             { x: 14, y: 15, offset: { x: 1174, y: 292 }, url: "arrow_light_up_right.svg" },
             { x: 13, y: 9, scale: ((10.5 * 80)/1202)/2, offset: { x: 2455, y: 917 }, url: "shop_entrance.svg" },
-            { x: 18, y: -1, scale: ((10.5 * 80)/1202)/2, offset: { x: 0, y: 0 }, url: "foreground.svg" },
+            { x: 5, y: 0, scale: ((10.5 * 80)/1202)/2, offset: { x: 602, y: 1117 }, url: "bench.svg" },
+            { x: 13, y: 2, scale: ((10.5 * 80)/1202)/2, offset: { x: 0, y: 0 }, url: "wall.svg" },
+            { x: 13, y: 1, scale: ((10.5 * 80)/1202)/2, offset: { x: 743, y: 904 }, url: "back_glasses_stand.svg" },
+            { x: 18, y: -1, scale: ((10.5 * 80)/1202)/2, offset: { x: 1830, y: 1169 }, url: "devices.svg" },
         ],
         sit: [
             { x: 5, y: 0 },
@@ -3689,8 +3692,7 @@ export const rooms: { [roomId: string]: Room } = {
             { x: 11, y: 8 },
             { x: 12, y: 8 },
             { x: 13, y: 8 },
-            
-            { x: 12, y: 10 },
+
             { x: 13, y: 10 },
 
             { x:  8, y: 1 },
