@@ -49,6 +49,7 @@ import { createApp, defineComponent, computed, nextTick } from 'vue'
 import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'
 import languages from './lang'
+import "jquery-ui/themes/base/all.css";
 
 import { characters, loadCharacters } from "./character";
 import User from "./user";
