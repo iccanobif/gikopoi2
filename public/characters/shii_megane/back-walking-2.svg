@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="160px" height="182px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:1.5;">
+    <path d="M101.249,28.611L100.843,31.544C100.548,33.673 102.038,35.641 104.167,35.936L116.248,37.608C118.377,37.902 120.345,36.413 120.64,34.284L121.046,31.351C121.341,29.222 119.851,27.254 117.722,26.959L105.641,25.287C103.512,24.992 101.544,26.482 101.249,28.611Z" style="fill:none;stroke:#aae0ec;stroke-width:2.5px;"/>
+    <path d="M99,29.378L99,32.514C99,34.793 100.849,36.642 103.128,36.642L115.239,36.642C117.517,36.642 119.367,34.793 119.367,32.514L119.367,29.378C119.367,27.099 117.517,25.25 115.239,25.25L103.128,25.25C100.849,25.25 99,27.099 99,29.378Z" style="fill:#fff;fill-opacity:0.5;"/>
+    <path d="M61,22L70,3L78,22L89,22L98,3L107,22L116.2,29.75C124.191,37.716 123.85,45.184 116.2,52.25L109,55L109,65C117.679,66.223 120.541,69.925 115.492,77C111.994,78.93 108.497,79.871 105,80L105,114L101.75,123L101.75,136C97.54,142.781 93.743,142.129 90.25,136L90.25,123L84,116L80.493,116L66.402,116.197L58.98,111.054L55,90L61,53.5C53.258,45.715 53.438,38.222 61,31L61,22Z" style="fill:#fff;"/>
+    <path d="M101.75,123L101.75,135.133C101.75,138.095 99.174,140.5 96,140.5C92.826,140.5 90.25,138.095 90.25,135.133L90.25,123" style="fill:none;stroke:#000;stroke-width:2.5px;"/>
+    <path d="M105,88L105,114" style="fill:none;stroke:#000;stroke-width:2.5px;"/>
+    <path d="M97.203,69.105C100.771,67.465 105.534,66.104 110.703,65.105C112.927,65.096 114.703,65.753 116.203,67.346C118.872,70.178 119.068,73.77 115.703,77.105C112.658,78.882 109.029,79.929 104.703,80.105" style="fill:#fff;stroke:#000;stroke-width:2.5px;"/>
+    <path d="M116.2,52.25C119.601,50.298 121.8,45.881 121.8,41C121.8,36.119 119.601,31.702 116.2,29.75" style="fill:none;stroke:#000;stroke-width:2.5px;"/>
+    <path d="M61,53.5C57.599,51.548 55.4,47.131 55.4,42.25C55.4,37.369 57.599,32.952 61,31" style="fill:none;stroke:#000;stroke-width:2.5px;"/>
+    <path d="M61,22L70,3L78,22L89,22L98,3L107,22" style="fill:none;stroke:#000;stroke-width:2.5px;stroke-miterlimit:3;"/>
+    <path d="M93.297,33.608C79.006,33.707 58.454,34.327 60.352,28.532" style="fill:none;stroke:#ffd3f7;stroke-width:2.5px;"/>
+    <path d="M108.146,41.6L104.141,45.6L107.845,49.2M104.141,45.6L104.141,45.5L104.141,50.5M104.141,45.6L100.437,49.2M100.136,41.6L104.141,45.5L104.141,39.6" style="fill:none;fill-rule:nonzero;stroke:#fea5c0;stroke-width:2px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;"/>
+    <circle id="gikopoipoi_eyes_open" cx="111.054" cy="31.6" r="2.266" style="fill:none;stroke:#000;stroke-width:1.5px;stroke-linejoin:round;"/>
+    <path id="gikopoipoi_eyes_closed" d="M107.798,31.7L114.098,31.7" style="display:none;fill:none;stroke:#000;stroke-width:3px;stroke-linecap:round;stroke-linejoin:round;"/>
+    <path d="M121.8,33.675L93.297,33.608" style="fill:none;stroke:#d1d1d1;stroke-width:2.5px;"/>
+</svg>
