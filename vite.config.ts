@@ -1,4 +1,4 @@
-import { defineConfig, splitVendorChunkPlugin } from "vite";
+import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import json5Plugin from 'vite-plugin-json5'
 
@@ -18,7 +18,6 @@ export default defineConfig({
     },
     plugins: [
         vue(),
-        splitVendorChunkPlugin(),
         json5Plugin(),
     ],
     server: {

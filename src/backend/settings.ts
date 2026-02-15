@@ -1,4 +1,4 @@
-import type { SiteArea } from './types'
+import type { SiteArea } from './types.js'
 import { readFileSync } from "fs"
 import log from "loglevel"
 

@@ -1,10 +1,9 @@
-export * from '../common/common_types'
-import type { Room, JankenStateDto } from '../common/common_types'
+export * from '../common/common_types.js'
+import { Janus } from 'janus-videoroom-client';
+import type { Room, JankenStateDto } from '../common/common_types.js'
 
-import { Player } from "./users";
-import { ChessInstance } from "chess.js"
-
-const JanusClient = require('janus-videoroom-client').Janus;
+import { Player } from "./users.js";
+import { Chess } from "chess.js"
 
 export interface Participant
 {
@@ -34,7 +33,7 @@ export interface StreamSlot
 export interface JanusServer
 {
     id: string;
-    client: typeof JanusClient;
+    client: Janus;
 }
 
 export type RoomStateCollection = {
@@ -59,7 +58,7 @@ export interface LoginResponseDto
 }
 
 export interface ChessboardState {
-    instance: ChessInstance | null,
+    instance: Chess | null,
     blackUserID: string | null,
     whiteUserID: string | null,
     lastMoveTime: number | null,

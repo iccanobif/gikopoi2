@@ -1,5 +1,5 @@
-import { Room, DynamicRoom, Coordinates } from "./types";
-import { getCurrentAnnualEvents } from "../common/annualevents";
+import { Room, DynamicRoom, Coordinates } from "./types.js";
+import { getCurrentAnnualEvents } from "../common/annualevents.js";
 
 
 function coordRange(from: Coordinates, to: Coordinates): Coordinates[]

@@ -1,34 +1,33 @@
 const isProduction = process.env.NODE_ENV == "production"
 
 import express, { Request } from "express"
-import { rooms, dynamicRooms } from "./rooms";
-import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom, ListedRoom, MoveDto } from "./types";
-import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getUserByPrivateId, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users";
+import { rooms, dynamicRooms } from "./rooms.js";
+import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom, ListedRoom, MoveDto } from "./types.js";
+import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getUserByPrivateId, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users.js";
 import got from "got";
 import log from "loglevel";
-import { settings } from "./settings";
+import { settings } from "./settings.js";
 import compression from 'compression';
-import { checkIfBadIp } from "./abuse-ip-db";
+import { checkIfBadIp } from "./abuse-ip-db.js";
 import { existsSync, readdirSync, readFileSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import { Chess } from "chess.js";
 import { Socket } from "socket.io";
-import { subscribeToAnnualEvents } from "../common/annualevents";
+import { subscribeToAnnualEvents } from "../common/annualevents.js";
+import http from "http";
+import { Server } from "socket.io"
+import { elaborateUserName } from "./utils.js";
+import cookieParser from "cookie-parser";
+import { HTTPS } from "express-sslify"
+import { Janus } from "janus-videoroom-client"
 
 const app = express()
-const server = require('http').Server(app);
-
-import { Server } from "socket.io"
-import { elaborateUserName } from "./utils";
+const server = http.createServer(app);
 
 const io = new Server(server, {
     pingInterval: 25 * 1000, // Heroku fails with "H15 Idle connection" if a socket is inactive for more than 55 seconds with
     pingTimeout: 60 * 1000
 })
-
-const enforce = require('express-sslify');
-const JanusClient = require('janus-videoroom-client').Janus;
-const cookieParser = require("cookie-parser");
 
 const persistInterval = 5 * 1000
 const maxGhostRetention = 30 * 60 * 1000
@@ -46,10 +45,11 @@ console.log("Using settings:", JSON.stringify(settings))
 if (settings.isBehindProxy)
     app.set('trust proxy', true)
 
+
 const janusServers: JanusServer[] =
     settings.janusServers.map(s => ({
         id: s.id,
-        client: new JanusClient({
+        client: new Janus({
             url: s.url,
             apiSecret: settings.janusApiSecret,
         })
@@ -1159,7 +1159,7 @@ io.on("connection", function (socket)
             }
 
             // If the game is over, clear the game and send a message declaring the winner
-            if (chessState.instance.game_over())
+            if (chessState.instance.isGameOver())
             {
                 const winnerUserID = chessState.instance?.turn() == "b" ? chessState.whiteUserID : chessState.blackUserID
                 log.info("game over", winnerUserID)
@@ -1373,7 +1373,7 @@ function toPlayerDto(player: Player): PlayerDto
 }
 
 if (settings.enableSSL)
-    app.use(enforce.HTTPS({ trustProtoHeader: true }))
+    app.use(HTTPS({ trustProtoHeader: true }))
 
 app.use(compression({
     filter: (req, res) =>
@@ -1967,7 +1967,7 @@ app.post("/api/login", async (req, res) =>
     }
 })
 
-function janusClientConnect(client: typeof JanusClient): Promise<void>
+function janusClientConnect(client: Janus): Promise<void>
 {
     return new Promise((resolve, reject) =>
     {
@@ -1992,7 +1992,7 @@ function janusClientConnect(client: typeof JanusClient): Promise<void>
 }
 
 // Next step is to determine the load of the stream: video+audio, video only, audio only, video/audio quality, etc
-function getLeastUsedJanusServer()
+function getLeastUsedJanusServer(): JanusServer
 {
     const serverUsageWeights = Object.fromEntries(janusServers.map(o => [o.id, 0]));
     for (const areaId in roomStates)

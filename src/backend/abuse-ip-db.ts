@@ -1,6 +1,6 @@
 import got from "got";
 import log from "loglevel";
-import { settings } from "./settings";
+import { settings } from "./settings.js";
 import dns from "dns"
 
 // By caching promises instead of directly their output, we're handling the case of multiple HTTP requests
@@ -22,7 +22,9 @@ async function callAbuseIpApi(ip: string): Promise<number>
                     "Key": settings.abuseIpDBApiKey,
                     "Accept": "application/json",
                 },
-                timeout: 1000 * 10,
+                timeout: {
+                    request: 1000 * 10
+                }
             })
 
         if (abuseIpStatusCode != 200)

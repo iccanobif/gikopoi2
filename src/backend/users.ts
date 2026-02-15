@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
-import { rooms } from "./rooms";
-import { Direction } from "./types";
-import { settings } from "./settings";
+import { rooms } from "./rooms.js";
+import { Direction } from "./types.js";
+import { settings } from "./settings.js";
 
 function generateId()
 {

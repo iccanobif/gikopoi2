@@ -1,0 +1,8 @@
+{
+  "exec": "tsx",
+  "ext": "ts,svg",
+  "watch": ["src/backend", "public/characters"],
+  "env": {
+    "TS_NODE_PROJECT": "tsconfig.server.json"
+  }
+}
