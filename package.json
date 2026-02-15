@@ -5,7 +5,7 @@
   "license": "Beerware",
   "type": "module",
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
   "scripts": {
     "dev-frontend": "vite --host",
