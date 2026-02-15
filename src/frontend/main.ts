@@ -49,7 +49,15 @@ import { createApp, defineComponent, computed, nextTick } from 'vue'
 import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'
 import languages from './lang'
+import $ from "jquery";
 import "jquery-ui/themes/base/all.css";
+
+// needed to make $ and jQuery available globally for the jquery-ui plugins.
+(window as any).$ = $;
+(window as any).jQuery = $;
+
+await import("jquery-ui/dist/jquery-ui.js");
+await import("jquery-ui-touch-punch");
 
 import { characters, loadCharacters } from "./character";
 import User from "./user";

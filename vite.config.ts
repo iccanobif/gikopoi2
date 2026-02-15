@@ -20,6 +20,13 @@ export default defineConfig({
         vue(),
         json5Plugin(),
     ],
+    optimizeDeps: {
+      include: [
+        "jquery",
+        "jquery-ui/dist/jquery-ui.js",
+        "jquery-ui-touch-punch",
+      ],
+    },
     server: {
         hmr: false, // Hot reloading
         proxy: {

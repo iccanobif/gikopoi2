@@ -541,6 +541,20 @@
   resolved "https://registry.yarnpkg.com/@types/http-errors/-/http-errors-2.0.5.tgz#5b749ab2b16ba113423feb1a64a95dcd30398472"
   integrity sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg==
 
+"@types/jquery@*", "@types/jquery@^3.5.33":
+  version "3.5.33"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.33.tgz#f42f40bac3edd84abdc9f6297d28e570fe463b35"
+  integrity sha512-SeyVJXlCZpEki5F0ghuYe+L+PprQta6nRZqhONt9F13dWBtR/ftoaIbdRQ7cis7womE+X2LKhsDdDtkkDhJS6g==
+  dependencies:
+    "@types/sizzle" "*"
+
+"@types/jqueryui@^1.12.24":
+  version "1.12.24"
+  resolved "https://registry.yarnpkg.com/@types/jqueryui/-/jqueryui-1.12.24.tgz#e78e862b0da13b9adb4f25ff8a00d7175c85860a"
+  integrity sha512-E2sGULwzMhg4kAeOV+gYcXjg988RuPkviWCt09jLe6GGK9sHM7dTqS8H7JMuUWoZQBucIBzBAgM5o/ezKUFkeg==
+  dependencies:
+    "@types/jquery" "*"
+
 "@types/json-schema@^7.0.15":
   version "7.0.15"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.15.tgz#596a1747233694d50f6ad8a7869fcb6f56cf5841"
@@ -582,6 +596,11 @@
   dependencies:
     "@types/http-errors" "*"
     "@types/node" "*"
+
+"@types/sizzle@*":
+  version "2.3.10"
+  resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.10.tgz#277a542aff6776d8a9b15f2ac682a663e3e94bbd"
+  integrity sha512-TC0dmN0K8YcWEAEfiPi5gJP14eJe30TTGjkvek3iM/1NdHHsdCA/Td6GvNndMOo/iSnIsZ4HuuhrYPDAmbxzww==
 
 "@types/ws@^8.18.1":
   version "8.18.1"
@@ -1753,6 +1772,11 @@ jackspeak@^4.2.3:
     uuid "3.3.2"
     validator "11.1.0"
     ws "7.1.1"
+
+jquery-ui-touch-punch@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/jquery-ui-touch-punch/-/jquery-ui-touch-punch-0.2.3.tgz#eed82242733ba243f46b3e87c1841b308191da68"
+  integrity sha512-Q/7aAd+SjbV0SspHO7Kuk96NJIbLwJAS0lD81U1PKcU2T5ZKayXMORH+Y5qvYLuy41xqVQbWimsRKDn1v3oI2Q==
 
 jquery-ui@^1.14.0:
   version "1.14.2"

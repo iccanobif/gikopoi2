@@ -1407,9 +1407,6 @@ function getRealIpWebSocket(socket: Socket): string
 
 const cachedJsBundle = (() => {
     return ""
-      + readFileSync("node_modules/jquery/dist/jquery.min.js").toString() + '\n'
-      + readFileSync("node_modules/jquery-ui/dist/jquery-ui.min.js").toString() + '\n'
-      + readFileSync("public/scripts/jquery.ui.touch-punch.min.js").toString() + '\n'
       + readFileSync("public/scripts/riffwave.js").toString() + '\n'
       + readFileSync("public/scripts/Blob.js").toString() + '\n'
       + readFileSync("public/scripts/animalese.js").toString() + '\n'
