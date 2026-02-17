@@ -103,6 +103,7 @@
         preferences_ui_theme_gikopoi: "GIKOpoi",
         //preferences_ui_theme_shaddox: "Shaddox Mode(暗色介面)",
         preferences_ui_theme_dark: "暗色介面",
+        // preferences_ui_theme_nostalgic: "Nostalgic",
         preferences_command_section_visible: "顯示指令按鈕",
         preferences_move_section_visible: "顯示移動按鈕",
         preferences_bubble_section_visible: "顯示對話框位置調整按鈕",
