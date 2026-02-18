@@ -81,7 +81,8 @@ import {
     removeControlChars,
     escapeHTML,
     adjustNiconicoMessagesFontSize,
-    debouncedLogSoundVolume
+    debouncedLogSoundVolume,
+    makeUrlsClickable
 } from "./utils";
 import { debouncedSpeakTest, speak } from "./tts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
@@ -1230,18 +1231,8 @@ const vueApp = createApp(defineComponent({
             const bodySpan = document.createElement("span");
             bodySpan.className = "message-body";
             bodySpan.textContent = msg;
-            bodySpan.innerHTML = bodySpan.innerHTML
-                .replace(urlRegex, (htmlUrl: string, prefix: string) =>
-                {
-                    const anchor = document.createElement('a');
-                    anchor.target = '_blank';
-                    anchor.setAttribute('tabindex', '-1');
-                    anchor.innerHTML = htmlUrl;
-                    const url = anchor.textContent;
-                    if (url) anchor.href = (prefix == 'www.' ? 'http://' + url : url);
-                    anchor.rel = "noopener noreferrer";
-                    return anchor.outerHTML;
-                })
+            bodySpan.innerHTML = makeUrlsClickable(bodySpan.innerHTML)
+
             if (userId) // Only mark mentions in user messages
                 bodySpan.childNodes.forEach(node =>
                 {

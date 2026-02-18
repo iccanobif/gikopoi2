@@ -562,3 +562,18 @@ export function adjustNiconicoMessagesFontSize()
             niconicoMessagesContainer.style.fontSize = fontsize + "px"
     }
 }
+
+export function makeUrlsClickable(html: string): string
+{
+    return html.replace(urlRegex, (htmlUrl: string, prefix: string) =>
+        {
+            const anchor = document.createElement('a');
+            anchor.target = '_blank';
+            anchor.setAttribute('tabindex', '-1');
+            anchor.innerHTML = safeDecodeURI(htmlUrl);
+            const url = anchor.textContent;
+            if (url) anchor.href = (prefix == 'www.' ? 'http://' + url : url);
+            anchor.rel = "noopener noreferrer";
+            return anchor.outerHTML;
+        })
+}
