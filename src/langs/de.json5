@@ -22,7 +22,7 @@
         label_stream: "Kanal {{index}}: ",
         label_input: "Eingabe:",
         label_log: "Log:",
-        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
+        error_invalid_username: "Benutzernamen länger als 20 Zeichen sind nicht erlaubt.",
 
         button_send: "Senden",
         button_stream_start: "Stream starten",
@@ -31,15 +31,15 @@
         button_stream_drop: "Stream schließen",
         button_stream_mute: "Stummschalten",
         button_stream_unmute: "Stummschaltung aufheben",
-        // button_stream_enable_feedback: "Enable feedback",
-        // button_stream_disable_feedback: "Disable feedback",
+        button_stream_enable_feedback: "Feedback aktivieren",
+        button_stream_disable_feedback: "Feedback deaktivieren",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Einstellungen",
-        button_logout: "Logout",
+        button_logout: "Abmelden",
         volume: "Lautstärke: ",
         enable_compression: "Verstärken: ",
-        // gain: "Gain: ",
+        gain: "Verstärkung: ",
         sound_effect: "Lauts.",
         tts_volume: "TTS Ls.",
         label_move: "Bewegen",
@@ -252,9 +252,9 @@
         irori: "Feuerstelle",
         taiikukan: "Schulturnhalle",
         yaneura: "Dachboden",
-        // kyougijou: "Track",
-        // yojouhan: "Tatami Room",
-        // meganeya: "Opticians"
+        kyougijou: "Laufbahn",
+        yojouhan: "Tatami-Zimmer",
+        meganeya: "Optiker"
     },
     area:
     {
