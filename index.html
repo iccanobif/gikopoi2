@@ -407,73 +407,21 @@
                     @select-room="selectRoomForRula"
                     @rula="rula"></rula-popup>
 
-                <div class="popup-overlay" v-if="isUserListPopupOpen" v-on:click="closeUserListPopup"></div>
-                <div id="user-list-popup" class="popup" v-if="isUserListPopupOpen">
-                    <div class="popup-titlebar">
-                        <div class="popup-title">{{ $t("ui.user_list_popup_title", {userCount: getUserListForListPopup().length}) }}</div>
-                    </div>
-                    <div class="popup-item">{{ $t("ui.user_list_popup_blurb") }}</div>
-                    <div class="popup-content">
-                        <table class="popup-table">
-                            <colgroup>
-                                <col id="user-list-column-user-name" />
-                                <col id="user-list-column-ignore-button" />
-                            </colgroup>
-                            <thead>
-                                <tr>
-                                    <th>{{ $t("ui.user_list_popup_column_user_name") }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr :id="'user-list-element-' + u.id"
-                                    v-for="u in getUserListForListPopup()"
-                                    v-bind:class="{'popup-row-is-selected': u.id == highlightedUserId}">
-                                    <td>
-                                        <div v-on:click="u.isInRoom && highlightUser(u.id, u.name)">
-                                            <span v-bind:title="$t('ui.user_not_in_room')"
-                                                  class="user-not-in-room-warning fas fa-exclamation-triangle"
-                                                  v-if="!u.isInRoom"></span>
-                                            <img v-bind:title="$t('ui.user_inactive')"
-                                                 v-if="u.isInactive"
-                                                 class="inactive-user-icon"
-                                                 src="zzz-sleep-symbol.svg"
-                                                  ></img>
-                                            <img v-if="isStreaming()
-                                                       && streamTarget == 'specific_users'
-                                                       && allowedListenerIDs.has(u.id)"
-                                                 class="enabled-disabled-listener-icon"
-                                                 src="enabled-listener.svg"
-                                                  ></img>
-                                            <img v-if="isStreaming()
-                                                       && streamTarget == 'specific_users'
-                                                       && !allowedListenerIDs.has(u.id)"
-                                                 class="enabled-disabled-listener-icon"
-                                                 src="disabled-listener.svg"
-                                                  ></img>
-                                            {{ u.name }}
-                                        </div>
-                                        <button v-if="isStreaming()
-                                                      && streamTarget == 'specific_users'
-                                                      && !allowedListenerIDs.has(u.id)"
-                                                v-on:click="giveStreamToUser(u.id)">{{ $t("ui.user_list_popup_give_stream") }}</button>
-                                        <button v-if="isStreaming()
-                                                      && streamTarget == 'specific_users'
-                                                      && allowedListenerIDs.has(u.id)"
-                                                v-on:click="revokeStreamToUser(u.id)">{{ $t("ui.user_list_popup_revoke_stream") }}</button>
-
-                                        <button v-if="ignoredUserIds.has(u.id)" v-on:click="unignoreUser(u.id)">{{ $t("ui.user_list_popup_unignore") }}</button>
-                                        <button v-if="!ignoredUserIds.has(u.id)" v-on:click="ignoreUser(u.id)">{{ $t("ui.user_list_popup_ignore") }}</button>
-
-                                        <button v-on:click="blockUser(u.id)">{{ $t("ui.user_list_popup_block") }}</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="popup-buttons">
-                        <button v-on:click="closeUserListPopup">{{ $t("ui.user_list_popup_close") }}</button>
-                    </div>
-                </div>
+                <user-list-popup
+                    :is-open="isUserListPopupOpen"
+                    :users="getUserListForListPopup()"
+                    :highlighted-user-id="highlightedUserId"
+                    :is-streaming="isStreaming()"
+                    :stream-target="streamTarget"
+                    :allowed-listener-ids="allowedListenerIDs"
+                    :ignored-user-ids="ignoredUserIds"
+                    @close="closeUserListPopup"
+                    @highlight-user="highlightUser"
+                    @give-stream="giveStreamToUser"
+                    @revoke-stream="revokeStreamToUser"
+                    @ignore-user="ignoreUser"
+                    @unignore-user="unignoreUser"
+                    @block-user="blockUser"></user-list-popup>
 
 
                 <div class="popup-overlay" v-if="isStreamPopupOpen" v-on:click="closeStreamPopup"></div>

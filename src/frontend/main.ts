@@ -100,6 +100,7 @@ import NumericValueControl from './components/numeric-value-control.vue'
 import VoiceChangerControl from './components/voice-changer-control.vue';
 import DialogPopup from './components/popups/dialog-popup.vue'
 import RulaPopup from './components/popups/rula-popup.vue'
+import UserListPopup from './components/popups/user-list-popup.vue'
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -245,6 +246,7 @@ const vueApp = createApp(defineComponent({
         VoiceChangerControl,
         DialogPopup,
         RulaPopup,
+        UserListPopup,
     },
     data() {
         return {
