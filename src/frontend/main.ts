@@ -102,6 +102,7 @@ import DialogPopup from './components/popups/dialog-popup.vue'
 import RulaPopup from './components/popups/rula-popup.vue'
 import UserListPopup from './components/popups/user-list-popup.vue'
 import StreamPopup from './components/popups/stream-popup.vue'
+import PreferencesPopup from './components/popups/preferences-popup.vue'
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -249,6 +250,7 @@ const vueApp = createApp(defineComponent({
         RulaPopup,
         UserListPopup,
         StreamPopup,
+        PreferencesPopup,
     },
     data() {
         return {

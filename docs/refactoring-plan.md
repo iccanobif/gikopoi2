@@ -16,7 +16,7 @@ Approach:
 Status legend: `[completed]`, `[in progress]`, `[not started]`
 
 Current step:
-1. `[in progress]` `PreferencesPopup` extraction.
+1. `[in progress]` `DeviceSelectionPopup` extraction.
 
 ## Plan of Action
 
@@ -30,8 +30,8 @@ Current step:
 2. `[completed]` Extract `RulaPopup` to `src/frontend/components/popups/rula-popup.vue`.
 3. `[completed]` Extract `UserListPopup` to `src/frontend/components/popups/user-list-popup.vue`.
 4. `[completed]` Extract `StreamPopup` to `src/frontend/components/popups/stream-popup.vue`.
-5. `[in progress]` Extract `PreferencesPopup` to `src/frontend/components/popups/preferences-popup.vue`.
-6. `[not started]` Extract `DeviceSelectionPopup` to `src/frontend/components/popups/device-selection-popup.vue`.
+5. `[completed]` Extract `PreferencesPopup` to `src/frontend/components/popups/preferences-popup.vue`.
+6. `[in progress]` Extract `DeviceSelectionPopup` to `src/frontend/components/popups/device-selection-popup.vue`.
 
 Rules for each extraction:
 1. `[completed]` Root (`main.ts`) remains owner of state and side effects.

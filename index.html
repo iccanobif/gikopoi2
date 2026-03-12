@@ -441,198 +441,56 @@
                     @start="showDeviceSelectionPopup"
                     @set-pref="(field, value) => storeSet(field, value)"></stream-popup>
 
-                <div class="popup-overlay" v-if="isPreferencesPopupOpen" v-on:click="closePreferencesPopup"></div>
-                <div class="popup" v-if="isPreferencesPopupOpen">
-                    <div class="popup-titlebar">
-                        <div class="popup-title">{{ $t("ui.preferences_title") }}</div>
-                    </div>
-                    <div class="popup-content">
-                        <div class='popup-section'>
-                            <div class='popup-header'>{{ $t("ui.preferences_title_general") }}</div>
-                            <div class='popup-item'>
-                                <label for="preferences-ui-theme">{{ $t("ui.preferences_ui_theme") }}</label>
-                                <select id="preferences-ui-theme" v-model="uiTheme" v-on:change="handleUiTheme">
-                                    <option value="gikopoi">{{ $t("ui.preferences_ui_theme_gikopoi") }}</option>
-                                    <option value="shaddox">{{ $t("ui.preferences_ui_theme_shaddox") }}</option>
-                                    <option value="dark">{{ $t("ui.preferences_ui_theme_dark") }}</option>
-                                </select>
-                            </div>
-                            <div class='popup-item' v-if="!getSiteArea().restrictLanguage">
-                                <label for="preferences-language">{{ $t("ui.preferences_language") }}</label>
-                                <select id="preferences-language" v-model="language" v-on:change="handleLanguageChange">
-                                    <template v-for="lang in getLangEntries()">
-                                        <option :value="lang.id">{{ lang.name }}</option>
-                                        <option disabled v-if="lang.endOfTopEntries">———</option>
-                                    </template>
-                                </select>
-                            </div>
-                        </div>
-                        <div class='popup-section'>
-                            <div class='popup-header'>{{ $t("ui.preferences_title_tts") }}</div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-text-to-speech"
-                                    v-model="enableTextToSpeech" v-on:change="handleEnableTextToSpeech"><label
-                                    for="preferences-text-to-speech">{{ $t("ui.preferences_enable_text_to_speech") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <label for="preferences-tts-voice">{{ $t("ui.preferences_tts_voice") }}</label>
-                                <select id="preferences-tts-voice" v-model="ttsVoiceURI" v-on:change="changeVoice">
-                                    <option value="automatic">{{ $t("ui.preferences_tts_voice_automatic") }}</option>
-                                    <option value="animalese">{{ $t("ui.preferences_tts_voice_animalese") }}</option>
-                                    <option v-for="voice in availableTTSVoices" :value="voice.voiceURI">{{ voice.name }}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class='popup-section'>
-                            <div class='popup-header'>{{ $t("ui.preferences_title_chat") }}</div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-shift-enter"
-                                    v-model="isNewlineOnShiftEnter" v-on:change="storeSet('isNewlineOnShiftEnter')"><label
-                                    for="preferences-shift-enter">{{ $t("ui.preferences_shift_enter") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-underlined-usernames"
-                                    v-model="underlinedUsernames" v-on:change="storeSet('underlinedUsernames')"><label
-                                    for="preferences-underlined-usernames">{{ $t("ui.preferences_underlined_usernames") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-timestamps-in-copied-log"
-                                    v-model="timestampsInCopiedLog" v-on:change="storeSet('timestampsInCopiedLog')"><label
-                                    for="preferences-timestamps-in-copied-log">{{ $t("ui.preferences_timestamps_in_copied_log") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-ignore-indicator-in-log"
-                                    v-model="showIgnoreIndicatorInLog" v-on:change="storeSet('showIgnoreIndicatorInLog')"><label
-                                    for="preferences-ignore-indicator-in-log">{{ $t("ui.preferences_ignore_indicator_in_log") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-ignore-on-block"
-                                    v-model="isIgnoreOnBlock" v-on:change="storeSet('isIgnoreOnBlock')"><label
-                                    for="preferences-ignore-on-block">{{ $t("ui.preferences_ignore_on_block") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-show-log-above-toolbar"
-                                    v-model="showLogAboveToolbar" v-on:change="storeSet('showLogAboveToolbar')"><label
-                                    for="preferences-show-log-above-toolbar">{{ $t("ui.preferences_show_log_above_toolbar") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-show-log-dividers"
-                                    v-model="showLogDividers" v-on:change="storeSet('showLogDividers')"><label
-                                    for="preferences-show-log-dividers">{{ $t("ui.preferences_show_log_dividers") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <button v-on:click="clearLog">{{ $t("ui.preferences_clear_log") }}</button>
-                            </div>
-                        </div>
-                        <div class='popup-section'>
-                            <div class='popup-header'>{{ $t("ui.preferences_title_notifications") }}</div>
-                            <div class='popup-item'>
-                                <div>
-                                    <input type="checkbox" id="preferences-show-notifications"
-                                        v-model="showNotifications" v-on:change="handleShowNotifications"><label
-                                        for="preferences-show-notifications">{{ $t("ui.preferences_show_notifications") }}</label>
-                                </div>
-                                <div v-if="!notificationPermissionsGranted" class="popup-notice">{{ $t("ui.notifications_are_denied") }}</div>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-login-sound-enabled"
-                                    v-model="isLoginSoundEnabled" v-on:change="storeSet('isLoginSoundEnabled')"><label
-                                    for="preferences-login-sound-enabled">{{ $t("ui.preferences_login_sound_enabled") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-message-sound-enabled"
-                                    v-model="isMessageSoundEnabled" v-on:change="storeSet('isMessageSoundEnabled')"><label
-                                    for="preferences-message-sound-enabled">{{ $t("ui.preferences_message_sound_enabled") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="enable-coin-sound"
-                                               v-model="isCoinSoundEnabled" v-on:change="toggleCoinSound"><label
-                                   for="enable-coin-sound">{{ $t("ui.preferences_enable_coin_sound")}}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-name-mention-sound-enabled"
-                                    v-model="isNameMentionSoundEnabled" v-on:change="handleNameMentionSoundEnabled"><label
-                                    for="preferences-name-mention-sound-enabled">{{ $t("ui.preferences_name_mention_sound_enabled") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <div>
-                                    <label for="preferences-custom-mention-sound-pattern">{{ $t("ui.preferences_custom_mention_sound_pattern") }}</label>
-                                    <input type="text" id="preferences-custom-mention-sound-pattern"
-                                        v-model="customMentionSoundPattern" v-on:change="handleCustomMentionSoundPattern">
-                                </div>
-                                <div class='popup-notice'>{{ $t("ui.preferences_custom_mention_sound_notice") }}</div>
-                            </div>
-                        </div>
-                        <div class='popup-section'>
-                            <div class='popup-header'>{{ $t("ui.preferences_title_game") }}</div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-name-bg"
-                                    v-model="showUsernameBackground" v-on:click="toggleUsernameBackground"><label
-                                    for="preferences-name-bg">{{ $t("ui.preferences_name_bg") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <label for="preferences-bubble-opacity">{{ $t("ui.preferences_bubble_opacity") }}</label>
-                                <input type="range" id="preferences-bubble-opacity"
-                                    min="50" max="100" v-model="bubbleOpacity" v-on:change="handleBubbleOpacity"><div
-                                    class='preferences-percentage'>{{ bubbleOpacity }}%</div>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-crisp-mode"
-                                    v-model="isCrispModeEnabled" v-on:change="handleCrispModeEnabled"><label
-                                    for="preferences-crisp-mode">{{ $t("ui.preferences_crisp_mode") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-low-quality"
-                                    v-model="isLowQualityEnabled" v-on:change="handleLowQualityEnabled"><label
-                                    for="preferences-low-quality">{{ $t("ui.preferences_low_quality") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-disable-idle-animations"
-                                    v-model="isIdleAnimationDisabled" v-on:change="handleIdleAnimationDisabled"><label
-                                    for="preferences-disable-idle-animations">{{ $t("ui.preferences_disable_idle_animations") }}</label>
-                            </div>
-                        </div>
-                        <div class='popup-section'>
-                            <div class='popup-header'>{{ $t("ui.preferences_title_streams") }}</div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-streams-auto-resume"
-                                    v-model="isStreamAutoResumeEnabled" v-on:change="storeSet('isStreamAutoResumeEnabled')"><label
-                                    for="preferences-streams-auto-resume">{{ $t("ui.preferences_streams_auto_resume") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-streams-inbound-vu-meter-enabled"
-                                    v-model="isStreamInboundVuMeterEnabled" v-on:change="storeSet('isStreamInboundVuMeterEnabled')"><label
-                                    for="preferences-streams-inbound-vu-meter-enabled">{{ $t("ui.preferences_streams_inbound_vu_meter_enabled") }}</label>
-                            </div>
-                        </div>
-                        <div class='popup-section'>
-                            <div class='popup-header'>{{ $t("ui.preferences_title_toolbar") }}</div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-command-section-visible"
-                                    v-model="isCommandSectionVisible" v-on:change="storeSet('isCommandSectionVisible')"><label
-                                    for="preferences-command-section-visible">{{ $t("ui.preferences_command_section_visible") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-move-section-visible"
-                                    v-model="isMoveSectionVisible" v-on:change="storeSet('isMoveSectionVisible')"><label
-                                    for="preferences-move-section-visible">{{ $t("ui.preferences_move_section_visible") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-bubble-section-visible"
-                                    v-model="isBubbleSectionVisible" v-on:change="storeSet('isBubbleSectionVisible')"><label
-                                    for="preferences-bubble-section-visible">{{ $t("ui.preferences_bubble_section_visible") }}</label>
-                            </div>
-                            <div class='popup-item'>
-                                <input type="checkbox" id="preferences-logout-button-visible"
-                                    v-model="isLogoutButtonVisible" v-on:change="storeSet('isLogoutButtonVisible')"><label
-                                    for="preferences-logout-button-visible">{{ $t("ui.preferences_logout_button_visible") }}</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="popup-buttons">
-                        <button v-on:click="closePreferencesPopup">{{ $t("ui.popup_button_ok") }}</button>
-                    </div>
-                </div>
+                <preferences-popup
+                    :is-open="isPreferencesPopupOpen"
+                    :site-language-restricted="getSiteArea().restrictLanguage"
+                    :ui-theme="uiTheme"
+                    :language="language"
+                    :lang-entries="getLangEntries()"
+                    :enable-text-to-speech="enableTextToSpeech"
+                    :tts-voice-u-r-i="ttsVoiceURI"
+                    :available-t-t-s-voices="availableTTSVoices"
+                    :is-newline-on-shift-enter="isNewlineOnShiftEnter"
+                    :underlined-usernames="underlinedUsernames"
+                    :timestamps-in-copied-log="timestampsInCopiedLog"
+                    :show-ignore-indicator-in-log="showIgnoreIndicatorInLog"
+                    :is-ignore-on-block="isIgnoreOnBlock"
+                    :show-log-above-toolbar="showLogAboveToolbar"
+                    :show-log-dividers="showLogDividers"
+                    :show-notifications="showNotifications"
+                    :notification-permissions-granted="notificationPermissionsGranted"
+                    :is-login-sound-enabled="isLoginSoundEnabled"
+                    :is-message-sound-enabled="isMessageSoundEnabled"
+                    :is-coin-sound-enabled="isCoinSoundEnabled"
+                    :is-name-mention-sound-enabled="isNameMentionSoundEnabled"
+                    :custom-mention-sound-pattern="customMentionSoundPattern"
+                    :show-username-background="showUsernameBackground"
+                    :bubble-opacity="bubbleOpacity"
+                    :is-crisp-mode-enabled="isCrispModeEnabled"
+                    :is-low-quality-enabled="isLowQualityEnabled"
+                    :is-idle-animation-disabled="isIdleAnimationDisabled"
+                    :is-stream-auto-resume-enabled="isStreamAutoResumeEnabled"
+                    :is-stream-inbound-vu-meter-enabled="isStreamInboundVuMeterEnabled"
+                    :is-command-section-visible="isCommandSectionVisible"
+                    :is-move-section-visible="isMoveSectionVisible"
+                    :is-bubble-section-visible="isBubbleSectionVisible"
+                    :is-logout-button-visible="isLogoutButtonVisible"
+                    @close="closePreferencesPopup"
+                    @set-pref="(field, value) => storeSet(field, value)"
+                    @ui-theme-changed="handleUiTheme"
+                    @language-changed="handleLanguageChange"
+                    @enable-tts-changed="handleEnableTextToSpeech"
+                    @tts-voice-changed="changeVoice"
+                    @clear-log="clearLog"
+                    @notifications-changed="handleShowNotifications"
+                    @coin-sound-toggled="toggleCoinSound"
+                    @mention-sound-changed="handleNameMentionSoundEnabled"
+                    @mention-pattern-changed="handleCustomMentionSoundPattern"
+                    @username-background-toggled="toggleUsernameBackground"
+                    @bubble-opacity-changed="handleBubbleOpacity"
+                    @crisp-mode-changed="handleCrispModeEnabled"
+                    @low-quality-changed="handleLowQualityEnabled"
+                    @idle-animation-changed="handleIdleAnimationDisabled"></preferences-popup>
 
                 <dialog-popup
                     :is-open="isDialogPopupOpen"
