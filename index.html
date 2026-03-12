@@ -394,66 +394,18 @@
                     </template>
                 </div>
 
-                <div class="popup-overlay" v-if="isRulaPopupOpen" v-on:click="closeRulaPopup"></div>
-                <div id="rula-popup" class="popup" v-if="isRulaPopupOpen" v-on:keydown="handleRulaPopupKeydown($event)" tabindex="-1">
-                    <div class="popup-titlebar">
-                        <div class="popup-title">{{ $t("ui.rula_menu_title") }}</div>
-                        <div class="popup-titlebar-item">
-                            <label for="rula-room-group">{{ $t("ui.rula_menu_label_group") }} </label>
-                            <select id="rula-room-group" v-model="rulaRoomGroup" v-on:change="prepareRulaRoomList()">
-                                <option value="all">{{ $t("ui.rula_menu_group_option_all") }}</option>
-                                <option value="gikopoipoi">{{ $t("area.gikopoipoi") }}</option>
-                                <option value="gikopoi">{{ $t("area.gikopoi") }}</option>
-                                <option value="bar_giko">{{ $t("area.bar_giko") }}</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="popup-content">
-                        <table class="popup-table popup-selectable-table popup-sortable-table">
-                            <colgroup>
-                                <col id="rula-menu-column-room-name" />
-                                <col id="rula-menu-column-user-count" />
-                                <col id="rula-menu-column-streamers" />
-                            </colgroup>
-                            <thead>
-                                <tr>
-                                    <th v-on:click="setRulaRoomListSortKey('sortName')">
-                                        {{ $t("ui.rula_menu_column_room_name") }}
-                                    </th>
-                                    <th v-on:click="setRulaRoomListSortKey('userCount')">
-                                        {{ $t("ui.rula_menu_column_user_count") }}
-                                    </th>
-                                    <th v-on:click="setRulaRoomListSortKey('streamerCount')">
-                                        {{ $t("ui.rula_menu_column_streamers") }}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="room in preparedRoomList"
-                                    :id="'room-tr-' + room.id"
-                                    v-bind:class="{'popup-row-is-selected': rulaRoomSelection == room.id}"
-                                    v-on:click="selectRoomForRula(room.id)"
-                                    v-on:dblclick="rula(room.id)">
-                                    <td>{{ $t("room." + room.id) }}</td>
-                                    <td>{{ room.userCount }}</td>
-                                    <td>
-                                        <span v-for="(stream, index) in room.streams">
-                                            <span v-if="index !== 0">/</span>
-                                            {{ stream.userName }}
-                                            <span v-bind:title="$t('ui.visible_only_to_specific_users_stream')"
-                                                  v-if="stream.isVisibleOnlyToSpecificUsers"
-                                                  class="fas fa-lock visible-only-to-specific-users-stream-icon"></span>
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="popup-buttons">
-                        <button v-on:click="rula(rulaRoomSelection)">{{ $t("ui.rula_menu_button_rula") }}</button><button
-                            v-on:click="closeRulaPopup">{{ $t("ui.popup_button_cancel") }}</button>
-                    </div>
-                </div>
+                <rula-popup
+                    :is-open="isRulaPopupOpen"
+                    :rooms="preparedRoomList"
+                    :room-group="rulaRoomGroup"
+                    :selected-room-id="rulaRoomSelection"
+                    @close="closeRulaPopup"
+                    @keydown="handleRulaPopupKeydown"
+                    @room-group-change="rulaRoomGroup = $event"
+                    @prepare-room-list="prepareRulaRoomList"
+                    @set-sort-key="setRulaRoomListSortKey"
+                    @select-room="selectRoomForRula"
+                    @rula="rula"></rula-popup>
 
                 <div class="popup-overlay" v-if="isUserListPopupOpen" v-on:click="closeUserListPopup"></div>
                 <div id="user-list-popup" class="popup" v-if="isUserListPopupOpen">
