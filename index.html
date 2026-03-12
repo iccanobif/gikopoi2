@@ -806,20 +806,12 @@
                     </div>
                 </div>
 
-                <div class="popup-overlay" id="dialog-popup-overlay" v-if="isDialogPopupOpen" v-on:click="closeDialog"></div>
-                <div class="popup" id="dialog-popup" v-if="isDialogPopupOpen">
-                    <div class="popup-titlebar" v-if="dialogPopupTitle">
-                        <div class="popup-title">{{ dialogPopupTitle }}</div>
-                    </div>
-                    <div class="popup-content">
-                        <div class="popup-item">
-                            {{ dialogPopupMessage }}
-                        </div>
-                    </div>
-                    <div class="popup-buttons">
-                        <button v-for="(buttonText, buttonIndex) in dialogPopupButtons" v-on:click="closeDialog(buttonIndex)">{{ buttonText }}</button>
-                    </div>
-                </div>
+                <dialog-popup
+                    :is-open="isDialogPopupOpen"
+                    :title="dialogPopupTitle"
+                    :message="dialogPopupMessage"
+                    :buttons="dialogPopupButtons"
+                    @close="closeDialog"></dialog-popup>
 
                 <div class="popup-overlay" v-if="isDeviceSelectionOpen" v-on:click="cancelDeviceSelection"></div>
                 <fieldset class="popup" v-if="isDeviceSelectionOpen" :disabled="waitingForDevicePermission">

@@ -98,6 +98,7 @@ import LoginPage from './pages/login.vue'
 
 import NumericValueControl from './components/numeric-value-control.vue'
 import VoiceChangerControl from './components/voice-changer-control.vue';
+import DialogPopup from './components/popups/dialog-popup.vue'
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -241,6 +242,7 @@ const vueApp = createApp(defineComponent({
         LoginFooter,
         NumericValueControl,
         VoiceChangerControl,
+        DialogPopup,
     },
     data() {
         return {
