@@ -94,6 +94,7 @@
                         </div>
                         <div class="popup-notice">{{ $t("ui.stream_form_screen_capture_audio_notice") }}</div>
                     </div>
+                    <!-- hide advanced audio settings for video only streams and streams with screen capture audio -->
                     <div class="popup-item" v-if="!streamScreenCapture || !(streamScreenCaptureAudio && streamMode == 'video_sound')">
                         <div>
                             <input

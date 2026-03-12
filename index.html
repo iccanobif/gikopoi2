@@ -499,34 +499,16 @@
                     :buttons="dialogPopupButtons"
                     @close="closeDialog"></dialog-popup>
 
-                <div class="popup-overlay" v-if="isDeviceSelectionOpen" v-on:click="cancelDeviceSelection"></div>
-                <fieldset class="popup" v-if="isDeviceSelectionOpen" :disabled="waitingForDevicePermission">
-                    <div class="popup-titlebar">
-                        <div class="popup-title">{{ $t("ui.device_selection_title") }}</div>
-                    </div>
-                    <div class="popup-content">
-                        <!-- AUDIO -->
-                        <div class='popup-section' v-if="deviceList.filter(d => d.type == 'audioinput').length">
-                            <div class='popup-header'>{{ $t("ui.device_selection_audio_devices") }}</div>
-                            <div class='popup-item' v-for="device in deviceList.filter(d => d.type == 'audioinput')">
-                                <input type="radio" :id="device.id" :value="device.id" v-model="selectedAudioDeviceId"><label
-                                    :for="device.id">{{ device.name }}</label>
-                            </div>
-                        </div>
-                        <!-- VIDEO -->
-                        <div class='popup-section' v-if="deviceList.filter(d => d.type == 'videoinput').length">
-                            <div class='popup-header'>{{ $t("ui.device_selection_video_devices") }}</div>
-                            <div class='popup-item' v-for="device in deviceList.filter(d => d.type == 'videoinput')">
-                                <input type="radio" :id="device.id" :value="device.id" v-model="selectedVideoDeviceId"><label
-                                    :for="device.id">{{ device.name }}</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="popup-buttons">
-                        <button v-on:click="wantToStartStreaming">{{ $t("ui.stream_form_button_stream") }}</button>
-                        <button v-on:click="cancelDeviceSelection">{{ $t("ui.popup_button_cancel") }}</button>
-                    </div>
-                </fieldset>
+                <device-selection-popup
+                    :is-open="isDeviceSelectionOpen"
+                    :waiting-for-device-permission="waitingForDevicePermission"
+                    :device-list="deviceList"
+                    :selected-audio-device-id="selectedAudioDeviceId"
+                    :selected-video-device-id="selectedVideoDeviceId"
+                    @close="cancelDeviceSelection"
+                    @start="wantToStartStreaming"
+                    @set-audio-device="selectedAudioDeviceId = $event"
+                    @set-video-device="selectedVideoDeviceId = $event"></device-selection-popup>
             </div>
             <div id="logged-out-page" v-if="appState == 'logout'" class="full-screen-page">
                 {{ $t("msg.goodbye") }}
