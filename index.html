@@ -424,94 +424,22 @@
                     @block-user="blockUser"></user-list-popup>
 
 
-                <div class="popup-overlay" v-if="isStreamPopupOpen" v-on:click="closeStreamPopup"></div>
-                <fieldset id="stream-popup" class="popup" v-if="isStreamPopupOpen" :disabled="waitingForDevicePermission">
-                    <div class="popup-titlebar">
-                        <div class="popup-title">{{ $t("ui.stream_form_title") }}</div>
-                    </div>
-                    <div class="popup-content">
-                        <div class='popup-item'>
-                            <span>{{ $t("ui.stream_form_mode") }}</span><input type="radio"
-                                id="stream-form-video-sound-mode" value="video_sound"
-                                v-model="streamMode" v-on:change="storeSet('streamMode')"><label
-                                for="stream-form-video-sound-mode">{{ $t("ui.stream_form_video_sound_mode") }}</label>
-
-                            <input type="radio" id="stream-form-sound-only-mode" value="sound"
-                                v-model="streamMode" v-on:change="storeSet('streamMode')"><label
-                                for="stream-form-sound-only-mode">{{ $t("ui.stream_form_sound_only_mode") }}</label>
-
-                            <input type="radio" id="stream-form-video-only-mode" value="video"
-                                v-model="streamMode" v-on:change="storeSet('streamMode')"><label
-                                for="stream-form-video-only-mode">{{ $t("ui.stream_form_video_only_mode") }}</label>
-                        </div>
-                        <div class='popup-item' v-if="streamMode != 'sound'">
-                            <input type="checkbox" id="stream-form-screen-capture"
-                                v-model="streamScreenCapture" v-on:change="storeSet('streamScreenCapture')"><label
-                                for="stream-form-screen-capture">{{ $t("ui.stream_form_screen_capture") }}</label>
-                        </div>
-                        <div class='popup-item'>
-                            <span>{{ $t("ui.stream_form_stream_target") }}</span>
-
-                            <input type="radio" id="stream-form-visible-to-all-room" value="all_room" v-model="streamTarget"><label
-                                for="stream-form-visible-to-all-room">{{ $t("ui.stream_form_visible_to_all_room") }}</label>
-
-                            <input type="radio" id="stream-form-visible-only-to-specific-users" value="specific_users" v-model="streamTarget"><label
-                                for="stream-form-visible-only-to-specific-users">{{ $t("ui.stream_form_visible_only_to_specific_users") }}</label>
-
-                        </div>
-                        <div class='popup-item' v-if="streamMode == 'video_sound' || streamMode == 'video'">
-                            <input type="checkbox" id="stream-form-vtuber-mode" v-model="streamIsVtuberMode"><label
-                                for="stream-form-vtuber-mode">{{ $t("ui.stream_form_vtuber_mode") }}</label>
-                        </div>
-                        <div class='popup-item' v-if="streamMode == 'video_sound' || streamMode == 'video'">
-                            <input type="checkbox" id="stream-form-niconico-mode" v-model="isNicoNicoMode"><label
-                                for="stream-form-niconico-mode">{{ $t("ui.stream_form_niconico_mode") }}</label>
-                        </div>
-                        <div v-if="streamMode != 'video'">
-                            <div class='popup-item'>
-                                <button v-if="!displayAdvancedStreamSettings"
-                                    v-on:click="storeSet('displayAdvancedStreamSettings', true)">{{ $t("ui.stream_form_show_advanced") }}</button>
-                                <button v-if="displayAdvancedStreamSettings"
-                                    v-on:click="storeSet('displayAdvancedStreamSettings', false)">{{ $t("ui.stream_form_hide_advanced") }}</button>
-                            </div>
-                            <div v-if="displayAdvancedStreamSettings">
-                                <div class='popup-item' v-if="streamMode != 'sound' && streamScreenCapture">
-                                    <div>
-                                        <input type="checkbox" id="stream-form-screen-capture-audio"
-                                            v-model="streamScreenCaptureAudio" v-on:change="storeSet('streamScreenCaptureAudio')"><label
-                                            for="stream-form-screen-capture-audio">{{ $t("ui.stream_form_screen_capture_audio") }}</label>
-                                    </div>
-                                    <div class='popup-notice'>{{ $t("ui.stream_form_screen_capture_audio_notice") }}</div>
-                                </div>
-                                <!-- hide advanced audio settings for video only streams and streams with screen capture audio -->
-                                <div class='popup-item' v-if="!streamScreenCapture || !(streamScreenCaptureAudio && streamMode == 'video_sound')">
-                                    <div>
-                                        <input type="checkbox" id="stream-form-echo-cancellation"
-                                            v-model="streamEchoCancellation" v-on:change="storeSet('streamEchoCancellation')"
-                                            ><label for="stream-form-echo-cancellation">{{
-                                            $t("ui.stream_form_echo_cancellation") }}</label>
-                                    </div>
-                                    <div>
-                                        <input type="checkbox" id="stream-form-noise-suppression"
-                                            v-model="streamNoiseSuppression" v-on:change="storeSet('streamNoiseSuppression')"
-                                            ><label for="stream-form-noise-suppression">{{
-                                            $t("ui.stream_form_noise_suppression") }}</label>
-                                    </div>
-                                    <div>
-                                        <input type="checkbox" id="stream-form-auto-gain"
-                                            v-model="streamAutoGain" v-on:change="storeSet('streamAutoGain')"
-                                            ><label
-                                            for="stream-form-auto-gain">{{ $t("ui.stream_form_auto_gain") }}</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="popup-buttons">
-                        <button v-on:click="showDeviceSelectionPopup">{{ $t("ui.stream_form_button_stream") }}</button><button
-                            v-on:click="closeStreamPopup">{{ $t("ui.popup_button_cancel") }}</button>
-                    </div>
-                </fieldset>
+                <stream-popup
+                    :is-open="isStreamPopupOpen"
+                    :waiting-for-device-permission="waitingForDevicePermission"
+                    :stream-mode="streamMode"
+                    :stream-screen-capture="streamScreenCapture"
+                    :stream-target="streamTarget"
+                    :stream-is-vtuber-mode="streamIsVtuberMode"
+                    :is-nico-nico-mode="isNicoNicoMode"
+                    :display-advanced-stream-settings="displayAdvancedStreamSettings"
+                    :stream-screen-capture-audio="streamScreenCaptureAudio"
+                    :stream-echo-cancellation="streamEchoCancellation"
+                    :stream-noise-suppression="streamNoiseSuppression"
+                    :stream-auto-gain="streamAutoGain"
+                    @close="closeStreamPopup"
+                    @start="showDeviceSelectionPopup"
+                    @set-pref="(field, value) => storeSet(field, value)"></stream-popup>
 
                 <div class="popup-overlay" v-if="isPreferencesPopupOpen" v-on:click="closePreferencesPopup"></div>
                 <div class="popup" v-if="isPreferencesPopupOpen">

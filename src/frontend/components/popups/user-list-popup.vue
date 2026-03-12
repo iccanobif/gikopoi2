@@ -80,12 +80,12 @@ defineProps<{
 
 const emit = defineEmits<{
     close: [],
-    highlightUser: [userId: string, userName: string],
-    giveStream: [userId: string],
-    revokeStream: [userId: string],
-    ignoreUser: [userId: string],
-    unignoreUser: [userId: string],
-    blockUser: [userId: string],
+    'highlight-user': [userId: string, userName: string],
+    'give-stream': [userId: string],
+    'revoke-stream': [userId: string],
+    'ignore-user': [userId: string],
+    'unignore-user': [userId: string],
+    'block-user': [userId: string],
 }>()
 </script>
 

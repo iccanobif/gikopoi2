@@ -82,18 +82,18 @@ const props = defineProps<{
 const emit = defineEmits<{
     close: [],
     keydown: [event: KeyboardEvent],
-    roomGroupChange: [value: string],
-    prepareRoomList: [],
-    setSortKey: [sortKey: RulaRoomListSortKey],
-    selectRoom: [roomId: string],
+    'room-group-change': [value: string],
+    'prepare-room-list': [],
+    'set-sort-key': [sortKey: RulaRoomListSortKey],
+    'select-room': [roomId: string],
     rula: [roomId: string | null],
 }>()
 
 function onRoomGroupChange(event: Event)
 {
     const target = event.target as HTMLSelectElement
-    emit('roomGroupChange', target.value)
-    emit('prepareRoomList')
+    emit('room-group-change', target.value)
+    emit('prepare-room-list')
 }
 </script>
 

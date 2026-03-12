@@ -15,13 +15,8 @@ Approach:
 
 Status legend: `[completed]`, `[in progress]`, `[not started]`
 
-Completed commits:
-1. `26fd4530` - `refactor(frontend): extract DialogPopup component`
-2. `f37f030c` - `refactor(frontend): extract RulaPopup component`
-3. `0eee6053` - `refactor(frontend): extract UserListPopup component`
-
 Current step:
-1. `[in progress]` `StreamPopup` extraction.
+1. `[in progress]` `PreferencesPopup` extraction.
 
 ## Plan of Action
 
@@ -34,8 +29,8 @@ Current step:
 1. `[completed]` Extract `DialogPopup` to `src/frontend/components/popups/dialog-popup.vue`.
 2. `[completed]` Extract `RulaPopup` to `src/frontend/components/popups/rula-popup.vue`.
 3. `[completed]` Extract `UserListPopup` to `src/frontend/components/popups/user-list-popup.vue`.
-4. `[in progress]` Extract `StreamPopup` to `src/frontend/components/popups/stream-popup.vue`.
-5. `[not started]` Extract `PreferencesPopup` to `src/frontend/components/popups/preferences-popup.vue`.
+4. `[completed]` Extract `StreamPopup` to `src/frontend/components/popups/stream-popup.vue`.
+5. `[in progress]` Extract `PreferencesPopup` to `src/frontend/components/popups/preferences-popup.vue`.
 6. `[not started]` Extract `DeviceSelectionPopup` to `src/frontend/components/popups/device-selection-popup.vue`.
 
 Rules for each extraction:
