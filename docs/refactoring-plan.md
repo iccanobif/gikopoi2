@@ -13,55 +13,54 @@ Approach:
 
 ## Current Progress
 
-Completed:
-1. `DialogPopup` extraction.
-2. `RulaPopup` extraction.
+Status legend: `[completed]`, `[in progress]`, `[not started]`
 
-Commits:
+Completed commits:
 1. `26fd4530` - `refactor(frontend): extract DialogPopup component`
 2. `f37f030c` - `refactor(frontend): extract RulaPopup component`
+3. `0eee6053` - `refactor(frontend): extract UserListPopup component`
 
-In progress:
-1. `UserListPopup` extraction.
+Current step:
+1. `[in progress]` `StreamPopup` extraction.
 
 ## Plan of Action
 
 ### Phase 0 - Baseline and Constraints
-1. Preserve all existing behavior while refactoring incrementally.
-2. Validate popup open/close behavior via button, overlay click, and `Escape`.
-3. Keep IDs/classes where needed for existing CSS and selectors.
+1. `[completed]` Preserve all existing behavior while refactoring incrementally.
+2. `[completed]` Validate popup open/close behavior via button, overlay click, and `Escape`.
+3. `[completed]` Keep IDs/classes where needed for existing CSS and selectors.
 
 ### Phase 1 - Popup-by-popup extraction
-1. Extract `DialogPopup` to `src/frontend/components/popups/dialog-popup.vue`.
-2. Extract `RulaPopup` to `src/frontend/components/popups/rula-popup.vue`.
-3. Extract `UserListPopup` to `src/frontend/components/popups/user-list-popup.vue`.
-4. Extract `StreamPopup` to `src/frontend/components/popups/stream-popup.vue`.
-5. Extract `PreferencesPopup` to `src/frontend/components/popups/preferences-popup.vue`.
-6. Extract `DeviceSelectionPopup` to `src/frontend/components/popups/device-selection-popup.vue`.
+1. `[completed]` Extract `DialogPopup` to `src/frontend/components/popups/dialog-popup.vue`.
+2. `[completed]` Extract `RulaPopup` to `src/frontend/components/popups/rula-popup.vue`.
+3. `[completed]` Extract `UserListPopup` to `src/frontend/components/popups/user-list-popup.vue`.
+4. `[in progress]` Extract `StreamPopup` to `src/frontend/components/popups/stream-popup.vue`.
+5. `[not started]` Extract `PreferencesPopup` to `src/frontend/components/popups/preferences-popup.vue`.
+6. `[not started]` Extract `DeviceSelectionPopup` to `src/frontend/components/popups/device-selection-popup.vue`.
 
 Rules for each extraction:
-1. Root (`main.ts`) remains owner of state and side effects.
-2. Component exposes display/state via props.
-3. Component emits user intents; root methods handle actions.
-4. Run build and smoke test.
-5. Create one dedicated commit per extraction.
+1. `[completed]` Root (`main.ts`) remains owner of state and side effects.
+2. `[completed]` Component exposes display/state via props.
+3. `[completed]` Component emits user intents; root methods handle actions.
+4. `[completed]` Run build and smoke test.
+5. `[completed]` Create one dedicated commit per extraction.
 
 ### Phase 2 - Template stabilization
-1. Keep popup area organized in `index.html` while extraction continues.
-2. Normalize props/emits naming (`isOpen`, `close`, intent-specific events).
-3. Add minimal comments only where coupling is non-obvious.
+1. `[in progress]` Keep popup area organized in `index.html` while extraction continues.
+2. `[in progress]` Normalize props/emits naming (`isOpen`, `close`, intent-specific events).
+3. `[not started]` Add minimal comments only where coupling is non-obvious.
 
 ### Phase 3 - Introduce runtime coordination object
-1. Introduce `ClientSessionController` (name chosen over generic "orchestrator").
-2. Move websocket lifecycle/domain actions there gradually.
-3. Keep Vue root as UI adapter between components and controller.
-4. Do not introduce a broad global event bus by default.
+1. `[not started]` Introduce `ClientSessionController` (name chosen over generic "orchestrator").
+2. `[not started]` Move websocket lifecycle/domain actions there gradually.
+3. `[not started]` Keep Vue root as UI adapter between components and controller.
+4. `[not started]` Do not introduce a broad global event bus by default.
 
 ### Phase 4 - Remaining major UI splits
 After popup stabilization:
-1. Extract canvas section into a component.
-2. Extract chat section (input, log, toolbar buttons) into a component.
-3. Extract stream section (`#video-streams`) into a component.
+1. `[not started]` Extract canvas section into a component.
+2. `[not started]` Extract chat section (input, log, toolbar buttons) into a component.
+3. `[not started]` Extract stream section (`#video-streams`) into a component.
 
 ## Why `ClientSessionController`
 
