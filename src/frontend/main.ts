@@ -406,7 +406,6 @@ const vueApp = createApp(defineComponent({
 
             lastCoinTossTime: 0, // unix timestamp
 
-            // hideStreams: false,
             // the key is the slot ID
             inboundAudioProcessors: {} as {[slotId: number]: AudioProcessor},
             outboundAudioProcessor: null as AudioProcessor | null,
@@ -804,13 +803,6 @@ const vueApp = createApp(defineComponent({
             const roomDto = dto.currentRoom
             const usersDto = dto.connectedUsers
             const streamsDto = dto.streams
-
-            // if (!this.hideStreams && (dto.hideStreams || localStorage.getItem("hideStreams")))
-            //     logToServer(this.myUserID + " setting hideStreams to true")
-
-            // if (dto.hideStreams)
-            //     localStorage.setItem("hideStreams", "true")
-            // this.hideStreams = localStorage.getItem("hideStreams") == "true";
 
             this.chessboardState = dto.chessboardState
             this.jankenState = dto.jankenState
@@ -3218,9 +3210,6 @@ const vueApp = createApp(defineComponent({
                 {
                     try
                     {
-                        // if (this.hideStreams)
-                        //     return;
-
                         this.clientSideStreamData[streamSlotId].isListenerConnected = true
 
                         const stream = event.streams[0]
