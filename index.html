@@ -70,7 +70,7 @@
                             v-on:click="canvasClick"
                             ></canvas>
                         <div id="infobox-container">
-                            <div id="infobox" v-if="isInfoboxVisible && currentRoom !== null">
+                            <div id="infobox" v-if="preferences.isInfoboxVisible && currentRoom !== null">
                                 <table>
                                     <tr>
                                         <td>{{ $t("ui.infobox_label_area") }}</td>

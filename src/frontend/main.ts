@@ -89,7 +89,7 @@ import { debouncedSpeakTest, speak } from "./tts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
 import { RenderCache } from "./rendercache";
 import { animateObjects, animateJizou } from "./animations";
-import { loadPreferencesFromLocalStorage } from './preferences'
+import { loadPreferencesFromLocalStorage, setAndPersist } from './preferences'
 
 import ChessboardSlot from './components/chessboard-slot.vue'
 import JankenSlot from './components/janken-slot.vue'
@@ -205,6 +205,8 @@ function getInitialAreaId(): string
 const initialAreaId = getInitialAreaId()
 const initialArea = getSiteArea(initialAreaId)
 
+// TODO: remove all references to the `initialPreferences` variable except for the i18 initialization
+//       and the initialization of the `preferences` attribute in the main component's data.
 const initialPreferences = loadPreferencesFromLocalStorage()
 
 function createPreferenceProxy<K extends keyof GikopoipoiPreferences>(key: K)
@@ -286,11 +288,10 @@ const vueApp = createApp(defineComponent({
             justSpawnedToThisRoom: true,
             isLoadingRoom: false,
             requestedRoomChange: false,
-            isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
             soundEffectVolume: 0,
             isLoggingIn: false,
             areaId: initialAreaId,
-            preferences: { ...initialPreferences } as GikopoipoiPreferences,
+            preferences: initialPreferences,
             uiBackgroundColor: null as number[] | null,
             isUiBackgroundDark: false,
             currentCanvasVerticalMovement: "none" as "none" | "up" | "down",
@@ -2388,10 +2389,7 @@ const vueApp = createApp(defineComponent({
         },
         toggleInfobox()
         {
-            localStorage.setItem(
-                "isInfoboxVisible",
-                (this.isInfoboxVisible = !this.isInfoboxVisible).toString()
-            );
+            setAndPersist(this.preferences, "isInfoboxVisible", !this.preferences.isInfoboxVisible)
         },
         toggleUsernameBackground() {
             localStorage.setItem(

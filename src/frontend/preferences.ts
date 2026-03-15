@@ -12,6 +12,7 @@ export function loadPreferencesFromLocalStorage(): GikopoipoiPreferences
         isCommandSectionVisible: localStorage.getItem('isCommandSectionVisible') != 'false',
         isCrispModeEnabled: localStorage.getItem('isCrispModeEnabled') == 'true',
         isIdleAnimationDisabled: localStorage.getItem('isIdleAnimationDisabled') == 'true',
+        isInfoboxVisible: localStorage.getItem('isInfoboxVisible') == 'true',
         isIgnoreOnBlock: localStorage.getItem('isIgnoreOnBlock') == 'true',
         isLoginSoundEnabled: localStorage.getItem('isLoginSoundEnabled') != 'false',
         isLogoutButtonVisible: localStorage.getItem('isLogoutButtonVisible') != 'false',
@@ -39,5 +40,17 @@ export function loadPreferencesFromLocalStorage(): GikopoipoiPreferences
         uiTheme: localStorage.getItem('uiTheme') || 'gikopoi',
         underlinedUsernames: localStorage.getItem('underlinedUsernames') == 'true',
         voiceVolume: parseInt(localStorage.getItem('voiceVolume') || '0'),
+    }
+}
+
+export function setAndPersist<K extends keyof GikopoipoiPreferences>(preferences: GikopoipoiPreferences, key: K, value: GikopoipoiPreferences[K])
+{
+    preferences[key] = value
+
+    // stringify if the value is an object
+    if (typeof value === 'object') {
+        localStorage.setItem(key, JSON.stringify(value))
+    } else {
+        localStorage.setItem(key, String(value))
     }
 }

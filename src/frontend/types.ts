@@ -70,42 +70,43 @@ export interface PointerState {
 export type PopupCallback = (buttonIndex: number) => void
 
 export interface GikopoipoiPreferences {
-    uiTheme: string
-    language: string
+    bubbleOpacity: number
+    customMentionSoundPattern: string
+    displayAdvancedStreamSettings: boolean
     enableTextToSpeech: boolean
-    ttsVoiceURI: string
-    voiceVolume: number
-    isNewlineOnShiftEnter: boolean
-    underlinedUsernames: boolean
-    timestampsInCopiedLog: boolean
-    showIgnoreIndicatorInLog: boolean
+    isBubbleSectionVisible: boolean
+    isCoinSoundEnabled: boolean
+    isCommandSectionVisible: boolean
+    isCrispModeEnabled: boolean
+    isIdleAnimationDisabled: boolean
     isIgnoreOnBlock: boolean
+    isInfoboxVisible: boolean
+    isLoginSoundEnabled: boolean
+    isLogoutButtonVisible: boolean
+    isLowQualityEnabled: boolean
+    isMessageSoundEnabled: boolean
+    isMoveSectionVisible: boolean
+    isNameMentionSoundEnabled: boolean
+    isNewlineOnShiftEnter: boolean
+    isStreamAutoResumeEnabled: boolean
+    isStreamInboundVuMeterEnabled: boolean
+    language: string
+    showIgnoreIndicatorInLog: boolean
     showLogAboveToolbar: boolean
     showLogDividers: boolean
     showNotifications: boolean
-    isLoginSoundEnabled: boolean
-    isMessageSoundEnabled: boolean
-    isCoinSoundEnabled: boolean
-    isNameMentionSoundEnabled: boolean
-    customMentionSoundPattern: string
     showUsernameBackground: boolean
-    bubbleOpacity: number
-    isCrispModeEnabled: boolean
-    isLowQualityEnabled: boolean
-    isIdleAnimationDisabled: boolean
-    isStreamAutoResumeEnabled: boolean
-    isStreamInboundVuMeterEnabled: boolean
-    isCommandSectionVisible: boolean
-    isMoveSectionVisible: boolean
-    isBubbleSectionVisible: boolean
-    isLogoutButtonVisible: boolean
-    streamMode: 'video_sound' | 'sound' | 'video'
-    displayAdvancedStreamSettings: boolean
-    streamEchoCancellation: boolean
-    streamNoiseSuppression: boolean
     streamAutoGain: boolean
+    streamEchoCancellation: boolean
+    streamMode: 'video_sound' | 'sound' | 'video'
+    streamNoiseSuppression: boolean
     streamScreenCapture: boolean
     streamScreenCaptureAudio: boolean
+    timestampsInCopiedLog: boolean
+    ttsVoiceURI: string
+    uiTheme: string
+    underlinedUsernames: boolean
+    voiceVolume: number
 }
 
 export type RulaRoomListSortKey = 'sortName' | 'userCount' | 'streamerCount'
