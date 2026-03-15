@@ -65,6 +65,11 @@ After popup stabilization:
 2. `[not started]` Extract chat section (input, log, toolbar buttons) into a component.
 3. `[not started]` Extract stream section (`#video-streams`) into a component.
 
+### Phase X - Backend
+1. Simplify annual events handling.
+2. Containerize all components of the system for easier deployment and development (it would be particularly great to be able to use local janus instances for dev)
+3. Kill janus! For example, by replacing it with a custom WebRTC relay (in node.js or Rust).
+
 ## Why `ClientSessionController`
 
 `ClientSessionController` is explicit about responsibility:
