@@ -74,6 +74,7 @@ export interface GikopoipoiPreferences {
     language: string
     enableTextToSpeech: boolean
     ttsVoiceURI: string
+    voiceVolume: number
     isNewlineOnShiftEnter: boolean
     underlinedUsernames: boolean
     timestampsInCopiedLog: boolean
@@ -98,6 +99,13 @@ export interface GikopoipoiPreferences {
     isMoveSectionVisible: boolean
     isBubbleSectionVisible: boolean
     isLogoutButtonVisible: boolean
+    streamMode: 'video_sound' | 'sound' | 'video'
+    displayAdvancedStreamSettings: boolean
+    streamEchoCancellation: boolean
+    streamNoiseSuppression: boolean
+    streamAutoGain: boolean
+    streamScreenCapture: boolean
+    streamScreenCaptureAudio: boolean
 }
 
 export type RulaRoomListSortKey = 'sortName' | 'userCount' | 'streamerCount'

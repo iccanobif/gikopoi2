@@ -50,7 +50,8 @@ Rules for each extraction:
 1. [completed] Instead of passing availableTTSVoices to the settings popup, compute it inside the popup component itself, since it's only used there.
 2. [completed] Similarly, move getLangEntries to the popup component. Before doing it check that it's safe to do, though.
 3. [not started] There's still stuff in the local storage which is not handled through the GikopoipoiPreferences type. Move them there as well, and update the code to use the new type instead of directly accessing local storage.
-4. [not started] Remove the `createPreferenceProxy()` bridge and make `preferences` the only settings source at runtime: migrate all root/template references from top-level aliases (for example `uiTheme`, `showNotifications`, `isCrispModeEnabled`) to `preferences.*`, and update generic helpers (such as `storeSet`) to read/write `preferences` keys directly.
+4. [not started] stream settings (streamMode, displayAdvancedStreamSettings, streamEchoCancellation...) are all individually in the main component's data, but it should be made so that the stream popup just references the preferences object for all of them, to reduce the amount of plumbing.
+5. [not started] Remove the `createPreferenceProxy()` bridge and make `preferences` the only settings source at runtime: migrate all root/template references from top-level aliases (for example `uiTheme`, `showNotifications`, `isCrispModeEnabled`) to `preferences.*`, and update generic helpers (such as `storeSet`) to read/write `preferences` keys directly.
 
 ### Phase 3 - Introduce runtime coordination object
 1. `[not started]` Introduce `ClientSessionController` (name chosen over generic "orchestrator").

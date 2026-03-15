@@ -205,8 +205,7 @@ function getInitialAreaId(): string
 const initialAreaId = getInitialAreaId()
 const initialArea = getSiteArea(initialAreaId)
 
-const initialLanguage = localStorage.getItem("language") || "en"
-const initialPreferences = loadPreferencesFromLocalStorage(initialLanguage)
+const initialPreferences = loadPreferencesFromLocalStorage()
 
 function createPreferenceProxy<K extends keyof GikopoipoiPreferences>(key: K)
 {
@@ -234,7 +233,7 @@ i18next.init(
 {
     ns: ['common'],
     defaultNS: 'common',
-    lng: (initialArea.restrictLanguage && initialArea.language) || initialLanguage,
+    lng: (initialArea.restrictLanguage && initialArea.language) || initialPreferences.language,
     fallbackLng: 'en',
     resources: languages,
     
@@ -331,7 +330,7 @@ const vueApp = createApp(defineComponent({
 
             // preferences stuff
             isPreferencesPopupOpen: false,
-            voiceVolume: parseInt(localStorage.getItem("voiceVolume") || '0'),
+            voiceVolume: initialPreferences.voiceVolume,
             customMentionRegexObject: null as RegExp | null,
             usernameMentionRegexObject: null as RegExp | null,
 
@@ -347,13 +346,13 @@ const vueApp = createApp(defineComponent({
 
             // stream settings
             isStreamPopupOpen: false,
-            streamMode: localStorage.getItem("streamMode") || "video_sound",
-            displayAdvancedStreamSettings: localStorage.getItem("displayAdvancedStreamSettings") == "true",
-            streamEchoCancellation: localStorage.getItem("streamEchoCancellation") == "true",
-            streamNoiseSuppression: localStorage.getItem("streamNoiseSuppression") == "true",
-            streamAutoGain: localStorage.getItem("streamAutoGain") == "true",
-            streamScreenCapture: localStorage.getItem("streamScreenCapture") == "true",
-            streamScreenCaptureAudio: localStorage.getItem("streamScreenCaptureAudio") == "true",
+            streamMode: initialPreferences.streamMode,
+            displayAdvancedStreamSettings: initialPreferences.displayAdvancedStreamSettings,
+            streamEchoCancellation: initialPreferences.streamEchoCancellation,
+            streamNoiseSuppression: initialPreferences.streamNoiseSuppression,
+            streamAutoGain: initialPreferences.streamAutoGain,
+            streamScreenCapture: initialPreferences.streamScreenCapture,
+            streamScreenCaptureAudio: initialPreferences.streamScreenCaptureAudio,
             streamTarget: "all_room" as "all_room" | "specific_users",
             allowedListenerIDs: new Set() as Set<string>,
             streamIsVtuberMode: false,
@@ -441,6 +440,14 @@ const vueApp = createApp(defineComponent({
         isMoveSectionVisible: createPreferenceProxy("isMoveSectionVisible"),
         isBubbleSectionVisible: createPreferenceProxy("isBubbleSectionVisible"),
         isLogoutButtonVisible: createPreferenceProxy("isLogoutButtonVisible"),
+        voiceVolume: createPreferenceProxy("voiceVolume"),
+        streamMode: createPreferenceProxy("streamMode"),
+        displayAdvancedStreamSettings: createPreferenceProxy("displayAdvancedStreamSettings"),
+        streamEchoCancellation: createPreferenceProxy("streamEchoCancellation"),
+        streamNoiseSuppression: createPreferenceProxy("streamNoiseSuppression"),
+        streamAutoGain: createPreferenceProxy("streamAutoGain"),
+        streamScreenCapture: createPreferenceProxy("streamScreenCapture"),
+        streamScreenCaptureAudio: createPreferenceProxy("streamScreenCaptureAudio"),
     },
     provide()
     {
