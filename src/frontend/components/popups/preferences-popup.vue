@@ -9,7 +9,7 @@
                 <div class="popup-header">{{ $t("ui.preferences_title_general") }}</div>
                 <div class="popup-item">
                     <label for="preferences-ui-theme">{{ $t("ui.preferences_ui_theme") }}</label>
-                    <select id="preferences-ui-theme" :value="uiTheme" v-on:change="onSelectChange('uiTheme', $event, 'ui-theme-changed')">
+                    <select id="preferences-ui-theme" :value="preferences.uiTheme" v-on:change="onSelectChange('uiTheme', $event, 'ui-theme-changed')">
                         <option value="gikopoi">{{ $t("ui.preferences_ui_theme_gikopoi") }}</option>
                         <option value="shaddox">{{ $t("ui.preferences_ui_theme_shaddox") }}</option>
                         <option value="dark">{{ $t("ui.preferences_ui_theme_dark") }}</option>
@@ -17,7 +17,7 @@
                 </div>
                 <div class="popup-item" v-if="!siteLanguageRestricted">
                     <label for="preferences-language">{{ $t("ui.preferences_language") }}</label>
-                    <select id="preferences-language" :value="language" v-on:change="onSelectChange('language', $event, 'language-changed')">
+                    <select id="preferences-language" :value="preferences.language" v-on:change="onSelectChange('language', $event, 'language-changed')">
                         <template v-for="lang in langEntries" :key="lang.id">
                             <option :value="lang.id">{{ lang.name }}</option>
                             <option disabled v-if="lang.endOfTopEntries">---</option>
@@ -31,13 +31,13 @@
                     <input
                         id="preferences-text-to-speech"
                         type="checkbox"
-                        :checked="enableTextToSpeech"
+                        :checked="preferences.enableTextToSpeech"
                         v-on:change="onCheckboxChange('enableTextToSpeech', $event, 'enable-tts-changed')"><label
                         for="preferences-text-to-speech">{{ $t("ui.preferences_enable_text_to_speech") }}</label>
                 </div>
                 <div class="popup-item">
                     <label for="preferences-tts-voice">{{ $t("ui.preferences_tts_voice") }}</label>
-                    <select id="preferences-tts-voice" :value="ttsVoiceURI" v-on:change="onSelectChange('ttsVoiceURI', $event, 'tts-voice-changed')">
+                    <select id="preferences-tts-voice" :value="preferences.ttsVoiceURI" v-on:change="onSelectChange('ttsVoiceURI', $event, 'tts-voice-changed')">
                         <option value="automatic">{{ $t("ui.preferences_tts_voice_automatic") }}</option>
                         <option value="animalese">{{ $t("ui.preferences_tts_voice_animalese") }}</option>
                         <option v-for="voice in availableTTSVoices" :key="voice.voiceURI" :value="voice.voiceURI">{{ voice.name }}</option>
@@ -50,7 +50,7 @@
                     <input
                         id="preferences-shift-enter"
                         type="checkbox"
-                        :checked="isNewlineOnShiftEnter"
+                        :checked="preferences.isNewlineOnShiftEnter"
                         v-on:change="onCheckboxChange('isNewlineOnShiftEnter', $event)"><label
                         for="preferences-shift-enter">{{ $t("ui.preferences_shift_enter") }}</label>
                 </div>
@@ -58,7 +58,7 @@
                     <input
                         id="preferences-underlined-usernames"
                         type="checkbox"
-                        :checked="underlinedUsernames"
+                        :checked="preferences.underlinedUsernames"
                         v-on:change="onCheckboxChange('underlinedUsernames', $event)"><label
                         for="preferences-underlined-usernames">{{ $t("ui.preferences_underlined_usernames") }}</label>
                 </div>
@@ -66,7 +66,7 @@
                     <input
                         id="preferences-timestamps-in-copied-log"
                         type="checkbox"
-                        :checked="timestampsInCopiedLog"
+                        :checked="preferences.timestampsInCopiedLog"
                         v-on:change="onCheckboxChange('timestampsInCopiedLog', $event)"><label
                         for="preferences-timestamps-in-copied-log">{{ $t("ui.preferences_timestamps_in_copied_log") }}</label>
                 </div>
@@ -74,7 +74,7 @@
                     <input
                         id="preferences-ignore-indicator-in-log"
                         type="checkbox"
-                        :checked="showIgnoreIndicatorInLog"
+                        :checked="preferences.showIgnoreIndicatorInLog"
                         v-on:change="onCheckboxChange('showIgnoreIndicatorInLog', $event)"><label
                         for="preferences-ignore-indicator-in-log">{{ $t("ui.preferences_ignore_indicator_in_log") }}</label>
                 </div>
@@ -82,7 +82,7 @@
                     <input
                         id="preferences-ignore-on-block"
                         type="checkbox"
-                        :checked="isIgnoreOnBlock"
+                        :checked="preferences.isIgnoreOnBlock"
                         v-on:change="onCheckboxChange('isIgnoreOnBlock', $event)"><label
                         for="preferences-ignore-on-block">{{ $t("ui.preferences_ignore_on_block") }}</label>
                 </div>
@@ -90,7 +90,7 @@
                     <input
                         id="preferences-show-log-above-toolbar"
                         type="checkbox"
-                        :checked="showLogAboveToolbar"
+                        :checked="preferences.showLogAboveToolbar"
                         v-on:change="onCheckboxChange('showLogAboveToolbar', $event)"><label
                         for="preferences-show-log-above-toolbar">{{ $t("ui.preferences_show_log_above_toolbar") }}</label>
                 </div>
@@ -98,7 +98,7 @@
                     <input
                         id="preferences-show-log-dividers"
                         type="checkbox"
-                        :checked="showLogDividers"
+                        :checked="preferences.showLogDividers"
                         v-on:change="onCheckboxChange('showLogDividers', $event)"><label
                         for="preferences-show-log-dividers">{{ $t("ui.preferences_show_log_dividers") }}</label>
                 </div>
@@ -113,7 +113,7 @@
                         <input
                             id="preferences-show-notifications"
                             type="checkbox"
-                            :checked="showNotifications"
+                                :checked="preferences.showNotifications"
                             v-on:change="onCheckboxChange('showNotifications', $event, 'notifications-changed')"><label
                             for="preferences-show-notifications">{{ $t("ui.preferences_show_notifications") }}</label>
                     </div>
@@ -123,7 +123,7 @@
                     <input
                         id="preferences-login-sound-enabled"
                         type="checkbox"
-                        :checked="isLoginSoundEnabled"
+                        :checked="preferences.isLoginSoundEnabled"
                         v-on:change="onCheckboxChange('isLoginSoundEnabled', $event)"><label
                         for="preferences-login-sound-enabled">{{ $t("ui.preferences_login_sound_enabled") }}</label>
                 </div>
@@ -131,7 +131,7 @@
                     <input
                         id="preferences-message-sound-enabled"
                         type="checkbox"
-                        :checked="isMessageSoundEnabled"
+                        :checked="preferences.isMessageSoundEnabled"
                         v-on:change="onCheckboxChange('isMessageSoundEnabled', $event)"><label
                         for="preferences-message-sound-enabled">{{ $t("ui.preferences_message_sound_enabled") }}</label>
                 </div>
@@ -139,7 +139,7 @@
                     <input
                         id="enable-coin-sound"
                         type="checkbox"
-                        :checked="isCoinSoundEnabled"
+                        :checked="preferences.isCoinSoundEnabled"
                         v-on:change="onCheckboxChange('isCoinSoundEnabled', $event, 'coin-sound-toggled')"><label
                         for="enable-coin-sound">{{ $t("ui.preferences_enable_coin_sound") }}</label>
                 </div>
@@ -147,7 +147,7 @@
                     <input
                         id="preferences-name-mention-sound-enabled"
                         type="checkbox"
-                        :checked="isNameMentionSoundEnabled"
+                        :checked="preferences.isNameMentionSoundEnabled"
                         v-on:change="onCheckboxChange('isNameMentionSoundEnabled', $event, 'mention-sound-changed')"><label
                         for="preferences-name-mention-sound-enabled">{{ $t("ui.preferences_name_mention_sound_enabled") }}</label>
                 </div>
@@ -157,7 +157,7 @@
                         <input
                             id="preferences-custom-mention-sound-pattern"
                             type="text"
-                            :value="customMentionSoundPattern"
+                                :value="preferences.customMentionSoundPattern"
                             v-on:change="onTextChange('customMentionSoundPattern', $event, 'mention-pattern-changed')">
                     </div>
                     <div class="popup-notice">{{ $t("ui.preferences_custom_mention_sound_notice") }}</div>
@@ -169,7 +169,7 @@
                     <input
                         id="preferences-name-bg"
                         type="checkbox"
-                        :checked="showUsernameBackground"
+                        :checked="preferences.showUsernameBackground"
                         v-on:change="onCheckboxChange('showUsernameBackground', $event, 'username-background-toggled')"><label
                         for="preferences-name-bg">{{ $t("ui.preferences_name_bg") }}</label>
                 </div>
@@ -180,15 +180,15 @@
                         type="range"
                         min="50"
                         max="100"
-                        :value="bubbleOpacity"
+                        :value="preferences.bubbleOpacity"
                         v-on:change="onRangeChange('bubbleOpacity', $event, 'bubble-opacity-changed')"><div
-                        class="preferences-percentage">{{ bubbleOpacity }}%</div>
+                        class="preferences-percentage">{{ preferences.bubbleOpacity }}%</div>
                 </div>
                 <div class="popup-item">
                     <input
                         id="preferences-crisp-mode"
                         type="checkbox"
-                        :checked="isCrispModeEnabled"
+                        :checked="preferences.isCrispModeEnabled"
                         v-on:change="onCheckboxChange('isCrispModeEnabled', $event, 'crisp-mode-changed')"><label
                         for="preferences-crisp-mode">{{ $t("ui.preferences_crisp_mode") }}</label>
                 </div>
@@ -196,7 +196,7 @@
                     <input
                         id="preferences-low-quality"
                         type="checkbox"
-                        :checked="isLowQualityEnabled"
+                        :checked="preferences.isLowQualityEnabled"
                         v-on:change="onCheckboxChange('isLowQualityEnabled', $event, 'low-quality-changed')"><label
                         for="preferences-low-quality">{{ $t("ui.preferences_low_quality") }}</label>
                 </div>
@@ -204,7 +204,7 @@
                     <input
                         id="preferences-disable-idle-animations"
                         type="checkbox"
-                        :checked="isIdleAnimationDisabled"
+                        :checked="preferences.isIdleAnimationDisabled"
                         v-on:change="onCheckboxChange('isIdleAnimationDisabled', $event, 'idle-animation-changed')"><label
                         for="preferences-disable-idle-animations">{{ $t("ui.preferences_disable_idle_animations") }}</label>
                 </div>
@@ -215,7 +215,7 @@
                     <input
                         id="preferences-streams-auto-resume"
                         type="checkbox"
-                        :checked="isStreamAutoResumeEnabled"
+                        :checked="preferences.isStreamAutoResumeEnabled"
                         v-on:change="onCheckboxChange('isStreamAutoResumeEnabled', $event)"><label
                         for="preferences-streams-auto-resume">{{ $t("ui.preferences_streams_auto_resume") }}</label>
                 </div>
@@ -223,7 +223,7 @@
                     <input
                         id="preferences-streams-inbound-vu-meter-enabled"
                         type="checkbox"
-                        :checked="isStreamInboundVuMeterEnabled"
+                        :checked="preferences.isStreamInboundVuMeterEnabled"
                         v-on:change="onCheckboxChange('isStreamInboundVuMeterEnabled', $event)"><label
                         for="preferences-streams-inbound-vu-meter-enabled">{{ $t("ui.preferences_streams_inbound_vu_meter_enabled") }}</label>
                 </div>
@@ -234,7 +234,7 @@
                     <input
                         id="preferences-command-section-visible"
                         type="checkbox"
-                        :checked="isCommandSectionVisible"
+                        :checked="preferences.isCommandSectionVisible"
                         v-on:change="onCheckboxChange('isCommandSectionVisible', $event)"><label
                         for="preferences-command-section-visible">{{ $t("ui.preferences_command_section_visible") }}</label>
                 </div>
@@ -242,7 +242,7 @@
                     <input
                         id="preferences-move-section-visible"
                         type="checkbox"
-                        :checked="isMoveSectionVisible"
+                        :checked="preferences.isMoveSectionVisible"
                         v-on:change="onCheckboxChange('isMoveSectionVisible', $event)"><label
                         for="preferences-move-section-visible">{{ $t("ui.preferences_move_section_visible") }}</label>
                 </div>
@@ -250,7 +250,7 @@
                     <input
                         id="preferences-bubble-section-visible"
                         type="checkbox"
-                        :checked="isBubbleSectionVisible"
+                        :checked="preferences.isBubbleSectionVisible"
                         v-on:change="onCheckboxChange('isBubbleSectionVisible', $event)"><label
                         for="preferences-bubble-section-visible">{{ $t("ui.preferences_bubble_section_visible") }}</label>
                 </div>
@@ -258,7 +258,7 @@
                     <input
                         id="preferences-logout-button-visible"
                         type="checkbox"
-                        :checked="isLogoutButtonVisible"
+                        :checked="preferences.isLogoutButtonVisible"
                         v-on:change="onCheckboxChange('isLogoutButtonVisible', $event)"><label
                         for="preferences-logout-button-visible">{{ $t("ui.preferences_logout_button_visible") }}</label>
                 </div>
@@ -271,76 +271,23 @@
 </template>
 
 <script setup lang="ts">
+import type { GikopoipoiPreferences } from '../../types'
+
 interface LangEntry {
     id: string
     name: string
     endOfTopEntries: boolean
 }
 
-type PreferenceField =
-    | 'uiTheme'
-    | 'language'
-    | 'enableTextToSpeech'
-    | 'ttsVoiceURI'
-    | 'isNewlineOnShiftEnter'
-    | 'underlinedUsernames'
-    | 'timestampsInCopiedLog'
-    | 'showIgnoreIndicatorInLog'
-    | 'isIgnoreOnBlock'
-    | 'showLogAboveToolbar'
-    | 'showLogDividers'
-    | 'showNotifications'
-    | 'isLoginSoundEnabled'
-    | 'isMessageSoundEnabled'
-    | 'isCoinSoundEnabled'
-    | 'isNameMentionSoundEnabled'
-    | 'customMentionSoundPattern'
-    | 'showUsernameBackground'
-    | 'bubbleOpacity'
-    | 'isCrispModeEnabled'
-    | 'isLowQualityEnabled'
-    | 'isIdleAnimationDisabled'
-    | 'isStreamAutoResumeEnabled'
-    | 'isStreamInboundVuMeterEnabled'
-    | 'isCommandSectionVisible'
-    | 'isMoveSectionVisible'
-    | 'isBubbleSectionVisible'
-    | 'isLogoutButtonVisible'
+type PreferenceField = keyof GikopoipoiPreferences
 
 const props = defineProps<{
     isOpen: boolean,
     siteLanguageRestricted: boolean,
-    uiTheme: string,
-    language: string,
+    preferences: GikopoipoiPreferences,
     langEntries: LangEntry[],
-    enableTextToSpeech: boolean,
-    ttsVoiceURI: string,
     availableTTSVoices: SpeechSynthesisVoice[],
-    isNewlineOnShiftEnter: boolean,
-    underlinedUsernames: boolean,
-    timestampsInCopiedLog: boolean,
-    showIgnoreIndicatorInLog: boolean,
-    isIgnoreOnBlock: boolean,
-    showLogAboveToolbar: boolean,
-    showLogDividers: boolean,
-    showNotifications: boolean,
     notificationPermissionsGranted: boolean,
-    isLoginSoundEnabled: boolean,
-    isMessageSoundEnabled: boolean,
-    isCoinSoundEnabled: boolean,
-    isNameMentionSoundEnabled: boolean,
-    customMentionSoundPattern: string,
-    showUsernameBackground: boolean,
-    bubbleOpacity: number,
-    isCrispModeEnabled: boolean,
-    isLowQualityEnabled: boolean,
-    isIdleAnimationDisabled: boolean,
-    isStreamAutoResumeEnabled: boolean,
-    isStreamInboundVuMeterEnabled: boolean,
-    isCommandSectionVisible: boolean,
-    isMoveSectionVisible: boolean,
-    isBubbleSectionVisible: boolean,
-    isLogoutButtonVisible: boolean,
 }>()
 
 const emit = defineEmits<{

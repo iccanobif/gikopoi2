@@ -43,7 +43,14 @@ Rules for each extraction:
 ### Phase 2 - Template stabilization
 1. `[in progress]` Keep popup area organized in `index.html` while extraction continues.
 2. `[in progress]` Normalize props/emits naming (`isOpen`, `close`, intent-specific events).
-3. `[not started]` Add minimal comments only where coupling is non-obvious.
+3. `[completed]` Consolidate preferences popup contract to `GikopoipoiPreferences` object while preserving legacy localStorage keys.
+4. `[not started]` Add minimal comments only where coupling is non-obvious.
+
+### Phase 2.5 - Small additional refactorings
+1. Instead of passing availableTTSVoices to the settings popup, compute it inside the popup component itself, since it's only used there.
+2. Similarly, move getLangEntries to the popup component. Before doing it check that it's safe to do, though.
+3. There's still stuff in the local storage which is not handled through the GikopoipoiPreferences type. Move them there as well, and update the code to use the new type instead of directly accessing local storage.
+4. Remove the `createPreferenceProxy()` bridge and make `preferences` the only settings source at runtime: migrate all root/template references from top-level aliases (for example `uiTheme`, `showNotifications`, `isCrispModeEnabled`) to `preferences.*`, and update generic helpers (such as `storeSet`) to read/write `preferences` keys directly.
 
 ### Phase 3 - Introduce runtime coordination object
 1. `[not started]` Introduce `ClientSessionController` (name chosen over generic "orchestrator").

@@ -1,0 +1,35 @@
+import type { GikopoipoiPreferences } from './types'
+
+export function loadPreferencesFromLocalStorage(defaultLanguage = 'en'): GikopoipoiPreferences
+{
+    return {
+        bubbleOpacity: parseInt(localStorage.getItem('bubbleOpacity') || '100'),
+        customMentionSoundPattern: localStorage.getItem('customMentionSoundPattern') || '',
+        enableTextToSpeech: localStorage.getItem('enableTextToSpeech') != 'false',
+        isBubbleSectionVisible: localStorage.getItem('isBubbleSectionVisible') != 'false',
+        isCoinSoundEnabled: localStorage.getItem('isCoinSoundEnabled') != 'false',
+        isCommandSectionVisible: localStorage.getItem('isCommandSectionVisible') != 'false',
+        isCrispModeEnabled: localStorage.getItem('isCrispModeEnabled') == 'true',
+        isIdleAnimationDisabled: localStorage.getItem('isIdleAnimationDisabled') == 'true',
+        isIgnoreOnBlock: localStorage.getItem('isIgnoreOnBlock') == 'true',
+        isLoginSoundEnabled: localStorage.getItem('isLoginSoundEnabled') != 'false',
+        isLogoutButtonVisible: localStorage.getItem('isLogoutButtonVisible') != 'false',
+        isLowQualityEnabled: localStorage.getItem('isLowQualityEnabled') == 'true',
+        isMessageSoundEnabled: localStorage.getItem('isMessageSoundEnabled') != 'false',
+        isMoveSectionVisible: localStorage.getItem('isMoveSectionVisible') != 'false',
+        isNameMentionSoundEnabled: localStorage.getItem('isNameMentionSoundEnabled') == 'true',
+        isNewlineOnShiftEnter: localStorage.getItem('isNewlineOnShiftEnter') != 'false',
+        isStreamAutoResumeEnabled: localStorage.getItem('isStreamAutoResumeEnabled') != 'false',
+        isStreamInboundVuMeterEnabled: localStorage.getItem('isStreamInboundVuMeterEnabled') != 'false',
+        language: localStorage.getItem('language') || defaultLanguage,
+        showIgnoreIndicatorInLog: localStorage.getItem('showIgnoreIndicatorInLog') == 'true',
+        showLogAboveToolbar: localStorage.getItem('showLogAboveToolbar') == 'true',
+        showLogDividers: localStorage.getItem('showLogDividers') == 'true',
+        showNotifications: localStorage.getItem('showNotifications') != 'false',
+        showUsernameBackground: localStorage.getItem('showUsernameBackground') != 'false',
+        timestampsInCopiedLog: localStorage.getItem('timestampsInCopiedLog') != 'false',
+        ttsVoiceURI: localStorage.getItem('ttsVoiceURI') || 'automatic',
+        uiTheme: localStorage.getItem('uiTheme') || 'gikopoi',
+        underlinedUsernames: localStorage.getItem('underlinedUsernames') == 'true',
+    }
+}

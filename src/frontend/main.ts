@@ -29,6 +29,7 @@ import type {
     CanvasObject,
     VideoContainer,
     IgnoredUserIds,
+    GikopoipoiPreferences,
 } from './types'
 import type { Character } from './character'
 
@@ -88,6 +89,7 @@ import { debouncedSpeakTest, speak } from "./tts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
 import { RenderCache } from "./rendercache";
 import { animateObjects, animateJizou } from "./animations";
+import { loadPreferencesFromLocalStorage } from './preferences'
 
 import ChessboardSlot from './components/chessboard-slot.vue'
 import JankenSlot from './components/janken-slot.vue'
@@ -204,6 +206,21 @@ const initialAreaId = getInitialAreaId()
 const initialArea = getSiteArea(initialAreaId)
 
 const initialLanguage = localStorage.getItem("language") || "en"
+const initialPreferences = loadPreferencesFromLocalStorage(initialLanguage)
+
+function createPreferenceProxy<K extends keyof GikopoipoiPreferences>(key: K)
+{
+    return {
+        get(this: { preferences: GikopoipoiPreferences })
+        {
+            return this.preferences[key]
+        },
+        set(this: { preferences: GikopoipoiPreferences }, value: GikopoipoiPreferences[K])
+        {
+            this.preferences[key] = value
+        },
+    }
+}
 
 function getAppState()
 {
@@ -274,7 +291,7 @@ const vueApp = createApp(defineComponent({
             soundEffectVolume: 0,
             isLoggingIn: false,
             areaId: initialAreaId,
-            language: initialLanguage,
+            preferences: { ...initialPreferences } as GikopoipoiPreferences,
             uiBackgroundColor: null as number[] | null,
             isUiBackgroundDark: false,
             currentCanvasVerticalMovement: "none" as "none" | "up" | "down",
@@ -294,9 +311,6 @@ const vueApp = createApp(defineComponent({
             backgroundImageDimensions: { w: 0, h: 0 } as Size,
             userCanvasScale: 1,
             userCanvasScaleStart: null as number | null,
-            isLowQualityEnabled: localStorage.getItem("isLowQualityEnabled") == "true",
-            isCrispModeEnabled: localStorage.getItem("isCrispModeEnabled") == "true",
-            isIdleAnimationDisabled: localStorage.getItem("isIdleAnimationDisabled") == "true",
             blockWidth: BLOCK_WIDTH,
             blockHeight: BLOCK_HEIGHT,
             devicePixelRatio: 1 as number,
@@ -317,31 +331,10 @@ const vueApp = createApp(defineComponent({
 
             // preferences stuff
             isPreferencesPopupOpen: false,
-            showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
-            isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") != "false",
-            bubbleOpacity: parseInt(localStorage.getItem("bubbleOpacity") || '100'),
-            isCommandSectionVisible: localStorage.getItem("isCommandSectionVisible") != "false",
-            isMoveSectionVisible: localStorage.getItem("isMoveSectionVisible") != "false",
-            isBubbleSectionVisible: localStorage.getItem("isBubbleSectionVisible") != "false",
-            isLogoutButtonVisible: localStorage.getItem("isLogoutButtonVisible") != "false",
-            uiTheme: localStorage.getItem("uiTheme") || "gikopoi",
-            showNotifications: localStorage.getItem("showNotifications") != "false",
-            enableTextToSpeech: localStorage.getItem("enableTextToSpeech") != "false",
-            ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
             voiceVolume: parseInt(localStorage.getItem("voiceVolume") || '0'),
             availableTTSVoices: [] as SpeechSynthesisVoice[],
-            isMessageSoundEnabled: localStorage.getItem("isMessageSoundEnabled") != "false",
-            isLoginSoundEnabled: localStorage.getItem("isLoginSoundEnabled") != "false",
-            isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
-            customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
             customMentionRegexObject: null as RegExp | null,
             usernameMentionRegexObject: null as RegExp | null,
-            isCoinSoundEnabled: localStorage.getItem("isCoinSoundEnabled") != "false",
-            isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
-            isStreamInboundVuMeterEnabled: localStorage.getItem("isStreamInboundVuMeterEnabled") != "false",
-            showLogAboveToolbar: localStorage.getItem("showLogAboveToolbar") == "true",
-            showLogDividers: localStorage.getItem("showLogDividers") == "true",
-            isIgnoreOnBlock: localStorage.getItem("isIgnoreOnBlock") == "true",
 
             // streaming 
             streams: [] as StreamSlotDto[],
@@ -405,9 +398,6 @@ const vueApp = createApp(defineComponent({
             highlightedUserName: null as string | null,
             movementDirection: null as Direction | null,
             lastSetMovementDirectionTime: 0, // Found in code but not in data
-            underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
-            timestampsInCopiedLog: localStorage.getItem("timestampsInCopiedLog") != "false",
-            showIgnoreIndicatorInLog: localStorage.getItem("showIgnoreIndicatorInLog") == "true",
             notificationPermissionsGranted: false,
             lastFrameTimestamp: null as number | null,
             chessboardState: null as ChessboardStateDto | null,
@@ -422,6 +412,36 @@ const vueApp = createApp(defineComponent({
             inboundAudioProcessors: {} as {[slotId: number]: AudioProcessor},
             outboundAudioProcessor: null as AudioProcessor | null,
         }
+    },
+    computed: {
+        uiTheme: createPreferenceProxy("uiTheme"),
+        language: createPreferenceProxy("language"),
+        enableTextToSpeech: createPreferenceProxy("enableTextToSpeech"),
+        ttsVoiceURI: createPreferenceProxy("ttsVoiceURI"),
+        isNewlineOnShiftEnter: createPreferenceProxy("isNewlineOnShiftEnter"),
+        underlinedUsernames: createPreferenceProxy("underlinedUsernames"),
+        timestampsInCopiedLog: createPreferenceProxy("timestampsInCopiedLog"),
+        showIgnoreIndicatorInLog: createPreferenceProxy("showIgnoreIndicatorInLog"),
+        isIgnoreOnBlock: createPreferenceProxy("isIgnoreOnBlock"),
+        showLogAboveToolbar: createPreferenceProxy("showLogAboveToolbar"),
+        showLogDividers: createPreferenceProxy("showLogDividers"),
+        showNotifications: createPreferenceProxy("showNotifications"),
+        isLoginSoundEnabled: createPreferenceProxy("isLoginSoundEnabled"),
+        isMessageSoundEnabled: createPreferenceProxy("isMessageSoundEnabled"),
+        isCoinSoundEnabled: createPreferenceProxy("isCoinSoundEnabled"),
+        isNameMentionSoundEnabled: createPreferenceProxy("isNameMentionSoundEnabled"),
+        customMentionSoundPattern: createPreferenceProxy("customMentionSoundPattern"),
+        showUsernameBackground: createPreferenceProxy("showUsernameBackground"),
+        bubbleOpacity: createPreferenceProxy("bubbleOpacity"),
+        isCrispModeEnabled: createPreferenceProxy("isCrispModeEnabled"),
+        isLowQualityEnabled: createPreferenceProxy("isLowQualityEnabled"),
+        isIdleAnimationDisabled: createPreferenceProxy("isIdleAnimationDisabled"),
+        isStreamAutoResumeEnabled: createPreferenceProxy("isStreamAutoResumeEnabled"),
+        isStreamInboundVuMeterEnabled: createPreferenceProxy("isStreamInboundVuMeterEnabled"),
+        isCommandSectionVisible: createPreferenceProxy("isCommandSectionVisible"),
+        isMoveSectionVisible: createPreferenceProxy("isMoveSectionVisible"),
+        isBubbleSectionVisible: createPreferenceProxy("isBubbleSectionVisible"),
+        isLogoutButtonVisible: createPreferenceProxy("isLogoutButtonVisible"),
     },
     provide()
     {
