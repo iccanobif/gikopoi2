@@ -443,9 +443,8 @@
 
                 <preferences-popup
                     :is-open="isPreferencesPopupOpen"
-                    :site-language-restricted="getSiteArea().restrictLanguage"
+                    :site-language-restricted="getSiteArea().restrictLanguage || false"
                     :preferences="preferences"
-                    :lang-entries="getLangEntries()"
                     :notification-permissions-granted="notificationPermissionsGranted"
                     @close="closePreferencesPopup"
                     @set-pref="(field, value) => storeSet(field, value)"

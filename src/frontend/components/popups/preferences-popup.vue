@@ -18,7 +18,7 @@
                 <div class="popup-item" v-if="!siteLanguageRestricted">
                     <label for="preferences-language">{{ $t("ui.preferences_language") }}</label>
                     <select id="preferences-language" :value="preferences.language" v-on:change="onSelectChange('language', $event, 'language-changed')">
-                        <template v-for="lang in langEntries" :key="lang.id">
+                        <template v-for="lang in getLangEntries()" :key="lang.id">
                             <option :value="lang.id">{{ lang.name }}</option>
                             <option disabled v-if="lang.endOfTopEntries">---</option>
                         </template>
@@ -272,6 +272,8 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import i18next from 'i18next'
+import languages from '../../lang'
 import type { GikopoipoiPreferences } from '../../types'
 
 interface LangEntry {
@@ -286,7 +288,6 @@ const props = defineProps<{
     isOpen: boolean,
     siteLanguageRestricted: boolean,
     preferences: GikopoipoiPreferences,
-    langEntries: LangEntry[],
     notificationPermissionsGranted: boolean,
 }>()
 
@@ -326,8 +327,53 @@ type ActionEvent =
 
 function emitOptionalAction(actionEvent?: ActionEvent)
 {
-    if (actionEvent)
-        emit(actionEvent)
+    if (!actionEvent)
+        return
+
+    switch (actionEvent)
+    {
+        case 'ui-theme-changed': emit('ui-theme-changed'); break
+        case 'language-changed': emit('language-changed'); break
+        case 'enable-tts-changed': emit('enable-tts-changed'); break
+        case 'tts-voice-changed': emit('tts-voice-changed'); break
+        case 'notifications-changed': emit('notifications-changed'); break
+        case 'coin-sound-toggled': emit('coin-sound-toggled'); break
+        case 'mention-sound-changed': emit('mention-sound-changed'); break
+        case 'mention-pattern-changed': emit('mention-pattern-changed'); break
+        case 'username-background-toggled': emit('username-background-toggled'); break
+        case 'bubble-opacity-changed': emit('bubble-opacity-changed'); break
+        case 'crisp-mode-changed': emit('crisp-mode-changed'); break
+        case 'low-quality-changed': emit('low-quality-changed'); break
+        case 'idle-animation-changed': emit('idle-animation-changed'); break
+    }
+}
+
+function getLangEntries(): LangEntry[]
+{
+    // Build language list the preferences dropdown, with ja/en pinned at the top.
+    const topEntries = ['ja', 'en']
+    return Object.keys(languages)
+        .sort((a, b) => {
+            const ta = topEntries.indexOf(a)
+            const tb = topEntries.indexOf(b)
+            if (ta >= 0 || tb >= 0)
+            {
+                if (ta < 0) return 1
+                if (tb < 0) return -1
+                return ta < tb ? -1 : 1
+            }
+
+            const aSortKey = String(i18next.t('lang_sort_key', { lng: a }))
+            const bSortKey = String(i18next.t('lang_sort_key', { lng: b }))
+            return aSortKey.localeCompare(bSortKey)
+        })
+        .map((id) => {
+            return {
+                id,
+                name: String(i18next.t('lang_name', { lng: id })),
+                endOfTopEntries: id == topEntries[topEntries.length - 1]
+            }
+        })
 }
 
 function onCheckboxChange(field: PreferenceField, event: Event, actionEvent?: ActionEvent)

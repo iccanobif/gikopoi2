@@ -666,28 +666,6 @@ const vueApp = createApp(defineComponent({
                 siteArea = this.getSiteArea()
             setAppLanguage((siteArea.restrictLanguage && siteArea.language) || this.language)
         },
-        getLangEntries()
-        {
-            const topEntries = ["ja", "en"]
-            return Object.keys(languages)
-                .sort((a, b) =>
-            {
-                const ta = topEntries.indexOf(a)
-                const tb = topEntries.indexOf(b)
-                if(ta >= 0 || tb >= 0)
-                {
-                    if (ta < 0) return 1
-                    if (tb < 0) return -1
-                    return ta < tb ? -1 : 1
-                }
-                
-                return this.$t("lang_sort_key", { lng: a }).localeCompare(this.$t("lang_sort_key", { lng: b }))
-            })
-                .map((id) =>
-            {
-                return {id, name: this.$t("lang_name", { lng: id }), endOfTopEntries: id == topEntries[topEntries.length-1]}
-            })
-        },
         openDialog(text: string, title: string, buttons: string[], cancelButtonIndex: number, callback: PopupCallback | null = null)
         {
             this.dialogPopupMessage = text;
