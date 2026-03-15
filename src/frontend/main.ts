@@ -332,7 +332,6 @@ const vueApp = createApp(defineComponent({
             // preferences stuff
             isPreferencesPopupOpen: false,
             voiceVolume: parseInt(localStorage.getItem("voiceVolume") || '0'),
-            availableTTSVoices: [] as SpeechSynthesisVoice[],
             customMentionRegexObject: null as RegExp | null,
             usernameMentionRegexObject: null as RegExp | null,
 
@@ -513,17 +512,6 @@ const vueApp = createApp(defineComponent({
             charactersSelected[0].scrollIntoView({block: "nearest"})
             
         document.getElementById("username-textbox")!.focus()
-
-        if (window.speechSynthesis)
-        {
-            this.availableTTSVoices = speechSynthesis.getVoices()
-            if (speechSynthesis.addEventListener)
-            {
-                speechSynthesis.addEventListener("voiceschanged", () => {
-                    this.availableTTSVoices = speechSynthesis.getVoices()
-                })
-            }
-        }
 
         this.devicePixelRatio = this.getDevicePixelRatio();
     },
@@ -3723,12 +3711,6 @@ const vueApp = createApp(defineComponent({
         changeVoice() {
             speak(this.$t("test"), this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('ttsVoiceURI')
-        },
-        // I think this getVoices() function isn't called anywhere, might be okay to remove
-        getVoices(): SpeechSynthesisVoice[] {
-            if (!window.speechSynthesis)
-                return []
-            return speechSynthesis.getVoices()
         },
         changeVoiceVolume(newValue: number) {
             this.voiceVolume = newValue

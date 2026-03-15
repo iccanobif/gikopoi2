@@ -271,6 +271,7 @@
 </template>
 
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import type { GikopoipoiPreferences } from '../../types'
 
 interface LangEntry {
@@ -286,7 +287,6 @@ const props = defineProps<{
     siteLanguageRestricted: boolean,
     preferences: GikopoipoiPreferences,
     langEntries: LangEntry[],
-    availableTTSVoices: SpeechSynthesisVoice[],
     notificationPermissionsGranted: boolean,
 }>()
 
@@ -357,6 +357,25 @@ function onSelectChange(field: PreferenceField, event: Event, actionEvent?: Acti
     emit('set-pref', field, target.value)
     emitOptionalAction(actionEvent)
 }
+
+const availableTTSVoices = ref<SpeechSynthesisVoice[]>([])
+
+function refreshTTSVoices()
+{
+    availableTTSVoices.value = window.speechSynthesis?.getVoices() || []
+}
+
+onMounted(() => {
+    if (!window.speechSynthesis)
+        return
+
+    refreshTTSVoices()
+    window.speechSynthesis.addEventListener('voiceschanged', refreshTTSVoices)
+})
+
+onBeforeUnmount(() => {
+    window.speechSynthesis?.removeEventListener('voiceschanged', refreshTTSVoices)
+})
 </script>
 
 <style scoped>
