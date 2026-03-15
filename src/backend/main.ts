@@ -211,7 +211,6 @@ const sendRoomState = (socket: Socket, user: Player, currentRoom: Room) =>
         chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId),
         jankenState: buildJankenStateDto(user.areaId, user.roomId),
         coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
-        hideStreams: settings.noStreamIPs.some(noStreamIP => user.ips.some(ip => ip == noStreamIP)),
     }
 
     socket.emit("server-update-current-room-state", state)
@@ -1552,7 +1551,6 @@ app.get("/api/areas/:areaId/rooms/:roomId", (req, res) =>
             chessboardState: buildChessboardStateDto(roomStates, areaId, roomId),
             jankenState: buildJankenStateDto(areaId, roomId),
             coinCounter: roomStates[areaId][roomId].coinCounter,
-            hideStreams: false,
         }
 
         res.json(dto)

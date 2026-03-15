@@ -69,6 +69,46 @@ export interface PointerState {
 
 export type PopupCallback = (buttonIndex: number) => void
 
+export interface GikopoipoiPreferences {
+    bubbleOpacity: number
+    customMentionSoundPattern: string
+    displayAdvancedStreamSettings: boolean
+    enableTextToSpeech: boolean
+    isBubbleSectionVisible: boolean
+    isCoinSoundEnabled: boolean
+    isCommandSectionVisible: boolean
+    isCrispModeEnabled: boolean
+    isIdleAnimationDisabled: boolean
+    isIgnoreOnBlock: boolean
+    isInfoboxVisible: boolean
+    isLoginSoundEnabled: boolean
+    isLogoutButtonVisible: boolean
+    isLowQualityEnabled: boolean
+    isMessageSoundEnabled: boolean
+    isMoveSectionVisible: boolean
+    isNameMentionSoundEnabled: boolean
+    isNewlineOnShiftEnter: boolean
+    isStreamAutoResumeEnabled: boolean
+    isStreamInboundVuMeterEnabled: boolean
+    language: string
+    showIgnoreIndicatorInLog: boolean
+    showLogAboveToolbar: boolean
+    showLogDividers: boolean
+    showNotifications: boolean
+    showUsernameBackground: boolean
+    streamAutoGain: boolean
+    streamEchoCancellation: boolean
+    streamMode: 'video_sound' | 'sound' | 'video'
+    streamNoiseSuppression: boolean
+    streamScreenCapture: boolean
+    streamScreenCaptureAudio: boolean
+    timestampsInCopiedLog: boolean
+    ttsVoiceURI: string
+    uiTheme: string
+    underlinedUsernames: boolean
+    voiceVolume: number
+}
+
 export type RulaRoomListSortKey = 'sortName' | 'userCount' | 'streamerCount'
 
 import type { RTCPeer } from "./rtcpeer";

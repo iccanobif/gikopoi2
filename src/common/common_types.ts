@@ -142,7 +142,6 @@ export interface RoomStateDto
     chessboardState: ChessboardStateDto,
     jankenState: JankenStateDto,
     coinCounter: number,
-    hideStreams: boolean,
 }
 
 export interface MoveDto

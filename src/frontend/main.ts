@@ -29,6 +29,7 @@ import type {
     CanvasObject,
     VideoContainer,
     IgnoredUserIds,
+    GikopoipoiPreferences,
 } from './types'
 import type { Character } from './character'
 
@@ -88,6 +89,7 @@ import { debouncedSpeakTest, speak } from "./tts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
 import { RenderCache } from "./rendercache";
 import { animateObjects, animateJizou } from "./animations";
+import { loadPreferencesFromLocalStorage, setAndPersist } from './preferences'
 
 import ChessboardSlot from './components/chessboard-slot.vue'
 import JankenSlot from './components/janken-slot.vue'
@@ -98,6 +100,12 @@ import LoginPage from './pages/login.vue'
 
 import NumericValueControl from './components/numeric-value-control.vue'
 import VoiceChangerControl from './components/voice-changer-control.vue';
+import DialogPopup from './components/popups/dialog-popup.vue'
+import RulaPopup from './components/popups/rula-popup.vue'
+import UserListPopup from './components/popups/user-list-popup.vue'
+import StreamPopup from './components/popups/stream-popup.vue'
+import PreferencesPopup from './components/popups/preferences-popup.vue'
+import DeviceSelectionPopup from './components/popups/device-selection-popup.vue'
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -197,7 +205,23 @@ function getInitialAreaId(): string
 const initialAreaId = getInitialAreaId()
 const initialArea = getSiteArea(initialAreaId)
 
-const initialLanguage = localStorage.getItem("language") || "en"
+// TODO: remove all references to the `initialPreferences` variable except for the i18 initialization
+//       and the initialization of the `preferences` attribute in the main component's data.
+const initialPreferences = loadPreferencesFromLocalStorage()
+
+function createPreferenceProxy<K extends keyof GikopoipoiPreferences>(key: K)
+{
+    return {
+        get(this: { preferences: GikopoipoiPreferences })
+        {
+            return this.preferences[key]
+        },
+        set(this: { preferences: GikopoipoiPreferences }, value: GikopoipoiPreferences[K])
+        {
+            this.preferences[key] = value
+        },
+    }
+}
 
 function getAppState()
 {
@@ -211,7 +235,7 @@ i18next.init(
 {
     ns: ['common'],
     defaultNS: 'common',
-    lng: (initialArea.restrictLanguage && initialArea.language) || initialLanguage,
+    lng: (initialArea.restrictLanguage && initialArea.language) || initialPreferences.language,
     fallbackLng: 'en',
     resources: languages,
     
@@ -241,6 +265,12 @@ const vueApp = createApp(defineComponent({
         LoginFooter,
         NumericValueControl,
         VoiceChangerControl,
+        DialogPopup,
+        RulaPopup,
+        UserListPopup,
+        StreamPopup,
+        PreferencesPopup,
+        DeviceSelectionPopup,
     },
     data() {
         return {
@@ -258,11 +288,10 @@ const vueApp = createApp(defineComponent({
             justSpawnedToThisRoom: true,
             isLoadingRoom: false,
             requestedRoomChange: false,
-            isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
             soundEffectVolume: 0,
             isLoggingIn: false,
             areaId: initialAreaId,
-            language: initialLanguage,
+            preferences: initialPreferences,
             uiBackgroundColor: null as number[] | null,
             isUiBackgroundDark: false,
             currentCanvasVerticalMovement: "none" as "none" | "up" | "down",
@@ -282,9 +311,6 @@ const vueApp = createApp(defineComponent({
             backgroundImageDimensions: { w: 0, h: 0 } as Size,
             userCanvasScale: 1,
             userCanvasScaleStart: null as number | null,
-            isLowQualityEnabled: localStorage.getItem("isLowQualityEnabled") == "true",
-            isCrispModeEnabled: localStorage.getItem("isCrispModeEnabled") == "true",
-            isIdleAnimationDisabled: localStorage.getItem("isIdleAnimationDisabled") == "true",
             blockWidth: BLOCK_WIDTH,
             blockHeight: BLOCK_HEIGHT,
             devicePixelRatio: 1 as number,
@@ -305,31 +331,9 @@ const vueApp = createApp(defineComponent({
 
             // preferences stuff
             isPreferencesPopupOpen: false,
-            showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
-            isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") != "false",
-            bubbleOpacity: parseInt(localStorage.getItem("bubbleOpacity") || '100'),
-            isCommandSectionVisible: localStorage.getItem("isCommandSectionVisible") != "false",
-            isMoveSectionVisible: localStorage.getItem("isMoveSectionVisible") != "false",
-            isBubbleSectionVisible: localStorage.getItem("isBubbleSectionVisible") != "false",
-            isLogoutButtonVisible: localStorage.getItem("isLogoutButtonVisible") != "false",
-            uiTheme: localStorage.getItem("uiTheme") || "gikopoi",
-            showNotifications: localStorage.getItem("showNotifications") != "false",
-            enableTextToSpeech: localStorage.getItem("enableTextToSpeech") != "false",
-            ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
-            voiceVolume: parseInt(localStorage.getItem("voiceVolume") || '0'),
-            availableTTSVoices: [] as SpeechSynthesisVoice[],
-            isMessageSoundEnabled: localStorage.getItem("isMessageSoundEnabled") != "false",
-            isLoginSoundEnabled: localStorage.getItem("isLoginSoundEnabled") != "false",
-            isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
-            customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
+            voiceVolume: initialPreferences.voiceVolume,
             customMentionRegexObject: null as RegExp | null,
             usernameMentionRegexObject: null as RegExp | null,
-            isCoinSoundEnabled: localStorage.getItem("isCoinSoundEnabled") != "false",
-            isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
-            isStreamInboundVuMeterEnabled: localStorage.getItem("isStreamInboundVuMeterEnabled") != "false",
-            showLogAboveToolbar: localStorage.getItem("showLogAboveToolbar") == "true",
-            showLogDividers: localStorage.getItem("showLogDividers") == "true",
-            isIgnoreOnBlock: localStorage.getItem("isIgnoreOnBlock") == "true",
 
             // streaming 
             streams: [] as StreamSlotDto[],
@@ -343,13 +347,13 @@ const vueApp = createApp(defineComponent({
 
             // stream settings
             isStreamPopupOpen: false,
-            streamMode: localStorage.getItem("streamMode") || "video_sound",
-            displayAdvancedStreamSettings: localStorage.getItem("displayAdvancedStreamSettings") == "true",
-            streamEchoCancellation: localStorage.getItem("streamEchoCancellation") == "true",
-            streamNoiseSuppression: localStorage.getItem("streamNoiseSuppression") == "true",
-            streamAutoGain: localStorage.getItem("streamAutoGain") == "true",
-            streamScreenCapture: localStorage.getItem("streamScreenCapture") == "true",
-            streamScreenCaptureAudio: localStorage.getItem("streamScreenCaptureAudio") == "true",
+            streamMode: initialPreferences.streamMode,
+            displayAdvancedStreamSettings: initialPreferences.displayAdvancedStreamSettings,
+            streamEchoCancellation: initialPreferences.streamEchoCancellation,
+            streamNoiseSuppression: initialPreferences.streamNoiseSuppression,
+            streamAutoGain: initialPreferences.streamAutoGain,
+            streamScreenCapture: initialPreferences.streamScreenCapture,
+            streamScreenCaptureAudio: initialPreferences.streamScreenCaptureAudio,
             streamTarget: "all_room" as "all_room" | "specific_users",
             allowedListenerIDs: new Set() as Set<string>,
             streamIsVtuberMode: false,
@@ -393,9 +397,6 @@ const vueApp = createApp(defineComponent({
             highlightedUserName: null as string | null,
             movementDirection: null as Direction | null,
             lastSetMovementDirectionTime: 0, // Found in code but not in data
-            underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
-            timestampsInCopiedLog: localStorage.getItem("timestampsInCopiedLog") != "false",
-            showIgnoreIndicatorInLog: localStorage.getItem("showIgnoreIndicatorInLog") == "true",
             notificationPermissionsGranted: false,
             lastFrameTimestamp: null as number | null,
             chessboardState: null as ChessboardStateDto | null,
@@ -405,11 +406,48 @@ const vueApp = createApp(defineComponent({
 
             lastCoinTossTime: 0, // unix timestamp
 
-            // hideStreams: false,
             // the key is the slot ID
             inboundAudioProcessors: {} as {[slotId: number]: AudioProcessor},
             outboundAudioProcessor: null as AudioProcessor | null,
         }
+    },
+    computed: {
+        uiTheme: createPreferenceProxy("uiTheme"),
+        language: createPreferenceProxy("language"),
+        enableTextToSpeech: createPreferenceProxy("enableTextToSpeech"),
+        ttsVoiceURI: createPreferenceProxy("ttsVoiceURI"),
+        isNewlineOnShiftEnter: createPreferenceProxy("isNewlineOnShiftEnter"),
+        underlinedUsernames: createPreferenceProxy("underlinedUsernames"),
+        timestampsInCopiedLog: createPreferenceProxy("timestampsInCopiedLog"),
+        showIgnoreIndicatorInLog: createPreferenceProxy("showIgnoreIndicatorInLog"),
+        isIgnoreOnBlock: createPreferenceProxy("isIgnoreOnBlock"),
+        showLogAboveToolbar: createPreferenceProxy("showLogAboveToolbar"),
+        showLogDividers: createPreferenceProxy("showLogDividers"),
+        showNotifications: createPreferenceProxy("showNotifications"),
+        isLoginSoundEnabled: createPreferenceProxy("isLoginSoundEnabled"),
+        isMessageSoundEnabled: createPreferenceProxy("isMessageSoundEnabled"),
+        isCoinSoundEnabled: createPreferenceProxy("isCoinSoundEnabled"),
+        isNameMentionSoundEnabled: createPreferenceProxy("isNameMentionSoundEnabled"),
+        customMentionSoundPattern: createPreferenceProxy("customMentionSoundPattern"),
+        showUsernameBackground: createPreferenceProxy("showUsernameBackground"),
+        bubbleOpacity: createPreferenceProxy("bubbleOpacity"),
+        isCrispModeEnabled: createPreferenceProxy("isCrispModeEnabled"),
+        isLowQualityEnabled: createPreferenceProxy("isLowQualityEnabled"),
+        isIdleAnimationDisabled: createPreferenceProxy("isIdleAnimationDisabled"),
+        isStreamAutoResumeEnabled: createPreferenceProxy("isStreamAutoResumeEnabled"),
+        isStreamInboundVuMeterEnabled: createPreferenceProxy("isStreamInboundVuMeterEnabled"),
+        isCommandSectionVisible: createPreferenceProxy("isCommandSectionVisible"),
+        isMoveSectionVisible: createPreferenceProxy("isMoveSectionVisible"),
+        isBubbleSectionVisible: createPreferenceProxy("isBubbleSectionVisible"),
+        isLogoutButtonVisible: createPreferenceProxy("isLogoutButtonVisible"),
+        voiceVolume: createPreferenceProxy("voiceVolume"),
+        streamMode: createPreferenceProxy("streamMode"),
+        displayAdvancedStreamSettings: createPreferenceProxy("displayAdvancedStreamSettings"),
+        streamEchoCancellation: createPreferenceProxy("streamEchoCancellation"),
+        streamNoiseSuppression: createPreferenceProxy("streamNoiseSuppression"),
+        streamAutoGain: createPreferenceProxy("streamAutoGain"),
+        streamScreenCapture: createPreferenceProxy("streamScreenCapture"),
+        streamScreenCaptureAudio: createPreferenceProxy("streamScreenCaptureAudio"),
     },
     provide()
     {
@@ -481,17 +519,6 @@ const vueApp = createApp(defineComponent({
             charactersSelected[0].scrollIntoView({block: "nearest"})
             
         document.getElementById("username-textbox")!.focus()
-
-        if (window.speechSynthesis)
-        {
-            this.availableTTSVoices = speechSynthesis.getVoices()
-            if (speechSynthesis.addEventListener)
-            {
-                speechSynthesis.addEventListener("voiceschanged", () => {
-                    this.availableTTSVoices = speechSynthesis.getVoices()
-                })
-            }
-        }
 
         this.devicePixelRatio = this.getDevicePixelRatio();
     },
@@ -646,28 +673,6 @@ const vueApp = createApp(defineComponent({
                 siteArea = this.getSiteArea()
             setAppLanguage((siteArea.restrictLanguage && siteArea.language) || this.language)
         },
-        getLangEntries()
-        {
-            const topEntries = ["ja", "en"]
-            return Object.keys(languages)
-                .sort((a, b) =>
-            {
-                const ta = topEntries.indexOf(a)
-                const tb = topEntries.indexOf(b)
-                if(ta >= 0 || tb >= 0)
-                {
-                    if (ta < 0) return 1
-                    if (tb < 0) return -1
-                    return ta < tb ? -1 : 1
-                }
-                
-                return this.$t("lang_sort_key", { lng: a }).localeCompare(this.$t("lang_sort_key", { lng: b }))
-            })
-                .map((id) =>
-            {
-                return {id, name: this.$t("lang_name", { lng: id }), endOfTopEntries: id == topEntries[topEntries.length-1]}
-            })
-        },
         openDialog(text: string, title: string, buttons: string[], cancelButtonIndex: number, callback: PopupCallback | null = null)
         {
             this.dialogPopupMessage = text;
@@ -798,13 +803,6 @@ const vueApp = createApp(defineComponent({
             const roomDto = dto.currentRoom
             const usersDto = dto.connectedUsers
             const streamsDto = dto.streams
-
-            // if (!this.hideStreams && (dto.hideStreams || localStorage.getItem("hideStreams")))
-            //     logToServer(this.myUserID + " setting hideStreams to true")
-
-            // if (dto.hideStreams)
-            //     localStorage.setItem("hideStreams", "true")
-            // this.hideStreams = localStorage.getItem("hideStreams") == "true";
 
             this.chessboardState = dto.chessboardState
             this.jankenState = dto.jankenState
@@ -2383,10 +2381,7 @@ const vueApp = createApp(defineComponent({
         },
         toggleInfobox()
         {
-            localStorage.setItem(
-                "isInfoboxVisible",
-                (this.isInfoboxVisible = !this.isInfoboxVisible).toString()
-            );
+            setAndPersist(this.preferences, "isInfoboxVisible", !this.preferences.isInfoboxVisible)
         },
         toggleUsernameBackground() {
             localStorage.setItem(
@@ -3215,9 +3210,6 @@ const vueApp = createApp(defineComponent({
                 {
                     try
                     {
-                        // if (this.hideStreams)
-                        //     return;
-
                         this.clientSideStreamData[streamSlotId].isListenerConnected = true
 
                         const stream = event.streams[0]
@@ -3691,12 +3683,6 @@ const vueApp = createApp(defineComponent({
         changeVoice() {
             speak(this.$t("test"), this.ttsVoiceURI, this.voiceVolume)
             this.storeSet('ttsVoiceURI')
-        },
-        // I think this getVoices() function isn't called anywhere, might be okay to remove
-        getVoices(): SpeechSynthesisVoice[] {
-            if (!window.speechSynthesis)
-                return []
-            return speechSynthesis.getVoices()
         },
         changeVoiceVolume(newValue: number) {
             this.voiceVolume = newValue
