@@ -53,6 +53,7 @@ Rules for each extraction:
 3. [not started] There's still stuff in the local storage which is not handled through the GikopoipoiPreferences type. Move them there as well, and update the code to use the new type instead of directly accessing local storage.
 4. [not started] stream settings (streamMode, displayAdvancedStreamSettings, streamEchoCancellation...) are all individually in the main component's data, but it should be made so that the stream popup just references the preferences object for all of them, to reduce the amount of plumbing.
 5. [not started] Remove the `createPreferenceProxy()` bridge and make `preferences` the only settings source at runtime: migrate all root/template references from top-level aliases (for example `uiTheme`, `showNotifications`, `isCrispModeEnabled`) to `preferences.*`, and update generic helpers (such as `storeSet`) to read/write `preferences` keys directly.
+6. [not started] simplify the rula popup by getting the rooms list with a REST api instead of sending a websocket message from the root component and then wait for another websocket message from the server. The api can be called directly by the rula popup. For an added bonus, could display a spinner in the rula popup while the rooms are being fetched.
 
 ### Phase 3 - Introduce runtime coordination object
 1. `[not started]` Introduce `ClientSessionController` (name chosen over generic "orchestrator").
