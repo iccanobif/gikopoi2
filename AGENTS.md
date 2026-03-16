@@ -1,5 +1,8 @@
 # Coding guidelines
 
+## Coding style
+- JavaScript strings should be in double quotes
+
 ## How to implement preferences
 - Every preference should be in the GikopoipoiPreferences type
 - The root component has a this.preferences object, all code should read preferences from there (other components should get the entire preference object as a prop).

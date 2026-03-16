@@ -91,6 +91,8 @@ export interface GikopoipoiPreferences {
     isStreamAutoResumeEnabled: boolean
     isStreamInboundVuMeterEnabled: boolean
     language: string
+    rulaRoomListSortKey: RulaRoomListSortKey
+    rulaRoomListSortDirection: 1 | -1
     showIgnoreIndicatorInLog: boolean
     showLogAboveToolbar: boolean
     showLogDividers: boolean

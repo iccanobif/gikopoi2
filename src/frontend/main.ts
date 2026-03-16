@@ -21,7 +21,6 @@ import type {
     ChessboardStateDto,
     PopupCallback,
     RoomStateDto,
-    RulaRoomListSortKey,
     PlayerDto,
     MoveDto,
     RTCPeerSlot,
@@ -318,12 +317,6 @@ const vueApp = createApp(defineComponent({
 
             // rula stuff
             isRulaPopupOpen: false,
-            roomList: [] as ListedRoom[],
-            preparedRoomList: [] as ListedRoom[],
-            rulaRoomGroup: "all",
-            rulaRoomListSortKey: (localStorage.getItem("rulaRoomListSortKey") || "sortName") as RulaRoomListSortKey,
-            rulaRoomListSortDirection: (localStorage.getItem("rulaRoomListSortDirection") == "1" ? 1 : -1) as 1 | -1,
-            rulaRoomSelection: null as string | null,
 
             // user list stuff
             isUserListPopupOpen: false,
@@ -1083,18 +1076,12 @@ const vueApp = createApp(defineComponent({
             this.socket.on("server-room-list", async (roomList: ListedRoom[]) =>
             {
                 if (!this.currentRoom) return // TS quick fix
-                this.roomList = roomList.map(r => {
-                    r.sortName = this.$t("room." + r.id, { context: "sort_key"}) || ''
-                    r.streams.forEach(s => s.userName = s.userName == "" ? this.$t("default_user_name") || '' : s.userName)
-                    return r
-                })
-                this.rulaRoomGroup = "all";
-                this.prepareRulaRoomList();
-                this.isRulaPopupOpen = true;
-                this.rulaRoomSelection = this.currentRoom.id;
 
-                await nextTick()
-                document.getElementById("rula-popup")!.focus()
+                const rulaPopup = this.$refs.rulaPopup as {
+                    setRooms: (rooms: ListedRoom[], currentRoomId: string | null) => void
+                } | undefined
+                rulaPopup?.setRooms(roomList, this.currentRoom.id)
+                this.isRulaPopupOpen = true;
             });
 
             this.socket.on("server-rtc-message", async (streamSlotId: number, type: string, msg: string | RTCIceCandidate) =>
@@ -3292,12 +3279,10 @@ const vueApp = createApp(defineComponent({
             this.canvasManualOffset = { x: 0, y: 0 };
             this.changeRoom(roomId);
             this.isRulaPopupOpen = false;
-            this.rulaRoomSelection = null;
         },
         closeRulaPopup()
         {
             this.isRulaPopupOpen = false;
-            this.rulaRoomSelection = null;
         },
         openUserListPopup()
         {
@@ -3368,43 +3353,6 @@ const vueApp = createApp(defineComponent({
                 this.socket!.emit("user-block", userId);
             });
         },
-        setRulaRoomListSortKey(key: RulaRoomListSortKey)
-        {
-            if (this.rulaRoomListSortKey != key)
-                this.rulaRoomListSortDirection = 1;
-            else
-                this.rulaRoomListSortDirection *= -1;
-
-            this.rulaRoomListSortKey = key
-            
-            localStorage.setItem("rulaRoomListSortKey", this.rulaRoomListSortKey)
-
-            localStorage.setItem("rulaRoomListSortDirection", this.rulaRoomListSortDirection.toString())
-
-            this.prepareRulaRoomList();
-        },
-        prepareRulaRoomList()
-        {
-            const key = this.rulaRoomListSortKey;
-            const direction = this.rulaRoomListSortDirection;
-
-            if (this.rulaRoomGroup === "all")
-                this.preparedRoomList = [...this.roomList];
-            else
-                this.preparedRoomList = this.roomList.filter(r => r.group == this.rulaRoomGroup);
-
-            this.preparedRoomList.sort((a, b) =>
-            {
-                let sort = 0;
-                if (key == "streamerCount")
-                    sort = b.streams.length - a.streams.length
-                if (key == "userCount" || (key == "streamerCount" && sort === 0))
-                    sort = b.userCount - a.userCount
-                if (sort === 0 && a.sortName && b.sortName)
-                    sort = a.sortName.localeCompare(b.sortName, this.$i18next.language);
-                return sort * direction;
-            })
-        },
         openStreamPopup(streamSlotId: number)
         {
             if (!window.RTCPeerConnection)
@@ -3464,10 +3412,6 @@ const vueApp = createApp(defineComponent({
             // very quickly after login and before initializing the socket
             if (this.socket)
                 this.socket.emit("user-room-list");
-        },
-        selectRoomForRula(roomId: string)
-        {
-            this.rulaRoomSelection = roomId;
         },
         showPasswordInput()
         {
@@ -3753,32 +3697,6 @@ const vueApp = createApp(defineComponent({
                 })
 
             return output
-        },
-        handleRulaPopupKeydown(event: KeyboardEvent)
-        {
-            const previousIndex = this.preparedRoomList.findIndex(r => r.id == this.rulaRoomSelection)
-
-            switch (event.code)
-            {
-                case "ArrowDown":
-                case "KeyJ":
-                case "KeyS":
-                    this.rulaRoomSelection = this.preparedRoomList[(previousIndex + 1) % this.preparedRoomList.length].id
-                    document.getElementById("room-tr-" + this.rulaRoomSelection)!.scrollIntoView({ block: "nearest"})
-                    break;
-                case "ArrowUp":
-                case "KeyK":
-                case "KeyW":
-                    if (previousIndex <= 0)
-                        this.rulaRoomSelection = this.preparedRoomList[this.preparedRoomList.length - 1].id
-                    else
-                        this.rulaRoomSelection = this.preparedRoomList[previousIndex - 1].id
-                    document.getElementById("room-tr-" + this.rulaRoomSelection)!.scrollIntoView({ block: "nearest"})
-                    break;
-                case "Enter":
-                    this.rula(this.rulaRoomSelection)
-                    break;
-            }
         },
         handlechatLogKeydown(ev: KeyboardEvent) {
             // hitting ctrl+a when the log is focused selects only the text in the log

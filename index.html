@@ -395,16 +395,10 @@
                 </div>
 
                 <rula-popup
+                    ref="rulaPopup"
                     :is-open="isRulaPopupOpen"
-                    :rooms="preparedRoomList"
-                    :room-group="rulaRoomGroup"
-                    :selected-room-id="rulaRoomSelection"
+                    :preferences="preferences"
                     @close="closeRulaPopup"
-                    @keydown="handleRulaPopupKeydown"
-                    @room-group-change="rulaRoomGroup = $event"
-                    @prepare-room-list="prepareRulaRoomList"
-                    @set-sort-key="setRulaRoomListSortKey"
-                    @select-room="selectRoomForRula"
                     @rula="rula"></rula-popup>
 
                 <user-list-popup

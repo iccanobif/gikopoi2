@@ -1,4 +1,4 @@
-import type { GikopoipoiPreferences } from './types'
+import type { GikopoipoiPreferences, RulaRoomListSortKey } from './types'
 
 export function loadPreferencesFromLocalStorage(): GikopoipoiPreferences
 {
@@ -24,6 +24,8 @@ export function loadPreferencesFromLocalStorage(): GikopoipoiPreferences
         isStreamAutoResumeEnabled: localStorage.getItem('isStreamAutoResumeEnabled') != 'false',
         isStreamInboundVuMeterEnabled: localStorage.getItem('isStreamInboundVuMeterEnabled') != 'false',
         language: localStorage.getItem('language') || 'en',
+        rulaRoomListSortKey: (localStorage.getItem('rulaRoomListSortKey') || 'sortName') as RulaRoomListSortKey,
+        rulaRoomListSortDirection: (localStorage.getItem("rulaRoomListSortDirection") == "1" ? 1 : -1),
         showIgnoreIndicatorInLog: localStorage.getItem('showIgnoreIndicatorInLog') == 'true',
         showLogAboveToolbar: localStorage.getItem('showLogAboveToolbar') == 'true',
         showLogDividers: localStorage.getItem('showLogDividers') == 'true',
