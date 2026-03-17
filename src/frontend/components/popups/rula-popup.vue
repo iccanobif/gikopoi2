@@ -19,8 +19,13 @@
                 </select>
             </div>
         </div>
-        <div class="popup-content">
-            <table class="popup-table popup-selectable-table popup-sortable-table">
+        <div class="popup-content rula-popup-content">
+            <div v-if="isLoadingRoomList" class="rula-popup-spinner-container" aria-live="polite">
+                <div class="rula-popup-spinner" aria-live="polite">
+                    <span class="fas fa-spinner fa-spin" aria-hidden="true"></span>
+                </div>
+            </div>
+            <table v-if="!isLoadingRoomList" class="popup-table popup-selectable-table popup-sortable-table">
                 <colgroup>
                     <col id="rula-menu-column-room-name" />
                     <col id="rula-menu-column-user-count" />
@@ -78,6 +83,9 @@ import { setAndPersist } from '../../preferences';
 
 const props = defineProps<{
     isOpen: boolean,
+    areaId: string,
+    myPrivateUserId: string | null,
+    currentRoomId: string | null,
     preferences: GikopoipoiPreferences,
 }>()
 
@@ -91,6 +99,46 @@ const roomList = ref<ListedRoom[]>([])
 const preparedRoomList = ref<ListedRoom[]>([])
 const roomGroup = ref('all')
 const selectedRoomId = ref<string | null>(null)
+const isLoadingRoomList = ref(false)
+
+async function fetchRoomList()
+{
+    if (!props.myPrivateUserId)
+    {
+        roomList.value = []
+        preparedRoomList.value = []
+        selectedRoomId.value = props.currentRoomId
+        return
+    }
+
+    isLoadingRoomList.value = true
+
+    try
+    {
+        const response = await fetch("/api/areas/" + props.areaId + "/rooms", {
+            headers: { "Authorization": "Bearer " + props.myPrivateUserId }
+        })
+
+        if (!response.ok)
+            throw new Error("Failed to fetch room list")
+
+        const fetchedRooms = await response.json() as ListedRoom[]
+        roomList.value = normalizeRoomList(fetchedRooms)
+        roomGroup.value = "all"
+        selectedRoomId.value = props.currentRoomId
+        prepareRoomList()
+    }
+    catch
+    {
+        roomList.value = []
+        preparedRoomList.value = []
+        selectedRoomId.value = props.currentRoomId
+    }
+    finally
+    {
+        isLoadingRoomList.value = false
+    }
+}
 
 function normalizeRoomList(rooms: ListedRoom[]): ListedRoom[]
 {
@@ -125,14 +173,6 @@ function prepareRoomList()
     })
 
     preparedRoomList.value = list
-}
-
-function setRooms(rooms: ListedRoom[], currentRoomId: string | null)
-{
-    roomList.value = normalizeRoomList(rooms)
-    roomGroup.value = 'all'
-    selectedRoomId.value = currentRoomId
-    prepareRoomList()
 }
 
 function setSortKey(key: RulaRoomListSortKey)
@@ -208,13 +248,33 @@ watch(
 
         await nextTick()
         popupElement.value?.focus()
+        await fetchRoomList()
     }
 )
 
-defineExpose({
-    setRooms,
-})
+watch(
+    () => props.currentRoomId,
+    (roomId) => {
+        selectedRoomId.value = roomId
+    }
+)
 </script>
 
 <style scoped>
+.rula-popup-spinner-container
+{
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    align-items: center;
+}
+
+.rula-popup-spinner {
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.rula-popup-content {
+    height: 400px;
+}
 </style>

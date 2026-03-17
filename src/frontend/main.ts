@@ -15,7 +15,6 @@ import type {
     StreamSlotDto,
     JankenStateDto,
     PointerState,
-    ListedRoom,
     DeviceInfo,
     Stats,
     ChessboardStateDto,
@@ -1071,17 +1070,6 @@ const vueApp = createApp(defineComponent({
             this.socket.on("server-update-current-room-streams", async (streams: StreamSlotDto[]) =>
             {
                 await this.updateCurrentRoomStreams(streams);
-            });
-
-            this.socket.on("server-room-list", async (roomList: ListedRoom[]) =>
-            {
-                if (!this.currentRoom) return // TS quick fix
-
-                const rulaPopup = this.$refs.rulaPopup as {
-                    setRooms: (rooms: ListedRoom[], currentRoomId: string | null) => void
-                } | undefined
-                rulaPopup?.setRooms(roomList, this.currentRoom.id)
-                this.isRulaPopupOpen = true;
             });
 
             this.socket.on("server-rtc-message", async (streamSlotId: number, type: string, msg: string | RTCIceCandidate) =>
@@ -2297,7 +2285,7 @@ const vueApp = createApp(defineComponent({
             }
 
             if (message.trim() == "#rula" || message.trim() == "#ﾙｰﾗ")
-                this.requestRoomList();
+                this.openRulaPopup();
             else if (message.trim() == '#ﾘｽﾄ' || message.trim() == '#list')
                 this.openUserListPopup();
             else
@@ -3284,6 +3272,10 @@ const vueApp = createApp(defineComponent({
         {
             this.isRulaPopupOpen = false;
         },
+        openRulaPopup()
+        {
+            this.isRulaPopupOpen = true;
+        },
         openUserListPopup()
         {
             if (this.getUserListForListPopup().length == 0)
@@ -3405,13 +3397,6 @@ const vueApp = createApp(defineComponent({
                 const el = document.getElementById(elementId) as HTMLAudioElement
                 el.volume = this.soundEffectVolume
             }
-        },
-        requestRoomList()
-        {
-            // Socket could be null if the user clicks on the #list button
-            // very quickly after login and before initializing the socket
-            if (this.socket)
-                this.socket.emit("user-room-list");
         },
         showPasswordInput()
         {

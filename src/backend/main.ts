@@ -925,41 +925,6 @@ io.on("connection", function (socket)
         }
     })
 
-    socket.on("user-room-list", function ()
-    {
-        try
-        {
-            const roomList: ListedRoom[] =
-                Object.values(rooms)
-                .filter(room => !room.secret)
-                .map(room => ({
-                    id: room.id,
-                    group: room.group,
-                    userCount: getFilteredConnectedUserList(user, room.id, user.areaId).length,
-                    streams: toStreamSlotDtoArray(user, roomStates[user.areaId][room.id].streams)
-                        .filter(stream => stream.isActive && stream.userId != null)
-                        .map(stream => {
-                            if (room.forcedAnonymous)
-                                return { userName: "", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
-
-                            const streamUser = getUser(stream.userId!)
-                            if (!streamUser)
-                            {
-                                log.error("ERROR: Can't find user", stream.userId, "when doing #rula")
-                                return { userName: "N/A", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
-                            }
-
-                            return { userName: streamUser.name, isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
-                        }),
-                }))
-
-            socket.emit("server-room-list", roomList)
-        }
-        catch (e)
-        {
-            logException(e, user)
-        }
-    })
 
     socket.on("user-block", function ( userId: string )
     {
@@ -1554,6 +1519,72 @@ app.get("/api/areas/:areaId/rooms/:roomId", (req, res) =>
         }
 
         res.json(dto)
+    }
+    catch (e)
+    {
+        res.end(stringifyException(e))
+    }
+})
+
+app.get("/api/areas/:areaId/rooms", (req, res) =>
+{
+    try
+    {
+        function setResponseToUnauthorized(msg: string)
+        {
+            log.error(getRealIp(req), msg)
+            res.status(401)
+            res.end("")
+        }
+
+        const areaId = req.params.areaId
+        const bearerHeader = req.headers["authorization"]
+
+        if (!bearerHeader)
+        {
+            setResponseToUnauthorized("ERROR: Room list API called with no authentication")
+            return
+        }
+
+        const userPrivateId = bearerHeader.split(" ")[1]
+        const user = getUserByPrivateId(userPrivateId)
+
+        if (!user)
+        {
+            setResponseToUnauthorized(`ERROR: User ${userPrivateId} doesn't exist`)
+            return
+        }
+
+        if (user.areaId != areaId)
+        {
+            setResponseToUnauthorized(`ERROR: User ${userPrivateId} tried to access room list on ${areaId} but he's on ${user.areaId}`)
+            return
+        }
+
+        const output = Object.values(rooms)
+            .filter(room => !room.secret)
+            .map(room => ({
+                id: room.id,
+                group: room.group,
+                userCount: getFilteredConnectedUserList(user, room.id, areaId).length,
+                streams: toStreamSlotDtoArray(user, roomStates[areaId][room.id].streams)
+                    .filter(stream => stream.isActive && stream.userId != null)
+                    .map(stream => {
+                        if (room.forcedAnonymous)
+                            return { userName: "", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
+
+                        const streamUser = getUser(stream.userId!)
+                        if (!streamUser)
+                        {
+                            log.error("ERROR: Can't find user", stream.userId, "when doing #rula")
+                            return { userName: "N/A", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
+                        }
+
+                        return { userName: streamUser.name, isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
+                    }),
+            }));
+
+        res.json(output)
     }
     catch (e)
     {
