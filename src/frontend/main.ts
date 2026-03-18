@@ -323,7 +323,6 @@ const vueApp = createApp(defineComponent({
 
             // preferences stuff
             isPreferencesPopupOpen: false,
-            voiceVolume: initialPreferences.voiceVolume,
             customMentionRegexObject: null as RegExp | null,
             usernameMentionRegexObject: null as RegExp | null,
 
@@ -339,17 +338,7 @@ const vueApp = createApp(defineComponent({
 
             // stream settings
             isStreamPopupOpen: false,
-            streamMode: initialPreferences.streamMode,
-            displayAdvancedStreamSettings: initialPreferences.displayAdvancedStreamSettings,
-            streamEchoCancellation: initialPreferences.streamEchoCancellation,
-            streamNoiseSuppression: initialPreferences.streamNoiseSuppression,
-            streamAutoGain: initialPreferences.streamAutoGain,
-            streamScreenCapture: initialPreferences.streamScreenCapture,
-            streamScreenCaptureAudio: initialPreferences.streamScreenCaptureAudio,
-            streamTarget: "all_room" as "all_room" | "specific_users",
             allowedListenerIDs: new Set() as Set<string>,
-            streamIsVtuberMode: false,
-            isNicoNicoMode: false,
 
             // Device selection popup
             isDeviceSelectionOpen: false,
@@ -1955,7 +1944,7 @@ const vueApp = createApp(defineComponent({
         drawPrivateStreamIcons()
         {
             // these icons are visible only the streamers who chose "specific_users" as stream target.
-            if (!this.isStreaming() || this.streamTarget == "all_room")
+            if (!this.isStreaming() || this.preferences.streamTarget == "all_room")
                 return
 
             if (!this.canvasContext) return
@@ -3057,9 +3046,9 @@ const vueApp = createApp(defineComponent({
                     streamSlotId: this.streamSlotIdInWhichIWantToStream,
                     withVideo: withVideo,
                     withSound: withSound,
-                    isVisibleOnlyToSpecificUsers: this.streamTarget == "specific_users",
-                    streamIsVtuberMode: withVideo && this.streamIsVtuberMode,
-                    isNicoNicoMode: withVideo && this.isNicoNicoMode,
+                    isVisibleOnlyToSpecificUsers: this.preferences.streamTarget == "specific_users",
+                    streamIsVtuberMode: withVideo && this.preferences.streamIsVtuberMode,
+                    isNicoNicoMode: withVideo && this.preferences.isNicoNicoMode,
                     info: this.mediaStream.getAudioTracks().map(t => ({
                             constraints: t.getConstraints && t.getConstraints(),
                             settings: t.getSettings && t.getSettings(),
@@ -3422,7 +3411,7 @@ const vueApp = createApp(defineComponent({
                 observer.observe(chatLog.lastElementChild);
             }
 
-            this.storeSet("uiTheme");
+            setAndPersist(this.preferences, "uiTheme", this.uiTheme)
             
             // Need to wait for the next tick so that knobElement.refresh() is called
             // with uiTheme already updated to its new value.
@@ -3437,22 +3426,16 @@ const vueApp = createApp(defineComponent({
         },
         toggleCoinSound()
         {
-            this.storeSet('isCoinSoundEnabled');
+            setAndPersist(this.preferences, "isCoinSoundEnabled", this.isCoinSoundEnabled)
         },
         handleLanguageChange()
         {
-            this.storeSet('language');
+            setAndPersist(this.preferences, "language", this.language)
             this.setLanguage();
-        },
-        storeSet(itemName: string, value?: any)
-        {
-            // @ts-ignore
-            if (value != undefined) this[itemName] = value;
-            localStorage.setItem(itemName, this[itemName]);
         },
         handleBubbleOpacity()
         {
-            this.storeSet("bubbleOpacity");
+            setAndPersist(this.preferences, "bubbleOpacity", this.bubbleOpacity)
             this.resetBubbleImages();
         },
         async logout()
@@ -3489,7 +3472,7 @@ const vueApp = createApp(defineComponent({
                 const permission = await requestNotificationPermission()
                 this.notificationPermissionsGranted = permission == "granted"
             }
-            this.storeSet("showNotifications")
+            setAndPersist(this.preferences, "showNotifications", this.showNotifications)
         },
         setMentionRegexObjects()
         {
@@ -3579,42 +3562,42 @@ const vueApp = createApp(defineComponent({
         },
         handleLowQualityEnabled()
         {
-            this.storeSet('isLowQualityEnabled');
+            setAndPersist(this.preferences, "isLowQualityEnabled", this.isLowQualityEnabled)
             this.isRedrawRequired = true
         },
         handleCrispModeEnabled()
         {
-            this.storeSet('isCrispModeEnabled');
+            setAndPersist(this.preferences, "isCrispModeEnabled", this.isCrispModeEnabled)
             this.reloadImages()
         },
         handleIdleAnimationDisabled()
         {
-            this.storeSet('isIdleAnimationDisabled');
+            setAndPersist(this.preferences, "isIdleAnimationDisabled", this.isIdleAnimationDisabled)
             this.isRedrawRequired = true
         },
         handleNameMentionSoundEnabled()
         {
-            this.storeSet('isNameMentionSoundEnabled')
+            setAndPersist(this.preferences, "isNameMentionSoundEnabled", this.isNameMentionSoundEnabled)
             this.setMentionRegexObjects()
         },
         handleCustomMentionSoundPattern()
         {
-            this.storeSet('customMentionSoundPattern')
+            setAndPersist(this.preferences, "customMentionSoundPattern", this.customMentionSoundPattern)
             this.setMentionRegexObjects()
         },
         handleEnableTextToSpeech()
         {
             if (window.speechSynthesis)
                 speechSynthesis.cancel()
-            this.storeSet('enableTextToSpeech')
+            setAndPersist(this.preferences, "enableTextToSpeech", this.enableTextToSpeech)
         },
         changeVoice() {
             speak(this.$t("test"), this.ttsVoiceURI, this.voiceVolume)
-            this.storeSet('ttsVoiceURI')
+            setAndPersist(this.preferences, "ttsVoiceURI", this.ttsVoiceURI)
         },
         changeVoiceVolume(newValue: number) {
             this.voiceVolume = newValue
-            this.storeSet('voiceVolume')
+            setAndPersist(this.preferences, "voiceVolume", this.voiceVolume)
             debouncedSpeakTest(this.ttsVoiceURI, this.voiceVolume, i18next)
         },
         toggleVideoSlotPinStatus(slotId: number) {

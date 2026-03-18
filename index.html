@@ -408,7 +408,7 @@
                     :users="getUserListForListPopup()"
                     :highlighted-user-id="highlightedUserId"
                     :is-streaming="isStreaming()"
-                    :stream-target="streamTarget"
+                    :stream-target="preferences.streamTarget"
                     :allowed-listener-ids="allowedListenerIDs"
                     :ignored-user-ids="ignoredUserIds"
                     @close="closeUserListPopup"
@@ -423,19 +423,9 @@
                 <stream-popup
                     :is-open="isStreamPopupOpen"
                     :waiting-for-device-permission="waitingForDevicePermission"
-                    :stream-mode="streamMode"
-                    :stream-screen-capture="streamScreenCapture"
-                    :stream-target="streamTarget"
-                    :stream-is-vtuber-mode="streamIsVtuberMode"
-                    :is-nico-nico-mode="isNicoNicoMode"
-                    :display-advanced-stream-settings="displayAdvancedStreamSettings"
-                    :stream-screen-capture-audio="streamScreenCaptureAudio"
-                    :stream-echo-cancellation="streamEchoCancellation"
-                    :stream-noise-suppression="streamNoiseSuppression"
-                    :stream-auto-gain="streamAutoGain"
+                    :preferences="preferences"
                     @close="closeStreamPopup"
-                    @start="showDeviceSelectionPopup"
-                    @set-pref="(field, value) => storeSet(field, value)"></stream-popup>
+                    @start="showDeviceSelectionPopup"></stream-popup>
 
                 <preferences-popup
                     :is-open="isPreferencesPopupOpen"
@@ -443,7 +433,6 @@
                     :preferences="preferences"
                     :notification-permissions-granted="notificationPermissionsGranted"
                     @close="closePreferencesPopup"
-                    @set-pref="(field, value) => storeSet(field, value)"
                     @ui-theme-changed="handleUiTheme"
                     @language-changed="handleLanguageChange"
                     @enable-tts-changed="handleEnableTextToSpeech"

@@ -1425,11 +1425,11 @@ app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
 
         const svgPath = req.params[0] + ".svg";
 
-            if (svgPath in svgCrispCache)
-            {
-                returnImage(svgCrispCache[svgPath]);
-                return;
-            }
+        if (svgPath in svgCrispCache)
+        {
+            returnImage(svgCrispCache[svgPath]);
+            return;
+        }
 
         log.info("Fetching svg: " + svgPath)
         let data = await readFile("public" + svgPath, 'utf8')

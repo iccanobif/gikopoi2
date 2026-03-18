@@ -275,6 +275,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import i18next from 'i18next'
 import languages from '../../lang'
 import type { GikopoipoiPreferences } from '../../types'
+import { setAndPersist } from '../../preferences'
 
 interface LangEntry {
     id: string
@@ -293,7 +294,6 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     close: [],
-    'set-pref': [field: PreferenceField, value: string | number | boolean],
     'ui-theme-changed': [],
     'language-changed': [],
     'enable-tts-changed': [],
@@ -379,28 +379,28 @@ function getLangEntries(): LangEntry[]
 function onCheckboxChange(field: PreferenceField, event: Event, actionEvent?: ActionEvent)
 {
     const target = event.target as HTMLInputElement
-    emit('set-pref', field, target.checked)
+    setAndPersist(props.preferences, field, target.checked)
     emitOptionalAction(actionEvent)
 }
 
 function onTextChange(field: PreferenceField, event: Event, actionEvent?: ActionEvent)
 {
     const target = event.target as HTMLInputElement
-    emit('set-pref', field, target.value)
+    setAndPersist(props.preferences, field, target.value)
     emitOptionalAction(actionEvent)
 }
 
 function onRangeChange(field: PreferenceField, event: Event, actionEvent?: ActionEvent)
 {
     const target = event.target as HTMLInputElement
-    emit('set-pref', field, Number(target.value))
+    setAndPersist(props.preferences, field, Number(target.value))
     emitOptionalAction(actionEvent)
 }
 
 function onSelectChange(field: PreferenceField, event: Event, actionEvent?: ActionEvent)
 {
     const target = event.target as HTMLSelectElement
-    emit('set-pref', field, target.value)
+    setAndPersist(props.preferences, field, target.value)
     emitOptionalAction(actionEvent)
 }
 

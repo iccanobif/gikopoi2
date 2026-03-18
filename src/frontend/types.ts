@@ -109,7 +109,10 @@ export interface GikopoipoiPreferences {
     ttsVoiceURI: string
     uiTheme: string
     underlinedUsernames: boolean
-    voiceVolume: number
+    voiceVolume: number,
+    streamTarget: 'all_room' | 'specific_users'
+    streamIsVtuberMode: boolean
+    isNicoNicoMode: boolean
 }
 
 export type RulaRoomListSortKey = 'sortName' | 'userCount' | 'streamerCount'

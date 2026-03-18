@@ -43,6 +43,9 @@ export function loadPreferencesFromLocalStorage(): GikopoipoiPreferences
         uiTheme: localStorage.getItem('uiTheme') || 'gikopoi',
         underlinedUsernames: localStorage.getItem('underlinedUsernames') == 'true',
         voiceVolume: parseInt(localStorage.getItem('voiceVolume') || '0'),
+        isNicoNicoMode: localStorage.getItem('isNicoNicoMode') == 'true',
+        streamIsVtuberMode: localStorage.getItem('streamIsVtuberMode') == 'true',
+        streamTarget: localStorage.getItem('streamTarget') == 'specific_users' ? 'specific_users' : 'all_room',
     }
 }
 
