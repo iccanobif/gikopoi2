@@ -557,9 +557,8 @@ const vueApp = createApp(defineComponent({
                 // wait next tick so that canvas-container gets rendered in the DOM
                 await nextTick()
 
-                const canvasHeight = localStorage.getItem("canvasHeight")
-                if (canvasHeight)
-                    document.getElementById("canvas-container")!.style.height = canvasHeight;
+                if (this.preferences.canvasHeight)
+                    document.getElementById("canvas-container")!.style.height = this.preferences.canvasHeight;
 
                 await this.connectToServer(username, areaId, characterId);
 
@@ -2348,7 +2347,7 @@ const vueApp = createApp(defineComponent({
                         return
                     const height = canvasContainer.style.height
 
-                    localStorage.setItem("canvasHeight", height);
+                    setAndPersist(this.preferences, "canvasHeight", height);
                     this.paint(0)
                 });
                 this.canvasContainerResizeObserver.observe(document.getElementById("canvas-container")!);

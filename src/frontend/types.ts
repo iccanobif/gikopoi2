@@ -71,6 +71,7 @@ export type PopupCallback = (buttonIndex: number) => void
 
 export interface GikopoipoiPreferences {
     bubbleOpacity: number
+    canvasHeight: string | null // string because CSSStyleDeclaration.style.height is typed as string.
     customMentionSoundPattern: string
     displayAdvancedStreamSettings: boolean
     enableTextToSpeech: boolean

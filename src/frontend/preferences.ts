@@ -4,6 +4,7 @@ export function loadPreferencesFromLocalStorage(): GikopoipoiPreferences
 {
     return {
         bubbleOpacity: parseInt(localStorage.getItem('bubbleOpacity') || '100'),
+        canvasHeight: localStorage.getItem('canvasHeight'),
         customMentionSoundPattern: localStorage.getItem('customMentionSoundPattern') || '',
         displayAdvancedStreamSettings: localStorage.getItem('displayAdvancedStreamSettings') == 'true',
         enableTextToSpeech: localStorage.getItem('enableTextToSpeech') != 'false',
