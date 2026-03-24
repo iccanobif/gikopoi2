@@ -101,7 +101,7 @@ export interface GikopoipoiPreferences {
     showUsernameBackground: boolean
     streamAutoGain: boolean
     streamEchoCancellation: boolean
-    streamMode: 'video_sound' | 'sound' | 'video'
+    streamMode: StreamMode
     streamNoiseSuppression: boolean
     streamScreenCapture: boolean
     streamScreenCaptureAudio: boolean
@@ -110,12 +110,14 @@ export interface GikopoipoiPreferences {
     uiTheme: string
     underlinedUsernames: boolean
     voiceVolume: number,
-    streamTarget: 'all_room' | 'specific_users'
+    streamTarget: StreamTarget
     streamIsVtuberMode: boolean
     isNicoNicoMode: boolean
 }
 
 export type RulaRoomListSortKey = 'sortName' | 'userCount' | 'streamerCount'
+export type StreamMode = 'video_sound' | 'sound' | 'video'
+export type StreamTarget = 'all_room' | 'specific_users'
 
 import type { RTCPeer } from "./rtcpeer";
 export interface RTCPeerSlot {
