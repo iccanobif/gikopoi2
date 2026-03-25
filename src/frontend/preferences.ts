@@ -62,6 +62,7 @@ export function loadPreferencesFromLocalStorage(): GikopoipoiPreferences
             "all_room",
             ["all_room", "specific_users"],
         ),
+        soundEffectVolume: getNumberPreference("soundEffectVolume", 0),
     }
 }
 
@@ -97,7 +98,7 @@ function getNumberPreference(key: string, defaultValue: number): number
     if (value === null) {
         return defaultValue
     }
-    return parseInt(value)
+    return parseFloat(value)
 }
 
 function getUnionTypePreference<T>(

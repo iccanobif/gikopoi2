@@ -77,6 +77,19 @@ After popup stabilization:
 2. Containerize all components of the system for easier deployment and development (it would be particularly great to be able to use local janus instances for dev)
 3. Kill janus! For example, by replacing it with a custom WebRTC relay (in node.js or Rust).
 
+## Tests to perform on all kinds of devices after finishing this refactoring
+1. Log message sound
+2. Streams
+
+### Devices to test on
+- Windows, Chrome
+- Windows, Firefox
+- Linux, Chrome
+- Linux, Firefox
+- Android
+- iPhone
+- iOS
+
 ## Why `ClientSessionController`
 
 `ClientSessionController` is explicit about responsibility:

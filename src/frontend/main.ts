@@ -80,8 +80,10 @@ import {
     removeControlChars,
     escapeHTML,
     adjustNiconicoMessagesFontSize,
-    debouncedLogSoundVolume,
-    makeUrlsClickable
+    makeUrlsClickable,
+    playSound,
+    loadAllSoundEffects,
+    debouncedPlaySound,
 } from "./utils";
 import { debouncedSpeakTest, speak } from "./tts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
@@ -286,7 +288,6 @@ const vueApp = createApp(defineComponent({
             justSpawnedToThisRoom: true,
             isLoadingRoom: false,
             requestedRoomChange: false,
-            soundEffectVolume: 0,
             isLoggingIn: false,
             areaId: initialAreaId,
             preferences: initialPreferences,
@@ -563,9 +564,7 @@ const vueApp = createApp(defineComponent({
                 await loadCharacterImagesPromise;
                 this.paintLoop();
 
-                this.soundEffectVolume = parseFloat(localStorage.getItem(areaId + "soundEffectVolume") || '0')
-
-                this.updateAudioElementsVolume()
+                await loadAllSoundEffects()
 
                 if (window.Notification)
                 {
@@ -586,7 +585,7 @@ const vueApp = createApp(defineComponent({
                     min: 0,
                     max: 1,
                     step: 0.01,
-                    value: this.soundEffectVolume,
+                    value: this.preferences.soundEffectVolume,
                     slide: ( event: any, ui: any ) => {
                         this.changeSoundEffectVolume(ui.value);
                     }
@@ -1002,8 +1001,8 @@ const vueApp = createApp(defineComponent({
 
             this.socket.on("server-user-joined-room", async (user: PlayerDto) =>
             {
-                if (this.isLoginSoundEnabled && this.soundEffectVolume > 0)
-                    (document.getElementById("login-sound") as HTMLAudioElement).play();
+                if (this.isLoginSoundEnabled && this.preferences.soundEffectVolume > 0)
+                    playSound("login-sound", this.preferences.soundEffectVolume);
                 this.addUser(user);
                 this.updateCanvasObjects();
                 this.isRedrawRequired = true;
@@ -1113,8 +1112,8 @@ const vueApp = createApp(defineComponent({
                 this.currentRoom.specialObjects[1].value = donationBoxValue;
                 this.lastCoinTossTime = Date.now();
                 this.isRedrawRequired = true;
-                if (this.soundEffectVolume > 0 && this.isCoinSoundEnabled) {
-                    (document.getElementById("ka-ching-sound") as HTMLAudioElement).play();
+                if (this.preferences.soundEffectVolume > 0 && this.isCoinSoundEnabled) {
+                    playSound("ka-ching-sound", this.preferences.soundEffectVolume);
                 }
                 setTimeout(() => {
                     this.isRedrawRequired = true;
@@ -1239,12 +1238,12 @@ const vueApp = createApp(defineComponent({
 
             if (isIgnored) return;
 
-            if (this.soundEffectVolume > 0)
+            if (this.preferences.soundEffectVolume > 0)
             {
                 if (this.checkIfMentioned(plainMsg))
-                    (document.getElementById("mention-sound") as HTMLAudioElement).play()
+                    playSound("mention-sound", this.preferences.soundEffectVolume)
                 else if (this.isMessageSoundEnabled)
-                    (document.getElementById("message-sound") as HTMLAudioElement).play()
+                    playSound("message-sound", this.preferences.soundEffectVolume)
             }
 
             if (this.enableTextToSpeech)
@@ -3371,20 +3370,8 @@ const vueApp = createApp(defineComponent({
         },
         changeSoundEffectVolume(newVolume: number)
         {
-            debouncedLogSoundVolume(this.myUserID, newVolume)
-            this.soundEffectVolume = newVolume
-
-            this.updateAudioElementsVolume()
-            ;(document.getElementById("message-sound") as HTMLAudioElement).play()
-            localStorage.setItem(this.areaId + "soundEffectVolume", this.soundEffectVolume.toString());
-        },
-        updateAudioElementsVolume()
-        {
-            for (const elementId of ["message-sound", "login-sound", "mention-sound"])
-            {
-                const el = document.getElementById(elementId) as HTMLAudioElement
-                el.volume = this.soundEffectVolume
-            }
+            setAndPersist(this.preferences, "soundEffectVolume", newVolume)
+            debouncedPlaySound("message-sound", newVolume)
         },
         showPasswordInput()
         {

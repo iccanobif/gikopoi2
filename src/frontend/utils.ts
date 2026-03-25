@@ -180,11 +180,9 @@ export const debounceWithDelayedExecution = (func: any, wait: number): ((...args
     };
   };
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function debounceWithImmediateExecution(func: Function, wait: number) {
     let lastExecution: number | null = null;
   
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return function executedFunction(...args: any[]) {
       if (Date.now() - (lastExecution || 0) > wait)
       {
@@ -544,10 +542,6 @@ export function escapeHTML(str: string): string
         .replaceAll('>', '&gt;')
 }
 
-export const debouncedLogSoundVolume = debounceWithDelayedExecution((myUserID: string, volume: number) => {
-    logToServer(myUserID + " SFX volume: " + volume)
-}, 150)
-
 // TODO: handle cases where the geometry of the <video> element changes during the stream,
 //       can be done with a ResizeObserver, maybe
 export function adjustNiconicoMessagesFontSize()
@@ -577,3 +571,48 @@ export function makeUrlsClickable(html: string): string
             return anchor.outerHTML;
         })
 }
+
+let soundEffectContext: AudioContext | null = null
+const soundEffectBuffers = new Map<string, AudioBuffer>()
+
+function getSoundEffectContext(): AudioContext
+{
+    if (!soundEffectContext)
+        soundEffectContext = new AudioContext()
+    return soundEffectContext
+}
+
+export async function loadAllSoundEffects(): Promise<void>
+{
+    const ctx = getSoundEffectContext()
+    const sounds: [string, string][] = [
+        ["message-sound", "message.mp3"],
+        ["mention-sound", "mention.mp3"],
+        ["login-sound", "login.mp3"],
+        ["ka-ching-sound", "ka-ching.mp3"],
+    ]
+    await Promise.all(sounds.map(async ([id, url]) =>
+    {
+        const response = await fetch(url)
+        const arrayBuffer = await response.arrayBuffer()
+        soundEffectBuffers.set(id, await ctx.decodeAudioData(arrayBuffer))
+    }))
+}
+
+export function playSound(elementId: string, volume: number = 1): void
+{
+    console.log("time now", Date.now(), "playing sound", elementId, "with volume", volume)
+    const buffer = soundEffectBuffers.get(elementId)
+    if (!buffer) return
+    const ctx = getSoundEffectContext()
+    if (ctx.state === "suspended") void ctx.resume()
+    const source = ctx.createBufferSource()
+    source.buffer = buffer
+    const gain = ctx.createGain()
+    gain.gain.value = volume
+    source.connect(gain)
+    gain.connect(ctx.destination)
+    source.start()
+}
+
+export const debouncedPlaySound = debounceWithImmediateExecution(playSound, 150)
