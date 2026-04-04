@@ -74,6 +74,7 @@ export interface GikopoipoiPreferences {
     areaId: string
     bubbleOpacity: number
     canvasHeight: string | null // string because CSSStyleDeclaration.style.height is typed as string.
+    characterId: string
     customMentionSoundPattern: string
     displayAdvancedStreamSettings: boolean
     enableTextToSpeech: boolean

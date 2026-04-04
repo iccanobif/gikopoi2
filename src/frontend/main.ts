@@ -491,7 +491,7 @@ const vueApp = createApp(defineComponent({
                 document.getElementById("username-textbox")!.blur()
 
                 setAndPersist(this.preferences, "username", username)
-                localStorage.setItem("characterId", characterId)
+                setAndPersist(this.preferences, "characterId", characterId)
                 setAndPersist(this.preferences, "areaId", areaId)
 
                 window.addEventListener("resize", () =>

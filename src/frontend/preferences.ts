@@ -7,6 +7,7 @@ export function loadPreferencesFromLocalStorage(): GikopoipoiPreferences
         areaId: getInitialAreaId(),
         bubbleOpacity: getNumberPreference("bubbleOpacity", 100),
         canvasHeight: localStorage.getItem("canvasHeight"),
+        characterId: getStringPreference("characterId", "giko"),
         customMentionSoundPattern: getStringPreference("customMentionSoundPattern", ""),
         displayAdvancedStreamSettings: getBooleanPreference("displayAdvancedStreamSettings", false),
         enableTextToSpeech: getBooleanPreference("enableTextToSpeech", true),

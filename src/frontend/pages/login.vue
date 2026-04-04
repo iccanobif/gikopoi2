@@ -91,7 +91,7 @@ const allCharacters = Object.values(characters);
 const username = ref(props.preferences.username);
 const password = ref("");
 const areaId = ref(props.preferences.areaId);
-const characterId = ref(localStorage.getItem("characterId") || "giko");
+const characterId = ref(props.preferences.characterId);
 
 const isValidUsername = computed(() => {
     // Allow usernames up to 20 characters, excluding the tripcode
