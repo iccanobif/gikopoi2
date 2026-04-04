@@ -17,7 +17,7 @@
                 </div>
                 <div class="popup-item" v-if="!siteLanguageRestricted">
                     <label for="preferences-language">{{ $t("ui.preferences_language") }}</label>
-                    <select id="preferences-language" :value="preferences.language" v-on:change="onSelectChange('language', $event, 'language-changed')">
+                    <select id="preferences-language" :value="preferences.language" v-on:change="onLanguageChange($event)">
                         <template v-for="lang in getLangEntries()" :key="lang.id">
                             <option :value="lang.id">{{ lang.name }}</option>
                             <option disabled v-if="lang.endOfTopEntries">---</option>
@@ -276,6 +276,7 @@ import i18next from 'i18next'
 import languages from '../../lang'
 import type { GikopoipoiPreferences } from '../../types'
 import { setAndPersist } from '../../preferences'
+import { siteAreas } from '../../../common/site-areas'
 
 interface LangEntry {
     id: string
@@ -287,7 +288,6 @@ type PreferenceField = keyof GikopoipoiPreferences
 
 const props = defineProps<{
     isOpen: boolean,
-    siteLanguageRestricted: boolean,
     preferences: GikopoipoiPreferences,
     notificationPermissionsGranted: boolean,
 }>()
@@ -404,6 +404,13 @@ function onSelectChange(field: PreferenceField, event: Event, actionEvent?: Acti
     emitOptionalAction(actionEvent)
 }
 
+function onLanguageChange(event: Event)
+{
+    const target = event.target as HTMLSelectElement
+    setAndPersist(props.preferences, 'language', target.value)
+    emit("language-changed")
+}
+
 const availableTTSVoices = ref<SpeechSynthesisVoice[]>([])
 
 function refreshTTSVoices()
@@ -422,6 +429,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.speechSynthesis?.removeEventListener('voiceschanged', refreshTTSVoices)
 })
+
+const siteLanguageRestricted = siteAreas.find(area => area.id === props.preferences.areaId)?.restrictLanguage || false
 </script>
 
 <style scoped>

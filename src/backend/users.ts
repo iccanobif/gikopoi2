@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
 import { rooms } from "./rooms.js";
 import { Direction } from "./types.js";
-import { settings } from "./settings.js";
+import { siteAreas } from "../common/site-areas.js";
 
 function generateId()
 {
@@ -42,7 +42,7 @@ export class Player
 
     constructor(options: { name?: string, characterId: string, areaId: string, roomId: string, ip: string })
     {
-        if (!settings.siteAreas.find(area => area.id == options.areaId))
+        if (!siteAreas.find(area => area.id == options.areaId))
             throw "invalid area id"
 
         if (!(options.roomId in rooms))

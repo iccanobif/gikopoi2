@@ -71,6 +71,7 @@ export interface PointerState {
 export type PopupCallback = (buttonIndex: number) => void
 
 export interface GikopoipoiPreferences {
+    areaId: string
     bubbleOpacity: number
     canvasHeight: string | null // string because CSSStyleDeclaration.style.height is typed as string.
     customMentionSoundPattern: string
@@ -92,7 +93,7 @@ export interface GikopoipoiPreferences {
     isNewlineOnShiftEnter: boolean
     isStreamAutoResumeEnabled: boolean
     isStreamInboundVuMeterEnabled: boolean
-    language: string
+    language: string // this is relevant only for areas that don't have a restricted language (for gikopoipoi.net, _for)
     rulaRoomListSortKey: RulaRoomListSortKey
     rulaRoomListSortDirection: 1 | -1
     showIgnoreIndicatorInLog: boolean

@@ -11,7 +11,7 @@
         <form id="login-form">
             <input v-if="passwordInputVisible" type="text" v-model="password" />
             <div id="area-selection">
-                <label v-for="(siteArea, index) in props.siteAreas" v-show="!siteArea.unlisted"
+                <label v-for="(siteArea, index) in siteAreas" v-show="!siteArea.unlisted"
                     :for="siteArea.id + '-selection'">
                     <input type="radio" :id="siteArea.id + '-selection'" :value="siteArea.id" v-model="areaId"
                         v-on:click="handleLanguageChange(siteArea)" :disabled="isLoggingIn" />
@@ -65,8 +65,9 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { characters } from "../character";
-import { SiteArea, SiteAreasInfo } from "../types";
+import { GikopoipoiPreferences, SiteArea, SiteAreasInfo } from "../types";
 import Changelog from "../components/change-log.vue";
+import { siteAreas } from "../../common/site-areas";
 
 const emit = defineEmits<{
     login: [
@@ -75,22 +76,22 @@ const emit = defineEmits<{
         areaId: string,
         characterId: string
     ];
-    setlanguage: [siteArea: SiteArea];
+    "area-changed": [siteArea: SiteArea];
 }>();
 
 const props = defineProps({
-    areaId: { type: String, required: true },
     passwordInputVisible: { type: Boolean, required: true },
     isLoggingIn: { type: Boolean, required: true },
     siteAreasInfo: { type: Object as () => SiteAreasInfo, required: true },
-    siteAreas: { type: Array as () => SiteArea[], required: true },
+    preferences: { type: Object as () => GikopoipoiPreferences, required: true },
 });
 
 const allCharacters = Object.values(characters);
 
+// TODO: use preferences instead of localStorage
 const username = ref(localStorage.getItem("username") || "");
 const password = ref("");
-const areaId = ref(props.areaId);
+const areaId = ref(props.preferences.areaId);
 const characterId = ref(localStorage.getItem("characterId") || "giko");
 
 const isValidUsername = computed(() => {
@@ -113,7 +114,7 @@ const handleLoginClick = () => {
 };
 
 const handleLanguageChange = (siteArea: SiteArea) => {
-    emit("setlanguage", siteArea);
+    emit("area-changed", siteArea);
 };
 </script>
 

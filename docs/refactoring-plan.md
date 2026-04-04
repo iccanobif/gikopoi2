@@ -73,10 +73,13 @@ After popup stabilization:
 2. `[not started]` Extract chat section (input, log, toolbar buttons) into a component.
 3. `[not started]` Extract stream section (`#video-streams`) into a component.
 
-### Phase X - Backend
+### Phase 5 - Backend
 1. Simplify annual events handling.
 2. Containerize all components of the system for easier deployment and development (it would be particularly great to be able to use local janus instances for dev)
 3. Kill janus! For example, by replacing it with a custom WebRTC relay (in node.js or Rust).
+
+### Phase X - Small things that can be done anytime
+1. Rename common_types.ts to common-types.ts for consistency with the rest of the codebase.
 
 ## Tests to perform on all kinds of devices after finishing this refactoring
 1. Log message sound

@@ -2,7 +2,7 @@ const isProduction = process.env.NODE_ENV == "production"
 
 import express, { Request } from "express"
 import { rooms, dynamicRooms } from "./rooms.js";
-import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom, ListedRoom, MoveDto } from "./types.js";
+import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom, MoveDto } from "./types.js";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getUserByPrivateId, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users.js";
 import got from "got";
 import log from "loglevel";
@@ -20,6 +20,7 @@ import { elaborateUserName } from "./utils.js";
 import cookieParser from "cookie-parser";
 import { HTTPS } from "express-sslify"
 import { Janus } from "janus-videoroom-client"
+import { siteAreas } from "../common/site-areas.js";
 
 const app = express()
 const server = http.createServer(app);
@@ -62,7 +63,7 @@ let bannedIPs: Set<string> = new Set<string>()
 
 function initializeRoomStates()
 {
-    roomStates = Object.fromEntries(settings.siteAreas.map((area, areaNumberId) =>
+    roomStates = Object.fromEntries(siteAreas.map((area, areaNumberId) =>
     {
         return [area.id, Object.fromEntries(Object.entries(rooms).map(([roomId, room], roomNumberId) =>
         {
@@ -1229,7 +1230,7 @@ io.on("connection", function (socket)
 function emitServerStats(areaId: string)
 {
     const allConnectedUsers = getAllUsers().filter(u => !u.isGhost)
-    const logLineAreas = settings.siteAreas.map(area =>
+    const logLineAreas = siteAreas.map(area =>
     {
         return area.id + " users: " + allConnectedUsers.filter(u => u.areaId == area.id).length + " " +
             area.id + " streams: " + Object.values(roomStates[area.id]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
@@ -1374,7 +1375,6 @@ const cachedJsBundle = (() => {
       + readFileSync("public/scripts/input-knobs.js").toString() + '\n'
       + readFileSync("public/scripts/polyfills.js").toString() + '\n'
       + 'window.EXPECTED_SERVER_VERSION = Number.parseInt("' + appVersion.toString() + '")' + '\n'
-      + 'window.siteAreas = JSON.parse("' + JSON.stringify(settings.siteAreas).replace(/\"/g, "\\\"") + '")' + '\n'
 })()
 
 app.get("/api/server_generated_bundle.js", async (req, res) =>
@@ -2404,7 +2404,7 @@ async function persistState()
         const state: PersistedState = {
             users: getAllUsers(),
             bannedIPs: Array.from(bannedIPs),
-            areas: settings.siteAreas.map(area =>
+            areas: siteAreas.map(area =>
             {
                 return {
                     id: area.id,
@@ -2514,7 +2514,7 @@ dynamicRooms.forEach((dynamicRoom: DynamicRoom) =>
         if (previousVariant != room.variant)
         {
             rooms[dynamicRoom.roomId] = room
-            settings.siteAreas.forEach(area =>
+            siteAreas.forEach(area =>
             {
                 for (const u of getConnectedUserList(dynamicRoom.roomId, area.id))
                     if (u.socketId)

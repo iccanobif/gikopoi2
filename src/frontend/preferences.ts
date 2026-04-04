@@ -1,8 +1,10 @@
+import { siteAreas } from "../common/site-areas"
 import type { GikopoipoiPreferences, RulaRoomListSortKey, StreamMode, StreamTarget } from "./types"
 
 export function loadPreferencesFromLocalStorage(): GikopoipoiPreferences
 {
     return {
+        areaId: getInitialAreaId(),
         bubbleOpacity: getNumberPreference("bubbleOpacity", 100),
         canvasHeight: localStorage.getItem("canvasHeight"),
         customMentionSoundPattern: getStringPreference("customMentionSoundPattern", ""),
@@ -113,4 +115,30 @@ function getUnionTypePreference<T>(
     }
 
     return allowedValues.includes(value as T) ? (value as T) : defaultValue
+}
+
+function getInitialAreaId(): string
+{
+    let areaId: string | null = null
+    // First try to get the areaId from the URL query parameters.
+    try
+    {
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        areaId = urlSearchParams.get("areaid")
+    }
+    catch
+    {}
+
+    // If there's no areaId in the URL, try to get the last used areaId from localStorage.
+    areaId = areaId || localStorage.getItem("areaId")
+    const foundArea = siteAreas.find(area => area.id == areaId)
+    if (foundArea)
+        return foundArea.id
+    
+    // If there's no areaId in the URL or localStorage, try to find the best match based on the browser's language. If there's no match, return the first area.
+    const siteArea =
+        siteAreas.find(area => area.language != "any" && (new RegExp("^" + area.language + "\\b")).test(navigator.language))
+        || siteAreas.find(area => area.language == "any")
+    if (siteArea) return siteArea.id
+    return siteAreas[0].id
 }

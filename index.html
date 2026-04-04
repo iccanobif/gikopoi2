@@ -38,11 +38,10 @@
                 v-if="appState == 'login'"
                 :password-input-visible="passwordInputVisible"
                 :is-logging-in="isLoggingIn"
-                :area-id="areaId"
-                :site-areas="siteAreas"
                 :site-areas-info="siteAreasInfo"
+                :preferences="preferences"
                 @login="login"
-                @setlanguage="setLanguage"
+                @area-changed="areaChanged"
             >
             </login-page>
             <div id="stage" v-if="appState == 'stage'">
@@ -406,7 +405,7 @@
 
                 <rula-popup
                     :is-open="isRulaPopupOpen"
-                    :area-id="areaId"
+                    :area-id="preferences.areaId"
                     :my-private-user-id="myPrivateUserID"
                     :current-room-id="currentRoom ? currentRoom.id : null"
                     :preferences="preferences"
@@ -439,12 +438,11 @@
 
                 <preferences-popup
                     :is-open="isPreferencesPopupOpen"
-                    :site-language-restricted="getSiteArea().restrictLanguage || false"
                     :preferences="preferences"
                     :notification-permissions-granted="notificationPermissionsGranted"
                     @close="closePreferencesPopup"
                     @ui-theme-changed="handleUiTheme"
-                    @language-changed="handleLanguageChange"
+                    @language-changed="languagePreferenceChanged"
                     @enable-tts-changed="handleEnableTextToSpeech"
                     @tts-voice-changed="changeVoice"
                     @clear-log="clearLog"

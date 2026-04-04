@@ -107,6 +107,7 @@ import StreamPopup from './components/popups/stream-popup.vue'
 import PreferencesPopup from './components/popups/preferences-popup.vue'
 import DeviceSelectionPopup from './components/popups/device-selection-popup.vue'
 import RoomObjectEditor from './components/room-object-editor.vue';
+import { siteAreas } from '../common/site-areas';
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -174,41 +175,9 @@ function getSpawnRoomId()
     }
 }
 
-const siteAreas = window.siteAreas
-const siteAreasInfo = window.siteAreasInfo
-
-function getSiteArea(areaId: string): SiteArea
-{
-    return siteAreas.find(area => area.id == areaId) || siteAreas[0]
-}
-
-function getInitialAreaId(): string
-{
-    let areaId: string | null = null
-    try
-    {
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        areaId = urlSearchParams.get("areaid")
-    }
-    catch
-    {}
-    areaId = areaId || localStorage.getItem("areaId")
-    const foundArea = siteAreas.find(area => area.id == areaId)
-    if (foundArea)
-        return foundArea.id
-    
-    const siteArea =
-        siteAreas.find(area => area.language != "any" && (new RegExp("^" + area.language + "\\b")).test(navigator.language))
-        || siteAreas.find(area => area.language == "any")
-    if (siteArea) return siteArea.id
-    return siteAreas[0].id
-}
-const initialAreaId = getInitialAreaId()
-const initialArea = getSiteArea(initialAreaId)
-
-// TODO: remove all references to the `initialPreferences` variable except for the i18 initialization
-//       and the initialization of the `preferences` attribute in the main component's data.
 const initialPreferences = loadPreferencesFromLocalStorage()
+
+const siteAreasInfo = window.siteAreasInfo
 
 function createPreferenceProxy<K extends keyof GikopoipoiPreferences>(key: K)
 {
@@ -232,6 +201,7 @@ function getAppState()
         return "login"
 }
 
+const initialArea = siteAreas.find(a => a.id == initialPreferences.areaId) || siteAreas[0]
 i18next.init(
 {
     ns: ['common'],
@@ -245,6 +215,7 @@ i18next.init(
     contextSeparator: '.',
 })
 
+// To be called also when the language changes, to update the page title and description.
 function setPageMetadata()
 {
     document.title = i18next.t("ui.title")
@@ -253,11 +224,6 @@ function setPageMetadata()
         descriptionElement.setAttribute("content", i18next.t("ui.subtitle"))
 }
 setPageMetadata()
-
-function setAppLanguage(code: string)
-{
-    i18next.changeLanguage(code, setPageMetadata)
-}
 
 const vueApp = createApp(defineComponent({
     components: {
@@ -276,7 +242,6 @@ const vueApp = createApp(defineComponent({
     },
     data() {
         return {
-            siteAreas: siteAreas,
             siteAreasInfo: siteAreasInfo,
             
             selectedCharacter: null as Character | null,
@@ -292,7 +257,6 @@ const vueApp = createApp(defineComponent({
             isLoadingRoom: false,
             requestedRoomChange: false,
             isLoggingIn: false,
-            areaId: initialAreaId,
             preferences: initialPreferences,
             uiBackgroundColor: null as number[] | null,
             isUiBackgroundDark: false,
@@ -398,7 +362,6 @@ const vueApp = createApp(defineComponent({
     },
     computed: {
         uiTheme: createPreferenceProxy("uiTheme"),
-        language: createPreferenceProxy("language"),
         enableTextToSpeech: createPreferenceProxy("enableTextToSpeech"),
         ttsVoiceURI: createPreferenceProxy("ttsVoiceURI"),
         isNewlineOnShiftEnter: createPreferenceProxy("isNewlineOnShiftEnter"),
@@ -521,7 +484,6 @@ const vueApp = createApp(defineComponent({
                     speechSynthesis.speak(new SpeechSynthesisUtterance(""));
 
                 this.isLoggingIn = true;
-                this.areaId = areaId;
 
                 // This is to make sure that the browser doesn't attempt to show the
                 // "autocomplete" drop down list when pressing the arrow keys on the keyboard,
@@ -530,7 +492,7 @@ const vueApp = createApp(defineComponent({
 
                 localStorage.setItem("username", username)
                 localStorage.setItem("characterId", characterId)
-                localStorage.setItem("areaId", areaId)
+                setAndPersist(this.preferences, "areaId", areaId)
 
                 window.addEventListener("resize", () =>
                 {
@@ -558,7 +520,7 @@ const vueApp = createApp(defineComponent({
                 if (this.preferences.canvasHeight)
                     document.getElementById("canvas-container")!.style.height = this.preferences.canvasHeight;
 
-                await this.connectToServer(username, areaId, characterId);
+                await this.connectToServer(username, characterId);
 
                 const roomCanvas = document.getElementById("room-canvas") as HTMLCanvasElement
                 this.canvasContext = roomCanvas.getContext("2d");
@@ -650,15 +612,22 @@ const vueApp = createApp(defineComponent({
             await (loadCharacters(this.isCrispModeEnabled));
             this.isRedrawRequired = true;
         },
-        getSiteArea()
+        areaChanged(siteArea: SiteArea)
         {
-            return getSiteArea(this.areaId)
+            // fallback to "ja" only to make typescript happy (in practice, if restrictLanguage is true, language should always be defined)
+            const language = siteArea.restrictLanguage ? siteArea.language : this.preferences.language;
+            this.setLanguage(language)
         },
-        setLanguage(siteArea?: SiteArea)
+        languagePreferenceChanged()
         {
-            if (!siteArea)
-                siteArea = this.getSiteArea()
-            setAppLanguage((siteArea.restrictLanguage && siteArea.language) || this.language)
+            // This method is called only from the preferences popup, and in that popup the language
+            // selector is available only if the current area doesn't have a restricted language, so we can
+            // be sure that preferences.language is the right source of truth for the language to set.
+            this.setLanguage(this.preferences.language)
+        },
+        setLanguage(language: string)
+        {
+            i18next.changeLanguage(language, setPageMetadata)
         },
         openDialog(text: string, title: string, buttons: string[], cancelButtonIndex: number, callback: PopupCallback | null = null)
         {
@@ -834,12 +803,12 @@ const vueApp = createApp(defineComponent({
             this.isLoadingRoom = false;
             this.requestedRoomChange = false;
         },
-        async connectToServer(username: string, areaId: string, characterId: string)
+        async connectToServer(username: string, characterId: string)
         {
             const loginResponse = await postJson("/api/login", {
                 userName: username,
                 characterId,
-                areaId,
+                areaId: this.preferences.areaId,
                 roomId: getSpawnRoomId(),
             });
 
@@ -877,7 +846,7 @@ const vueApp = createApp(defineComponent({
             // Load the room state before connecting the websocket, so that all
             // code handling websocket events (and paint() events) can assume that
             // currentRoom, streams etc... are all defined.
-            const response = await fetch("/api/areas/" + this.areaId + "/rooms/" + getSpawnRoomId(),
+            const response = await fetch("/api/areas/" + this.preferences.areaId + "/rooms/" + getSpawnRoomId(),
                                          { headers: { "Authorization": "Bearer " + this.myPrivateUserID } })
             await this.updateRoomState(await response.json())
 
@@ -3425,11 +3394,6 @@ const vueApp = createApp(defineComponent({
         toggleCoinSound()
         {
             setAndPersist(this.preferences, "isCoinSoundEnabled", this.isCoinSoundEnabled)
-        },
-        handleLanguageChange()
-        {
-            setAndPersist(this.preferences, "language", this.language)
-            this.setLanguage();
         },
         handleBubbleOpacity()
         {
