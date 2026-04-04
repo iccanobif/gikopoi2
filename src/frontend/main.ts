@@ -377,7 +377,6 @@ const vueApp = createApp(defineComponent({
         isCoinSoundEnabled: createPreferenceProxy("isCoinSoundEnabled"),
         isNameMentionSoundEnabled: createPreferenceProxy("isNameMentionSoundEnabled"),
         customMentionSoundPattern: createPreferenceProxy("customMentionSoundPattern"),
-        showUsernameBackground: createPreferenceProxy("showUsernameBackground"),
         bubbleOpacity: createPreferenceProxy("bubbleOpacity"),
         isCrispModeEnabled: createPreferenceProxy("isCrispModeEnabled"),
         isLowQualityEnabled: createPreferenceProxy("isLowQualityEnabled"),
@@ -1863,7 +1862,7 @@ const vueApp = createApp(defineComponent({
             for (const userObject of userObjects)
             {
                 if (userObject.nameImage == null || this.isUsernameRedrawRequired)
-                    userObject.nameImage = this.getNameImage(userObject, this.showUsernameBackground);
+                    userObject.nameImage = this.getNameImage(userObject, this.preferences.showUsernameBackground);
 
                 const image = userObject.nameImage.getImage(this.getCanvasScale())
 
@@ -2325,11 +2324,8 @@ const vueApp = createApp(defineComponent({
         {
             setAndPersist(this.preferences, "isInfoboxVisible", !this.preferences.isInfoboxVisible)
         },
-        toggleUsernameBackground() {
-            localStorage.setItem(
-                "showUsernameBackground",
-                (this.showUsernameBackground = !this.showUsernameBackground).toString()
-            );
+        toggleUsernameBackground()
+        {
             this.isUsernameRedrawRequired = true;
             this.isRedrawRequired = true;
         },
