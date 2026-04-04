@@ -228,6 +228,7 @@
         school_rouka: { t: "学校 廊下", sort_key: "がっこう ろうか" },
         school_international: { t: "学校 国際科教室", sort_key: "がっこう こくさいかきょうしつ" },
         school_pc: { t: "学校 パソコンルーム", sort_key: "がっこう パソコンルーム" },
+        karaoke_box: { t: "カラオケボックス", sort_key: "からおけぼっくす" },
         seashore: { t: "海岸", sort_key: "かいがん" },
         radio: { t: "ラヂヲ局", sort_key: "ラヂヲきょく" },
         radio_room1: { t: "ラヂヲ局 第1スタジオ", sort_key: "ラヂヲきょく だい1スタジオ" },

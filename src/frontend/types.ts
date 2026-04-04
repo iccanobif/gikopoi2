@@ -15,6 +15,7 @@ export interface ImageLayer {
 
 export interface ClientRoomObject extends RoomObject
 {
+    isHidden?: boolean
     physicalPositionX?: number
     physicalPositionY?: number
     image?: RenderCache

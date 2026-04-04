@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="431px" height="139px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <!-- stool -->
+    <g>
+        <path d="M200.076,105.581C200.407,107.191 201.806,108.756 204.271,109.989C209.967,112.837 219.215,112.837 224.911,109.989C227.759,108.565 229.183,106.697 229.183,104.829L226.21,132.718C226.21,134.205 225.076,135.693 222.809,136.827C218.273,139.094 210.909,139.094 206.373,136.827C204.105,135.693 202.971,134.205 202.971,132.718C202.971,132.718 199.999,104.858 199.999,104.858" style="fill:#341b12;stroke:#22110b;stroke-width:0.75px;"/>
+        <path d="M204.271,99.669C209.967,96.821 219.215,96.821 224.911,99.669C230.607,102.517 230.607,107.141 224.911,109.989C219.215,112.837 209.967,112.837 204.271,109.989C198.575,107.141 198.575,102.517 204.271,99.669Z" style="fill:#2c160f;stroke:#22110b;stroke-width:0.75px;"/>
+    </g>
+</svg>

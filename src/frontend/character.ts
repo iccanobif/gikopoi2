@@ -256,6 +256,8 @@ const characterObjects: CharacterObject[] = [
     { name: "chindonnya_shobon", portrait: { left: -0.5, top: -0.2 }, isHidden: true }, // all characters are visibile on new year's
     { name: "giko_megane", portrait: { left: -0.5, top: 0.24 } },
     { name: "shii_megane", portrait: { left: -0.5, top: 0.24 } },
+    { name: "giko_headphones", portrait: { left: -0.5, top: 0.24 }, isHidden: true },
+    { name: "shii_headphones", portrait: { left: -0.5, top: 0.24 }, isHidden: true },
 ]
 
 export const characters: { [characterId: string]: Character } =

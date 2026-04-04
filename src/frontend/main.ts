@@ -106,6 +106,7 @@ import UserListPopup from './components/popups/user-list-popup.vue'
 import StreamPopup from './components/popups/stream-popup.vue'
 import PreferencesPopup from './components/popups/preferences-popup.vue'
 import DeviceSelectionPopup from './components/popups/device-selection-popup.vue'
+import RoomObjectEditor from './components/room-object-editor.vue';
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -271,6 +272,7 @@ const vueApp = createApp(defineComponent({
         StreamPopup,
         PreferencesPopup,
         DeviceSelectionPopup,
+        RoomObjectEditor,
     },
     data() {
         return {
@@ -282,6 +284,7 @@ const vueApp = createApp(defineComponent({
             users: {} as Users,
             roomLoadId: 0,
             currentRoom: null as ClientRoom | null,
+            isRoomObjectEditorVisible: false,
             myUserID: null as string | null,
             myPrivateUserID: null as string | null,
             isWaitingForServerResponseOnMovement: false,
@@ -460,6 +463,11 @@ const vueApp = createApp(defineComponent({
             {
                 this.enableGridNumbers = !this.enableGridNumbers
                 this.isRedrawRequired = true
+            }
+            if (ev.shiftKey && ev.ctrlKey && ev.code == "Digit7")
+            {
+                ev.preventDefault()
+                this.isRoomObjectEditorVisible = !this.isRoomObjectEditorVisible
             }
             if (ev.code == "Escape")
             {
@@ -1728,7 +1736,9 @@ const vueApp = createApp(defineComponent({
             {
                 const objectsByPosition: ObjectsByPosition = {};
 
-                this.currentRoom!.objects.forEach(o => addObject({
+                this.currentRoom!.objects
+                    .filter(o => !o.isHidden)
+                    .forEach(o => addObject({
                     o,
                     type: "room-object",
                     x: o.x,
@@ -1756,6 +1766,7 @@ const vueApp = createApp(defineComponent({
             {
                 return ([] as CanvasObject[]).concat(
                     this.currentRoom!.objects
+                        .filter(o => !o.isHidden)
                         .map(o => ({
                             o,
                             type: "room-object",
@@ -3824,6 +3835,89 @@ const vueApp = createApp(defineComponent({
             }
             const character = user.character
             return "characters/" + character.characterName + "/front-standing." + character.format
+        },
+        // Used only by the hidden "Room object editor" screen.
+        // TODO: when refactoring the canvas, move this stuff in the canvas component.
+        adjustRoomObject(objectIndex: number, property: string, delta: number)
+        {
+            if (!this.currentRoom) return
+            const obj = this.currentRoom.objects[objectIndex]
+            if (!obj) return
+            if (property === "x")
+            {
+                obj.x += delta
+                this.updateCanvasObjects()
+            }
+            else if (property === "y")
+            {
+                obj.y += delta
+                this.updateCanvasObjects()
+            }
+            else if (property === "offset.x")
+            {
+                if (!obj.offset) obj.offset = { x: 0, y: 0 }
+                obj.offset.x += delta
+                const scale = obj.scale ?? 1
+                obj.physicalPositionX = obj.offset.x * scale
+            }
+            else if (property === "offset.y")
+            {
+                if (!obj.offset) obj.offset = { x: 0, y: 0 }
+                obj.offset.y += delta
+                const scale = obj.scale ?? 1
+                obj.physicalPositionY = obj.offset.y * scale
+            }
+            else if (property === "scale")
+            {
+                obj.scale = Math.round(((obj.scale ?? 1) + delta) * 100) / 100
+                this.loadRoomObjects()
+                return // loadRoomObjects sets isRedrawRequired itself
+            }
+            this.isRedrawRequired = true
+        },
+        setRoomObject(objectIndex: number, property: string, value: number)
+        {
+            if (!this.currentRoom) return
+            const obj = this.currentRoom.objects[objectIndex]
+            if (!obj) return
+            if (property === "x")
+            {
+                obj.x = value
+                this.updateCanvasObjects()
+            }
+            else if (property === "y")
+            {
+                obj.y = value
+                this.updateCanvasObjects()
+            }
+            else if (property === "offset.x")
+            {
+                if (!obj.offset) obj.offset = { x: 0, y: 0 }
+                obj.offset.x = value
+                obj.physicalPositionX = value * (obj.scale ?? 1)
+            }
+            else if (property === "offset.y")
+            {
+                if (!obj.offset) obj.offset = { x: 0, y: 0 }
+                obj.offset.y = value
+                obj.physicalPositionY = value * (obj.scale ?? 1)
+            }
+            else if (property === "scale")
+            {
+                obj.scale = Math.round(value * 100) / 100
+                this.loadRoomObjects()
+                return
+            }
+            this.isRedrawRequired = true
+        },
+        toggleRoomObjectVisibility(objectIndex: number)
+        {
+            if (!this.currentRoom) return
+            const obj = this.currentRoom.objects[objectIndex]
+            if (!obj) return
+            obj.isHidden = !obj.isHidden
+            this.updateCanvasObjects()
+            this.isRedrawRequired = true
         },
     },
 }))

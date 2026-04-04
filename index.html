@@ -97,6 +97,15 @@
                                 tabindex="-1"></button>
                         </div>
                     </div>
+
+                    <room-object-editor
+                        v-if="isRoomObjectEditorVisible"
+                        :current-room="currentRoom"
+                        @adjust-object="adjustRoomObject"
+                        @set-object="setRoomObject"
+                        @toggle-object-visibility="toggleRoomObjectVisibility"
+                    ></room-object-editor>
+
                     <div id="toolbar" v-if="!connectionRefused">
                         <div id="toolbar-text-input">
                             {{ $t("ui.label_input") }} <textarea id="input-textbox"
@@ -393,6 +402,7 @@
                             ></janken-slot>
                     </template>
                 </div>
+
 
                 <rula-popup
                     :is-open="isRulaPopupOpen"

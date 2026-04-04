@@ -224,6 +224,7 @@
         school_rouka: "École: Corridor",
         school_international: "École: Études internationales", // International classroom
         school_pc: "École: Salle d'informatique",
+        // karaoke_box: "Karaoke Box",
         seashore: "Côte",
         radio: "Studio de radio", // Radio station
         radio_room1: "Studio de radio 1", // Radio station studio 1
