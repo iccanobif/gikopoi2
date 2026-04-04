@@ -2,7 +2,7 @@
 import type { PropType } from 'vue'
 import type { Socket } from 'socket.io-client'
 
-import type { ChessboardStateDto,  } from '../types'
+import type { ChessboardStateDto } from '../types'
 
 import { defineComponent, inject, Ref } from 'vue'
 
@@ -20,9 +20,8 @@ export default defineComponent({
     },
     data()
     {
-        const chessboard: any | null = null
         return {
-            chessboard,
+            chessboard: null as ChessboardInstance | null,
             visible: false,
         }
     },
@@ -57,12 +56,13 @@ export default defineComponent({
         {
             if (!this.chessboardState) return
             const chessboardElement = document.getElementById("chessboard")
+            if (!chessboardElement) return
 
             const position = this.chessboardState
                 ? (this.chessboardState.fenString || "start")
                 : "start"
 
-            this.chessboard = (window as any).Chessboard(chessboardElement, {
+            this.chessboard = window.Chessboard(chessboardElement, {
                 pieceTheme: 'chess/img/chesspieces/wikipedia/{piece}.png',
                 position,
                 orientation: this.chessboardState.blackUserID == this.myUserId ? "black" : "white",
@@ -86,7 +86,7 @@ export default defineComponent({
                     // if (colorOfMovedPiece != this.chessboardState.turn)
                     //     return false
                 },
-                onDrop: (source: any, target: any) =>
+                onDrop: (source: string, target: string) =>
                 {
                     if (!this.chessboardState) return
                     if (this.chessboardState.blackUserID == this.myUserId
