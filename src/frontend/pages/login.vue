@@ -88,8 +88,7 @@ const props = defineProps({
 
 const allCharacters = Object.values(characters);
 
-// TODO: use preferences instead of localStorage
-const username = ref(localStorage.getItem("username") || "");
+const username = ref(props.preferences.username);
 const password = ref("");
 const areaId = ref(props.preferences.areaId);
 const characterId = ref(localStorage.getItem("characterId") || "giko");

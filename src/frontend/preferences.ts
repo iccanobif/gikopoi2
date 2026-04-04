@@ -55,6 +55,7 @@ export function loadPreferencesFromLocalStorage(): GikopoipoiPreferences
         timestampsInCopiedLog: getBooleanPreference("timestampsInCopiedLog", true),
         ttsVoiceURI: getStringPreference("ttsVoiceURI", "automatic"),
         uiTheme: getStringPreference("uiTheme", "gikopoi"),
+        username: getStringPreference("username", ""),
         underlinedUsernames: getBooleanPreference("underlinedUsernames", false),
         voiceVolume: getNumberPreference("voiceVolume", 0),
         isNicoNicoMode: getBooleanPreference("isNicoNicoMode", false),

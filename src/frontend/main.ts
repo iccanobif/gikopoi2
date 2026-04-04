@@ -490,7 +490,7 @@ const vueApp = createApp(defineComponent({
                 // even when the textbox isn't visibile anymore (dunno why this happens, a firefox bug maybe).
                 document.getElementById("username-textbox")!.blur()
 
-                localStorage.setItem("username", username)
+                setAndPersist(this.preferences, "username", username)
                 localStorage.setItem("characterId", characterId)
                 setAndPersist(this.preferences, "areaId", areaId)
 

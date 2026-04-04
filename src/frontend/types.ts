@@ -110,6 +110,7 @@ export interface GikopoipoiPreferences {
     timestampsInCopiedLog: boolean
     ttsVoiceURI: string
     uiTheme: string
+    username: string
     underlinedUsernames: boolean
     voiceVolume: number,
     streamTarget: StreamTarget
