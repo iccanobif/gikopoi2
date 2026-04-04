@@ -138,6 +138,7 @@
         preferences_title_streams: "Streams",
         preferences_streams_auto_resume: "Auto resume",
         preferences_streams_inbound_vu_meter_enabled: "Display VU meter for received streams",
+        preferences_streams_auto_subtitles_enabled: "Automatic subtitles (experimental, Chromium browsers)",
         preferences_title_chat: "Chat",
         preferences_clear_log: "Clear chat log",
 
@@ -182,6 +183,7 @@
         error_obtaining_media: "Unable to obtain media. Please check the browser permissions.",
         error_obtaining_video: "Unable to obtain video. Please check the browser permissions.",
         error_obtaining_audio: "Unable to obtain audio. Please check the browser permissions.",
+        auto_subtitles_not_supported: "Automatic subtitles for stream audio are only available in supported Chromium-based browsers.",
         no_webrtc: "Sorry, your browser doesn't support WebRTC.",
         error_didnt_select_device: "Please select a device.",
         

@@ -247,6 +247,11 @@
                             <div class="nico-nico-messages-container"
                                  v-if="streamSlot.isNicoNicoMode">
                             </div>
+                            <div
+                                v-if="streamSlot.withSound && getStreamSubtitleText(index)"
+                                class="stream-subtitles-overlay">
+                                {{ getStreamSubtitleText(index) }}
+                            </div>
                         </div>
                         <div :id="'vu-meter-container-' + index"
                              v-show="streamSlot.isActive
@@ -307,6 +312,11 @@
                                         :default="0"
                                         @value-changed="gain => onGainChanged(index, gain)"></numeric-value-control>
                                 </div>
+                            </div>
+                            <div
+                                v-if="!streamSlot.withVideo && getStreamSubtitleText(index)"
+                                class="audio-stream-subtitles">
+                                {{ getStreamSubtitleText(index) }}
                             </div>
                         </div>
                         <div v-if="streamSlotIdInWhichIWantToStream == index">
@@ -785,6 +795,11 @@
                                 <input type="checkbox" id="preferences-streams-inbound-vu-meter-enabled"
                                     v-model="isStreamInboundVuMeterEnabled" v-on:change="storeSet('isStreamInboundVuMeterEnabled')"><label
                                     for="preferences-streams-inbound-vu-meter-enabled">{{ $t("ui.preferences_streams_inbound_vu_meter_enabled") }}</label>
+                            </div>
+                            <div class='popup-item'>
+                                <input type="checkbox" id="preferences-streams-auto-subtitles-enabled"
+                                    v-model="isStreamAutoSubtitlesEnabled" v-on:change="handleStreamAutoSubtitlesEnabled"><label
+                                    for="preferences-streams-auto-subtitles-enabled">{{ $t("ui.preferences_streams_auto_subtitles_enabled") }}</label>
                             </div>
                         </div>
                         <div class='popup-section'>

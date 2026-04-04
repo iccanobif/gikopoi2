@@ -138,6 +138,7 @@
         preferences_title_streams: "配信",
         preferences_streams_auto_resume: "配信再開後に自動受信",
         preferences_streams_inbound_vu_meter_enabled: "受信側音量ゲージを表示",
+        preferences_streams_auto_subtitles_enabled: "自動字幕（実験中・Chromium系のみ）",
         preferences_title_chat: "チャット",
         preferences_clear_log: "チャットログをクリア",
 
@@ -182,6 +183,7 @@
         error_obtaining_media: "メディアを取得できませんでした。ブラウザの許可を確認してください。",
         error_obtaining_video: "動画を取得できませんでした。ブラウザの許可を確認してください。",
         error_obtaining_audio: "音声を取得できませんでした。ブラウザの許可を確認してください。",
+        auto_subtitles_not_supported: "配信音声の自動字幕は、対応しているChromium系ブラウザでのみ使えます。",
         no_webrtc: "このブラウザはWebRTCをサポートしていません。",
         error_didnt_select_device: "デバイスを選択してください。",
 
