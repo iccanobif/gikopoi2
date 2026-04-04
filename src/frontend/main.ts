@@ -53,8 +53,8 @@ import $ from "jquery";
 import "jquery-ui/themes/base/all.css";
 
 // needed to make $ and jQuery available globally for the jquery-ui plugins.
-(window as any).$ = $;
-(window as any).jQuery = $;
+window.$ = $;
+window.jQuery = $;
 
 await import("jquery-ui/dist/jquery-ui.js");
 await import("jquery-ui-touch-punch");
@@ -233,6 +233,59 @@ setPageMetadata()
 function setAppLanguage(code: string)
 {
     i18next.changeLanguage(code, setPageMetadata)
+}
+
+type PersistedSettingValues = {
+    uiTheme: string
+    isCoinSoundEnabled: boolean
+    language: string
+    bubbleOpacity: number
+    showNotifications: boolean
+    isLowQualityEnabled: boolean
+    isCrispModeEnabled: boolean
+    isIdleAnimationDisabled: boolean
+    isNameMentionSoundEnabled: boolean
+    customMentionSoundPattern: string
+    enableTextToSpeech: boolean
+    ttsVoiceURI: string
+    voiceVolume: number
+}
+
+type VerticalSliderConfig = {
+    selector: string
+    min: number
+    max: number
+    step: number
+    value: number
+    onSlide: (value: number) => void
+}
+
+function initializeVerticalSlider({ selector, min, max, step, value, onSlide }: VerticalSliderConfig)
+{
+    $(selector).slider({
+        orientation: "vertical",
+        range: "min",
+        min,
+        max,
+        step,
+        value,
+        slide: (_event, ui) => {
+            onSlide(ui.value)
+        }
+    })
+}
+
+function makeResizable(target: string | HTMLElement, options?: JQueryUiResizableOptions)
+{
+    $(target).resizable(options)
+}
+
+function makeVideoContainerResizable(target: string | HTMLElement)
+{
+    makeResizable(target, {
+        aspectRatio: true,
+        resize: adjustNiconicoMessagesFontSize
+    })
 }
 
 const vueApp = createApp(defineComponent({
@@ -580,33 +633,28 @@ const vueApp = createApp(defineComponent({
                     }
                 }
 
-                // @ts-ignore
-                $( "#sound-effect-volume" ).slider({
-                    orientation: "vertical",
-                    range: "min",
+                initializeVerticalSlider({
+                    selector: "#sound-effect-volume",
                     min: 0,
                     max: 1,
                     step: 0.01,
                     value: this.soundEffectVolume,
-                    slide: ( event: any, ui: any ) => {
-                        this.changeSoundEffectVolume(ui.value);
+                    onSlide: (value) => {
+                        this.changeSoundEffectVolume(value);
                     }
                 });
-                // @ts-ignore
-                $( "#voice-volume" ).slider({
-                    orientation: "vertical",
-                    range: "min",
+                initializeVerticalSlider({
+                    selector: "#voice-volume",
                     min: 0,
                     max: 100,
                     step: 1,
                     value: this.voiceVolume,
-                    slide: ( event: any, ui: any ) => {
-                        this.changeVoiceVolume(ui.value);
+                    onSlide: (value) => {
+                        this.changeVoiceVolume(value);
                     }
                 });
 
-                // @ts-ignore
-                $( "#main-section" ).resizable({
+                makeResizable("#main-section", {
                     handles: "e"
                 })
 
@@ -910,11 +958,12 @@ const vueApp = createApp(defineComponent({
         },
         initializeSocket()
         {
-            // @ts-ignore
-            this.socket = io({
+            const socketOptions = {
                 extraHeaders: {"private-user-id": this.myPrivateUserID},
                 closeOnBeforeunload: false,
-            });
+            } as Parameters<typeof io>[0]
+
+            this.socket = io(socketOptions);
 
             const immanentizeConnection = async () =>
             {
@@ -2751,7 +2800,6 @@ const vueApp = createApp(defineComponent({
             rtcPeer.conn.addEventListener("iceconnectionstatechange", (ev) =>
             {
                 const state = rtcPeer.conn!.iceConnectionState;
-                console.log("RTC Connection state", state)
                 logToServer(new Date() + " " + this.myUserID + " RTC Connection state " + state)
 
                 if (state == "connected")
@@ -2855,11 +2903,7 @@ const vueApp = createApp(defineComponent({
                     else
                         this.takeStream(slotId);
 
-                // @ts-ignore
-                $( "#video-container-" + slotId ).resizable({
-                    aspectRatio: true,
-                    resize: adjustNiconicoMessagesFontSize
-                })
+                makeVideoContainerResizable("#video-container-" + slotId)
 
                 if (this.slotVolume[slotId] === undefined)
                     this.slotVolume[slotId] = 1
@@ -3234,11 +3278,7 @@ const vueApp = createApp(defineComponent({
                         const stream = event.streams[0]
                         videoElement.srcObject = stream;
                         
-                        // @ts-ignore
-                        $( "#video-container-" + streamSlotId ).resizable({
-                            aspectRatio: true,
-                            resize: adjustNiconicoMessagesFontSize
-                        })
+                        makeVideoContainerResizable("#video-container-" + streamSlotId)
 
                         if (this.inboundAudioProcessors[streamSlotId])
                         {
@@ -3521,8 +3561,7 @@ const vueApp = createApp(defineComponent({
             this.checkBackgroundColor();
             for (const knobElement of (document.getElementsByClassName("input-knob") as HTMLCollectionOf<HTMLInputElement>))
             {
-                // @ts-ignore what's refresh from? can't find it in docs
-                knobElement.refresh()
+                knobElement.refresh?.()
             }
             this.isRedrawRequired = true
         },
@@ -3535,11 +3574,11 @@ const vueApp = createApp(defineComponent({
             this.storeSet('language');
             this.setLanguage();
         },
-        storeSet(itemName: string, value?: any)
+        storeSet<K extends keyof PersistedSettingValues>(itemName: K, value?: PersistedSettingValues[K])
         {
-            // @ts-ignore
-            if (value != undefined) this[itemName] = value;
-            localStorage.setItem(itemName, this[itemName]);
+            const persistedSettings = this as unknown as PersistedSettingValues
+            if (value !== undefined) persistedSettings[itemName] = value;
+            localStorage.setItem(itemName, String(persistedSettings[itemName]));
         },
         handleBubbleOpacity()
         {
@@ -3721,12 +3760,10 @@ const vueApp = createApp(defineComponent({
 
             if (videoContainer.classList.contains("unpinned-video"))
             {
-                // @ts-ignore
                 $(videoContainer).draggable()
             }
             else
             {
-                // @ts-ignore
                 $(videoContainer).draggable("destroy")
                 // Reset 'top' and 'left' styles to snap the container back to its original position
                 videoContainer.setAttribute("style", "")

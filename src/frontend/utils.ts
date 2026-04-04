@@ -128,9 +128,10 @@ export function calculateRealCoordinates(room: ClientRoom, x: number, y: number)
     return { x: realX, y: realY }
 }
 
-export const sleep = (milliseconds: number) => new Promise(resolve => setTimeout(resolve, milliseconds));
+export const sleep = (milliseconds: number): Promise<void> =>
+    new Promise(resolve => setTimeout(resolve, milliseconds));
 
-export function postJson(url: string, data: any): Promise<Response>
+export function postJson<T>(url: string, data: T): Promise<Response>
 {
     return fetch(url, {
         method: "POST",
@@ -166,36 +167,40 @@ export function safeDecodeURI(str: string): string
     }
 }
 
-export const debounceWithDelayedExecution = (func: any, wait: number): ((...args: any) => void) => {
-    let timeout: number;
-  
-    return function executedFunction(...args) {
-      const later = () => {
-        window.clearTimeout(timeout);
-        func(...args);
-      };
-  
-      window.clearTimeout(timeout);
-      timeout = window.setTimeout(later, wait);
-    };
-  };
+export const debounceWithDelayedExecution = <TArgs extends unknown[]>(
+    func: (...args: TArgs) => void,
+    wait: number
+): ((...args: TArgs) => void) => {
+    let timeout: number | undefined;
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export function debounceWithImmediateExecution(func: Function, wait: number) {
+    return function executedFunction(...args: TArgs) {
+        if (timeout !== undefined)
+            window.clearTimeout(timeout);
+
+        timeout = window.setTimeout(() => {
+            timeout = undefined;
+            func(...args);
+        }, wait);
+    };
+};
+
+export function debounceWithImmediateExecution<TArgs extends unknown[]>(
+    func: (...args: TArgs) => void,
+    wait: number
+) {
     let lastExecution: number | null = null;
-  
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return function executedFunction(...args: any[]) {
-      if (Date.now() - (lastExecution || 0) > wait)
-      {
-        lastExecution = Date.now()
-        func(...args);
-      }
-    };
-  };
 
-const AudioContext = window.AudioContext          // Default
-                   || (window as any).webkitAudioContext;  // Safari and old versions of Chrome
+    return function executedFunction(...args: TArgs) {
+        if (Date.now() - (lastExecution || 0) > wait)
+        {
+            lastExecution = Date.now()
+            func(...args);
+        }
+    };
+};
+
+const AudioContextConstructor = window.AudioContext
+    || window.webkitAudioContext
 
 export type VuMeterCallback = (level: number) => void
 
@@ -232,7 +237,10 @@ export class AudioProcessor
         this.volume = volume;
         this.vuMeterCallback = vuMeterCallback
 
-        this.context = new AudioContext();
+        if (!AudioContextConstructor)
+            throw new Error("AudioContext is not supported in this browser")
+
+        this.context = new AudioContextConstructor();
         this.source = this.context.createMediaStreamSource(this.stream);
         this.destination = this.context.createMediaStreamDestination()
         this.compressor = this.context.createDynamicsCompressor();

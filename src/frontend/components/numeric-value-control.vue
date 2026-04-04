@@ -23,10 +23,11 @@ const props = defineProps({
 })
 
 const count = ref(props.initialValue)
-const emit = defineEmits(['value-changed'])
+const emit = defineEmits<{
+    'value-changed': [value: number]
+}>()
 
 const emitValueChanged = () => {
-    console.log('emitValueChanged', count.value)
     emit('value-changed', count.value)
 }
 const increment = () => {

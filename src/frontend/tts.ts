@@ -2,7 +2,7 @@ import { i18n } from "i18next";
 import { kanaToRomajiMap, kanjiToKanaMap, katakanaToHiragana } from "./japanese-tools";
 import { debounceWithDelayedExecution, urlRegex } from "./utils";
 
-const synth = new (window as any).Animalese('animalese.wav', function () { });
+const synth = new window.Animalese('animalese.wav', function () { });
 
 function speakAnimalese(text: string, pitch: number | null, volume: number) {
     // replace every japanese character with a random roman letter

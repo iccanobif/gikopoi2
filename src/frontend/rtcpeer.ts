@@ -1,5 +1,6 @@
-export type SendCallback = (type: string, msg: string | RTCIceCandidate) => void
-export type ErrorCallback = (error: any, event: any) => void
+export type RTCSignalType = "offer" | "answer" | "candidate"
+export type SendCallback = (type: RTCSignalType, msg: string | RTCIceCandidate) => void
+export type ErrorCallback = (error: unknown, event: Event) => void
 
 
 export const defaultIceConfig: RTCConfiguration = {
