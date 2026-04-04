@@ -41,8 +41,8 @@ Rules for each extraction:
 5. `[completed]` Create one dedicated commit per extraction.
 
 ### Phase 2 - Template stabilization
-1. `[in progress]` Keep popup area organized in `index.html` while extraction continues.
-2. `[in progress]` Normalize props/emits naming (`isOpen`, `close`, intent-specific events).
+1. `[completed]` Keep popup area organized in `index.html` while extraction continues.
+2. `[completed]` Normalize props/emits naming (`isOpen`, `close`, intent-specific events).
 3. `[completed]` Consolidate preferences popup contract to `GikopoipoiPreferences` object while preserving legacy localStorage keys.
 4. `[not started]` Add minimal comments only where coupling is non-obvious.
 
@@ -51,14 +51,14 @@ Rules for each extraction:
 2. [completed] Similarly, move getLangEntries to the popup component. Before doing it check that it's safe to do, though.
 2. [not started] In the same manner as it was done for isInfoboxVisible, make all the sets of preferences go through setAndPersist(). do this one preference as a time.
 3. [not started] There's still stuff in the local storage which is not handled through the GikopoipoiPreferences type. Move them there as well, and update the code to use the new type instead of directly accessing local storage.
-4. [not started] stream settings (streamMode, displayAdvancedStreamSettings, streamEchoCancellation...) are all individually in the main component's data, but it should be made so that the stream popup just references the preferences object for all of them, to reduce the amount of plumbing.
+4. [completed] stream settings (streamMode, displayAdvancedStreamSettings, streamEchoCancellation...) are all individually in the main component's data, but it should be made so that the stream popup just references the preferences object for all of them, to reduce the amount of plumbing.
 5. [not started] Remove the `createPreferenceProxy()` bridge and make `preferences` the only settings source at runtime: migrate all root/template references from top-level aliases (for example `uiTheme`, `showNotifications`, `isCrispModeEnabled`) to `preferences.*`, and update generic helpers (such as `storeSet`) to read/write `preferences` keys directly.
-6. [not started] simplify the rula popup by getting the rooms list with a REST api instead of sending a websocket message from the root component and then wait for another websocket message from the server. The api can be called directly by the rula popup. For an added bonus, could display a spinner in the rula popup while the rooms are being fetched.
+6. [completed] simplify the rula popup by getting the rooms list with a REST api instead of sending a websocket message from the root component and then wait for another websocket message from the server. The api can be called directly by the rula popup. For an added bonus, could display a spinner in the rula popup while the rooms are being fetched.
 7. [not started] Make the API calls go through an explicit API client module instead of being scattered across the codebase, in order to:
     - keep type safety for request/response payloads
     - have a single place to handle auth tokens (it's the private user id) and error handling
 8. [not started] In the backend, streamline authentication and authorization for REST API calls (now, at least for /api/areas/:areaId/rooms and /api/areas/:areaId/rooms/:roomId, it's copypasted)
-9. [not started] Remove all usages of the "set-pref" emit: components should receive the `preferences` object as a prop and use `setAndPersistPreference` to mutate it instead of making the root component do it for them.
+9. [completed] Remove all usages of the "set-pref" emit: components should receive the `preferences` object as a prop and use `setAndPersistPreference` to mutate it instead of making the root component do it for them.
 10. split rooms.ts into separate files for each room (it's just too big now).
 
 ### Phase 3 - Introduce runtime coordination object
