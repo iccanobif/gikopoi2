@@ -62,10 +62,11 @@ Rules for each extraction:
 10. split rooms.ts into separate files for each room (it's just too big now).
 
 ### Phase 3 - Introduce runtime coordination object
-1. `[not started]` Introduce `ClientSessionController` (name chosen over generic "orchestrator").
-2. `[not started]` Move websocket lifecycle/domain actions there gradually.
-3. `[not started]` Keep Vue root as UI adapter between components and controller.
-4. `[not started]` Do not introduce a broad global event bus by default.
+Introduce an object to centralize some core things of the application state and making it act like an event bus.
+- the name of this object was decided to be ClientSessionController but i'm still not sure i like it. let's decide a better name based on the following details.
+- this central object will be the owner of the websocket connecting to the server
+- it will be an abstraction layer for the events sent to the websockets, and also provide hooks to register to events coming from the websocket.
+- the main goal is that as we move more and more stuff from index.html into dedicated components, main.ts will have very little code, and all components will interact with the central object instead
 
 ### Phase 4 - Remaining major UI splits
 After popup stabilization:
