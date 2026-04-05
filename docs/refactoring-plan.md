@@ -71,7 +71,7 @@ Rules for each extraction:
 After popup stabilization:
 1. `[not started]` Extract canvas section into a component.
 2. `[not started]` Extract chat section (input, log, toolbar buttons) into a component.
-3. `[not started]` Extract stream section (`#video-streams`) into a component.
+3. `[not started]` Extract stream section (`#stream-section`) into a component.
 
 ### Phase 5 - Backend
 1. Simplify annual events handling.

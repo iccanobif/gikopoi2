@@ -194,7 +194,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="video-streams" v-if="!connectionRefused">
+                <div id="stream-section" v-if="!connectionRefused">
                     <div v-for="(streamSlot, index) in streams" v-bind:class="{'stream-is-active': streamSlot.isActive}">
                         <hr v-if="index != 0" />
                         <div>

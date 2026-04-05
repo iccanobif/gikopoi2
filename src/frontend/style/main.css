@@ -309,13 +309,13 @@ video {
     {
         flex-grow: initial;
     }
-    #video-streams
+    #stream-section
     {
         flex-wrap: nowrap;
     }
 }
 
-#video-streams{
+#stream-section{
     padding: 5px;
     flex-grow: 1;
     box-sizing: border-box;
