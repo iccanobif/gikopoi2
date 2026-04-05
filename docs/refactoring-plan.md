@@ -61,12 +61,11 @@ Rules for each extraction:
 9. [completed] Remove all usages of the "set-pref" emit: components should receive the `preferences` object as a prop and use `setAndPersistPreference` to mutate it instead of making the root component do it for them.
 10. split rooms.ts into separate files for each room (it's just too big now).
 
-### Phase 3 - Introduce runtime coordination object
-Introduce an object to centralize some core things of the application state and making it act like an event bus.
-- the name of this object was decided to be ClientSessionController but i'm still not sure i like it. let's decide a better name based on the following details.
-- this central object will be the owner of the websocket connecting to the server
-- it will be an abstraction layer for the events sent to the websockets, and also provide hooks to register to events coming from the websocket.
-- the main goal is that as we move more and more stuff from index.html into dedicated components, main.ts will have very little code, and all components will interact with the central object instead
+### Phase 3 - Introduce `RoomSession`
+Introduce a `RoomSession` object to centralize the core live application state and expose a small event-bus-like API where useful.
+- `RoomSession` will be the owner of the websocket connecting to the server.
+- it will be the abstraction layer for websocket commands, and also provide hooks to register to events coming from the websocket.
+- the main goal is that as we move more and more stuff from `index.html` into dedicated components, `main.ts` will have very little code, and all components will interact with `RoomSession` instead.
 
 ### Phase 4 - Remaining major UI splits
 After popup stabilization:
@@ -95,12 +94,12 @@ After popup stabilization:
 - iPhone
 - iOS
 
-## Why `ClientSessionController`
+## Why `RoomSession`
 
-`ClientSessionController` is explicit about responsibility:
-- Own socket/session lifecycle.
-- Expose high-level actions (chat, room movement, stream intents).
-- Avoid a vague catch-all "orchestrator" object.
+`RoomSession` is short, explicit, and aligned with the actual responsibility:
+- own the live room/session state and socket lifecycle;
+- expose high-level actions (chat, room movement, stream intents);
+- avoid a vague catch-all "orchestrator" object.
 
 A small typed event mechanism can be added later only for decoupled notifications, not as a default interaction pattern.
 
@@ -123,4 +122,4 @@ After each extraction:
 - `src/frontend/components/popups/stream-popup.vue`
 - `src/frontend/components/popups/preferences-popup.vue`
 - `src/frontend/components/popups/device-selection-popup.vue`
-- `src/frontend/client-session-controller.ts` (future phase)
+- `src/frontend/room-session.ts` (future phase)

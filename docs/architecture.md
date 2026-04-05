@@ -516,3 +516,212 @@ A relatively safe order would be:
 4. extract **`CanvasArea`** last, since it has the heaviest rendering and input coupling.
 
 This order keeps the most stateful and timing-sensitive part (`CanvasArea`) in place until the other boundaries are already stable.
+
+---
+
+## Idea: a shared `RoomSession` object that owns `users` and the websocket
+
+This idea **does make sense**, and it is probably a better long-term direction than keeping all of the room/session logic inside the root Vue component.
+
+However, it would be better to think of it as **`RoomSession`** — a room/session store or service that also offers event-bus behavior where useful — rather than as a generic free-floating event bus.
+
+In other words:
+
+- **good:** one `RoomSession` object owns the live room/session state and exposes typed commands/events;
+- **risky:** many unrelated components sending arbitrary string events through a global bus.
+
+`RoomSession` can be a plain JavaScript/TypeScript object, a class, or a composable-backed singleton. The important part is the responsibility split.
+
+### What `RoomSession` should own
+
+This is a good home for **server-driven and cross-cutting state**, such as:
+
+- `users`
+- `currentRoom`
+- `streams`
+- `serverStats`
+- `myUserID` / `myPrivateUserID`
+- connection state (`connectionLost`, `connectionRefused`, `pageRefreshRequired`)
+- socket initialization and all websocket handlers
+- shared domain actions like:
+  - `connectToServer()`
+  - `initializeSocket()`
+  - `changeRoom()`
+  - `sendMessage()`
+  - `move()`
+  - `setBubblePosition()`
+  - `takeStream()` / `dropStream()` / `startStreaming()` / `stopStreaming()`
+
+If desired, it can also own the shared interaction state:
+
+- `highlightedUserId`
+- `highlightedUserName`
+- `ignoredUserIds`
+- `allowedListenerIDs`
+
+### What it should *not* own
+
+These should usually remain local to the visual components:
+
+- canvas DOM references and drawing internals;
+- chat log scroll position and selection behavior;
+- toolbar textbox local state and focus helpers;
+- popup layout/open-close presentation details;
+- per-video drag/pin DOM state.
+
+So `RoomSession` should own the **room/session model**, not every UI detail.
+
+### Recommended pattern: state + commands + typed events
+
+A good shape would be:
+
+- **reactive/shared state** for long-lived facts (`users`, `currentRoom`, `streams`, etc.);
+- **commands** for actions (`sendMessage`, `move`, `changeRoom`, `highlightUser`, ...);
+- **events** only for one-shot notifications (`message received`, `connection lost`, `stream started`, etc.).
+
+That distinction is important.
+
+A pure event bus is not enough for stateful UI, because components then have to reconstruct state from past events. It is better if components can always read the current state directly and only use events for transient notifications.
+
+### Rough interface sketch
+
+Something along these lines would be reasonable:
+
+```ts
+interface RoomSession {
+    state: {
+        users: Users
+        currentRoom: ClientRoom | null
+        streams: StreamSlotDto[]
+        serverStats: Stats
+        highlightedUserId: string | null
+        ignoredUserIds: Set<string>
+        connectionLost: boolean
+    }
+
+    connectToServer(username: string, characterId: string): Promise<void>
+    sendMessage(message: string): void
+    move(direction: Direction): void
+    setBubblePosition(position: Direction): void
+    changeRoom(roomId: string, doorId?: string): void
+    highlightUser(userId: string, userName: string): void
+
+    on(eventName: string, handler: (payload: unknown) => void): () => void
+}
+```
+
+The exact implementation style can vary, but the separation is the key part.
+
+---
+
+## Plan to move toward this architecture
+
+### Phase 1: introduce `RoomSession` without changing the UI split yet
+
+Create a new module, for example:
+
+- `src/frontend/room-session.ts`
+
+Initially, do **not** try to redesign everything. Just move the room/session logic behind `RoomSession` while leaving the current root component mostly intact.
+
+**Goal of this phase:**
+- the root still renders everything as before;
+- but socket setup and session state start living in `RoomSession`.
+
+### Phase 2: move websocket ownership first
+
+The first chunk to move should be:
+
+- `connectToServer()`
+- `initializeSocket()`
+- socket `.on(...)` handlers
+- `updateRoomState()`
+
+This is the cleanest seam, because all of this is already logically part of the same responsibility.
+
+After this step, the root component should no longer contain most of the websocket plumbing directly.
+
+### Phase 3: make the root read from `roomSession.state`
+
+Once `RoomSession` owns the live session state, the root component can gradually stop owning these fields directly and instead consume:
+
+- `roomSession.state.users`
+- `roomSession.state.currentRoom`
+- `roomSession.state.streams`
+- `roomSession.state.serverStats`
+- connection flags, etc.
+
+At this point, `RoomSession` becomes the source of truth, while the root becomes mostly a composition layer.
+
+### Phase 4: route cross-cutting actions through `RoomSession`
+
+Move the actions that multiple sections depend on so that they are called through `RoomSession`:
+
+- `highlightUser()`
+- `ignoreUser()` / `unignoreUser()` / `blockUser()`
+- `sendMessageToServer()` (or a renamed `sendMessage()`)
+- `changeRoom()`
+- stream lifecycle commands
+
+The UI components should then emit intents upward, and the parent / `RoomSession` should perform the actual action.
+
+### Phase 5: extract visual sections one by one
+
+Once state ownership is cleaner, split the UI into visual components:
+
+1. `ChatLogSection`
+2. `ToolbarSection`
+3. `StreamsSection`
+4. `CanvasArea`
+
+This order is still recommended, but now each extracted component can depend on the shared `RoomSession` object rather than reaching through the root's giant method list.
+
+### Phase 6: keep the event bus narrow and typed
+
+If an event system is added, use it for a **small number of clear domain events**, such as:
+
+- `room-state-updated`
+- `user-joined`
+- `user-left`
+- `user-message`
+- `streams-updated`
+- `connection-lost`
+- `highlighted-user-changed`
+
+Try to avoid turning it into a catch-all mechanism for every UI action.
+
+A useful rule is:
+
+- **persistent facts go in `state`**;
+- **commands are explicit methods**;
+- **transient notifications go through events**.
+
+### Phase 7: optionally split `RoomSession` internally later
+
+Once this is in place, `RoomSession` itself can be broken down internally into smaller services/composables, for example:
+
+- `room-state-service`
+- `stream-service`
+- `chat-service`
+- `user-selection-service`
+
+But that can happen later. The first win is to remove the current “everything lives in `main.ts`” bottleneck.
+
+---
+
+## Recommended direction
+
+If choosing between:
+
+1. **split the UI into components only**, or
+2. **introduce `RoomSession` and then split the UI**,
+
+option **2** is likely the cleaner long-term architecture for this codebase.
+
+A good practical compromise is:
+
+- first create **`RoomSession`** and move websocket + shared state into it;
+- then extract the visual components in small steps;
+- keep `preferences` following the existing root-owned `setAndPersist()` pattern.
+
+That gives you a structure where the UI components become much thinner, while the real application logic lives in one explicit domain object instead of being spread across template handlers and DOM code.
