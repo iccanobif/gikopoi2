@@ -118,6 +118,7 @@ export interface GikopoipoiPreferences {
     streamIsVtuberMode: boolean
     isNicoNicoMode: boolean
     soundEffectVolume: number // 0~1
+    slotVolume: { [slotId: number]: number } // key: slot Id / value: volume
 }
 
 export type RulaRoomListSortKey = 'sortName' | 'userCount' | 'streamerCount'

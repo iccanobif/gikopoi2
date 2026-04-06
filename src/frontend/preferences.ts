@@ -67,6 +67,7 @@ export function loadPreferencesFromLocalStorage(): GikopoipoiPreferences
             ["all_room", "specific_users"],
         ),
         soundEffectVolume: getNumberPreference("soundEffectVolume", 0),
+        slotVolume: getObjectPreference<{ [slotId: number]: number }>("slotVolume", {}),
     }
 }
 
@@ -103,6 +104,24 @@ function getNumberPreference(key: string, defaultValue: number): number
         return defaultValue
     }
     return parseFloat(value)
+}
+
+function getObjectPreference<T extends object>(key: string, defaultValue: T): T
+{
+    const value = localStorage.getItem(key)
+    if (value === null) {
+        return defaultValue
+    }
+
+    try
+    {
+        const parsedValue = JSON.parse(value)
+        return (typeof parsedValue === "object" && parsedValue !== null) ? parsedValue as T : defaultValue
+    }
+    catch
+    {
+        return defaultValue
+    }
 }
 
 function getUnionTypePreference<T>(

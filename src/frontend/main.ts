@@ -300,7 +300,6 @@ const vueApp = createApp(defineComponent({
             mediaStream: null as MediaStream | null,
             streamSlotIdInWhichIWantToStream: null as number | null,
             takenStreams: [] as boolean[], // streams taken by me
-            slotVolume: JSON.parse(localStorage.getItem("slotVolume") || '{}') as {[slotId: number]: number}, // key: slot Id / value: volume
             detachedStreamTabs: {} as {[slotId: number]: Window | null}, // key: slot Id
             slotIsVtuberCharacterJumping: {} as {[slotId: number]: boolean}, // key: slot Id / value: boolean
 
@@ -2765,6 +2764,9 @@ const vueApp = createApp(defineComponent({
 
             this.streamSlotIdInWhichIWantToStream = null;
 
+            const slotVolume = { ...this.preferences.slotVolume }
+            let shouldPersistSlotVolume = false
+
             for (let slotId=0; slotId<updatedStreams.length; slotId++)
             {
                 const stream = updatedStreams[slotId];
@@ -2783,9 +2785,15 @@ const vueApp = createApp(defineComponent({
                     resize: adjustNiconicoMessagesFontSize
                 })
 
-                if (this.slotVolume[slotId] === undefined)
-                    this.slotVolume[slotId] = 1
+                if (slotVolume[slotId] === undefined)
+                {
+                    slotVolume[slotId] = 1
+                    shouldPersistSlotVolume = true
+                }
             }
+
+            if (shouldPersistSlotVolume)
+                setAndPersist(this.preferences, "slotVolume", slotVolume)
         },
 
         async showDeviceSelectionPopup()
@@ -3175,7 +3183,7 @@ const vueApp = createApp(defineComponent({
                             // EDIT: Too bad that setting muted to true actually mutes the stream entirely, even the sound that's supposed to come
                             // out of the AudioProcessor... Needs further investigation.
                             // videoElement.muted = true
-                            this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId], true, (level) => {
+                            this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.preferences.slotVolume[streamSlotId] ?? 1, true, (level) => {
                                 const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + streamSlotId) as HTMLElement
                                 const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + streamSlotId) as HTMLElement
         
@@ -3335,14 +3343,20 @@ const vueApp = createApp(defineComponent({
             this.wantToStream = false;
             this.streamSlotIdInWhichIWantToStream = null;
         },
-        changeStreamVolume(streamSlotId: number)
+        changeStreamVolume(streamSlotId: number, event: Event)
         {
-            const volumeSlider = document.getElementById("volume-" + streamSlotId) as HTMLInputElement
+            const volumeSlider = event.target as HTMLInputElement | null
+            if (!volumeSlider)
+                return
+
             const volume = parseFloat(volumeSlider.value)
 
             this.inboundAudioProcessors[streamSlotId].setVolume(volume)
 
-            localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
+            setAndPersist(this.preferences, "slotVolume", {
+                ...this.preferences.slotVolume,
+                [streamSlotId]: volume,
+            })
         },
         changeSoundEffectVolume(newVolume: number)
         {
