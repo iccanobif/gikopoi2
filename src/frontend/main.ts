@@ -546,7 +546,6 @@ const vueApp = createApp(defineComponent({
                     }
                 }
 
-                // @ts-ignore
                 $( "#sound-effect-volume" ).slider({
                     orientation: "vertical",
                     range: "min",
@@ -558,7 +557,6 @@ const vueApp = createApp(defineComponent({
                         this.changeSoundEffectVolume(ui.value);
                     }
                 });
-                // @ts-ignore
                 $( "#voice-volume" ).slider({
                     orientation: "vertical",
                     range: "min",
@@ -571,7 +569,6 @@ const vueApp = createApp(defineComponent({
                     }
                 });
 
-                // @ts-ignore
                 $( "#main-section" ).resizable({
                     handles: "e"
                 })
@@ -2779,7 +2776,6 @@ const vueApp = createApp(defineComponent({
                     else
                         this.takeStream(slotId);
 
-                // @ts-ignore
                 $( "#video-container-" + slotId ).resizable({
                     aspectRatio: true,
                     resize: adjustNiconicoMessagesFontSize
@@ -3161,7 +3157,6 @@ const vueApp = createApp(defineComponent({
                         const stream = event.streams[0]
                         videoElement.srcObject = stream;
                         
-                        // @ts-ignore
                         $( "#video-container-" + streamSlotId ).resizable({
                             aspectRatio: true,
                             resize: adjustNiconicoMessagesFontSize
@@ -3579,12 +3574,10 @@ const vueApp = createApp(defineComponent({
 
             if (videoContainer.classList.contains("unpinned-video"))
             {
-                // @ts-ignore
                 $(videoContainer).draggable()
             }
             else
             {
-                // @ts-ignore
                 $(videoContainer).draggable("destroy")
                 // Reset 'top' and 'left' styles to snap the container back to its original position
                 videoContainer.setAttribute("style", "")
