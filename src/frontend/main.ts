@@ -851,7 +851,7 @@ const vueApp = createApp(defineComponent({
         },
         initializeSocket()
         {
-            // @ts-ignore
+            // @ts-expect-error
             this.socket = io({
                 extraHeaders: {"private-user-id": this.myPrivateUserID},
                 closeOnBeforeunload: false,
@@ -3391,7 +3391,7 @@ const vueApp = createApp(defineComponent({
             this.checkBackgroundColor();
             for (const knobElement of (document.getElementsByClassName("input-knob") as HTMLCollectionOf<HTMLInputElement>))
             {
-                // @ts-ignore what's refresh from? can't find it in docs
+                // @ts-expect-error  what's refresh from? can't find it in docs
                 knobElement.refresh()
             }
             this.isRedrawRequired = true
