@@ -42,9 +42,9 @@ declare global {
     }
 }
 
-import { io } from 'socket.io-client'
 import { isWebrtcReceiveCodecSupported, isWebrtcPublishCodecSupported, WebrtcCodec } from 'webrtc-codec-support'
 import { createApp, defineComponent, computed, nextTick } from 'vue'
+import { RoomSession } from "./room-session";
 import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'
 import languages from './lang'
@@ -231,7 +231,7 @@ const vueApp = createApp(defineComponent({
             siteAreasInfo: siteAreasInfo,
             
             selectedCharacter: null as Character | null,
-            socket: null as Socket | null,
+            roomSession: new RoomSession() as RoomSession,
             users: {} as Users,
             roomLoadId: 0,
             currentRoom: null as ClientRoom | null,
@@ -348,7 +348,6 @@ const vueApp = createApp(defineComponent({
     provide()
     {
         return {
-            socket: computed(() => this.socket),
             users: computed(() => this.users),
             ignoredUserIds: computed(() => this.ignoredUserIds),
             myUserId: computed(() => this.myUserID),
@@ -750,26 +749,17 @@ const vueApp = createApp(defineComponent({
         },
         async connectToServer(username: string, characterId: string)
         {
-            const loginResponse = await postJson("/api/login", {
-                userName: username,
-                characterId,
-                areaId: this.preferences.areaId,
-                roomId: getSpawnRoomId(),
-            });
+            const { userId, privateUserId, pageRefreshRequired, initialRoomState } =
+                await this.roomSession.connectToServer(
+                    username,
+                    characterId,
+                    this.preferences.areaId,
+                    getSpawnRoomId()
+                );
 
-            const loginMessage = await loginResponse.json();
-
-            if (!loginMessage.isLoginSuccessful) throw new UserException(loginMessage.error);
-
-            window.myUserID = this.myUserID = loginMessage.userId;
-            this.myPrivateUserID = loginMessage.privateUserId;
-
-            logToServer(new Date() + " " + this.myUserID
-                + " window.EXPECTED_SERVER_VERSION: "+ window.EXPECTED_SERVER_VERSION
-                + " loginMessage.appVersion: " + loginMessage.appVersion
-                + " DIFFERENT: " + (window.EXPECTED_SERVER_VERSION != loginMessage.appVersion))
-            if (window.EXPECTED_SERVER_VERSION != loginMessage.appVersion)
-                this.pageRefreshRequired = true
+            window.myUserID = this.myUserID = userId;
+            this.myPrivateUserID = privateUserId;
+            this.pageRefreshRequired = pageRefreshRequired;
 
             // prevent accidental page closing
             window.onbeforeunload = () => {
@@ -777,35 +767,23 @@ const vueApp = createApp(defineComponent({
                 if (this.appState == 'logout')
                     return null
 
-                // Before onbeforeunload the socket has already died, so
-                // i have to start it again here, in case the user
-                // decides that he doesn't want to close the window.
-                // UPDATE: might not be needed anymore now that we open the socket closeOnBeforeunload: false
-
-                // this.initializeSocket();
-                // if (this.mediaStream) this.stopStreaming();
-
                 return "Are you sure?";
             }
 
             // Load the room state before connecting the websocket, so that all
             // code handling websocket events (and paint() events) can assume that
             // currentRoom, streams etc... are all defined.
-            const response = await fetch("/api/areas/" + this.preferences.areaId + "/rooms/" + getSpawnRoomId(),
-                                         { headers: { "Authorization": "Bearer " + this.myPrivateUserID } })
-            await this.updateRoomState(await response.json())
+            await this.updateRoomState(initialRoomState)
 
             logToServer(new Date() + " " + this.myUserID + " User agent: " + navigator.userAgent)
 
+            this.roomSession.initializeSocket()
             this.initializeSocket()
         },
         initializeSocket()
         {
-            // @ts-expect-error
-            this.socket = io({
-                extraHeaders: {"private-user-id": this.myPrivateUserID},
-                closeOnBeforeunload: false,
-            });
+            if (!this.roomSession.socket)
+                return
 
             const immanentizeConnection = async () =>
             {
@@ -826,15 +804,15 @@ const vueApp = createApp(defineComponent({
                     this.pageRefreshRequired = true
             }
 
-            this.socket.on("connect", immanentizeConnection);
-            this.socket.on("reconnect", immanentizeConnection);
+            this.roomSession.socket.on("connect", immanentizeConnection);
+            this.roomSession.socket.on("reconnect", immanentizeConnection);
 
-            this.socket.on('connect_error', (error) => {
+            this.roomSession.socket.on('connect_error', (error) => {
                 console.error(error)
                 logToServer(new Date() + " " + this.myUserID + " connect_error: " + error)
             });
 
-            this.socket.on("disconnect", (reason) =>
+            this.roomSession.socket.on("disconnect", (reason) =>
             {
                 if (this.appState != "logout")
                 {
@@ -842,17 +820,17 @@ const vueApp = createApp(defineComponent({
                     this.connectionLost = true;
                 }
             });
-            this.socket.on("server-cant-log-you-in", () =>
+            this.roomSession.socket.on("server-cant-log-you-in", () =>
             {
                 this.connectionRefused = true;
             });
 
-            this.socket.on("server-update-current-room-state", async (dto: RoomStateDto) =>
+            this.roomSession.socket.on("server-update-current-room-state", async (dto: RoomStateDto) =>
             {
                 await this.updateRoomState(dto);
             });
 
-            this.socket.on("server-msg", (userId: string, msg: string) =>
+            this.roomSession.socket.on("server-msg", (userId: string, msg: string) =>
             {
                 const user = this.users[userId]
                 if (user)
@@ -866,7 +844,7 @@ const vueApp = createApp(defineComponent({
                 }
             });
 
-            this.socket.on("server-system-message", (messageCode: string, extra: string) =>
+            this.roomSession.socket.on("server-system-message", (messageCode: string, extra: string) =>
             {
                 let message = this.$t("msg." + messageCode);
                 if (messageCode == "flood_warning")
@@ -875,12 +853,12 @@ const vueApp = createApp(defineComponent({
                 this.writeMessageToLog("SYSTEM", message, null)
             });
 
-            this.socket.on("server-stats", (serverStats: Stats) =>
+            this.roomSession.socket.on("server-stats", (serverStats: Stats) =>
             {
                 this.serverStats = serverStats;
             });
 
-            this.socket.on("server-move", (dto: MoveDto) =>
+            this.roomSession.socket.on("server-move", (dto: MoveDto) =>
             {
                 if (!this.currentRoom) return // TS quick fix
                 const { userId, x, y, direction, lastMovement, isInstant, shouldSpinwalk } = dto
@@ -907,7 +885,7 @@ const vueApp = createApp(defineComponent({
                 this.updateCanvasObjects();
             });
 
-            this.socket.on("server-bubble-position", (userId: string, position: Direction) =>
+            this.roomSession.socket.on("server-bubble-position", (userId: string, position: Direction) =>
             {
                 const user = this.users[userId];
 
@@ -917,11 +895,11 @@ const vueApp = createApp(defineComponent({
                 this.isRedrawRequired = true;
             });
 
-            this.socket.on("server-reject-movement",
+            this.roomSession.socket.on("server-reject-movement",
                 () => (this.isWaitingForServerResponseOnMovement = false)
             );
 
-            this.socket.on("server-user-joined-room", async (user: PlayerDto) =>
+            this.roomSession.socket.on("server-user-joined-room", async (user: PlayerDto) =>
             {
                 if (this.preferences.isLoginSoundEnabled && this.preferences.soundEffectVolume > 0)
                     playSound("login-sound", this.preferences.soundEffectVolume);
@@ -930,14 +908,14 @@ const vueApp = createApp(defineComponent({
                 this.isRedrawRequired = true;
             });
 
-            this.socket.on("server-user-left-room", (userId: string) =>
+            this.roomSession.socket.on("server-user-left-room", (userId: string) =>
             {
                 if (userId != this.myUserID) delete this.users[userId];
                 this.updateCanvasObjects();
                 this.isRedrawRequired = true;
             });
 
-            this.socket.on("server-user-inactive", (userId: string) =>
+            this.roomSession.socket.on("server-user-inactive", (userId: string) =>
             {
                 if (!this.users[userId])
                 {
@@ -949,7 +927,7 @@ const vueApp = createApp(defineComponent({
                 this.isRedrawRequired = true;
             });
 
-            this.socket.on("server-user-active", (userId: string) =>
+            this.roomSession.socket.on("server-user-active", (userId: string) =>
             {
                 if (!this.users[userId])
                 {
@@ -961,27 +939,27 @@ const vueApp = createApp(defineComponent({
                 this.isRedrawRequired = true;
             });
 
-            this.socket.on("server-not-ok-to-stream", (reason: string) =>
+            this.roomSession.socket.on("server-not-ok-to-stream", (reason: string) =>
             {
                 this.wantToStream = false;
                 this.stopStreaming();
                 this.showWarningToast(this.$t("msg." + reason));
             });
-            this.socket.on("server-not-ok-to-take-stream", (streamSlotId: number) =>
+            this.roomSession.socket.on("server-not-ok-to-take-stream", (streamSlotId: number) =>
             {
                 this.wantToDropStream(streamSlotId);
             });
-            this.socket.on("server-ok-to-stream", () =>
+            this.roomSession.socket.on("server-ok-to-stream", () =>
             {
                 this.wantToStream = false;
                 this.startStreaming();
             });
-            this.socket.on("server-update-current-room-streams", async (streams: StreamSlotDto[]) =>
+            this.roomSession.socket.on("server-update-current-room-streams", async (streams: StreamSlotDto[]) =>
             {
                 await this.updateCurrentRoomStreams(streams);
             });
 
-            this.socket.on("server-rtc-message", async (streamSlotId: number, type: string, msg: string | RTCIceCandidate) =>
+            this.roomSession.socket.on("server-rtc-message", async (streamSlotId: number, type: string, msg: string | RTCIceCandidate) =>
             {
                 const rtcPeer = window.rtcPeerSlots[streamSlotId].rtcPeer;
                 if (rtcPeer === null) return;
@@ -1004,32 +982,32 @@ const vueApp = createApp(defineComponent({
                 }
             });
 
-            this.socket.on("server-character-changed", (userId: string, characterId: string, isAlternateCharacter: boolean) => {
+            this.roomSession.socket.on("server-character-changed", (userId: string, characterId: string, isAlternateCharacter: boolean) => {
                 this.users[userId].character = characters[characterId]
                 this.users[userId].isAlternateCharacter = isAlternateCharacter
                 this.isRedrawRequired = true
             })
 
-            this.socket.on("server-update-chessboard", (state: ChessboardStateDto) => {
+            this.roomSession.socket.on("server-update-chessboard", (state: ChessboardStateDto) => {
                 this.chessboardState = state
             })
 
-            this.socket.on("server-update-janken", (state: JankenStateDto) => {
+            this.roomSession.socket.on("server-update-janken", (state: JankenStateDto) => {
                 this.jankenState = state
             })
 
-            this.socket.on("server-chess-win", (winnerUserId: string) => {
+            this.roomSession.socket.on("server-chess-win", (winnerUserId: string) => {
                 const winnerUserName = this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A"
 
                 this.writeMessageToLog("SYSTEM", this.$t("msg.chess_win", {userName: winnerUserName}), null)
             })
 
-            this.socket.on("server-chess-quit", (quitterUserId: string)  => {
+            this.roomSession.socket.on("server-chess-quit", (quitterUserId: string)  => {
                 const winnerUserName = this.users[quitterUserId] ? this.users[quitterUserId].name : "N/A"
 
                 this.writeMessageToLog("SYSTEM", this.$t("msg.chess_quit", {userName: winnerUserName}), null)
             })
-            this.socket.on("special-events:server-add-shrine-coin", (donationBoxValue: number) => {
+            this.roomSession.socket.on("special-events:server-add-shrine-coin", (donationBoxValue: number) => {
                 if (!this.currentRoom || !this.currentRoom.specialObjects) return // TS quick fix
                 this.currentRoom.specialObjects[1].value = donationBoxValue;
                 this.lastCoinTossTime = Date.now();
@@ -2005,7 +1983,7 @@ const vueApp = createApp(defineComponent({
                     mouseCursor.y >= realDonationBoxCoordinates.y - this.blockHeight * this.getCanvasScale() - 20 * this.getCanvasScale() &&
                     mouseCursor.y <= realDonationBoxCoordinates.y
                 ) {
-                    this.socket!.emit("special-events:client-add-shrine-coin");
+                    this.roomSession.socket!.emit("special-events:client-add-shrine-coin");
                 }
             }
         },
@@ -2148,7 +2126,7 @@ const vueApp = createApp(defineComponent({
             if (window.speechSynthesis)
                 speechSynthesis.cancel();
             this.requestedRoomChange = true;
-            this.socket!.emit("user-change-room", { targetRoomId, targetDoorId });
+            this.roomSession.changeRoom(targetRoomId, targetDoorId);
         },
         forcePhysicalPositionRefresh()
         {
@@ -2172,11 +2150,11 @@ const vueApp = createApp(defineComponent({
                 return;
 
             this.isWaitingForServerResponseOnMovement = true;
-            this.socket!.emit("user-move", direction);
+            this.roomSession.move(direction);
         },
         sendNewBubblePositionToServer(position: Direction)
         {
-            this.socket!.emit("user-bubble-position", position);
+            this.roomSession.setBubblePosition(position);
         },
         sendMessageToServer()
         {
@@ -2204,7 +2182,7 @@ const vueApp = createApp(defineComponent({
             {
                 // If the user has already cleared their bubble, avoid sending any more empty messages.
                 if (message || this.users[this.myUserID!].message)
-                    this.socket!.emit("user-msg", message);
+                    this.roomSession.sendMessage(message);
             }
             inputTextbox.value = "";
             inputTextbox.focus()
@@ -2216,7 +2194,7 @@ const vueApp = createApp(defineComponent({
             const debouncedPing = debounceWithImmediateExecution(() => {
                 if (!this.connectionLost && !this.connectionRefused && this.appState != "logout")
                 {
-                    this.socket!.emit("user-ping");
+                    this.roomSession.socket!.emit("user-ping");
                 }
             }, 10 * 60 * 1000)
 
@@ -2575,7 +2553,7 @@ const vueApp = createApp(defineComponent({
                 // TODO figure out if keeping this line causes issues.
                 // More privacy with candidates not being sent.
                 if(type == "candidate") return;
-                this.socket!.emit("user-rtc-message", {
+                this.roomSession.socket!.emit("user-rtc-message", {
                     streamSlotId: slotId, type, msg})
             });
 
@@ -2971,7 +2949,7 @@ const vueApp = createApp(defineComponent({
                     }
                 }
 
-                this.socket!.emit("user-want-to-stream", {
+                this.roomSession.socket!.emit("user-want-to-stream", {
                     streamSlotId: this.streamSlotIdInWhichIWantToStream,
                     withVideo: withVideo,
                     withSound: withSound,
@@ -3056,7 +3034,7 @@ const vueApp = createApp(defineComponent({
 
             (document.getElementById("local-video-" + streamSlotId) as HTMLVideoElement).srcObject = this.mediaStream = null;
 
-            this.socket!.emit("user-want-to-stop-stream");
+            this.roomSession.socket!.emit("user-want-to-stop-stream");
 
             this.allowedListenerIDs = new Set()
 
@@ -3150,7 +3128,7 @@ const vueApp = createApp(defineComponent({
                 },
                 { once: true }
             );
-            this.socket!.emit("user-want-to-take-stream", streamSlotId);
+            this.roomSession.socket!.emit("user-want-to-take-stream", streamSlotId);
         },
         async dropStream(streamSlotId: number)
         {
@@ -3164,7 +3142,7 @@ const vueApp = createApp(defineComponent({
 
             this.reattachVideoFromOtherTabIfDetached(streamSlotId);
             
-            this.socket!.emit("user-want-to-drop-stream", streamSlotId);
+            this.roomSession.socket!.emit("user-want-to-drop-stream", streamSlotId);
 
             if (this.inboundAudioProcessors[streamSlotId])
             {
@@ -3258,7 +3236,7 @@ const vueApp = createApp(defineComponent({
             {
                 if (this.preferences.isIgnoreOnBlock)
                     this.ignoreUser(userId)
-                this.socket!.emit("user-block", userId);
+                this.roomSession.socket!.emit("user-block", userId);
             });
         },
         openStreamPopup(streamSlotId: number)
@@ -3368,7 +3346,7 @@ const vueApp = createApp(defineComponent({
 
                 this.appState = "logout";
 
-                this.socket!.close()
+                this.roomSession.socket!.close()
 
                 for (let i = 0; i < this.takenStreams.length; i++)
                     if (this.takenStreams[i])
@@ -3534,6 +3512,8 @@ const vueApp = createApp(defineComponent({
         },
         highlightUser(userId: string, userName: string)
         {
+            this.roomSession.highlightUser(userId, userName)
+
             const highlightedUserStyle = document.getElementById("highlighted-user-style") as HTMLStyleElement
 
             if (this.highlightedUserId == userId)
@@ -3639,14 +3619,14 @@ const vueApp = createApp(defineComponent({
         {
             this.allowedListenerIDs.add(userID)
             this.$forceUpdate()
-            this.socket!.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
+            this.roomSession.socket!.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
             this.isRedrawRequired = true;
         },
         revokeStreamToUser(userID: string)
         {
             this.allowedListenerIDs.delete(userID)
             this.$forceUpdate()
-            this.socket!.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
+            this.roomSession.socket!.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
             this.isRedrawRequired = true;
         },
         playVideo(event: MouseEvent)
