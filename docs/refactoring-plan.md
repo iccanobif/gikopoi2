@@ -67,6 +67,12 @@ Introduce a `RoomSession` object to centralize the core live application state a
 - it will be the abstraction layer for websocket commands, and also provide hooks to register to events coming from the websocket.
 - the main goal is that as we move more and more stuff from `index.html` into dedicated components, `main.ts` will have very little code, and all components will interact with `RoomSession` instead.
 Details about this are in the [architecture.md](./architecture.md) file.
+Good next step
+- Move the inbound socket handlers from main.ts into RoomSession one group at a time, starting with:
+    - server-update-current-room-state
+    - server-stats
+    - server-msg
+
 
 ### Phase 4 - Remaining major UI splits
 After popup stabilization:
