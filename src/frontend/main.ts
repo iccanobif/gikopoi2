@@ -3978,6 +3978,7 @@ const vueApp = createApp(defineComponent({
             const character = user.character
             return "characters/" + character.characterName + "/front-standing." + character.format
         },
+        // TODO: used only for the room-object-editor, move it to the canvas component
         setRoomObject(objectIndex: number, property: string, value: number)
         {
             if (!this.currentRoom) return
@@ -4010,6 +4011,27 @@ const vueApp = createApp(defineComponent({
                 obj.scale = Math.round(value * 100) / 100
                 this.loadRoomObjects()
                 return
+            }
+            this.isRedrawRequired = true
+        },
+        setRoomProperty(property: string, value: number) {
+            if (!this.currentRoom) return
+            if (property === "scale")
+            {
+                this.currentRoom.scale = value
+                this.loadRoomBackground();
+            }
+            else if (property === "originCoordinates.x")
+            {
+                console.log("setting originCoordinates.x to " + value)
+                this.currentRoom.originCoordinates.x = value
+                this.loadRoomBackground();
+            }
+            else if (property === "originCoordinates.y")
+            {
+                console.log("setting originCoordinates.y to " + value)
+                this.currentRoom.originCoordinates.y = value
+                this.loadRoomBackground();
             }
             this.isRedrawRequired = true
         },
