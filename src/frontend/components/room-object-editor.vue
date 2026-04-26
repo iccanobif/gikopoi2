@@ -7,7 +7,6 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-    'adjust-object': [objectIndex: number, property: string, delta: number]
     'set-object': [objectIndex: number, property: string, value: number]
     'toggle-object-visibility': [objectIndex: number]
 }>()
@@ -22,9 +21,9 @@ const fields: { label: string; prop: string; step: number }[] = [
 
 const copyStatus = ref<'idle' | 'copied'>('idle')
 
-function adjust(objectIndex: number, property: string, delta: number)
+function setValue(objectIndex: number, property: string, value: number)
 {
-    emit('adjust-object', objectIndex, property, delta)
+    emit('set-object', objectIndex, property, value)
 }
 
 function onInput(objectIndex: number, property: string, event: Event)
@@ -99,7 +98,7 @@ function toggleVisibility(objectIndex: number)
                   :key="field.prop"
                   class="room-object-editor-field">
                 <label class="room-object-editor-field-name">{{ field.label }}</label>
-                <button @click="adjust(index, field.prop, -field.step)">−</button>
+                <button @click="setValue(index, field.prop, getValue(obj, field.prop) - field.step)">−</button>
                 <input
                     class="room-object-editor-input"
                     type="number"
@@ -107,7 +106,7 @@ function toggleVisibility(objectIndex: number)
                     :value="getValue(obj, field.prop)"
                     @change="onInput(index, field.prop, $event)"
                 />
-                <button @click="adjust(index, field.prop, field.step)">+</button>
+                <button @click="setValue(index, field.prop, getValue(obj, field.prop) + field.step)">+</button>
             </span>
         </div>
     </div>

@@ -3978,45 +3978,6 @@ const vueApp = createApp(defineComponent({
             const character = user.character
             return "characters/" + character.characterName + "/front-standing." + character.format
         },
-        // Used only by the hidden "Room object editor" screen.
-        // TODO: when refactoring the canvas, move this stuff in the canvas component.
-        adjustRoomObject(objectIndex: number, property: string, delta: number)
-        {
-            if (!this.currentRoom) return
-            const obj = this.currentRoom.objects[objectIndex]
-            if (!obj) return
-            if (property === "x")
-            {
-                obj.x += delta
-                this.updateCanvasObjects()
-            }
-            else if (property === "y")
-            {
-                obj.y += delta
-                this.updateCanvasObjects()
-            }
-            else if (property === "offset.x")
-            {
-                if (!obj.offset) obj.offset = { x: 0, y: 0 }
-                obj.offset.x += delta
-                const scale = obj.scale ?? 1
-                obj.physicalPositionX = obj.offset.x * scale
-            }
-            else if (property === "offset.y")
-            {
-                if (!obj.offset) obj.offset = { x: 0, y: 0 }
-                obj.offset.y += delta
-                const scale = obj.scale ?? 1
-                obj.physicalPositionY = obj.offset.y * scale
-            }
-            else if (property === "scale")
-            {
-                obj.scale = Math.round(((obj.scale ?? 1) + delta) * 100) / 100
-                this.loadRoomObjects()
-                return // loadRoomObjects sets isRedrawRequired itself
-            }
-            this.isRedrawRequired = true
-        },
         setRoomObject(objectIndex: number, property: string, value: number)
         {
             if (!this.currentRoom) return
