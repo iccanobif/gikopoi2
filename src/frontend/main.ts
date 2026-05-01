@@ -4023,13 +4023,11 @@ const vueApp = createApp(defineComponent({
             }
             else if (property === "originCoordinates.x")
             {
-                console.log("setting originCoordinates.x to " + value)
                 this.currentRoom.originCoordinates.x = value
                 this.loadRoomBackground();
             }
             else if (property === "originCoordinates.y")
             {
-                console.log("setting originCoordinates.y to " + value)
                 this.currentRoom.originCoordinates.y = value
                 this.loadRoomBackground();
             }

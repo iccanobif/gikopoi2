@@ -12,7 +12,6 @@ const initialPitchFactor = outboundAudioProcessor.value?.getPitchFactor() ?? 1
 const initialValue = Math.round((initialPitchFactor - 1) * 200)
 
 function onPitchShiftChanged(value: number) {
-    console.log('onPitchShiftChanged', value, outboundAudioProcessor.value)
     // convert value (-100~100) to pitch factor (0.5~1.5)
     const pitchFactor = 0.5 + (value + 100) / 200
     outboundAudioProcessor.value?.setPitchFactor(pitchFactor)

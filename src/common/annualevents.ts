@@ -77,9 +77,7 @@ export class AnnualEvent
     
     public isNow(): boolean
     {
-        const now = getNow()
-        console.log(`Checking event for now=${now.format()}`)
-        return this.isBetween(now)
+        return this.isBetween(getNow())
     }
 }
 
@@ -109,11 +107,8 @@ export const annualEvents: {[eventName: string]: AnnualEvent} =
 export function getCurrentAnnualEvents(): string[]
 {
     const now = getNow()
-    console.log(`Checking current events for now=${now.format()}`)
-
     const noKotatsuEvent = annualEvents["noKotatsu"]
     const yesKotatsuEvent = annualEvents["yesKotatsu"]
-    console.log(`noKotatsu is between now and yesKotatsu is between now: ${noKotatsuEvent.isBetween(now)}, ${yesKotatsuEvent.isBetween(now)}`)
 
     return Object.entries(annualEvents)
         .filter(([eventName, annualEvent]) => annualEvent.isBetween(now))
