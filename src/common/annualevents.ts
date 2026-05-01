@@ -107,8 +107,6 @@ export const annualEvents: {[eventName: string]: AnnualEvent} =
 export function getCurrentAnnualEvents(): string[]
 {
     const now = getNow()
-    const noKotatsuEvent = annualEvents["noKotatsu"]
-    const yesKotatsuEvent = annualEvents["yesKotatsu"]
 
     return Object.entries(annualEvents)
         .filter(([eventName, annualEvent]) => annualEvent.isBetween(now))
