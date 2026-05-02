@@ -7,8 +7,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-    'set-object': [objectIndex: number, property: string, value: number]
-    'set-room': [property: string, value: number]
+    'set-object': [objectIndex: number, property: string, value: number | string]
+    'set-room': [property: string, value: number | string]
     'toggle-object-visibility': [objectIndex: number]
 }>()
 
@@ -27,6 +27,17 @@ function onObjectValueChange(objectIndex: number, property: string, event: Event
     const raw = (event.target as HTMLInputElement).value
     const value = parseFloat(raw)
     emit('set-object', objectIndex, property, isNaN(value) ? 0 : value)
+}
+
+function onObjectUrlChange(objectIndex: number, event: Event)
+{
+    const value = (event.target as HTMLInputElement).value
+    emit('set-object', objectIndex, 'url', value)
+}
+
+function getObjectUrlValue(obj: NonNullable<ClientRoom>['objects'][number]): string
+{
+    return Array.isArray(obj.url) ? obj.url.join(', ') : obj.url
 }
 
 function getObjectValue(obj: NonNullable<ClientRoom>['objects'][number], property: string): number
@@ -53,6 +64,19 @@ function onRoomValueChange(property: string, event: Event)
     const raw = (event.target as HTMLInputElement).value
     const value = parseFloat(raw)
     emit('set-room', property, isNaN(value) ? 0 : value)
+}
+
+function onRoomTextValueChange(property: string, event: Event)
+{
+    const value = (event.target as HTMLInputElement).value
+    emit('set-room', property, value)
+}
+
+function getRoomTextValue(property: string): string
+{
+    if (!props.currentRoom) return ''
+    if (property === 'backgroundImageUrl') return props.currentRoom.backgroundImageUrl
+    return ''
 }
 
 function formatObjectsJson(objects: Record<string, unknown>[]): string
@@ -100,6 +124,12 @@ function toggleVisibility(objectIndex: number)
                 :step="0.01"
                 :value="getRoomValue('scale')"
                 @change="onRoomValueChange('scale', $event)">
+            <label>backgroundImageUrl</label>
+            <input
+                type="text"
+                class="room-object-editor-background-url-input"
+                :value="getRoomTextValue('backgroundImageUrl')"
+                @change="onRoomTextValueChange('backgroundImageUrl', $event)">
             <label>originCoordinates.x</label>
             <input
                 type="number"
@@ -122,6 +152,15 @@ function toggleVisibility(objectIndex: number)
             class="room-object-editor-row"
         >
             <span class="room-object-editor-label">{{ obj.url || ('[' + index + ']') }}</span>
+            <span class="room-object-editor-field room-object-editor-url-field">
+                <label class="room-object-editor-field-name">url</label>
+                <input
+                    class="room-object-editor-input room-object-editor-url-input"
+                    type="text"
+                    :value="getObjectUrlValue(obj)"
+                    @change="onObjectUrlChange(index, $event)"
+                />
+            </span>
             <span class="room-object-editor-field">
                 <button @click="toggleVisibility(index)">{{ obj.isHidden ? '無' : '有' }}</button>
             </span>
@@ -155,7 +194,7 @@ function toggleVisibility(objectIndex: number)
 
 .room-object-editor-row {
     display: grid;
-    grid-template-columns: 140px repeat(6, auto);
+    grid-template-columns: 140px repeat(7, auto);
     align-items: center;
     gap: 4px;
     padding: 2px 0;
@@ -185,10 +224,24 @@ function toggleVisibility(objectIndex: number)
     padding: 0 2px;
 }
 
+.room-object-editor-url-field {
+    min-width: 220px;
+}
+
+.room-object-editor-url-input {
+    width: 200px;
+}
+
 .room-object-editor-row button {
     padding: 0 4px;
     line-height: 1.2;
     font-size: 12px;
     cursor: pointer;
+}
+
+.room-object-editor-background-url-input {
+    width: 240px;
+    font-size: 11px;
+    padding: 0 2px;
 }
 </style>
