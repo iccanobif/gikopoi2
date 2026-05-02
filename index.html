@@ -23,7 +23,6 @@
     <link rel='stylesheet' href='/src/frontend/style/main.css' />
     <link rel='stylesheet' href='/src/frontend/style/theme-dark.css' />
     <link rel='stylesheet' href='/src/frontend/style/theme-shaddox.css' />
-    <link rel='stylesheet' href='chess/css/chessboard-1.0.0.min.css' />
     <link href="font-awesome/css/all.css" rel="stylesheet">
     <style id="highlighted-user-style"></style>
 
@@ -392,10 +391,6 @@
                     </div>
                     <template v-if="currentRoom !== null && currentRoom.games" v-for="(game, index) in currentRoom.games">
                         <hr v-if="streams.length || index > 0" />
-                        <chessboard-slot
-                            v-if="game == 'chess' && chessboardState"
-                            :chessboard-state="chessboardState"
-                            ></chessboard-slot>
                         <janken-slot
                             v-if="game == 'janken' && jankenState"
                             :janken-state="jankenState"

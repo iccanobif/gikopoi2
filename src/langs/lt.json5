@@ -148,12 +148,6 @@
         game_join: "Žaisti",
         game_quit: "Užbaigti",
 
-        chess_slot_title: "Šachmatai",
-        chess_waiting_for_white: "Laukiama baltųjų žaidėjo...",
-        chess_waiting_for_black: "Laukiama juodųjų žaidėjo...",
-        chess_white: "Balti: ",
-        chess_black: "Juodi: ",
-        
         janken_title: "Akmuo, Žirklės, Popierius",
         janken_versus: "prieš",
         janken_start_a_game: "Prisijunkite, kad pradėti žaidimą!",
@@ -196,10 +190,7 @@
         are_you_sure_you_want_to_block: "Ar tikrai norite užblokuoti šį naudotoją?",
         goodbye: "Iki kito karto!",
         flood_warning: "Sustok, ar ne per greitai rašai? Neišsiųsta žinutė: ",
-        chess_timeout_reached: "Šachmatų žaidimas baigtas: Išsęko laikas.",
-        chess_win: "Šachmatų žaidimas baigtas: Laimėjo {{userName}}.",
-        chess_quit: "Šachmatų žaidimas baigtas: {{userName}} paliko žaidimą.",
-        
+
         are_you_sure_you_want_to_clear_log: "Ar tikrai norite išvalyti pokalbio langą?",
         chat_log_cleared: "Pokalbio langas išvalytas.",
         stream_start_notification: "Naudotojas {{userName}} pradėjo transliaciją",

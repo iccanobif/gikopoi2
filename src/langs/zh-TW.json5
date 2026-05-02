@@ -147,12 +147,6 @@
         game_hide: "隱藏",
         game_join: "參加",
         game_quit: "投降",
-
-        chess_slot_title: "西洋棋",
-        chess_waiting_for_white: "正在等候白方加入",
-        chess_waiting_for_black: "正在等候黑方加入",
-        chess_white: "白：",
-        chess_black: "黑：",
         
         // janken_title: "Rock Paper Scissors",
         // janken_versus: "VS",
@@ -196,9 +190,6 @@
         are_you_sure_you_want_to_block: "確定要封鎖該用戶嗎？(雙方(你與封鎖用戶)將無法看到彼此的訊息與角色)",
         goodbye: "路上小心！約定好了還要再回來呦！",
         flood_warning: "欸，你會不會講太快了！ Undelivered message: ", // Partial
-        chess_timeout_reached: "對弈結束：時間到",
-        chess_win: "對弈結束：{{userName}}贏了。",
-        chess_quit: "對弈結束：{{userName}}投降了。",
         
         // are_you_sure_you_want_to_clear_log: "",
         // chat_log_cleared: "",

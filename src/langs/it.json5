@@ -148,12 +148,6 @@
         game_join: "Partecipa al giuoco",
         game_quit: "Esci dal giuoco",
 
-        chess_slot_title: "Scacchi",
-        chess_waiting_for_white: "In attesa del giocatore bianco...",
-        chess_waiting_for_black: "In attesa del giocatore nero...",
-        chess_white: "Bianco: ",
-        chess_black: "Nero: ",
-
         janken_title: "Sasso carta e forbice",
         janken_versus: "VS",
         janken_start_a_game: "Per iniziare il giuoco clicca su 'Partecipa al giuoco'",
@@ -196,10 +190,7 @@
         are_you_sure_you_want_to_block: "Sei sicuro di voler bloccare questo utente?",
         goodbye: "Ci si vede!",
         flood_warning: "Ehi, non stai parlando un po' troppo velocemente? Messaggio non recapitato: ",
-        chess_timeout_reached: "La partita a scacchi è finita: timeout raggiunto.",
-        chess_win: "La partita a scacchi è terminata: il vincitore è {{userName}}.",
-        chess_quit: "La partita a scacchi è terminata: {{userName}} ha abbandonato la partita.",
-        
+
         // are_you_sure_you_want_to_clear_log: "",
         // chat_log_cleared: "",
         // stream_start_notification: "{{userName}} has started a stream.",

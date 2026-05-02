@@ -148,12 +148,6 @@
         game_join: "Oyuna katıl",
         game_quit: "Oyundan çık",
 
-        chess_slot_title: "Satranç",
-        chess_waiting_for_white: "Beyazın girmesi bekleniyor...",
-        chess_waiting_for_black: "Siyahın girmesi bekleniyor...",
-        chess_white: "Beyaz: ",
-        chess_black: "Siyah: ",
-        
         janken_title: "Taş Kağıt Makas",
         janken_versus: "VS",
         janken_start_a_game: "Oyunu başlatmak için katıl",
@@ -196,9 +190,6 @@
         are_you_sure_you_want_to_block: "Bu kullanıcıyı engellemek istediğine emin misin?",
         goodbye: "Görüşmek üzere!",
         flood_warning: "Hey, biraz fazla hızlı konuşmuyor musun? Gönderilmemiş mesaj: ",
-        chess_timeout_reached: "Satranç oyun sona serdi: zaman aşımına uğradı.",
-        chess_win: "Satranç oyun sona serdi: kazanan {{userName}}.",
-        chess_quit: "Satranç oyun sona serdi: {{userName}} oyundan çıktı.",
         
         are_you_sure_you_want_to_clear_log: "Sohbet defterini temizlemek istediğine emin misin?",
         chat_log_cleared: "Sohbet defteri temizlendi.",

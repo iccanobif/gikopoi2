@@ -68,10 +68,6 @@
         game_join: "Ludum participare",
         game_quit: "Ludi exire",
         
-        chess_slot_title: "Scacci",
-        chess_white: "Album: ",
-        chess_black: "Nigrum: ",
-        
         janken_title: "Micatio Sinensis",
         janken_versus: "contra",
         janken_phrase: "Saxum! Forfex! Charta!",

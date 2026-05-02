@@ -148,12 +148,6 @@
         game_join: "Börja spela",
         game_quit: "Sluta spela",
 
-        chess_slot_title: "Schack",
-        chess_waiting_for_white: "Väntar på vit spelare...",
-        chess_waiting_for_black: "Väntar på svart spelare...",
-        chess_white: "Vit: ",
-        chess_black: "Svart: ",
-
         janken_title: "Sten Sax Påse",
         janken_versus: "mot",
         janken_start_a_game: "Påbörja ett spel!",
@@ -196,9 +190,6 @@
         are_you_sure_you_want_to_block: "Är du säker på att du vill blockera den här användaren?",
         goodbye: "På återseende!",
         flood_warning: "Hörru, snackar du inte lite fort nu? Olevererat meddelande: ",
-        chess_timeout_reached: "Schackspelet är över: timeout uppnådd.",
-        chess_win: "Schackspelet är över: segraren är {{userName}}.",
-        chess_quit: "Schackspelet är över: {{userName}} lämnade spelet.",
         
         are_you_sure_you_want_to_clear_log: "Vill du verkligen rensa chattloggen",
         chat_log_cleared: "Chattloggen har rensats.",

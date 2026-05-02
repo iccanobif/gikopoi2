@@ -892,12 +892,6 @@ button.checked {
     color: white;
 }
 
-.next-move-chess-player
-{
-    text-decoration: underline;
-    font-weight: bold;
-}
-
 .slot-message
 {
     margin-top: 5px;

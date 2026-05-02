@@ -2,7 +2,7 @@ const isProduction = process.env.NODE_ENV == "production"
 
 import express, { Request } from "express"
 import { rooms, dynamicRooms } from "./rooms.js";
-import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom, ListedRoom, MoveDto } from "./types.js";
+import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, JankenStateDto, Room, DynamicRoom, ListedRoom, MoveDto } from "./types.js";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getUserByPrivateId, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users.js";
 import got from "got";
 import log from "loglevel";
@@ -11,7 +11,6 @@ import compression from 'compression';
 import { checkIfBadIp } from "./abuse-ip-db.js";
 import { existsSync, readdirSync, readFileSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
-import { Chess } from "chess.js";
 import { Socket } from "socket.io";
 import { subscribeToAnnualEvents } from "../common/annualevents.js";
 import http from "http";
@@ -32,7 +31,6 @@ const io = new Server(server, {
 const persistInterval = 5 * 1000
 const maxGhostRetention = 30 * 60 * 1000
 const inactivityTimeout = 30 * 60 * 1000
-const maxWaitForChessMove = 1000 * 60 * 5
 const maximumUsersPerIpPerArea = 2
 
 const appVersion = Number.parseInt(readFileSync("version").toString())
@@ -87,13 +85,6 @@ function initializeRoomStates()
                         isNicoNicoMode: false,
                     }
                 })),
-                chess: {
-                    instance: null,
-                    blackUserID: null,
-                    whiteUserID: null,
-                    lastMoveTime: null,
-                    timer: null,
-                },
                 janken: {
                     stage: "joining",
                     player1Id: null,
@@ -208,7 +199,6 @@ const sendRoomState = (socket: Socket, user: Player, currentRoom: Room) =>
         currentRoom,
         connectedUsers,
         streams: toStreamSlotDtoArray(user, roomStates[user.areaId][user.roomId].streams),
-        chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId),
         jankenState: buildJankenStateDto(user.areaId, user.roomId),
         coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
         hideStreams: settings.noStreamIPs.some(noStreamIP => user.ips.some(ip => ip == noStreamIP)),
@@ -247,7 +237,6 @@ io.on("connection", function (socket)
             emitServerStats(user.areaId)
             await clearRoomListener(user)
             userRoomEmit(user, "server-user-left-room", user.id);
-            stopChessGame(roomStates, user)
             quitJanken(user)
         }
         catch (exc)
@@ -889,7 +878,6 @@ io.on("connection", function (socket)
             
             await clearStream(user)
             await clearRoomListener(user)
-            stopChessGame(roomStates, user)
             quitJanken(user)
             userRoomEmit(user, "server-user-left-room", user.id)
             socket.leave(user.areaId + user.roomId)
@@ -1010,99 +998,6 @@ io.on("connection", function (socket)
         }
     })
 
-    function createChessMoveTimeout() {
-        return setTimeout(() => {
-            const chessState = roomStates[user.areaId][user.roomId].chess
-            if (!chessState) return
-
-            const blackUserSocketId = chessState.blackUserID && getUser(chessState.blackUserID) && getUser(chessState.blackUserID).socketId
-            if (blackUserSocketId)
-                io.to(blackUserSocketId).emit("server-system-message", "chess_timeout_reached")
-            
-            const whiteUserSocketId = chessState.whiteUserID && getUser(chessState.whiteUserID) && getUser(chessState.whiteUserID).socketId
-            if (whiteUserSocketId)
-                io.to(whiteUserSocketId).emit("server-system-message", "chess_timeout_reached")
-
-            stopChessGame(roomStates, user)
-        }, maxWaitForChessMove)
-    }
-
-    function getUsersToNotifyAboutChessGame() {
-
-        const chessState = roomStates[user.areaId][user.roomId].chess
-
-        const blackUser = getUser(chessState?.blackUserID!)
-        const whiteUser = getUser(chessState?.whiteUserID!)
-        const usersToNotify = new Set<Player>()
-        if (blackUser)
-            getFilteredConnectedUserList(blackUser, blackUser.roomId, blackUser.areaId)
-                .forEach(u => usersToNotify.add(u))
-        if (whiteUser)
-            getFilteredConnectedUserList(whiteUser, whiteUser.roomId, whiteUser.areaId)
-                .forEach(u => usersToNotify.add(u))
-        return usersToNotify
-    }
-
-    socket.on("user-want-to-play-chess", function () {
-        try {
-            // The first user who requests a game will be white, the second one will be black
-
-            log.info("user-want-to-play-chess", user.id)
-            const chessState = roomStates[user.areaId][user.roomId].chess
-
-            if (chessState.blackUserID)
-            {
-                // Game already started
-                return // TODO display error message to user
-            }
-
-            if (!chessState.whiteUserID)
-                chessState.whiteUserID = user.id
-            else
-            {
-                if (chessState.whiteUserID == user.id)
-                    return // can't play against yourself
-
-                log.info("chess game starts", user.id)
-
-                chessState.blackUserID = user.id
-                chessState.instance = new Chess()
-                chessState.timer = createChessMoveTimeout()
-            }
-
-            sendUpdatedChessboardState(roomStates, user.areaId, user.roomId)
-        }
-        catch (e)
-        {
-            logException(e, user)
-        }
-    })
-
-    socket.on("user-want-to-quit-chess", function () {
-        try
-        {
-            log.info("user-want-to-quit-chess", user.id)
-
-            const state = roomStates[user.areaId][user.roomId].chess
-
-            if (state.blackUserID)
-            {
-                // Notify only if the game was already started.
-                const usersToNotify = getUsersToNotifyAboutChessGame()
-                usersToNotify.forEach(u => {
-                    if (u.socketId)
-                        io.to(u.socketId).emit("server-chess-quit", user.id)
-                })
-            }
-
-            stopChessGame(roomStates, user)
-        }
-        catch (e)
-        {
-            logException(e, user)
-        }
-    })
-
     socket.on("special-events:client-add-shrine-coin", function () {
         try
         {
@@ -1120,63 +1015,6 @@ io.on("connection", function (socket)
         }
     })
 
-    socket.on("user-chess-move", function(source: any, target: any) {
-        try {
-            log.info("user-chess-move", user.id, source, target)
-
-            const chessState = roomStates[user.areaId][user.roomId].chess
-
-            // Check if a game is on
-            if (!chessState.instance)
-                return
-
-            if (source == target)
-                return
-
-            // Check if move comes from the right user
-            if ((chessState.instance.turn() == "b" && chessState.blackUserID != user.id)
-                || (chessState.instance.turn() == "w" && chessState.whiteUserID != user.id))
-            {
-                const stateDTO: ChessboardStateDto = buildChessboardStateDto(roomStates, user.areaId, user.roomId)
-                socket.emit("server-update-chessboard", stateDTO);
-                return
-            }
-
-            // If the move is illegal, nothing happens
-            const result = chessState.instance.move({ from: source, to: target, promotion: "q" })
-
-            if (result)
-            {
-                // Move was legal
-                chessState.lastMoveTime = Date.now()
-                if (chessState.timer)
-                    clearTimeout(chessState.timer)
-                chessState.timer = createChessMoveTimeout()
-            }
-
-            // If the game is over, clear the game and send a message declaring the winner
-            if (chessState.instance.isGameOver())
-            {
-                const winnerUserID = chessState.instance?.turn() == "b" ? chessState.whiteUserID : chessState.blackUserID
-                log.info("game over", winnerUserID)
-
-                const usersToNotify = getUsersToNotifyAboutChessGame()
-                usersToNotify.forEach(u => {
-                    if (u.socketId)
-                        io.to(u.socketId).emit("server-chess-win", winnerUserID)
-                })
-
-                stopChessGame(roomStates, user)
-            }
-
-            sendUpdatedChessboardState(roomStates, user.areaId, user.roomId)
-        }
-        catch (e)
-        {
-            logException(e, user)
-        }
-    })
-    
     socket.on("user-want-to-join-janken", function()
     {
         try
@@ -1406,7 +1244,6 @@ const cachedJsBundle = (() => {
       + readFileSync("public/scripts/riffwave.js").toString() + '\n'
       + readFileSync("public/scripts/Blob.js").toString() + '\n'
       + readFileSync("public/scripts/animalese.js").toString() + '\n'
-      + readFileSync("public/chess/js/chessboard-1.0.0.min.js").toString() + '\n'
       + readFileSync("public/scripts/input-knobs.js").toString() + '\n'
       + readFileSync("public/scripts/polyfills.js").toString() + '\n'
       + 'window.EXPECTED_SERVER_VERSION = Number.parseInt("' + appVersion.toString() + '")' + '\n'
@@ -1545,7 +1382,6 @@ app.get("/api/areas/:areaId/rooms/:roomId", (req, res) =>
             currentRoom: rooms[roomId],
             connectedUsers: filteredList.map(toPlayerDto),
             streams: [],
-            chessboardState: buildChessboardStateDto(roomStates, areaId, roomId),
             jankenState: buildJankenStateDto(areaId, roomId),
             coinCounter: roomStates[areaId][roomId].coinCounter,
             hideStreams: false,
@@ -2210,48 +2046,6 @@ function quitJanken(user: Player)
     sendUpdatedJankenState(user.areaId, user.roomId)
     resetJanken(user.areaId, user.roomId, true)
 }
-
-function buildChessboardStateDto(roomStates: RoomStateCollection, areaId: string, roomId: string): ChessboardStateDto
-{
-    const state = roomStates[areaId][roomId].chess
-
-    return {
-        fenString: state.instance?.fen() || null,
-        turn: state.instance?.turn() || null,
-        blackUserID: state.blackUserID,
-        whiteUserID: state.whiteUserID,
-    }
-}
-
-function sendUpdatedChessboardState(roomStates: RoomStateCollection, areaId: string, roomId: string)
-{
-    const stateDTO: ChessboardStateDto = buildChessboardStateDto(roomStates, areaId, roomId)
-    roomEmit(areaId, roomId, "server-update-chessboard", stateDTO);
-}
-
-function stopChessGame(roomStates: RoomStateCollection, user: Player)
-{
-    const state = roomStates[user.areaId][user.roomId].chess
-
-    if (user.id != state.blackUserID && user.id != state.whiteUserID)
-        return
-
-    log.info("stopChessGame", user.id)
-
-    if (state.timer)
-        clearTimeout(state.timer)
-
-    roomStates[user.areaId][user.roomId].chess = {
-        instance: state.instance,
-        blackUserID: null,
-        whiteUserID: null,
-        lastMoveTime: null,
-        timer: null,
-    }
-
-    sendUpdatedChessboardState(roomStates, user.areaId,user. roomId)
-}
-
 
 async function disconnectUser(user: Player)
 {

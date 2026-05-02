@@ -148,12 +148,6 @@
         game_join: "Bergabung ke permainan",
         game_quit: "Keluar dari permainan",
 
-        chess_slot_title: "Catur",
-        chess_waiting_for_white: "Menunggu putih untuk bergabung...",
-        chess_waiting_for_black: "Menunggu hitam untuk bergabung...",
-        chess_white: "Putih: ",
-        chess_black: "Hitam: ",
-        
         // janken_title: "Rock Paper Scissors",
         // janken_versus: "VS",
         // janken_start_a_game: "Join to start a game!",
@@ -196,10 +190,7 @@
         are_you_sure_you_want_to_block: "Apakah Anda ingin memblokirnya?",
         goodbye: "Sampai nanti!",
         flood_warning: "Anda berbicara terlalu banyak! Pesan yang tidak terkirim: ",
-        chess_timeout_reached: "Game catur sudah berakhir : waktu telah habis.",
-        chess_win: "Game catur sudah berakhir: Pemenangnya {{userName}}.",
-        chess_quit: "Game catur berakhir: {{userName}} berhenti main.",
-        
+
         are_you_sure_you_want_to_clear_log: "Apakah Anda ingin menghapus log obrolan?",
         chat_log_cleared: "Log obrolan telah dihapus.",
         stream_start_notification: "{{userName}} telah memulai siaran.",
