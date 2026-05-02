@@ -70,7 +70,60 @@ export interface PointerState {
 
 export type PopupCallback = (buttonIndex: number) => void
 
+export interface GikopoipoiPreferences {
+    areaId: string
+    bubbleOpacity: number
+    canvasHeight: string | null // string because CSSStyleDeclaration.style.height is typed as string.
+    characterId: string
+    customMentionSoundPattern: string
+    displayAdvancedStreamSettings: boolean
+    enableTextToSpeech: boolean
+    isBubbleSectionVisible: boolean
+    isCoinSoundEnabled: boolean
+    isCommandSectionVisible: boolean
+    isCrispModeEnabled: boolean
+    isIdleAnimationDisabled: boolean
+    isIgnoreOnBlock: boolean
+    isInfoboxVisible: boolean
+    isLoginSoundEnabled: boolean
+    isLogoutButtonVisible: boolean
+    isLowQualityEnabled: boolean
+    isMessageSoundEnabled: boolean
+    isMoveSectionVisible: boolean
+    isNameMentionSoundEnabled: boolean
+    isNewlineOnShiftEnter: boolean
+    isStreamAutoResumeEnabled: boolean
+    isStreamInboundVuMeterEnabled: boolean
+    language: string // this is relevant only for areas that don't have a restricted language (for gikopoipoi.net, _for)
+    rulaRoomListSortKey: RulaRoomListSortKey
+    rulaRoomListSortDirection: 1 | -1
+    showIgnoreIndicatorInLog: boolean
+    showLogAboveToolbar: boolean
+    showLogDividers: boolean
+    showNotifications: boolean
+    showUsernameBackground: boolean
+    streamAutoGain: boolean
+    streamEchoCancellation: boolean
+    streamMode: StreamMode
+    streamNoiseSuppression: boolean
+    streamScreenCapture: boolean
+    streamScreenCaptureAudio: boolean
+    timestampsInCopiedLog: boolean
+    ttsVoiceURI: string
+    uiTheme: string
+    username: string
+    underlinedUsernames: boolean
+    voiceVolume: number,
+    streamTarget: StreamTarget
+    streamIsVtuberMode: boolean
+    isNicoNicoMode: boolean
+    soundEffectVolume: number // 0~1
+    slotVolume: { [slotId: number]: number } // key: slot Id / value: volume
+}
+
 export type RulaRoomListSortKey = 'sortName' | 'userCount' | 'streamerCount'
+export type StreamMode = 'video_sound' | 'sound' | 'video'
+export type StreamTarget = 'all_room' | 'specific_users'
 
 import type { RTCPeer } from "./rtcpeer";
 export interface RTCPeerSlot {

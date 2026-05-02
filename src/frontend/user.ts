@@ -40,9 +40,9 @@ export default class User
 
     public isAlternateCharacter: boolean = false
 
-    public isBlinking: boolean = false // private
-    public blinkingPattern: number[] // private
-    public blinkingStartShift: number // private
+    private isBlinking: boolean = false
+    private blinkingPattern: number[]
+    private blinkingStartShift: number
     
     constructor(id: string, name: string, character: Character)
     {

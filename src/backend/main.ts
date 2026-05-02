@@ -2,7 +2,7 @@ const isProduction = process.env.NODE_ENV == "production"
 
 import express, { Request } from "express"
 import { rooms, dynamicRooms } from "./rooms.js";
-import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom, ListedRoom, MoveDto } from "./types.js";
+import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, ChessboardStateDto, JankenStateDto, Room, DynamicRoom, MoveDto } from "./types.js";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getUserByPrivateId, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users.js";
 import got from "got";
 import log from "loglevel";
@@ -20,6 +20,7 @@ import { elaborateUserName } from "./utils.js";
 import cookieParser from "cookie-parser";
 import { HTTPS } from "express-sslify"
 import { Janus } from "janus-videoroom-client"
+import { siteAreas } from "../common/site-areas.js";
 
 const app = express()
 const server = http.createServer(app);
@@ -62,7 +63,7 @@ let bannedIPs: Set<string> = new Set<string>()
 
 function initializeRoomStates()
 {
-    roomStates = Object.fromEntries(settings.siteAreas.map((area, areaNumberId) =>
+    roomStates = Object.fromEntries(siteAreas.map((area, areaNumberId) =>
     {
         return [area.id, Object.fromEntries(Object.entries(rooms).map(([roomId, room], roomNumberId) =>
         {
@@ -211,7 +212,6 @@ const sendRoomState = (socket: Socket, user: Player, currentRoom: Room) =>
         chessboardState: buildChessboardStateDto(roomStates, user.areaId, user.roomId),
         jankenState: buildJankenStateDto(user.areaId, user.roomId),
         coinCounter: roomStates[user.areaId][user.roomId].coinCounter,
-        hideStreams: settings.noStreamIPs.some(noStreamIP => user.ips.some(ip => ip == noStreamIP)),
     }
 
     socket.emit("server-update-current-room-state", state)
@@ -922,41 +922,6 @@ io.on("connection", function (socket)
         }
     })
 
-    socket.on("user-room-list", function ()
-    {
-        try
-        {
-            const roomList: ListedRoom[] =
-                Object.values(rooms)
-                .filter(room => !room.secret)
-                .map(room => ({
-                    id: room.id,
-                    group: room.group,
-                    userCount: getFilteredConnectedUserList(user, room.id, user.areaId).length,
-                    streams: toStreamSlotDtoArray(user, roomStates[user.areaId][room.id].streams)
-                        .filter(stream => stream.isActive && stream.userId != null)
-                        .map(stream => {
-                            if (room.forcedAnonymous)
-                                return { userName: "", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
-
-                            const streamUser = getUser(stream.userId!)
-                            if (!streamUser)
-                            {
-                                log.error("ERROR: Can't find user", stream.userId, "when doing #rula")
-                                return { userName: "N/A", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
-                            }
-
-                            return { userName: streamUser.name, isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
-                        }),
-                }))
-
-            socket.emit("server-room-list", roomList)
-        }
-        catch (e)
-        {
-            logException(e, user)
-        }
-    })
 
     socket.on("user-block", function ( userId: string )
     {
@@ -1265,7 +1230,7 @@ io.on("connection", function (socket)
 function emitServerStats(areaId: string)
 {
     const allConnectedUsers = getAllUsers().filter(u => !u.isGhost)
-    const logLineAreas = settings.siteAreas.map(area =>
+    const logLineAreas = siteAreas.map(area =>
     {
         return area.id + " users: " + allConnectedUsers.filter(u => u.areaId == area.id).length + " " +
             area.id + " streams: " + Object.values(roomStates[area.id]).map(s => s.streams).flat().filter(s => s.publisher != null && s.publisher.user.id).length
@@ -1410,7 +1375,6 @@ const cachedJsBundle = (() => {
       + readFileSync("public/scripts/input-knobs.js").toString() + '\n'
       + readFileSync("public/scripts/polyfills.js").toString() + '\n'
       + 'window.EXPECTED_SERVER_VERSION = Number.parseInt("' + appVersion.toString() + '")' + '\n'
-      + 'window.siteAreas = JSON.parse("' + JSON.stringify(settings.siteAreas).replace(/\"/g, "\\\"") + '")' + '\n'
 })()
 
 app.get("/api/server_generated_bundle.js", async (req, res) =>
@@ -1457,11 +1421,11 @@ app.get(/(.+)\.crisp\.svg$/i, async (req, res) =>
 
         const svgPath = req.params[0] + ".svg";
 
-            if (svgPath in svgCrispCache)
-            {
-                returnImage(svgCrispCache[svgPath]);
-                return;
-            }
+        if (svgPath in svgCrispCache)
+        {
+            returnImage(svgCrispCache[svgPath]);
+            return;
+        }
 
         log.info("Fetching svg: " + svgPath)
         let data = await readFile("public" + svgPath, 'utf8')
@@ -1548,10 +1512,75 @@ app.get("/api/areas/:areaId/rooms/:roomId", (req, res) =>
             chessboardState: buildChessboardStateDto(roomStates, areaId, roomId),
             jankenState: buildJankenStateDto(areaId, roomId),
             coinCounter: roomStates[areaId][roomId].coinCounter,
-            hideStreams: false,
         }
 
         res.json(dto)
+    }
+    catch (e)
+    {
+        res.end(stringifyException(e))
+    }
+})
+
+app.get("/api/areas/:areaId/rooms", (req, res) =>
+{
+    try
+    {
+        function setResponseToUnauthorized(msg: string)
+        {
+            log.error(getRealIp(req), msg)
+            res.status(401)
+            res.end("")
+        }
+
+        const areaId = req.params.areaId
+        const bearerHeader = req.headers["authorization"]
+
+        if (!bearerHeader)
+        {
+            setResponseToUnauthorized("ERROR: Room list API called with no authentication")
+            return
+        }
+
+        const userPrivateId = bearerHeader.split(" ")[1]
+        const user = getUserByPrivateId(userPrivateId)
+
+        if (!user)
+        {
+            setResponseToUnauthorized(`ERROR: User ${userPrivateId} doesn't exist`)
+            return
+        }
+
+        if (user.areaId != areaId)
+        {
+            setResponseToUnauthorized(`ERROR: User ${userPrivateId} tried to access room list on ${areaId} but he's on ${user.areaId}`)
+            return
+        }
+
+        const output = Object.values(rooms)
+            .filter(room => !room.secret)
+            .map(room => ({
+                id: room.id,
+                group: room.group,
+                userCount: getFilteredConnectedUserList(user, room.id, areaId).length,
+                streams: toStreamSlotDtoArray(user, roomStates[areaId][room.id].streams)
+                    .filter(stream => stream.isActive && stream.userId != null)
+                    .map(stream => {
+                        if (room.forcedAnonymous)
+                            return { userName: "", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
+
+                        const streamUser = getUser(stream.userId!)
+                        if (!streamUser)
+                        {
+                            log.error("ERROR: Can't find user", stream.userId, "when doing #rula")
+                            return { userName: "N/A", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
+                        }
+
+                        return { userName: streamUser.name, isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
+                    }),
+            }));
+
+        res.json(output)
     }
     catch (e)
     {
@@ -2375,7 +2404,7 @@ async function persistState()
         const state: PersistedState = {
             users: getAllUsers(),
             bannedIPs: Array.from(bannedIPs),
-            areas: settings.siteAreas.map(area =>
+            areas: siteAreas.map(area =>
             {
                 return {
                     id: area.id,
@@ -2485,7 +2514,7 @@ dynamicRooms.forEach((dynamicRoom: DynamicRoom) =>
         if (previousVariant != room.variant)
         {
             rooms[dynamicRoom.roomId] = room
-            settings.siteAreas.forEach(area =>
+            siteAreas.forEach(area =>
             {
                 for (const u of getConnectedUserList(dynamicRoom.roomId, area.id))
                     if (u.socketId)

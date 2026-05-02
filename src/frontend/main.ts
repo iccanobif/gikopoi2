@@ -15,13 +15,11 @@ import type {
     StreamSlotDto,
     JankenStateDto,
     PointerState,
-    ListedRoom,
     DeviceInfo,
     Stats,
     ChessboardStateDto,
     PopupCallback,
     RoomStateDto,
-    RulaRoomListSortKey,
     PlayerDto,
     MoveDto,
     RTCPeerSlot,
@@ -29,6 +27,7 @@ import type {
     CanvasObject,
     VideoContainer,
     IgnoredUserIds,
+    GikopoipoiPreferences,
 } from './types'
 import type { Character } from './character'
 
@@ -81,13 +80,16 @@ import {
     removeControlChars,
     escapeHTML,
     adjustNiconicoMessagesFontSize,
-    debouncedLogSoundVolume,
-    makeUrlsClickable
+    makeUrlsClickable,
+    playSound,
+    loadAllSoundEffects,
+    debouncedPlaySound,
 } from "./utils";
 import { debouncedSpeakTest, speak } from "./tts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
 import { RenderCache } from "./rendercache";
 import { animateObjects, animateJizou } from "./animations";
+import { loadPreferencesFromLocalStorage, setAndPersist } from './preferences'
 
 import ChessboardSlot from './components/chessboard-slot.vue'
 import JankenSlot from './components/janken-slot.vue'
@@ -98,7 +100,14 @@ import LoginPage from './pages/login.vue'
 
 import NumericValueControl from './components/numeric-value-control.vue'
 import VoiceChangerControl from './components/voice-changer-control.vue';
+import DialogPopup from './components/popups/dialog-popup.vue'
+import RulaPopup from './components/popups/rula-popup.vue'
+import UserListPopup from './components/popups/user-list-popup.vue'
+import StreamPopup from './components/popups/stream-popup.vue'
+import PreferencesPopup from './components/popups/preferences-popup.vue'
+import DeviceSelectionPopup from './components/popups/device-selection-popup.vue'
 import RoomObjectEditor from './components/room-object-editor.vue';
+import { siteAreas } from '../common/site-areas';
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -166,39 +175,9 @@ function getSpawnRoomId()
     }
 }
 
-const siteAreas = window.siteAreas
+const initialPreferences = loadPreferencesFromLocalStorage()
+
 const siteAreasInfo = window.siteAreasInfo
-
-function getSiteArea(areaId: string): SiteArea
-{
-    return siteAreas.find(area => area.id == areaId) || siteAreas[0]
-}
-
-function getInitialAreaId(): string
-{
-    let areaId: string | null = null
-    try
-    {
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        areaId = urlSearchParams.get("areaid")
-    }
-    catch
-    {}
-    areaId = areaId || localStorage.getItem("areaId")
-    const foundArea = siteAreas.find(area => area.id == areaId)
-    if (foundArea)
-        return foundArea.id
-    
-    const siteArea =
-        siteAreas.find(area => area.language != "any" && (new RegExp("^" + area.language + "\\b")).test(navigator.language))
-        || siteAreas.find(area => area.language == "any")
-    if (siteArea) return siteArea.id
-    return siteAreas[0].id
-}
-const initialAreaId = getInitialAreaId()
-const initialArea = getSiteArea(initialAreaId)
-
-const initialLanguage = localStorage.getItem("language") || "en"
 
 function getAppState()
 {
@@ -208,11 +187,12 @@ function getAppState()
         return "login"
 }
 
+const initialArea = siteAreas.find(a => a.id == initialPreferences.areaId) || siteAreas[0]
 i18next.init(
 {
     ns: ['common'],
     defaultNS: 'common',
-    lng: (initialArea.restrictLanguage && initialArea.language) || initialLanguage,
+    lng: (initialArea.restrictLanguage && initialArea.language) || initialPreferences.language,
     fallbackLng: 'en',
     resources: languages,
     
@@ -221,6 +201,7 @@ i18next.init(
     contextSeparator: '.',
 })
 
+// To be called also when the language changes, to update the page title and description.
 function setPageMetadata()
 {
     document.title = i18next.t("ui.title")
@@ -230,11 +211,6 @@ function setPageMetadata()
 }
 setPageMetadata()
 
-function setAppLanguage(code: string)
-{
-    i18next.changeLanguage(code, setPageMetadata)
-}
-
 const vueApp = createApp(defineComponent({
     components: {
         ChessboardSlot,
@@ -242,11 +218,16 @@ const vueApp = createApp(defineComponent({
         LoginFooter,
         NumericValueControl,
         VoiceChangerControl,
+        DialogPopup,
+        RulaPopup,
+        UserListPopup,
+        StreamPopup,
+        PreferencesPopup,
+        DeviceSelectionPopup,
         RoomObjectEditor,
     },
     data() {
         return {
-            siteAreas: siteAreas,
             siteAreasInfo: siteAreasInfo,
             
             selectedCharacter: null as Character | null,
@@ -261,11 +242,8 @@ const vueApp = createApp(defineComponent({
             justSpawnedToThisRoom: true,
             isLoadingRoom: false,
             requestedRoomChange: false,
-            isInfoboxVisible: localStorage.getItem("isInfoboxVisible") == "true",
-            soundEffectVolume: 0,
             isLoggingIn: false,
-            areaId: initialAreaId,
-            language: initialLanguage,
+            preferences: initialPreferences,
             uiBackgroundColor: null as number[] | null,
             isUiBackgroundDark: false,
             currentCanvasVerticalMovement: "none" as "none" | "up" | "down",
@@ -285,9 +263,6 @@ const vueApp = createApp(defineComponent({
             backgroundImageDimensions: { w: 0, h: 0 } as Size,
             userCanvasScale: 1,
             userCanvasScaleStart: null as number | null,
-            isLowQualityEnabled: localStorage.getItem("isLowQualityEnabled") == "true",
-            isCrispModeEnabled: localStorage.getItem("isCrispModeEnabled") == "true",
-            isIdleAnimationDisabled: localStorage.getItem("isIdleAnimationDisabled") == "true",
             blockWidth: BLOCK_WIDTH,
             blockHeight: BLOCK_HEIGHT,
             devicePixelRatio: 1 as number,
@@ -295,12 +270,6 @@ const vueApp = createApp(defineComponent({
 
             // rula stuff
             isRulaPopupOpen: false,
-            roomList: [] as ListedRoom[],
-            preparedRoomList: [] as ListedRoom[],
-            rulaRoomGroup: "all",
-            rulaRoomListSortKey: (localStorage.getItem("rulaRoomListSortKey") || "sortName") as RulaRoomListSortKey,
-            rulaRoomListSortDirection: (localStorage.getItem("rulaRoomListSortDirection") == "1" ? 1 : -1) as 1 | -1,
-            rulaRoomSelection: null as string | null,
 
             // user list stuff
             isUserListPopupOpen: false,
@@ -308,31 +277,8 @@ const vueApp = createApp(defineComponent({
 
             // preferences stuff
             isPreferencesPopupOpen: false,
-            showUsernameBackground: localStorage.getItem("showUsernameBackground") != "false",
-            isNewlineOnShiftEnter: localStorage.getItem("isNewlineOnShiftEnter") != "false",
-            bubbleOpacity: parseInt(localStorage.getItem("bubbleOpacity") || '100'),
-            isCommandSectionVisible: localStorage.getItem("isCommandSectionVisible") != "false",
-            isMoveSectionVisible: localStorage.getItem("isMoveSectionVisible") != "false",
-            isBubbleSectionVisible: localStorage.getItem("isBubbleSectionVisible") != "false",
-            isLogoutButtonVisible: localStorage.getItem("isLogoutButtonVisible") != "false",
-            uiTheme: localStorage.getItem("uiTheme") || "gikopoi",
-            showNotifications: localStorage.getItem("showNotifications") != "false",
-            enableTextToSpeech: localStorage.getItem("enableTextToSpeech") != "false",
-            ttsVoiceURI: localStorage.getItem("ttsVoiceURI") || "automatic",
-            voiceVolume: parseInt(localStorage.getItem("voiceVolume") || '0'),
-            availableTTSVoices: [] as SpeechSynthesisVoice[],
-            isMessageSoundEnabled: localStorage.getItem("isMessageSoundEnabled") != "false",
-            isLoginSoundEnabled: localStorage.getItem("isLoginSoundEnabled") != "false",
-            isNameMentionSoundEnabled: localStorage.getItem("isNameMentionSoundEnabled") == "true",
-            customMentionSoundPattern: localStorage.getItem("customMentionSoundPattern") || "",
             customMentionRegexObject: null as RegExp | null,
             usernameMentionRegexObject: null as RegExp | null,
-            isCoinSoundEnabled: localStorage.getItem("isCoinSoundEnabled") != "false",
-            isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
-            isStreamInboundVuMeterEnabled: localStorage.getItem("isStreamInboundVuMeterEnabled") != "false",
-            showLogAboveToolbar: localStorage.getItem("showLogAboveToolbar") == "true",
-            showLogDividers: localStorage.getItem("showLogDividers") == "true",
-            isIgnoreOnBlock: localStorage.getItem("isIgnoreOnBlock") == "true",
 
             // streaming 
             streams: [] as StreamSlotDto[],
@@ -340,23 +286,12 @@ const vueApp = createApp(defineComponent({
             mediaStream: null as MediaStream | null,
             streamSlotIdInWhichIWantToStream: null as number | null,
             takenStreams: [] as boolean[], // streams taken by me
-            slotVolume: JSON.parse(localStorage.getItem("slotVolume") || '{}') as {[slotId: number]: number}, // key: slot Id / value: volume
             detachedStreamTabs: {} as {[slotId: number]: Window | null}, // key: slot Id
             slotIsVtuberCharacterJumping: {} as {[slotId: number]: boolean}, // key: slot Id / value: boolean
 
             // stream settings
             isStreamPopupOpen: false,
-            streamMode: localStorage.getItem("streamMode") || "video_sound",
-            displayAdvancedStreamSettings: localStorage.getItem("displayAdvancedStreamSettings") == "true",
-            streamEchoCancellation: localStorage.getItem("streamEchoCancellation") == "true",
-            streamNoiseSuppression: localStorage.getItem("streamNoiseSuppression") == "true",
-            streamAutoGain: localStorage.getItem("streamAutoGain") == "true",
-            streamScreenCapture: localStorage.getItem("streamScreenCapture") == "true",
-            streamScreenCaptureAudio: localStorage.getItem("streamScreenCaptureAudio") == "true",
-            streamTarget: "all_room" as "all_room" | "specific_users",
             allowedListenerIDs: new Set() as Set<string>,
-            streamIsVtuberMode: false,
-            isNicoNicoMode: false,
 
             // Device selection popup
             isDeviceSelectionOpen: false,
@@ -396,9 +331,6 @@ const vueApp = createApp(defineComponent({
             highlightedUserName: null as string | null,
             movementDirection: null as Direction | null,
             lastSetMovementDirectionTime: 0, // Found in code but not in data
-            underlinedUsernames: localStorage.getItem("underlinedUsernames") == "true",
-            timestampsInCopiedLog: localStorage.getItem("timestampsInCopiedLog") != "false",
-            showIgnoreIndicatorInLog: localStorage.getItem("showIgnoreIndicatorInLog") == "true",
             notificationPermissionsGranted: false,
             lastFrameTimestamp: null as number | null,
             chessboardState: null as ChessboardStateDto | null,
@@ -408,7 +340,6 @@ const vueApp = createApp(defineComponent({
 
             lastCoinTossTime: 0, // unix timestamp
 
-            // hideStreams: false,
             // the key is the slot ID
             inboundAudioProcessors: {} as {[slotId: number]: AudioProcessor},
             outboundAudioProcessor: null as AudioProcessor | null,
@@ -481,7 +412,7 @@ const vueApp = createApp(defineComponent({
         // the button.
         document.addEventListener("mouseup", () => this.setMovementDirection())
 
-        loadCharacterImagesPromise = loadCharacters(this.isCrispModeEnabled);
+        loadCharacterImagesPromise = loadCharacters(this.preferences.isCrispModeEnabled);
 
         const charSelect = document.getElementById("character-selection")
         const charactersSelected = charSelect!.getElementsByClassName("character-selected")
@@ -489,17 +420,6 @@ const vueApp = createApp(defineComponent({
             charactersSelected[0].scrollIntoView({block: "nearest"})
             
         document.getElementById("username-textbox")!.focus()
-
-        if (window.speechSynthesis)
-        {
-            this.availableTTSVoices = speechSynthesis.getVoices()
-            if (speechSynthesis.addEventListener)
-            {
-                speechSynthesis.addEventListener("voiceschanged", () => {
-                    this.availableTTSVoices = speechSynthesis.getVoices()
-                })
-            }
-        }
 
         this.devicePixelRatio = this.getDevicePixelRatio();
     },
@@ -512,16 +432,15 @@ const vueApp = createApp(defineComponent({
                     speechSynthesis.speak(new SpeechSynthesisUtterance(""));
 
                 this.isLoggingIn = true;
-                this.areaId = areaId;
 
                 // This is to make sure that the browser doesn't attempt to show the
                 // "autocomplete" drop down list when pressing the arrow keys on the keyboard,
                 // even when the textbox isn't visibile anymore (dunno why this happens, a firefox bug maybe).
                 document.getElementById("username-textbox")!.blur()
 
-                localStorage.setItem("username", username)
-                localStorage.setItem("characterId", characterId)
-                localStorage.setItem("areaId", areaId)
+                setAndPersist(this.preferences, "username", username)
+                setAndPersist(this.preferences, "characterId", characterId)
+                setAndPersist(this.preferences, "areaId", areaId)
 
                 window.addEventListener("resize", () =>
                 {
@@ -546,11 +465,10 @@ const vueApp = createApp(defineComponent({
                 // wait next tick so that canvas-container gets rendered in the DOM
                 await nextTick()
 
-                const canvasHeight = localStorage.getItem("canvasHeight")
-                if (canvasHeight)
-                    document.getElementById("canvas-container")!.style.height = canvasHeight;
+                if (this.preferences.canvasHeight)
+                    document.getElementById("canvas-container")!.style.height = this.preferences.canvasHeight;
 
-                await this.connectToServer(username, areaId, characterId);
+                await this.connectToServer(username, characterId);
 
                 const roomCanvas = document.getElementById("room-canvas") as HTMLCanvasElement
                 this.canvasContext = roomCanvas.getContext("2d");
@@ -564,15 +482,13 @@ const vueApp = createApp(defineComponent({
                 await loadCharacterImagesPromise;
                 this.paintLoop();
 
-                this.soundEffectVolume = parseFloat(localStorage.getItem(areaId + "soundEffectVolume") || '0')
-
-                this.updateAudioElementsVolume()
+                await loadAllSoundEffects()
 
                 if (window.Notification)
                 {
                     if (Notification.permission == "granted")
                         this.notificationPermissionsGranted = true
-                    else if (this.showNotifications)
+                    else if (this.preferences.showNotifications)
                     {
                         const permission = await requestNotificationPermission()
 
@@ -580,32 +496,29 @@ const vueApp = createApp(defineComponent({
                     }
                 }
 
-                // @ts-ignore
                 $( "#sound-effect-volume" ).slider({
                     orientation: "vertical",
                     range: "min",
                     min: 0,
                     max: 1,
                     step: 0.01,
-                    value: this.soundEffectVolume,
+                    value: this.preferences.soundEffectVolume,
                     slide: ( event: any, ui: any ) => {
                         this.changeSoundEffectVolume(ui.value);
                     }
                 });
-                // @ts-ignore
                 $( "#voice-volume" ).slider({
                     orientation: "vertical",
                     range: "min",
                     min: 0,
                     max: 100,
                     step: 1,
-                    value: this.voiceVolume,
+                    value: this.preferences.voiceVolume,
                     slide: ( event: any, ui: any ) => {
                         this.changeVoiceVolume(ui.value);
                     }
                 });
 
-                // @ts-ignore
                 $( "#main-section" ).resizable({
                     handles: "e"
                 })
@@ -634,47 +547,32 @@ const vueApp = createApp(defineComponent({
         },
         getSVGMode(): string | null
         {
-            return this.isCrispModeEnabled ? "crisp" : null;
+            return this.preferences.isCrispModeEnabled ? "crisp" : null;
         },
         async reloadImages()
         {
             this.loadRoomBackground();
             this.loadRoomObjects();
 
-            await (loadCharacters(this.isCrispModeEnabled));
+            await (loadCharacters(this.preferences.isCrispModeEnabled));
             this.isRedrawRequired = true;
         },
-        getSiteArea()
+        areaChanged(siteArea: SiteArea)
         {
-            return getSiteArea(this.areaId)
+            // fallback to "ja" only to make typescript happy (in practice, if restrictLanguage is true, language should always be defined)
+            const language = siteArea.restrictLanguage ? siteArea.language : this.preferences.language;
+            this.setLanguage(language)
         },
-        setLanguage(siteArea?: SiteArea)
+        languagePreferenceChanged()
         {
-            if (!siteArea)
-                siteArea = this.getSiteArea()
-            setAppLanguage((siteArea.restrictLanguage && siteArea.language) || this.language)
+            // This method is called only from the preferences popup, and in that popup the language
+            // selector is available only if the current area doesn't have a restricted language, so we can
+            // be sure that preferences.language is the right source of truth for the language to set.
+            this.setLanguage(this.preferences.language)
         },
-        getLangEntries()
+        setLanguage(language: string)
         {
-            const topEntries = ["ja", "en"]
-            return Object.keys(languages)
-                .sort((a, b) =>
-            {
-                const ta = topEntries.indexOf(a)
-                const tb = topEntries.indexOf(b)
-                if(ta >= 0 || tb >= 0)
-                {
-                    if (ta < 0) return 1
-                    if (tb < 0) return -1
-                    return ta < tb ? -1 : 1
-                }
-                
-                return this.$t("lang_sort_key", { lng: a }).localeCompare(this.$t("lang_sort_key", { lng: b }))
-            })
-                .map((id) =>
-            {
-                return {id, name: this.$t("lang_name", { lng: id }), endOfTopEntries: id == topEntries[topEntries.length-1]}
-            })
+            i18next.changeLanguage(language, setPageMetadata)
         },
         openDialog(text: string, title: string, buttons: string[], cancelButtonIndex: number, callback: PopupCallback | null = null)
         {
@@ -807,13 +705,6 @@ const vueApp = createApp(defineComponent({
             const usersDto = dto.connectedUsers
             const streamsDto = dto.streams
 
-            // if (!this.hideStreams && (dto.hideStreams || localStorage.getItem("hideStreams")))
-            //     logToServer(this.myUserID + " setting hideStreams to true")
-
-            // if (dto.hideStreams)
-            //     localStorage.setItem("hideStreams", "true")
-            // this.hideStreams = localStorage.getItem("hideStreams") == "true";
-
             this.chessboardState = dto.chessboardState
             this.jankenState = dto.jankenState
 
@@ -857,12 +748,12 @@ const vueApp = createApp(defineComponent({
             this.isLoadingRoom = false;
             this.requestedRoomChange = false;
         },
-        async connectToServer(username: string, areaId: string, characterId: string)
+        async connectToServer(username: string, characterId: string)
         {
             const loginResponse = await postJson("/api/login", {
                 userName: username,
                 characterId,
-                areaId,
+                areaId: this.preferences.areaId,
                 roomId: getSpawnRoomId(),
             });
 
@@ -900,7 +791,7 @@ const vueApp = createApp(defineComponent({
             // Load the room state before connecting the websocket, so that all
             // code handling websocket events (and paint() events) can assume that
             // currentRoom, streams etc... are all defined.
-            const response = await fetch("/api/areas/" + this.areaId + "/rooms/" + getSpawnRoomId(),
+            const response = await fetch("/api/areas/" + this.preferences.areaId + "/rooms/" + getSpawnRoomId(),
                                          { headers: { "Authorization": "Bearer " + this.myPrivateUserID } })
             await this.updateRoomState(await response.json())
 
@@ -910,7 +801,7 @@ const vueApp = createApp(defineComponent({
         },
         initializeSocket()
         {
-            // @ts-ignore
+            // @ts-expect-error
             this.socket = io({
                 extraHeaders: {"private-user-id": this.myPrivateUserID},
                 closeOnBeforeunload: false,
@@ -1032,8 +923,8 @@ const vueApp = createApp(defineComponent({
 
             this.socket.on("server-user-joined-room", async (user: PlayerDto) =>
             {
-                if (this.isLoginSoundEnabled && this.soundEffectVolume > 0)
-                    (document.getElementById("login-sound") as HTMLAudioElement).play();
+                if (this.preferences.isLoginSoundEnabled && this.preferences.soundEffectVolume > 0)
+                    playSound("login-sound", this.preferences.soundEffectVolume);
                 this.addUser(user);
                 this.updateCanvasObjects();
                 this.isRedrawRequired = true;
@@ -1090,23 +981,6 @@ const vueApp = createApp(defineComponent({
                 await this.updateCurrentRoomStreams(streams);
             });
 
-            this.socket.on("server-room-list", async (roomList: ListedRoom[]) =>
-            {
-                if (!this.currentRoom) return // TS quick fix
-                this.roomList = roomList.map(r => {
-                    r.sortName = this.$t("room." + r.id, { context: "sort_key"}) || ''
-                    r.streams.forEach(s => s.userName = s.userName == "" ? this.$t("default_user_name") || '' : s.userName)
-                    return r
-                })
-                this.rulaRoomGroup = "all";
-                this.prepareRulaRoomList();
-                this.isRulaPopupOpen = true;
-                this.rulaRoomSelection = this.currentRoom.id;
-
-                await nextTick()
-                document.getElementById("rula-popup")!.focus()
-            });
-
             this.socket.on("server-rtc-message", async (streamSlotId: number, type: string, msg: string | RTCIceCandidate) =>
             {
                 const rtcPeer = window.rtcPeerSlots[streamSlotId].rtcPeer;
@@ -1160,8 +1034,8 @@ const vueApp = createApp(defineComponent({
                 this.currentRoom.specialObjects[1].value = donationBoxValue;
                 this.lastCoinTossTime = Date.now();
                 this.isRedrawRequired = true;
-                if (this.soundEffectVolume > 0 && this.isCoinSoundEnabled) {
-                    (document.getElementById("ka-ching-sound") as HTMLAudioElement).play();
+                if (this.preferences.soundEffectVolume > 0 && this.preferences.isCoinSoundEnabled) {
+                    playSound("ka-ching-sound", this.preferences.soundEffectVolume);
                 }
                 setTimeout(() => {
                     this.isRedrawRequired = true;
@@ -1286,17 +1160,17 @@ const vueApp = createApp(defineComponent({
 
             if (isIgnored) return;
 
-            if (this.soundEffectVolume > 0)
+            if (this.preferences.soundEffectVolume > 0)
             {
                 if (this.checkIfMentioned(plainMsg))
-                    (document.getElementById("mention-sound") as HTMLAudioElement).play()
-                else if (this.isMessageSoundEnabled)
-                    (document.getElementById("message-sound") as HTMLAudioElement).play()
+                    playSound("mention-sound", this.preferences.soundEffectVolume)
+                else if (this.preferences.isMessageSoundEnabled)
+                    playSound("message-sound", this.preferences.soundEffectVolume)
             }
 
-            if (this.enableTextToSpeech)
+            if (this.preferences.enableTextToSpeech)
             {
-                speak(plainMsg, this.ttsVoiceURI, this.voiceVolume, user.voicePitch)
+                speak(plainMsg, this.preferences.ttsVoiceURI, this.preferences.voiceVolume, user.voicePitch)
             }
 
             if (user.id != this.myUserID)
@@ -1339,7 +1213,7 @@ const vueApp = createApp(defineComponent({
 
             if (!window.Notification) return null
 
-            if (!this.showNotifications
+            if (!this.preferences.showNotifications
                 || document.visibilityState == "visible") return null;
 
             const permission = await requestNotificationPermission()
@@ -1548,7 +1422,7 @@ const vueApp = createApp(defineComponent({
                 canvas.width = sBoxWidth + sBoxMargin;
                 canvas.height = sBoxHeight + sBoxMargin;
 
-                context.fillStyle = 'rgba(255, 255, 255, ' + (this.bubbleOpacity/100) + ')';
+                context.fillStyle = 'rgba(255, 255, 255, ' + (this.preferences.bubbleOpacity/100) + ')';
 
                 context.beginPath();
 
@@ -1934,7 +1808,7 @@ const vueApp = createApp(defineComponent({
             for (const userObject of userObjects)
             {
                 if (userObject.nameImage == null || this.isUsernameRedrawRequired)
-                    userObject.nameImage = this.getNameImage(userObject, this.showUsernameBackground);
+                    userObject.nameImage = this.getNameImage(userObject, this.preferences.showUsernameBackground);
 
                 const image = userObject.nameImage.getImage(this.getCanvasScale())
 
@@ -1994,7 +1868,7 @@ const vueApp = createApp(defineComponent({
         drawPrivateStreamIcons()
         {
             // these icons are visible only the streamers who chose "specific_users" as stream target.
-            if (!this.isStreaming() || this.streamTarget == "all_room")
+            if (!this.isStreaming() || this.preferences.streamTarget == "all_room")
                 return
 
             if (!this.canvasContext) return
@@ -2177,7 +2051,7 @@ const vueApp = createApp(defineComponent({
             
             const now = Date.now()
             
-            if (!this.isIdleAnimationDisabled)
+            if (!this.preferences.isIdleAnimationDisabled)
             {
                 if(animateObjects(this.canvasObjects, this.users))
                     this.isRedrawRequired = true
@@ -2197,10 +2071,10 @@ const vueApp = createApp(defineComponent({
             {
                 if (user.checkIfRedrawRequired()) usersRequiringRedraw.add(userId)
                 
-                if (!this.isIdleAnimationDisabled && user.animateBlinking(now))
+                if (!this.preferences.isIdleAnimationDisabled && user.animateBlinking(now))
                     usersRequiringRedraw.add(userId)
                 
-                if (this.isIdleAnimationDisabled)
+                if (this.preferences.isIdleAnimationDisabled)
                     user.resetBlinking()
             }
 
@@ -2323,7 +2197,7 @@ const vueApp = createApp(defineComponent({
             }
 
             if (message.trim() == "#rula" || message.trim() == "#ﾙｰﾗ")
-                this.requestRoomList();
+                this.openRulaPopup();
             else if (message.trim() == '#ﾘｽﾄ' || message.trim() == '#list')
                 this.openUserListPopup();
             else
@@ -2386,7 +2260,7 @@ const vueApp = createApp(defineComponent({
                         return
                     const height = canvasContainer.style.height
 
-                    localStorage.setItem("canvasHeight", height);
+                    setAndPersist(this.preferences, "canvasHeight", height);
                     this.paint(0)
                 });
                 this.canvasContainerResizeObserver.observe(document.getElementById("canvas-container")!);
@@ -2394,16 +2268,10 @@ const vueApp = createApp(defineComponent({
         },
         toggleInfobox()
         {
-            localStorage.setItem(
-                "isInfoboxVisible",
-                (this.isInfoboxVisible = !this.isInfoboxVisible).toString()
-            );
+            setAndPersist(this.preferences, "isInfoboxVisible", !this.preferences.isInfoboxVisible)
         },
-        toggleUsernameBackground() {
-            localStorage.setItem(
-                "showUsernameBackground",
-                (this.showUsernameBackground = !this.showUsernameBackground).toString()
-            );
+        toggleUsernameBackground()
+        {
             this.isUsernameRedrawRequired = true;
             this.isRedrawRequired = true;
         },
@@ -2648,8 +2516,8 @@ const vueApp = createApp(defineComponent({
         handleMessageInputKeypress(event: KeyboardEvent)
         {
             if (event.key != "Enter"
-                || (this.isNewlineOnShiftEnter && event.shiftKey)
-                || (!this.isNewlineOnShiftEnter && !event.shiftKey))
+                || (this.preferences.isNewlineOnShiftEnter && event.shiftKey)
+                || (!this.preferences.isNewlineOnShiftEnter && !event.shiftKey))
                 return;
 
             this.sendMessageToServer();
@@ -2696,7 +2564,7 @@ const vueApp = createApp(defineComponent({
 
         getDevicePixelRatio(): number
         {
-            if (this.isLowQualityEnabled) return 1;
+            if (this.preferences.isLowQualityEnabled) return 1;
             return Math.round(window.devicePixelRatio*100)/100;
         },
 
@@ -2843,6 +2711,9 @@ const vueApp = createApp(defineComponent({
 
             this.streamSlotIdInWhichIWantToStream = null;
 
+            const slotVolume = { ...this.preferences.slotVolume }
+            let shouldPersistSlotVolume = false
+
             for (let slotId=0; slotId<updatedStreams.length; slotId++)
             {
                 const stream = updatedStreams[slotId];
@@ -2855,15 +2726,20 @@ const vueApp = createApp(defineComponent({
                     else
                         this.takeStream(slotId);
 
-                // @ts-ignore
                 $( "#video-container-" + slotId ).resizable({
                     aspectRatio: true,
                     resize: adjustNiconicoMessagesFontSize
                 })
 
-                if (this.slotVolume[slotId] === undefined)
-                    this.slotVolume[slotId] = 1
+                if (slotVolume[slotId] === undefined)
+                {
+                    slotVolume[slotId] = 1
+                    shouldPersistSlotVolume = true
+                }
             }
+
+            if (shouldPersistSlotVolume)
+                setAndPersist(this.preferences, "slotVolume", slotVolume)
         },
 
         async showDeviceSelectionPopup()
@@ -2871,9 +2747,9 @@ const vueApp = createApp(defineComponent({
             this.isStreamPopupOpen = false;
             try
             {
-                const withVideo = this.streamMode != "sound" && !this.streamScreenCapture;
-                const withSound = this.streamMode == "sound"
-                    || (this.streamMode == "video_sound" && !(this.streamScreenCapture && this.streamScreenCaptureAudio));
+                const withVideo = this.preferences.streamMode != "sound" && !this.preferences.streamScreenCapture;
+                const withSound = this.preferences.streamMode == "sound"
+                    || (this.preferences.streamMode == "video_sound" && !(this.preferences.streamScreenCapture && this.preferences.streamScreenCaptureAudio));
 
                 this.waitingForDevicePermission = true
                 this.deviceList = await getDeviceList(withSound, withVideo)
@@ -2937,26 +2813,26 @@ const vueApp = createApp(defineComponent({
                 // - video + sound (screen sharing)
                 // - video + sound (screen sharing + desktop audio)
 
-                const withVideo = this.streamMode != "sound";
-                const withSound = this.streamMode != "video";
+                const withVideo = this.preferences.streamMode != "sound";
+                const withSound = this.preferences.streamMode != "video";
 
                 // Validate device selection
-                if ((withVideo && !this.selectedVideoDeviceId && !this.streamScreenCapture)
-                    || (withSound && !this.selectedAudioDeviceId && !this.streamScreenCaptureAudio))
+                if ((withVideo && !this.selectedVideoDeviceId && !this.preferences.streamScreenCapture)
+                    || (withSound && !this.selectedAudioDeviceId && !this.preferences.streamScreenCaptureAudio))
                 {
                     this.showWarningToast(this.$t("msg.error_didnt_select_device"));
                     return;
                 }
 
-                const withScreenCapture = this.streamScreenCapture && withVideo
-                const withScreenCaptureAudio = this.streamScreenCaptureAudio && withScreenCapture && withSound
+                const withScreenCapture = this.preferences.streamScreenCapture && withVideo
+                const withScreenCaptureAudio = this.preferences.streamScreenCaptureAudio && withScreenCapture && withSound
 
                 // Force all the other advanced settings if desktop audio sharing is enabled.
                 // Can't remember why, but the UI hides those settings when sharing desktop audio.
                 const audioConstraints = {
-                    echoCancellation: withScreenCaptureAudio && this.streamEchoCancellation,
-                    noiseSuppression: withScreenCaptureAudio && this.streamNoiseSuppression,
-                    autoGainControl: withScreenCaptureAudio && this.streamAutoGain,
+                    echoCancellation: withScreenCaptureAudio && this.preferences.streamEchoCancellation,
+                    noiseSuppression: withScreenCaptureAudio && this.preferences.streamNoiseSuppression,
+                    autoGainControl: withScreenCaptureAudio && this.preferences.streamAutoGain,
                     deviceId: withScreenCaptureAudio ? undefined : { exact: this.selectedAudioDeviceId! },
                 }
 
@@ -3099,9 +2975,9 @@ const vueApp = createApp(defineComponent({
                     streamSlotId: this.streamSlotIdInWhichIWantToStream,
                     withVideo: withVideo,
                     withSound: withSound,
-                    isVisibleOnlyToSpecificUsers: this.streamTarget == "specific_users",
-                    streamIsVtuberMode: withVideo && this.streamIsVtuberMode,
-                    isNicoNicoMode: withVideo && this.isNicoNicoMode,
+                    isVisibleOnlyToSpecificUsers: this.preferences.streamTarget == "specific_users",
+                    streamIsVtuberMode: withVideo && this.preferences.streamIsVtuberMode,
+                    isNicoNicoMode: withVideo && this.preferences.isNicoNicoMode,
                     info: this.mediaStream.getAudioTracks().map(t => ({
                             constraints: t.getConstraints && t.getConstraints(),
                             settings: t.getSettings && t.getSettings(),
@@ -3226,15 +3102,11 @@ const vueApp = createApp(defineComponent({
                 {
                     try
                     {
-                        // if (this.hideStreams)
-                        //     return;
-
                         this.clientSideStreamData[streamSlotId].isListenerConnected = true
 
                         const stream = event.streams[0]
                         videoElement.srcObject = stream;
                         
-                        // @ts-ignore
                         $( "#video-container-" + streamSlotId ).resizable({
                             aspectRatio: true,
                             resize: adjustNiconicoMessagesFontSize
@@ -3256,7 +3128,7 @@ const vueApp = createApp(defineComponent({
                             // EDIT: Too bad that setting muted to true actually mutes the stream entirely, even the sound that's supposed to come
                             // out of the AudioProcessor... Needs further investigation.
                             // videoElement.muted = true
-                            this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.slotVolume[streamSlotId], true, (level) => {
+                            this.inboundAudioProcessors[streamSlotId] = new AudioProcessor(stream, this.preferences.slotVolume[streamSlotId] ?? 1, true, (level) => {
                                 const vuMeterBarPrimary = document.getElementById("vu-meter-bar-primary-" + streamSlotId) as HTMLElement
                                 const vuMeterBarSecondary = document.getElementById("vu-meter-bar-secondary-" + streamSlotId) as HTMLElement
         
@@ -3285,7 +3157,7 @@ const vueApp = createApp(defineComponent({
             if(!window.rtcPeerSlots[streamSlotId].rtcPeer) return;
             this.resetRtcPeerSlot(streamSlotId)
             
-            if (!this.isStreamAutoResumeEnabled)
+            if (!this.preferences.isStreamAutoResumeEnabled)
                 this.takenStreams[streamSlotId] = false
 
             this.clientSideStreamData[streamSlotId].isListenerConnected = false
@@ -3311,12 +3183,14 @@ const vueApp = createApp(defineComponent({
             this.canvasManualOffset = { x: 0, y: 0 };
             this.changeRoom(roomId);
             this.isRulaPopupOpen = false;
-            this.rulaRoomSelection = null;
         },
         closeRulaPopup()
         {
             this.isRulaPopupOpen = false;
-            this.rulaRoomSelection = null;
+        },
+        openRulaPopup()
+        {
+            this.isRulaPopupOpen = true;
         },
         openUserListPopup()
         {
@@ -3382,47 +3256,10 @@ const vueApp = createApp(defineComponent({
         {
             this.confirm(this.$t("msg.are_you_sure_you_want_to_block"), () =>
             {
-                if (this.isIgnoreOnBlock)
+                if (this.preferences.isIgnoreOnBlock)
                     this.ignoreUser(userId)
                 this.socket!.emit("user-block", userId);
             });
-        },
-        setRulaRoomListSortKey(key: RulaRoomListSortKey)
-        {
-            if (this.rulaRoomListSortKey != key)
-                this.rulaRoomListSortDirection = 1;
-            else
-                this.rulaRoomListSortDirection *= -1;
-
-            this.rulaRoomListSortKey = key
-            
-            localStorage.setItem("rulaRoomListSortKey", this.rulaRoomListSortKey)
-
-            localStorage.setItem("rulaRoomListSortDirection", this.rulaRoomListSortDirection.toString())
-
-            this.prepareRulaRoomList();
-        },
-        prepareRulaRoomList()
-        {
-            const key = this.rulaRoomListSortKey;
-            const direction = this.rulaRoomListSortDirection;
-
-            if (this.rulaRoomGroup === "all")
-                this.preparedRoomList = [...this.roomList];
-            else
-                this.preparedRoomList = this.roomList.filter(r => r.group == this.rulaRoomGroup);
-
-            this.preparedRoomList.sort((a, b) =>
-            {
-                let sort = 0;
-                if (key == "streamerCount")
-                    sort = b.streams.length - a.streams.length
-                if (key == "userCount" || (key == "streamerCount" && sort === 0))
-                    sort = b.userCount - a.userCount
-                if (sort === 0 && a.sortName && b.sortName)
-                    sort = a.sortName.localeCompare(b.sortName, this.$i18next.language);
-                return sort * direction;
-            })
         },
         openStreamPopup(streamSlotId: number)
         {
@@ -3451,42 +3288,25 @@ const vueApp = createApp(defineComponent({
             this.wantToStream = false;
             this.streamSlotIdInWhichIWantToStream = null;
         },
-        changeStreamVolume(streamSlotId: number)
+        changeStreamVolume(streamSlotId: number, event: Event)
         {
-            const volumeSlider = document.getElementById("volume-" + streamSlotId) as HTMLInputElement
+            const volumeSlider = event.target as HTMLInputElement | null
+            if (!volumeSlider)
+                return
+
             const volume = parseFloat(volumeSlider.value)
 
             this.inboundAudioProcessors[streamSlotId].setVolume(volume)
 
-            localStorage.setItem("slotVolume", JSON.stringify(this.slotVolume))
+            setAndPersist(this.preferences, "slotVolume", {
+                ...this.preferences.slotVolume,
+                [streamSlotId]: volume,
+            })
         },
         changeSoundEffectVolume(newVolume: number)
         {
-            debouncedLogSoundVolume(this.myUserID, newVolume)
-            this.soundEffectVolume = newVolume
-
-            this.updateAudioElementsVolume()
-            ;(document.getElementById("message-sound") as HTMLAudioElement).play()
-            localStorage.setItem(this.areaId + "soundEffectVolume", this.soundEffectVolume.toString());
-        },
-        updateAudioElementsVolume()
-        {
-            for (const elementId of ["message-sound", "login-sound", "mention-sound"])
-            {
-                const el = document.getElementById(elementId) as HTMLAudioElement
-                el.volume = this.soundEffectVolume
-            }
-        },
-        requestRoomList()
-        {
-            // Socket could be null if the user clicks on the #list button
-            // very quickly after login and before initializing the socket
-            if (this.socket)
-                this.socket.emit("user-room-list");
-        },
-        selectRoomForRula(roomId: string)
-        {
-            this.rulaRoomSelection = roomId;
+            setAndPersist(this.preferences, "soundEffectVolume", newVolume)
+            debouncedPlaySound("message-sound", newVolume)
         },
         showPasswordInput()
         {
@@ -3513,7 +3333,7 @@ const vueApp = createApp(defineComponent({
                 observer.observe(chatLog.lastElementChild);
             }
 
-            this.storeSet("uiTheme");
+            setAndPersist(this.preferences, "uiTheme", this.preferences.uiTheme)
             
             // Need to wait for the next tick so that knobElement.refresh() is called
             // with uiTheme already updated to its new value.
@@ -3521,29 +3341,18 @@ const vueApp = createApp(defineComponent({
             this.checkBackgroundColor();
             for (const knobElement of (document.getElementsByClassName("input-knob") as HTMLCollectionOf<HTMLInputElement>))
             {
-                // @ts-ignore what's refresh from? can't find it in docs
+                // @ts-expect-error  what's refresh from? can't find it in docs
                 knobElement.refresh()
             }
             this.isRedrawRequired = true
         },
         toggleCoinSound()
         {
-            this.storeSet('isCoinSoundEnabled');
-        },
-        handleLanguageChange()
-        {
-            this.storeSet('language');
-            this.setLanguage();
-        },
-        storeSet(itemName: string, value?: any)
-        {
-            // @ts-ignore
-            if (value != undefined) this[itemName] = value;
-            localStorage.setItem(itemName, this[itemName]);
+            setAndPersist(this.preferences, "isCoinSoundEnabled", this.preferences.isCoinSoundEnabled)
         },
         handleBubbleOpacity()
         {
-            this.storeSet("bubbleOpacity");
+            setAndPersist(this.preferences, "bubbleOpacity", this.preferences.bubbleOpacity)
             this.resetBubbleImages();
         },
         async logout()
@@ -3575,12 +3384,12 @@ const vueApp = createApp(defineComponent({
                 this.notificationPermissionsGranted = false
                 return
             }
-            if (this.showNotifications)
+            if (this.preferences.showNotifications)
             {
                 const permission = await requestNotificationPermission()
                 this.notificationPermissionsGranted = permission == "granted"
             }
-            this.storeSet("showNotifications")
+            setAndPersist(this.preferences, "showNotifications", this.preferences.showNotifications)
         },
         setMentionRegexObjects()
         {
@@ -3596,7 +3405,7 @@ const vueApp = createApp(defineComponent({
                     + ")", "ig")
             }
             
-            const customMentionSoundPattern = this.customMentionSoundPattern.trim();
+            const customMentionSoundPattern = this.preferences.customMentionSoundPattern.trim();
             
             if (customMentionSoundPattern)
             {
@@ -3611,7 +3420,7 @@ const vueApp = createApp(defineComponent({
             }
             
             this.usernameMentionRegexObject = null
-            if (!(this.myUserID! in this.users) || !this.isNameMentionSoundEnabled) return
+            if (!(this.myUserID! in this.users) || !this.preferences.isNameMentionSoundEnabled) return
             this.usernameMentionRegexObject = wordsToRegexObject(
                 this.users[this.myUserID!].name.split("◆"))
         },
@@ -3670,49 +3479,42 @@ const vueApp = createApp(defineComponent({
         },
         handleLowQualityEnabled()
         {
-            this.storeSet('isLowQualityEnabled');
+            setAndPersist(this.preferences, "isLowQualityEnabled", this.preferences.isLowQualityEnabled)
             this.isRedrawRequired = true
         },
         handleCrispModeEnabled()
         {
-            this.storeSet('isCrispModeEnabled');
+            setAndPersist(this.preferences, "isCrispModeEnabled", this.preferences.isCrispModeEnabled)
             this.reloadImages()
         },
         handleIdleAnimationDisabled()
         {
-            this.storeSet('isIdleAnimationDisabled');
+            setAndPersist(this.preferences, "isIdleAnimationDisabled", this.preferences.isIdleAnimationDisabled)
             this.isRedrawRequired = true
         },
         handleNameMentionSoundEnabled()
         {
-            this.storeSet('isNameMentionSoundEnabled')
+            setAndPersist(this.preferences, "isNameMentionSoundEnabled", this.preferences.isNameMentionSoundEnabled)
             this.setMentionRegexObjects()
         },
         handleCustomMentionSoundPattern()
         {
-            this.storeSet('customMentionSoundPattern')
+            setAndPersist(this.preferences, "customMentionSoundPattern", this.preferences.customMentionSoundPattern)
             this.setMentionRegexObjects()
         },
         handleEnableTextToSpeech()
         {
             if (window.speechSynthesis)
                 speechSynthesis.cancel()
-            this.storeSet('enableTextToSpeech')
+            setAndPersist(this.preferences, "enableTextToSpeech", this.preferences.enableTextToSpeech)
         },
         changeVoice() {
-            speak(this.$t("test"), this.ttsVoiceURI, this.voiceVolume)
-            this.storeSet('ttsVoiceURI')
-        },
-        // I think this getVoices() function isn't called anywhere, might be okay to remove
-        getVoices(): SpeechSynthesisVoice[] {
-            if (!window.speechSynthesis)
-                return []
-            return speechSynthesis.getVoices()
+            speak(this.$t("test"), this.preferences.ttsVoiceURI, this.voiceVolume)
+            setAndPersist(this.preferences, "ttsVoiceURI", this.preferences.ttsVoiceURI)
         },
         changeVoiceVolume(newValue: number) {
-            this.voiceVolume = newValue
-            this.storeSet('voiceVolume')
-            debouncedSpeakTest(this.ttsVoiceURI, this.voiceVolume, i18next)
+            setAndPersist(this.preferences, "voiceVolume", this.preferences.voiceVolume)
+            debouncedSpeakTest(this.preferences.ttsVoiceURI, this.preferences.voiceVolume, i18next)
         },
         toggleVideoSlotPinStatus(slotId: number) {
             const videoContainer = document.getElementById('video-container-' + slotId) as HTMLElement
@@ -3721,12 +3523,10 @@ const vueApp = createApp(defineComponent({
 
             if (videoContainer.classList.contains("unpinned-video"))
             {
-                // @ts-ignore
                 $(videoContainer).draggable()
             }
             else
             {
-                // @ts-ignore
                 $(videoContainer).draggable("destroy")
                 // Reset 'top' and 'left' styles to snap the container back to its original position
                 videoContainer.setAttribute("style", "")
@@ -3779,32 +3579,6 @@ const vueApp = createApp(defineComponent({
 
             return output
         },
-        handleRulaPopupKeydown(event: KeyboardEvent)
-        {
-            const previousIndex = this.preparedRoomList.findIndex(r => r.id == this.rulaRoomSelection)
-
-            switch (event.code)
-            {
-                case "ArrowDown":
-                case "KeyJ":
-                case "KeyS":
-                    this.rulaRoomSelection = this.preparedRoomList[(previousIndex + 1) % this.preparedRoomList.length].id
-                    document.getElementById("room-tr-" + this.rulaRoomSelection)!.scrollIntoView({ block: "nearest"})
-                    break;
-                case "ArrowUp":
-                case "KeyK":
-                case "KeyW":
-                    if (previousIndex <= 0)
-                        this.rulaRoomSelection = this.preparedRoomList[this.preparedRoomList.length - 1].id
-                    else
-                        this.rulaRoomSelection = this.preparedRoomList[previousIndex - 1].id
-                    document.getElementById("room-tr-" + this.rulaRoomSelection)!.scrollIntoView({ block: "nearest"})
-                    break;
-                case "Enter":
-                    this.rula(this.rulaRoomSelection)
-                    break;
-            }
-        },
         handlechatLogKeydown(ev: KeyboardEvent) {
             // hitting ctrl+a when the log is focused selects only the text in the log
             if (ev.code == "KeyA" && ev.ctrlKey)
@@ -3815,7 +3589,7 @@ const vueApp = createApp(defineComponent({
             }
         },
         toggleDesktopNotifications() {
-            this.showNotifications = !this.showNotifications
+            this.preferences.showNotifications = !this.preferences.showNotifications // TODO: fix direct mutation of preferences
             this.handleShowNotifications()
         },
         onCompressionChanged(streamSlotID: number)

@@ -142,7 +142,6 @@ export interface RoomStateDto
     chessboardState: ChessboardStateDto,
     jankenState: JankenStateDto,
     coinCounter: number,
-    hideStreams: boolean,
 }
 
 export interface MoveDto
@@ -209,9 +208,9 @@ export interface ChessboardStateDto
 export interface SiteArea {
     id: string,
     name: string,
-    language?: string,
-    restrictLanguage?: boolean,
-    unlisted?: boolean 
+    language: string,
+    restrictLanguage: boolean,
+    unlisted: boolean 
 }
 
 export interface Stats {
