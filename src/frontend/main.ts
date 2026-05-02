@@ -3979,11 +3979,19 @@ const vueApp = createApp(defineComponent({
             return "characters/" + character.characterName + "/front-standing." + character.format
         },
         // TODO: used only for the room-object-editor, move it to the canvas component
-        setRoomObject(objectIndex: number, property: string, value: number)
+        setRoomObject(objectIndex: number, property: string, value: number | string)
         {
             if (!this.currentRoom) return
             const obj = this.currentRoom.objects[objectIndex]
             if (!obj) return
+            if (property === "url")
+            {
+                if (typeof value !== "string") return
+                obj.url = value
+                this.loadRoomObjects()
+                return
+            }
+            if (typeof value !== "number") return
             if (property === "x")
             {
                 obj.x = value
@@ -4014,8 +4022,17 @@ const vueApp = createApp(defineComponent({
             }
             this.isRedrawRequired = true
         },
-        setRoomProperty(property: string, value: number) {
+        setRoomProperty(property: string, value: number | string) {
             if (!this.currentRoom) return
+            if (property === "backgroundImageUrl")
+            {
+                if (typeof value !== "string") return
+                this.currentRoom.backgroundImageUrl = value
+                this.loadRoomBackground();
+                this.isRedrawRequired = true
+                return
+            }
+            if (typeof value !== "number") return
             if (property === "scale")
             {
                 this.currentRoom.scale = value
