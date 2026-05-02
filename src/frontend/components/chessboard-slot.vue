@@ -2,19 +2,20 @@
 import type { PropType } from 'vue'
 import type { Socket } from 'socket.io-client'
 
-import type { ChessboardStateDto,  } from '../types'
+import type { ChessboardStateDto } from '../types'
+import type { RoomSession } from '../room-session'
 
 import { defineComponent, inject, Ref } from 'vue'
 
 export default defineComponent({
     props: {
-        chessboardState: { type: Object as PropType<ChessboardStateDto>, required: true }
+        chessboardState: { type: Object as PropType<ChessboardStateDto>, required: true },
+        roomSession: { type: Object as PropType<RoomSession>, required: true }
     },
     template: "#chessboard-slot",
     setup() // hacky way to make injects type safe, using composition API's setup method
     {
         return {
-            socket: inject('socket') as Ref<Socket>,
             myUserId: inject('myUserId') as Ref<string>
         }
     },
@@ -92,7 +93,7 @@ export default defineComponent({
                     if (this.chessboardState.blackUserID == this.myUserId
                         || this.chessboardState.whiteUserID == this.myUserId)
                     {
-                        this.socket.emit("user-chess-move", source, target);
+                        this.roomSession.socket?.emit("user-chess-move", source, target);
                     }
                 },
                 onSnapEnd: () =>
@@ -123,12 +124,12 @@ export default defineComponent({
         },
         wantToJoinGame()
         {
-            this.socket.emit("user-want-to-play-chess")
+            this.roomSession.socket?.emit("user-want-to-play-chess")
             this.visible = true
         },
         wantToQuitGame()
         {
-            this.socket.emit("user-want-to-quit-chess")
+            this.roomSession.socket?.emit("user-want-to-quit-chess")
         },
         wantToDisplayGame()
         {
@@ -170,10 +171,10 @@ export default defineComponent({
             {{ !chessboardState.whiteUserID ? $t("ui.chess_waiting_for_white") : $t("ui.chess_waiting_for_black") }}
             </div>
             <span v-if="chessboardState.whiteUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'w'}">
-                {{ $t("ui.chess_white") }}<username-label :user-id="chessboardState.whiteUserID"></username-label>
+                {{ $t("ui.chess_white") }}<username-label :user-id="chessboardState.whiteUserID" :room-session="roomSession"></username-label>
             </span>
             <span v-if="chessboardState.blackUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'b'}">
-                {{ $t("ui.chess_black") }}<username-label :user-id="chessboardState.blackUserID"></username-label>
+                {{ $t("ui.chess_black") }}<username-label :user-id="chessboardState.blackUserID" :room-session="roomSession"></username-label>
             </span>
             <div
                 id="chessboard"

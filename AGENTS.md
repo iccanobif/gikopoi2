@@ -2,6 +2,7 @@
 
 ## Coding style
 - JavaScript strings should be in double quotes
+- Do not use vue's provide/inject, always pass dependencies as props
 
 ## How to implement preferences
 - Every preference should be in the GikopoipoiPreferences type
@@ -9,4 +10,5 @@
 - All writes to the preferences should be done with the setAndPersist() helper, which will update the preferences object and also persist the change to local storage.
 - Use the isInfoboxVisible preference as a reference for how to implement this, since it already follows this pattern.
 
-
+## Things to remember everytime you implement something
+- check the refactoring-plan.md, and set as [completed] any item that you have implemented.

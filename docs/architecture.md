@@ -20,6 +20,13 @@ The goal is to make the future split into separate components safer by identifyi
 
 ---
 
+## Goals
+- Make dependencies explicit (avoid provide/inject)
+- Decouple sections as much as possible while making the necessary interactions explicit and handled through the room session object.
+- Ideally, it should be possible to have in the same page multiple sessions open, or multiple canvases/logs for the same session. Not really necessary to do this, but it would be a good sanity check for the architecture to avoid hardcoding assumptions about "there is only one canvas and one log".
+
+-- 
+
 ## Cross-component interactions
 
 ### 1. Highlighted user / selected user

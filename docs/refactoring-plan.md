@@ -60,6 +60,7 @@ Rules for each extraction:
 8. [not started] In the backend, streamline authentication and authorization for REST API calls (now, at least for /api/areas/:areaId/rooms and /api/areas/:areaId/rooms/:roomId, it's copypasted)
 9. [completed] Remove all usages of the "set-pref" emit: components should receive the `preferences` object as a prop and use `setAndPersistPreference` to mutate it instead of making the root component do it for them.
 10. split rooms.ts into separate files for each room (it's just too big now).
+11. [not started] Remove usage of provide/inject, make all dependencies explicit to make it easier to understand and refactor.
 
 ### Phase 3 - Introduce `RoomSession`
 Introduce a `RoomSession` object to centralize the core live application state and expose a small event-bus-like API where useful.

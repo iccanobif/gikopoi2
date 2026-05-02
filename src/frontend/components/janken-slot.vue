@@ -6,6 +6,7 @@ import { ref, toRef, watch, inject, computed, onBeforeUnmount } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import type { Users, JankenStateDto } from '../types'
+import { RoomSession } from '../room-session'
 
 const { t } = useTranslation()
 
@@ -13,10 +14,10 @@ const hands = [ "rock", "paper", "scissors" ]
 const createFallbackUser = (id: string | null) => ({ id, name: "N/A" })
 
 const props = defineProps<{
-    jankenState: JankenStateDto
+    jankenState: JankenStateDto,
+    roomSession: RoomSession
 }>()
 
-const socket = inject("socket") as Ref<Socket>
 const users = inject("users") as Ref<Users>
 const myUserId = inject("myUserId") as Ref<string>
 
@@ -51,12 +52,14 @@ const waitForStateChange = ref(false)
 const join = () =>
 {
     waitForStateChange.value = true
-    socket.value.emit("user-want-to-join-janken")
+    // TODO: remove null propagation once the declaration of socket is changed to be non-nullable
+    props.roomSession.socket?.emit("user-want-to-join-janken")
 }
 const quit = () =>
 {
     waitForStateChange.value = true
-    socket.value.emit("user-want-to-quit-janken")
+    // TODO: remove null propagation once the declaration of socket is changed to be non-nullable
+    props.roomSession.socket?.emit("user-want-to-quit-janken")
 }
 watch(state, () => { waitForStateChange.value = false })
 onBeforeUnmount(quit)
@@ -67,7 +70,8 @@ let waitingForOpponentTimer: number | null = null
 const chooseHand = (handKey: string) =>
 {
     waitForResult.value = true
-    socket.value.emit("user-want-to-choose-janken-hand", handKey)
+    // TODO: remove null propagation once the declaration of socket is changed to be non-nullable
+    props.roomSession.socket?.emit("user-want-to-choose-janken-hand", handKey)
     
     // to avoid the flashing message of waiting for the other
     // opponent if you're the last to pick
@@ -116,9 +120,9 @@ watch(isActive, () =>
         </div>
         <div v-if="isVisible">
             <div v-if="player1.id && player2.id" class="slot-message janken-versus">
-                <div class="janken-versus-player1"><username-label :user-id="player1.id" :user-name="player1.name"></username-label></div>
+                <div class="janken-versus-player1"><username-label :user-id="player1.id" :user-name="player1.name" :room-session="roomSession"></username-label></div>
                 <div>{{ t("ui.janken_versus") }}</div>
-                <div class="janken-versus-player2"><username-label :user-id="player2.id" :user-name="player2.name"></username-label></div>
+                <div class="janken-versus-player2"><username-label :user-id="player2.id" :user-name="player2.name" :room-session="roomSession"></username-label></div>
             </div>
             <div v-if="state.stage == 'win' || state.stage == 'draw'"
                 class="janken-hand-results" :class="{ 'janken-hands-draw': state.stage == 'draw' }">
@@ -130,7 +134,7 @@ watch(isActive, () =>
                     <span v-if="!player1.id">{{ t("ui.janken_start_a_game") }}</span>
                     <span v-else-if="!player2.id">
                         <i18next :translation="$t('ui.janken_waiting_for_opponent')">
-                            <template #username><username-label :user-id="player1.id" :user-name="player1.name"></username-label></template>
+                            <template #username><username-label :user-id="player1.id" :user-name="player1.name" :room-session="roomSession"></username-label></template>
                         </i18next>
                     </span>
                 </template>
@@ -153,14 +157,14 @@ watch(isActive, () =>
                 
                 <span v-else-if="state.stage == 'win'">
                     <i18next :translation="$t('ui.janken_win')">
-                        <template #username><username-label :user-id="namedPlayer.id" :user-name="namedPlayer.name"></username-label></template>
+                        <template #username><username-label :user-id="namedPlayer.id" :user-name="namedPlayer.name" :room-session="roomSession"></username-label></template>
                     </i18next>
                 </span>
                 
                 <template v-else-if="state.stage == 'quit'">
                     <span>
                         <i18next :translation="$t('ui.janken_quit')">
-                            <template #username><username-label :user-id="namedPlayer.id" :user-name="namedPlayer.name"></username-label></template>
+                            <template #username><username-label :user-id="namedPlayer.id" :user-name="namedPlayer.name" :room-session="roomSession"></username-label></template>
                         </i18next>
                     </span>
                 </template>

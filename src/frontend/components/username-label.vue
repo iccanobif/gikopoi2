@@ -3,20 +3,25 @@ import { inject, watch, onUnmounted, ref, computed } from 'vue'
 import type { Ref, WatchStopHandle } from 'vue'
 
 import type { Users, IgnoredUserIds } from '../types'
+import { RoomSession } from '../room-session';
 
 const fallbackUserName = 'N/A'
 
 const props = defineProps<{
     userId: string,
-    userName?: string
+    userName?: string,
+    roomSession: RoomSession
 }>()
 
 const users = inject('users') as Ref<Users>
-const highlightedUserId = inject('highlightedUserId') as Ref<string>
-const highlightUser = inject('highlightUser') as (userId: string, userName: string) => void
+const highlightedUserId = ref(null) as Ref<string | null>
 const ignoredUserIds = inject('ignoredUserIds') as Ref<IgnoredUserIds>
 
 const properUserName = ref(fallbackUserName)
+
+props.roomSession.registerHighlightUserEventHandler((userId) => {
+    highlightedUserId.value = userId
+})
 
 watch(props, () =>
 {
@@ -57,5 +62,5 @@ const userName = computed(() => ignoredUserIds.value.has(props.userId) ? fallbac
 <template>
     <span class="username"
         :class="{'highlighted-username': props.userId && props.userId == highlightedUserId}"
-        @click="highlightUser(props.userId, userName)">{{ userName }}</span>
+        @click="props.roomSession.highlightUser(props.userId, userName)">{{ userName }}</span>
 </template>

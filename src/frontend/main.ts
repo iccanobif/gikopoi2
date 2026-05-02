@@ -327,8 +327,8 @@ const vueApp = createApp(defineComponent({
             allCharacters: Object.values(characters),
 
             vuMeterTimer: null as number | null,
-            highlightedUserId: null as string | null,
-            highlightedUserName: null as string | null,
+            highlightedUserId: null as string | null,     // TODO: move into roomSession
+            highlightedUserName: null as string | null,   // TODO: move into roomSession
             movementDirection: null as Direction | null,
             lastSetMovementDirectionTime: 0, // Found in code but not in data
             notificationPermissionsGranted: false,
@@ -352,9 +352,6 @@ const vueApp = createApp(defineComponent({
             ignoredUserIds: computed(() => this.ignoredUserIds),
             myUserId: computed(() => this.myUserID),
             outboundAudioProcessor: computed(() => this.outboundAudioProcessor),
-            
-            highlightedUserId: computed(() => this.highlightedUserId),
-            highlightUser: this.highlightUser,
         }
     },
     mounted()
@@ -747,6 +744,13 @@ const vueApp = createApp(defineComponent({
             this.isLoadingRoom = false;
             this.requestedRoomChange = false;
         },
+        registerRoomSessionEventHandlers()
+        {
+            this.roomSession.registerHighlightUserEventHandler((userId: string | null, userName: string | null) =>
+            {
+                this.onUserHighlighted(userId, userName)
+            });
+        },
         async connectToServer(username: string, characterId: string)
         {
             const { userId, privateUserId, pageRefreshRequired, initialRoomState } =
@@ -756,6 +760,8 @@ const vueApp = createApp(defineComponent({
                     this.preferences.areaId,
                     getSpawnRoomId()
                 );
+
+            this.registerRoomSessionEventHandlers()
 
             window.myUserID = this.myUserID = userId;
             this.myPrivateUserID = privateUserId;
@@ -1073,7 +1079,7 @@ const vueApp = createApp(defineComponent({
             authorSpan.textContent = displayName;
             if (userId)
                 authorSpan.addEventListener("click", (ev) => {
-                    this.highlightUser(userId, userName)
+                    this.roomSession.highlightUser(userId, userName)
                 })
 
             const tripcodeSpan = document.createElement("span");
@@ -1084,7 +1090,7 @@ const vueApp = createApp(defineComponent({
                 tripcodeSpan.textContent = "◆" + tripcode;
                 if (userId)
                     tripcodeSpan.addEventListener("click", (ev) => {
-                        this.highlightUser(userId, userName)
+                        this.roomSession.highlightUser(userId, userName)
                     })
             }
 
@@ -3510,9 +3516,7 @@ const vueApp = createApp(defineComponent({
                 videoContainer.setAttribute("style", "")
             }
         },
-        highlightUser(userId: string, userName: string)
-        {
-            this.roomSession.highlightUser(userId, userName)
+        onUserHighlighted(userId: string | null, userName: string | null = null) {
 
             const highlightedUserStyle = document.getElementById("highlighted-user-style") as HTMLStyleElement
 

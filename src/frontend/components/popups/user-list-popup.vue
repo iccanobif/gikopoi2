@@ -23,7 +23,7 @@
                         :key="u.id"
                         v-bind:class="{'popup-row-is-selected': u.id == highlightedUserId}">
                         <td>
-                            <div v-on:click="u.isInRoom && emit('highlight-user', u.id, u.name || '')">
+                            <div v-on:click="u.isInRoom && props.roomSession.highlightUser(u.id, u.name)">
                                 <span
                                     v-bind:title="$t('ui.user_not_in_room')"
                                     class="user-not-in-room-warning fas fa-exclamation-triangle"
@@ -66,9 +66,10 @@
 </template>
 
 <script setup lang="ts">
+import { RoomSession } from '../../room-session';
 import type { PopupUserList } from '../../types'
 
-defineProps<{
+const props = defineProps<{
     isOpen: boolean,
     users: PopupUserList[],
     highlightedUserId: string | null,
@@ -76,11 +77,11 @@ defineProps<{
     streamTarget: 'all_room' | 'specific_users',
     allowedListenerIds: Set<string>,
     ignoredUserIds: Set<string>,
+    roomSession: RoomSession,
 }>()
 
 const emit = defineEmits<{
     close: [],
-    'highlight-user': [userId: string, userName: string],
     'give-stream': [userId: string],
     'revoke-stream': [userId: string],
     'ignore-user': [userId: string],

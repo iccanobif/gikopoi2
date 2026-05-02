@@ -199,7 +199,7 @@
                         <hr v-if="index != 0" />
                         <div>
                             {{ $t("ui.label_stream", {index: index+1}) }}<span
-                                v-if="streamSlot.isActive" class="stream-title"><username-label :user-id="streamSlot.userId"></username-label>
+                                v-if="streamSlot.isActive" class="stream-title"><username-label :user-id="streamSlot.userId" :room-session="roomSession"></username-label>
                                 <!-- NOTE 2: username component handles cases where the user id is missing in users, but unsure if the ideas mentioned in the note
                                     are still relevant or not.
                                     NOTE: Above, I'm using the null propagator in the `users[streamSlot.userId]?.name` expression for
@@ -394,10 +394,12 @@
                         <chessboard-slot
                             v-if="game == 'chess' && chessboardState"
                             :chessboard-state="chessboardState"
+                            :room-session="roomSession"
                             ></chessboard-slot>
                         <janken-slot
                             v-if="game == 'janken' && jankenState"
                             :janken-state="jankenState"
+                            :room-session="roomSession"
                             ></janken-slot>
                     </template>
                 </div>
@@ -420,8 +422,8 @@
                     :stream-target="preferences.streamTarget"
                     :allowed-listener-ids="allowedListenerIDs"
                     :ignored-user-ids="ignoredUserIds"
+                    :room-session="roomSession"
                     @close="closeUserListPopup"
-                    @highlight-user="highlightUser"
                     @give-stream="giveStreamToUser"
                     @revoke-stream="revokeStreamToUser"
                     @ignore-user="ignoreUser"

@@ -10,8 +10,6 @@ import type {
 } from "./types";
 import { postJson } from "./utils";
 
-type RoomSessionEventHandler = (payload: unknown) => void;
-
 export interface ConnectToServerResult {
   userId: string;
   privateUserId: string;
@@ -28,6 +26,7 @@ export class RoomSession {
     streams: StreamSlotDto[];
     serverStats: Stats;
     highlightedUserId: string | null;
+    highlightedUserName: string | null;
     ignoredUserIds: Set<string>;
     connectionLost: boolean;
   };
@@ -36,7 +35,7 @@ export class RoomSession {
   myPrivateUserID: string | null = null;
   pageRefreshRequired = false;
 
-  private readonly eventHandlers = new Map<string, Set<RoomSessionEventHandler>>();
+  private readonly highlightUserEventHandlers = new Set<(userId: string | null, userName: string | null) => void>();
 
   constructor() {
     this.state = {
@@ -48,11 +47,13 @@ export class RoomSession {
         userCount: 0,
       },
       highlightedUserId: null,
+      highlightedUserName: null,
       ignoredUserIds: new Set(),
       connectionLost: false,
     };
   }
 
+  // Called only once during login
   async connectToServer(
     username: string,
     characterId: string,
@@ -92,12 +93,6 @@ export class RoomSession {
     this.state.currentRoom = initialRoomState.currentRoom as ClientRoom;
     this.state.streams = initialRoomState.streams;
 
-    this.emitEvent("logged-in", {
-      userId: this.myUserID,
-      privateUserId: this.myPrivateUserID,
-      initialRoomState,
-    });
-
     return {
       userId: this.myUserID,
       privateUserId: this.myPrivateUserID,
@@ -121,7 +116,6 @@ export class RoomSession {
       closeOnBeforeunload: false,
     });
     this.state.connectionLost = false;
-    this.emitEvent("socket-initialized", this.socket);
   }
 
   sendMessage(message: string) {
@@ -143,40 +137,16 @@ export class RoomSession {
     });
   }
 
-  highlightUser(userId: string, userName: string) {
+  highlightUser(userId: string | null, userName: string | null) {
     this.state.highlightedUserId = this.state.highlightedUserId == userId ? null : userId;
-    this.emitEvent("highlight-user", { userId, userName });
+    this.state.highlightedUserName = this.state.highlightedUserId ? userName : null;
+    for (const handler of this.highlightUserEventHandlers) {
+      handler(this.state.highlightedUserId, this.state.highlightedUserName);
+    }
   }
 
-  on(eventName: string, handler: (payload: unknown) => void): () => void {
-    if (!this.eventHandlers.has(eventName)) {
-      this.eventHandlers.set(eventName, new Set());
-    }
-
-    this.eventHandlers.get(eventName)!.add(handler);
-
-    return () => {
-      const handlers = this.eventHandlers.get(eventName);
-      if (!handlers) {
-        return;
-      }
-
-      handlers.delete(handler);
-      if (handlers.size == 0) {
-        this.eventHandlers.delete(eventName);
-      }
-    };
-  }
-
-  private emitEvent(eventName: string, payload: unknown) {
-    const handlers = this.eventHandlers.get(eventName);
-    if (!handlers) {
-      return;
-    }
-
-    for (const handler of handlers) {
-      handler(payload);
-    }
+  registerHighlightUserEventHandler(handler: (userId: string | null, userName: string | null) => void) {
+    this.highlightUserEventHandlers.add(handler);
   }
 
   private requireSocket(): Socket {
