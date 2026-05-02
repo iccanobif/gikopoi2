@@ -4573,7 +4573,7 @@ dynamicRooms.push({
             spawnPoint: "staircase",
             backgroundImageUrl: `rooms/yane/background.${variant}.svg`,
             objects: [
-                { x: 4, y: 0, scale: 0.35, offset: { x: 0 , y: 0 }, url: `top.${variant}.svg` },
+                { x: 6, y: -1, scale: 0.35, offset: { x: 0 , y: 0 }, url: `top.${variant}.svg` },
                 { x: 5, y: 2, scale: 0.35, offset: { x: 720 , y: 1512 }, url: `wall.${variant}.svg` },
                 { x: 0, y: 0, scale: 1, offset: { x: 52 , y: 545 }, url: `../arrow-right.svg` },
                 { x: 0, y: 3, scale: 1, offset: { x: 134 , y: 472 }, url: `../arrow-up.svg` },
@@ -4631,9 +4631,6 @@ dynamicRooms.push({
                 { x: 4, y: 7 },
                 { x: 4, y: 8 },
                 { x: 4, y: 9 },
-                // left corner of the roof
-                { x: 5, y: 0 },
-                { x: 6, y: 0 },
             ],
             forbiddenMovements: [],
             streamSlotCount: 2,
