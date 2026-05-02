@@ -179,20 +179,6 @@ const initialPreferences = loadPreferencesFromLocalStorage()
 
 const siteAreasInfo = window.siteAreasInfo
 
-function createPreferenceProxy<K extends keyof GikopoipoiPreferences>(key: K)
-{
-    return {
-        get(this: { preferences: GikopoipoiPreferences })
-        {
-            return this.preferences[key]
-        },
-        set(this: { preferences: GikopoipoiPreferences }, value: GikopoipoiPreferences[K])
-        {
-            setAndPersist(this.preferences, key, value)
-        },
-    }
-}
-
 function getAppState()
 {
     if (window.location.hostname == "gikopoi2.herokuapp.com")
@@ -359,41 +345,6 @@ const vueApp = createApp(defineComponent({
             outboundAudioProcessor: null as AudioProcessor | null,
         }
     },
-    computed: {
-        enableTextToSpeech: createPreferenceProxy("enableTextToSpeech"),
-        ttsVoiceURI: createPreferenceProxy("ttsVoiceURI"),
-        isNewlineOnShiftEnter: createPreferenceProxy("isNewlineOnShiftEnter"),
-        underlinedUsernames: createPreferenceProxy("underlinedUsernames"),
-        timestampsInCopiedLog: createPreferenceProxy("timestampsInCopiedLog"),
-        showIgnoreIndicatorInLog: createPreferenceProxy("showIgnoreIndicatorInLog"),
-        isIgnoreOnBlock: createPreferenceProxy("isIgnoreOnBlock"),
-        showLogAboveToolbar: createPreferenceProxy("showLogAboveToolbar"),
-        showLogDividers: createPreferenceProxy("showLogDividers"),
-        showNotifications: createPreferenceProxy("showNotifications"),
-        isLoginSoundEnabled: createPreferenceProxy("isLoginSoundEnabled"),
-        isMessageSoundEnabled: createPreferenceProxy("isMessageSoundEnabled"),
-        isCoinSoundEnabled: createPreferenceProxy("isCoinSoundEnabled"),
-        isNameMentionSoundEnabled: createPreferenceProxy("isNameMentionSoundEnabled"),
-        customMentionSoundPattern: createPreferenceProxy("customMentionSoundPattern"),
-        bubbleOpacity: createPreferenceProxy("bubbleOpacity"),
-        isCrispModeEnabled: createPreferenceProxy("isCrispModeEnabled"),
-        isLowQualityEnabled: createPreferenceProxy("isLowQualityEnabled"),
-        isIdleAnimationDisabled: createPreferenceProxy("isIdleAnimationDisabled"),
-        isStreamAutoResumeEnabled: createPreferenceProxy("isStreamAutoResumeEnabled"),
-        isStreamInboundVuMeterEnabled: createPreferenceProxy("isStreamInboundVuMeterEnabled"),
-        isCommandSectionVisible: createPreferenceProxy("isCommandSectionVisible"),
-        isMoveSectionVisible: createPreferenceProxy("isMoveSectionVisible"),
-        isBubbleSectionVisible: createPreferenceProxy("isBubbleSectionVisible"),
-        isLogoutButtonVisible: createPreferenceProxy("isLogoutButtonVisible"),
-        voiceVolume: createPreferenceProxy("voiceVolume"),
-        streamMode: createPreferenceProxy("streamMode"),
-        displayAdvancedStreamSettings: createPreferenceProxy("displayAdvancedStreamSettings"),
-        streamEchoCancellation: createPreferenceProxy("streamEchoCancellation"),
-        streamNoiseSuppression: createPreferenceProxy("streamNoiseSuppression"),
-        streamAutoGain: createPreferenceProxy("streamAutoGain"),
-        streamScreenCapture: createPreferenceProxy("streamScreenCapture"),
-        streamScreenCaptureAudio: createPreferenceProxy("streamScreenCaptureAudio"),
-    },
     provide()
     {
         return {
@@ -461,7 +412,7 @@ const vueApp = createApp(defineComponent({
         // the button.
         document.addEventListener("mouseup", () => this.setMovementDirection())
 
-        loadCharacterImagesPromise = loadCharacters(this.isCrispModeEnabled);
+        loadCharacterImagesPromise = loadCharacters(this.preferences.isCrispModeEnabled);
 
         const charSelect = document.getElementById("character-selection")
         const charactersSelected = charSelect!.getElementsByClassName("character-selected")
@@ -537,7 +488,7 @@ const vueApp = createApp(defineComponent({
                 {
                     if (Notification.permission == "granted")
                         this.notificationPermissionsGranted = true
-                    else if (this.showNotifications)
+                    else if (this.preferences.showNotifications)
                     {
                         const permission = await requestNotificationPermission()
 
@@ -562,7 +513,7 @@ const vueApp = createApp(defineComponent({
                     min: 0,
                     max: 100,
                     step: 1,
-                    value: this.voiceVolume,
+                    value: this.preferences.voiceVolume,
                     slide: ( event: any, ui: any ) => {
                         this.changeVoiceVolume(ui.value);
                     }
@@ -596,14 +547,14 @@ const vueApp = createApp(defineComponent({
         },
         getSVGMode(): string | null
         {
-            return this.isCrispModeEnabled ? "crisp" : null;
+            return this.preferences.isCrispModeEnabled ? "crisp" : null;
         },
         async reloadImages()
         {
             this.loadRoomBackground();
             this.loadRoomObjects();
 
-            await (loadCharacters(this.isCrispModeEnabled));
+            await (loadCharacters(this.preferences.isCrispModeEnabled));
             this.isRedrawRequired = true;
         },
         areaChanged(siteArea: SiteArea)
@@ -972,7 +923,7 @@ const vueApp = createApp(defineComponent({
 
             this.socket.on("server-user-joined-room", async (user: PlayerDto) =>
             {
-                if (this.isLoginSoundEnabled && this.preferences.soundEffectVolume > 0)
+                if (this.preferences.isLoginSoundEnabled && this.preferences.soundEffectVolume > 0)
                     playSound("login-sound", this.preferences.soundEffectVolume);
                 this.addUser(user);
                 this.updateCanvasObjects();
@@ -1083,7 +1034,7 @@ const vueApp = createApp(defineComponent({
                 this.currentRoom.specialObjects[1].value = donationBoxValue;
                 this.lastCoinTossTime = Date.now();
                 this.isRedrawRequired = true;
-                if (this.preferences.soundEffectVolume > 0 && this.isCoinSoundEnabled) {
+                if (this.preferences.soundEffectVolume > 0 && this.preferences.isCoinSoundEnabled) {
                     playSound("ka-ching-sound", this.preferences.soundEffectVolume);
                 }
                 setTimeout(() => {
@@ -1213,13 +1164,13 @@ const vueApp = createApp(defineComponent({
             {
                 if (this.checkIfMentioned(plainMsg))
                     playSound("mention-sound", this.preferences.soundEffectVolume)
-                else if (this.isMessageSoundEnabled)
+                else if (this.preferences.isMessageSoundEnabled)
                     playSound("message-sound", this.preferences.soundEffectVolume)
             }
 
-            if (this.enableTextToSpeech)
+            if (this.preferences.enableTextToSpeech)
             {
-                speak(plainMsg, this.ttsVoiceURI, this.voiceVolume, user.voicePitch)
+                speak(plainMsg, this.preferences.ttsVoiceURI, this.preferences.voiceVolume, user.voicePitch)
             }
 
             if (user.id != this.myUserID)
@@ -1262,7 +1213,7 @@ const vueApp = createApp(defineComponent({
 
             if (!window.Notification) return null
 
-            if (!this.showNotifications
+            if (!this.preferences.showNotifications
                 || document.visibilityState == "visible") return null;
 
             const permission = await requestNotificationPermission()
@@ -1471,7 +1422,7 @@ const vueApp = createApp(defineComponent({
                 canvas.width = sBoxWidth + sBoxMargin;
                 canvas.height = sBoxHeight + sBoxMargin;
 
-                context.fillStyle = 'rgba(255, 255, 255, ' + (this.bubbleOpacity/100) + ')';
+                context.fillStyle = 'rgba(255, 255, 255, ' + (this.preferences.bubbleOpacity/100) + ')';
 
                 context.beginPath();
 
@@ -2100,7 +2051,7 @@ const vueApp = createApp(defineComponent({
             
             const now = Date.now()
             
-            if (!this.isIdleAnimationDisabled)
+            if (!this.preferences.isIdleAnimationDisabled)
             {
                 if(animateObjects(this.canvasObjects, this.users))
                     this.isRedrawRequired = true
@@ -2120,10 +2071,10 @@ const vueApp = createApp(defineComponent({
             {
                 if (user.checkIfRedrawRequired()) usersRequiringRedraw.add(userId)
                 
-                if (!this.isIdleAnimationDisabled && user.animateBlinking(now))
+                if (!this.preferences.isIdleAnimationDisabled && user.animateBlinking(now))
                     usersRequiringRedraw.add(userId)
                 
-                if (this.isIdleAnimationDisabled)
+                if (this.preferences.isIdleAnimationDisabled)
                     user.resetBlinking()
             }
 
@@ -2565,8 +2516,8 @@ const vueApp = createApp(defineComponent({
         handleMessageInputKeypress(event: KeyboardEvent)
         {
             if (event.key != "Enter"
-                || (this.isNewlineOnShiftEnter && event.shiftKey)
-                || (!this.isNewlineOnShiftEnter && !event.shiftKey))
+                || (this.preferences.isNewlineOnShiftEnter && event.shiftKey)
+                || (!this.preferences.isNewlineOnShiftEnter && !event.shiftKey))
                 return;
 
             this.sendMessageToServer();
@@ -2613,7 +2564,7 @@ const vueApp = createApp(defineComponent({
 
         getDevicePixelRatio(): number
         {
-            if (this.isLowQualityEnabled) return 1;
+            if (this.preferences.isLowQualityEnabled) return 1;
             return Math.round(window.devicePixelRatio*100)/100;
         },
 
@@ -2796,9 +2747,9 @@ const vueApp = createApp(defineComponent({
             this.isStreamPopupOpen = false;
             try
             {
-                const withVideo = this.streamMode != "sound" && !this.streamScreenCapture;
-                const withSound = this.streamMode == "sound"
-                    || (this.streamMode == "video_sound" && !(this.streamScreenCapture && this.streamScreenCaptureAudio));
+                const withVideo = this.preferences.streamMode != "sound" && !this.preferences.streamScreenCapture;
+                const withSound = this.preferences.streamMode == "sound"
+                    || (this.preferences.streamMode == "video_sound" && !(this.preferences.streamScreenCapture && this.preferences.streamScreenCaptureAudio));
 
                 this.waitingForDevicePermission = true
                 this.deviceList = await getDeviceList(withSound, withVideo)
@@ -2862,26 +2813,26 @@ const vueApp = createApp(defineComponent({
                 // - video + sound (screen sharing)
                 // - video + sound (screen sharing + desktop audio)
 
-                const withVideo = this.streamMode != "sound";
-                const withSound = this.streamMode != "video";
+                const withVideo = this.preferences.streamMode != "sound";
+                const withSound = this.preferences.streamMode != "video";
 
                 // Validate device selection
-                if ((withVideo && !this.selectedVideoDeviceId && !this.streamScreenCapture)
-                    || (withSound && !this.selectedAudioDeviceId && !this.streamScreenCaptureAudio))
+                if ((withVideo && !this.selectedVideoDeviceId && !this.preferences.streamScreenCapture)
+                    || (withSound && !this.selectedAudioDeviceId && !this.preferences.streamScreenCaptureAudio))
                 {
                     this.showWarningToast(this.$t("msg.error_didnt_select_device"));
                     return;
                 }
 
-                const withScreenCapture = this.streamScreenCapture && withVideo
-                const withScreenCaptureAudio = this.streamScreenCaptureAudio && withScreenCapture && withSound
+                const withScreenCapture = this.preferences.streamScreenCapture && withVideo
+                const withScreenCaptureAudio = this.preferences.streamScreenCaptureAudio && withScreenCapture && withSound
 
                 // Force all the other advanced settings if desktop audio sharing is enabled.
                 // Can't remember why, but the UI hides those settings when sharing desktop audio.
                 const audioConstraints = {
-                    echoCancellation: withScreenCaptureAudio && this.streamEchoCancellation,
-                    noiseSuppression: withScreenCaptureAudio && this.streamNoiseSuppression,
-                    autoGainControl: withScreenCaptureAudio && this.streamAutoGain,
+                    echoCancellation: withScreenCaptureAudio && this.preferences.streamEchoCancellation,
+                    noiseSuppression: withScreenCaptureAudio && this.preferences.streamNoiseSuppression,
+                    autoGainControl: withScreenCaptureAudio && this.preferences.streamAutoGain,
                     deviceId: withScreenCaptureAudio ? undefined : { exact: this.selectedAudioDeviceId! },
                 }
 
@@ -3206,7 +3157,7 @@ const vueApp = createApp(defineComponent({
             if(!window.rtcPeerSlots[streamSlotId].rtcPeer) return;
             this.resetRtcPeerSlot(streamSlotId)
             
-            if (!this.isStreamAutoResumeEnabled)
+            if (!this.preferences.isStreamAutoResumeEnabled)
                 this.takenStreams[streamSlotId] = false
 
             this.clientSideStreamData[streamSlotId].isListenerConnected = false
@@ -3305,7 +3256,7 @@ const vueApp = createApp(defineComponent({
         {
             this.confirm(this.$t("msg.are_you_sure_you_want_to_block"), () =>
             {
-                if (this.isIgnoreOnBlock)
+                if (this.preferences.isIgnoreOnBlock)
                     this.ignoreUser(userId)
                 this.socket!.emit("user-block", userId);
             });
@@ -3397,11 +3348,11 @@ const vueApp = createApp(defineComponent({
         },
         toggleCoinSound()
         {
-            setAndPersist(this.preferences, "isCoinSoundEnabled", this.isCoinSoundEnabled)
+            setAndPersist(this.preferences, "isCoinSoundEnabled", this.preferences.isCoinSoundEnabled)
         },
         handleBubbleOpacity()
         {
-            setAndPersist(this.preferences, "bubbleOpacity", this.bubbleOpacity)
+            setAndPersist(this.preferences, "bubbleOpacity", this.preferences.bubbleOpacity)
             this.resetBubbleImages();
         },
         async logout()
@@ -3433,12 +3384,12 @@ const vueApp = createApp(defineComponent({
                 this.notificationPermissionsGranted = false
                 return
             }
-            if (this.showNotifications)
+            if (this.preferences.showNotifications)
             {
                 const permission = await requestNotificationPermission()
                 this.notificationPermissionsGranted = permission == "granted"
             }
-            setAndPersist(this.preferences, "showNotifications", this.showNotifications)
+            setAndPersist(this.preferences, "showNotifications", this.preferences.showNotifications)
         },
         setMentionRegexObjects()
         {
@@ -3454,7 +3405,7 @@ const vueApp = createApp(defineComponent({
                     + ")", "ig")
             }
             
-            const customMentionSoundPattern = this.customMentionSoundPattern.trim();
+            const customMentionSoundPattern = this.preferences.customMentionSoundPattern.trim();
             
             if (customMentionSoundPattern)
             {
@@ -3469,7 +3420,7 @@ const vueApp = createApp(defineComponent({
             }
             
             this.usernameMentionRegexObject = null
-            if (!(this.myUserID! in this.users) || !this.isNameMentionSoundEnabled) return
+            if (!(this.myUserID! in this.users) || !this.preferences.isNameMentionSoundEnabled) return
             this.usernameMentionRegexObject = wordsToRegexObject(
                 this.users[this.myUserID!].name.split("◆"))
         },
@@ -3528,43 +3479,42 @@ const vueApp = createApp(defineComponent({
         },
         handleLowQualityEnabled()
         {
-            setAndPersist(this.preferences, "isLowQualityEnabled", this.isLowQualityEnabled)
+            setAndPersist(this.preferences, "isLowQualityEnabled", this.preferences.isLowQualityEnabled)
             this.isRedrawRequired = true
         },
         handleCrispModeEnabled()
         {
-            setAndPersist(this.preferences, "isCrispModeEnabled", this.isCrispModeEnabled)
+            setAndPersist(this.preferences, "isCrispModeEnabled", this.preferences.isCrispModeEnabled)
             this.reloadImages()
         },
         handleIdleAnimationDisabled()
         {
-            setAndPersist(this.preferences, "isIdleAnimationDisabled", this.isIdleAnimationDisabled)
+            setAndPersist(this.preferences, "isIdleAnimationDisabled", this.preferences.isIdleAnimationDisabled)
             this.isRedrawRequired = true
         },
         handleNameMentionSoundEnabled()
         {
-            setAndPersist(this.preferences, "isNameMentionSoundEnabled", this.isNameMentionSoundEnabled)
+            setAndPersist(this.preferences, "isNameMentionSoundEnabled", this.preferences.isNameMentionSoundEnabled)
             this.setMentionRegexObjects()
         },
         handleCustomMentionSoundPattern()
         {
-            setAndPersist(this.preferences, "customMentionSoundPattern", this.customMentionSoundPattern)
+            setAndPersist(this.preferences, "customMentionSoundPattern", this.preferences.customMentionSoundPattern)
             this.setMentionRegexObjects()
         },
         handleEnableTextToSpeech()
         {
             if (window.speechSynthesis)
                 speechSynthesis.cancel()
-            setAndPersist(this.preferences, "enableTextToSpeech", this.enableTextToSpeech)
+            setAndPersist(this.preferences, "enableTextToSpeech", this.preferences.enableTextToSpeech)
         },
         changeVoice() {
-            speak(this.$t("test"), this.ttsVoiceURI, this.voiceVolume)
-            setAndPersist(this.preferences, "ttsVoiceURI", this.ttsVoiceURI)
+            speak(this.$t("test"), this.preferences.ttsVoiceURI, this.voiceVolume)
+            setAndPersist(this.preferences, "ttsVoiceURI", this.preferences.ttsVoiceURI)
         },
         changeVoiceVolume(newValue: number) {
-            this.voiceVolume = newValue
-            setAndPersist(this.preferences, "voiceVolume", this.voiceVolume)
-            debouncedSpeakTest(this.ttsVoiceURI, this.voiceVolume, i18next)
+            setAndPersist(this.preferences, "voiceVolume", this.preferences.voiceVolume)
+            debouncedSpeakTest(this.preferences.ttsVoiceURI, this.preferences.voiceVolume, i18next)
         },
         toggleVideoSlotPinStatus(slotId: number) {
             const videoContainer = document.getElementById('video-container-' + slotId) as HTMLElement
@@ -3639,7 +3589,7 @@ const vueApp = createApp(defineComponent({
             }
         },
         toggleDesktopNotifications() {
-            this.showNotifications = !this.showNotifications
+            this.preferences.showNotifications = !this.preferences.showNotifications // TODO: fix direct mutation of preferences
             this.handleShowNotifications()
         },
         onCompressionChanged(streamSlotID: number)
