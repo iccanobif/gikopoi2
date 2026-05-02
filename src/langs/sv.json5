@@ -103,6 +103,7 @@
         preferences_ui_theme_gikopoi: "Gikopoi",
         preferences_ui_theme_shaddox: "Shaddoxläge",
         preferences_ui_theme_dark: "Mörkt",
+        // preferences_ui_theme_nostalgic: "Nostalgic",
         preferences_command_section_visible: "Visa Kontrollknappar",
         preferences_move_section_visible: "Visa Gångknappar",
         preferences_bubble_section_visible: "Visa Pratbubbleknappar",

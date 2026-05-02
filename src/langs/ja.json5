@@ -103,6 +103,7 @@
         preferences_ui_theme_gikopoi: "ギコっぽい",
         preferences_ui_theme_shaddox: "Shaddoxモード",
         preferences_ui_theme_dark: "ダーク",
+        // preferences_ui_theme_nostalgic: "Nostalgic",
         preferences_command_section_visible: "呪文ボタンを表示",
         preferences_move_section_visible: "移動ボタンを表示",
         preferences_bubble_section_visible: "吹き出しボタンを表示",

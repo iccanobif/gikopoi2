@@ -103,6 +103,7 @@
         preferences_ui_theme_gikopoi: "Gikopoi",
         preferences_ui_theme_shaddox: "Mode Shaddox",
         preferences_ui_theme_dark: "Gelap",
+        // preferences_ui_theme_nostalgic: "Nostalgic",
         preferences_command_section_visible: "Tampilkan Tombol Perintah",
         preferences_move_section_visible: "Tampilkan Tombol Gerakan",
         preferences_bubble_section_visible: "Tampilkan Tombol Balon",

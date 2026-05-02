@@ -102,6 +102,7 @@
         preferences_ui_theme_gikopoi: "Gikopoi",
         preferences_ui_theme_shaddox: "Shaddox-Modus",
         preferences_ui_theme_dark: "Dunkel",
+        // preferences_ui_theme_nostalgic: "Nostalgic",
         preferences_command_section_visible: "Befehl-Buttons anzeigen",
         preferences_move_section_visible: "Bewegungs-Buttons anzeigen",
         preferences_bubble_section_visible: "Sprechblase-Button anzeigen",

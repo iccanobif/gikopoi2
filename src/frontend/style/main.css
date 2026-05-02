@@ -464,6 +464,7 @@ video {
 .non-wrappable-buttons
 {
     display: flex;
+    align-self: center;
 }
 
 .tooltip-section-title
@@ -478,6 +479,7 @@ video {
 {
     min-height: 80px;
     align-items: center;
+    padding: 3px;
 }
 
 #toolbar button.arrow-button
