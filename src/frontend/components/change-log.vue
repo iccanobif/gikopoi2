@@ -10,6 +10,7 @@ const { i18next } = useTranslation()
         </div>
         <div class="changelog">
             <h3>更新ログ</h3>
+2026/05/01: 新しいキャラと部屋を追加しました。<br/>
 2026/03/30: 新しいキャラと部屋を追加しました。<br/>
 2026/02/20: 新しいキャラと部屋を追加しました。<br/>
 2025/12/30: 新しいキャラと新しい変身を追加しました。<br/>
@@ -143,6 +144,7 @@ You must be at least 16 years of age to enter.
         </div>
         <div class="changelog">
             <h3>Change Log</h3>
+2026/05/02: Added a new character and room.<br/>
 2026/03/30: Added a new character and room.<br/>
 2026/02/20: Added a new character and room.<br/>
 2025/12/30: Added a new character and a new henshin.<br/>

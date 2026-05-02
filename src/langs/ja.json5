@@ -257,6 +257,7 @@
         kyougijou: { t: "競技場", sort_key: "きょうぎじょう" },
         yojouhan: { t: "四畳半", sort_key: "よじょうはん" },
         meganeya: { t: "眼鏡屋", sort_key: "めがねや" },
+        yane: { t: "屋根", sort_key: "やね" },
     },
     area:
     {

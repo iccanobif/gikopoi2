@@ -7,8 +7,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-    'adjust-object': [objectIndex: number, property: string, delta: number]
-    'set-object': [objectIndex: number, property: string, value: number]
+    'set-object': [objectIndex: number, property: string, value: number | string]
+    'set-room': [property: string, value: number | string]
     'toggle-object-visibility': [objectIndex: number]
 }>()
 
@@ -22,20 +22,25 @@ const fields: { label: string; prop: string; step: number }[] = [
 
 const copyStatus = ref<'idle' | 'copied'>('idle')
 
-function adjust(objectIndex: number, property: string, delta: number)
-{
-    emit('adjust-object', objectIndex, property, delta)
-}
-
-function onInput(objectIndex: number, property: string, event: Event)
+function onObjectValueChange(objectIndex: number, property: string, event: Event)
 {
     const raw = (event.target as HTMLInputElement).value
     const value = parseFloat(raw)
-    if (!isNaN(value))
-        emit('set-object', objectIndex, property, value)
+    emit('set-object', objectIndex, property, isNaN(value) ? 0 : value)
 }
 
-function getValue(obj: NonNullable<ClientRoom>['objects'][number], property: string): number
+function onObjectUrlChange(objectIndex: number, event: Event)
+{
+    const value = (event.target as HTMLInputElement).value
+    emit('set-object', objectIndex, 'url', value)
+}
+
+function getObjectUrlValue(obj: NonNullable<ClientRoom>['objects'][number]): string
+{
+    return Array.isArray(obj.url) ? obj.url.join(', ') : obj.url
+}
+
+function getObjectValue(obj: NonNullable<ClientRoom>['objects'][number], property: string): number
 {
     if (property === 'x') return obj.x
     if (property === 'y') return obj.y
@@ -43,6 +48,35 @@ function getValue(obj: NonNullable<ClientRoom>['objects'][number], property: str
     if (property === 'offset.y') return obj.offset?.y ?? 0
     if (property === 'scale') return obj.scale ?? 1
     return 0
+}
+
+function getRoomValue(property: string): number
+{
+    if (!props.currentRoom) return 0
+    if (property === 'scale') return props.currentRoom.scale
+    if (property === 'originCoordinates.x') return props.currentRoom.originCoordinates.x
+    if (property === 'originCoordinates.y') return props.currentRoom.originCoordinates.y
+    return 0
+}
+
+function onRoomValueChange(property: string, event: Event)
+{
+    const raw = (event.target as HTMLInputElement).value
+    const value = parseFloat(raw)
+    emit('set-room', property, isNaN(value) ? 0 : value)
+}
+
+function onRoomTextValueChange(property: string, event: Event)
+{
+    const value = (event.target as HTMLInputElement).value
+    emit('set-room', property, value)
+}
+
+function getRoomTextValue(property: string): string
+{
+    if (!props.currentRoom) return ''
+    if (property === 'backgroundImageUrl') return props.currentRoom.backgroundImageUrl
+    return ''
 }
 
 function formatObjectsJson(objects: Record<string, unknown>[]): string
@@ -83,6 +117,32 @@ function toggleVisibility(objectIndex: number)
 
 <template>
     <div id="room-object-editor" v-if="currentRoom">
+        <div>
+            <label>scale</label>
+            <input
+                type="number"
+                :step="0.01"
+                :value="getRoomValue('scale')"
+                @change="onRoomValueChange('scale', $event)">
+            <label>backgroundImageUrl</label>
+            <input
+                type="text"
+                class="room-object-editor-background-url-input"
+                :value="getRoomTextValue('backgroundImageUrl')"
+                @change="onRoomTextValueChange('backgroundImageUrl', $event)">
+            <label>originCoordinates.x</label>
+            <input
+                type="number"
+                :step="1"
+                :value="getRoomValue('originCoordinates.x')"
+                @change="onRoomValueChange('originCoordinates.x', $event)">
+            <label>originCoordinates.y</label>
+            <input
+                type="number"
+                :step="1"
+                :value="getRoomValue('originCoordinates.y')"
+                @change="onRoomValueChange('originCoordinates.y', $event)">
+        </div>
         <div id="room-object-editor-toolbar">
             <button @click="copyObjectsJson">{{ copyStatus === 'copied' ? '✓ Copied!' : 'Copy objects JSON' }}</button>
         </div>
@@ -92,6 +152,15 @@ function toggleVisibility(objectIndex: number)
             class="room-object-editor-row"
         >
             <span class="room-object-editor-label">{{ obj.url || ('[' + index + ']') }}</span>
+            <span class="room-object-editor-field room-object-editor-url-field">
+                <label class="room-object-editor-field-name">url</label>
+                <input
+                    class="room-object-editor-input room-object-editor-url-input"
+                    type="text"
+                    :value="getObjectUrlValue(obj)"
+                    @change="onObjectUrlChange(index, $event)"
+                />
+            </span>
             <span class="room-object-editor-field">
                 <button @click="toggleVisibility(index)">{{ obj.isHidden ? '無' : '有' }}</button>
             </span>
@@ -99,15 +168,13 @@ function toggleVisibility(objectIndex: number)
                   :key="field.prop"
                   class="room-object-editor-field">
                 <label class="room-object-editor-field-name">{{ field.label }}</label>
-                <button @click="adjust(index, field.prop, -field.step)">−</button>
                 <input
                     class="room-object-editor-input"
                     type="number"
                     :step="field.step"
-                    :value="getValue(obj, field.prop)"
-                    @change="onInput(index, field.prop, $event)"
+                    :value="getObjectValue(obj, field.prop)"
+                    @change="onObjectValueChange(index, field.prop, $event)"
                 />
-                <button @click="adjust(index, field.prop, field.step)">+</button>
             </span>
         </div>
     </div>
@@ -127,7 +194,7 @@ function toggleVisibility(objectIndex: number)
 
 .room-object-editor-row {
     display: grid;
-    grid-template-columns: 140px repeat(6, auto);
+    grid-template-columns: 140px repeat(7, auto);
     align-items: center;
     gap: 4px;
     padding: 2px 0;
@@ -157,10 +224,24 @@ function toggleVisibility(objectIndex: number)
     padding: 0 2px;
 }
 
+.room-object-editor-url-field {
+    min-width: 220px;
+}
+
+.room-object-editor-url-input {
+    width: 200px;
+}
+
 .room-object-editor-row button {
     padding: 0 4px;
     line-height: 1.2;
     font-size: 12px;
     cursor: pointer;
+}
+
+.room-object-editor-background-url-input {
+    width: 240px;
+    font-size: 11px;
+    padding: 0 2px;
 }
 </style>

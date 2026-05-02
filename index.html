@@ -100,8 +100,8 @@
                     <room-object-editor
                         v-if="isRoomObjectEditorVisible"
                         :current-room="currentRoom"
-                        @adjust-object="adjustRoomObject"
                         @set-object="setRoomObject"
+                        @set-room="setRoomProperty"
                         @toggle-object-visibility="toggleRoomObjectVisibility"
                     ></room-object-editor>
 

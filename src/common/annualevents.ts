@@ -77,20 +77,20 @@ export class AnnualEvent
     
     public isNow(): boolean
     {
-        const now = getNow()
-        return this.isBetween(now)
+        return this.isBetween(getNow())
     }
 }
 
 export const annualEvents: {[eventName: string]: AnnualEvent} =
 {
+    // NOTE: month is 0-indexed in dayjs .set() function
     spring:     new AnnualEvent(d => d.set({month:  2, date: 21}), d => d.set({month:  4, date: 31})), // starting with cherry blossoms blooming
     summer:     new AnnualEvent(d => d.set({month:  5, date:  1}), d => d.set({month:  7, date: 31})), // sun
     autumn:     new AnnualEvent(d => d.set({month:  8, date:  1}), d => d.set({month: 10, date: 30})), // orange/yellow/brown colors
     winter:     new AnnualEvent(d => d.set({month: 11, date:  1}), d => d.set({month:  2, date: 20})), // snow
     
-    noKotatsu:  new AnnualEvent(d => d.set({month: 4,  date:  1}), d => d.set({month:  9, date: 30})),
-    yesKotatsu: new AnnualEvent(d => d.set({month: 10, date:  1}), d => d.set({month:  3, date: 31})),
+    noKotatsu:  new AnnualEvent(d => d.set({month: 3, date:  1}), d => d.set({month: 8, date: 30})),
+    yesKotatsu: new AnnualEvent(d => d.set({month: 9, date:  1}), d => d.set({month: 2, date: 31})),
     
     sakura:     new AnnualEvent(d => d.set({month:  2, date: 21}), d => d.set({month:  3, date: 30})), // cherry blossoms
     goldenWeek: new AnnualEvent(d => d.set({month:  3, date: 29}), d => d.set({month:  4, date:  5})),
@@ -107,6 +107,7 @@ export const annualEvents: {[eventName: string]: AnnualEvent} =
 export function getCurrentAnnualEvents(): string[]
 {
     const now = getNow()
+
     return Object.entries(annualEvents)
         .filter(([eventName, annualEvent]) => annualEvent.isBetween(now))
         .map(([eventName, annualEvent]) => eventName)

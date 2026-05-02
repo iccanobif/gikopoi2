@@ -26,7 +26,6 @@ const count = ref(props.initialValue)
 const emit = defineEmits(['value-changed'])
 
 const emitValueChanged = () => {
-    console.log('emitValueChanged', count.value)
     emit('value-changed', count.value)
 }
 const increment = () => {

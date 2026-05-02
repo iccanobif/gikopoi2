@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="160px" height="182px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <path d="M71.465,128.425L80.513,132.683C91.728,135.351 84.097,120.364 75,118.5" style="fill:#fff;stroke:#000;stroke-width:2.5px;"/>
+    <path d="M70,28.862L61,20C60.273,21.363 59.838,22.702 59.644,23.996C58.835,29.385 56.697,37.662 60.63,40" style="fill:#fff;stroke:#000;stroke-width:2.5px;"/>
+    <path d="M54,38C61.524,25.446 76.712,21.176 96,23L115,29L117.5,34L120.663,35.5L121,43L122.779,44.733L121.278,46.5L121.395,53.5L111.5,61.5L106,68.025C123.631,55.909 128.224,72.615 112.103,78.461L107,81C103.445,84.317 100.823,87.002 100,92L100,111C100.211,116.679 96.139,120.934 92.867,124L91,138C77.222,151.549 71.021,127.398 73.5,125L71.465,128.5L63,124L53.5,111C51.409,103.193 50.043,92.906 53,79L61,62.5C50.303,57.912 50.712,48.532 54,38Z" style="fill:#fff;"/>
+    <path d="M37,103.25C39.193,100.262 42.11,99.359 46,101.25C49.584,103.983 52.765,103.593 55.5,99.75" style="fill:none;stroke:#000;stroke-width:2.5px;"/>
+    <path d="M93,123L91,138C79.561,148.827 72.513,134.22 73.5,125" style="fill:none;stroke:#000;stroke-width:2.5px;"/>
+    <path d="M100,92L100,113" style="fill:none;stroke:#000;stroke-width:2.5px;"/>
+    <path d="M60.984,62.5L53,79" style="fill:none;stroke:#000;stroke-width:2.5px;"/>
+    <path d="M102.344,70.46L111.033,64.673C120.252,60.831 124.037,67.463 120.128,73.922C117.747,75.849 115.116,77.425 112.103,78.461" style="fill:#fff;stroke:#000;stroke-width:2.5px;"/>
+    <path d="M116,57.59L119.299,56.135L120.501,49.239L122.518,48.212L120.93,46.776L122.39,38.403L119.692,36.41" style="fill:none;stroke:#000;stroke-width:2.5px;stroke-linejoin:miter;stroke-miterlimit:2.5;"/>
+    <path d="M113,30L114,10L94,25" style="fill:#fff;stroke:#000;stroke-width:2.5px;stroke-linejoin:miter;stroke-miterlimit:2.5;"/>
+</svg>
