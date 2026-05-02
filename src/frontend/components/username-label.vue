@@ -10,10 +10,10 @@ const fallbackUserName = 'N/A'
 const props = defineProps<{
     userId: string,
     userName?: string,
+    users: Users,
     roomSession: RoomSession
 }>()
 
-const users = inject('users') as Ref<Users>
 const highlightedUserId = ref(null) as Ref<string | null>
 const ignoredUserIds = inject('ignoredUserIds') as Ref<IgnoredUserIds>
 
@@ -38,8 +38,8 @@ watch(props, () =>
         const clearUnwatchTimer = () => window.clearTimeout(unwatchTimer)
         const checkUsers = (): boolean =>
         {
-            if (!users.value[props.userId]) return true
-            properUserName.value = users.value[props.userId].name
+            if (!props.users || !props.users[props.userId]) return true
+            properUserName.value = props.users[props.userId].name
             if (unwatch)
             {
                 unwatch()
@@ -49,7 +49,7 @@ watch(props, () =>
         }
         if (checkUsers())
         {
-            unwatch = watch(users, checkUsers)
+            unwatch = watch(() => props.users, checkUsers)
             unwatchTimer = window.setTimeout(unwatch, 4000)
             onUnmounted(clearUnwatchTimer)
         }

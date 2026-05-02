@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Socket } from 'socket.io-client'
 import type { Ref } from 'vue'
 
 import { ref, toRef, watch, inject, computed, onBeforeUnmount } from 'vue'
@@ -15,10 +14,10 @@ const createFallbackUser = (id: string | null) => ({ id, name: "N/A" })
 
 const props = defineProps<{
     jankenState: JankenStateDto,
+    users: Users,
     roomSession: RoomSession
 }>()
 
-const users = inject("users") as Ref<Users>
 const myUserId = inject("myUserId") as Ref<string>
 
 const state = toRef(props, "jankenState")
@@ -29,11 +28,11 @@ const isStageDraw = computed(() => state.value.stage == "draw")
 const isStageResult = computed(() => state.value.stage == "win" || state.value.stage == "draw")
 
 const player1 = ref()
-watch(() => state.value.player1Id, () => { player1.value = ((state.value.player1Id && users.value[state.value.player1Id])
+watch(() => [state.value.player1Id, props.users], () => { player1.value = ((state.value.player1Id && props.users[state.value.player1Id])
     || createFallbackUser(state.value.player1Id)) }, { immediate: true })
 
 const player2 = ref()
-watch(() => state.value.player2Id, () => { player2.value = ((state.value.player2Id && users.value[state.value.player2Id])
+watch(() => [state.value.player2Id, props.users], () => { player2.value = ((state.value.player2Id && props.users[state.value.player2Id])
     || createFallbackUser(state.value.player2Id)) }, { immediate: true })
 
 // this is so that the named player, in cases like quitting, doesn't become N/A when the id is checked in the users list
@@ -120,9 +119,9 @@ watch(isActive, () =>
         </div>
         <div v-if="isVisible">
             <div v-if="player1.id && player2.id" class="slot-message janken-versus">
-                <div class="janken-versus-player1"><username-label :user-id="player1.id" :user-name="player1.name" :room-session="roomSession"></username-label></div>
+                <div class="janken-versus-player1"><username-label :user-id="player1.id" :user-name="player1.name" :users="props.users" :room-session="roomSession"></username-label></div>
                 <div>{{ t("ui.janken_versus") }}</div>
-                <div class="janken-versus-player2"><username-label :user-id="player2.id" :user-name="player2.name" :room-session="roomSession"></username-label></div>
+                <div class="janken-versus-player2"><username-label :user-id="player2.id" :user-name="player2.name" :users="props.users" :room-session="roomSession"></username-label></div>
             </div>
             <div v-if="state.stage == 'win' || state.stage == 'draw'"
                 class="janken-hand-results" :class="{ 'janken-hands-draw': state.stage == 'draw' }">
@@ -134,7 +133,7 @@ watch(isActive, () =>
                     <span v-if="!player1.id">{{ t("ui.janken_start_a_game") }}</span>
                     <span v-else-if="!player2.id">
                         <i18next :translation="$t('ui.janken_waiting_for_opponent')">
-                            <template #username><username-label :user-id="player1.id" :user-name="player1.name" :room-session="roomSession"></username-label></template>
+                            <template #username><username-label :user-id="player1.id" :user-name="player1.name" :users="props.users" :room-session="roomSession"></username-label></template>
                         </i18next>
                     </span>
                 </template>
@@ -157,14 +156,14 @@ watch(isActive, () =>
                 
                 <span v-else-if="state.stage == 'win'">
                     <i18next :translation="$t('ui.janken_win')">
-                        <template #username><username-label :user-id="namedPlayer.id" :user-name="namedPlayer.name" :room-session="roomSession"></username-label></template>
+                        <template #username><username-label :user-id="namedPlayer.id" :user-name="namedPlayer.name" :users="props.users" :room-session="roomSession"></username-label></template>
                     </i18next>
                 </span>
                 
                 <template v-else-if="state.stage == 'quit'">
                     <span>
                         <i18next :translation="$t('ui.janken_quit')">
-                            <template #username><username-label :user-id="namedPlayer.id" :user-name="namedPlayer.name" :room-session="roomSession"></username-label></template>
+                            <template #username><username-label :user-id="namedPlayer.id" :user-name="namedPlayer.name" :users="props.users" :room-session="roomSession"></username-label></template>
                         </i18next>
                     </span>
                 </template>

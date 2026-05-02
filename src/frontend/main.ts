@@ -348,7 +348,6 @@ const vueApp = createApp(defineComponent({
     provide()
     {
         return {
-            users: computed(() => this.users),
             ignoredUserIds: computed(() => this.ignoredUserIds),
             myUserId: computed(() => this.myUserID),
             outboundAudioProcessor: computed(() => this.outboundAudioProcessor),

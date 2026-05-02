@@ -2,7 +2,7 @@
 import type { PropType } from 'vue'
 import type { Socket } from 'socket.io-client'
 
-import type { ChessboardStateDto } from '../types'
+import type { ChessboardStateDto, Users } from '../types'
 import type { RoomSession } from '../room-session'
 
 import { defineComponent, inject, Ref } from 'vue'
@@ -10,6 +10,7 @@ import { defineComponent, inject, Ref } from 'vue'
 export default defineComponent({
     props: {
         chessboardState: { type: Object as PropType<ChessboardStateDto>, required: true },
+        users: { type: Object as PropType<Users>, required: true },
         roomSession: { type: Object as PropType<RoomSession>, required: true }
     },
     template: "#chessboard-slot",
@@ -171,10 +172,10 @@ export default defineComponent({
             {{ !chessboardState.whiteUserID ? $t("ui.chess_waiting_for_white") : $t("ui.chess_waiting_for_black") }}
             </div>
             <span v-if="chessboardState.whiteUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'w'}">
-                {{ $t("ui.chess_white") }}<username-label :user-id="chessboardState.whiteUserID" :room-session="roomSession"></username-label>
+                {{ $t("ui.chess_white") }}<username-label :user-id="chessboardState.whiteUserID" :users="users" :room-session="roomSession"></username-label>
             </span>
             <span v-if="chessboardState.blackUserID" v-bind:class="{'next-move-chess-player': chessboardState.turn == 'b'}">
-                {{ $t("ui.chess_black") }}<username-label :user-id="chessboardState.blackUserID" :room-session="roomSession"></username-label>
+                {{ $t("ui.chess_black") }}<username-label :user-id="chessboardState.blackUserID" :users="users" :room-session="roomSession"></username-label>
             </span>
             <div
                 id="chessboard"
