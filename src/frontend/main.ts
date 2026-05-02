@@ -188,7 +188,7 @@ function createPreferenceProxy<K extends keyof GikopoipoiPreferences>(key: K)
         },
         set(this: { preferences: GikopoipoiPreferences }, value: GikopoipoiPreferences[K])
         {
-            this.preferences[key] = value
+            setAndPersist(this.preferences, key, value)
         },
     }
 }
@@ -360,7 +360,6 @@ const vueApp = createApp(defineComponent({
         }
     },
     computed: {
-        uiTheme: createPreferenceProxy("uiTheme"),
         enableTextToSpeech: createPreferenceProxy("enableTextToSpeech"),
         ttsVoiceURI: createPreferenceProxy("ttsVoiceURI"),
         isNewlineOnShiftEnter: createPreferenceProxy("isNewlineOnShiftEnter"),
@@ -3383,7 +3382,7 @@ const vueApp = createApp(defineComponent({
                 observer.observe(chatLog.lastElementChild);
             }
 
-            setAndPersist(this.preferences, "uiTheme", this.uiTheme)
+            setAndPersist(this.preferences, "uiTheme", this.preferences.uiTheme)
             
             // Need to wait for the next tick so that knobElement.refresh() is called
             // with uiTheme already updated to its new value.

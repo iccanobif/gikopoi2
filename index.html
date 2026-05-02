@@ -33,7 +33,7 @@
 
 <body>
     <div id="vue-app">
-        <div id="page-container" ref="page-container" v-cloak :class="['theme-' + uiTheme]" v-bind:lang="$i18next.language">
+        <div id="page-container" ref="page-container" v-cloak :class="['theme-' + preferences.uiTheme]" v-bind:lang="$i18next.language">
             <login-page
                 v-if="appState == 'login'"
                 :password-input-visible="passwordInputVisible"
