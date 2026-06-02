@@ -22,7 +22,7 @@
         label_stream: "Kanal {{index}}: ",
         label_input: "Inlägg:",
         label_log: "Logg:",
-        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
+        error_invalid_username: "Användarnamn får som längst vara 20 tecken.",
 
         button_send: "Skriv",
         button_stream_start: "Börja strömma",
@@ -39,7 +39,7 @@
         button_logout: "Logga ut",
         volume: "Volym: ",
         enable_compression: "Förstärkning: ",
-        // voice_changer: "Voice Changer: ",
+        voice_changer: "Röstförvrängare: ",
         gain: "Öka: ",
         sound_effect: "Volym",
         tts_volume: "Talsyntesvolym.",
@@ -219,7 +219,7 @@
         school_rouka: "Skolan: Korridor",
         school_international: "Skolan: Kulturrum",
         school_pc: "Skolan: Datasal",
-        // karaoke_box: "Karaoke Box",
+        karaoke_box: "Karaokeboxen",
         seashore: "Stranden",
         radio: "Radiostationen",
         radio_room1: "Radiostudio 1",
@@ -246,9 +246,9 @@
         taiikukan: "Skolan: Gymnastiksal",
         yaneura: "Stugans loft",
         kyougijou: "Vallen",
-        // yojouhan: "Tatami Room",
-        // meganeya: "Opticians"
-        // yane: "Rooftop",
+        yojouhan: "Lyan",
+        meganeya: "Optikern",
+        yane: "Stugans tak",
     },
     area:
     {
