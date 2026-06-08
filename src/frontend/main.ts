@@ -2662,8 +2662,8 @@ const vueApp = createApp(defineComponent({
         {
             if(canvasScale > 3)
                 canvasScale = 3;
-            else if(canvasScale < 0.70)
-                canvasScale = 0.70;
+            else if(canvasScale < 0.50)
+                canvasScale = 0.50;
 
             this.userCanvasScale = canvasScale;
             this.isRedrawRequired = true;
