@@ -199,6 +199,29 @@ const AudioContext = window.AudioContext          // Default
 
 export type VuMeterCallback = (level: number) => void
 
+export interface SpeechRecognitionLike
+{
+    continuous: boolean
+    interimResults: boolean
+    lang: string
+    maxAlternatives?: number
+    onresult: ((event: any) => void) | null
+    onerror: ((event: any) => void) | null
+    onend: (() => void) | null
+    start: (audioTrack?: MediaStreamTrack) => void
+    stop: () => void
+    abort?: () => void
+}
+
+type SpeechRecognitionConstructor = new () => SpeechRecognitionLike
+
+export function getSpeechRecognitionConstructor(): SpeechRecognitionConstructor | null
+{
+    return (window as any).SpeechRecognition
+        || (window as any).webkitSpeechRecognition
+        || null
+}
+
 export class AudioProcessor
 {
     private stream: MediaStream
@@ -306,6 +329,11 @@ export class AudioProcessor
                     window.clearInterval(this.vuMeterTimer)
             }
         }, 100)
+    }
+
+    getProcessedAudioTrack(): MediaStreamTrack | null
+    {
+        return this.destination.stream.getAudioTracks()[0] || null
     }
 
     async dispose(): Promise<void>

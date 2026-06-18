@@ -74,6 +74,7 @@ import {
     getFormattedCurrentDate,
     requestNotificationPermission,
     getDeviceList,
+    getSpeechRecognitionConstructor,
     getClickCoordinatesWithinCanvas,
     htmlToControlChars,
     controlCharsToHtml,
@@ -327,6 +328,7 @@ const vueApp = createApp(defineComponent({
             isCoinSoundEnabled: localStorage.getItem("isCoinSoundEnabled") != "false",
             isStreamAutoResumeEnabled: localStorage.getItem("isStreamAutoResumeEnabled") != "false",
             isStreamInboundVuMeterEnabled: localStorage.getItem("isStreamInboundVuMeterEnabled") != "false",
+            isStreamAutoSubtitlesEnabled: localStorage.getItem("isStreamAutoSubtitlesEnabled") == "true",
             showLogAboveToolbar: localStorage.getItem("showLogAboveToolbar") == "true",
             showLogDividers: localStorage.getItem("showLogDividers") == "true",
             isIgnoreOnBlock: localStorage.getItem("isIgnoreOnBlock") == "true",
@@ -408,6 +410,10 @@ const vueApp = createApp(defineComponent({
             // the key is the slot ID
             inboundAudioProcessors: {} as {[slotId: number]: AudioProcessor},
             outboundAudioProcessor: null as AudioProcessor | null,
+            subtitleRecognizers: {} as {[slotId: number]: any},
+            streamSubtitleRestartTimers: {} as {[slotId: number]: number | null},
+            streamSubtitles: {} as {[slotId: number]: { finalText: string, interimText: string, clearTimer: number | null }},
+            hasShownSubtitleSupportWarning: false,
         }
     },
     provide()
@@ -3034,6 +3040,11 @@ const vueApp = createApp(defineComponent({
                         const audioTrack = this.outboundAudioProcessor.destination.stream.getAudioTracks()[0]
 
                         this.mediaStream.addTrack(audioTrack)
+
+                        if (this.streamSlotIdInWhichIWantToStream !== null)
+                            this.startStreamSubtitleRecognition(
+                                this.streamSlotIdInWhichIWantToStream,
+                                this.outboundAudioProcessor.getProcessedAudioTrack())
                     }
                 }
 
@@ -3169,6 +3180,7 @@ const vueApp = createApp(defineComponent({
 
             this.streamSlotIdInWhichIWantToStream = null;
 
+            this.stopStreamSubtitleRecognition(streamSlotId)
             this.resetRtcPeerSlot(streamSlotId)
 
             // On small screens, displaying the <video> element seems to cause a reflow in a way that
@@ -3249,6 +3261,9 @@ const vueApp = createApp(defineComponent({
                                     setTimeout(() => {this.streams[streamSlotId].isJumping = false}, 100)
                             })
                             await this.inboundAudioProcessors[streamSlotId].initialize()
+                            this.startStreamSubtitleRecognition(
+                                streamSlotId,
+                                this.inboundAudioProcessors[streamSlotId].getProcessedAudioTrack())
                         }
                     }
                     catch (exc)
@@ -3279,6 +3294,8 @@ const vueApp = createApp(defineComponent({
                 await this.inboundAudioProcessors[streamSlotId].dispose()
                 delete this.inboundAudioProcessors[streamSlotId]
             }
+
+            this.stopStreamSubtitleRecognition(streamSlotId)
         },
         async wantToDropStream(streamSlotId: number)
         {
@@ -3431,6 +3448,200 @@ const vueApp = createApp(defineComponent({
             this.wantToStream = false;
             this.streamSlotIdInWhichIWantToStream = null;
         },
+        getStreamSubtitleState(streamSlotId: number)
+        {
+            if (!this.streamSubtitles[streamSlotId])
+            {
+                this.streamSubtitles[streamSlotId] = {
+                    finalText: '',
+                    interimText: '',
+                    clearTimer: null,
+                }
+            }
+            return this.streamSubtitles[streamSlotId]
+        },
+        getStreamSubtitleText(streamSlotId: number)
+        {
+            const subtitleState = this.streamSubtitles[streamSlotId]
+            if (!subtitleState) return ''
+            return [subtitleState.finalText, subtitleState.interimText].filter(Boolean).join(' ')
+        },
+        clearStreamSubtitle(streamSlotId: number)
+        {
+            const subtitleState = this.getStreamSubtitleState(streamSlotId)
+            if (subtitleState.clearTimer)
+                clearTimeout(subtitleState.clearTimer)
+            subtitleState.finalText = ''
+            subtitleState.interimText = ''
+            subtitleState.clearTimer = null
+        },
+        scheduleStreamSubtitleClear(streamSlotId: number)
+        {
+            const subtitleState = this.getStreamSubtitleState(streamSlotId)
+            if (subtitleState.clearTimer)
+                clearTimeout(subtitleState.clearTimer)
+            subtitleState.clearTimer = window.setTimeout(() => {
+                const latestSubtitleState = this.streamSubtitles[streamSlotId]
+                if (!latestSubtitleState) return
+                latestSubtitleState.finalText = ''
+                latestSubtitleState.interimText = ''
+                latestSubtitleState.clearTimer = null
+            }, 7000)
+        },
+        stopStreamSubtitleRecognition(streamSlotId: number)
+        {
+            const restartTimer = this.streamSubtitleRestartTimers[streamSlotId]
+            if (restartTimer)
+            {
+                clearTimeout(restartTimer)
+                this.streamSubtitleRestartTimers[streamSlotId] = null
+            }
+
+            const recognition = this.subtitleRecognizers[streamSlotId]
+            if (recognition)
+            {
+                ;(recognition as any).__gikopoiStopped = true
+                try
+                {
+                    recognition.stop()
+                }
+                catch (exc)
+                {
+                    console.debug(exc)
+                }
+                delete this.subtitleRecognizers[streamSlotId]
+            }
+
+            this.clearStreamSubtitle(streamSlotId)
+        },
+        startStreamSubtitleRecognition(streamSlotId: number, audioTrack: MediaStreamTrack | null)
+        {
+            this.stopStreamSubtitleRecognition(streamSlotId)
+
+            if (!this.isStreamAutoSubtitlesEnabled || !audioTrack || audioTrack.readyState != "live")
+                return
+
+            const SpeechRecognition = getSpeechRecognitionConstructor()
+            if (!SpeechRecognition)
+            {
+                if (!this.hasShownSubtitleSupportWarning)
+                {
+                    this.hasShownSubtitleSupportWarning = true
+                    this.showWarningToast(this.$t("msg.auto_subtitles_not_supported"))
+                }
+                return
+            }
+
+            const subtitleState = this.getStreamSubtitleState(streamSlotId)
+            const recognition = new SpeechRecognition()
+            this.subtitleRecognizers[streamSlotId] = recognition
+
+            recognition.continuous = true
+            recognition.interimResults = true
+            recognition.lang = this.language || navigator.language || "en-US"
+            recognition.maxAlternatives = 1
+
+            recognition.onresult = (event: any) => {
+                if (this.subtitleRecognizers[streamSlotId] !== recognition)
+                    return
+
+                let interimText = ''
+                let latestFinalText = subtitleState.finalText
+
+                for (let i = event.resultIndex || 0; i < event.results.length; i++)
+                {
+                    const transcript = event.results[i][0]?.transcript?.trim()
+                    if (!transcript)
+                        continue
+
+                    if (event.results[i].isFinal)
+                        latestFinalText = transcript
+                    else
+                        interimText += (interimText ? ' ' : '') + transcript
+                }
+
+                subtitleState.finalText = latestFinalText
+                subtitleState.interimText = interimText
+
+                if (latestFinalText)
+                    this.scheduleStreamSubtitleClear(streamSlotId)
+            }
+
+            recognition.onerror = (event: any) => {
+                if (this.subtitleRecognizers[streamSlotId] !== recognition)
+                    return
+
+                if ((event?.error == 'not-allowed' || event?.error == 'service-not-allowed')
+                    && !this.hasShownSubtitleSupportWarning)
+                {
+                    this.hasShownSubtitleSupportWarning = true
+                    this.showWarningToast(this.$t("msg.auto_subtitles_not_supported"))
+                }
+            }
+
+            recognition.onend = () => {
+                if (this.subtitleRecognizers[streamSlotId] !== recognition || (recognition as any).__gikopoiStopped)
+                    return
+
+                if (!this.isStreamAutoSubtitlesEnabled || audioTrack.readyState != "live")
+                    return
+
+                this.streamSubtitleRestartTimers[streamSlotId] = window.setTimeout(() => {
+                    if (this.subtitleRecognizers[streamSlotId] !== recognition)
+                        return
+
+                    try
+                    {
+                        recognition.start(audioTrack)
+                    }
+                    catch (exc)
+                    {
+                        console.debug("Auto subtitle restart failed", exc)
+                    }
+                }, 250)
+            }
+
+            try
+            {
+                recognition.start(audioTrack)
+            }
+            catch (exc)
+            {
+                console.error(exc)
+                delete this.subtitleRecognizers[streamSlotId]
+                if (!this.hasShownSubtitleSupportWarning)
+                {
+                    this.hasShownSubtitleSupportWarning = true
+                    this.showWarningToast(this.$t("msg.auto_subtitles_not_supported"))
+                }
+            }
+        },
+        refreshStreamSubtitleRecognitions()
+        {
+            const activeSlotIds = new Set<number>()
+
+            Object.keys(this.streamSubtitles).forEach(slotId => {
+                this.stopStreamSubtitleRecognition(parseInt(slotId))
+            })
+
+            if (!this.isStreamAutoSubtitlesEnabled)
+                return
+
+            if (this.streamSlotIdInWhichIWantToStream !== null && this.outboundAudioProcessor)
+            {
+                activeSlotIds.add(this.streamSlotIdInWhichIWantToStream)
+                this.startStreamSubtitleRecognition(
+                    this.streamSlotIdInWhichIWantToStream,
+                    this.outboundAudioProcessor.getProcessedAudioTrack())
+            }
+
+            Object.keys(this.inboundAudioProcessors).forEach(slotIdString => {
+                const slotId = parseInt(slotIdString)
+                if (activeSlotIds.has(slotId))
+                    return
+                this.startStreamSubtitleRecognition(slotId, this.inboundAudioProcessors[slotId].getProcessedAudioTrack())
+            })
+        },
         changeStreamVolume(streamSlotId: number)
         {
             const volumeSlider = document.getElementById("volume-" + streamSlotId) as HTMLInputElement
@@ -3514,6 +3725,7 @@ const vueApp = createApp(defineComponent({
         {
             this.storeSet('language');
             this.setLanguage();
+            this.refreshStreamSubtitleRecognitions()
         },
         storeSet(itemName: string, value?: any)
         {
@@ -3672,6 +3884,11 @@ const vueApp = createApp(defineComponent({
         {
             this.storeSet('customMentionSoundPattern')
             this.setMentionRegexObjects()
+        },
+        handleStreamAutoSubtitlesEnabled()
+        {
+            this.storeSet('isStreamAutoSubtitlesEnabled')
+            this.refreshStreamSubtitleRecognitions()
         },
         handleEnableTextToSpeech()
         {

@@ -860,6 +860,35 @@ button.checked {
     transition: opacity 0.3s;
 }
 
+.stream-subtitles-overlay
+{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    padding: 6px 8px;
+    background: rgba(0, 0, 0, 0.72);
+    color: white;
+    text-align: center;
+    text-shadow: 0 1px 2px black;
+    font-size: 14px;
+    line-height: 1.35;
+    word-break: break-word;
+    pointer-events: none;
+}
+
+.audio-stream-subtitles
+{
+    margin-top: 6px;
+    padding: 4px 6px;
+    background: rgba(0, 0, 0, 0.72);
+    color: white;
+    font-size: 12px;
+    line-height: 1.35;
+    word-break: break-word;
+}
+
 .video-container:hover > .pin-video-button
 {
     /* visibility: visible; */
