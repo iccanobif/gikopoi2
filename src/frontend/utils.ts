@@ -12,7 +12,7 @@ export function loadImage(url: string): Promise<HTMLImageElement>
         try
         {
             const img = new Image();
-            img.addEventListener("load", () => 
+            img.addEventListener("load", () =>
             {
                 resolve(img)
             })
@@ -32,12 +32,12 @@ export function stringToImage(imageString: string, isPng: boolean): Promise<HTML
         try
         {
             const img = new Image()
-            
+
             if (isPng)
                img.src = "data:image/png;base64," + imageString
             else
                 img.src = "data:image/svg+xml;base64," + btoa(imageString)
-            
+
             img.addEventListener("load", () => resolve(img))
             img.addEventListener("error", reject)
         }
@@ -63,13 +63,13 @@ export async function stringToImageList(imageString: string, isBase64: boolean)
         {
             const svgDoc = document.createElement("template")
             svgDoc.innerHTML = imageString
-            
+
             if (!svgDoc.content || !svgDoc.content.firstElementChild)
                 return
-            
+
             const elements = Array.from(svgDoc.content.firstElementChild.children)
                 .filter(el => el.tagName != "defs") as SVGElement[]
-            
+
             Promise.all(elements
                 .reduce((acc, el) =>
             {
@@ -116,7 +116,7 @@ export function calculateRealCoordinates(room: ClientRoom, x: number, y: number)
 {
     const blockWidth = room.blockWidth ? room.blockWidth : BLOCK_WIDTH;
     const blockHeight = room.blockHeight ? room.blockHeight : BLOCK_HEIGHT;
-    
+
     const realX = room.originCoordinates.x
         + x * blockWidth / 2
         + y * blockWidth / 2
@@ -150,7 +150,7 @@ export async function logToServer(msg: string)
     } catch {
         // Ignore errors to prevent infinite loops and increased CPU usage when the network is down.
         // Nothing particularly important is logged here anyway.
-    } 
+    }
 }
 
 // Some websites don't seem to realize that URL encoded strings should decode to UTF-8 and not to SHIFT-JIS.
@@ -168,13 +168,13 @@ export function safeDecodeURI(str: string): string
 
 export const debounceWithDelayedExecution = (func: any, wait: number): ((...args: any) => void) => {
     let timeout: number;
-  
+
     return function executedFunction(...args) {
       const later = () => {
         window.clearTimeout(timeout);
         func(...args);
       };
-  
+
       window.clearTimeout(timeout);
       timeout = window.setTimeout(later, wait);
     };
@@ -183,7 +183,7 @@ export const debounceWithDelayedExecution = (func: any, wait: number): ((...args
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function debounceWithImmediateExecution(func: Function, wait: number) {
     let lastExecution: number | null = null;
-  
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return function executedFunction(...args: any[]) {
       if (Date.now() - (lastExecution || 0) > wait)
@@ -206,12 +206,12 @@ export class AudioProcessor
     private gainValue: number = 0
     private isInbound: boolean
     public isMute: boolean = false // used in the html template
-    
+
     public isBoostEnabled: boolean = false // set by v-model
     public isFeedbackEnabled: boolean = false // set by v-model
 
     public pitchFactor: number = 1
-    
+
     private context: AudioContext
     private source: MediaStreamAudioSourceNode
     public destination: MediaStreamAudioDestinationNode
@@ -221,10 +221,10 @@ export class AudioProcessor
     private analyser: AnalyserNode
     private phaseVocoderNode: AudioWorkletNode | null = null
     private lowPassFilter: BiquadFilterNode
-    
+
     private vuMeterCallback: VuMeterCallback
     private vuMeterTimer: number | null = null
-    
+
     constructor(stream: MediaStream, volume: number, isInbound: boolean, vuMeterCallback: VuMeterCallback)
     {
         this.stream = stream
@@ -341,7 +341,7 @@ export class AudioProcessor
             this.source.connect(this.gain)
         }
 
-        if (this.isPitchShiftEnabled() && this.phaseVocoderNode) 
+        if (this.isPitchShiftEnabled() && this.phaseVocoderNode)
         {
             this.gain.connect(this.phaseVocoderNode)
             this.phaseVocoderNode.connect(this.lowPassFilter)
@@ -354,7 +354,7 @@ export class AudioProcessor
 
         if (this.isInbound || this.isFeedbackEnabled)
             this.pan.connect(this.context.destination)
-        
+
         this.pan.connect(this.destination)
         this.pan.connect(this.analyser)
     }
@@ -365,10 +365,10 @@ export class AudioProcessor
         {
             this.gain.gain.value = 0
         }
-        else 
+        else
         {
             const adjustedGain = this.gainValue * 0.25
-            
+
             this.gain.gain.value = this.isBoostEnabled
                 ? this.volume * 1.3 + adjustedGain
                 : this.volume + adjustedGain
@@ -379,7 +379,7 @@ export class AudioProcessor
     {
         // Coerce "volume" to number, since in some case it's populated with a value that's
         // read from the local storage and because of previous bugs it might be a string.
-        this.volume = +volume 
+        this.volume = +volume
         this.updateGainNodeGain()
     }
 
@@ -421,11 +421,11 @@ export class AudioProcessor
 
     setPitchFactor(value: number) {
         this.pitchFactor = value;
-    
+
         if (!this.phaseVocoderNode) return;
         const pitchFactorParam = this.phaseVocoderNode.parameters.get('pitchFactor');
         if (!pitchFactorParam) return;
-    
+
         pitchFactorParam.value = value;
 
         // Set low pass filter frequency so that:
@@ -433,7 +433,7 @@ export class AudioProcessor
         // - if pitch factor is close to 1, the treshold is close to maxFrequency
         // This is to avoid aliasing when pitch shifting. These values were chosen empirically
         // with my own microphone and voice, so they might not be perfect for all cases.
-        const maxFrequency = this.context.sampleRate / 2;        
+        const maxFrequency = this.context.sampleRate / 2;
         const frequency = value > 1
                         ? maxFrequency
                         : 4000 + (maxFrequency - 4000) * (value - 0.5) * 2;
@@ -481,7 +481,7 @@ export async function getDeviceList(includeAudioDevices: boolean, includeVideoDe
     if (!includeVideoDevices && !includeAudioDevices)
         return []
 
-    // In order to get the labels, we need to get permission first 
+    // In order to get the labels, we need to get permission first
     const mediaStream = await navigator.mediaDevices.getUserMedia({ video: includeVideoDevices, audio: includeAudioDevices })
 
     const devices = await navigator.mediaDevices.enumerateDevices();
@@ -502,7 +502,7 @@ export async function getDeviceList(includeAudioDevices: boolean, includeVideoDe
 export function getClickCoordinatesWithinCanvas(canvas: HTMLCanvasElement, clickEvent: MouseEvent, devicePixelRatio: number)
 {
     const canvasBoundingClientRect = canvas.getBoundingClientRect()
-    
+
     return {
         x: (clickEvent.clientX - canvasBoundingClientRect.x) * devicePixelRatio,
         y: (clickEvent.clientY - canvasBoundingClientRect.y) * devicePixelRatio,
@@ -565,15 +565,27 @@ export function adjustNiconicoMessagesFontSize()
 
 export function makeUrlsClickable(html: string): string
 {
-    return html.replace(urlRegex, (htmlUrl: string, prefix: string) =>
+    // URLs to test:
+    // https://example.org/test?a=1&b=2<>
+    // https://example.org/test?a=1&b=very%20very%20long%20url%20this%20keeps%20going%20on%20it's%20never%20ending%20and%20definitely%20more%20than%20100%20characters%20long&c=3
+
+    const maximumLength = 100
+    const output = html.replace(urlRegex, (htmlUrl: string, prefix: string) =>
         {
             const anchor = document.createElement('a');
             anchor.target = '_blank';
             anchor.setAttribute('tabindex', '-1');
-            anchor.innerHTML = safeDecodeURI(htmlUrl);
+            anchor.rel = "noopener noreferrer";
+            const decodedUrl = safeDecodeURI(htmlUrl);
+            anchor.innerHTML = decodedUrl
+
             const url = anchor.textContent;
             if (url) anchor.href = (prefix == 'www.' ? 'http://' + url : url);
-            anchor.rel = "noopener noreferrer";
+
+            // Set displayed URL
+            anchor.innerHTML = decodedUrl.length > maximumLength ? decodedUrl.slice(0, maximumLength - 3) + "..." : decodedUrl;
+
             return anchor.outerHTML;
         })
+    return output
 }

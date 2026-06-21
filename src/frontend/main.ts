@@ -1221,6 +1221,7 @@ const vueApp = createApp(defineComponent({
             bodySpan.textContent = msg;
             bodySpan.innerHTML = makeUrlsClickable(bodySpan.innerHTML)
 
+            // Mark mentions
             if (userId) // Only mark mentions in user messages
                 bodySpan.childNodes.forEach(node =>
                 {
@@ -1232,7 +1233,7 @@ const vueApp = createApp(defineComponent({
                     if (node.nodeType == 3)
                         bodySpan.replaceChild(el, node)
                 })
-            
+
             messageDiv.append(timestampSpan);
             messageDiv.append(authorSpan);
             messageDiv.append(tripcodeSpan);
