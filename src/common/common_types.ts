@@ -139,7 +139,6 @@ export interface RoomStateDto
     currentRoom: Room,
     connectedUsers: PlayerDto[],
     streams: StreamSlotDto[],
-    chessboardState: ChessboardStateDto,
     jankenState: JankenStateDto,
     coinCounter: number,
 }
@@ -195,14 +194,6 @@ export interface JankenStateDto {
     player2Id: string | null,
     player1Hand: "rock" | "paper" | "scissors" | null,
     player2Hand: "rock" | "paper" | "scissors" | null,
-}
-
-export interface ChessboardStateDto
-{
-    fenString: string | null,
-    blackUserID: string | null,
-    whiteUserID: string | null,
-    turn: "b" | "w" | null,
 }
 
 export interface SiteArea {

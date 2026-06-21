@@ -147,12 +147,6 @@
         game_join: "Spiel beitreten",
         game_quit: "Spiel verlassen",
 
-        chess_slot_title: "Schach",
-        chess_waiting_for_white: "Warten auf Spieler Weiß...",
-        chess_waiting_for_black: "Warten auf Spieler Schwarz...",
-        chess_white: "Weiß: ",
-        chess_black: "Schwarz: ",
-        
         janken_title: "Schere Stein Papier",
         janken_versus: "Gg",
         janken_start_a_game: "Trete bei um ein Spiel zu starten.",
@@ -195,9 +189,6 @@
         are_you_sure_you_want_to_block: "Sind sie sicher, dass Sie diesen Benutzer blockieren möchten?",
         goodbye: "Auf Wiedersehen!",
         flood_warning: "Hey, sprechen Sie nicht eine bisschen zu schnell? Nicht zugestellte Nachricht: ",
-        chess_timeout_reached: "Das Schachspiel ist vorbei: Bedenkzeit überschreitet.",
-        chess_win: "Das Schachspiel ist vorbei: Der Gewinner ist {{userName}}.",
-        chess_quit: "Das Schachspiel ist vorbei: {{userName}} hat das Spiel verlassen.",
         
         are_you_sure_you_want_to_clear_log: "Sind sie sicher, dass Sie das Chat-Log löschen möchten?",
         chat_log_cleared: "Das Chat-Log wurde gelöscht.",

@@ -144,12 +144,6 @@
         // game_join: "Join game", was chess_join_game: "Rejoindre partie",
         // game_quit: "Quit game" was chess_quit_game: "Quitter partie",
 
-        chess_slot_title: "Échecs",
-        chess_waiting_for_white: "En attente des blancs...",
-        chess_waiting_for_black: "En attente des noirs...",
-        chess_white: "Blancs: ",
-        chess_black: "Noirs: ",
-        
         // janken_title: "Rock Paper Scissors",
         // jnken_versus: "VS",
         // janken_start_a_game: "Join to start a game!",
@@ -192,10 +186,7 @@
         are_you_sure_you_want_to_block: "Voulez-vous bloquer cet utilisateur?",
         goodbye: "À la prochaine!",
         flood_warning: "Hé, vous ne parlez pas un peu vite, des fois? Le message n'a pas été envoyé: ",
-        chess_timeout_reached: "La partie d'échecs est terminée: le temps est écoulé.",
-        chess_win: "La partie d'échecs est terminée: le gagnant est {{userName}}.",
-        chess_quit: "La partie d'échecs est terminée: {{userName}} a quitté la partie.",
-
+        
         are_you_sure_you_want_to_clear_log: "Voulez-vous effacer l'historique de chat?",
         chat_log_cleared: "L'historique de chat a été effacé.",
         // stream_start_notification: "{{userName}} has started a stream.",

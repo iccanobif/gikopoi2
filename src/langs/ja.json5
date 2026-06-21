@@ -148,12 +148,6 @@
         game_join: "参加",
         game_quit: "投了",
 
-        chess_slot_title: "チェス",
-        chess_waiting_for_white: "白を待機中",
-        chess_waiting_for_black: "黒を待機中",
-        chess_white: "白：",
-        chess_black: "黒：",
-        
         janken_title: "じゃんけん",
         janken_versus: "VS",
         janken_start_a_game: "ゲームを始めるには「参加」をクリックしてください",
@@ -196,10 +190,7 @@
         are_you_sure_you_want_to_block: "このユーザーを相互あぼーんしますか？",
         goodbye: "　またね！",
         flood_warning: "おい、早口すぎるじゃないか！未配信のメッセージ：",
-        chess_timeout_reached: "チェス対局が終わりました：時間切れ",
-        chess_win: "チェス対局が終わりました：{{userName}}の勝利。",
-        chess_quit: "チェス対局が終わりました：{{userName}}が投了した。",
-        
+
         are_you_sure_you_want_to_clear_log: "チャットログをクリアしますか？",
         chat_log_cleared: "チャットログがクリアされました。",
         stream_start_notification: "{{userName}}が配信を始めた。",

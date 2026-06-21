@@ -148,12 +148,6 @@
         game_join: "Csatlakozás játékhoz",
         game_quit: "Kilépés játékból",
 
-        chess_slot_title: "Sakk",
-        chess_waiting_for_white: "Várakozás fehér csatlakozására...",
-        chess_waiting_for_black: "Várakozás fekete csatlakozására...",
-        chess_white: "Fehér: ",
-        chess_black: "Fekete: ",
-        
         janken_title: "Kő papír olló",
         janken_versus: "ellen",
         janken_start_a_game: "Csatlakozz a játék kezdéséhez!",
@@ -196,9 +190,6 @@
         are_you_sure_you_want_to_block: "Biztosan le akarod tiltani a felhasználót?",
         goodbye: "Viszlát!",
         flood_warning: "Hé, nem beszélsz egy kicsit túl gyorsan? Elküldetlen üzenet: ",
-        chess_timeout_reached: "A sakkjátszma véget ért: időkorlát elérése.",
-        chess_win: "A sakkjátszma véget ért: a győztes {{userName}} lett.",
-        chess_quit: "A sakkjátszma véget ért: {{userName}} kilépett a játékból.",
         
         are_you_sure_you_want_to_clear_log: "Biztosan törölni akarod a naplót?",
         chat_log_cleared: "A napló törlésre került.",

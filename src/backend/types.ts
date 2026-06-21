@@ -3,7 +3,6 @@ import { Janus } from 'janus-videoroom-client';
 import type { Room, JankenStateDto } from '../common/common_types.js'
 
 import { Player } from "./users.js";
-import { Chess } from "chess.js"
 
 export interface Participant
 {
@@ -43,7 +42,6 @@ export type RoomStateCollection = {
 export interface RoomState
 {
     streams: StreamSlot[],
-    chess: ChessboardState,
     janken: JankenState,
     coinCounter: number
 }
@@ -55,14 +53,6 @@ export interface LoginResponseDto
     error?: "invalid_username" | "ip_restricted",
     userId?: string,
     privateUserId?: string,
-}
-
-export interface ChessboardState {
-    instance: Chess | null,
-    blackUserID: string | null,
-    whiteUserID: string | null,
-    lastMoveTime: number | null,
-    timer: any
 }
 
 export interface JankenState extends JankenStateDto {
