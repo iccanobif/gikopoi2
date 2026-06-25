@@ -3494,7 +3494,7 @@ const vueApp = createApp(defineComponent({
             setAndPersist(this.preferences, "ttsVoiceURI", this.preferences.ttsVoiceURI)
         },
         changeVoiceVolume(newValue: number) {
-            setAndPersist(this.preferences, "voiceVolume", this.preferences.voiceVolume)
+            setAndPersist(this.preferences, "voiceVolume", newValue)
             debouncedSpeakTest(this.preferences.ttsVoiceURI, this.preferences.voiceVolume, i18next)
         },
         toggleVideoSlotPinStatus(slotId: number) {
