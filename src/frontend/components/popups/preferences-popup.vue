@@ -140,7 +140,7 @@
                         id="enable-coin-sound"
                         type="checkbox"
                         :checked="preferences.isCoinSoundEnabled"
-                        v-on:change="onCheckboxChange('isCoinSoundEnabled', $event, 'coin-sound-toggled')"><label
+                        v-on:change="onCheckboxChange('isCoinSoundEnabled', $event)"><label
                         for="enable-coin-sound">{{ $t("ui.preferences_enable_coin_sound") }}</label>
                 </div>
                 <div class="popup-item">
@@ -300,7 +300,6 @@ const emit = defineEmits<{
     'tts-voice-changed': [],
     'clear-log': [],
     'notifications-changed': [],
-    'coin-sound-toggled': [],
     'mention-sound-changed': [],
     'mention-pattern-changed': [],
     'username-background-toggled': [],
@@ -316,7 +315,6 @@ type ActionEvent =
     | 'enable-tts-changed'
     | 'tts-voice-changed'
     | 'notifications-changed'
-    | 'coin-sound-toggled'
     | 'mention-sound-changed'
     | 'mention-pattern-changed'
     | 'username-background-toggled'
@@ -337,7 +335,6 @@ function emitOptionalAction(actionEvent?: ActionEvent)
         case 'enable-tts-changed': emit('enable-tts-changed'); break
         case 'tts-voice-changed': emit('tts-voice-changed'); break
         case 'notifications-changed': emit('notifications-changed'); break
-        case 'coin-sound-toggled': emit('coin-sound-toggled'); break
         case 'mention-sound-changed': emit('mention-sound-changed'); break
         case 'mention-pattern-changed': emit('mention-pattern-changed'); break
         case 'username-background-toggled': emit('username-background-toggled'); break

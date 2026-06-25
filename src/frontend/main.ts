@@ -3325,10 +3325,6 @@ const vueApp = createApp(defineComponent({
             }
             this.isRedrawRequired = true
         },
-        toggleCoinSound()
-        {
-            setAndPersist(this.preferences, "isCoinSoundEnabled", this.preferences.isCoinSoundEnabled)
-        },
         handleBubbleOpacity()
         {
             setAndPersist(this.preferences, "bubbleOpacity", this.preferences.bubbleOpacity)
