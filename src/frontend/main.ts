@@ -3313,8 +3313,6 @@ const vueApp = createApp(defineComponent({
                 });
                 observer.observe(chatLog.lastElementChild);
             }
-
-            setAndPersist(this.preferences, "uiTheme", this.preferences.uiTheme)
             
             // Need to wait for the next tick so that knobElement.refresh() is called
             // with uiTheme already updated to its new value.
