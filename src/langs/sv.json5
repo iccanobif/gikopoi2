@@ -22,7 +22,7 @@
         label_stream: "Kanal {{index}}: ",
         label_input: "Inlägg:",
         label_log: "Logg:",
-        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
+        error_invalid_username: "Användarnamn får som längst vara 20 tecken.",
 
         button_send: "Skriv",
         button_stream_start: "Börja strömma",
@@ -39,7 +39,7 @@
         button_logout: "Logga ut",
         volume: "Volym: ",
         enable_compression: "Förstärkning: ",
-        // voice_changer: "Voice Changer: ",
+        voice_changer: "Röstförvrängare: ",
         gain: "Öka: ",
         sound_effect: "Volym",
         tts_volume: "Talsyntesvolym.",
@@ -148,12 +148,6 @@
         game_join: "Börja spela",
         game_quit: "Sluta spela",
 
-        chess_slot_title: "Schack",
-        chess_waiting_for_white: "Väntar på vit spelare...",
-        chess_waiting_for_black: "Väntar på svart spelare...",
-        chess_white: "Vit: ",
-        chess_black: "Svart: ",
-
         janken_title: "Sten Sax Påse",
         janken_versus: "mot",
         janken_start_a_game: "Påbörja ett spel!",
@@ -196,9 +190,6 @@
         are_you_sure_you_want_to_block: "Är du säker på att du vill blockera den här användaren?",
         goodbye: "På återseende!",
         flood_warning: "Hörru, snackar du inte lite fort nu? Olevererat meddelande: ",
-        chess_timeout_reached: "Schackspelet är över: timeout uppnådd.",
-        chess_win: "Schackspelet är över: segraren är {{userName}}.",
-        chess_quit: "Schackspelet är över: {{userName}} lämnade spelet.",
         
         are_you_sure_you_want_to_clear_log: "Vill du verkligen rensa chattloggen",
         chat_log_cleared: "Chattloggen har rensats.",
@@ -228,7 +219,7 @@
         school_rouka: "Skolan: Korridor",
         school_international: "Skolan: Kulturrum",
         school_pc: "Skolan: Datasal",
-        // karaoke_box: "Karaoke Box",
+        karaoke_box: "Karaokeboxen",
         seashore: "Stranden",
         radio: "Radiostationen",
         radio_room1: "Radiostudio 1",
@@ -255,9 +246,9 @@
         taiikukan: "Skolan: Gymnastiksal",
         yaneura: "Stugans loft",
         kyougijou: "Vallen",
-        // yojouhan: "Tatami Room",
-        // meganeya: "Opticians"
-        // yane: "Rooftop",
+        yojouhan: "Lyan",
+        meganeya: "Optikern",
+        yane: "Stugans tak",
     },
     area:
     {

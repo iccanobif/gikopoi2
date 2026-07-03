@@ -17,7 +17,6 @@ import type {
     PointerState,
     DeviceInfo,
     Stats,
-    ChessboardStateDto,
     PopupCallback,
     RoomStateDto,
     PlayerDto,
@@ -91,7 +90,6 @@ import { RenderCache } from "./rendercache";
 import { animateObjects, animateJizou } from "./animations";
 import { loadPreferencesFromLocalStorage, setAndPersist } from './preferences'
 
-import ChessboardSlot from './components/chessboard-slot.vue'
 import JankenSlot from './components/janken-slot.vue'
 import LoginFooter from './components/change-log.vue'
 import UsernameLabel from './components/username-label.vue'
@@ -213,7 +211,6 @@ setPageMetadata()
 
 const vueApp = createApp(defineComponent({
     components: {
-        ChessboardSlot,
         JankenSlot,
         LoginFooter,
         NumericValueControl,
@@ -333,7 +330,6 @@ const vueApp = createApp(defineComponent({
             lastSetMovementDirectionTime: 0, // Found in code but not in data
             notificationPermissionsGranted: false,
             lastFrameTimestamp: null as number | null,
-            chessboardState: null as ChessboardStateDto | null,
             jankenState: null as JankenStateDto | null,
 
             canvasContainerResizeObserver: null as ResizeObserver | null,
@@ -700,7 +696,6 @@ const vueApp = createApp(defineComponent({
             const usersDto = dto.connectedUsers
             const streamsDto = dto.streams
 
-            this.chessboardState = dto.chessboardState
             this.jankenState = dto.jankenState
 
             this.isLoadingRoom = true;
@@ -993,25 +988,10 @@ const vueApp = createApp(defineComponent({
                 this.isRedrawRequired = true
             })
 
-            this.roomSession.socket.on("server-update-chessboard", (state: ChessboardStateDto) => {
-                this.chessboardState = state
-            })
-
             this.roomSession.socket.on("server-update-janken", (state: JankenStateDto) => {
                 this.jankenState = state
             })
 
-            this.roomSession.socket.on("server-chess-win", (winnerUserId: string) => {
-                const winnerUserName = this.users[winnerUserId] ? this.users[winnerUserId].name : "N/A"
-
-                this.writeMessageToLog("SYSTEM", this.$t("msg.chess_win", {userName: winnerUserName}), null)
-            })
-
-            this.roomSession.socket.on("server-chess-quit", (quitterUserId: string)  => {
-                const winnerUserName = this.users[quitterUserId] ? this.users[quitterUserId].name : "N/A"
-
-                this.writeMessageToLog("SYSTEM", this.$t("msg.chess_quit", {userName: winnerUserName}), null)
-            })
             this.roomSession.socket.on("special-events:server-add-shrine-coin", (donationBoxValue: number) => {
                 if (!this.currentRoom || !this.currentRoom.specialObjects) return // TS quick fix
                 this.currentRoom.specialObjects[1].value = donationBoxValue;
@@ -1098,6 +1078,7 @@ const vueApp = createApp(defineComponent({
             bodySpan.textContent = msg;
             bodySpan.innerHTML = makeUrlsClickable(bodySpan.innerHTML)
 
+            // Mark mentions
             if (userId) // Only mark mentions in user messages
                 bodySpan.childNodes.forEach(node =>
                 {
@@ -1109,7 +1090,7 @@ const vueApp = createApp(defineComponent({
                     if (node.nodeType == 3)
                         bodySpan.replaceChild(el, node)
                 })
-            
+
             messageDiv.append(timestampSpan);
             messageDiv.append(authorSpan);
             messageDiv.append(tripcodeSpan);
@@ -2533,8 +2514,8 @@ const vueApp = createApp(defineComponent({
         {
             if(canvasScale > 3)
                 canvasScale = 3;
-            else if(canvasScale < 0.70)
-                canvasScale = 0.70;
+            else if(canvasScale < 0.50)
+                canvasScale = 0.50;
 
             this.userCanvasScale = canvasScale;
             this.isRedrawRequired = true;
@@ -3315,8 +3296,6 @@ const vueApp = createApp(defineComponent({
                 });
                 observer.observe(chatLog.lastElementChild);
             }
-
-            setAndPersist(this.preferences, "uiTheme", this.preferences.uiTheme)
             
             // Need to wait for the next tick so that knobElement.refresh() is called
             // with uiTheme already updated to its new value.
@@ -3328,10 +3307,6 @@ const vueApp = createApp(defineComponent({
                 knobElement.refresh()
             }
             this.isRedrawRequired = true
-        },
-        toggleCoinSound()
-        {
-            setAndPersist(this.preferences, "isCoinSoundEnabled", this.preferences.isCoinSoundEnabled)
         },
         handleBubbleOpacity()
         {
@@ -3496,7 +3471,7 @@ const vueApp = createApp(defineComponent({
             setAndPersist(this.preferences, "ttsVoiceURI", this.preferences.ttsVoiceURI)
         },
         changeVoiceVolume(newValue: number) {
-            setAndPersist(this.preferences, "voiceVolume", this.preferences.voiceVolume)
+            setAndPersist(this.preferences, "voiceVolume", newValue)
             debouncedSpeakTest(this.preferences.ttsVoiceURI, this.preferences.voiceVolume, i18next)
         },
         toggleVideoSlotPinStatus(slotId: number) {
