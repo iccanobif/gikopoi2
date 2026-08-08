@@ -1,7 +1,6 @@
 //localStorage.debug = '*'; // socket.io debug
 localStorage.removeItem("debug");
 
-import type { Socket } from 'socket.io-client'
 import type { App } from 'vue'
 
 import type {
@@ -324,8 +323,6 @@ const vueApp = createApp(defineComponent({
             allCharacters: Object.values(characters),
 
             vuMeterTimer: null as number | null,
-            highlightedUserId: null as string | null,     // TODO: move into roomSession
-            highlightedUserName: null as string | null,   // TODO: move into roomSession
             movementDirection: null as Direction | null,
             lastSetMovementDirectionTime: 0, // Found in code but not in data
             notificationPermissionsGranted: false,
@@ -742,7 +739,7 @@ const vueApp = createApp(defineComponent({
         {
             this.roomSession.registerHighlightUserEventHandler((userId: string | null, userName: string | null) =>
             {
-                this.onUserHighlighted(userId, userName)
+                this.onUserHighlighted(userId)
             });
         },
         async connectToServer(username: string, characterId: string)
@@ -1259,7 +1256,7 @@ const vueApp = createApp(defineComponent({
             const fontPrefix = "bold ";
             const fontSuffix = "px Arial, Helvetica, sans-serif";
 
-            const highlightedUserId = this.highlightedUserId;
+            const roomSession = this.roomSession
 
             return new RenderCache(function(canvas, scale)
             {
@@ -1289,7 +1286,7 @@ const vueApp = createApp(defineComponent({
                 context.font = fontPrefix + scaledLineHeight + fontSuffix;
                 context.textBaseline = "middle";
                 context.textAlign = "center"
-                context.fillStyle = user.id == highlightedUserId ? "red" : "blue";
+                context.fillStyle = user.id == roomSession.state.highlightedUserId ? "red" : "blue";
 
                 if (tripcode && displayName)
                 {
@@ -1596,9 +1593,9 @@ const vueApp = createApp(defineComponent({
             const compareUserObjects = (a: User, b: User) =>
             {
                 // A highlighted user will always be on top.
-                if (a.id == this.highlightedUserId)
+                if (a.id == this.roomSession.state.highlightedUserId)
                     return 1
-                if (b.id == this.highlightedUserId)
+                if (b.id == this.roomSession.state.highlightedUserId)
                     return -1
                 // The user that moved last will be underneath
                 const aLastMovement = a.lastMovement || 0
@@ -3165,10 +3162,10 @@ const vueApp = createApp(defineComponent({
             else
             {
                 this.isUserListPopupOpen = true;
-                if (this.highlightedUserId)
+                if (this.roomSession.state.highlightedUserId)
                 {
                     nextTick(() => {
-                        const element = document.getElementById("user-list-element-" + this.highlightedUserId)
+                        const element = document.getElementById("user-list-element-" + this.roomSession.state.highlightedUserId)
                         if (element) element.scrollIntoView({ block: "nearest" })
                     })
                 }
@@ -3310,6 +3307,7 @@ const vueApp = createApp(defineComponent({
         },
         handleBubbleOpacity()
         {
+            // TODO: fix, the next line basically sets this.preferences.bubbleOpacity to itself.
             setAndPersist(this.preferences, "bubbleOpacity", this.preferences.bubbleOpacity)
             this.resetBubbleImages();
         },
@@ -3347,6 +3345,7 @@ const vueApp = createApp(defineComponent({
                 const permission = await requestNotificationPermission()
                 this.notificationPermissionsGranted = permission == "granted"
             }
+            // TODO: fix, the next line basically sets this.preferences.showNotifications to itself.
             setAndPersist(this.preferences, "showNotifications", this.preferences.showNotifications)
         },
         setMentionRegexObjects()
@@ -3437,26 +3436,31 @@ const vueApp = createApp(defineComponent({
         },
         handleLowQualityEnabled()
         {
+            // TODO: fix, the next line basically sets the preference to itself
             setAndPersist(this.preferences, "isLowQualityEnabled", this.preferences.isLowQualityEnabled)
             this.isRedrawRequired = true
         },
         handleCrispModeEnabled()
         {
+            // TODO: fix, the next line basically sets the preference to itself
             setAndPersist(this.preferences, "isCrispModeEnabled", this.preferences.isCrispModeEnabled)
             this.reloadImages()
         },
         handleIdleAnimationDisabled()
         {
+            // TODO: fix, the next line basically sets the preference to itself
             setAndPersist(this.preferences, "isIdleAnimationDisabled", this.preferences.isIdleAnimationDisabled)
             this.isRedrawRequired = true
         },
         handleNameMentionSoundEnabled()
         {
+            // TODO: fix, the next line basically sets the preference to itself
             setAndPersist(this.preferences, "isNameMentionSoundEnabled", this.preferences.isNameMentionSoundEnabled)
             this.setMentionRegexObjects()
         },
         handleCustomMentionSoundPattern()
         {
+            // TODO: fix, the next line basically sets the preference to itself
             setAndPersist(this.preferences, "customMentionSoundPattern", this.preferences.customMentionSoundPattern)
             this.setMentionRegexObjects()
         },
@@ -3464,10 +3468,12 @@ const vueApp = createApp(defineComponent({
         {
             if (window.speechSynthesis)
                 speechSynthesis.cancel()
+            // TODO: fix, the next line basically sets the preference to itself
             setAndPersist(this.preferences, "enableTextToSpeech", this.preferences.enableTextToSpeech)
         },
         changeVoice() {
             speak(this.$t("test"), this.preferences.ttsVoiceURI, this.voiceVolume)
+            // TODO: fix, the next line basically sets the preference to itself
             setAndPersist(this.preferences, "ttsVoiceURI", this.preferences.ttsVoiceURI)
         },
         changeVoiceVolume(newValue: number) {
@@ -3490,23 +3496,14 @@ const vueApp = createApp(defineComponent({
                 videoContainer.setAttribute("style", "")
             }
         },
-        onUserHighlighted(userId: string | null, userName: string | null = null) {
-
+        onUserHighlighted(userId: string | null) {
             const highlightedUserStyle = document.getElementById("highlighted-user-style") as HTMLStyleElement
 
-            if (this.highlightedUserId == userId)
-            {
-                this.highlightedUserId = null
-                this.highlightedUserName = null
+            if (!this.roomSession.state.highlightedUserId)
                 highlightedUserStyle.textContent = ''
-            }
             else
-            {
-                this.highlightedUserId = userId
-                this.highlightedUserName = userName
                 // Need to add a rule for .message-author too to override shaddox mode's color
                 highlightedUserStyle.textContent = '.message[data-user-id="' + userId +'"] {color:red} .message[data-user-id="' + userId +'"] .message-author {color:red}'
-            }
 
             this.isUsernameRedrawRequired = true;
             this.isRedrawRequired = true;
@@ -3527,10 +3524,10 @@ const vueApp = createApp(defineComponent({
                     isInactive: u.isInactive,
                 }))
             // Add highlighted users that are not in the room anymore
-            if (this.highlightedUserId && !this.users[this.highlightedUserId])
+            if (this.roomSession.state.highlightedUserId && !this.users[this.roomSession.state.highlightedUserId])
                 output.unshift({
-                    id: this.highlightedUserId,
-                    name: this.highlightedUserName || '',
+                    id: this.roomSession.state.highlightedUserId,
+                    name: this.roomSession.state.highlightedUserName || '',
                     isInRoom: false,
                     isInactive: false,
                 })

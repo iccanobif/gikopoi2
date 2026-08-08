@@ -21,7 +21,7 @@
                         :id="'user-list-element-' + u.id"
                         v-for="u in users"
                         :key="u.id"
-                        v-bind:class="{'popup-row-is-selected': u.id == highlightedUserId}">
+                        v-bind:class="{'popup-row-is-selected': u.id == roomSession.state.highlightedUserId}">
                         <td>
                             <div v-on:click="u.isInRoom && props.roomSession.highlightUser(u.id, u.name)">
                                 <span
@@ -72,7 +72,6 @@ import type { PopupUserList } from '../../types'
 const props = defineProps<{
     isOpen: boolean,
     users: PopupUserList[],
-    highlightedUserId: string | null,
     isStreaming: boolean,
     streamTarget: 'all_room' | 'specific_users',
     allowedListenerIds: Set<string>,

@@ -185,7 +185,12 @@
                     </div>
                     <div id='chat-log-container'>
                         <div id='chat-log-label'>{{ $t("ui.label_log") }}</div>
-                        <div id="chatLog" tabindex="-1" v-bind:class="{'underlined-usernames': preferences.underlinedUsernames, 'timestamps-in-copied-log': preferences.timestampsInCopiedLog, 'ignore-indicators-in-log': preferences.showIgnoreIndicatorInLog, 'log-dividers': preferences.showLogDividers}" v-on:keydown="handlechatLogKeydown($event)">
+                        <div id="chatLog" tabindex="-1" v-bind:class="{
+                            'underlined-usernames': preferences.underlinedUsernames,
+                            'timestamps-in-copied-log': preferences.timestampsInCopiedLog,
+                            'ignore-indicators-in-log': preferences.showIgnoreIndicatorInLog,
+                            'log-dividers': preferences.showLogDividers
+                        }" v-on:keydown="handlechatLogKeydown($event)">
                         </div>
                         <div id="dummyElement">
                             <!-- This element is needed only to make chatLog.nextSibling return something, so that we can 
@@ -412,7 +417,6 @@
                 <user-list-popup
                     :is-open="isUserListPopupOpen"
                     :users="getUserListForListPopup()"
-                    :highlighted-user-id="highlightedUserId"
                     :is-streaming="isStreaming()"
                     :stream-target="preferences.streamTarget"
                     :allowed-listener-ids="allowedListenerIDs"
