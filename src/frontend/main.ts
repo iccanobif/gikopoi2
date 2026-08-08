@@ -3307,8 +3307,6 @@ const vueApp = createApp(defineComponent({
         },
         handleBubbleOpacity()
         {
-            // TODO: fix, the next line basically sets this.preferences.bubbleOpacity to itself.
-            setAndPersist(this.preferences, "bubbleOpacity", this.preferences.bubbleOpacity)
             this.resetBubbleImages();
         },
         async logout()
@@ -3345,8 +3343,6 @@ const vueApp = createApp(defineComponent({
                 const permission = await requestNotificationPermission()
                 this.notificationPermissionsGranted = permission == "granted"
             }
-            // TODO: fix, the next line basically sets this.preferences.showNotifications to itself.
-            setAndPersist(this.preferences, "showNotifications", this.preferences.showNotifications)
         },
         setMentionRegexObjects()
         {
@@ -3436,45 +3432,31 @@ const vueApp = createApp(defineComponent({
         },
         handleLowQualityEnabled()
         {
-            // TODO: fix, the next line basically sets the preference to itself
-            setAndPersist(this.preferences, "isLowQualityEnabled", this.preferences.isLowQualityEnabled)
             this.isRedrawRequired = true
         },
         handleCrispModeEnabled()
         {
-            // TODO: fix, the next line basically sets the preference to itself
-            setAndPersist(this.preferences, "isCrispModeEnabled", this.preferences.isCrispModeEnabled)
             this.reloadImages()
         },
         handleIdleAnimationDisabled()
         {
-            // TODO: fix, the next line basically sets the preference to itself
-            setAndPersist(this.preferences, "isIdleAnimationDisabled", this.preferences.isIdleAnimationDisabled)
             this.isRedrawRequired = true
         },
         handleNameMentionSoundEnabled()
         {
-            // TODO: fix, the next line basically sets the preference to itself
-            setAndPersist(this.preferences, "isNameMentionSoundEnabled", this.preferences.isNameMentionSoundEnabled)
             this.setMentionRegexObjects()
         },
         handleCustomMentionSoundPattern()
         {
-            // TODO: fix, the next line basically sets the preference to itself
-            setAndPersist(this.preferences, "customMentionSoundPattern", this.preferences.customMentionSoundPattern)
             this.setMentionRegexObjects()
         },
         handleEnableTextToSpeech()
         {
             if (window.speechSynthesis)
                 speechSynthesis.cancel()
-            // TODO: fix, the next line basically sets the preference to itself
-            setAndPersist(this.preferences, "enableTextToSpeech", this.preferences.enableTextToSpeech)
         },
         changeVoice() {
             speak(this.$t("test"), this.preferences.ttsVoiceURI, this.voiceVolume)
-            // TODO: fix, the next line basically sets the preference to itself
-            setAndPersist(this.preferences, "ttsVoiceURI", this.preferences.ttsVoiceURI)
         },
         changeVoiceVolume(newValue: number) {
             setAndPersist(this.preferences, "voiceVolume", newValue)
