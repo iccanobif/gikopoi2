@@ -3526,7 +3526,7 @@ const vueApp = createApp(defineComponent({
             }
         },
         toggleDesktopNotifications() {
-            this.preferences.showNotifications = !this.preferences.showNotifications // TODO: fix direct mutation of preferences
+            setAndPersist(this.preferences, "showNotifications", !this.preferences.showNotifications)
             this.handleShowNotifications()
         },
         onCompressionChanged(streamSlotID: number)
