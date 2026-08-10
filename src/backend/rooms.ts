@@ -52,6 +52,7 @@ import { monachatRoom } from "./rooms/monachat.js";
 import { yaneuraRoom } from "./rooms/yaneura.js";
 import { yojouhanRoom } from "./rooms/yojouhan.js";
 import { yaneRoom } from "./rooms/yane.js";
+import { matsuriRoom } from "./rooms/matsuri.js";
 
 export function coordRange(from: Coordinates, to: Coordinates): Coordinates[] {
   const coords = [];
@@ -119,6 +120,7 @@ export const dynamicRooms: DynamicRoom[] = [
   yaneuraRoom,
   yojouhanRoom,
   yaneRoom,
+  matsuriRoom,
 ];
 
 const currentAnnualEvents = getCurrentAnnualEvents();
