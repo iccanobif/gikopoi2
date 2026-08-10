@@ -53,77 +53,80 @@ import { yaneuraRoom } from "./rooms/yaneura.js";
 import { yojouhanRoom } from "./rooms/yojouhan.js";
 import { yaneRoom } from "./rooms/yane.js";
 
-export function coordRange(from: Coordinates, to: Coordinates): Coordinates[]
-{
-    const coords = []
-    for (let x=from.x; x<to.x+1; x+=(from.x<=to.x?1:-1))
-    {
-        for (let y=from.y; y<to.y+1; y+=(from.y<=to.y?1:-1))
-        {
-            coords.push({x, y})
-        }
+export function coordRange(from: Coordinates, to: Coordinates): Coordinates[] {
+  const coords = [];
+  for (let x = from.x; x < to.x + 1; x += from.x <= to.x ? 1 : -1) {
+    for (let y = from.y; y < to.y + 1; y += from.y <= to.y ? 1 : -1) {
+      coords.push({ x, y });
     }
-    return coords
+  }
+  return coords;
 }
 
 export const rooms: { [roomId: string]: Room } = {
-    bar: barRoom,
-    admin_st: adminStRoom,
-    basement: basementRoom,
-    admin: adminRoom,
-    admin_old: adminOldroom,
-    radio_backstage: radioBackstageRoom,
-    school_st: schoolStRoom,
-    bar_st: barStRoom,
-    takadai: takadaiRoom,
-    silo: siloRoom,
-    badend: badendRoom,
-    yoshinoya: yoshinoyaRoom,
-    long_st: longStRoom,
-    bar_giko: barGikoRoom,
-    jinja: jinjaRoom,
-    busstop: busStopRoom,
-    izakaya774: izakaya774Room,
-    bar_giko_square: barGikoSquareRoom,
-    bar_giko2: barGiko2Room,
-    radio_room1: radioRoom1,
-    radio_room2: radioRoom2,
-    radio_room3: radioRoom3,
-    radio: radioRoom,
-    radio_gakuya: radioGakuyaRoom,
-    jinja_st: jinjaStRoom,
-    enkai: enkaiRoom,
-    idoA: idoARoom,
-    idoB: idoBRoom,
-    admin_bar: adminBarRoom,
-    bar774: bar774Room,
-    yatai: yataiRoom,
-    school_rouka: schoolRoukaRoom,
-    school: schoolRoom,
-    school_international: schoolInternationalRoom,
-    school_pc: schoolPcRoom,
-    school_ground: schoolGroundRoom,
-    kaidan: kaidanRoom,
-    seashore: seashoreRoom,
-    densha: denshaRoom,
-    nerd_office: nerdOfficeRoom,
-    meganeya: meganeyaRoom,
-    taiikukan: taiikukanRoom,
-    kyougijou: kyougijouRoom,
-    karaoke_box: karaokeBoxRoom,
+  bar: barRoom,
+  admin_st: adminStRoom,
+  basement: basementRoom,
+  admin: adminRoom,
+  admin_old: adminOldroom,
+  radio_backstage: radioBackstageRoom,
+  school_st: schoolStRoom,
+  bar_st: barStRoom,
+  takadai: takadaiRoom,
+  silo: siloRoom,
+  badend: badendRoom,
+  yoshinoya: yoshinoyaRoom,
+  long_st: longStRoom,
+  bar_giko: barGikoRoom,
+  jinja: jinjaRoom,
+  busstop: busStopRoom,
+  izakaya774: izakaya774Room,
+  bar_giko_square: barGikoSquareRoom,
+  bar_giko2: barGiko2Room,
+  radio_room1: radioRoom1,
+  radio_room2: radioRoom2,
+  radio_room3: radioRoom3,
+  radio: radioRoom,
+  radio_gakuya: radioGakuyaRoom,
+  jinja_st: jinjaStRoom,
+  enkai: enkaiRoom,
+  idoA: idoARoom,
+  idoB: idoBRoom,
+  admin_bar: adminBarRoom,
+  bar774: bar774Room,
+  yatai: yataiRoom,
+  school_rouka: schoolRoukaRoom,
+  school: schoolRoom,
+  school_international: schoolInternationalRoom,
+  school_pc: schoolPcRoom,
+  school_ground: schoolGroundRoom,
+  kaidan: kaidanRoom,
+  seashore: seashoreRoom,
+  densha: denshaRoom,
+  nerd_office: nerdOfficeRoom,
+  meganeya: meganeyaRoom,
+  taiikukan: taiikukanRoom,
+  kyougijou: kyougijouRoom,
+  karaoke_box: karaokeBoxRoom,
 };
 
+export const dynamicRooms: DynamicRoom[] = [
+  cafeStRoom,
+  konbiniRoom,
+  iroriRoom,
+  riverRoom,
+  monachatRoom,
+  yaneuraRoom,
+  yojouhanRoom,
+  yaneRoom,
+];
 
-export const dynamicRooms: DynamicRoom[] = []
-dynamicRooms.push(cafeStRoom);
-dynamicRooms.push(konbiniRoom);
-dynamicRooms.push(iroriRoom);
-dynamicRooms.push(riverRoom)
-dynamicRooms.push(monachatRoom);
-dynamicRooms.push(yaneuraRoom);
-dynamicRooms.push(yojouhanRoom);
-dynamicRooms.push(yaneRoom);
-
-const currentAnnualEvents = getCurrentAnnualEvents()
-dynamicRooms.forEach((dynamicRoom: DynamicRoom) => rooms[dynamicRoom.roomId] = dynamicRoom.build(currentAnnualEvents, currentAnnualEvents, []))
-
+const currentAnnualEvents = getCurrentAnnualEvents();
+dynamicRooms.forEach(
+  (dynamicRoom: DynamicRoom) =>
+    (rooms[dynamicRoom.roomId] = dynamicRoom.build(
+      currentAnnualEvents,
+      currentAnnualEvents,
+      [],
+    )),
+);
