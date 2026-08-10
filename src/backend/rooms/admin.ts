@@ -1,0 +1,55 @@
+import { Room } from "../types";
+
+export const adminRoom: Room = {
+    id: "admin",
+    group: "gikopoi",
+    scale: 1,
+    size: { x: 12, y: 6 },
+    originCoordinates: { x: 43, y: 268 },
+    spawnPoint: "down",
+    backgroundImageUrl: "rooms/admin/background.svg",
+    objects: [
+        { x: 2, y: 1, url: "long_table_left.svg", offset: { x: 164, y: 194 } },
+        { x: 2, y: 3, url: "long_table_right.svg", offset: { x: 237, y: 164 } },
+        { x: 8, y: 2, url: "round_table.svg", offset: { x: 473, y: 313 } },
+    ],
+    sit: [
+        { x: 10, y: 2 },
+        { x: 10, y: 3 },
+        { x: 7, y: 2 },
+        { x: 7, y: 3 },
+        { x: 9, y: 1 },
+        { x: 9, y: 4 },
+        { x: 8, y: 1 },
+        { x: 8, y: 4 },
+        { x: 4, y: 1 },
+        { x: 4, y: 2 },
+        { x: 4, y: 3 },
+        { x: 4, y: 4 },
+        { x: 1, y: 1 },
+        { x: 1, y: 2 },
+        { x: 1, y: 3 },
+        { x: 1, y: 4 },
+    ],
+    blocked: [
+        { x: 0, y: 5 }, // shobon
+        { x: 2, y: 1 },
+        { x: 2, y: 2 },
+        { x: 2, y: 3 },
+        { x: 2, y: 4 },
+        { x: 3, y: 1 },
+        { x: 3, y: 2 },
+        { x: 3, y: 3 },
+        { x: 3, y: 4 },
+        { x: 8, y: 2 },
+        { x: 8, y: 3 },
+        { x: 9, y: 2 },
+        { x: 9, y: 3 },
+        { x: 6, y: 5 },
+    ],
+    forbiddenMovements: [],
+    doors: {
+        down: { x: 10, y: 0, direction: "up", target: { roomId: "admin_st", doorId: "admin" } }
+    },
+    streamSlotCount: 3,
+}
