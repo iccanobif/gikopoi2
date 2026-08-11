@@ -259,6 +259,9 @@ const characterObjects: CharacterObject[] = [
     { name: "giko_headphones", portrait: { left: -0.5, top: 0.24 }, isHidden: true },
     { name: "shii_headphones", portrait: { left: -0.5, top: 0.24 }, isHidden: true },
     { name: "nanamegiko", portrait: { left: -0.5, top: 0.24 } },
+    { name: "yukata_shii", portrait: { left: -0.5, top: 0.24 }, isHidden: !annualEvents.matsuriNight.isNow() },
+    { name: "giko_matsuri", portrait: { left: -0.5, top: 0.24 }, isHidden: !annualEvents.matsuriNight.isNow() },
+    { name: "roubon", portrait: { left: -0.6, top: -0.3 }, isHidden: true },
 ]
 
 export const characters: { [characterId: string]: Character } =

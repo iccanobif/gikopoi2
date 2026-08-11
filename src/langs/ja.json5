@@ -249,6 +249,7 @@
         yojouhan: { t: "四畳半", sort_key: "よじょうはん" },
         meganeya: { t: "眼鏡屋", sort_key: "めがねや" },
         yane: { t: "屋根", sort_key: "やね" },
+        matsuri: { t: "祭屋台", sort_key: "まつりやたい" },
     },
     area:
     {
