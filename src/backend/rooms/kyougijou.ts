@@ -1,5 +1,5 @@
-import { coordRange } from "../rooms";
-import { Room } from "../types";
+import { coordRange } from "../rooms.js";
+import { Room } from "../types.js";
 
 export const kyougijouRoom: Room = {
     // 元     -> 五輪    -> 戻

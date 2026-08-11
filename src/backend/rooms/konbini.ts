@@ -1,4 +1,4 @@
-import { DynamicRoom, Room } from "../types"
+import { DynamicRoom, Room } from "../types.js"
 
 export const konbiniRoom: DynamicRoom = {
     roomId: "konbini",
