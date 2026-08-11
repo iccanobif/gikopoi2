@@ -59,15 +59,14 @@ export const matsuriRoom: DynamicRoom = {
         },
       },
       sit: [],
-      blocked: ([] as Coordinates[])
-      // left portion of the map
-      .concat(coordRange({ x: 0, y: 0 }, { x: 0, y: 3 }))
-      .concat(coordRange({ x: 1, y: 0 }, { x: 1, y: 2 }))
-      .concat(coordRange({ x: 2, y: 0 }, { x: 2, y: 1 }))
-      // behind shooting game
+      blocked: ([
+        // left portion of the map
+        { x: 3, y: 0 }, { x: 2, y: 1 }, { x: 1, y: 2}, { x: 0, y: 3 }
+      ] as Coordinates[])
+      // shooting game
       .concat(coordRange({ x: 0, y: 6 }, { x: 5, y: 6 }))
       // yatais
-      .concat(coordRange({ x: 5, y: 5 }, { x: 17, y: 5 }))
+      .concat(coordRange({ x: 0, y: 5 }, { x: 17, y: 5 }))
       ,
       forbiddenMovements: [],
       streamSlotCount: 2,
