@@ -10,6 +10,7 @@ const { i18next } = useTranslation()
         </div>
         <div class="changelog">
             <h3>更新ログ</h3>
+2026/08/11: 新しいキャラを追加しました。<br/>
 2026/06/24: ログ上で、長いURLの最初の100文字のみを表示するようになりました。チェスが削除されました。大きめなリファクタリングを行いました。<br/>
 2026/05/01: 新しいキャラと部屋を追加しました。<br/>
 2026/03/30: 新しいキャラと部屋を追加しました。<br/>
@@ -145,6 +146,7 @@ You must be at least 16 years of age to enter.
         </div>
         <div class="changelog">
             <h3>Change Log</h3>
+2026/08/11: Added a new character.<br/>
 2026/06/24: Only the first 100 characters of long URLs are now displayed in the log. Chess has been removed. This release also includes a somewhat big refactoring.<br/>
 2026/05/02: Added a new character and room.<br/>
 2026/03/30: Added a new character and room.<br/>
