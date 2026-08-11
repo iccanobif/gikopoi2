@@ -3,53 +3,71 @@ import { Coordinates, DynamicRoom } from "../types";
 
 export const matsuriRoom: DynamicRoom = {
   roomId: "matsuri",
-  subscribedAnnualEvents: [],
+  subscribedAnnualEvents: ["matsuriNight", "matsuriDay"],
   build: (currentAnnualEvents: string[]) => {
     const scale = 0.7;
 
-    const variation = "day" as "day" | "night";
+    const variation = currentAnnualEvents.includes("matsuriNight") ? "night" : "day";
 
     return {
       id: "matsuri",
       group: "gikopoipoi",
       scale: scale,
-      size: { x: 18, y: 5 },
+      backgroundColor: variation == "night" ? "#000000" : undefined,
+      size: { x: 18, y: 7 },
       originCoordinates: { x: -159, y: 181 },
       spawnPoint: "spawn",
+      objectRenderSortMethod: "diagonal_scan",
       backgroundImageUrl: `rooms/matsuri/background_${variation}.svg`,
       objects: [
         {
-          x: 100,
+          x: 18,
           y: 0,
           scale: scale,
           offset: { x: 0, y: 0 },
           url: `chouchin_${variation}.svg`,
         },
         {
-          x: 0,
-          y: 0,
+          x: 5,
+          y: 5,
           scale: scale,
           offset: variation == "day" ? { x: 0, y: 0 } : { x: 386, y: 47 },
+          width: 13,
+          heigth: 1,
           url: `yatai_${variation}.svg`,
         },
+        { x: 0, y: 0, offset: { x: 540, y: 485 }, url: `../arrow-down.svg` },
       ],
       doors: {
         spawn: {
-          x: 0,
+          x: 17,
           y: 0,
+          direction: "up",
+          target: { roomId: "jinja", doorId: "toMatsuri" },
+        },
+        behindYatai: {
+          x: 6,
+          y: 6,
+          direction: "right",
+          target: { roomId: "matsuri", doorId: "inFrontOfYatai" },
+        },
+        inFrontOfYatai: {
+          x: 6,
+          y: 4,
           direction: "down",
-          target: { roomId: "matsuri", doorId: "spawn" },
+          target: { roomId: "matsuri", doorId: "behindYatai" },
         },
       },
       sit: [],
-      blocked: (
-        [
-          // outside of the map
-        ] as Coordinates[]
-      )
+      blocked: ([] as Coordinates[])
+      // left portion of the map
       .concat(coordRange({ x: 0, y: 0 }, { x: 0, y: 3 }))
       .concat(coordRange({ x: 1, y: 0 }, { x: 1, y: 2 }))
       .concat(coordRange({ x: 2, y: 0 }, { x: 2, y: 1 }))
+      // behind shooting game
+      .concat(coordRange({ x: 0, y: 6 }, { x: 5, y: 6 }))
+      // yatais
+      .concat(coordRange({ x: 5, y: 5 }, { x: 17, y: 5 }))
       ,
       forbiddenMovements: [],
       streamSlotCount: 2,

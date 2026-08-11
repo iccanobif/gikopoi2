@@ -102,6 +102,9 @@ export const annualEvents: {[eventName: string]: AnnualEvent} =
         d => d.set({month: 11, date: 24}).startOf('week').subtract(3, 'week'), // first advent
         d => d.set({month: 11, date: 30})),
     newYears:   new AnnualEvent(d => d.set({month: 11, date: 31}), d => d.set({month:  0, date:  1})),
+    // night matsuri for 7月 and 8月, day for all the other months
+    matsuriNight: new AnnualEvent(d => d.set({month: 6, date: 1}), d => d.set({month: 7, date: 31})),
+    matsuriDay: new AnnualEvent(d => d.set({month: 8, date: 1}), d => d.set({month: 5, date: 30})),
 }
 
 export function getCurrentAnnualEvents(): string[]

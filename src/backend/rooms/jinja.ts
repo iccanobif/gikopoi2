@@ -23,6 +23,7 @@ export const jinjaRoom: Room = {
         { x:  8, y:  1, offset: { x: 395, y: 411 }, url: "stool.svg" },
         { x:  9, y:  0, offset: { x: 395, y: 451 }, url: "stool.svg" },
         { x:  8, y:  0, offset: { x: 338, y: 417 }, url: "chessu.svg" },
+        { x:  0, y:  0, offset: { x: 939, y: 341 }, url: "../arrow-up.svg" },
     ],
     sit: [
         // stools
@@ -83,6 +84,7 @@ export const jinjaRoom: Room = {
     ],
     doors: {
         steps: { x: 14, y: 4, direction: "left", target: { roomId: "jinja_st", doorId: "torii" } },
+        toMatsuri: { x: 13, y: 10, direction: "down", target: { roomId: "matsuri", doorId: "spawn" } },
     },
     specialObjects: [
         { name: 'donation-text', x: 2, y: 7 },
