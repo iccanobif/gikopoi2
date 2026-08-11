@@ -1,5 +1,5 @@
-import { coordRange } from "../rooms";
-import { Coordinates, DynamicRoom } from "../types";
+import { coordRange } from "../rooms.js";
+import { Coordinates, DynamicRoom } from "../types.js";
 
 export const matsuriRoom: DynamicRoom = {
   roomId: "matsuri",

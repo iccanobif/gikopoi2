@@ -1,5 +1,5 @@
-import { coordRange } from "../rooms";
-import { Coordinates, Room } from "../types";
+import { coordRange } from "../rooms.js";
+import { Coordinates, Room } from "../types.js";
 
 export const enkaiRoom: Room = {
     id: "enkai",

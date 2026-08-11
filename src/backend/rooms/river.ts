@@ -1,4 +1,4 @@
-import { DynamicRoom, Room } from "../types"
+import { DynamicRoom, Room } from "../types.js"
 // annual events can overlap, so we first check if we're in a short, "specific" event and if not, we
 // check which of the four seasons we're in.
 const annualEventPriority = ["sakura", "rainy", "fireflies", "akizakura", "spring", "summer", "autumn", "winter"]

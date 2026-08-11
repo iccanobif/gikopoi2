@@ -1,4 +1,4 @@
-import { Room } from "../types";
+import { Room } from "../types.js";
 
 export const barGikoSquareRoom: Room = {
     id: "bar_giko_square",
