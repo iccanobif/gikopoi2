@@ -80,6 +80,7 @@ import { nextTick, ref, watch } from 'vue'
 import i18next from 'i18next'
 import type { GikopoipoiPreferences, ListedRoom, RulaRoomListSortKey } from '../../types'
 import { setAndPersist } from '../../preferences';
+import { RoomSession } from '../../room-session';
 
 const props = defineProps<{
     isOpen: boolean,
@@ -87,6 +88,7 @@ const props = defineProps<{
     myPrivateUserId: string | null,
     currentRoomId: string | null,
     preferences: GikopoipoiPreferences,
+    roomSession: RoomSession,
 }>()
 
 const emit = defineEmits<{
@@ -115,14 +117,7 @@ async function fetchRoomList()
 
     try
     {
-        const response = await fetch("/api/areas/" + props.areaId + "/rooms", {
-            headers: { "Authorization": "Bearer " + props.myPrivateUserId }
-        })
-
-        if (!response.ok)
-            throw new Error("Failed to fetch room list")
-
-        const fetchedRooms = await response.json() as ListedRoom[]
+        const fetchedRooms = await props.roomSession.getRoomList()
         roomList.value = normalizeRoomList(fetchedRooms)
         roomGroup.value = "all"
         selectedRoomId.value = props.currentRoomId

@@ -2,7 +2,7 @@ const isProduction = process.env.NODE_ENV == "production"
 
 import express, { Request } from "express"
 import { rooms, dynamicRooms } from "./rooms.js";
-import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, JankenStateDto, Room, DynamicRoom, MoveDto } from "./types.js";
+import type { SiteAreasInfo, RoomStateDto, JanusServer, LoginResponseDto, PlayerDto, StreamSlotDto, StreamSlot, PersistedState, CharacterSvgDto, RoomStateCollection, JankenStateDto, Room, DynamicRoom, MoveDto, ListedRoom } from "./types.js";
 import { addNewUser, getConnectedUserList, getUsersByIp, getAllUsers, getUserByPrivateId, getUser, Player, removeUser, getFilteredConnectedUserList, setUserAsActive, restoreUserState, isUserBlocking } from "./users.js";
 import got from "got";
 import log from "loglevel";
@@ -1063,6 +1063,17 @@ io.on("connection", function (socket)
         }
     })
 
+    socket.on("user-get-room-list", function() {
+        try {
+            const areaId = user.areaId
+            const roomList = getRoomList(user, areaId)
+            if (user.socketId)
+                io.to(user.socketId).emit("server-room-list", roomList)
+        } catch (e) {
+            logException(e, user)
+        }
+    })
+
 });
 
 function emitServerStats(areaId: string)
@@ -1393,30 +1404,7 @@ app.get("/api/areas/:areaId/rooms", (req, res) =>
             return
         }
 
-        const output = Object.values(rooms)
-            .filter(room => !room.secret)
-            .map(room => ({
-                id: room.id,
-                group: room.group,
-                userCount: getFilteredConnectedUserList(user, room.id, areaId).length,
-                streams: toStreamSlotDtoArray(user, roomStates[areaId][room.id].streams)
-                    .filter(stream => stream.isActive && stream.userId != null)
-                    .map(stream => {
-                        if (room.forcedAnonymous)
-                            return { userName: "", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
-
-                        const streamUser = getUser(stream.userId!)
-                        if (!streamUser)
-                        {
-                            log.error("ERROR: Can't find user", stream.userId, "when doing #rula")
-                            return { userName: "N/A", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
-                        }
-
-                        return { userName: streamUser.name, isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
-                    }),
-            }));
-
-        res.json(output)
+        res.json(getRoomList(user, areaId))
     }
     catch (e)
     {
@@ -2295,8 +2283,32 @@ async function restoreState()
     }
 }
 
-setInterval(() => persistState(), persistInterval)
+function getRoomList(user: Player, areaId: string): ListedRoom[] {
+    return Object.values(rooms)
+        .filter(room => !room.secret)
+        .map(room => ({
+            id: room.id,
+            group: room.group,
+            userCount: getFilteredConnectedUserList(user, room.id, areaId).length,
+            streams: toStreamSlotDtoArray(user, roomStates[areaId][room.id].streams)
+                .filter(stream => stream.isActive && stream.userId != null)
+                .map(stream => {
+                    if (room.forcedAnonymous)
+                        return { userName: "", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
 
+                    const streamUser = getUser(stream.userId!)
+                    if (!streamUser)
+                    {
+                        log.error("ERROR: Can't find user", stream.userId, "when doing #rula")
+                        return { userName: "N/A", isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
+                    }
+
+                    return { userName: streamUser.name, isVisibleOnlyToSpecificUsers: stream.isVisibleOnlyToSpecificUsers! }
+                }),
+        }));
+}
+
+setInterval(() => persistState(), persistInterval)
 
 dynamicRooms.forEach((dynamicRoom: DynamicRoom) =>
 {

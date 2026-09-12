@@ -3,6 +3,7 @@ import { io, type Socket } from "socket.io-client";
 import type {
   ClientRoom,
   Direction,
+  ListedRoom,
   RoomStateDto,
   Stats,
   StreamSlotDto,
@@ -35,7 +36,9 @@ export class RoomSession {
   myPrivateUserID: string | null = null;
   pageRefreshRequired = false;
 
-  private readonly highlightUserEventHandlers = new Set<(userId: string | null, userName: string | null) => void>();
+  private readonly highlightUserEventHandlers = new Set<
+    (userId: string | null, userName: string | null) => void
+  >();
 
   constructor() {
     this.state = {
@@ -58,7 +61,7 @@ export class RoomSession {
     username: string,
     characterId: string,
     areaId: string,
-    roomId: string
+    roomId: string,
   ): Promise<ConnectToServerResult> {
     const loginResponse = await postJson("/api/login", {
       userName: username,
@@ -80,10 +83,11 @@ export class RoomSession {
 
     this.myUserID = loginMessage.userId;
     this.myPrivateUserID = loginMessage.privateUserId;
-    this.pageRefreshRequired = window.EXPECTED_SERVER_VERSION != loginMessage.appVersion;
+    this.pageRefreshRequired =
+      window.EXPECTED_SERVER_VERSION != loginMessage.appVersion;
 
     const response = await fetch("/api/areas/" + areaId + "/rooms/" + roomId, {
-      headers: { "Authorization": "Bearer " + this.myPrivateUserID },
+      headers: { Authorization: "Bearer " + this.myPrivateUserID },
     });
     if (!response.ok) {
       throw new Error(response.status + " " + response.statusText);
@@ -138,14 +142,19 @@ export class RoomSession {
   }
 
   highlightUser(userId: string | null, userName: string | null) {
-    this.state.highlightedUserId = this.state.highlightedUserId == userId ? null : userId;
-    this.state.highlightedUserName = this.state.highlightedUserId ? userName : null;
+    this.state.highlightedUserId =
+      this.state.highlightedUserId == userId ? null : userId;
+    this.state.highlightedUserName = this.state.highlightedUserId
+      ? userName
+      : null;
     for (const handler of this.highlightUserEventHandlers) {
       handler(this.state.highlightedUserId, this.state.highlightedUserName);
     }
   }
 
-  registerHighlightUserEventHandler(handler: (userId: string | null, userName: string | null) => void) {
+  registerHighlightUserEventHandler(
+    handler: (userId: string | null, userName: string | null) => void,
+  ) {
     this.highlightUserEventHandlers.add(handler);
   }
 
@@ -155,5 +164,37 @@ export class RoomSession {
     }
 
     return this.socket;
+  }
+
+  private async websocketRPC<ReqT, ResT>(
+    requestType: "user-get-room-list",
+    responseType: "server-room-list",
+    request: ReqT,
+  ): Promise<ResT> {
+    {
+      if (!this.socket) {
+        throw new Error("Socket is not initialized yet");
+      }
+
+      this.socket.emit(requestType, request);
+
+      const outputPromise = new Promise<ResT>((resolve, reject) => {
+        const responseHandler = (response: ResT) => {
+          resolve(response);
+          this.socket?.off(responseType, responseHandler);
+        };
+        this.socket?.on(responseType, responseHandler);
+      });
+
+      return outputPromise;
+    }
+  }
+
+  getRoomList(): Promise<ListedRoom[]> {
+    return this.websocketRPC<{}, ListedRoom[]>(
+      "user-get-room-list",
+      "server-room-list",
+      {},
+    );
   }
 }
