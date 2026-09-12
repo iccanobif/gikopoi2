@@ -2157,7 +2157,7 @@ const vueApp = createApp(defineComponent({
                 return
             }
 
-            if (message.trim() == "#rula" || message.trim() == "#ﾙｰﾗ")
+            if (message.toLowerCase().trim() == "#rula" || message.trim() == "#ﾙｰﾗ")
                 this.openRulaPopup();
             else if (message.trim() == '#ﾘｽﾄ' || message.trim() == '#list')
                 this.openUserListPopup();
