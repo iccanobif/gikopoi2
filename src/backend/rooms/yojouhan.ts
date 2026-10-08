@@ -31,8 +31,6 @@ export const yojouhanRoom: DynamicRoom = {
                 { x: 1, y: 5 },
                 { x: 2, y: 5 },
                 { x: 3, y: 5 },
-                // fan
-                { x: 4, y: 5 },
             ],
             forbiddenMovements: [],
             doors: {
@@ -68,6 +66,7 @@ export const yojouhanRoom: DynamicRoom = {
         }
         else
         {
+            // no kotatsu variant
             room.sit = room.sit.concat([
                 // in the middle of the room
                 { x: 2, y: 1 },
@@ -80,6 +79,10 @@ export const yojouhanRoom: DynamicRoom = {
                 { x: 3, y: 3 },
                 { x: 4, y: 3 },
             ])
+            room.blocked = room.blocked.concat([
+                // fan
+                { x: 4, y: 5 },
+            ]);
         }
 
         return room
