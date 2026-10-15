@@ -5,7 +5,7 @@ export const barGikoSquareRoom: Room = {
     group: "bar_giko",
     scale: 1,
     size: { x: 24, y: 22 },
-    originCoordinates: { x: -160, y: 505 },
+    originCoordinates: { x: -160, y: 500 },
     spawnPoint: "up",
     backgroundImageUrl: "rooms/bar_giko_square/background.svg",
     objects: [
@@ -17,6 +17,7 @@ export const barGikoSquareRoom: Room = {
         { x: 19, y:  4, offset: { x:  790, y:  546 }, url: "street_light_left.svg" },
         { x: 14, y: 17, offset: { x: 1110, y:  186 }, url: "street_light_left.svg" },
         { x:  9, y:  4, offset: { x:  390, y:  346 }, url: "street_light_right.svg" },
+        { x:  4, y:  8, offset: { x: 300, y: 410 }, url: "../arrow-left.svg" },
         { x: 0, y: 11, offset: { x: 344 , y: 707 }, url: "arrow-down.svg" },
     ],
     sit: [
@@ -128,6 +129,7 @@ export const barGikoSquareRoom: Room = {
         next_to_light: { x: 18, y: 4, direction: "up", target: { roomId: "yojouhan", doorId: "door"} },
         bottom_left: {x: 12, y: 0, direction: "up", target: {roomId: "meganeya", doorId: "top_right"} },
         big_dicks: {x: 19, y: 15, direction: "left", target: {roomId: "karaoke_box", doorId: "door"} },
+        koban: { x: 4, y: 7, direction: "right", target: { roomId: "koban", doorId: "door" } },
     },
     streamSlotCount: 3,
     games: ["janken"],

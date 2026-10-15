@@ -53,6 +53,7 @@ import { yaneuraRoom } from "./rooms/yaneura.js";
 import { yojouhanRoom } from "./rooms/yojouhan.js";
 import { yaneRoom } from "./rooms/yane.js";
 import { matsuriRoom } from "./rooms/matsuri.js";
+import { kobanRoom } from "./rooms/koban.js";
 
 export function coordRange(from: Coordinates, to: Coordinates): Coordinates[] {
   const coords = [];
@@ -109,6 +110,7 @@ export const rooms: { [roomId: string]: Room } = {
   taiikukan: taiikukanRoom,
   kyougijou: kyougijouRoom,
   karaoke_box: karaokeBoxRoom,
+  koban: kobanRoom,
 };
 
 export const dynamicRooms: DynamicRoom[] = [
