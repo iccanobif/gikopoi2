@@ -22,7 +22,7 @@
         label_stream: "Kanal {{index}}: ",
         label_input: "Eingabe:",
         label_log: "Log:",
-        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
+        error_invalid_username: "Benutzernamen mit mehr als 20 Zeichen sind nicht erlaubt.",
 
         button_send: "Senden",
         button_stream_start: "Stream starten",
@@ -31,15 +31,15 @@
         button_stream_drop: "Stream schließen",
         button_stream_mute: "Stummschalten",
         button_stream_unmute: "Stummschaltung aufheben",
-        // button_stream_enable_feedback: "Enable feedback",
-        // button_stream_disable_feedback: "Disable feedback",
+        button_stream_enable_feedback: "Rückkopplung aktivieren",
+        button_stream_disable_feedback: "Rückkopplung deaktivieren",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Einstellungen",
         button_logout: "Logout",
         volume: "Lautstärke: ",
         enable_compression: "Verstärken: ",
-        // gain: "Gain: ",
+        gain: "Verstärkung: ",
         sound_effect: "Lauts.",
         tts_volume: "TTS Ls.",
         label_move: "Bewegen",
@@ -164,6 +164,7 @@
         visible_only_to_specific_users_stream: "Privater Stream",
         double_click_to_move_to_new_tab: "Doppelklicken, um zu einem neuen Tab zu wechseln",
         double_click_to_toggle_fullscreen: "Doppelklicken, um in den Vollbildmodus zu wechseln",
+        voice_changer: "Stimmverzerrer: ",
     },
     msg:
     {
@@ -218,7 +219,7 @@
         school_rouka: "Schule: Flur",
         school_international: "Schule: Internationales Klassenzimmer",
         school_pc: "Schule: Rechnerraum",
-        // karaoke_box: "Karaoke Box",
+        karaoke_box: "Karaoke-Box",
         seashore: "Strand",
         radio: "Radiostation",
         radio_room1: "Radiostation: Studio 1",
@@ -244,11 +245,11 @@
         irori: "Feuerstelle",
         taiikukan: "Schulturnhalle",
         yaneura: "Dachboden",
-        // kyougijou: "Track",
-        // yojouhan: "Tatami Room",
-        // meganeya: "Opticians"
-        // yane: "Rooftop",
-        // matsuri: "Matsuri"
+        kyougijou: "Sportplatz",
+        yojouhan: "Tatami-Zimmer",
+        meganeya: "Optiker",
+        yane: "Dach",
+        matsuri: "Matsuri"
     },
     area:
     {

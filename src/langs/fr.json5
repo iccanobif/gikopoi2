@@ -22,7 +22,7 @@
         label_stream: "Chaîne {{index}}: ",
         label_input: "Saisie:",
         label_log: "Historique:",
-        // error_invalid_username: "Usernames longer than 20 characters are not allowed.",
+        error_invalid_username: "Les noms d'utilisateur de plus de 20 caractères ne sont pas autorisés.",
 
         button_send: "Envoyer",
         button_stream_start: "Commencer stream",
@@ -95,10 +95,10 @@
         preferences_name_bg: "Afficher arrière-plan pseudo",
         preferences_shift_enter: "Saut de ligne avec Maj+Entrée",
         preferences_bubble_opacity: "Opacité de la bulle de dialogue",
-        // preferences_ui_theme: "Theme",
+        preferences_ui_theme: "Thème",
         preferences_ui_theme_gikopoi: "Gikopoi",
         preferences_ui_theme_shaddox: "Mode Shaddox",
-        // preferences_ui_theme_dark: "Dark",
+        preferences_ui_theme_dark: "Sombre",
         preferences_command_section_visible: "Afficher boutons de commande",
         preferences_move_section_visible: "Afficher boutons de déplacement",
         preferences_bubble_section_visible: "Afficher boutons de contrôle de la bulle",
@@ -122,14 +122,14 @@
         preferences_underlined_usernames: "Souligner les pseudos",
         preferences_low_quality: "Basse qualité",
         preferences_crisp_mode: "Sharp",
-        //preferences_disable_idle_animations: "Disable idle animations",
+        preferences_disable_idle_animations: "Désactiver les animations d'inactivité",
         preferences_timestamps_in_copied_log: "Inclure l'heure dans historique chat lorsque copié",
         preferences_ignore_indicator_in_log: "Afficher un indicateur au lieu d'un message d'utilisateur ignoré dans l'historique de chat",
-        // preferences_ignore_on_block: "Hide the messages of a blocked user",
+        preferences_ignore_on_block: "Masquer aussi tous les messages d'un utilisateur bloqué",
         preferences_language: "Langue",
         preferences_enable_coin_sound: "Effets sonores",
         preferences_show_log_above_toolbar: "Afficher historique au-dessus de la barre d'outils",
-        // preferences_show_log_dividers: "Show log message dividing lines",
+        preferences_show_log_dividers: "Afficher les séparateurs entre les messages",
 
         preferences_title_streams: "Streams",
         preferences_streams_auto_resume: "Reprendre auto",
@@ -139,28 +139,31 @@
 
         back_to_homepage: "Retour à la page d'accueil",
         
-        // game_display: "Display game", was chess_display_game: "Afficher partie",
-        // game_hide: "Hide game", was chess_hide_game: "Cacher partie",
-        // game_join: "Join game", was chess_join_game: "Rejoindre partie",
-        // game_quit: "Quit game" was chess_quit_game: "Quitter partie",
-
-        // janken_title: "Rock Paper Scissors",
-        // jnken_versus: "VS",
-        // janken_start_a_game: "Join to start a game!",
-        // janken_waiting_for_opponent: "{username} is waiting for an opponent to join...",
-        // janken_choose_your_hand: "Choose your hand!",
-        // janken_waiting_for_player: "Waiting for your opponent to choose a hand...",
-        // janken_players_choosing: "The players are choosing their hands...",
-        // janken_phrase: "Rock! Paper! Scissors!",
-        // janken_phrase_after_draw: "$t(ui.janken_phrase)",
-        // janken_phrase_after_draw_repeated: "$t(ui.janken_phrase)",
-        // janken_win: "{username} wins!",
-        // janken_quit: "{username} quit the game.",
-        // janken_timeout_reached: "The game has timed out.",
+        janken_title: "Pierre, feuille, ciseaux",
+        janken_start_a_game: "Rejoignez la partie pour commencer !",
+        janken_waiting_for_opponent: "{username} attend qu'un adversaire rejoigne la partie...",
+        janken_choose_your_hand: "Choisissez votre coup !",
+        janken_waiting_for_player: "En attente du choix de votre adversaire...",
+        janken_players_choosing: "Les joueurs choisissent leur coup...",
+        janken_phrase: "Pierre ! Feuille ! Ciseaux !",
+        janken_phrase_after_draw: "$t(ui.janken_phrase)",
+        janken_phrase_after_draw_repeated: "$t(ui.janken_phrase)",
+        janken_win: "{username} a gagné !",
+        janken_quit: "{username} a quitté la partie.",
+        janken_timeout_reached: "La partie a expiré.",
         
         visible_only_to_specific_users_stream: "Stream privé",
         double_click_to_move_to_new_tab: "Double-cliquez pour déplacer vers nouvel onglet",
-        //double_click_to_toggle_fullscreen: "Double click to toggle fullscreen",
+        double_click_to_toggle_fullscreen: "Double-cliquez pour passer en plein écran ou en sortir",
+        button_stream_enable_feedback: "Activer le retour audio",
+        button_stream_disable_feedback: "Désactiver le retour audio",
+        voice_changer: "Modificateur de voix : ",
+        gain: "Gain : ",
+        game_display: "Afficher partie",
+        game_hide: "Cacher partie",
+        game_join: "Rejoindre partie",
+        game_quit: "Quitter partie",
+        janken_versus: "contre",
     },
     msg:
     {
@@ -189,43 +192,43 @@
         
         are_you_sure_you_want_to_clear_log: "Voulez-vous effacer l'historique de chat?",
         chat_log_cleared: "L'historique de chat a été effacé.",
-        // stream_start_notification: "{{userName}} has started a stream.",
+        stream_start_notification: "{{userName}} a commencé un stream.",
     },
     room:
     {
-        long_st: "Chemin de l'anguille", // Eel road/way/alley
+        long_st: "Chemin de l'anguille", // Eel road/way/alley,
         jinja: "Sanctuaire",
         jinja_st: "Entrée du Sanctuaire",
         school_ground: "École: Cour de récré",
         bar774: "Centre commercial: Bar 774",
-        izakaya774: "Centre commercial: Taverne anonyme", // Izakaya Anonymous
+        izakaya774: "Centre commercial: Taverne anonyme", // Izakaya Anonymous,
         basement: "Centre commercial: souterrain",
         bar: "Bar",
-        school_st: "Rue de l'école", // School street
+        school_st: "Rue de l'école", // School street,
         bar_st: "Ruelle du bar",
-        admin_st: "Rue des développeurs", // Development Bureau/Department Street
-        admin: "Bureau des développeurs", // Development Bureau/Department
-        admin_bar: "Bar admin", // Secret bar
-        cafe_st: "Rue du café", // Cafe street
+        admin_st: "Rue des développeurs", // Development Bureau/Department Street,
+        admin: "Bureau des développeurs", // Development Bureau/Department,
+        admin_bar: "Bar admin", // Secret bar,
+        cafe_st: "Rue du café", // Cafe street,
         enkai: "Salle de banquet",
         idoA: "Puits A",
         idoB: "Puits B",
         busstop: "Arrêt d'autobus",
         school: "École: Classe",
         school_rouka: "École: Corridor",
-        school_international: "École: Études internationales", // International classroom
+        school_international: "École: Études internationales", // International classroom,
         school_pc: "École: Salle d'informatique",
-        // karaoke_box: "Karaoke Box",
+        karaoke_box: "Karaoké",
         seashore: "Côte",
-        radio: "Studio de radio", // Radio station
-        radio_room1: "Studio de radio 1", // Radio station studio 1
-        radio_room2: "Studio de radio 2: BEAT GIKO", // Radio station studio 2 BEAT GIKO
+        radio: "Studio de radio", // Radio station,
+        radio_room1: "Studio de radio 1", // Radio station studio 1,
+        radio_room2: "Studio de radio 2: BEAT GIKO", // Radio station studio 2 BEAT GIKO,
         radio_room3: "Studio de radio 3: G-SQUID",
         radio_gakuya: "Studio de radio: Loges",
-        radio_backstage: "Studio de radio: Coulisses", // Backstage/Behind the scenes/offstage
-        yatai: "Bar à sushi", // (Ramen) vendor/stand/stall/food cart
+        radio_backstage: "Studio de radio: Coulisses", // Backstage/Behind the scenes/offstage,
+        yatai: "Bar à sushi", // (Ramen) vendor/stand/stall/food cart,
         kaidan: "Escalier de la colline",
-        takadai: "Colline", // High ground/elevation
+        takadai: "Colline", // High ground/elevation,
         yoshinoya: "Yoshinoya",
         silo: "Silo",
         badend: "Vous êtes mort de la chute!",
@@ -241,10 +244,11 @@
         irori: "Foyer",
         yaneura: "Grenier",
         taiikukan: "Gymnase",
-        // yojouhan: "Tatami Room",
-        // meganeya: "Opticians"
-        // yane: "Rooftop",
-        // matsuri: "Matsuri"
+        yojouhan: "Pièce tatami",
+        meganeya: "Opticien",
+        yane: "Toit",
+        matsuri: "Matsuri",
+        kyougijou: "Piste",
     },
     area:
     {
