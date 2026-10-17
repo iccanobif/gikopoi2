@@ -39,6 +39,7 @@ export class RoomSession {
   private readonly highlightUserEventHandlers = new Set<
     (userId: string | null, userName: string | null) => void
   >();
+  private readonly clearLogEventHandlers = new Set<() => void>();
 
   constructor() {
     this.state = {
@@ -156,6 +157,18 @@ export class RoomSession {
     handler: (userId: string | null, userName: string | null) => void,
   ) {
     this.highlightUserEventHandlers.add(handler);
+  }
+
+  clearLog() {
+    for (const handler of this.clearLogEventHandlers) {
+      handler();
+    }
+  }
+
+  registerClearLogEventHandler(
+    handler: () => void,
+  ) {
+    this.clearLogEventHandlers.add(handler);
   }
 
   private requireSocket(): Socket {

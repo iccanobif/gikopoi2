@@ -700,6 +700,10 @@ const vueApp = createApp(defineComponent({
             {
                 this.onUserHighlighted(userId)
             });
+            this.roomSession.registerClearLogEventHandler(() =>
+            {
+                this.clearLog()
+            });
         },
         async connectToServer(username: string, characterId: string)
         {

@@ -103,7 +103,7 @@
                         for="preferences-show-log-dividers">{{ $t("ui.preferences_show_log_dividers") }}</label>
                 </div>
                 <div class="popup-item">
-                    <button v-on:click="emit('clear-log')">{{ $t("ui.preferences_clear_log") }}</button>
+                    <button v-on:click="onClearLog()">{{ $t("ui.preferences_clear_log") }}</button>
                 </div>
             </div>
             <div class="popup-section">
@@ -277,6 +277,7 @@ import languages from '../../lang'
 import type { GikopoipoiPreferences } from '../../types'
 import { setAndPersist } from '../../preferences'
 import { siteAreas } from '../../../common/site-areas'
+import { RoomSession } from '../../room-session'
 
 interface LangEntry {
     id: string
@@ -290,6 +291,7 @@ const props = defineProps<{
     isOpen: boolean,
     preferences: GikopoipoiPreferences,
     notificationPermissionsGranted: boolean,
+    roomSession: RoomSession
 }>()
 
 const emit = defineEmits<{
@@ -298,7 +300,6 @@ const emit = defineEmits<{
     'language-changed': [],
     'enable-tts-changed': [],
     'tts-voice-changed': [],
-    'clear-log': [],
     'notifications-changed': [],
     'mention-sound-changed': [],
     'mention-pattern-changed': [],
@@ -428,6 +429,11 @@ onBeforeUnmount(() => {
 })
 
 const siteLanguageRestricted = siteAreas.find(area => area.id === props.preferences.areaId)?.restrictLanguage || false
+
+function onClearLog()
+{
+    props.roomSession.clearLog()
+}
 </script>
 
 <style scoped>
