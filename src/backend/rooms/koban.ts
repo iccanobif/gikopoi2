@@ -12,7 +12,7 @@ export const kobanRoom: Room = {
   spawnPoint: "door",
   backgroundImageUrl: "rooms/koban/background.svg",
   objects: [
-    { x: 6, y: 0, offset: { x: 0, y: 0 }, url: "backrests.svg", scale: 1.463 },
+    { x: 6, y: 0, offset: { x: 0, y: 0 }, url: "backrests.svg", scale },
     {
       x: 2,
       y: 1,
