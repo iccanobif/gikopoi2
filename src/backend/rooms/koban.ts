@@ -22,7 +22,7 @@ export const kobanRoom: Room = {
       scale: 0.9,
     },
     // arrow right
-    { x: 0, y: 0, offset: { x: 291, y: 243 }, url: "../arrow-right.svg" },
+    { x: 0, y: 0, offset: { x: 212, y: 283 }, url: "../arrow-right.svg" },
   ],
   objectRenderSortMethod: "diagonal_scan",
   sit: [
@@ -40,7 +40,7 @@ export const kobanRoom: Room = {
   doors: {
     door: {
       x: 5,
-      y: 2,
+      y: 0,
       direction: "left",
       target: { roomId: "bar_giko_square", doorId: "koban" },
     },
