@@ -21,13 +21,6 @@ type RenderImage = {
     [key: string]: RenderCache[]
 }
 
-const characterFeatureNames = [
-    "eyes_open",
-    "eyes_closed",
-    "mouth_open",
-    "mouth_closed",
-]
-
 type PortraitProps = {
     left?: number,
     top?: number,
@@ -262,6 +255,7 @@ const characterObjects: CharacterObject[] = [
     { name: "yukata_shii", portrait: { left: -0.5, top: 0.24 }, isHidden: !annualEvents.matsuriNight.isNow() },
     { name: "giko_matsuri", portrait: { left: -0.5, top: 0.24 }, isHidden: !annualEvents.matsuriNight.isNow() },
     { name: "roubon", portrait: { left: -0.6, top: -0.3 }, isHidden: true },
+    { name: "omawari_giko", portrait: { left: -0.5, top: 0.24 }, isHidden: true },
 ]
 
 export const characters: { [characterId: string]: Character } =

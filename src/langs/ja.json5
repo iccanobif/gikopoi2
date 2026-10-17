@@ -236,6 +236,7 @@
         bar_giko: { t: "ＢＡＲギコ", sort_key: "バーギコ" },
         bar_giko2: { t: "ＢＡＲギコ 下階", sort_key: "バーギコ かかい" },
         bar_giko_square: { t: "噴水広場", sort_key: "ふんすいひろば" },
+        koban: { t: "交番", sort_key: "こうばん" },
         densha: { t: "電車", sort_key: "でんしゃ" },
         monachat: { t: "もなちゃと", sort_key: "もなちゃと" },
         konbini: { t: "コンビニ", sort_key: "こんびに" },
