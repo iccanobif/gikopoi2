@@ -16,7 +16,6 @@ import type {
     PointerState,
     DeviceInfo,
     Stats,
-    PopupCallback,
     RoomStateDto,
     PlayerDto,
     MoveDto,
@@ -25,7 +24,6 @@ import type {
     CanvasObject,
     VideoContainer,
     IgnoredUserIds,
-    GikopoipoiPreferences,
 } from './types'
 import type { Character } from './character'
 
@@ -295,15 +293,7 @@ const vueApp = createApp(defineComponent({
             selectedAudioDeviceId: null as string | null,
             selectedVideoDeviceId: null as string | null,
             waitingForDevicePermission: false,
-            
-            // Dialog Popup
-            dialogPopupMessage: '',
-            dialogPopupTitle: '',
-            dialogPopupButtons: [] as string[],
-            dialogPopupCallback: null as PopupCallback | null,
-            dialogPopupButtonIndex: null as number | null,
-            isDialogPopupOpen: false,
-            
+           
             appState: getAppState() as 'login' | 'stage' | 'logout' | 'redirect_notice' | 'poop',
 
             enableGridNumbers: false,
@@ -370,16 +360,11 @@ const vueApp = createApp(defineComponent({
             }
             if (ev.code == "Escape")
             {
-                // Only close the listed popups if there is no dialog popup open in front of it.
-                // So the dialog popup and other popup behind don't all disappear at the same time.
-                if (this.closeDialog() === null)
-                {
-                    this.closeRulaPopup()
-                    this.closeUserListPopup()
-                    this.closeStreamPopup()
-                    this.closePreferencesPopup()
-                    this.cancelDeviceSelection()
-                }
+                this.closeRulaPopup()
+                this.closeUserListPopup()
+                this.closeStreamPopup()
+                this.closePreferencesPopup()
+                this.cancelDeviceSelection()
             }
             if (ev.code == "KeyG" && ev.ctrlKey)
             {
@@ -562,64 +547,38 @@ const vueApp = createApp(defineComponent({
         {
             i18next.changeLanguage(language, setPageMetadata)
         },
-        openDialog(text: string, title: string, buttons: string[], cancelButtonIndex: number, callback: PopupCallback | null = null)
-        {
-            this.dialogPopupMessage = text;
-            this.dialogPopupTitle = title;
-            this.dialogPopupButtons = buttons;
-            this.dialogPopupButtonIndex = cancelButtonIndex;
-            this.dialogPopupCallback = callback;
-            this.isDialogPopupOpen = true;
-        },
-        closeDialog(buttonIndex?: number)
-        {
-            if (!this.isDialogPopupOpen) return null;
-            if (buttonIndex === undefined)
-            {
-                if (this.dialogPopupButtonIndex !== null && this.dialogPopupButtonIndex >= 0)
-                    buttonIndex = this.dialogPopupButtonIndex;
-                else
-                    return false;
-            }
-            
-            this.isDialogPopupOpen = false;
-            if (this.dialogPopupCallback)
-            {
-                this.dialogPopupCallback(buttonIndex);
-                this.dialogPopupCallback = null;
-            }
-            return true;
-        },
         async showWarningToast(text: string)
         {
-            this.openDialog(text,
-                this.$t("ui.warning_toast_title"),
-                [this.$t("ui.popup_button_ok")],
-                0);
-            await nextTick();
-            const firstButton = document.querySelector("#dialog-popup .popup-buttons button") as HTMLButtonElement
-            firstButton.focus();
+            const dialogPopup = this.$refs.dialogPopup as any;
+            dialogPopup.openDialog({
+                message: text,
+                title: this.$t("ui.warning_toast_title"),
+                buttons: [this.$t("ui.popup_button_ok")]
+            });
         },
-        confirm(text: string, okCallback: ()=>void, cancelCallback?: ()=>void, button?: string[] | string)
+        async confirm(text: string, okCallback: () => void, cancelCallback?: () => void, buttons?: string[] | string)
         {
             // button param can be an array of two strings for confirm and cancel,
             // or one string to be used for confirm
-            if (button == undefined)
+            if (buttons == undefined)
             {
-                button = [this.$t("ui.popup_button_ok"),
+                buttons = [this.$t("ui.popup_button_ok"),
                     this.$t("ui.popup_button_cancel")];
             }
-            else if (!Array.isArray(button))
+            else if (!Array.isArray(buttons))
             {
-                button = [button, this.$t("ui.popup_button_cancel")];
+                buttons = [buttons, this.$t("ui.popup_button_cancel")];
             }
-            this.openDialog(text, '', button, 1, buttonIndex =>
-            {
-                if(buttonIndex == 0)
-                    okCallback();
-                else if (cancelCallback)
-                    cancelCallback();
+            const dialogPopup = this.$refs.dialogPopup as any;
+            const buttonIndex = await dialogPopup.openDialog({
+                message: text,
+                title: '',
+                buttons
             });
+            if (buttonIndex == 0)
+                okCallback();
+            else if (cancelCallback)
+                cancelCallback();
         },
         async loadRoomBackground()
         {

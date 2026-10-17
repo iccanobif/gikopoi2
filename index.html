@@ -404,7 +404,6 @@
                     </template>
                 </div>
 
-
                 <rula-popup
                     :is-open="isRulaPopupOpen"
                     :area-id="preferences.areaId"
@@ -457,12 +456,7 @@
                     @low-quality-changed="handleLowQualityEnabled"
                     @idle-animation-changed="handleIdleAnimationDisabled"></preferences-popup>
 
-                <dialog-popup
-                    :is-open="isDialogPopupOpen"
-                    :title="dialogPopupTitle"
-                    :message="dialogPopupMessage"
-                    :buttons="dialogPopupButtons"
-                    @close="closeDialog"></dialog-popup>
+                <dialog-popup ref="dialogPopup"></dialog-popup>
 
                 <device-selection-popup
                     :is-open="isDeviceSelectionOpen"

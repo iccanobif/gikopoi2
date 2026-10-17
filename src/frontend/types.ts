@@ -68,8 +68,6 @@ export interface PointerState {
     pos: Coordinates
 }
 
-export type PopupCallback = (buttonIndex: number) => void
-
 export interface GikopoipoiPreferences {
     areaId: string
     bubbleOpacity: number
