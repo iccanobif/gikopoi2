@@ -93,9 +93,9 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
-import { setAndPersist } from '../../preferences';
 import { GikopoipoiPreferences, OutboundStreamSettings } from '../../types';
 import { showAlert } from '../../utils';
+import i18next from 'i18next';
 
 type StreamField =
     | 'streamMode'
@@ -120,7 +120,7 @@ const emit = defineEmits<{
 }>()
 
 defineExpose({
-    openOutboundStreamSettingsPopup
+    openPopup
 })
 
 function getDefaultOutboundStreamSettings(): OutboundStreamSettings {
@@ -143,9 +143,9 @@ const outboundStreamSettings = ref<OutboundStreamSettings>(getDefaultOutboundStr
 
 let promiseResolver: ((settings: OutboundStreamSettings | null) => void) | null = null;
 
-function openOutboundStreamSettingsPopup(): Promise<OutboundStreamSettings | null> {
+function openPopup(): Promise<OutboundStreamSettings | null> {
     if (!window.RTCPeerConnection) {
-        showAlert("msg.no_webrtc");
+        showAlert(i18next.t("msg.no_webrtc")); // TODO: Translate this message with i18n
         return Promise.resolve(null);
     }
 
@@ -159,8 +159,6 @@ function openOutboundStreamSettingsPopup(): Promise<OutboundStreamSettings | nul
 }
 
 function cancel() {
-    // TODO: i guess i need a global store for waitingForDevicePermission (pinia?)
-
     // If there's a native device selection popup open, let's keep the poipoi device selection
     // open and disabled, so that the user is forced to either give permissions or deny them.
     if (props.waitingForDevicePermission)

@@ -456,15 +456,9 @@
                 <dialog-popup ref="dialogPopup"></dialog-popup>
 
                 <device-selection-popup
-                    :is-open="isDeviceSelectionOpen"
-                    :waiting-for-device-permission="waitingForDevicePermission"
-                    :device-list="deviceList"
-                    :selected-audio-device-id="selectedAudioDeviceId"
-                    :selected-video-device-id="selectedVideoDeviceId"
-                    @close="cancelDeviceSelection"
-                    @start="wantToStartStreaming"
-                    @set-audio-device="selectedAudioDeviceId = $event"
-                    @set-video-device="selectedVideoDeviceId = $event"></device-selection-popup>
+                    ref="deviceSelectionPopup"
+                    :preferences="preferences"
+                    ></device-selection-popup>
             </div>
             <div id="logged-out-page" v-if="appState == 'logout'" class="full-screen-page">
                 {{ $t("msg.goodbye") }}
