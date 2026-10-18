@@ -335,7 +335,7 @@
                             <button :id="'start-video-streaming-button-' + index"
                                 v-if="!streamSlot.isActive && !wantToStream
                                       && streamSlotIdInWhichIWantToStream == null"
-                                v-on:click="openStreamPopup(index)">
+                                v-on:click="openOutboundStreamSettingsPopup(index)">
                                 {{ $t("ui.button_stream_start") }}
                             </button>
                             <button :id="'stop-streaming-button-' + index"
@@ -429,10 +429,10 @@
                     @unignore-user="unignoreUser"
                     @block-user="blockUser"></user-list-popup>
 
-                <stream-popup
-                    ref="streamPopup"
+                <outbound-stream-settings-popup
+                    ref="outboundStreamSettingsPopup"
                     :waiting-for-device-permission="waitingForDevicePermission"
-                    :preferences="preferences"></stream-popup>
+                    :preferences="preferences"></outbound-stream-settings-popup>
 
                 <preferences-popup
                     :is-open="isPreferencesPopupOpen"

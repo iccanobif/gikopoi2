@@ -101,7 +101,7 @@ import VoiceChangerControl from './components/voice-changer-control.vue';
 import DialogPopup from './components/popups/dialog-popup.vue'
 import RulaPopup from './components/popups/rula-popup.vue'
 import UserListPopup from './components/popups/user-list-popup.vue'
-import StreamPopup from './components/popups/stream-popup.vue'
+import OutboundStreamSettingsPopup from './components/popups/outbound-stream-settings-popup.vue'
 import PreferencesPopup from './components/popups/preferences-popup.vue'
 import DeviceSelectionPopup from './components/popups/device-selection-popup.vue'
 import RoomObjectEditor from './components/room-object-editor.vue';
@@ -218,7 +218,7 @@ const vueApp = createApp(defineComponent({
         DialogPopup,
         RulaPopup,
         UserListPopup,
-        StreamPopup,
+        OutboundStreamSettingsPopup,
         PreferencesPopup,
         DeviceSelectionPopup,
         RoomObjectEditor,
@@ -287,7 +287,6 @@ const vueApp = createApp(defineComponent({
             slotIsVtuberCharacterJumping: {} as {[slotId: number]: boolean}, // key: slot Id / value: boolean
 
             // stream settings
-            isStreamPopupOpen: false,
             allowedListenerIDs: new Set() as Set<string>,
 
             // Device selection popup
@@ -2675,7 +2674,6 @@ const vueApp = createApp(defineComponent({
 
         async showDeviceSelectionPopup()
         {
-            this.isStreamPopupOpen = false;
             try
             {
                 const withVideo = this.preferences.streamMode != "sound" && !this.preferences.streamScreenCapture;
@@ -2714,7 +2712,7 @@ const vueApp = createApp(defineComponent({
                 showAlert(this.$t("msg.error_obtaining_media"));
                 this.mediaStream = null;
                 this.waitingForDevicePermission = false;
-                this.isStreamPopupOpen = true;
+                this.openOutboundStreamSettingsPopup();
             }
         },
 
@@ -2729,7 +2727,7 @@ const vueApp = createApp(defineComponent({
                 return
 
             this.isDeviceSelectionOpen = false
-            this.isStreamPopupOpen = true
+            this.openOutboundStreamSettingsPopup();
         },
 
         async wantToStartStreaming()
@@ -2796,7 +2794,7 @@ const vueApp = createApp(defineComponent({
 
                 // Gotta make sure both popups are closed (the device selection popup might be skipped if there's only one device to select)
                 this.isDeviceSelectionOpen = false;
-                this.isStreamPopupOpen = false;
+                // this.isOutboundStreamSettingsPopupOpen = false; // Shouldn't be needed anymore
 
                 const rejectedResult = promiseResults.find(r => r.status == "rejected") as PromiseRejectedResult // type needed for typescript to know about the reason property
                 if (rejectedResult)
@@ -3192,13 +3190,13 @@ const vueApp = createApp(defineComponent({
                 this.roomSession.socket!.emit("user-block", userId);
             });
         },
-        async openStreamPopup(streamSlotId: number)
+        async openOutboundStreamSettingsPopup(streamSlotId: number)
         {
             this.streamSlotIdInWhichIWantToStream = streamSlotId;
             this.wantToStream = true;
 
-            const streamPopup = this.$refs.streamPopup as any;
-            const result = (await streamPopup.openPopup()) as OutboundStreamSettings | null;
+            const outboundStreamSettingsPopup = this.$refs.outboundStreamSettingsPopup as any;
+            const result = (await outboundStreamSettingsPopup.openOutboundStreamSettingsPopup()) as OutboundStreamSettings | null;
 
             if (result)
             {
@@ -3753,5 +3751,4 @@ vueApp.use(I18NextVue, { i18next })
 
 vueApp.mount("#vue-app")
 window.vueApp = vueApp
-
 

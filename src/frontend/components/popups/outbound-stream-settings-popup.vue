@@ -1,6 +1,6 @@
 <template>
     <div class="popup-overlay" v-if="isOpen" v-on:click="cancel()"></div>
-    <fieldset id="stream-popup" class="popup" v-if="isOpen" :disabled="waitingForDevicePermission">
+    <fieldset id="outbound-stream-settings-popup" class="popup" v-if="isOpen" :disabled="waitingForDevicePermission">
         <div class="popup-titlebar">
             <div class="popup-title">{{ $t("ui.stream_form_title") }}</div>
         </div>
@@ -120,7 +120,7 @@ const emit = defineEmits<{
 }>()
 
 defineExpose({
-    openPopup
+    openOutboundStreamSettingsPopup
 })
 
 function getDefaultOutboundStreamSettings(): OutboundStreamSettings {
@@ -143,7 +143,7 @@ const outboundStreamSettings = ref<OutboundStreamSettings>(getDefaultOutboundStr
 
 let promiseResolver: ((settings: OutboundStreamSettings | null) => void) | null = null;
 
-function openPopup(): Promise<OutboundStreamSettings | null> {
+function openOutboundStreamSettingsPopup(): Promise<OutboundStreamSettings | null> {
     if (!window.RTCPeerConnection) {
         showAlert("msg.no_webrtc");
         return Promise.resolve(null);
