@@ -18,12 +18,28 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, ref } from 'vue';
 
 const isOpen = ref(false);
 const title = ref('');
 const message = ref('');
 const buttons = ref<string[]>([]);
+
+function handleKeydown(ev: KeyboardEvent) {
+    if (ev.code === "Escape" && isOpen.value) {
+        // If we let the event propagate, other dialogs would also close.
+        ev.stopPropagation();
+        closeDialog(null);
+    }
+}
+
+onMounted(() => {
+    document.addEventListener("keydown", handleKeydown);
+});
+
+onUnmounted(() => {
+    document.removeEventListener("keydown", handleKeydown);
+});
 
 let promiseResolver: ((buttonIndex: number | null) => void) | null = null;
 
@@ -63,15 +79,6 @@ function closeDialog(buttonIndex: number | null) {
 defineExpose({
     openDialog
 })
-
-// Close dialog on overlay click or ESC key press
-document.addEventListener("keydown", (ev) => {
-    if (ev.code === "Escape" && isOpen.value) {
-        // If we let the event propagate, other dialogs would also close.
-        ev.stopPropagation();
-        closeDialog(null);
-    }
-});
 
 </script>
 
