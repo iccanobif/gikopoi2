@@ -1,6 +1,6 @@
 <template>
     <div class="popup-overlay" v-if="isOpen" v-on:click="cancel()"></div>
-    <fieldset class="popup" v-if="isOpen" :disabled="isWaitingForDevicePermission">
+    <fieldset class="popup" v-if="isOpen" :disabled="isWaitingForDevicePermission" v-on:keydown="handleKeydown">
         <div class="popup-titlebar">
             <div class="popup-title">{{ $t("ui.device_selection_title") }}</div>
         </div>
@@ -23,14 +23,14 @@
             </div>
         </div>
         <div class="popup-buttons">
-            <button v-on:click="confirm()">{{ $t("ui.stream_form_button_stream") }}</button>
+            <button v-on:click="confirm()" ref="confirmButton">{{ $t("ui.stream_form_button_stream") }}</button>
             <button v-on:click="cancel()">{{ $t("ui.popup_button_cancel") }}</button>
         </div>
     </fieldset>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, nextTick, ref, useTemplateRef } from 'vue'
 import type { DeviceInfo, DeviceSelection, GikopoipoiPreferences } from '../../types'
 import { getDeviceList, showAlert } from '../../utils';
 import i18next from 'i18next';
@@ -47,6 +47,8 @@ const isOpen = ref(false);
 const deviceList = ref<DeviceInfo[]>([]);
 const deviceSelection = ref<DeviceSelection>(getDefaultDeviceSelection());
 const isWaitingForDevicePermission = ref(false);
+
+const confirmButton = useTemplateRef<HTMLButtonElement>("confirmButton");
 
 const audioDevices = computed(() => deviceList.value.filter(d => d.type == 'audioinput'))
 const videoDevices = computed(() => deviceList.value.filter(d => d.type == 'videoinput'))
@@ -67,6 +69,7 @@ function openPopup(): Promise<DeviceSelection | null> {
     isOpen.value = true
 
     loadDeviceList(); // Launch asynchronously without await
+
 
     return new Promise<DeviceSelection | null>((resolve) => {
         promiseResolver = resolve
@@ -100,6 +103,10 @@ async function loadDeviceList() {
             deviceSelection.value.selectedAudioDeviceId = null;
         if (!videoDevices.value.find(d => d.id == deviceSelection.value.selectedVideoDeviceId))
             deviceSelection.value.selectedVideoDeviceId = null;
+
+        nextTick(() => {
+            confirmButton.value?.focus({ focusVisible: true });
+        });
     }
     catch (err) {
         console.error(err)
@@ -147,23 +154,18 @@ function handleKeydown(ev: KeyboardEvent) {
     }
 }
 
-onMounted(() => {
-    document.addEventListener("keydown", handleKeydown);
-});
-
-onUnmounted(() => {
-    document.removeEventListener("keydown", handleKeydown);
-});
-
 /*
 TODO: fix the following regressions.
-
+- [ ] A definite solution for the Escape key handling might be to have a dedicated event bus, where the event gets
+      propagated only to the currently active popup, that is to say the last one who registered for the event. (a kind of stack-based approach)
 - [ ] When you confirm() without selecting a device, the alert is shown but if you press Escape, not only the alert
       disappears but we go back to the outbound stream settings popup
 - [ ] after confirming i always get a msg.start_stream_stream_slot_does_not_exist error
+    can reproduce only if i confirm with no selected devices, hit esc and then try to confirm again (with devices selected).
 - [ ] when moving from ouotbound stream settings popup to device selection, the device fetch is executed while displaying the device selection popup,
       displaying in the meanwhile an out-of-date device list. Also, the first time you open the device selection popup, the device list is empty 
       and looks very bad.
+- [ ] The second time i stream, it doesn't remember the previously selected devices
 */
 
 </script>

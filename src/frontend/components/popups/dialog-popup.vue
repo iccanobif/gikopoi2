@@ -1,6 +1,6 @@
 <template>
     <div class="popup-overlay" id="dialog-popup-overlay" v-if="isOpen" v-on:click="closeDialog(null)"></div>
-    <div class="popup" id="dialog-popup" v-if="isOpen">
+    <div class="popup" id="dialog-popup" v-if="isOpen" v-on:keydown="handleKeydown">
         <div class="popup-titlebar" v-if="title">
             <div class="popup-title">{{ title }}</div>
         </div>
@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, ref } from 'vue';
+import { nextTick, ref } from 'vue';
 
 const isOpen = ref(false);
 const title = ref('');
@@ -32,14 +32,6 @@ function handleKeydown(ev: KeyboardEvent) {
         closeDialog(null);
     }
 }
-
-onMounted(() => {
-    document.addEventListener("keydown", handleKeydown);
-});
-
-onUnmounted(() => {
-    document.removeEventListener("keydown", handleKeydown);
-});
 
 let promiseResolver: ((buttonIndex: number | null) => void) | null = null;
 

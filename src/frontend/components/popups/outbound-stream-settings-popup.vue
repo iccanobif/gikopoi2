@@ -1,6 +1,6 @@
 <template>
     <div class="popup-overlay" v-if="isOpen" v-on:click="cancel()"></div>
-    <fieldset id="outbound-stream-settings-popup" class="popup" v-if="isOpen" :disabled="waitingForDevicePermission">
+    <fieldset id="outbound-stream-settings-popup" class="popup" v-if="isOpen" :disabled="waitingForDevicePermission" v-on:keydown="handleKeydown">
         <div class="popup-titlebar">
             <div class="popup-title">{{ $t("ui.stream_form_title") }}</div>
         </div>
@@ -85,14 +85,14 @@
             </div>
         </div>
         <div class="popup-buttons">
-            <button v-on:click="confirm()">{{ $t("ui.stream_form_button_stream") }}</button><button
-                v-on:click="cancel()">{{ $t("ui.popup_button_cancel") }}</button>
+            <button v-on:click="confirm()" ref="confirmButton">{{ $t("ui.stream_form_button_stream") }}</button>
+            <button v-on:click="cancel()">{{ $t("ui.popup_button_cancel") }}</button>
         </div>
     </fieldset>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { nextTick, ref, useTemplateRef } from 'vue';
 import { GikopoipoiPreferences, OutboundStreamSettings } from '../../types';
 import { showAlert } from '../../utils';
 import i18next from 'i18next';
@@ -123,6 +123,8 @@ defineExpose({
     openPopup
 })
 
+const confirmButton = useTemplateRef<HTMLButtonElement>("confirmButton");
+
 function getDefaultOutboundStreamSettings(): OutboundStreamSettings {
     return {
         displayAdvancedStreamSettings: props.preferences.displayAdvancedStreamSettings,
@@ -152,6 +154,12 @@ function openPopup(): Promise<OutboundStreamSettings | null> {
     outboundStreamSettings.value = getDefaultOutboundStreamSettings();
 
     isOpen.value = true;
+
+    nextTick(() => {
+        console.log("confirmButton", confirmButton);
+        console.log("confirmButton.value", confirmButton.value);
+        confirmButton.value?.focus({ focusVisible: true });
+    });
 
     return new Promise<OutboundStreamSettings | null>((resolve) => {
         promiseResolver = resolve;
@@ -188,14 +196,6 @@ function handleKeydown(ev: KeyboardEvent) {
         cancel();
     }
 }
-
-onMounted(() => {
-    document.addEventListener("keydown", handleKeydown);
-});
-
-onUnmounted(() => {
-    document.removeEventListener("keydown", handleKeydown);
-});
 
 function toggleAdvancedSettings() {
     outboundStreamSettings.value.displayAdvancedStreamSettings = !outboundStreamSettings.value.displayAdvancedStreamSettings;
