@@ -429,13 +429,10 @@
                     @unignore-user="unignoreUser"
                     @block-user="blockUser"></user-list-popup>
 
-
                 <stream-popup
-                    :is-open="isStreamPopupOpen"
+                    ref="streamPopup"
                     :waiting-for-device-permission="waitingForDevicePermission"
-                    :preferences="preferences"
-                    @close="closeStreamPopup"
-                    @start="showDeviceSelectionPopup"></stream-popup>
+                    :preferences="preferences"></stream-popup>
 
                 <preferences-popup
                     :is-open="isPreferencesPopupOpen"

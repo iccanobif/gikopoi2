@@ -24,6 +24,7 @@ import type {
     CanvasObject,
     VideoContainer,
     IgnoredUserIds,
+    OutboundStreamSettings,
 } from './types'
 import type { Character } from './character'
 
@@ -80,6 +81,8 @@ import {
     playSound,
     loadAllSoundEffects,
     debouncedPlaySound,
+    emitter,
+    showAlert,
 } from "./utils";
 import { debouncedSpeakTest, speak } from "./tts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
@@ -362,7 +365,6 @@ const vueApp = createApp(defineComponent({
             {
                 this.closeRulaPopup()
                 this.closeUserListPopup()
-                this.closeStreamPopup()
                 this.closePreferencesPopup()
                 this.cancelDeviceSelection()
             }
@@ -395,6 +397,11 @@ const vueApp = createApp(defineComponent({
         document.getElementById("username-textbox")!.focus()
 
         this.devicePixelRatio = this.getDevicePixelRatio();
+
+        emitter.on("show-alert", this.showWarningToast);
+    },
+    unmounted() {
+        emitter.off("show-alert", this.showWarningToast);
     },
     methods: {
         async login(username: string, password: string, areaId: string, characterId: string)
@@ -903,7 +910,7 @@ const vueApp = createApp(defineComponent({
             {
                 this.wantToStream = false;
                 this.stopStreaming();
-                this.showWarningToast(this.$t("msg." + reason));
+                showAlert(this.$t("msg." + reason));
             });
             this.roomSession.socket.on("server-not-ok-to-take-stream", (streamSlotId: number) =>
             {
@@ -1167,7 +1174,7 @@ const vueApp = createApp(defineComponent({
             this.confirm(this.$t("msg.are_you_sure_you_want_to_clear_log"), () =>
             {
                 document.getElementById("chatLog")!.innerHTML = '';
-                this.showWarningToast(this.$t("msg.chat_log_cleared"));
+                showAlert(this.$t("msg.chat_log_cleared"));
             });
         },
         drawImage(context: CanvasRenderingContext2D, image: HTMLCanvasElement|OffscreenCanvas, x?: number, y?: number)
@@ -2704,7 +2711,7 @@ const vueApp = createApp(defineComponent({
             catch (err)
             {
                 console.error(err)
-                this.showWarningToast(this.$t("msg.error_obtaining_media"));
+                showAlert(this.$t("msg.error_obtaining_media"));
                 this.mediaStream = null;
                 this.waitingForDevicePermission = false;
                 this.isStreamPopupOpen = true;
@@ -2744,7 +2751,7 @@ const vueApp = createApp(defineComponent({
                 if ((withVideo && !this.selectedVideoDeviceId && !this.preferences.streamScreenCapture)
                     || (withSound && !this.selectedAudioDeviceId && !this.preferences.streamScreenCaptureAudio))
                 {
-                    this.showWarningToast(this.$t("msg.error_didnt_select_device"));
+                    showAlert(this.$t("msg.error_didnt_select_device"));
                     return;
                 }
 
@@ -2922,11 +2929,11 @@ const vueApp = createApp(defineComponent({
                 console.error(e)
                 if (e instanceof UserException)
                 {
-                    this.showWarningToast(this.$t("msg." + e.message));
+                    showAlert(this.$t("msg." + e.message));
                 }
                 else
                 {
-                    this.showWarningToast(this.$t("msg.error_obtaining_media"));
+                    showAlert(this.$t("msg.error_obtaining_media"));
                 }
                 this.wantToStream = false;
                 this.mediaStream = null;
@@ -2999,7 +3006,7 @@ const vueApp = createApp(defineComponent({
         {
             if (!window.RTCPeerConnection)
             {
-                this.showWarningToast(this.$t("msg.no_webrtc"));
+                showAlert(this.$t("msg.no_webrtc"));
                 return;
             }
             this.takenStreams[streamSlotId] = true
@@ -3120,7 +3127,7 @@ const vueApp = createApp(defineComponent({
         {
             if (this.getUserListForListPopup().length == 0)
             {
-                this.showWarningToast(this.$t("msg.no_other_users_in_this_room"));
+                showAlert(this.$t("msg.no_other_users_in_this_room"));
             }
             else
             {
@@ -3185,32 +3192,35 @@ const vueApp = createApp(defineComponent({
                 this.roomSession.socket!.emit("user-block", userId);
             });
         },
-        openStreamPopup(streamSlotId: number)
+        async openStreamPopup(streamSlotId: number)
         {
-            if (!window.RTCPeerConnection)
-            {
-                this.showWarningToast(this.$t("msg.no_webrtc"));
-                return;
-            }
-
             this.streamSlotIdInWhichIWantToStream = streamSlotId;
             this.wantToStream = true;
 
-            this.isStreamPopupOpen = true;
-        },
-        closeStreamPopup()
-        {
-            if (!this.isStreamPopupOpen)
-                return
+            const streamPopup = this.$refs.streamPopup as any;
+            const result = (await streamPopup.openPopup()) as OutboundStreamSettings | null;
 
-            // If there's a native device selection popup open, let's keep the poipoi device selection
-            // open and disabled, so that the user is forced to either give permissions or deny them.
-            if (this.waitingForDevicePermission)
-                return
+            if (result)
+            {
+                // Handle the case when the user successfully started streaming
+                // set and persist all outbound stream settings
+                setAndPersist(this.preferences, "displayAdvancedStreamSettings", result.displayAdvancedStreamSettings)
+                setAndPersist(this.preferences, "streamMode", result.streamMode)
+                setAndPersist(this.preferences, "streamScreenCapture", result.streamScreenCapture)
+                setAndPersist(this.preferences, "streamTarget", result.streamTarget)
+                setAndPersist(this.preferences, "streamIsVtuberMode", result.streamIsVtuberMode)
+                setAndPersist(this.preferences, "isNicoNicoMode", result.isNicoNicoMode)
+                setAndPersist(this.preferences, "streamScreenCaptureAudio", result.streamScreenCaptureAudio)
+                setAndPersist(this.preferences, "streamEchoCancellation", result.streamEchoCancellation)
+                setAndPersist(this.preferences, "streamNoiseSuppression", result.streamNoiseSuppression)
+                setAndPersist(this.preferences, "streamAutoGain", result.streamAutoGain)
 
-            this.isStreamPopupOpen = false;
-            this.wantToStream = false;
-            this.streamSlotIdInWhichIWantToStream = null;
+                this.showDeviceSelectionPopup()
+            } else
+            {
+                this.wantToStream = false;
+                this.streamSlotIdInWhichIWantToStream = null;
+            }
         },
         changeStreamVolume(streamSlotId: number, event: Event)
         {

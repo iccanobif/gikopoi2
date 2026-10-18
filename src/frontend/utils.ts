@@ -1,4 +1,5 @@
 import type { ClientRoom, ImageLayer, DeviceInfo } from './types'
+import mitt from "mitt";
 
 export const BLOCK_WIDTH = 80
 export const BLOCK_HEIGHT = 40
@@ -628,3 +629,11 @@ export function playSound(elementId: string, volume: number = 1): void
 }
 
 export const debouncedPlaySound = debounceWithImmediateExecution(playSound, 150)
+
+export const emitter = mitt()
+
+export function showAlert(message: string): void
+{
+    console.log("showAlert:", message)
+    emitter.emit("show-alert", message);
+}

@@ -133,3 +133,16 @@ export interface VideoContainer extends HTMLElement
 {
     originalPreviousSibling: HTMLElement | null
 }
+
+export interface OutboundStreamSettings {
+    streamMode: StreamMode
+    streamScreenCapture: boolean
+    streamTarget: StreamTarget
+    streamIsVtuberMode: boolean
+    isNicoNicoMode: boolean
+    displayAdvancedStreamSettings: boolean
+    streamScreenCaptureAudio: boolean
+    streamEchoCancellation: boolean
+    streamNoiseSuppression: boolean
+    streamAutoGain: boolean
+}
