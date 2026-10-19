@@ -335,7 +335,7 @@
                             <button :id="'start-video-streaming-button-' + index"
                                 v-if="!streamSlot.isActive && !wantToStream
                                       && streamSlotIdInWhichIWantToStream == null"
-                                v-on:click="openStreamPopup(index)">
+                                v-on:click="openOutboundStreamSettingsPopup(index)">
                                 {{ $t("ui.button_stream_start") }}
                             </button>
                             <button :id="'stop-streaming-button-' + index"
@@ -404,7 +404,6 @@
                     </template>
                 </div>
 
-
                 <rula-popup
                     :is-open="isRulaPopupOpen"
                     :area-id="preferences.areaId"
@@ -430,24 +429,21 @@
                     @unignore-user="unignoreUser"
                     @block-user="blockUser"></user-list-popup>
 
-
-                <stream-popup
-                    :is-open="isStreamPopupOpen"
+                <outbound-stream-settings-popup
+                    ref="outboundStreamSettingsPopup"
                     :waiting-for-device-permission="waitingForDevicePermission"
-                    :preferences="preferences"
-                    @close="closeStreamPopup"
-                    @start="showDeviceSelectionPopup"></stream-popup>
+                    :preferences="preferences"></outbound-stream-settings-popup>
 
                 <preferences-popup
                     :is-open="isPreferencesPopupOpen"
                     :preferences="preferences"
                     :notification-permissions-granted="notificationPermissionsGranted"
+                    :room-session="roomSession"
                     @close="closePreferencesPopup"
                     @ui-theme-changed="handleUiTheme"
                     @language-changed="languagePreferenceChanged"
                     @enable-tts-changed="handleEnableTextToSpeech"
                     @tts-voice-changed="changeVoice"
-                    @clear-log="clearLog"
                     @notifications-changed="handleShowNotifications"
                     @mention-sound-changed="handleNameMentionSoundEnabled"
                     @mention-pattern-changed="handleCustomMentionSoundPattern"
@@ -457,12 +453,7 @@
                     @low-quality-changed="handleLowQualityEnabled"
                     @idle-animation-changed="handleIdleAnimationDisabled"></preferences-popup>
 
-                <dialog-popup
-                    :is-open="isDialogPopupOpen"
-                    :title="dialogPopupTitle"
-                    :message="dialogPopupMessage"
-                    :buttons="dialogPopupButtons"
-                    @close="closeDialog"></dialog-popup>
+                <dialog-popup ref="dialogPopup"></dialog-popup>
 
                 <device-selection-popup
                     :is-open="isDeviceSelectionOpen"

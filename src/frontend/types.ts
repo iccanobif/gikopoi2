@@ -68,8 +68,6 @@ export interface PointerState {
     pos: Coordinates
 }
 
-export type PopupCallback = (buttonIndex: number) => void
-
 export interface GikopoipoiPreferences {
     areaId: string
     bubbleOpacity: number
@@ -134,4 +132,17 @@ export interface RTCPeerSlot {
 export interface VideoContainer extends HTMLElement
 {
     originalPreviousSibling: HTMLElement | null
+}
+
+export interface OutboundStreamSettings {
+    streamMode: StreamMode
+    streamScreenCapture: boolean
+    streamTarget: StreamTarget
+    streamIsVtuberMode: boolean
+    isNicoNicoMode: boolean
+    displayAdvancedStreamSettings: boolean
+    streamScreenCaptureAudio: boolean
+    streamEchoCancellation: boolean
+    streamNoiseSuppression: boolean
+    streamAutoGain: boolean
 }

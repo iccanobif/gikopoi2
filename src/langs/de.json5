@@ -22,7 +22,7 @@
         label_stream: "Kanal {{index}}: ",
         label_input: "Eingabe:",
         label_log: "Log:",
-        error_invalid_username: "Benutzernamen länger als 20 Zeichen sind nicht erlaubt.",
+        error_invalid_username: "Benutzernamen mit mehr als 20 Zeichen sind nicht erlaubt.",
 
         button_send: "Senden",
         button_stream_start: "Stream starten",
@@ -31,8 +31,8 @@
         button_stream_drop: "Stream schließen",
         button_stream_mute: "Stummschalten",
         button_stream_unmute: "Stummschaltung aufheben",
-        button_stream_enable_feedback: "Feedback aktivieren",
-        button_stream_disable_feedback: "Feedback deaktivieren",
+        button_stream_enable_feedback: "Rückkopplung aktivieren",
+        button_stream_disable_feedback: "Rückkopplung deaktivieren",
         button_rula: "#rula",
         button_list: "#list",
         button_preferences: "Einstellungen",
@@ -164,6 +164,7 @@
         visible_only_to_specific_users_stream: "Privater Stream",
         double_click_to_move_to_new_tab: "Doppelklicken, um zu einem neuen Tab zu wechseln",
         double_click_to_toggle_fullscreen: "Doppelklicken, um in den Vollbildmodus zu wechseln",
+        voice_changer: "Stimmverzerrer: ",
     },
     msg:
     {
@@ -235,6 +236,7 @@
         bar_giko: "Bar Giko",
         bar_giko2: "Bar Giko Untergeschoss",
         bar_giko_square: "Brunnenplatz",
+        koban: "Polizeiwache",
         densha: "Bahn",
         monachat: "Monachat",
         konbini: "Gemischtwarenladen",
@@ -244,11 +246,11 @@
         irori: "Feuerstelle",
         taiikukan: "Schulturnhalle",
         yaneura: "Dachboden",
-        kyougijou: "Laufbahn",
+        kyougijou: "Sportplatz",
         yojouhan: "Tatami-Zimmer",
         meganeya: "Optiker",
         yane: "Dach",
-        matsuri: "Matsuri",
+        matsuri: "Matsuri"
     },
     area:
     {
