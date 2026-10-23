@@ -92,7 +92,7 @@ import JankenSlot from './components/janken-slot.vue'
 import LoginFooter from './components/change-log.vue'
 import UsernameLabel from './components/username-label.vue'
 
-import LoginPage from './pages/login.vue'
+import LoginPage from './components/login.vue'
 
 import NumericValueControl from './components/numeric-value-control.vue'
 import VoiceChangerControl from './components/voice-changer-control.vue';
