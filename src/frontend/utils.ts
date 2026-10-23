@@ -112,6 +112,50 @@ export async function stringToImageList(imageString: string, isBase64: boolean)
     })
 }
 
+export function parseMessageSpoilers(msg: string): { spoiler: boolean; text: string }[] {
+	let results = [];
+	let insideSpoiler = false;
+	let closingDelimiter = "]]";
+	let spoilerStartIndex = 0;
+	let spoilerEndIndex = 0;
+	for (let i = 0; i < msg.length - 1; i++)
+	{
+		const delimiter = msg.slice(i, i + 2);
+		if (delimiter == "[[" || delimiter == "［［")
+		{
+			if (!insideSpoiler)
+			{
+				results.push({spoiler: false, text: msg.slice(spoilerEndIndex, i)});
+				spoilerStartIndex = i+2;
+				insideSpoiler = true;
+				closingDelimiter = delimiter == "[[" ? "]]" : "］］";
+				i++;
+			}
+		} else if (delimiter == closingDelimiter)
+		{
+			if (insideSpoiler)
+			{
+				results.push({spoiler: true, text: msg.slice(spoilerStartIndex, i)});
+				spoilerEndIndex = i+2;
+				i++;
+			}
+			insideSpoiler = false;
+		}
+
+	}
+	const remainingStart = insideSpoiler ? spoilerStartIndex - 2 : spoilerEndIndex;
+	results.push({ spoiler: false, text: msg.slice(remainingStart) });
+	return results;
+}
+
+export function getMessagePreview(message: string, spoilerPlaceholder: string): string {
+    return parseMessageSpoilers(message)
+        .map(part => part.spoiler
+            ? spoilerPlaceholder
+            : part.text.replace(urlRegex, url => safeDecodeURI(url)))
+        .join("");
+}
+
 // returns "left" and "bottom" positions
 export function calculateRealCoordinates(room: ClientRoom, x: number, y: number): {x: number, y: number}
 {
