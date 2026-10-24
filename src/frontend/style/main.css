@@ -153,6 +153,22 @@ input
     text-decoration: underline;
 }
 
+.message .spoiler-hidden
+{
+    background-color: #222;
+    color: #222;
+    cursor: pointer;
+}
+
+.message .spoiler-hidden *
+{
+    color: inherit;
+}
+
+.message .spoiler-hidden a
+{
+    pointer-events: none;
+}
 .video-container,
 .audio-stream-controls-spinner
 {

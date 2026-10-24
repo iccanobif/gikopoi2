@@ -64,9 +64,8 @@ import {
     BLOCK_WIDTH,
     BLOCK_HEIGHT,
     logToServer,
-    safeDecodeURI,
+    getMessagePreview,
     debounceWithImmediateExecution,
-    urlRegex,
     AudioProcessor,
     getFormattedCurrentDate,
     requestNotificationPermission,
@@ -83,6 +82,7 @@ import {
     debouncedPlaySound,
     emitter,
     showAlert,
+	parseMessageSpoilers
 } from "./utils";
 import { debouncedSpeakTest, speak } from "./tts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
@@ -1039,23 +1039,42 @@ const vueApp = createApp(defineComponent({
                     })
             }
 
+			
             const bodySpan = document.createElement("span");
             bodySpan.className = "message-body";
-            bodySpan.textContent = msg;
-            bodySpan.innerHTML = makeUrlsClickable(bodySpan.innerHTML)
 
-            // Mark mentions
-            if (userId) // Only mark mentions in user messages
-                bodySpan.childNodes.forEach(node =>
-                {
-                    const el = node.nodeType == 3
-                        ? document.createElement("span")
-                        : (node as HTMLElement)
-                        
-                    el.innerHTML = controlCharsToHtml(escapeHTML(this.markMentions(removeControlChars(node.textContent || ''))))
-                    if (node.nodeType == 3)
-                        bodySpan.replaceChild(el, node)
-                })
+			for (const part of parseMessageSpoilers(msg))
+			{
+				const segment = document.createElement("span");
+				segment.textContent = part.text;
+				segment.innerHTML = makeUrlsClickable(segment.innerHTML)
+
+				// Mark mentions inside each segment, preserving link elements.
+				if (userId) // Only mark mentions in user messages
+					segment.childNodes.forEach(node =>
+					{
+						const isTextNode = node.nodeType == Node.TEXT_NODE;
+						const el = isTextNode
+							? document.createElement("span")
+							: (node as HTMLElement);
+
+						el.innerHTML = controlCharsToHtml(escapeHTML(this.markMentions(removeControlChars(node.textContent || ""))));
+						if (isTextNode)
+							segment.replaceChild(el, node);
+					})
+
+				if (part.spoiler)
+				{
+					segment.classList.add("spoiler-hidden");
+					segment.addEventListener("click", (event) => {
+						if (!segment.classList.contains("spoiler-hidden")) return;
+						event.preventDefault();
+						segment.classList.replace("spoiler-hidden", "spoiler-revealed");
+					});
+				}
+
+				bodySpan.appendChild(segment);
+			}
 
             messageDiv.append(timestampSpan);
             messageDiv.append(authorSpan);
@@ -1073,9 +1092,9 @@ const vueApp = createApp(defineComponent({
         {
             const isIgnored = this.ignoredUserIds.has(user.id);
 
-            const plainMsg = msg.replace(urlRegex, s => safeDecodeURI(s));
+            const plainMsg = getMessagePreview(msg, this.$t("spoiler"));
 
-            user.message = plainMsg;
+            user.message = msg;
             if(user.lastMessage != user.message)
             {
                 user.bubbleImage = null;
@@ -1100,7 +1119,9 @@ const vueApp = createApp(defineComponent({
 
             if (this.preferences.enableTextToSpeech)
             {
-                speak(plainMsg, this.preferences.ttsVoiceURI, this.preferences.voiceVolume, user.voicePitch)
+                const speechMsg = getMessagePreview(msg, " ");
+                if (speechMsg.trim())
+                    speak(speechMsg, this.preferences.ttsVoiceURI, this.preferences.voiceVolume, user.voicePitch)
             }
 
             if (user.id != this.myUserID)
@@ -1283,7 +1304,8 @@ const vueApp = createApp(defineComponent({
             const boxMargin = 6;
             const boxPadding = [5, 3];
 
-            let messageLines: string[] | null = user.message.split(/\r\n|\n\r|\n|\r/);
+            let messageLines: string[] | null =
+                getMessagePreview(user.message, this.$t("spoiler")).split(/\r\n|\n\r|\n|\r/);
             let preparedLines: string[] | null = null;
             let textWidth: number | null = null;
 
