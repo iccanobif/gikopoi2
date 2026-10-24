@@ -13,6 +13,7 @@
                         <option value="gikopoi">{{ $t("ui.preferences_ui_theme_gikopoi") }}</option>
                         <option value="shaddox">{{ $t("ui.preferences_ui_theme_shaddox") }}</option>
                         <option value="dark">{{ $t("ui.preferences_ui_theme_dark") }}</option>
+                        <option value="yellow">{{ $t("ui.preferences_ui_theme_yellow") }}</option>
                     </select>
                 </div>
                 <div class="popup-item" v-if="!siteLanguageRestricted">

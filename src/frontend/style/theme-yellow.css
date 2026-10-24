@@ -1,0 +1,183 @@
+#vue-app.theme-yellow,
+#page-container.theme-yellow,
+.theme-yellow#page-container {
+    background-color: #F2DD98;
+    color: #49360F;
+    scrollbar-color: #C49A36 #F2DD98;
+    font-family: Monospace;
+}
+
+/* Also color the page behind the container so the whole window is yellow */
+html:has(.theme-yellow),
+body:has(.theme-yellow) {
+    background-color: #F2DD98;
+    scrollbar-color: #C49A36 #F2DD98;
+}
+
+.theme-yellow h1 a {
+    color: #8A6116;
+}
+
+.theme-yellow .message a {
+    color: #835B12;
+    font-weight: bold;
+}
+
+.theme-yellow .message-author {
+    padding-right: 2px;
+    color: #835B12;
+    font-weight: bold;
+}
+
+.theme-yellow .log-dividers .message {
+    border-color: #B28A31;
+}
+
+.theme-yellow .log-dividers .message:nth-child(even) {
+    background-color: #EAD17D;
+}
+
+.theme-yellow input[type="text"],
+.theme-yellow textarea,
+.theme-yellow #chatLog {
+    background-color: #FFF1C2;
+    color: #49360F;
+    border: 1px solid #B28A31;
+    border-radius: 8px;
+    box-shadow: 2px 2px #A98A3F;
+    padding: 10px;
+}
+
+.theme-yellow #login-page button,
+.theme-yellow #toolbar button,
+.theme-yellow .stream-buttons button,
+.theme-yellow .slot-wrapper button,
+.theme-yellow .popup button {
+    appearance: button;
+    background-color: #E7BF3F;
+    color: #49360F;
+    border: 1px solid #9B7418;
+    border-radius: 4px;
+    box-shadow: #FFF0B8 4px 4px 0 0, #9B7418 4px 4px 0 1px;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12pt;
+    line-height: 20px;
+    margin: 5px;
+    padding: 10px;
+    text-align: center;
+    text-transform: none;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.theme-yellow button:focus {
+    text-decoration: none;
+}
+
+.theme-yellow button:hover {
+    text-decoration: none;
+}
+
+.theme-yellow button:active {
+    box-shadow: rgba(0, 0, 0, .2) 0 3px 5px inset;
+    outline: 0;
+}
+
+.theme-yellow button:not([disabled]):active {
+    box-shadow: #FFF0B8 2px 2px 0 0, #9B7418 2px 2px 0 1px;
+    transform: translate(2px, 2px);
+}
+
+.theme-yellow .stream-buttons button.red-button,
+.theme-yellow .slot-wrapper button.red-button,
+.theme-yellow .slot-wrapper button.slot-button-highlight {
+    background-color: #F0CB4F;
+    color: #49360F;
+    font-weight: bold;
+}
+
+.theme-yellow .popup {
+    background-color: #FFF0B8;
+    color: #49360F;
+    border-radius: 8px;
+}
+
+.theme-yellow .popup .popup-titlebar {
+    background-color: #E3C45E;
+    color: #49360F;
+}
+
+.theme-yellow .popup th {
+    background-color: #E3C45E;
+    color: #49360F;
+    font-weight: bold;
+}
+
+.theme-yellow .popup-selectable-table tr:hover td {
+    background-color: #E7CC73;
+    color: #49360F;
+}
+
+.theme-yellow .popup-selectable-table tr.popup-row-is-selected td {
+    background-color: #D6B04B;
+    color: #49360F;
+    font-weight: bold;
+}
+
+.theme-yellow .popup-row-is-selected {
+    color: #49360F;
+    font-weight: bold;
+}
+
+/* Arrow buttons: dark icon drawn with a mask, same as before */
+.theme-yellow .arrow-button {
+    position: relative;
+    background-image: none;
+}
+
+.theme-yellow .arrow-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 15px;
+    height: 15px;
+    margin: auto;
+    background-color: #49360F;
+    pointer-events: none;
+    -webkit-mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+}
+
+.theme-yellow .arrow-button-left::before {
+    -webkit-mask-image: url("/north_west_black_24dp.dark.svg");
+    mask-image: url("/north_west_black_24dp.dark.svg");
+}
+
+.theme-yellow .arrow-button-up::before {
+    -webkit-mask-image: url("/north_east_black_24dp.dark.svg");
+    mask-image: url("/north_east_black_24dp.dark.svg");
+}
+
+.theme-yellow .arrow-button-down::before {
+    -webkit-mask-image: url("/south_west_black_24dp.dark.svg");
+    mask-image: url("/south_west_black_24dp.dark.svg");
+}
+
+.theme-yellow .arrow-button-right::before {
+    -webkit-mask-image: url("/south_east_black_24dp.dark.svg");
+    mask-image: url("/south_east_black_24dp.dark.svg");
+}
+
+.theme-yellow hr {
+    border-color: #C49A36;
+    width: 95%;
+}
