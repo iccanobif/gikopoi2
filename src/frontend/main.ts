@@ -104,6 +104,7 @@ import PreferencesPopup from './components/popups/preferences-popup.vue'
 import DeviceSelectionPopup from './components/popups/device-selection-popup.vue'
 import RoomObjectEditor from './components/room-object-editor.vue';
 import { siteAreas } from '../common/site-areas';
+import { registerPopupCloseHandle } from './popup-close-bus';
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -263,15 +264,10 @@ const vueApp = createApp(defineComponent({
             devicePixelRatio: 1 as number,
             canvasObjects: [] as CanvasObject[],
 
-            // rula stuff
-            isRulaPopupOpen: false,
-
             // user list stuff
-            isUserListPopupOpen: false,
             ignoredUserIds: new Set() as IgnoredUserIds,
 
             // preferences stuff
-            isPreferencesPopupOpen: false,
             customMentionRegexObject: null as RegExp | null,
             usernameMentionRegexObject: null as RegExp | null,
 
@@ -354,12 +350,6 @@ const vueApp = createApp(defineComponent({
             {
                 ev.preventDefault()
                 this.isRoomObjectEditorVisible = !this.isRoomObjectEditorVisible
-            }
-            if (ev.code == "Escape")
-            {
-                this.closeRulaPopup()
-                this.closeUserListPopup()
-                this.closePreferencesPopup()
             }
             if (ev.code == "KeyG" && ev.ctrlKey)
             {
@@ -2102,7 +2092,7 @@ const vueApp = createApp(defineComponent({
         {
             this.roomSession.setBubblePosition(position);
         },
-        sendMessageToServer()
+        async sendMessageToServer()
         {
             const inputTextbox = document.getElementById("input-textbox") as HTMLInputElement
 
@@ -2120,18 +2110,18 @@ const vueApp = createApp(defineComponent({
                 return
             }
 
+            inputTextbox.value = "";
             if (message.toLowerCase().trim() == "#rula" || message.trim() == "#ﾙｰﾗ")
-                this.openRulaPopup();
+                await this.openRulaPopup();
             else if (message.trim() == '#ﾘｽﾄ' || message.trim() == '#list')
-                this.openUserListPopup();
+                await this.openUserListPopup();
             else
             {
                 // If the user has already cleared their bubble, avoid sending any more empty messages.
                 if (message || this.users[this.myUserID!].message)
                     this.roomSession.sendMessage(message);
+                inputTextbox.focus()
             }
-            inputTextbox.value = "";
-            inputTextbox.focus()
         },
         registerKeybindings()
         {
@@ -2437,15 +2427,15 @@ const vueApp = createApp(defineComponent({
                 return
             }
         },
-        handleMessageInputKeypress(event: KeyboardEvent)
+        async handleMessageInputKeypress(event: KeyboardEvent)
         {
             if (event.key != "Enter"
                 || (this.preferences.isNewlineOnShiftEnter && event.shiftKey)
                 || (!this.preferences.isNewlineOnShiftEnter && !event.shiftKey))
                 return;
 
-            this.sendMessageToServer();
             event.preventDefault();
+            this.sendMessageToServer();
             return false;
         },
         resetZoom()
@@ -3035,17 +3025,13 @@ const vueApp = createApp(defineComponent({
             if (!roomId) return;
             this.canvasManualOffset = { x: 0, y: 0 };
             this.changeRoom(roomId);
-            this.isRulaPopupOpen = false;
         },
-        closeRulaPopup()
+        async openRulaPopup()
         {
-            this.isRulaPopupOpen = false;
+            const rulaPopup = this.$refs.rulaPopup as any;
+            await rulaPopup.openPopup();
         },
-        openRulaPopup()
-        {
-            this.isRulaPopupOpen = true;
-        },
-        openUserListPopup()
+        async openUserListPopup()
         {
             if (this.getUserListForListPopup().length == 0)
             {
@@ -3053,27 +3039,14 @@ const vueApp = createApp(defineComponent({
             }
             else
             {
-                this.isUserListPopupOpen = true;
-                if (this.roomSession.state.highlightedUserId)
-                {
-                    nextTick(() => {
-                        const element = document.getElementById("user-list-element-" + this.roomSession.state.highlightedUserId)
-                        if (element) element.scrollIntoView({ block: "nearest" })
-                    })
-                }
+                const userListPopup = this.$refs.userListPopup as any;
+                await userListPopup.openPopup();
             }
-        },
-        closeUserListPopup()
-        {
-            this.isUserListPopupOpen = false;
         },
         openPreferencesPopup()
         {
-            this.isPreferencesPopupOpen = true;
-        },
-        closePreferencesPopup()
-        {
-            this.isPreferencesPopupOpen = false;
+            const preferencesPopup = this.$refs.preferencesPopup as any;
+            preferencesPopup.openPopup();
         },
         ignoreUser(userId: string)
         {

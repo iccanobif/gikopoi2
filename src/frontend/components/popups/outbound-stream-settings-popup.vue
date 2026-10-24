@@ -1,6 +1,6 @@
 <template>
     <div class="popup-overlay" v-if="isOpen" v-on:click="cancel()"></div>
-    <fieldset id="outbound-stream-settings-popup" class="popup" v-if="isOpen" :disabled="waitingForDevicePermission" v-on:keydown="handleKeydown">
+    <fieldset id="outbound-stream-settings-popup" class="popup" v-if="isOpen" :disabled="waitingForDevicePermission">
         <div class="popup-titlebar">
             <div class="popup-title">{{ $t("ui.stream_form_title") }}</div>
         </div>
@@ -92,10 +92,11 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, useTemplateRef } from 'vue';
+import { nextTick, onBeforeUnmount, ref, useTemplateRef } from 'vue';
 import { GikopoipoiPreferences, OutboundStreamSettings } from '../../types';
 import { showAlert } from '../../utils';
 import i18next from 'i18next';
+import { registerPopupCloseHandle, unregisterPopupCloseHandle } from '../../popup-close-bus';
 
 type StreamField =
     | 'streamMode'
@@ -154,10 +155,9 @@ function openPopup(): Promise<OutboundStreamSettings | null> {
     outboundStreamSettings.value = getDefaultOutboundStreamSettings();
 
     isOpen.value = true;
+    registerPopupCloseHandle(cancel);
 
     nextTick(() => {
-        console.log("confirmButton", confirmButton);
-        console.log("confirmButton.value", confirmButton.value);
         confirmButton.value?.focus({ focusVisible: true });
     });
 
@@ -166,6 +166,10 @@ function openPopup(): Promise<OutboundStreamSettings | null> {
     });
 }
 
+onBeforeUnmount(() => {
+    unregisterPopupCloseHandle(close)
+})
+
 function cancel() {
     // If there's a native device selection popup open, let's keep the poipoi device selection
     // open and disabled, so that the user is forced to either give permissions or deny them.
@@ -173,6 +177,7 @@ function cancel() {
         return
 
     isOpen.value = false;
+    unregisterPopupCloseHandle(cancel);
 
     if (promiseResolver) {
         promiseResolver(null);
@@ -186,14 +191,6 @@ function confirm() {
     if (promiseResolver) {
         promiseResolver(outboundStreamSettings.value);
         promiseResolver = null;
-    }
-}
-
-function handleKeydown(ev: KeyboardEvent) {
-    if (ev.code === "Escape" && isOpen.value) {
-        // If we let the event propagate, other dialogs would also close.
-        ev.stopPropagation();
-        cancel();
     }
 }
 

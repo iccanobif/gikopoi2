@@ -405,24 +405,21 @@
                 </div>
 
                 <rula-popup
-                    :is-open="isRulaPopupOpen"
+                    ref="rulaPopup"
                     :area-id="preferences.areaId"
                     :my-private-user-id="myPrivateUserID"
-                    :current-room-id="currentRoom ? currentRoom.id : null"
                     :preferences="preferences"
                     :room-session="roomSession"
-                    @close="closeRulaPopup"
                     @rula="rula"></rula-popup>
 
                 <user-list-popup
-                    :is-open="isUserListPopupOpen"
+                    ref="userListPopup"
                     :users="getUserListForListPopup()"
                     :is-streaming="isStreaming()"
                     :stream-target="preferences.streamTarget"
                     :allowed-listener-ids="allowedListenerIDs"
                     :ignored-user-ids="ignoredUserIds"
                     :room-session="roomSession"
-                    @close="closeUserListPopup"
                     @give-stream="giveStreamToUser"
                     @revoke-stream="revokeStreamToUser"
                     @ignore-user="ignoreUser"
@@ -435,11 +432,10 @@
                     :preferences="preferences"></outbound-stream-settings-popup>
 
                 <preferences-popup
-                    :is-open="isPreferencesPopupOpen"
+                    ref="preferencesPopup"
                     :preferences="preferences"
                     :notification-permissions-granted="notificationPermissionsGranted"
                     :room-session="roomSession"
-                    @close="closePreferencesPopup"
                     @ui-theme-changed="handleUiTheme"
                     @language-changed="languagePreferenceChanged"
                     @enable-tts-changed="handleEnableTextToSpeech"

@@ -1,6 +1,6 @@
 <template>
     <div class="popup-overlay" v-if="isOpen" v-on:click="cancel()"></div>
-    <fieldset class="popup" v-if="isOpen" :disabled="isWaitingForDevicePermission" v-on:keydown="handleKeydown">
+    <fieldset class="popup" v-if="isOpen" :disabled="isWaitingForDevicePermission">
         <div class="popup-titlebar">
             <div class="popup-title">{{ $t("ui.device_selection_title") }}</div>
         </div>
@@ -30,10 +30,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, useTemplateRef } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef } from 'vue'
 import type { DeviceInfo, DeviceSelection, GikopoipoiPreferences } from '../../types'
 import { getDeviceList, showAlert } from '../../utils';
 import i18next from 'i18next';
+import { registerPopupCloseHandle, unregisterPopupCloseHandle } from '../../popup-close-bus';
 
 const props = defineProps<{
     preferences: GikopoipoiPreferences
@@ -67,6 +68,7 @@ function openPopup(): Promise<DeviceSelection | null> {
     deviceSelection.value = getDefaultDeviceSelection();
 
     isOpen.value = true
+    registerPopupCloseHandle(cancel);
 
     loadDeviceList(); // Launch asynchronously without await
 
@@ -75,6 +77,10 @@ function openPopup(): Promise<DeviceSelection | null> {
         promiseResolver = resolve
     })
 }
+
+onBeforeUnmount(() => {
+    unregisterPopupCloseHandle(close)
+})
 
 async function loadDeviceList() {
     try
@@ -139,6 +145,8 @@ function cancel() {
     if (isWaitingForDevicePermission.value)
         return;
 
+    unregisterPopupCloseHandle(cancel);
+
     isOpen.value = false
     if (promiseResolver) {
         promiseResolver(null)
@@ -146,17 +154,9 @@ function cancel() {
     }
 }
 
-function handleKeydown(ev: KeyboardEvent) {
-    if (ev.code === "Escape" && isOpen.value) {
-        // If we let the event propagate, other dialogs would also close.
-        ev.stopPropagation();
-        cancel();
-    }
-}
-
 /*
 TODO: fix the following regressions.
-- [ ] A definite solution for the Escape key handling might be to have a dedicated event bus, where the event gets
+- [x] A definite solution for the Escape key handling might be to have a dedicated event bus, where the event gets
       propagated only to the currently active popup, that is to say the last one who registered for the event. (a kind of stack-based approach)
 - [ ] When you confirm() without selecting a device, the alert is shown but if you press Escape, not only the alert
       disappears but we go back to the outbound stream settings popup
