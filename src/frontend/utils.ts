@@ -614,7 +614,6 @@ export async function loadAllSoundEffects(): Promise<void>
 
 export function playSound(elementId: string, volume: number = 1): void
 {
-    console.log("time now", Date.now(), "playing sound", elementId, "with volume", volume)
     const buffer = soundEffectBuffers.get(elementId)
     if (!buffer) return
     const ctx = getSoundEffectContext()
@@ -634,6 +633,5 @@ export const emitter = mitt()
 
 export function showAlert(message: string): void
 {
-    console.log("showAlert:", message)
     emitter.emit("show-alert", message);
 }

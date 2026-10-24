@@ -146,3 +146,8 @@ export interface OutboundStreamSettings {
     streamNoiseSuppression: boolean
     streamAutoGain: boolean
 }
+
+export interface DeviceSelection {
+    selectedAudioDeviceId: string | null
+    selectedVideoDeviceId: string | null
+}

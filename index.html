@@ -405,24 +405,21 @@
                 </div>
 
                 <rula-popup
-                    :is-open="isRulaPopupOpen"
+                    ref="rulaPopup"
                     :area-id="preferences.areaId"
                     :my-private-user-id="myPrivateUserID"
-                    :current-room-id="currentRoom ? currentRoom.id : null"
                     :preferences="preferences"
                     :room-session="roomSession"
-                    @close="closeRulaPopup"
                     @rula="rula"></rula-popup>
 
                 <user-list-popup
-                    :is-open="isUserListPopupOpen"
+                    ref="userListPopup"
                     :users="getUserListForListPopup()"
                     :is-streaming="isStreaming()"
                     :stream-target="preferences.streamTarget"
                     :allowed-listener-ids="allowedListenerIDs"
                     :ignored-user-ids="ignoredUserIds"
                     :room-session="roomSession"
-                    @close="closeUserListPopup"
                     @give-stream="giveStreamToUser"
                     @revoke-stream="revokeStreamToUser"
                     @ignore-user="ignoreUser"
@@ -435,11 +432,10 @@
                     :preferences="preferences"></outbound-stream-settings-popup>
 
                 <preferences-popup
-                    :is-open="isPreferencesPopupOpen"
+                    ref="preferencesPopup"
                     :preferences="preferences"
                     :notification-permissions-granted="notificationPermissionsGranted"
                     :room-session="roomSession"
-                    @close="closePreferencesPopup"
                     @ui-theme-changed="handleUiTheme"
                     @language-changed="languagePreferenceChanged"
                     @enable-tts-changed="handleEnableTextToSpeech"
@@ -456,15 +452,9 @@
                 <dialog-popup ref="dialogPopup"></dialog-popup>
 
                 <device-selection-popup
-                    :is-open="isDeviceSelectionOpen"
-                    :waiting-for-device-permission="waitingForDevicePermission"
-                    :device-list="deviceList"
-                    :selected-audio-device-id="selectedAudioDeviceId"
-                    :selected-video-device-id="selectedVideoDeviceId"
-                    @close="cancelDeviceSelection"
-                    @start="wantToStartStreaming"
-                    @set-audio-device="selectedAudioDeviceId = $event"
-                    @set-video-device="selectedVideoDeviceId = $event"></device-selection-popup>
+                    ref="deviceSelectionPopup"
+                    :preferences="preferences"
+                    ></device-selection-popup>
             </div>
             <div id="logged-out-page" v-if="appState == 'logout'" class="full-screen-page">
                 {{ $t("msg.goodbye") }}

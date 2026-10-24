@@ -85,17 +85,18 @@
             </div>
         </div>
         <div class="popup-buttons">
-            <button v-on:click="confirm()">{{ $t("ui.stream_form_button_stream") }}</button><button
-                v-on:click="cancel()">{{ $t("ui.popup_button_cancel") }}</button>
+            <button v-on:click="confirm()" ref="confirmButton">{{ $t("ui.stream_form_button_stream") }}</button>
+            <button v-on:click="cancel()">{{ $t("ui.popup_button_cancel") }}</button>
         </div>
     </fieldset>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
-import { setAndPersist } from '../../preferences';
+import { nextTick, onBeforeUnmount, ref, useTemplateRef } from 'vue';
 import { GikopoipoiPreferences, OutboundStreamSettings } from '../../types';
 import { showAlert } from '../../utils';
+import i18next from 'i18next';
+import { registerPopupCloseHandle, unregisterPopupCloseHandle } from '../../popup-close-bus';
 
 type StreamField =
     | 'streamMode'
@@ -120,8 +121,10 @@ const emit = defineEmits<{
 }>()
 
 defineExpose({
-    openOutboundStreamSettingsPopup
+    openPopup
 })
+
+const confirmButton = useTemplateRef<HTMLButtonElement>("confirmButton");
 
 function getDefaultOutboundStreamSettings(): OutboundStreamSettings {
     return {
@@ -143,30 +146,38 @@ const outboundStreamSettings = ref<OutboundStreamSettings>(getDefaultOutboundStr
 
 let promiseResolver: ((settings: OutboundStreamSettings | null) => void) | null = null;
 
-function openOutboundStreamSettingsPopup(): Promise<OutboundStreamSettings | null> {
+function openPopup(): Promise<OutboundStreamSettings | null> {
     if (!window.RTCPeerConnection) {
-        showAlert("msg.no_webrtc");
+        showAlert(i18next.t("msg.no_webrtc")); // TODO: Translate this message with i18n
         return Promise.resolve(null);
     }
 
     outboundStreamSettings.value = getDefaultOutboundStreamSettings();
 
     isOpen.value = true;
+    registerPopupCloseHandle(cancel);
+
+    nextTick(() => {
+        confirmButton.value?.focus({ focusVisible: true });
+    });
 
     return new Promise<OutboundStreamSettings | null>((resolve) => {
         promiseResolver = resolve;
     });
 }
 
-function cancel() {
-    // TODO: i guess i need a global store for waitingForDevicePermission (pinia?)
+onBeforeUnmount(() => {
+    unregisterPopupCloseHandle(close)
+})
 
+function cancel() {
     // If there's a native device selection popup open, let's keep the poipoi device selection
     // open and disabled, so that the user is forced to either give permissions or deny them.
     if (props.waitingForDevicePermission)
         return
 
     isOpen.value = false;
+    unregisterPopupCloseHandle(cancel);
 
     if (promiseResolver) {
         promiseResolver(null);
@@ -182,22 +193,6 @@ function confirm() {
         promiseResolver = null;
     }
 }
-
-function handleKeydown(ev: KeyboardEvent) {
-    if (ev.code === "Escape" && isOpen.value) {
-        // If we let the event propagate, other dialogs would also close.
-        ev.stopPropagation();
-        cancel();
-    }
-}
-
-onMounted(() => {
-    document.addEventListener("keydown", handleKeydown);
-});
-
-onUnmounted(() => {
-    document.removeEventListener("keydown", handleKeydown);
-});
 
 function toggleAdvancedSettings() {
     outboundStreamSettings.value.displayAdvancedStreamSettings = !outboundStreamSettings.value.displayAdvancedStreamSettings;

@@ -18,28 +18,15 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, ref } from 'vue';
+import { nextTick, onBeforeUnmount, ref } from 'vue';
+import { registerPopupCloseHandle, unregisterPopupCloseHandle } from '../../popup-close-bus';
 
 const isOpen = ref(false);
 const title = ref('');
 const message = ref('');
 const buttons = ref<string[]>([]);
 
-function handleKeydown(ev: KeyboardEvent) {
-    if (ev.code === "Escape" && isOpen.value) {
-        // If we let the event propagate, other dialogs would also close.
-        ev.stopPropagation();
-        closeDialog(null);
-    }
-}
-
-onMounted(() => {
-    document.addEventListener("keydown", handleKeydown);
-});
-
-onUnmounted(() => {
-    document.removeEventListener("keydown", handleKeydown);
-});
+registerPopupCloseHandle(() => closeDialog(null));
 
 let promiseResolver: ((buttonIndex: number | null) => void) | null = null;
 
@@ -50,6 +37,7 @@ function openDialog(options: {
     callback?: (buttonIndex?: number) => void,
 }): Promise<number | null> {
     isOpen.value = true;
+    registerPopupCloseHandle(cancel);
     title.value = options.title;
     message.value = options.message;
     buttons.value = options.buttons;
@@ -68,12 +56,21 @@ function openDialog(options: {
     });
 }
 
+onBeforeUnmount(() => {
+    unregisterPopupCloseHandle(close)
+})
+
 function closeDialog(buttonIndex: number | null) {
     isOpen.value = false;
+    unregisterPopupCloseHandle(cancel);
     if (promiseResolver) {
         promiseResolver(buttonIndex);
         promiseResolver = null;
     }
+}
+
+function cancel() {
+    closeDialog(null);
 }
 
 defineExpose({
