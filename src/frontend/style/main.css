@@ -160,6 +160,14 @@ input
     cursor: pointer;
 }
 
+.message .spoiler-revealed
+{
+	transition: background-color 0.2s ease, color 0.2s ease;
+	background-color: inherit;
+	color: inherit;
+	cursor: inherit;
+}
+
 .message .spoiler-hidden *
 {
     color: inherit;

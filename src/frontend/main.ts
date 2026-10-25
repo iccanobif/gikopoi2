@@ -995,7 +995,32 @@ const vueApp = createApp(defineComponent({
 
             return newUser;
         },
-        writeMessageToLog(userName: string, msg: string, userId: string | null = null)
+        playMessageAudio(
+            text: string,
+            voicePitch: number | null = null,
+            options: { speechText?: string; playSoundEffect?: boolean } = {}
+        )
+        {
+            const { speechText = text, playSoundEffect = true } = options;
+            if (!text.trim()) return;
+
+            if (playSoundEffect && this.preferences.soundEffectVolume > 0)
+            {
+                if (this.checkIfMentioned(text))
+                    playSound("mention-sound", this.preferences.soundEffectVolume)
+                else if (this.preferences.isMessageSoundEnabled)
+                    playSound("message-sound", this.preferences.soundEffectVolume)
+            }
+
+            if (this.preferences.enableTextToSpeech && speechText.trim())
+                speak(speechText, this.preferences.ttsVoiceURI, this.preferences.voiceVolume, voicePitch)
+        },
+        writeMessageToLog(
+            userName: string,
+            msg: string,
+            userId: string | null = null,
+            voicePitch: number | null = null
+        )
         {
             const chatLog = document.getElementById("chatLog") as HTMLTextAreaElement
             const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
@@ -1070,6 +1095,8 @@ const vueApp = createApp(defineComponent({
 						if (!segment.classList.contains("spoiler-hidden")) return;
 						event.preventDefault();
 						segment.classList.replace("spoiler-hidden", "spoiler-revealed");
+						if (!userId || !this.ignoredUserIds.has(userId))
+							this.playMessageAudio(part.text, voicePitch, { playSoundEffect: false });
 					});
 				}
 
@@ -1092,7 +1119,7 @@ const vueApp = createApp(defineComponent({
         {
             const isIgnored = this.ignoredUserIds.has(user.id);
 
-            const plainMsg = getMessagePreview(msg, this.$t("spoiler"));
+            const plainMsg = getMessagePreview(msg, "████████");
 
             user.message = msg;
             if(user.lastMessage != user.message)
@@ -1105,24 +1132,12 @@ const vueApp = createApp(defineComponent({
 
             if(!user.message) return;
 
-            this.writeMessageToLog(user.name, msg, user.id)
+            this.writeMessageToLog(user.name, msg, user.id, user.voicePitch)
 
             if (isIgnored) return;
 
-            if (this.preferences.soundEffectVolume > 0)
-            {
-                if (this.checkIfMentioned(plainMsg))
-                    playSound("mention-sound", this.preferences.soundEffectVolume)
-                else if (this.preferences.isMessageSoundEnabled)
-                    playSound("message-sound", this.preferences.soundEffectVolume)
-            }
-
-            if (this.preferences.enableTextToSpeech)
-            {
-                const speechMsg = getMessagePreview(msg, " ");
-                if (speechMsg.trim())
-                    speak(speechMsg, this.preferences.ttsVoiceURI, this.preferences.voiceVolume, user.voicePitch)
-            }
+            const speechMsg = getMessagePreview(msg, this.$t("spoiler"));
+            this.playMessageAudio(plainMsg, user.voicePitch, { speechText: speechMsg });
 
             if (user.id != this.myUserID)
                 await this.displayNotification(user.name + ": " + plainMsg, this.getAvatarSpriteForUser(user.id), user.id)
@@ -1304,8 +1319,7 @@ const vueApp = createApp(defineComponent({
             const boxMargin = 6;
             const boxPadding = [5, 3];
 
-            let messageLines: string[] | null =
-                getMessagePreview(user.message, this.$t("spoiler")).split(/\r\n|\n\r|\n|\r/);
+            let messageLines: string[] | null = getMessagePreview(user.message, "████████").split(/\r\n|\n\r|\n|\r/);
             let preparedLines: string[] | null = null;
             let textWidth: number | null = null;
 

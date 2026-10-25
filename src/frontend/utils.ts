@@ -121,14 +121,14 @@ export function parseMessageSpoilers(msg: string): { spoiler: boolean; text: str
 	for (let i = 0; i < msg.length - 1; i++)
 	{
 		const delimiter = msg.slice(i, i + 2);
-		if (delimiter == "[[" || delimiter == "［［")
+		if (delimiter == "[[" || delimiter == "【【")
 		{
 			if (!insideSpoiler)
 			{
 				results.push({spoiler: false, text: msg.slice(spoilerEndIndex, i)});
 				spoilerStartIndex = i+2;
 				insideSpoiler = true;
-				closingDelimiter = delimiter == "[[" ? "]]" : "］］";
+				closingDelimiter = delimiter == "[[" ? "]]" : "】】";
 				i++;
 			}
 		} else if (delimiter == closingDelimiter)
