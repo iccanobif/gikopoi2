@@ -64,9 +64,8 @@ import {
     BLOCK_WIDTH,
     BLOCK_HEIGHT,
     logToServer,
-    safeDecodeURI,
+    getMessagePreview,
     debounceWithImmediateExecution,
-    urlRegex,
     AudioProcessor,
     getFormattedCurrentDate,
     requestNotificationPermission,
@@ -83,6 +82,7 @@ import {
     debouncedPlaySound,
     emitter,
     showAlert,
+    parseMessageSpoilers
 } from "./utils";
 import { debouncedSpeakTest, speak } from "./tts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
@@ -995,7 +995,32 @@ const vueApp = createApp(defineComponent({
 
             return newUser;
         },
-        writeMessageToLog(userName: string, msg: string, userId: string | null = null)
+        playMessageAudio(
+            text: string,
+            voicePitch: number | null = null,
+            options: { speechText?: string; playSoundEffect?: boolean } = {}
+        )
+        {
+            const { speechText = text, playSoundEffect = true } = options;
+            if (!text.trim()) return;
+
+            if (playSoundEffect && this.preferences.soundEffectVolume > 0)
+            {
+                if (this.checkIfMentioned(text))
+                    playSound("mention-sound", this.preferences.soundEffectVolume)
+                else if (this.preferences.isMessageSoundEnabled)
+                    playSound("message-sound", this.preferences.soundEffectVolume)
+            }
+
+            if (this.preferences.enableTextToSpeech && speechText.trim())
+                speak(speechText, this.preferences.ttsVoiceURI, this.preferences.voiceVolume, voicePitch)
+        },
+        writeMessageToLog(
+            userName: string,
+            msg: string,
+            userId: string | null = null,
+            voicePitch: number | null = null
+        )
         {
             const chatLog = document.getElementById("chatLog") as HTMLTextAreaElement
             const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
@@ -1041,21 +1066,41 @@ const vueApp = createApp(defineComponent({
 
             const bodySpan = document.createElement("span");
             bodySpan.className = "message-body";
-            bodySpan.textContent = msg;
-            bodySpan.innerHTML = makeUrlsClickable(bodySpan.innerHTML)
 
-            // Mark mentions
-            if (userId) // Only mark mentions in user messages
-                bodySpan.childNodes.forEach(node =>
+            for (const part of parseMessageSpoilers(msg))
+            {
+                const segment = document.createElement("span");
+                segment.textContent = part.text;
+                segment.innerHTML = makeUrlsClickable(segment.innerHTML)
+
+                // Mark mentions inside each segment, preserving link elements.
+                if (userId) // Only mark mentions in user messages
+                    segment.childNodes.forEach(node =>
+                    {
+                        const isTextNode = node.nodeType == Node.TEXT_NODE;
+                        const el = isTextNode
+                            ? document.createElement("span")
+                            : (node as HTMLElement);
+
+                        el.innerHTML = controlCharsToHtml(escapeHTML(this.markMentions(removeControlChars(node.textContent || ""))));
+                        if (isTextNode)
+                            segment.replaceChild(el, node);
+                    })
+
+                if (part.spoiler)
                 {
-                    const el = node.nodeType == 3
-                        ? document.createElement("span")
-                        : (node as HTMLElement)
-                        
-                    el.innerHTML = controlCharsToHtml(escapeHTML(this.markMentions(removeControlChars(node.textContent || ''))))
-                    if (node.nodeType == 3)
-                        bodySpan.replaceChild(el, node)
-                })
+                    segment.classList.add("spoiler-hidden");
+                    segment.addEventListener("click", (event) => {
+                        if (!segment.classList.contains("spoiler-hidden")) return;
+                        event.preventDefault();
+                        segment.classList.replace("spoiler-hidden", "spoiler-revealed");
+                        if (!userId || !this.ignoredUserIds.has(userId))
+                            this.playMessageAudio(part.text, voicePitch, { playSoundEffect: false });
+                    });
+                }
+
+                bodySpan.appendChild(segment);
+            }
 
             messageDiv.append(timestampSpan);
             messageDiv.append(authorSpan);
@@ -1073,9 +1118,9 @@ const vueApp = createApp(defineComponent({
         {
             const isIgnored = this.ignoredUserIds.has(user.id);
 
-            const plainMsg = msg.replace(urlRegex, s => safeDecodeURI(s));
+            const plainMsg = getMessagePreview(msg, "████████");
 
-            user.message = plainMsg;
+            user.message = msg;
             if(user.lastMessage != user.message)
             {
                 user.bubbleImage = null;
@@ -1086,22 +1131,12 @@ const vueApp = createApp(defineComponent({
 
             if(!user.message) return;
 
-            this.writeMessageToLog(user.name, msg, user.id)
+            this.writeMessageToLog(user.name, msg, user.id, user.voicePitch)
 
             if (isIgnored) return;
 
-            if (this.preferences.soundEffectVolume > 0)
-            {
-                if (this.checkIfMentioned(plainMsg))
-                    playSound("mention-sound", this.preferences.soundEffectVolume)
-                else if (this.preferences.isMessageSoundEnabled)
-                    playSound("message-sound", this.preferences.soundEffectVolume)
-            }
-
-            if (this.preferences.enableTextToSpeech)
-            {
-                speak(plainMsg, this.preferences.ttsVoiceURI, this.preferences.voiceVolume, user.voicePitch)
-            }
+            const speechMsg = getMessagePreview(msg, this.$t("spoiler"));
+            this.playMessageAudio(plainMsg, user.voicePitch, { speechText: speechMsg });
 
             if (user.id != this.myUserID)
                 await this.displayNotification(user.name + ": " + plainMsg, this.getAvatarSpriteForUser(user.id), user.id)
@@ -1283,7 +1318,7 @@ const vueApp = createApp(defineComponent({
             const boxMargin = 6;
             const boxPadding = [5, 3];
 
-            let messageLines: string[] | null = user.message.split(/\r\n|\n\r|\n|\r/);
+            let messageLines: string[] | null = getMessagePreview(user.message, "████████").split(/\r\n|\n\r|\n|\r/);
             let preparedLines: string[] | null = null;
             let textWidth: number | null = null;
 
