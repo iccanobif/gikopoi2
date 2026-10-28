@@ -113,30 +113,28 @@ export async function stringToImageList(imageString: string, isBase64: boolean)
 }
 
 export function parseMessageSpoilers(msg: string): { spoiler: boolean; text: string }[] {
-    let results = [];
+    const results = [];
     let insideSpoiler = false;
-    let closingDelimiter = "]]";
     let spoilerStartIndex = 0;
     let spoilerEndIndex = 0;
     for (let i = 0; i < msg.length - 1; i++)
     {
-        const delimiter = msg.slice(i, i + 2);
-        if (delimiter == "[[" || delimiter == "【【")
+        const currentSlice = msg.slice(i, i + 2);
+        if (currentSlice == "[[")
         {
             if (!insideSpoiler)
             {
                 results.push({spoiler: false, text: msg.slice(spoilerEndIndex, i)});
-                spoilerStartIndex = i+2;
+                spoilerStartIndex = i + 2;
                 insideSpoiler = true;
-                closingDelimiter = delimiter == "[[" ? "]]" : "】】";
                 i++;
             }
-        } else if (delimiter == closingDelimiter)
+        } else if (currentSlice == "]]")
         {
             if (insideSpoiler)
             {
                 results.push({spoiler: true, text: msg.slice(spoilerStartIndex, i)});
-                spoilerEndIndex = i+2;
+                spoilerEndIndex = i + 2;
                 i++;
             }
             insideSpoiler = false;
