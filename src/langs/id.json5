@@ -3,6 +3,7 @@
     lang_sort_key: "Indonesia",
     default_user_name: "Anonim",
     message_colon: ": ",
+    spoiler: "spoiler",
     test: "tes",
     ui:
     {

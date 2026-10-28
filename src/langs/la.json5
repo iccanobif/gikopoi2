@@ -3,6 +3,7 @@
     lang_sort_key: "Latina",
     default_user_name: "Nomen nescio",
     message_colon: ": ",
+    spoiler: "spoiler",
     test: "Probatio",
     ui:
     {
