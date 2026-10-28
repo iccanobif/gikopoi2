@@ -82,7 +82,7 @@ import {
     debouncedPlaySound,
     emitter,
     showAlert,
-	parseMessageSpoilers
+    parseMessageSpoilers
 } from "./utils";
 import { debouncedSpeakTest, speak } from "./tts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
@@ -1064,44 +1064,43 @@ const vueApp = createApp(defineComponent({
                     })
             }
 
-			
             const bodySpan = document.createElement("span");
             bodySpan.className = "message-body";
 
-			for (const part of parseMessageSpoilers(msg))
-			{
-				const segment = document.createElement("span");
-				segment.textContent = part.text;
-				segment.innerHTML = makeUrlsClickable(segment.innerHTML)
+            for (const part of parseMessageSpoilers(msg))
+            {
+                const segment = document.createElement("span");
+                segment.textContent = part.text;
+                segment.innerHTML = makeUrlsClickable(segment.innerHTML)
 
-				// Mark mentions inside each segment, preserving link elements.
-				if (userId) // Only mark mentions in user messages
-					segment.childNodes.forEach(node =>
-					{
-						const isTextNode = node.nodeType == Node.TEXT_NODE;
-						const el = isTextNode
-							? document.createElement("span")
-							: (node as HTMLElement);
+                // Mark mentions inside each segment, preserving link elements.
+                if (userId) // Only mark mentions in user messages
+                    segment.childNodes.forEach(node =>
+                    {
+                        const isTextNode = node.nodeType == Node.TEXT_NODE;
+                        const el = isTextNode
+                            ? document.createElement("span")
+                            : (node as HTMLElement);
 
-						el.innerHTML = controlCharsToHtml(escapeHTML(this.markMentions(removeControlChars(node.textContent || ""))));
-						if (isTextNode)
-							segment.replaceChild(el, node);
-					})
+                        el.innerHTML = controlCharsToHtml(escapeHTML(this.markMentions(removeControlChars(node.textContent || ""))));
+                        if (isTextNode)
+                            segment.replaceChild(el, node);
+                    })
 
-				if (part.spoiler)
-				{
-					segment.classList.add("spoiler-hidden");
-					segment.addEventListener("click", (event) => {
-						if (!segment.classList.contains("spoiler-hidden")) return;
-						event.preventDefault();
-						segment.classList.replace("spoiler-hidden", "spoiler-revealed");
-						if (!userId || !this.ignoredUserIds.has(userId))
-							this.playMessageAudio(part.text, voicePitch, { playSoundEffect: false });
-					});
-				}
+                if (part.spoiler)
+                {
+                    segment.classList.add("spoiler-hidden");
+                    segment.addEventListener("click", (event) => {
+                        if (!segment.classList.contains("spoiler-hidden")) return;
+                        event.preventDefault();
+                        segment.classList.replace("spoiler-hidden", "spoiler-revealed");
+                        if (!userId || !this.ignoredUserIds.has(userId))
+                            this.playMessageAudio(part.text, voicePitch, { playSoundEffect: false });
+                    });
+                }
 
-				bodySpan.appendChild(segment);
-			}
+                bodySpan.appendChild(segment);
+            }
 
             messageDiv.append(timestampSpan);
             messageDiv.append(authorSpan);
