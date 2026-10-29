@@ -25,7 +25,7 @@
   "dependencies": {
     "2ch-trip": "^4.0.0",
     "@vitejs/plugin-vue": "^6.0.8",
-    "compression": "^1.8.1",
+    "compression": "^1.8.2",
     "cookie-parser": "^1.4.7",
     "cross-env": "^10.1.0",
     "dayjs": "^1.11.21",
