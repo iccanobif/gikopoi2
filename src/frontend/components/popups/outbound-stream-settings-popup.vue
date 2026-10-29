@@ -148,7 +148,7 @@ let promiseResolver: ((settings: OutboundStreamSettings | null) => void) | null 
 
 function openPopup(): Promise<OutboundStreamSettings | null> {
     if (!window.RTCPeerConnection) {
-        showAlert(i18next.t("msg.no_webrtc")); // TODO: Translate this message with i18n
+        showAlert(i18next.t("msg.no_webrtc"));
         return Promise.resolve(null);
     }
 
