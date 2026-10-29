@@ -25,6 +25,7 @@ import type {
     IgnoredUserIds,
     OutboundStreamSettings,
     DeviceSelection,
+    OutboudStreamSettingPopupOutput,
 } from './types'
 import type { Character } from './character'
 
@@ -3093,7 +3094,7 @@ const vueApp = createApp(defineComponent({
             this.wantToStream = true;
 
             const outboundStreamSettingsPopup = this.$refs.outboundStreamSettingsPopup as any;
-            const result = (await outboundStreamSettingsPopup.openPopup()) as OutboundStreamSettings | null;
+            const result = (await outboundStreamSettingsPopup.openPopup()) as OutboudStreamSettingPopupOutput | null;
 
             if (!result)
             {
@@ -3104,19 +3105,19 @@ const vueApp = createApp(defineComponent({
             // Handle the case when the user successfully started streaming
             // set and persist all outbound stream settings
             // TODO: Add OutboundStreamSettings to preferences instead of setting each property individually
-            setAndPersist(this.preferences, "displayAdvancedStreamSettings", result.displayAdvancedStreamSettings)
-            setAndPersist(this.preferences, "streamMode", result.streamMode)
-            setAndPersist(this.preferences, "streamScreenCapture", result.streamScreenCapture)
-            setAndPersist(this.preferences, "streamTarget", result.streamTarget)
-            setAndPersist(this.preferences, "streamIsVtuberMode", result.streamIsVtuberMode)
-            setAndPersist(this.preferences, "isNicoNicoMode", result.isNicoNicoMode)
-            setAndPersist(this.preferences, "streamScreenCaptureAudio", result.streamScreenCaptureAudio)
-            setAndPersist(this.preferences, "streamEchoCancellation", result.streamEchoCancellation)
-            setAndPersist(this.preferences, "streamNoiseSuppression", result.streamNoiseSuppression)
-            setAndPersist(this.preferences, "streamAutoGain", result.streamAutoGain)
+            setAndPersist(this.preferences, "displayAdvancedStreamSettings", result.outboundStreamSettings.displayAdvancedStreamSettings)
+            setAndPersist(this.preferences, "streamMode", result.outboundStreamSettings.streamMode)
+            setAndPersist(this.preferences, "streamScreenCapture", result.outboundStreamSettings.streamScreenCapture)
+            setAndPersist(this.preferences, "streamTarget", result.outboundStreamSettings.streamTarget)
+            setAndPersist(this.preferences, "streamIsVtuberMode", result.outboundStreamSettings.streamIsVtuberMode)
+            setAndPersist(this.preferences, "isNicoNicoMode", result.outboundStreamSettings.isNicoNicoMode)
+            setAndPersist(this.preferences, "streamScreenCaptureAudio", result.outboundStreamSettings.streamScreenCaptureAudio)
+            setAndPersist(this.preferences, "streamEchoCancellation", result.outboundStreamSettings.streamEchoCancellation)
+            setAndPersist(this.preferences, "streamNoiseSuppression", result.outboundStreamSettings.streamNoiseSuppression)
+            setAndPersist(this.preferences, "streamAutoGain", result.outboundStreamSettings.streamAutoGain)
 
             const deviceSelectionPopup = this.$refs.deviceSelectionPopup as any;
-            const deviceSelectionResult = (await deviceSelectionPopup.openPopup() as DeviceSelection | null);
+            const deviceSelectionResult = (await deviceSelectionPopup.openPopup(result.deviceList) as DeviceSelection | null);
 
             if (!deviceSelectionResult)
             {

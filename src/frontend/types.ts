@@ -147,6 +147,11 @@ export interface OutboundStreamSettings {
     streamAutoGain: boolean
 }
 
+export interface OutboudStreamSettingPopupOutput {
+    outboundStreamSettings: OutboundStreamSettings
+    deviceList: DeviceInfo[]
+}
+
 export interface DeviceSelection {
     selectedAudioDeviceId: string | null
     selectedVideoDeviceId: string | null

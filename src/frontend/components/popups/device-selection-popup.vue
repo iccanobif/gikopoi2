@@ -1,6 +1,6 @@
 <template>
     <div class="popup-overlay" v-if="isOpen" v-on:click="cancel()"></div>
-    <fieldset class="popup" v-if="isOpen" :disabled="isWaitingForDevicePermission">
+    <fieldset class="popup" v-if="isOpen">
         <div class="popup-titlebar">
             <div class="popup-title">{{ $t("ui.device_selection_title") }}</div>
         </div>
@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef } from 'vue'
 import type { DeviceInfo, DeviceSelection, GikopoipoiPreferences } from '../../types'
-import { getDeviceList, showAlert } from '../../utils';
+import { showAlert } from '../../utils';
 import i18next from 'i18next';
 import { registerPopupCloseHandle, unregisterPopupCloseHandle } from '../../popup-close-bus';
 
@@ -47,7 +47,6 @@ defineExpose({
 const isOpen = ref(false);
 const deviceList = ref<DeviceInfo[]>([]);
 const deviceSelection = ref<DeviceSelection>(getDefaultDeviceSelection());
-const isWaitingForDevicePermission = ref(false);
 
 const confirmButton = useTemplateRef<HTMLButtonElement>("confirmButton");
 
@@ -64,38 +63,16 @@ function getDefaultDeviceSelection(): DeviceSelection {
     }
 }
 
-function openPopup(): Promise<DeviceSelection | null> {
+function openPopup(deviceListParam: DeviceInfo[]): Promise<DeviceSelection | null> {
     deviceSelection.value = getDefaultDeviceSelection();
+    deviceList.value = deviceListParam;
 
     isOpen.value = true
     registerPopupCloseHandle(cancel);
 
-    loadDeviceList(); // Launch asynchronously without await
-
-
-    return new Promise<DeviceSelection | null>((resolve) => {
-        promiseResolver = resolve
-    })
-}
-
-onBeforeUnmount(() => {
-    unregisterPopupCloseHandle(close)
-})
-
-async function loadDeviceList() {
     try
     {
-        const withVideo = props.preferences.streamMode != "sound" && !props.preferences.streamScreenCapture;
-        const withSound = props.preferences.streamMode == "sound"
-            || (props.preferences.streamMode == "video_sound" && !(props.preferences.streamScreenCapture && props.preferences.streamScreenCaptureAudio));
-
-        isWaitingForDevicePermission.value = true;
-        deviceList.value = await getDeviceList(withSound, withVideo)
-        isWaitingForDevicePermission.value = false;
-
         // Automatically select device if there is only one of its kind
-        // const audioDevices = deviceList.value.filter(d => d.type == "audioinput")
-        // const videoDevices = deviceList.value.filter(d => d.type == "videoinput")
         if (audioDevices.value.length == 1)
             deviceSelection.value.selectedAudioDeviceId = audioDevices.value[0].id
         if (videoDevices.value.length == 1)
@@ -117,9 +94,20 @@ async function loadDeviceList() {
     catch (err) {
         console.error(err)
         showAlert(i18next.t("msg.error_obtaining_media"));
-        isWaitingForDevicePermission.value = false;
         cancel()
     }
+
+    return new Promise<DeviceSelection | null>((resolve) => {
+        promiseResolver = resolve
+    })
+}
+
+onBeforeUnmount(() => {
+    unregisterPopupCloseHandle(close)
+})
+
+async function loadDeviceList() {
+
 }
 
 function confirm() {
@@ -140,11 +128,6 @@ function confirm() {
 }
 
 function cancel() {
-    // If there's a native device selection popup open, let's keep the poipoi device selection
-    // open and disabled, so that the user is forced to either give permissions or deny them.
-    if (isWaitingForDevicePermission.value)
-        return;
-
     unregisterPopupCloseHandle(cancel);
 
     isOpen.value = false
@@ -158,9 +141,6 @@ function cancel() {
 TODO: fix the following regressions.
 - [ ] after confirming i always get a msg.start_stream_stream_slot_does_not_exist error
     can reproduce only if i confirm with no selected devices, hit esc and then try to confirm again (with devices selected).
-- [ ] when moving from ouotbound stream settings popup to device selection, the device fetch is executed while displaying the device selection popup,
-      displaying in the meanwhile an out-of-date device list. Also, the first time you open the device selection popup, the device list is empty 
-      and looks very bad.
 - [ ] The second time i stream, it doesn't remember the previously selected devices
 */
 
