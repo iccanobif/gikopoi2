@@ -156,10 +156,6 @@ function cancel() {
 
 /*
 TODO: fix the following regressions.
-- [x] A definite solution for the Escape key handling might be to have a dedicated event bus, where the event gets
-      propagated only to the currently active popup, that is to say the last one who registered for the event. (a kind of stack-based approach)
-- [ ] When you confirm() without selecting a device, the alert is shown but if you press Escape, not only the alert
-      disappears but we go back to the outbound stream settings popup
 - [ ] after confirming i always get a msg.start_stream_stream_slot_does_not_exist error
     can reproduce only if i confirm with no selected devices, hit esc and then try to confirm again (with devices selected).
 - [ ] when moving from ouotbound stream settings popup to device selection, the device fetch is executed while displaying the device selection popup,
