@@ -56,10 +56,9 @@ const videoDevices = computed(() => deviceList.value.filter(d => d.type == 'vide
 let promiseResolver: ((value: DeviceSelection | null) => void) | null = null
 
 function getDefaultDeviceSelection(): DeviceSelection {
-    // TODO: Remember device selection through local storage.
     return {
-        selectedAudioDeviceId: null,
-        selectedVideoDeviceId: null,
+        selectedAudioDeviceId: props.preferences.selectedAudioDeviceId,
+        selectedVideoDeviceId: props.preferences.selectedVideoDeviceId,
     }
 }
 
@@ -106,10 +105,6 @@ onBeforeUnmount(() => {
     unregisterPopupCloseHandle(close)
 })
 
-async function loadDeviceList() {
-
-}
-
 function confirm() {
 
     // Validate device selection
@@ -136,11 +131,6 @@ function cancel() {
         promiseResolver = null
     }
 }
-
-/*
-TODO: fix the following regressions.
-- [ ] The second time i stream, it doesn't remember the previously selected devices
-*/
 
 </script>
 

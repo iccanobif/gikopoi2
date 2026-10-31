@@ -23,7 +23,6 @@ import type {
     CanvasObject,
     VideoContainer,
     IgnoredUserIds,
-    OutboundStreamSettings,
     DeviceSelection,
     OutboudStreamSettingPopupOutput,
 } from './types'
@@ -285,8 +284,6 @@ const vueApp = createApp(defineComponent({
             allowedListenerIDs: new Set() as Set<string>,
 
             // Device selection popup
-            selectedAudioDeviceId: null as string | null,
-            selectedVideoDeviceId: null as string | null,
             waitingForDevicePermission: false,
             appState: getAppState() as 'login' | 'stage' | 'logout' | 'redirect_notice' | 'poop',
 
@@ -2681,7 +2678,7 @@ const vueApp = createApp(defineComponent({
                     echoCancellation: withScreenCaptureAudio && this.preferences.streamEchoCancellation,
                     noiseSuppression: withScreenCaptureAudio && this.preferences.streamNoiseSuppression,
                     autoGainControl: withScreenCaptureAudio && this.preferences.streamAutoGain,
-                    deviceId: withScreenCaptureAudio ? undefined : { exact: this.selectedAudioDeviceId! },
+                    deviceId: withScreenCaptureAudio ? undefined : { exact: this.preferences.selectedAudioDeviceId! },
                 }
 
                 let userMediaPromise = null
@@ -2689,7 +2686,7 @@ const vueApp = createApp(defineComponent({
                     userMediaPromise = navigator.mediaDevices.getUserMedia(
                         {
                             video: (!withVideo || withScreenCapture) ? undefined : {
-                                deviceId: { exact: this.selectedVideoDeviceId! },
+                                deviceId: { exact: this.preferences.selectedVideoDeviceId! },
                             },
                             audio: !withSound ? undefined : audioConstraints
                         }
@@ -3126,11 +3123,8 @@ const vueApp = createApp(defineComponent({
                 return;
             }
             // Handle the case when the user successfully selected devices
-            // TODO: Persist the selected devices in preferences
-            // setAndPersist(this.preferences, "selectedAudioDeviceId", deviceSelectionResult.selectedAudioDeviceId)
-            // setAndPersist(this.preferences, "selectedVideoDeviceId", deviceSelectionResult.selectedVideoDeviceId)
-            this.selectedAudioDeviceId = deviceSelectionResult.selectedAudioDeviceId
-            this.selectedVideoDeviceId = deviceSelectionResult.selectedVideoDeviceId
+            setAndPersist(this.preferences, "selectedAudioDeviceId", deviceSelectionResult.selectedAudioDeviceId)
+            setAndPersist(this.preferences, "selectedVideoDeviceId", deviceSelectionResult.selectedVideoDeviceId)
 
             this.wantToStartStreaming();
         },

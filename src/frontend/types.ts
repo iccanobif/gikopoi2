@@ -103,6 +103,8 @@ export interface GikopoipoiPreferences {
     streamAutoGain: boolean
     streamEchoCancellation: boolean
     streamMode: StreamMode
+    selectedAudioDeviceId: string | null
+    selectedVideoDeviceId: string | null
     streamNoiseSuppression: boolean
     streamScreenCapture: boolean
     streamScreenCaptureAudio: boolean
