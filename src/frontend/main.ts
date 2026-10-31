@@ -3122,7 +3122,7 @@ const vueApp = createApp(defineComponent({
             if (!deviceSelectionResult)
             {
                 // Go back to previous popup (it's a bit like a wizard step)
-                this.openOutboundStreamSettingsPopup();
+                this.openOutboundStreamSettingsPopup(this.streamSlotIdInWhichIWantToStream);
                 return;
             }
             // Handle the case when the user successfully selected devices

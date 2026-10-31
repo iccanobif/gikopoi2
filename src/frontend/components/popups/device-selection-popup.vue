@@ -139,8 +139,6 @@ function cancel() {
 
 /*
 TODO: fix the following regressions.
-- [ ] after confirming i always get a msg.start_stream_stream_slot_does_not_exist error
-    can reproduce only if i confirm with no selected devices, hit esc and then try to confirm again (with devices selected).
 - [ ] The second time i stream, it doesn't remember the previously selected devices
 */
 
