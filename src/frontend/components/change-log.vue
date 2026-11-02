@@ -10,6 +10,7 @@ const { i18next } = useTranslation()
         </div>
         <div class="changelog">
             <h3>更新ログ</h3>
+2026/11/03: ネタバレ防止タグを実施しました（[[spoiler]]でテキストを囲むとネタバレとして扱われます）。<br/>
 2026/10/17: 新しいキャラと部屋を追加しました。<br/>
 2026/09/12: ルーラ画面の表示を速くしました。<br/>
 2026/08/12: 新しいキャラと部屋を追加しました。<br/>
@@ -149,6 +150,7 @@ You must be at least 16 years of age to enter.
         </div>
         <div class="changelog">
             <h3>Change Log</h3>
+2026/11/03: Added spoiler tags (write text as [[spoiler]]).
 2026/10/17: Added a new character and room.<br/>
 2026/09/12: Improved speed of rula popup<br/>
 2026/08/12: Added a new character and room.<br/>
