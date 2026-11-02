@@ -150,7 +150,7 @@ You must be at least 16 years of age to enter.
         </div>
         <div class="changelog">
             <h3>Change Log</h3>
-2026/11/03: Added spoiler tags (write text as [[spoiler]]).
+2026/11/03: Added spoiler tags (write text as [[spoiler]]).<br/>
 2026/10/17: Added a new character and room.<br/>
 2026/09/12: Improved speed of rula popup<br/>
 2026/08/12: Added a new character and room.<br/>
