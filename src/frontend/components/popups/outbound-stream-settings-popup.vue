@@ -204,7 +204,7 @@ async function confirm() {
 
     const includeVideoDevices = outboundStreamSettings.value.streamMode != "sound" && !outboundStreamSettings.value.streamScreenCapture;
     const includeAudioDevices = outboundStreamSettings.value.streamMode == "sound"
-        || (outboundStreamSettings.value.streamMode == "video_sound" && !(outboundStreamSettings.value.streamScreenCapture && props.preferences.streamScreenCaptureAudio));
+        || (outboundStreamSettings.value.streamMode == "video_sound" && !(outboundStreamSettings.value.streamScreenCapture && outboundStreamSettings.value.streamScreenCaptureAudio));
 
     try {
         const deviceList = await getDeviceList(includeAudioDevices, includeVideoDevices)
