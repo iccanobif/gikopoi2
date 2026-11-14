@@ -3148,18 +3148,23 @@ const vueApp = createApp(defineComponent({
             setAndPersist(this.preferences, "streamNoiseSuppression", result.outboundStreamSettings.streamNoiseSuppression)
             setAndPersist(this.preferences, "streamAutoGain", result.outboundStreamSettings.streamAutoGain)
 
-            const deviceSelectionPopup = this.$refs.deviceSelectionPopup as any;
-            const deviceSelectionResult = (await deviceSelectionPopup.openPopup(result.deviceList) as DeviceSelection | null);
-
-            if (!deviceSelectionResult)
+            // No need to select devices if both video and audio are being captured from the screen
+            // (can capture screen audio only if you have also selected screen video).
+            if (!result.outboundStreamSettings.streamScreenCaptureAudio)
             {
-                // Go back to previous popup (it's a bit like a wizard step)
-                this.openOutboundStreamSettingsPopup(this.streamSlotIdInWhichIWantToStream);
-                return;
+                const deviceSelectionPopup = this.$refs.deviceSelectionPopup as any;
+                const deviceSelectionResult = (await deviceSelectionPopup.openPopup(result.deviceList) as DeviceSelection | null);
+
+                if (!deviceSelectionResult)
+                {
+                    // Go back to previous popup (it's a bit like a wizard step)
+                    this.openOutboundStreamSettingsPopup(this.streamSlotIdInWhichIWantToStream);
+                    return;
+                }
+                // Handle the case when the user successfully selected devices
+                setAndPersist(this.preferences, "selectedAudioDeviceId", deviceSelectionResult.selectedAudioDeviceId)
+                setAndPersist(this.preferences, "selectedVideoDeviceId", deviceSelectionResult.selectedVideoDeviceId)
             }
-            // Handle the case when the user successfully selected devices
-            setAndPersist(this.preferences, "selectedAudioDeviceId", deviceSelectionResult.selectedAudioDeviceId)
-            setAndPersist(this.preferences, "selectedVideoDeviceId", deviceSelectionResult.selectedVideoDeviceId)
 
             this.wantToStartStreaming();
         },
