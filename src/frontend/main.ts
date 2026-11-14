@@ -2460,7 +2460,7 @@ const vueApp = createApp(defineComponent({
                 return
             }
         },
-        async handleMessageInputKeypress(event: KeyboardEvent)
+        handleMessageInputKeypress(event: KeyboardEvent)
         {
             if (event.key != "Enter"
                 || (this.preferences.isNewlineOnShiftEnter && event.shiftKey)
@@ -2468,7 +2468,7 @@ const vueApp = createApp(defineComponent({
                 return;
 
             event.preventDefault();
-            this.sendMessageToServer();
+            this.sendMessageToServer(); // fire-and-forget async
             return false;
         },
         resetZoom()
