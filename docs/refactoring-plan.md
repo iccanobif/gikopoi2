@@ -81,6 +81,24 @@ After popup stabilization:
 2. `[not started]` Extract chat section (input, log, toolbar buttons) into a component.
 3. `[not started]` Extract stream section (`#stream-section`) into a component.
 
+#### Stream section
+##### State variables to move from main.ts to component, and that need to be updated by room session
+- streams
+- allowedListenerIDs (this should be owned by room session, i think, as it's read by the canvas rendering code too)
+##### Functions to move
+- [x] onVideoDoubleClick
+- [x] toggleVideoSlotPinStatus
+- [ ] playVideo()
+- [ ] getAvatarSpriteForUser() <- TO BE MOVED TO A SHARED UTIL MODULE
+- [ ] changeStreamVolume()
+- [ ] onPanChanged()
+- [ ] resetPan()
+- [ ] onCompressionChanged()
+- [ ] onGainChanged()
+- [ ] wantToTakeStream()
+- [ ] wantToDropStream()
+- ...and more
+
 ### Phase 5 - Backend
 1. Simplify annual events handling.
 2. Containerize all components of the system for easier deployment and development (it would be particularly great to be able to use local janus instances for dev)

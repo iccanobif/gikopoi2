@@ -21,6 +21,8 @@ export interface ConnectToServerResult {
 // TODO: make createRoomSession() function, so that I can set more stuff in the state to nonullable.
 
 export class RoomSession {
+  // FIXME: it's not very beautiful that now other parts of the code have access to
+  //        the internal state directly, maybe we should provide getter methods instead
   state: {
     users: Users;
     currentRoom: ClientRoom | null;

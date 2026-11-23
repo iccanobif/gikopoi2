@@ -271,15 +271,6 @@ const vueApp = createApp(defineComponent({
             customMentionRegexObject: null as RegExp | null,
             usernameMentionRegexObject: null as RegExp | null,
 
-            // streaming 
-            streams: [] as StreamSlotDto[],
-            clientSideStreamData: [] as { isListenerConnected: boolean, isSeparateTab: boolean }[],
-            mediaStream: null as MediaStream | null,
-            streamSlotIdInWhichIWantToStream: null as number | null,
-            takenStreams: [] as boolean[], // streams taken by me
-            detachedStreamTabs: {} as {[slotId: number]: Window | null}, // key: slot Id
-            slotIsVtuberCharacterJumping: {} as {[slotId: number]: boolean}, // key: slot Id / value: boolean
-
             // stream settings
             allowedListenerIDs: new Set() as Set<string>,
 
@@ -294,7 +285,6 @@ const vueApp = createApp(defineComponent({
                 userCount: 0,
                 streamCount: 0,
             } as Stats,
-            wantToStream: false,
             connectionLost: false,
             connectionRefused: false,
 
@@ -313,10 +303,6 @@ const vueApp = createApp(defineComponent({
             canvasContainerResizeObserver: null as ResizeObserver | null,
 
             lastCoinTossTime: 0, // unix timestamp
-
-            // the key is the slot ID
-            inboundAudioProcessors: {} as {[slotId: number]: AudioProcessor},
-            outboundAudioProcessor: null as AudioProcessor | null,
         }
     },
     provide()
@@ -325,6 +311,7 @@ const vueApp = createApp(defineComponent({
             ignoredUserIds: computed(() => this.ignoredUserIds),
             myUserId: computed(() => this.myUserID),
             outboundAudioProcessor: computed(() => this.outboundAudioProcessor),
+            isUiBackgroundDark: computed(() => this.isUiBackgroundDark)
         }
     },
     mounted()
@@ -3381,22 +3368,6 @@ const vueApp = createApp(defineComponent({
             setAndPersist(this.preferences, "voiceVolume", newValue)
             debouncedSpeakTest(this.preferences.ttsVoiceURI, this.preferences.voiceVolume, i18next)
         },
-        toggleVideoSlotPinStatus(slotId: number) {
-            const videoContainer = document.getElementById('video-container-' + slotId) as HTMLElement
-            videoContainer.classList.toggle("pinned-video")
-            videoContainer.classList.toggle("unpinned-video")
-
-            if (videoContainer.classList.contains("unpinned-video"))
-            {
-                $(videoContainer).draggable()
-            }
-            else
-            {
-                $(videoContainer).draggable("destroy")
-                // Reset 'top' and 'left' styles to snap the container back to its original position
-                videoContainer.setAttribute("style", "")
-            }
-        },
         onUserHighlighted(userId: string | null) {
             const highlightedUserStyle = document.getElementById("highlighted-user-style") as HTMLStyleElement
 
@@ -3512,72 +3483,6 @@ const vueApp = createApp(defineComponent({
             // it's enough to click on the video to make it play again.
             const video = event.target as HTMLVideoElement;
             video.play();
-        },
-        async onVideoDoubleClick(event: MouseEvent, slotId: number)
-        {
-            const video = event.target as HTMLVideoElement;
-            const videoContainer = video.parentElement as VideoContainer
-
-            // If this video was already moved to another tab, doubleclicking on it
-            // will make it fullscreen. Otherwise, move it to a new tab.
-            if (this.clientSideStreamData[slotId].isSeparateTab)
-            {
-                if (videoContainer.ownerDocument.fullscreenElement)
-                {
-                    await videoContainer.ownerDocument.exitFullscreen()
-                }
-                else if (videoContainer.requestFullscreen) // requestFullscreen() not available on safari, try webkitRequestFullscreen() one day
-                {
-                    await videoContainer.requestFullscreen();
-                }
-            }
-            else
-            {
-                // On chromium based browser, for other people's streams, the video
-                // might automatically when it gets moved to another tab and need a user interaction
-                // before it can be started again... Make sure to test for that everytime a change is made to this code.
-                this.clientSideStreamData[slotId].isSeparateTab = true;
-                this.$forceUpdate() // HACK: this is to force vue to rebind the title attribute of the <video> element
-                videoContainer.originalPreviousSibling = videoContainer.previousElementSibling as HTMLElement;
-                const tab = open(window.origin + '/video-tab.html');
-                if (!tab) return // TS quick fix
-                this.detachedStreamTabs[slotId] = tab;
-                const streamSlot = this.streams[slotId];
-                const newTabTitle = this.$t("ui.label_stream", {index: slotId + 1}) + " " + this.users[streamSlot.userId!].name;
-                tab.onload = () => {
-                    tab.document.title = newTabTitle;
-                    tab.document.body.appendChild(videoContainer);
-                    // listen to onunload too for mobile support, android doesn't trigger onbeforeunload
-                    tab.onunload = tab.onbeforeunload = () => {
-                        // this.clientSideStreamData[slotId].isSeparateTab could be false if the stream was dropped while the video was detached
-                        // to a new tab: in that case, streamDrop() forcibly reattaches the video element to the original
-                        // document and closes the tab. In this scenario, there's no need to attempt once more to reattach
-                        // the video again.
-                        // Checking isSeparateTab is also useful to handle correctly browsers that raise both unload 
-                        // and beforeunload events
-                        if (this.clientSideStreamData[slotId].isSeparateTab)
-                        {
-                            this.clientSideStreamData[slotId].isSeparateTab = false;
-                            this.$forceUpdate() // HACK: this is to force vue to rebind the title attribute of the <video> element
-                            if (videoContainer.originalPreviousSibling)
-                                videoContainer.originalPreviousSibling.after(videoContainer);
-                            videoContainer.originalPreviousSibling = null;
-                            this.detachedStreamTabs[slotId] = null;
-
-                            // Restore original width for the niconico messages container (the detached tab
-                            // uses javascript to set its width equal to the one of the <video> element, but in 
-                            // the main page we don't need that).
-                            const niconicoMessagesContainer = videoContainer.getElementsByClassName("nico-nico-messages-container")[0] as HTMLElement
-                            if (niconicoMessagesContainer)
-                            {
-                                niconicoMessagesContainer.style.width = "100%"
-                                adjustNiconicoMessagesFontSize()
-                            }
-                        }
-                    };
-                    tab.postMessage("adjust-niconico-stuff")
-                }
-            }
         },
         reattachVideoFromOtherTabIfDetached(slotId: number)
         {
