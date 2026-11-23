@@ -88,7 +88,7 @@ After popup stabilization:
 ##### Functions to move
 - [x] onVideoDoubleClick
 - [x] toggleVideoSlotPinStatus
-- [ ] playVideo()
+- [x] playVideo()
 - [ ] getAvatarSpriteForUser() <- TO BE MOVED TO A SHARED UTIL MODULE
 - [ ] changeStreamVolume()
 - [ ] onPanChanged()

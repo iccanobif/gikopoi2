@@ -3476,14 +3476,6 @@ const vueApp = createApp(defineComponent({
             this.roomSession.socket!.emit("user-update-allowed-listener-ids", [...this.allowedListenerIDs]);
             this.isRedrawRequired = true;
         },
-        playVideo(event: MouseEvent)
-        {
-            // When moving the video element to a new tab, chromium based browsers will
-            // automatically pause it and wait for a user interaction. With this function
-            // it's enough to click on the video to make it play again.
-            const video = event.target as HTMLVideoElement;
-            video.play();
-        },
         reattachVideoFromOtherTabIfDetached(slotId: number)
         {
             const tab = this.detachedStreamTabs[slotId]

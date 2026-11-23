@@ -310,5 +310,14 @@ function toggleVideoSlotPinStatus(slotId: number) {
     }
 }
 
+function playVideo(event: MouseEvent)
+{
+    // When moving the video element to a new tab, chromium based browsers will
+    // automatically pause it and wait for a user interaction. With this function
+    // it's enough to click on the video to make it play again.
+    const video = event.target as HTMLVideoElement;
+    video.play();
+}
+
 
 </script>
