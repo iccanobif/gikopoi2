@@ -284,7 +284,6 @@ const vueApp = createApp(defineComponent({
             allowedListenerIDs: new Set() as Set<string>,
 
             // Device selection popup
-            waitingForDevicePermission: false,
             appState: getAppState() as 'login' | 'stage' | 'logout' | 'redirect_notice' | 'poop',
 
             enableGridNumbers: false,
@@ -2735,13 +2734,9 @@ const vueApp = createApp(defineComponent({
                             audio: !withScreenCaptureAudio ? undefined : audioConstraints
                         });
 
-                this.waitingForDevicePermission = true
-
                 // I need to use Promise.allSettled() because the browser needs to be convinced that both getDisplayMedia()
                 // and getUserMedia() were initiated by a user action.
                 const promiseResults = await Promise.allSettled([userMediaPromise, screenMediaPromise])
-
-                this.waitingForDevicePermission = false
 
                 const rejectedResult = promiseResults.find(r => r.status == "rejected") as PromiseRejectedResult // type needed for typescript to know about the reason property
                 if (rejectedResult)
@@ -2883,7 +2878,6 @@ const vueApp = createApp(defineComponent({
                 this.wantToStream = false;
                 this.mediaStream = null;
                 this.streamSlotIdInWhichIWantToStream = null;
-                this.waitingForDevicePermission = false;
             }
         },
         setupRtcPeerSlot(slotId: number)
