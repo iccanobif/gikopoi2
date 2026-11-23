@@ -103,6 +103,8 @@ export interface GikopoipoiPreferences {
     streamAutoGain: boolean
     streamEchoCancellation: boolean
     streamMode: StreamMode
+    selectedAudioDeviceId: string | null
+    selectedVideoDeviceId: string | null
     streamNoiseSuppression: boolean
     streamScreenCapture: boolean
     streamScreenCaptureAudio: boolean
@@ -132,4 +134,27 @@ export interface RTCPeerSlot {
 export interface VideoContainer extends HTMLElement
 {
     originalPreviousSibling: HTMLElement | null
+}
+
+export interface OutboundStreamSettings {
+    streamMode: StreamMode
+    streamScreenCapture: boolean
+    streamTarget: StreamTarget
+    streamIsVtuberMode: boolean
+    isNicoNicoMode: boolean
+    displayAdvancedStreamSettings: boolean
+    streamScreenCaptureAudio: boolean
+    streamEchoCancellation: boolean
+    streamNoiseSuppression: boolean
+    streamAutoGain: boolean
+}
+
+export interface OutboudStreamSettingPopupOutput {
+    outboundStreamSettings: OutboundStreamSettings
+    deviceList: DeviceInfo[]
+}
+
+export interface DeviceSelection {
+    selectedAudioDeviceId: string | null
+    selectedVideoDeviceId: string | null
 }

@@ -350,7 +350,7 @@ A reasonable split would be to keep a **single stage/root container** as the sou
   - `ChatLogSection`
   - `StreamsSection`
   - `UserListPopup`
-  - other popups (`PreferencesPopup`, `StreamPopup`, `RulaPopup`, etc.)
+  - other popups (`PreferencesPopup`, `OutboundStreamSettingsPopup`, `RulaPopup`, etc.)
 
 The key idea is:
 
@@ -445,7 +445,7 @@ For preferences specifically, the current project convention should be preserved
 - `stop-stream`
 - `take-stream`
 - `drop-stream`
-- `open-stream-popup`.
+- `open-outbound-stream-settings-popup`.
 
 #### `ToolbarSection`
 

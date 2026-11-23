@@ -1,4 +1,5 @@
 import type { ClientRoom, ImageLayer, DeviceInfo } from './types'
+import mitt from "mitt";
 
 export const BLOCK_WIDTH = 80
 export const BLOCK_HEIGHT = 40
@@ -109,6 +110,48 @@ export async function stringToImageList(imageString: string, isBase64: boolean)
             reject(exception)
         }
     })
+}
+
+export function parseMessageSpoilers(msg: string): { spoiler: boolean; text: string }[] {
+    const results = [];
+    let insideSpoiler = false;
+    let spoilerStartIndex = 0;
+    let spoilerEndIndex = 0;
+    for (let i = 0; i < msg.length - 1; i++)
+    {
+        const currentSlice = msg.slice(i, i + 2);
+        if (currentSlice == "[[")
+        {
+            if (!insideSpoiler)
+            {
+                results.push({spoiler: false, text: msg.slice(spoilerEndIndex, i)});
+                spoilerStartIndex = i + 2;
+                insideSpoiler = true;
+                i++;
+            }
+        } else if (currentSlice == "]]")
+        {
+            if (insideSpoiler)
+            {
+                results.push({spoiler: true, text: msg.slice(spoilerStartIndex, i)});
+                spoilerEndIndex = i + 2;
+                i++;
+            }
+            insideSpoiler = false;
+        }
+
+    }
+    const remainingStart = insideSpoiler ? spoilerStartIndex - 2 : spoilerEndIndex;
+    results.push({ spoiler: false, text: msg.slice(remainingStart) });
+    return results;
+}
+
+export function getMessagePreview(message: string, spoilerPlaceholder: string): string {
+    return parseMessageSpoilers(message)
+        .map(part => part.spoiler
+            ? spoilerPlaceholder
+            : part.text.replace(urlRegex, url => safeDecodeURI(url)))
+        .join("");
 }
 
 // returns "left" and "bottom" positions
@@ -613,7 +656,6 @@ export async function loadAllSoundEffects(): Promise<void>
 
 export function playSound(elementId: string, volume: number = 1): void
 {
-    console.log("time now", Date.now(), "playing sound", elementId, "with volume", volume)
     const buffer = soundEffectBuffers.get(elementId)
     if (!buffer) return
     const ctx = getSoundEffectContext()
@@ -628,3 +670,10 @@ export function playSound(elementId: string, volume: number = 1): void
 }
 
 export const debouncedPlaySound = debounceWithImmediateExecution(playSound, 150)
+
+export const emitter = mitt()
+
+export function showAlert(message: string): void
+{
+    emitter.emit("show-alert", message);
+}

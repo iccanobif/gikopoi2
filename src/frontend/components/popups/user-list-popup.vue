@@ -1,5 +1,5 @@
 <template>
-    <div class="popup-overlay" v-if="isOpen" v-on:click="emit('close')"></div>
+    <div class="popup-overlay" v-if="isOpen" v-on:click="closePopup()"></div>
     <div id="user-list-popup" class="popup" v-if="isOpen">
         <div class="popup-titlebar">
             <div class="popup-title">{{ $t("ui.user_list_popup_title", {userCount: users.length}) }}</div>
@@ -60,17 +60,18 @@
             </table>
         </div>
         <div class="popup-buttons">
-            <button v-on:click="emit('close')">{{ $t("ui.user_list_popup_close") }}</button>
+            <button v-on:click="closePopup()">{{ $t("ui.user_list_popup_close") }}</button>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { nextTick, onBeforeUnmount, ref } from 'vue';
 import { RoomSession } from '../../room-session';
 import type { PopupUserList } from '../../types'
+import { registerPopupCloseHandle, unregisterPopupCloseHandle } from '../../popup-close-bus';
 
 const props = defineProps<{
-    isOpen: boolean,
     users: PopupUserList[],
     isStreaming: boolean,
     streamTarget: 'all_room' | 'specific_users',
@@ -79,8 +80,34 @@ const props = defineProps<{
     roomSession: RoomSession,
 }>()
 
+const isOpen = ref(false)
+
+function openPopup() {
+    isOpen.value = true;
+    registerPopupCloseHandle(closePopup)
+    if (props.roomSession.state.highlightedUserId)
+    {
+        nextTick(() => {
+            const element = document.getElementById("user-list-element-" + props.roomSession.state.highlightedUserId)
+            if (element) element.scrollIntoView({ block: "nearest" })
+        })
+    }
+}
+
+function closePopup() {
+    isOpen.value = false;
+    unregisterPopupCloseHandle(closePopup)
+}
+
+defineExpose({
+    openPopup
+})
+
+onBeforeUnmount(() => {
+    unregisterPopupCloseHandle(close)
+})
+
 const emit = defineEmits<{
-    close: [],
     'give-stream': [userId: string],
     'revoke-stream': [userId: string],
     'ignore-user': [userId: string],

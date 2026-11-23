@@ -3,6 +3,7 @@
     lang_sort_key: "Italiano",
     default_user_name: "Anonimo",
     message_colon: ": ",
+    spoiler: "spoiler",
     test: "test",
     ui:
     {

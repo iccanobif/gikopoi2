@@ -1,5 +1,5 @@
 <template>
-    <div class="popup-overlay" v-if="isOpen" v-on:click="emit('close')"></div>
+    <div class="popup-overlay" v-if="isOpen" v-on:click="closePopup()"></div>
     <div
         id="rula-popup"
         ref="popupElement"
@@ -51,7 +51,7 @@
                         :id="'room-tr-' + room.id"
                         v-bind:class="{'popup-row-is-selected': selectedRoomId == room.id}"
                         v-on:click="selectedRoomId = room.id"
-                        v-on:dblclick="emit('rula', room.id)">
+                        v-on:dblclick="rula(room.id)">
                         <td>{{ $t("room." + room.id) }}</td>
                         <td>{{ room.userCount }}</td>
                         <td>
@@ -69,30 +69,28 @@
             </table>
         </div>
         <div class="popup-buttons">
-            <button v-on:click="emit('rula', selectedRoomId)">{{ $t("ui.rula_menu_button_rula") }}</button><button
-                v-on:click="emit('close')">{{ $t("ui.popup_button_cancel") }}</button>
+            <button v-on:click="rula(selectedRoomId)">{{ $t("ui.rula_menu_button_rula") }}</button><button
+                v-on:click="closePopup()">{{ $t("ui.popup_button_cancel") }}</button>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import i18next from 'i18next'
 import type { GikopoipoiPreferences, ListedRoom, RulaRoomListSortKey } from '../../types'
 import { setAndPersist } from '../../preferences';
 import { RoomSession } from '../../room-session';
+import { registerPopupCloseHandle, unregisterPopupCloseHandle } from '../../popup-close-bus';
 
 const props = defineProps<{
-    isOpen: boolean,
     areaId: string,
     myPrivateUserId: string | null,
-    currentRoomId: string | null,
     preferences: GikopoipoiPreferences,
     roomSession: RoomSession,
 }>()
 
 const emit = defineEmits<{
-    close: [],
     rula: [roomId: string | null],
 }>()
 
@@ -100,8 +98,37 @@ const popupElement = ref<HTMLElement | null>(null)
 const roomList = ref<ListedRoom[]>([])
 const preparedRoomList = ref<ListedRoom[]>([])
 const roomGroup = ref('all')
-const selectedRoomId = ref<string | null>(null)
+// I don't expect props.roomSession.state.currentRoom to actually ever be null in practice, so for now we default to an empty string if it is null.
+const selectedRoomId = ref<string>(props.roomSession.state.currentRoom ? props.roomSession.state.currentRoom.id : '')
 const isLoadingRoomList = ref(false)
+
+defineExpose({
+    openPopup
+})
+
+const isOpen = ref(false)
+
+// TODO: Instead of returning the roomId through an event, make the openPopup() function
+//       return the roomId as Promise<string | null>
+async function openPopup()
+{
+    isOpen.value = true
+    registerPopupCloseHandle(closePopup)
+
+    await nextTick()
+    popupElement.value?.focus()
+    await fetchRoomList()
+}
+
+function closePopup()
+{
+    isOpen.value = false
+    unregisterPopupCloseHandle(closePopup)
+}
+
+onBeforeUnmount(() => {
+    unregisterPopupCloseHandle(closePopup)
+})
 
 async function fetchRoomList()
 {
@@ -109,7 +136,6 @@ async function fetchRoomList()
     {
         roomList.value = []
         preparedRoomList.value = []
-        selectedRoomId.value = props.currentRoomId
         return
     }
 
@@ -120,14 +146,12 @@ async function fetchRoomList()
         const fetchedRooms = await props.roomSession.getRoomList()
         roomList.value = normalizeRoomList(fetchedRooms)
         roomGroup.value = "all"
-        selectedRoomId.value = props.currentRoomId
         prepareRoomList()
     }
     catch
     {
         roomList.value = []
         preparedRoomList.value = []
-        selectedRoomId.value = props.currentRoomId
     }
     finally
     {
@@ -210,7 +234,7 @@ function handleKeydown(event: KeyboardEvent)
                 selectedRoomId.value = preparedRoomList.value[previousIndex - 1].id
             break
         case 'Enter':
-            emit('rula', selectedRoomId.value)
+            rula(selectedRoomId.value)
             return
         default:
             return
@@ -220,6 +244,12 @@ function handleKeydown(event: KeyboardEvent)
         return
 
     document.getElementById('room-tr-' + selectedRoomId.value)?.scrollIntoView({ block: 'nearest' })
+}
+
+function rula(roomId: string)
+{
+    closePopup()
+    emit('rula', roomId)
 }
 
 watch(
@@ -232,27 +262,6 @@ watch(
     () => prepareRoomList()
 )
 
-watch(
-    () => props.isOpen,
-    async (isOpen) => {
-        if (!isOpen)
-        {
-            selectedRoomId.value = null
-            return
-        }
-
-        await nextTick()
-        popupElement.value?.focus()
-        await fetchRoomList()
-    }
-)
-
-watch(
-    () => props.currentRoomId,
-    (roomId) => {
-        selectedRoomId.value = roomId
-    }
-)
 </script>
 
 <style scoped>

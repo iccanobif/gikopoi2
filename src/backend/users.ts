@@ -111,7 +111,7 @@ export function getUserByPrivateId(privateId: string): Player | null
         .find(u => u.privateId == privateId) || null
 };
 
-export function getUser(userId: string)
+export function getUser(userId: string): Player | undefined
 {
     return users[userId];
 };

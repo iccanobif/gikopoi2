@@ -1655,6 +1655,8 @@ app.post(`/admin/ban-or-kick`, async (req, res) => {
         for (const id of userIdsToBan)
         {
             const user = getUser(id)
+            if (!user)
+                continue
             for (const ip of user.ips)
                 await banOrKickIP(ip, isBan ? "ban" : "kick")
         }

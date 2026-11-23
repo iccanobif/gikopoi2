@@ -3,6 +3,7 @@
     lang_sort_key: "Magyar",
     default_user_name: "Névtelen",
     message_colon: ": ",
+    spoiler: "spoiler",
     test: "test",
     ui:
     {

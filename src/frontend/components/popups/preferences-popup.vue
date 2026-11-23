@@ -1,5 +1,5 @@
 <template>
-    <div class="popup-overlay" v-if="isOpen" v-on:click="emit('close')"></div>
+    <div class="popup-overlay" v-if="isOpen" v-on:click="close()"></div>
     <div class="popup" v-if="isOpen">
         <div class="popup-titlebar">
             <div class="popup-title">{{ $t("ui.preferences_title") }}</div>
@@ -103,7 +103,7 @@
                         for="preferences-show-log-dividers">{{ $t("ui.preferences_show_log_dividers") }}</label>
                 </div>
                 <div class="popup-item">
-                    <button v-on:click="emit('clear-log')">{{ $t("ui.preferences_clear_log") }}</button>
+                    <button v-on:click="onClearLog()">{{ $t("ui.preferences_clear_log") }}</button>
                 </div>
             </div>
             <div class="popup-section">
@@ -265,7 +265,7 @@
             </div>
         </div>
         <div class="popup-buttons">
-            <button v-on:click="emit('close')">{{ $t("ui.popup_button_ok") }}</button>
+            <button v-on:click="close()">{{ $t("ui.popup_button_ok") }}</button>
         </div>
     </div>
 </template>
@@ -277,6 +277,8 @@ import languages from '../../lang'
 import type { GikopoipoiPreferences } from '../../types'
 import { setAndPersist } from '../../preferences'
 import { siteAreas } from '../../../common/site-areas'
+import { RoomSession } from '../../room-session'
+import { registerPopupCloseHandle, unregisterPopupCloseHandle } from '../../popup-close-bus'
 
 interface LangEntry {
     id: string
@@ -287,18 +289,16 @@ interface LangEntry {
 type PreferenceField = keyof GikopoipoiPreferences
 
 const props = defineProps<{
-    isOpen: boolean,
     preferences: GikopoipoiPreferences,
     notificationPermissionsGranted: boolean,
+    roomSession: RoomSession
 }>()
 
 const emit = defineEmits<{
-    close: [],
     'ui-theme-changed': [],
     'language-changed': [],
     'enable-tts-changed': [],
     'tts-voice-changed': [],
-    'clear-log': [],
     'notifications-changed': [],
     'mention-sound-changed': [],
     'mention-pattern-changed': [],
@@ -323,6 +323,30 @@ type ActionEvent =
     | 'low-quality-changed'
     | 'idle-animation-changed'
 
+defineExpose({
+    openPopup
+})
+
+const isOpen = ref(false)
+
+function openPopup()
+{
+    isOpen.value = true
+    registerPopupCloseHandle(close)
+}
+
+function close()
+{
+    isOpen.value = false
+    unregisterPopupCloseHandle(close)
+}
+
+onBeforeUnmount(() => {
+    unregisterPopupCloseHandle(close)
+})
+
+// TODO: decouple from container component and send events through room session
+//       or maybe a dedicated event bus for settings
 function emitOptionalAction(actionEvent?: ActionEvent)
 {
     if (!actionEvent)
@@ -428,6 +452,11 @@ onBeforeUnmount(() => {
 })
 
 const siteLanguageRestricted = siteAreas.find(area => area.id === props.preferences.areaId)?.restrictLanguage || false
+
+function onClearLog()
+{
+    props.roomSession.clearLog()
+}
 </script>
 
 <style scoped>

@@ -14,7 +14,6 @@ import type {
     StreamSlotDto,
     JankenStateDto,
     PointerState,
-    DeviceInfo,
     Stats,
     RoomStateDto,
     PlayerDto,
@@ -24,6 +23,8 @@ import type {
     CanvasObject,
     VideoContainer,
     IgnoredUserIds,
+    DeviceSelection,
+    OutboudStreamSettingPopupOutput,
 } from './types'
 import type { Character } from './character'
 
@@ -59,17 +60,14 @@ import User from "./user";
 import {
     loadImage,
     calculateRealCoordinates,
-    postJson,
     BLOCK_WIDTH,
     BLOCK_HEIGHT,
     logToServer,
-    safeDecodeURI,
+    getMessagePreview,
     debounceWithImmediateExecution,
-    urlRegex,
     AudioProcessor,
     getFormattedCurrentDate,
     requestNotificationPermission,
-    getDeviceList,
     getClickCoordinatesWithinCanvas,
     htmlToControlChars,
     controlCharsToHtml,
@@ -80,6 +78,9 @@ import {
     playSound,
     loadAllSoundEffects,
     debouncedPlaySound,
+    emitter,
+    showAlert,
+    parseMessageSpoilers
 } from "./utils";
 import { debouncedSpeakTest, speak } from "./tts";
 import { RTCPeer, defaultIceConfig } from "./rtcpeer";
@@ -91,18 +92,19 @@ import JankenSlot from './components/janken-slot.vue'
 import LoginFooter from './components/change-log.vue'
 import UsernameLabel from './components/username-label.vue'
 
-import LoginPage from './pages/login.vue'
+import LoginPage from './components/login.vue'
 
 import NumericValueControl from './components/numeric-value-control.vue'
 import VoiceChangerControl from './components/voice-changer-control.vue';
 import DialogPopup from './components/popups/dialog-popup.vue'
 import RulaPopup from './components/popups/rula-popup.vue'
 import UserListPopup from './components/popups/user-list-popup.vue'
-import StreamPopup from './components/popups/stream-popup.vue'
+import OutboundStreamSettingsPopup from './components/popups/outbound-stream-settings-popup.vue'
 import PreferencesPopup from './components/popups/preferences-popup.vue'
 import DeviceSelectionPopup from './components/popups/device-selection-popup.vue'
 import RoomObjectEditor from './components/room-object-editor.vue';
 import { siteAreas } from '../common/site-areas';
+import { registerPopupCloseHandle } from './popup-close-bus';
 
 // I define myUserID here outside of the vue.js component to make it
 // visible to console.error
@@ -215,7 +217,7 @@ const vueApp = createApp(defineComponent({
         DialogPopup,
         RulaPopup,
         UserListPopup,
-        StreamPopup,
+        OutboundStreamSettingsPopup,
         PreferencesPopup,
         DeviceSelectionPopup,
         RoomObjectEditor,
@@ -262,15 +264,10 @@ const vueApp = createApp(defineComponent({
             devicePixelRatio: 1 as number,
             canvasObjects: [] as CanvasObject[],
 
-            // rula stuff
-            isRulaPopupOpen: false,
-
             // user list stuff
-            isUserListPopupOpen: false,
             ignoredUserIds: new Set() as IgnoredUserIds,
 
             // preferences stuff
-            isPreferencesPopupOpen: false,
             customMentionRegexObject: null as RegExp | null,
             usernameMentionRegexObject: null as RegExp | null,
 
@@ -284,16 +281,10 @@ const vueApp = createApp(defineComponent({
             slotIsVtuberCharacterJumping: {} as {[slotId: number]: boolean}, // key: slot Id / value: boolean
 
             // stream settings
-            isStreamPopupOpen: false,
             allowedListenerIDs: new Set() as Set<string>,
 
             // Device selection popup
-            isDeviceSelectionOpen: false,
-            deviceList: [] as DeviceInfo[],
-            selectedAudioDeviceId: null as string | null,
-            selectedVideoDeviceId: null as string | null,
             waitingForDevicePermission: false,
-           
             appState: getAppState() as 'login' | 'stage' | 'logout' | 'redirect_notice' | 'poop',
 
             enableGridNumbers: false,
@@ -358,14 +349,6 @@ const vueApp = createApp(defineComponent({
                 ev.preventDefault()
                 this.isRoomObjectEditorVisible = !this.isRoomObjectEditorVisible
             }
-            if (ev.code == "Escape")
-            {
-                this.closeRulaPopup()
-                this.closeUserListPopup()
-                this.closeStreamPopup()
-                this.closePreferencesPopup()
-                this.cancelDeviceSelection()
-            }
             if (ev.code == "KeyG" && ev.ctrlKey)
             {
                 ev.preventDefault()
@@ -395,6 +378,11 @@ const vueApp = createApp(defineComponent({
         document.getElementById("username-textbox")!.focus()
 
         this.devicePixelRatio = this.getDevicePixelRatio();
+
+        emitter.on("show-alert", this.showWarningToast);
+    },
+    unmounted() {
+        emitter.off("show-alert", this.showWarningToast);
     },
     methods: {
         async login(username: string, password: string, areaId: string, characterId: string)
@@ -700,6 +688,10 @@ const vueApp = createApp(defineComponent({
             {
                 this.onUserHighlighted(userId)
             });
+            this.roomSession.registerClearLogEventHandler(() =>
+            {
+                this.clearLog()
+            });
         },
         async connectToServer(username: string, characterId: string)
         {
@@ -899,7 +891,7 @@ const vueApp = createApp(defineComponent({
             {
                 this.wantToStream = false;
                 this.stopStreaming();
-                this.showWarningToast(this.$t("msg." + reason));
+                showAlert(this.$t("msg." + reason));
             });
             this.roomSession.socket.on("server-not-ok-to-take-stream", (streamSlotId: number) =>
             {
@@ -985,7 +977,32 @@ const vueApp = createApp(defineComponent({
 
             return newUser;
         },
-        writeMessageToLog(userName: string, msg: string, userId: string | null = null)
+        playMessageAudio(
+            text: string,
+            voicePitch: number | null = null,
+            options: { speechText?: string; playSoundEffect?: boolean } = {}
+        )
+        {
+            const { speechText = text, playSoundEffect = true } = options;
+            if (!text.trim()) return;
+
+            if (playSoundEffect && this.preferences.soundEffectVolume > 0)
+            {
+                if (this.checkIfMentioned(text))
+                    playSound("mention-sound", this.preferences.soundEffectVolume)
+                else if (this.preferences.isMessageSoundEnabled)
+                    playSound("message-sound", this.preferences.soundEffectVolume)
+            }
+
+            if (this.preferences.enableTextToSpeech && speechText.trim())
+                speak(speechText, this.preferences.ttsVoiceURI, this.preferences.voiceVolume, voicePitch)
+        },
+        writeMessageToLog(
+            userName: string,
+            msg: string,
+            userId: string | null = null,
+            voicePitch: number | null = null
+        )
         {
             const chatLog = document.getElementById("chatLog") as HTMLTextAreaElement
             const isAtBottom = (chatLog.scrollHeight - chatLog.clientHeight) - chatLog.scrollTop < 5;
@@ -1031,21 +1048,41 @@ const vueApp = createApp(defineComponent({
 
             const bodySpan = document.createElement("span");
             bodySpan.className = "message-body";
-            bodySpan.textContent = msg;
-            bodySpan.innerHTML = makeUrlsClickable(bodySpan.innerHTML)
 
-            // Mark mentions
-            if (userId) // Only mark mentions in user messages
-                bodySpan.childNodes.forEach(node =>
+            for (const part of parseMessageSpoilers(msg))
+            {
+                const segment = document.createElement("span");
+                segment.textContent = part.text;
+                segment.innerHTML = makeUrlsClickable(segment.innerHTML)
+
+                // Mark mentions inside each segment, preserving link elements.
+                if (userId) // Only mark mentions in user messages
+                    segment.childNodes.forEach(node =>
+                    {
+                        const isTextNode = node.nodeType == Node.TEXT_NODE;
+                        const el = isTextNode
+                            ? document.createElement("span")
+                            : (node as HTMLElement);
+
+                        el.innerHTML = controlCharsToHtml(escapeHTML(this.markMentions(removeControlChars(node.textContent || ""))));
+                        if (isTextNode)
+                            segment.replaceChild(el, node);
+                    })
+
+                if (part.spoiler)
                 {
-                    const el = node.nodeType == 3
-                        ? document.createElement("span")
-                        : (node as HTMLElement)
-                        
-                    el.innerHTML = controlCharsToHtml(escapeHTML(this.markMentions(removeControlChars(node.textContent || ''))))
-                    if (node.nodeType == 3)
-                        bodySpan.replaceChild(el, node)
-                })
+                    segment.classList.add("spoiler-hidden");
+                    segment.addEventListener("click", (event) => {
+                        if (!segment.classList.contains("spoiler-hidden")) return;
+                        event.preventDefault();
+                        segment.classList.replace("spoiler-hidden", "spoiler-revealed");
+                        if (!userId || !this.ignoredUserIds.has(userId))
+                            this.playMessageAudio(part.text, voicePitch, { playSoundEffect: false });
+                    });
+                }
+
+                bodySpan.appendChild(segment);
+            }
 
             messageDiv.append(timestampSpan);
             messageDiv.append(authorSpan);
@@ -1063,9 +1100,9 @@ const vueApp = createApp(defineComponent({
         {
             const isIgnored = this.ignoredUserIds.has(user.id);
 
-            const plainMsg = msg.replace(urlRegex, s => safeDecodeURI(s));
+            const plainMsg = getMessagePreview(msg, "████████");
 
-            user.message = plainMsg;
+            user.message = msg;
             if(user.lastMessage != user.message)
             {
                 user.bubbleImage = null;
@@ -1076,22 +1113,12 @@ const vueApp = createApp(defineComponent({
 
             if(!user.message) return;
 
-            this.writeMessageToLog(user.name, msg, user.id)
+            this.writeMessageToLog(user.name, msg, user.id, user.voicePitch)
 
             if (isIgnored) return;
 
-            if (this.preferences.soundEffectVolume > 0)
-            {
-                if (this.checkIfMentioned(plainMsg))
-                    playSound("mention-sound", this.preferences.soundEffectVolume)
-                else if (this.preferences.isMessageSoundEnabled)
-                    playSound("message-sound", this.preferences.soundEffectVolume)
-            }
-
-            if (this.preferences.enableTextToSpeech)
-            {
-                speak(plainMsg, this.preferences.ttsVoiceURI, this.preferences.voiceVolume, user.voicePitch)
-            }
+            const speechMsg = getMessagePreview(msg, this.$t("spoiler"));
+            this.playMessageAudio(plainMsg, user.voicePitch, { speechText: speechMsg });
 
             if (user.id != this.myUserID)
                 await this.displayNotification(user.name + ": " + plainMsg, this.getAvatarSpriteForUser(user.id), user.id)
@@ -1163,7 +1190,7 @@ const vueApp = createApp(defineComponent({
             this.confirm(this.$t("msg.are_you_sure_you_want_to_clear_log"), () =>
             {
                 document.getElementById("chatLog")!.innerHTML = '';
-                this.showWarningToast(this.$t("msg.chat_log_cleared"));
+                showAlert(this.$t("msg.chat_log_cleared"));
             });
         },
         drawImage(context: CanvasRenderingContext2D, image: HTMLCanvasElement|OffscreenCanvas, x?: number, y?: number)
@@ -1273,7 +1300,7 @@ const vueApp = createApp(defineComponent({
             const boxMargin = 6;
             const boxPadding = [5, 3];
 
-            let messageLines: string[] | null = user.message.split(/\r\n|\n\r|\n|\r/);
+            let messageLines: string[] | null = getMessagePreview(user.message, "████████").split(/\r\n|\n\r|\n|\r/);
             let preparedLines: string[] | null = null;
             let textWidth: number | null = null;
 
@@ -2098,7 +2125,7 @@ const vueApp = createApp(defineComponent({
         {
             this.roomSession.setBubblePosition(position);
         },
-        sendMessageToServer()
+        async sendMessageToServer()
         {
             const inputTextbox = document.getElementById("input-textbox") as HTMLInputElement
 
@@ -2116,18 +2143,18 @@ const vueApp = createApp(defineComponent({
                 return
             }
 
+            inputTextbox.value = "";
             if (message.toLowerCase().trim() == "#rula" || message.trim() == "#ﾙｰﾗ")
-                this.openRulaPopup();
+                await this.openRulaPopup();
             else if (message.trim() == '#ﾘｽﾄ' || message.trim() == '#list')
-                this.openUserListPopup();
+                await this.openUserListPopup();
             else
             {
                 // If the user has already cleared their bubble, avoid sending any more empty messages.
                 if (message || this.users[this.myUserID!].message)
                     this.roomSession.sendMessage(message);
+                inputTextbox.focus()
             }
-            inputTextbox.value = "";
-            inputTextbox.focus()
         },
         registerKeybindings()
         {
@@ -2440,8 +2467,8 @@ const vueApp = createApp(defineComponent({
                 || (!this.preferences.isNewlineOnShiftEnter && !event.shiftKey))
                 return;
 
-            this.sendMessageToServer();
             event.preventDefault();
+            this.sendMessageToServer(); // fire-and-forget async
             return false;
         },
         resetZoom()
@@ -2662,65 +2689,6 @@ const vueApp = createApp(defineComponent({
                 setAndPersist(this.preferences, "slotVolume", slotVolume)
         },
 
-        async showDeviceSelectionPopup()
-        {
-            this.isStreamPopupOpen = false;
-            try
-            {
-                const withVideo = this.preferences.streamMode != "sound" && !this.preferences.streamScreenCapture;
-                const withSound = this.preferences.streamMode == "sound"
-                    || (this.preferences.streamMode == "video_sound" && !(this.preferences.streamScreenCapture && this.preferences.streamScreenCaptureAudio));
-
-                this.waitingForDevicePermission = true
-                this.deviceList = await getDeviceList(withSound, withVideo)
-                this.waitingForDevicePermission = false
-
-                // Automatically select device if there is only one of its kind
-                const audioDevices = this.deviceList.filter(d => d.type == "audioinput")
-                const videoDevices = this.deviceList.filter(d => d.type == "videoinput")
-                if (audioDevices.length == 1)
-                    this.selectedAudioDeviceId = audioDevices[0].id
-                if (videoDevices.length == 1)
-                    this.selectedVideoDeviceId = videoDevices[0].id
-
-                // If a previously selected device isn't available anymore, clear the selection.
-                // This also handles scenarios where, for example, a previous stream used a video device
-                // while this new stream is only audio: in that case videoDevices will be an empty list
-                // and this.selectedVideoDeviceId will be correctly set to null.
-                if (!audioDevices.find(d => d.id == this.selectedAudioDeviceId))
-                    this.selectedAudioDeviceId = null;
-                if (!videoDevices.find(d => d.id == this.selectedVideoDeviceId))
-                    this.selectedVideoDeviceId = null;
-
-                if (this.deviceList.length)
-                    this.isDeviceSelectionOpen = true
-                else
-                    this.wantToStartStreaming()
-            }
-            catch (err)
-            {
-                console.error(err)
-                this.showWarningToast(this.$t("msg.error_obtaining_media"));
-                this.mediaStream = null;
-                this.waitingForDevicePermission = false;
-                this.isStreamPopupOpen = true;
-            }
-        },
-
-        cancelDeviceSelection()
-        {
-            if (!this.isDeviceSelectionOpen)
-                return
-
-            // If there's a native device selection popup open, let's keep the poipoi device selection
-            // open and disabled, so that the user is forced to either give permissions or deny them.
-            if (this.waitingForDevicePermission)
-                return
-
-            this.isDeviceSelectionOpen = false
-            this.isStreamPopupOpen = true
-        },
-
         async wantToStartStreaming()
         {
             try
@@ -2736,14 +2704,6 @@ const vueApp = createApp(defineComponent({
                 const withVideo = this.preferences.streamMode != "sound";
                 const withSound = this.preferences.streamMode != "video";
 
-                // Validate device selection
-                if ((withVideo && !this.selectedVideoDeviceId && !this.preferences.streamScreenCapture)
-                    || (withSound && !this.selectedAudioDeviceId && !this.preferences.streamScreenCaptureAudio))
-                {
-                    this.showWarningToast(this.$t("msg.error_didnt_select_device"));
-                    return;
-                }
-
                 const withScreenCapture = this.preferences.streamScreenCapture && withVideo
                 const withScreenCaptureAudio = this.preferences.streamScreenCaptureAudio && withScreenCapture && withSound
 
@@ -2753,7 +2713,7 @@ const vueApp = createApp(defineComponent({
                     echoCancellation: withScreenCaptureAudio && this.preferences.streamEchoCancellation,
                     noiseSuppression: withScreenCaptureAudio && this.preferences.streamNoiseSuppression,
                     autoGainControl: withScreenCaptureAudio && this.preferences.streamAutoGain,
-                    deviceId: withScreenCaptureAudio ? undefined : { exact: this.selectedAudioDeviceId! },
+                    deviceId: withScreenCaptureAudio ? undefined : { exact: this.preferences.selectedAudioDeviceId! },
                 }
 
                 let userMediaPromise = null
@@ -2761,7 +2721,7 @@ const vueApp = createApp(defineComponent({
                     userMediaPromise = navigator.mediaDevices.getUserMedia(
                         {
                             video: (!withVideo || withScreenCapture) ? undefined : {
-                                deviceId: { exact: this.selectedVideoDeviceId! },
+                                deviceId: { exact: this.preferences.selectedVideoDeviceId! },
                             },
                             audio: !withSound ? undefined : audioConstraints
                         }
@@ -2782,10 +2742,6 @@ const vueApp = createApp(defineComponent({
                 const promiseResults = await Promise.allSettled([userMediaPromise, screenMediaPromise])
 
                 this.waitingForDevicePermission = false
-
-                // Gotta make sure both popups are closed (the device selection popup might be skipped if there's only one device to select)
-                this.isDeviceSelectionOpen = false;
-                this.isStreamPopupOpen = false;
 
                 const rejectedResult = promiseResults.find(r => r.status == "rejected") as PromiseRejectedResult // type needed for typescript to know about the reason property
                 if (rejectedResult)
@@ -2918,11 +2874,11 @@ const vueApp = createApp(defineComponent({
                 console.error(e)
                 if (e instanceof UserException)
                 {
-                    this.showWarningToast(this.$t("msg." + e.message));
+                    showAlert(this.$t("msg." + e.message));
                 }
                 else
                 {
-                    this.showWarningToast(this.$t("msg.error_obtaining_media"));
+                    showAlert(this.$t("msg.error_obtaining_media"));
                 }
                 this.wantToStream = false;
                 this.mediaStream = null;
@@ -2995,7 +2951,7 @@ const vueApp = createApp(defineComponent({
         {
             if (!window.RTCPeerConnection)
             {
-                this.showWarningToast(this.$t("msg.no_webrtc"));
+                showAlert(this.$t("msg.no_webrtc"));
                 return;
             }
             this.takenStreams[streamSlotId] = true
@@ -3102,45 +3058,28 @@ const vueApp = createApp(defineComponent({
             if (!roomId) return;
             this.canvasManualOffset = { x: 0, y: 0 };
             this.changeRoom(roomId);
-            this.isRulaPopupOpen = false;
         },
-        closeRulaPopup()
+        async openRulaPopup()
         {
-            this.isRulaPopupOpen = false;
+            const rulaPopup = this.$refs.rulaPopup as any;
+            await rulaPopup.openPopup();
         },
-        openRulaPopup()
-        {
-            this.isRulaPopupOpen = true;
-        },
-        openUserListPopup()
+        async openUserListPopup()
         {
             if (this.getUserListForListPopup().length == 0)
             {
-                this.showWarningToast(this.$t("msg.no_other_users_in_this_room"));
+                showAlert(this.$t("msg.no_other_users_in_this_room"));
             }
             else
             {
-                this.isUserListPopupOpen = true;
-                if (this.roomSession.state.highlightedUserId)
-                {
-                    nextTick(() => {
-                        const element = document.getElementById("user-list-element-" + this.roomSession.state.highlightedUserId)
-                        if (element) element.scrollIntoView({ block: "nearest" })
-                    })
-                }
+                const userListPopup = this.$refs.userListPopup as any;
+                await userListPopup.openPopup();
             }
-        },
-        closeUserListPopup()
-        {
-            this.isUserListPopupOpen = false;
         },
         openPreferencesPopup()
         {
-            this.isPreferencesPopupOpen = true;
-        },
-        closePreferencesPopup()
-        {
-            this.isPreferencesPopupOpen = false;
+            const preferencesPopup = this.$refs.preferencesPopup as any;
+            preferencesPopup.openPopup();
         },
         ignoreUser(userId: string)
         {
@@ -3181,32 +3120,53 @@ const vueApp = createApp(defineComponent({
                 this.roomSession.socket!.emit("user-block", userId);
             });
         },
-        openStreamPopup(streamSlotId: number)
+        async openOutboundStreamSettingsPopup(streamSlotId: number)
         {
-            if (!window.RTCPeerConnection)
-            {
-                this.showWarningToast(this.$t("msg.no_webrtc"));
-                return;
-            }
-
             this.streamSlotIdInWhichIWantToStream = streamSlotId;
             this.wantToStream = true;
 
-            this.isStreamPopupOpen = true;
-        },
-        closeStreamPopup()
-        {
-            if (!this.isStreamPopupOpen)
-                return
+            const outboundStreamSettingsPopup = this.$refs.outboundStreamSettingsPopup as any;
+            const result = (await outboundStreamSettingsPopup.openPopup()) as OutboudStreamSettingPopupOutput | null;
 
-            // If there's a native device selection popup open, let's keep the poipoi device selection
-            // open and disabled, so that the user is forced to either give permissions or deny them.
-            if (this.waitingForDevicePermission)
-                return
+            if (!result)
+            {
+                this.wantToStream = false;
+                this.streamSlotIdInWhichIWantToStream = null;
+                return;
+            }
+            // Handle the case when the user successfully started streaming
+            // set and persist all outbound stream settings
+            // TODO: Add OutboundStreamSettings to preferences instead of setting each property individually
+            setAndPersist(this.preferences, "displayAdvancedStreamSettings", result.outboundStreamSettings.displayAdvancedStreamSettings)
+            setAndPersist(this.preferences, "streamMode", result.outboundStreamSettings.streamMode)
+            setAndPersist(this.preferences, "streamScreenCapture", result.outboundStreamSettings.streamScreenCapture)
+            setAndPersist(this.preferences, "streamTarget", result.outboundStreamSettings.streamTarget)
+            setAndPersist(this.preferences, "streamIsVtuberMode", result.outboundStreamSettings.streamIsVtuberMode)
+            setAndPersist(this.preferences, "isNicoNicoMode", result.outboundStreamSettings.isNicoNicoMode)
+            setAndPersist(this.preferences, "streamScreenCaptureAudio", result.outboundStreamSettings.streamScreenCaptureAudio)
+            setAndPersist(this.preferences, "streamEchoCancellation", result.outboundStreamSettings.streamEchoCancellation)
+            setAndPersist(this.preferences, "streamNoiseSuppression", result.outboundStreamSettings.streamNoiseSuppression)
+            setAndPersist(this.preferences, "streamAutoGain", result.outboundStreamSettings.streamAutoGain)
 
-            this.isStreamPopupOpen = false;
-            this.wantToStream = false;
-            this.streamSlotIdInWhichIWantToStream = null;
+            // No need to select devices if both video and audio are being captured from the screen
+            // (can capture screen audio only if you have also selected screen video).
+            if (!result.outboundStreamSettings.streamScreenCaptureAudio)
+            {
+                const deviceSelectionPopup = this.$refs.deviceSelectionPopup as any;
+                const deviceSelectionResult = (await deviceSelectionPopup.openPopup(result.deviceList) as DeviceSelection | null);
+
+                if (!deviceSelectionResult)
+                {
+                    // Go back to previous popup (it's a bit like a wizard step)
+                    this.openOutboundStreamSettingsPopup(this.streamSlotIdInWhichIWantToStream);
+                    return;
+                }
+                // Handle the case when the user successfully selected devices
+                setAndPersist(this.preferences, "selectedAudioDeviceId", deviceSelectionResult.selectedAudioDeviceId)
+                setAndPersist(this.preferences, "selectedVideoDeviceId", deviceSelectionResult.selectedVideoDeviceId)
+            }
+
+            this.wantToStartStreaming();
         },
         changeStreamVolume(streamSlotId: number, event: Event)
         {
@@ -3739,5 +3699,4 @@ vueApp.use(I18NextVue, { i18next })
 
 vueApp.mount("#vue-app")
 window.vueApp = vueApp
-
 

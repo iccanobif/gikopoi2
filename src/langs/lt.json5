@@ -3,6 +3,7 @@
     lang_sort_key: "Lietuvių",
     default_user_name: "Anonimas",
     message_colon: ": ",
+    spoiler: "spoiler",
     test: "test",
     ui:
     {

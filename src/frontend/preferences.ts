@@ -50,6 +50,8 @@ export function loadPreferencesFromLocalStorage(): GikopoipoiPreferences
             "video_sound",
             ["video_sound", "sound", "video"],
         ),
+        selectedAudioDeviceId: getStringPreference("selectedAudioDeviceId", ""),
+        selectedVideoDeviceId: getStringPreference("selectedVideoDeviceId", ""),
         streamNoiseSuppression: getBooleanPreference("streamNoiseSuppression", false),
         streamScreenCapture: getBooleanPreference("streamScreenCapture", false),
         streamScreenCaptureAudio: getBooleanPreference("streamScreenCaptureAudio", false),

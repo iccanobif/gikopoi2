@@ -36,6 +36,7 @@ export const kobanRoom: Room = {
     .concat(coordRange({ x: 2, y: 1 }, { x: 5, y: 1 })), // Desk and furniture,
   forbiddenMovements: [
     { xFrom: 4, yFrom: 3, xTo: 3, yTo: 3 },
+    { xFrom: 3, yFrom: 3, xTo: 4, yTo: 3 },
   ],
   doors: {
     door: {

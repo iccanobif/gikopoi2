@@ -153,6 +153,30 @@ input
     text-decoration: underline;
 }
 
+.message .spoiler-hidden
+{
+    background-color: #222;
+    color: #222;
+    cursor: pointer;
+}
+
+.message .spoiler-revealed
+{
+	transition: background-color 0.2s ease, color 0.2s ease;
+	background-color: inherit;
+	color: inherit;
+	cursor: inherit;
+}
+
+.message .spoiler-hidden *
+{
+    color: inherit;
+}
+
+.message .spoiler-hidden a
+{
+    pointer-events: none;
+}
 .video-container,
 .audio-stream-controls-spinner
 {
